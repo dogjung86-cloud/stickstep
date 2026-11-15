@@ -146,7 +146,7 @@ const LANDS: Land[] = GONDWANA.map((d) => {
   return { d, pts, ice, mid, pole: vec(d.rot[1], d.rot[0]) };
 });
 /** 대륙 하나를 t(0 지금, 1 먼 옛날)만큼 옮겨 무대 좌표로 펼친다. */
-function place(l: Land, t: number): { path: string; ice: string; at: [number, number]; top: number } {
+function place(l: Land, t: number): { path: string; ice: string; icePts: [number, number][]; at: [number, number]; top: number } {
   const ang = l.d.rot[2] * t;
   const m = spin(l.mid, l.pole, ang);
   const lat = Math.asin(Math.max(-1, Math.min(1, m[2]))) / RAD, th = (Math.atan2(m[1], m[0]) / RAD - LON0) * RAD;
@@ -155,18 +155,36 @@ function place(l: Land, t: number): { path: string; ice: string; at: [number, nu
   const u: [number, number] = [Math.sin(th), -Math.cos(th)], e: [number, number] = [Math.cos(th), Math.sin(th)]; // 북쪽(남극에서 멀어지는 쪽)과 동쪽
   const north = norm([-m[0] * m[2], -m[1] * m[2], 1 - m[2] * m[2]]), east = norm(cross([0, 0, 1], m));
   let top = at[1];
-  const flat = (list: V3[]): string => list.map((p0) => {
+  const icePts: [number, number][] = [];
+  const flat = (list: V3[], keep?: [number, number][]): string => list.map((p0) => {
     const p = spin(p0, l.pole, ang);
     const dist = Math.acos(Math.max(-1, Math.min(1, dot(m, p))));
     const k = (dist < 1e-6 ? 1 : dist / Math.sin(dist)) / RAD * PX;
     const pn = dot(p, north) * k, pe = dot(p, east) * k;
     const x = at[0] + pn * u[0] + pe * e[0], y = at[1] + pn * u[1] + pe * e[1];
-    if (y < top) top = y;
+    if (keep) keep.push([x, y]);
+    else if (y < top) top = y;
     return `${x.toFixed(1)} ${y.toFixed(1)}`;
   }).join(" L");
   const path = `M${flat(l.pts)} Z`;
-  return { path, ice: `M${flat(l.ice)} Z`, at, top };
+  return { path, ice: `M${flat(l.ice, icePts)} Z`, icePts, at, top };
 }
+/** 대륙을 다 모았을 때 흩어진 빙하의 흔적을 하나로 감싸는 윤곽(볼록 껍질을 바깥으로 조금 넓힌 것). */
+function iceHull(): string {
+  const pts = LANDS.flatMap((l) => place(l, 1).icePts).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const crossZ = (o: number[], a: number[], b: number[]): number => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lo: [number, number][] = [], hi: [number, number][] = [];
+  for (const p of pts) { while (lo.length >= 2 && crossZ(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); }
+  for (const p of [...pts].reverse()) { while (hi.length >= 2 && crossZ(hi[hi.length - 2], hi[hi.length - 1], p) <= 0) hi.pop(); hi.push(p); }
+  const hull = [...lo.slice(0, -1), ...hi.slice(0, -1)];
+  const cx = hull.reduce((a, p) => a + p[0], 0) / hull.length, cy = hull.reduce((a, p) => a + p[1], 0) / hull.length;
+  const big = hull.map(([x, y]) => { const d = Math.hypot(x - cx, y - cy) || 1; return [x + ((x - cx) / d) * 6, y + ((y - cy) / d) * 6]; });
+  // 모서리를 둥글게: 변의 가운데를 이어 2차 곡선으로
+  const mid = (a: number[], b: number[]): string => `${((a[0] + b[0]) / 2).toFixed(1)} ${((a[1] + b[1]) / 2).toFixed(1)}`;
+  return `M${mid(big[big.length - 1], big[0])} ${big.map((p, i) => `Q${p[0].toFixed(1)} ${p[1].toFixed(1)} ${mid(p, big[(i + 1) % big.length])}`).join(" ")} Z`;
+}
+// 다 모았을 때의 이름표 자리: 하나로 모인 빙하의 흔적 밖(남아메리카는 위, 인도와 오스트레일리아는 오른쪽, 남극은 아래)
+const JOINED_LABEL: Record<string, [number, number, string]> = { sa: [96, 102, "middle"], af: [152, 64, "middle"], in: [204, 126, "start"], au: [232, 177, "start"], an: [174, 204, "middle"] };
 
 export const g2u2IceLab: StepRenderer = (host, step, api) => {
   const lab = gLab(host, api, step as unknown as GStep, { steps: 3, cls: "g2u2x-icel" });
@@ -178,14 +196,15 @@ export const g2u2IceLab: StepRenderer = (host, step, api) => {
     <defs>${LANDS.map((l) => `<clipPath id="g2ic-${l.d.k}"><path class="g2u2x-ic-c c-${l.d.k}"/></clipPath>`).join("")}</defs>
     ${LANDS.map((l) => `<path class="g2u2x-ic-l l-${l.d.k}" fill="${l.d.color}" stroke="rgba(0,0,0,.45)" stroke-width="1" stroke-linejoin="round"/>
       <path class="g2u2x-ic-i i-${l.d.k}" clip-path="url(#g2ic-${l.d.k})" fill="#F4FAFF" stroke="#8FB6D6" stroke-width="1.2"/>`).join("")}
-    <circle class="g2u2x-ic-cap" cx="${POLE[0] - 4}" cy="${POLE[1] - 14}" r="52" stroke="#fff" stroke-width="2" stroke-dasharray="5 5" fill="none"/>
+    <path class="g2u2x-ic-cap" d="${iceHull()}" stroke="#fff" stroke-width="2.2" stroke-dasharray="6 4" fill="rgba(244,250,255,.16)"/>
+    <circle class="g2u2x-ic-ring" r="19" stroke="#FFD43B" stroke-width="2.2" stroke-dasharray="5 3" fill="none"/>
     ${LANDS.map((l) => label(0, 0, l.d.name, { size: 12, cls: `g2u2x-halo n-${l.d.k}` })).join("")}
     ${label(POLE[0] + eq * Math.sin(62 * RAD) + 5, POLE[1] - eq * Math.cos(62 * RAD), "적도(더운 곳)", { anchor: "start", size: 12, fill: G.gold, cls: "g2u2x-halo" })}
     <rect x="10" y="9" width="14" height="10" rx="3" fill="#F4FAFF"/>${label(30, 19, "빙하의 흔적", { anchor: "start", size: 12.5 })}
     ${label(336, 19, "남극을 가운데에 둔 지도", { anchor: "end", size: 12, fill: G.dim, weight: 600 })}
   </svg>`;
   const q = (c: string): SVGElement[] => LANDS.map((l) => lab.q<SVGElement>(`.${c}-${l.d.k}`));
-  const land = q("l"), clip = q("c"), ice = q("i"), names = q("n");
+  const land = q("l"), clip = q("c"), ice = q("i"), names = q("n"), ring = lab.q<SVGCircleElement>(".g2u2x-ic-ring");
   let g = 0, pred = "", locked = false;
   const paint = (): void => {
     const t = g / 100;
@@ -194,9 +213,14 @@ export const g2u2IceLab: StepRenderer = (host, step, api) => {
       land[i].setAttribute("d", p.path);
       clip[i].setAttribute("d", p.path);
       ice[i].setAttribute("d", p.ice);
-      // 이름표는 맨 위 겹에 둔다. 남극은 대륙 아래쪽, 나머지는 대륙 위쪽에 붙인다.
-      names[i].setAttribute("x", Math.max(34, Math.min(300, p.at[0])).toFixed(1));
-      names[i].setAttribute("y", (l.d.k === "an" ? p.at[1] + 40 : Math.max(34, p.top - 4)).toFixed(1));
+      // 이름표는 맨 위 겹에 둔다. 남극은 대륙 아래쪽, 나머지는 대륙 위쪽에 붙인다. 다 모아 갈수록 빙하의 흔적 밖 자리로 옮긴다.
+      const x0 = Math.max(34, Math.min(300, p.at[0])), y0 = l.d.k === "an" ? p.at[1] + 40 : Math.max(34, p.top - 4);
+      const [jx, jy, anchor] = JOINED_LABEL[l.d.k], m = Math.max(0, Math.min(1, (t - 0.7) / 0.3)), e = m * m * (3 - 2 * m);
+      const tx = anchor === "start" ? jx + l.d.name.length * 5.8 : jx; // 왼쪽 맞춤 자리를 가운데 기준으로 바꿔 옮긴다
+      names[i].setAttribute("x", (x0 + (tx - x0) * e).toFixed(1));
+      names[i].setAttribute("y", (y0 + (jy - y0) * e).toFixed(1));
+      // 질문의 주인공 인도에 밝은 테를 두른다(다 모으면 걷는다)
+      if (l.d.k === "in") { ring.setAttribute("cx", p.at[0].toFixed(1)); ring.setAttribute("cy", p.at[1].toFixed(1)); }
     });
     host.dataset.g2G = String(g);
   };

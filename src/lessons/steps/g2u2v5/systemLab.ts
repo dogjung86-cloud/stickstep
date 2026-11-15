@@ -19,7 +19,8 @@ const ITEMS: { k: string; name: string; at: [number, number]; s: Sph; why: strin
   { k: "sea", name: "바다", at: [272, 190], s: "water", why: "바다는 <b>물</b>이 모여 있는 곳이에요." },
   { k: "soil", name: "토양", at: [84, 190], s: "land", why: "토양은 <b>땅</b>을 이루는 흙이에요." },
   { k: "ice", name: "빙하", at: [62, 100], s: "water", why: "빙하는 얼음이에요. 얼음도 <b>물</b>이에요." },
-  { k: "wind", name: "공기", at: [206, 84], s: "air", why: "공기는 지구를 둘러싼 <b>기체</b>예요." },
+  // 공기는 구름(물방울과 얼음 알갱이)이 아니라 구름 아래 맑은 하늘의 바람 줄에서 고른다
+  { k: "wind", name: "공기", at: [252, 108], s: "air", why: "공기는 지구를 둘러싼 <b>기체</b>예요." },
   { k: "sun", name: "태양", at: [304, 26], s: "space", why: "태양은 <b>지구 밖 우주</b>에 있는 천체예요." },
   { k: "tree", name: "나무", at: [146, 132], s: "life", why: "나무는 <b>살아 있는</b> 생물이에요." },
 ];
@@ -37,8 +38,8 @@ const SCENE = `${svgOpen}
   <rect y="44" width="346" height="120" fill="url(#g2sSky)"/>
   <circle cx="304" cy="26" r="15" fill="url(#g2sSun)"/>
   <g stroke="#FFD76A" stroke-width="2" stroke-linecap="round">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => { const a = (i * Math.PI) / 4; return `<path d="M${(304 + Math.cos(a) * 19).toFixed(1)} ${(26 + Math.sin(a) * 19).toFixed(1)} L${(304 + Math.cos(a) * 24).toFixed(1)} ${(26 + Math.sin(a) * 24).toFixed(1)}"/>`; }).join("")}</g>
-  <g fill="#fff" opacity=".92"><ellipse cx="196" cy="84" rx="26" ry="11"/><ellipse cx="214" cy="76" rx="18" ry="12"/><ellipse cx="228" cy="86" rx="16" ry="9"/></g>
-  <g stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"><path d="M150 100 h34"/><path d="M162 108 h28"/><path d="M240 104 h30"/></g>
+  <g fill="#fff" opacity=".92"><ellipse cx="178" cy="66" rx="26" ry="11"/><ellipse cx="196" cy="58" rx="18" ry="12"/><ellipse cx="210" cy="68" rx="16" ry="9"/></g>
+  <g stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none" opacity=".75"><path d="M200 98 h26 q7 0 7 -6"/><path d="M276 96 h30"/><path d="M208 112 h20"/><path d="M280 110 h24 q7 0 7 6"/></g>
   <path d="M0 168 L62 76 L104 136 L132 116 L186 168 Z" fill="url(#g2sMt)"/>
   <path d="M41 107 L62 76 L83 106 L72 99 L62 110 L52 99 Z" fill="#EAF6FF" stroke="#B9DBF2" stroke-width="1.2"/>
   <path d="M0 162 H178 C190 166 196 176 204 230 H0 Z" fill="url(#g2sSoil)"/>
@@ -49,6 +50,15 @@ const SCENE = `${svgOpen}
   <rect x="143" y="140" width="6" height="22" rx="2" fill="#7A5230"/>
   <circle cx="146" cy="128" r="15" fill="#3FA65A"/><circle cx="137" cy="136" r="9" fill="#4DBB69"/><circle cx="156" cy="135" r="9" fill="#35934E"/>
 </svg>`;
+
+const FISH = `<g class="g2u2x-sys-fish">
+  <circle cx="315" cy="184" r="20" stroke="#FFD43B" stroke-width="2" stroke-dasharray="4 3" fill="rgba(11,21,36,.18)"/>
+  <path d="M323 184 L334 176.5 L334 191.5 Z" fill="#FF922B" stroke="#6E3300" stroke-width="1.3" stroke-linejoin="round"/>
+  <path d="M299 184 Q311 173 325 184 Q311 195 299 184 Z" fill="#FFA94D" stroke="#6E3300" stroke-width="1.3"/>
+  <path d="M312 178 q3 6 0 12" stroke="#6E3300" stroke-width="1.1" fill="none"/>
+  <circle cx="305" cy="182.4" r="1.7" fill="#1B1B1B"/>
+  <circle cx="295" cy="175" r="2.1" stroke="#CFE8FF" stroke-width="1.2" fill="none"/><circle cx="291" cy="168.5" r="1.4" stroke="#CFE8FF" stroke-width="1.1" fill="none"/>
+</g>`;
 
 export const g2u2SystemLab: StepRenderer = (host, step, api) => {
   const lab = gLab(host, api, step as unknown as GStep, { steps: 3, cls: "g2u2x-sys" });
@@ -114,6 +124,8 @@ export const g2u2SystemLab: StepRenderer = (host, step, api) => {
   }
 
   function judge(): void {
+    // 판정의 물고기를 바닷속에 띄운다(물속에 살아도 생물이라는 상황이 그림으로 보이게)
+    f.stage.querySelector("svg")?.insertAdjacentHTML("beforeend", FISH);
     lab.ask(
       "바닷속을 헤엄치는 <b>물고기</b>는 어느 영역에 속할까요?",
       ["생물권", "수권", "지권"],

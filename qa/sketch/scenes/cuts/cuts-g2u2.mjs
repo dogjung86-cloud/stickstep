@@ -1,11 +1,12 @@
 // 중2 과학 Ⅱ단원(지권의 변화) 개념 컷 코드 그림.
 // 목록은 Ⅱ단원 v5 세션이 낸 것(D:\Brilliant Science\output\g2-v5\u2\concept-cuts.md).
-// g2u2l3(녹인 설탕 굳히기)은 사실과 다른 비유라 그리지 않고 보류했다(판정 자료 README 참조).
+// g2u2l3(녹인 설탕 굳히기)과 g2u2l2b(색이 같은 분필)는 사실과 다른 비유라 처음에 빼 두었다가(판정 자료 README 참조),
+// 2026-11-15 그래픽 수정에서 판정 자료가 고른 대안 장면(빨리 얼린 아이스크림과 천천히 다시 언 아이스크림, 자루가 똑같이 검은 색연필)으로 그려 실었다.
 // 색의 뜻: 지구 속 네 층은 복숭아의 실제 색(껍질 붉은색, 과육 노랑, 씨 겉 짙은 갈색, 씨 속 밝은 살구색).
 // 누르는 힘은 빨간 화살표, 차례(아래에서 위로)는 청록 화살표. 그 밖의 소품은 일상 물건 색이다.
-import { Sk, C, curve, dense, circ, ell, poly, rrect, arrow, emark, sparkle, hash } from "../../lib/sk.mjs";
+import { Sk, C, curve, dense, circ, ell, poly, rrect, arrow, emark, sparkle, hash, drop } from "../../lib/sk.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT } from "../../lib/figure.mjs";
-import { cloud, moon } from "../../lib/props.mjs";
+import { cloud, moon, clock } from "../../lib/props.mjs";
 import { W, H, lerpx, thin, steam } from "./common.mjs";
 
 const ground = (sk, y, sd, x0 = 14, x1 = 946) => sk.ink(curve([[x0, y + 2], [lerpx(x0, x1, 0.35), y - 2], [lerpx(x0, x1, 0.7), y + 1], [x1, y - 1]]), { w: 9, seed: sd });
@@ -169,37 +170,117 @@ function cutL2() {
   return sk;
 }
 
-/* ---------- g2u2l2b: 겉이 같은 분필 두 자루. 그은 자국은 한 줄은 흰색, 한 줄은 붉은색 ---------- */
+/* ---------- g2u2l2b: 자루가 똑같이 검은 색연필 두 자루. 종이에 그으면 한 줄은 검은색, 한 줄은 붉은 갈색 ----------
+   (2026-11-15) 처음 목록의 '색이 같은 분필 두 자루'는 실제 분필이 겉 색과 자국 색이 같아 사실과 다른 비유라 뺐고,
+   판정 자료가 고른 대안(겉은 같고 그은 자국의 색이 다른 색연필, 실제로 있는 일)으로 그렸다. 색은 자철석과 적철석의 조흔색에 맞췄다. */
 function cutL2b() {
   const sk = new Sk(W, H, { id: "d" });
   const GY = 668, fx = 480, s = 0.8;
   ground(sk, GY, 11);
-  // 칠판(위쪽 띠)
+  // 나무 판에 붙인 흰 종이(위쪽 띠)
   thin(sk, 0.8, () => {
-    const outer = rrect(118, 44, 724, 404, 14), inner = rrect(136, 62, 688, 368, 6);
+    const outer = rrect(118, 44, 724, 404, 14), inner = rrect(142, 66, 676, 360, 6);
     sk.fill(outer, C.wood, { seed: 21, tex: true, texAng: 0.05 });
-    sk.fill(inner, C.board, { seed: 22, tex: true, dx: 1, dy: 1.2 });
-    sk.ink(inner, { w: 7, wob: 1.2, seed: 23 }); sk.ink(outer, { w: 11, wob: 1.6, seed: 24 });
+    sk.fill(inner, "#FCFAF4", { seed: 22, dx: 1, dy: 1.2 });
+    sk.ink(inner, { w: 6, wob: 1.0, seed: 23, color: "#B9AE96" }); sk.ink(outer, { w: 11, wob: 1.6, seed: 24 });
   });
+  for (const [x, y, c] of [[166, 90, C.blue], [794, 90, C.red], [166, 402, C.red], [794, 402, C.blue]]) { sk.dot(x, y, 9, c); sk.dot(x - 2, y - 2, 3, C.white); }
   const hy = GY - s * 452, hl = fx - s * 204, hr = fx + s * 204;
-  // 그은 자국: 왼쪽 흰색, 오른쪽 붉은색
-  for (const [x, sg, col, i] of [[hl, -1, "#F7F4EC", 0], [hr, 1, "#FF6A4D", 1]]) {
-    const st = curve([[x + sg * 2, hy - 62], [x + sg * 16, hy - 120], [x + sg * 6, hy - 176], [x + sg * 22, hy - 222]]);
-    sk.ink(st, { w: 20, color: col, seed: 31 + i, wob: 1.6, alpha: 0.96 });
-    for (let j = 0; j < 4; j++) sk.dot(x + sg * (30 + 10 * hash(j + i * 9)), hy - 104 - j * 40, 3, col);
+  // 그은 자국: 왼쪽은 검은색, 오른쪽은 붉은 갈색(조흔판에 긁은 자국처럼 지그재그)
+  for (const [x, sg, col, i] of [[hl, -1, "#2B2B31", 0], [hr, 1, "#A0432F", 1]]) {
+    const z = []; for (let j = 0; j <= 6; j++) z.push([x + sg * (j % 2 ? 38 : 6), hy - 72 - j * 24]);
+    sk.ink(z, { w: 16, color: col, seed: 31 + i, wob: 1.1 });
   }
-  // 쌤: 두 팔을 들어 분필을 한 자루씩 쥔다
+  // 쌤: 두 팔을 들어 자루가 똑같이 검은 색연필을 한 자루씩 쥔다(심만 검은색과 붉은 갈색)
   const P = pose({ elL: [-124, -372], haL: [-204, -452], elR: [124, -372], haR: [204, -452] });
   drawFigure(sk, fx, GY, s, P, { ...TEACHER, name: "teacher", hands: false });
-  for (const [x, sg, i] of [[hl, -1, 0], [hr, 1, 1]]) {
-    const ch = poly([[x - 10, hy + 6], [x + 10, hy + 6], [x + 10 + sg * 3, hy - 56], [x - 10 + sg * 3, hy - 56]], 3);
-    sk.fill(ch, "#EDE7D6", { ...flat, seed: 41 + i }); sk.ink(ch, { w: 5.5, seed: 43 + i, wob: 0.4 });
-    handDot(sk, [x, hy + 8], C.skin, 45 + i * 2, 13);
+  for (const [x, sg, lead, i] of [[hl, -1, "#2B2B31", 0], [hr, 1, "#A0432F", 1]]) {
+    const top = hy - 50, tx = x + sg * 2;
+    const barrel = poly([[x - 10, hy + 10], [x + 10, hy + 10], [tx + 10, top], [tx - 10, top]], 3);
+    sk.fill(barrel, "#2E2E35", { ...flat, seed: 41 + i }); sk.ink(barrel, { w: 5.5, seed: 43 + i, wob: 0.4 });
+    sk.ink(dense([[x - 3, hy + 2], [tx - 3, top + 6]]), { w: 3, color: "#6A6A74", seed: 51 + i, wob: 0.2 });
+    const cone = poly([[tx - 10, top], [tx + 10, top], [tx, top - 22]], 3);
+    sk.fill(cone, C.woodLight, { ...flat, seed: 45 + i }); sk.ink(cone, { w: 5, seed: 47 + i, wob: 0.3 });
+    sk.dot(tx, top - 18, 4.6, lead);
+    handDot(sk, [x, hy + 10], C.skin, 55 + i * 2, 13);
   }
   emark(sk, 896, 250, 1);
   return sk;
 }
 
+/* ---------- g2u2l3: 빨리 얼린 아이스크림과, 녹았다가 천천히 다시 언 아이스크림 ----------
+   (2026-11-15) 처음 목록의 '녹인 설탕을 빨리, 천천히 굳히기'는 녹인 설탕이 어느 쪽이든 유리처럼 굳어 사실과 달라 그리지 않았다.
+   판정 자료가 고른 대안: 공장에서 빨리 얼린 아이스크림은 얼음 알갱이가 아주 잘아 매끈하고(왼쪽, 빠른 바람 줄과 눈송이),
+   녹았다가 냉동실에서 천천히 다시 언 아이스크림은 얼음 알갱이가 굵게 자라 서걱거린다(오른쪽, 시계와 녹은 방울).
+   녹은 것이 식어 굳는 일이고, 식는 빠르기에 따라 알갱이 크기가 달라지는 것도 사실이라 화산암과 심성암의 대비에 가깝다. */
+function cutL3() {
+  const sk = new Sk(W, H, { id: "l" });
+  const GY = 668, TY = 548;
+  ground(sk, GY, 11);
+  table(sk, 330, 944, TY, GY, 21);
+  const cup = (cx) => {
+    thin(sk, 0.8, () => {
+      const b = curve([[cx - 112, TY - 112], [cx - 98, TY - 46], [cx - 60, TY - 6], [cx + 60, TY - 6], [cx + 98, TY - 46], [cx + 112, TY - 112]], false, 4);
+      sk.fill([...b, b[0]], C.white, { ...flat, seed: cx });
+      sk.ink(curve([[cx - 100, TY - 80], [cx, TY - 70], [cx + 100, TY - 80]]), { w: 8, color: "#7FB8DC", seed: cx + 1, wob: 0.3 });
+      sk.ink([...b, b[0]], { w: 10, seed: cx + 2 });
+    });
+  };
+  const RIM = TY - 112;
+  // 아이스크림 한 덩이: 둥근 머리와 그릇 가장자리의 물결 자락
+  const scoop = (cx) => {
+    const p = [];
+    for (let i = 0; i <= 24; i++) { const a = Math.PI + (i / 24) * Math.PI; p.push([cx + 98 * Math.cos(a), RIM - 30 + 74 * Math.sin(a)]); }
+    for (let i = 0; i <= 8; i++) p.push([cx + 104 - i * 26, RIM + (i % 2 ? -12 : 4)]);
+    return curve(p, true, 4);
+  };
+  // 왼쪽: 빨리 얼린 아이스크림. 얼음 알갱이가 아주 잘아 매끈하다(고운 점만)
+  const lx = 470;
+  const moundL = scoop(lx);
+  sk.fill(moundL, "#FFF3DE", { ...flat, seed: 61 });
+  for (let i = 0; i < 80; i++) {
+    const u = hash(i * 3.7), v = hash(i * 9.1 + 2), x = lx - 84 + u * 168, top = RIM - 30 - 70 * Math.sqrt(Math.max(0, 1 - ((x - lx) / 98) ** 2));
+    const y = top + 9 + v * (RIM - 8 - top - 9);
+    sk.dot(x, y, 2.2, "#E6D5B8");
+  }
+  sk.ink(curve([[lx - 60, RIM - 70], [lx - 30, RIM - 92], [lx + 6, RIM - 98]]), { w: 6, color: C.white, seed: 63, wob: 0.2 });
+  thin(sk, 0.8, () => sk.ink(moundL, { w: 9, seed: 62, wob: 0.6 }));
+  cup(lx);
+  // 빠르게 얼린 표시: 눈송이와 빠른 바람 줄
+  const flake = (x, y, r, sd) => { for (let k = 0; k < 3; k++) { const a = k * Math.PI / 3; sk.ink(dense([[x - r * Math.cos(a), y - r * Math.sin(a)], [x + r * Math.cos(a), y + r * Math.sin(a)]]), { w: 6, color: "#3F8FD0", seed: sd + k, wob: 0.2 }); } };
+  flake(lx - 40, 150, 30, 70);
+  for (const [y, i] of [[196, 0], [226, 1], [256, 2]]) sk.ink(dense([[lx + 6, y], [lx + 96 - i * 14, y]]), { w: 6, color: "#3F8FD0", seed: 74 + i, wob: 0.3 });
+  // 오른쪽: 굵은 얼음 알갱이가 드러난 울퉁불퉁한 봉우리
+  const rx = 790;
+  const moundR = scoop(rx);
+  sk.fill(moundR, "#F4F1EA", { ...flat, seed: 81 });
+  const xtal = [[-66, -30, 22], [-22, -44, 26], [24, -42, 24], [66, -28, 21], [-44, -78, 21], [2, -88, 20], [46, -72, 20], [-84, -10, 14], [86, -10, 15], [-30, -6, 16], [16, -6, 17], [52, -4, 13]];
+  xtal.forEach(([dx, dy, r], i) => {
+    const pts = []; for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2 + hash(i * 5.3) * 1.2, rr = r * (0.78 + 0.36 * hash(i * 7.1 + k * 3.3)); pts.push([rx + dx + rr * Math.cos(a), RIM + dy + rr * 0.8 * Math.sin(a)]); }
+    const p = poly(pts, 3);
+    sk.fill(p, "#E6F4FF", { ...flat, seed: 90 + i });
+    sk.ink(p, { w: 4.5, color: "#7FB8DC", seed: 91 + i, wob: 0.3 });
+    sk.ink(dense([[rx + dx - r * 0.3, RIM + dy - r * 0.3], [rx + dx - r * 0.05, RIM + dy - r * 0.45]]), { w: 3.5, color: C.white, seed: 92 + i, wob: 0.1 });
+  });
+  thin(sk, 0.8, () => sk.ink(moundR, { w: 9, seed: 82, wob: 0.6 }));
+  cup(rx);
+  // 천천히 다시 언 표시: 시계와 녹았던 방울
+  clock(sk, rx - 20, 166, 46, { h: 3, m: 0, rim: "#7FB8DC" });
+  drop(sk, rx + 70, 232, 1.1);
+  drop(sk, rx + 96, 196, 0.8);
+  // 학생(챙이 오른쪽): 숟가락으로 오른쪽 아이스크림을 떠 본다
+  const fx = 168, s = 0.8;
+  const P = pose({ elR: [116, -330], haR: [214, -372], tilt: 0.06, head: [4, -436] });
+  drawFigure(sk, fx, GY, s, P, { ...STUDENT, name: "student", hands: "L" });
+  const hx = fx + s * 214, hy = GY - s * 372;
+  thin(sk, 0.8, () => {
+    sk.ink(dense([[hx + 8, hy - 2], [hx + 120, hy - 50]]), { w: 8, color: "#8E99A6", seed: 101, wob: 0.3 });
+    const sp = ell(hx + 140, hy - 58, 24, 13).map(([x, y]) => { const ddx = x - (hx + 140), ddy = y - (hy - 58), c = Math.cos(-0.4), q = Math.sin(-0.4); return [hx + 140 + ddx * c - ddy * q, hy - 58 + ddx * q + ddy * c]; });
+    sk.fill(sp, "#D5DEE6", { ...flat, seed: 102 }); sk.ink(sp, { w: 7, seed: 103, wob: 0.3 });
+  });
+  handDot(sk, [hx, hy], C.skin, 105, 13);
+  return sk;
+}
 /* ---------- g2u2l4: 유리컵에 시리얼과 요거트를 한 겹씩. 옆에서 본 줄무늬 ---------- */
 function cutL4() {
   const sk = new Sk(W, H, { id: "e" });
@@ -524,8 +605,8 @@ export function cuts() {
     { name: "g2u2l1", theme: "geo", orig: null, sk: cutL1(), alt: "비 오는 날 우산을 쓴 스틱맨이 화분의 풀을 가리키고, 곁에 웅덩이와 젖은 흙, 구름 사이로 달이 보이는 장면", cap: "비, 흙, 풀, 웅덩이, 달이 한 장면에 이어져 있어요" },
     { name: "g2u2l1b", theme: "geo", orig: null, sk: cutL1b(), alt: "반으로 자른 복숭아의 얇은 껍질을 스틱맨이 손가락으로 짚고, 자른 면에 두꺼운 과육과 씨의 겉과 속이 보이는 장면", cap: "껍질은 종이처럼 얇고, 과육이 가장 두꺼워요" },
     { name: "g2u2l2", theme: "geo", orig: null, sk: cutL2(), alt: "잡곡밥 한 그릇에 섞인 흰 쌀, 검은콩, 노란 조를 스틱맨이 젓가락으로 가리키는 장면", cap: "밥 한 그릇에 여러 알갱이가 섞여 있어요" },
-    // 예비 장면: 실제 분필은 겉 색과 자국 색이 같아 사실과 다르다. 정식 컷에서 뺐다(빌드는 spare 를 건너뛴다).
-    { name: "g2u2l2b", spare: true, theme: "geo", orig: null, sk: cutL2b(), alt: "스틱맨이 색이 같은 분필 두 자루를 칠판에 그었는데 한 줄은 흰색, 한 줄은 붉은색으로 그어진 장면", cap: "[예비 장면, 정식 컷 아님] 겉은 같아도 그은 자국의 색은 달라요" },
+    { name: "g2u2l2b", theme: "geo", orig: null, sk: cutL2b(), alt: "스틱맨이 자루가 똑같이 검은 색연필 두 자루로 흰 종이에 줄을 긋자 한 줄은 검은색, 한 줄은 붉은 갈색으로 그어진 장면", cap: "겉은 똑같이 검어도 그은 줄의 색은 달라요" },
+    { name: "g2u2l3", theme: "geo", orig: null, sk: cutL3(), alt: "식탁 위 두 그릇의 아이스크림. 빨리 얼린 왼쪽은 알갱이가 잘아 매끈하고, 녹았다가 천천히 다시 언 오른쪽은 굵은 얼음 알갱이가 드러나 있는 장면", cap: "빨리 얼면 알갱이가 잘고, 천천히 얼면 굵게 자라요" },
     { name: "g2u2l4", theme: "geo", orig: null, sk: cutL4(), alt: "유리컵에 색이 다른 시리얼과 요거트를 한 겹씩 번갈아 담고 옆에서 줄무늬를 들여다보는 스틱맨", cap: "먼저 담은 것이 아래에 있어요" },
     { name: "g2u2l5", theme: "geo", orig: null, sk: cutL5(), alt: "제멋대로 놓인 낙엽 뭉치와, 두꺼운 책 더미 사이에 끼워 누르자 모두 납작하게 나란히 누운 낙엽을 견주는 장면", cap: "위에서 누르면 옆으로 나란히 누워요" },
     { name: "g2u2l6", theme: "geo", orig: null, sk: cutL6(), alt: "스틱맨이 부순 크레파스 조각을 틀에 눌러 담고, 다른 손으로는 녹여 굳힌 새 크레파스를 들어 보이는 장면", cap: "부수고, 누르고, 녹이고, 굳히면 다른 모습이 돼요" },

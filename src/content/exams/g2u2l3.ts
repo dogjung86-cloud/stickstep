@@ -168,7 +168,7 @@ export const POOL_G2U2L3: ExamItem[] = [
     diff: 2,
     prompt: "(가)와 (나)는 색도 알갱이 크기도 서로 다른 암석이에요. 그런데도 두 암석이 <b>같은 화성암 가족</b>으로 묶이는 까닭은?",
     figure: pic2(
-      ["geo/rocks/rhyolite.webp", "밝은 빛깔에 알갱이가 고운 암석 표본"],
+      ["geo/rocks/rhyolite-soft.webp", "밝은 빛깔에 알갱이가 고운 암석 표본"],
       ["geo/rocks/gabbro.webp", "어두운 빛깔에 굵은 알갱이가 맞물린 암석 표본"],
     ),
     options: [

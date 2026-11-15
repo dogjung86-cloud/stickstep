@@ -167,8 +167,45 @@
 .g2u2x-pl-q, .g2u2x-pl-v { opacity: 0; transition: opacity .25s; }
 .quakes .g2u2x-pl-q, .volcs .g2u2x-pl-v { opacity: 1; }
 .g2u2x-pl-b { stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.6s ease-in-out; }
+/* 꺼진 경계선은 숨긴다(길이 0인 대시의 둥근 끝이 점으로 남지 않게) */
+.g2u2x-pl-b { visibility: hidden; }
+.bounds .g2u2x-pl-b { visibility: visible; }
+/* 판마다 다른 옅은 바탕은 판의 경계를 켤 때만(1랩에서는 판을 아직 모른다) */
+.g2u2x-pl-tint { opacity: 0; transition: opacity .8s; }
+.bounds .g2u2x-pl-tint { opacity: 1; }
 .bounds .g2u2x-pl-b { stroke-dashoffset: 0; }
 .g2u2x-pl-kj { opacity: 0; transition: opacity .4s; }
 .kj .g2u2x-pl-kj { opacity: 1; }
 .g2u2x-qk-tap { position: absolute; left: 0; right: 0; top: 13%; bottom: 11.5%; background: none; border: 0; padding: 0; cursor: crosshair; -webkit-tap-highlight-color: transparent; }
 .g2u2x-qk-tap:disabled { cursor: default; }
+
+/* ── 그래픽 수정(2026-11-15) ───────────────────────── */
+/* 1레슨 지구계: 판정 때 바닷속에 뜨는 물고기 */
+.g2u2x-sys-fish { animation: g2u2xFishIn .6s var(--ease-out) both; }
+@keyframes g2u2xFishIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
+/* 묽은 염산: 짙은 젖은 자국과 진한 테두리의 거품(무대에 남는다. 2레슨 도구 랩, 6레슨 표본 랩) */
+.g2u2x-acid-wet { opacity: 0; animation: g2u2xWet .45s .35s ease-out forwards; }
+@keyframes g2u2xWet { to { opacity: 1; } }
+.g2u2x-acid-bub { opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; animation: g2u2xFizz .5s ease-out forwards; }
+@keyframes g2u2xFizz { 0% { opacity: 0; transform: scale(.2); } 70% { opacity: 1; transform: scale(1.12); } 100% { opacity: 1; transform: none; } }
+.g2u2x-acid-rise { opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; animation: g2u2xRise 1.3s ease-out 3 both; }
+@keyframes g2u2xRise { 0% { opacity: 0; transform: translateY(6px) scale(.5); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(-12px) scale(1); } }
+/* 4레슨: 다진 뒤에는 물에서 꺼내 크게 본 암석 */
+.g2u2x-sd-tank { transition: opacity .4s; }
+.g2u2x-sed.rock .g2u2x-sd-tank { opacity: 0; }
+.g2u2x-sd-rock { opacity: 0; transition: opacity .45s .25s; }
+.g2u2x-sed.rock .g2u2x-sd-rock { opacity: 1; }
+/* 5레슨: 판정 때 판정의 근거를 무대 왼쪽(눌러 본 두 결과)과 가운데(이암, 편암, 편마암)에 다시 그린다 */
+.g2u2x-pr-main, .g2u2x-mt-main { transition: opacity .3s; }
+.g2u2x-pr-end, .g2u2x-mt-end { opacity: 0; transition: opacity .45s .15s; }
+.g2u2x-press.end .g2u2x-pr-main, .g2u2x-meta.end .g2u2x-mt-main { opacity: 0; }
+.g2u2x-press.end .g2u2x-pr-end, .g2u2x-meta.end .g2u2x-mt-end { opacity: 1; }
+/* 6레슨 순환: 아직 안 간 길은 아주 옅게, 지나간 길은 금색과 과정 이름. 둘째 과제를 마치면 모든 길, 판정 때는 첫 과제의 길만 밝게 */
+.g2u2x-cy-e { opacity: .16; transition: opacity .35s; }
+.g2u2x-cy-e.on, .g2u2x-cycle.all .g2u2x-cy-e { opacity: 1; }
+.g2u2x-cy-p { opacity: 0; transition: opacity .3s; }
+.g2u2x-cy-p.on { opacity: 1; }
+.g2u2x-cycle.judge .g2u2x-cy-e.t2:not(.t1), .g2u2x-cycle.judge .g2u2x-cy-p.t2:not(.t1) { opacity: .4; }
+/* 8레슨 빙하의 흔적: 주인공 인도의 테(다 모으면 걷는다) */
+.g2u2x-ic-ring { transition: opacity .4s; }
+.g2u2x-icel.joined .g2u2x-ic-ring { opacity: 0; }
