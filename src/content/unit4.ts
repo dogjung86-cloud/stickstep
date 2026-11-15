@@ -7,7 +7,7 @@
 import type { Unit } from "./curriculum";
 import type { Step } from "../lessons/types";
 import type { Curio } from "../ui/curio";
-import { opener, comic, concept, recap, mcq, multi, binSort, rimg, cut } from "./dsl";
+import { opener, comic, concept, recap, mcq, multi, binSort, cut } from "./dsl";
 import { stateTrioFig, watchGlassFig, curveFig, vaporizeFig, miniArt } from "../ui/matterFigures";
 import { comicStory } from "../ui/sketchArt";
 import { sciFig, sciFigMore } from "./sciFigG1";
@@ -299,6 +299,7 @@ const L3 = {
         term("융해와 응고", "고체가 액체로 변하는 것이 <b>융해</b>, 액체가 고체로 변하는 것이 <b>응고</b>예요. 접시 위의 얼음이 녹은 것이 융해이고, 물이 얼어 얼음이 되는 것이 응고예요."),
         term("기화와 액화", "액체가 기체로 변하는 것이 <b>기화</b>, 기체가 액체로 변하는 것이 <b>액화</b>예요. 비커의 물이 수증기가 된 것이 기화이고, 수증기가 접시 아랫면에서 물방울이 된 것이 액화예요."),
         term("승화", "고체가 액체를 거치지 않고 <b>바로 기체로</b> 변하거나, 기체가 <b>바로 고체로</b> 변하는 것이에요. 드라이아이스가 그랬고, 추운 날 나뭇잎의 서리도 승화로 생겨요."),
+        sciFig("u4l3f1"),
         note("상태가 변해도 <b>물질의 성질은 변하지 않아요</b>. 비커의 물에 댄 종이도, 접시 아랫면의 물방울에 댄 종이도 붉게 변했죠.", "blue"),
       ],
       cta: "이름대로 일으켜 보기",
@@ -454,8 +455,7 @@ const L4 = {
           text: "대부분의 물질과 달리 <b>물은 얼 때 부피가 늘어나요</b>. 물을 가득 채운 페트병을 얼리면 병이 부풀어요.",
           examples: ["얼린 페트병", "물에 뜨는 얼음"],
           more:
-            "<b class='rm-h'>왜 그럴까요?</b>올리브유처럼 대부분의 물질은 얼 때 입자들이 더 가까이 모여 부피가 줄어요. 그런데 물의 입자들은 얼면서 <b>빈틈이 많은 배열</b>로 늘어서요. 그래서 얼음은 같은 양의 물보다 자리를 더 많이 차지해요.<b class='rm-h'>예를 들면</b>물을 가득 채워 얼린 페트병이 부풀고, 한겨울에 수도관이 얼어 터지는 것이 이 때문이에요. 유리병에 든 음료를 냉동실에 오래 두면 안 되는 까닭이기도 해요.<b class='rm-h'>헷갈리지 마세요</b>부피가 늘어도 <b>질량은 그대로</b>예요. 물도 얼 때 입자의 수는 변하지 않으니까요. 얼음이 물에 뜨는 것은 무거워져서가 아니라 같은 질량이 더 넓은 자리를 차지하기 때문이에요." +
-            rimg("u4-ice-lattice.webp", "액체 물의 촘촘한 입자와 얼음의 틈 많은 입자 배열 비교"),
+            "<b class='rm-h'>왜 그럴까요?</b>올리브유처럼 대부분의 물질은 얼 때 입자들이 더 가까이 모여 부피가 줄어요. 그런데 물의 입자들은 얼면서 <b>빈틈이 많은 배열</b>로 늘어서요. 그래서 얼음은 같은 양의 물보다 자리를 더 많이 차지해요." + sciFigMore("u4l4f2") + "<b class='rm-h'>예를 들면</b>물을 가득 채워 얼린 페트병이 부풀고, 한겨울에 수도관이 얼어 터지는 것이 이 때문이에요. 유리병에 든 음료를 냉동실에 오래 두면 안 되는 까닭이기도 해요.<b class='rm-h'>헷갈리지 마세요</b>부피가 늘어도 <b>질량은 그대로</b>예요. 물도 얼 때 입자의 수는 변하지 않으니까요. 얼음이 물에 뜨는 것은 무거워져서가 아니라 같은 질량이 더 넓은 자리를 차지하기 때문이에요.",
         },
       ],
       note: { icon: "bulb", tone: "amber", title: "국그릇의 랩", html: "국물의 물이 <b>기화</b>해 수증기가 되면 입자 사이가 멀어져 부피가 크게 늘어요. 그 수증기가 랩을 밀어 올렸어요. 식으면 수증기가 다시 물이 되어(액화) 부피가 줄고 랩이 오목해져요." },
