@@ -5,6 +5,10 @@
 // 실패하는 길: 펌프가 없으면 수도꼭지를 열어도 물이 흐르지 않고, 수도꼭지를 잠그면 펌프가 있어도 흐르지 않는다(전기 회로도 똑같이 멈춘다).
 // 옛 랩(waterCircuit3d)은 3D 장면에서 짝을 눌렀다. 여기서는 두 그림을 나란히 놓고 같은 조작 하나로 함께 움직여 견준다.
 // 세로 화면의 무대에는 같은 그림을 작게 보여 주고, 조작은 가로 화면에서 한다. 가로 화면은 한 화면 검사의 대상이 아니다.
+// 누를 자리 힌트(2026-11-15, 사용자 지적 "어느 위치인지 힌트를 줘야 터치할 수 있다"): 가로 화면에서 아직 찾지 않은 자리마다
+//   은은하게 깜박이는 점선 상자를 두 그림 모두에 띄우고(옛 3D판의 "깜빡이는 점선 링"과 같은 결, 크게 키우지 말 것),
+//   빈 곳을 누르면 가장 가까운 남은 자리를 잠깐 더 밝게 짚어 준다. 짝이 무엇인지는 누른 뒤에만 알려 준다.
+//   누르는 자리는 그린 상자에 여유를 두르고 48px보다 작으면 넓힌다(hitBox). 상자끼리 여유가 겹치면 누른 점에 더 가까운 자리가 받는다.
 
 import { el } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
@@ -30,11 +34,104 @@ interface View {
   hot: PairKey | null;
   spin: number;
   ph: number;
+  /** 지금 시각(ms, 그리기 루프의 시각). 찾을 자리의 깜박임은 물이 멈춰도 이어진다. */
+  now: number;
+  /** 움직임 줄이기 설정이면 깜박이지 않고 은은한 빛만 둔다. */
+  still: boolean;
+  /** 빈 곳을 눌렀을 때 잠깐 더 밝게 짚어 주는 자리(i: 0 왼쪽 물길, 1 오른쪽 회로)와 시작 시각. */
+  nudge: { k: PairKey; i: number; t0: number } | null;
 }
 type Rect = [number, number, number, number];
+type Spot = { k: PairKey; i: number };
+/** 빈 곳을 눌렀을 때 짚어 주는 시간. */
+const NUDGE_MS = 1500;
+/** 가로 화면 위쪽의 상태 줄(.g2u7x-wsay, 50~82px)에 이름표가 가리지 않게 이보다 아래에 쓴다. */
+const SAFE_TOP = 92;
+/** 누르는 자리: 그린 상자에 여유 6px을 두르고, 그래도 48px보다 작으면 가운데를 두고 48px까지 넓힌다. */
+function hitBox(r: Rect): Rect {
+  const w = Math.max(r[2] + 12, 48);
+  const h = Math.max(r[3] + 12, 48);
+  return [r[0] + r[2] / 2 - w / 2, r[1] + r[3] / 2 - h / 2, w, h];
+}
+/** 점에서 상자까지의 거리(안이면 0). */
+function gapTo(p: { x: number; y: number }, r: Rect): number {
+  return Math.hypot(Math.max(r[0] - p.x, 0, p.x - r[0] - r[2]), Math.max(r[1] - p.y, 0, p.y - r[1] - r[3]));
+}
+/** 누른 점이 받히는 자리. 여유가 겹치면 그린 상자에 더 가까운 자리. */
+function pickSpot(hits: Record<PairKey, Rect[]>, p: { x: number; y: number }): Spot | null {
+  let best: Spot | null = null;
+  let bestD = Infinity;
+  for (const { k } of PAIRS)
+    (hits[k] ?? []).forEach((r, i) => {
+      const b = hitBox(r);
+      if (p.x < b[0] || p.x > b[0] + b[2] || p.y < b[1] || p.y > b[1] + b[3]) return;
+      const d = gapTo(p, r);
+      if (d < bestD) {
+        best = { k, i };
+        bestD = d;
+      }
+    });
+  return best;
+}
+/** 아직 찾지 않은 자리 가운데 누른 점에 가장 가까운 자리. */
+function nearestOpen(hits: Record<PairKey, Rect[]>, found: Set<PairKey>, p: { x: number; y: number }): Spot | null {
+  let best: Spot | null = null;
+  let bestD = Infinity;
+  for (const { k } of PAIRS) {
+    if (found.has(k)) continue;
+    (hits[k] ?? []).forEach((r, i) => {
+      const d = gapTo(p, r);
+      if (d < bestD) {
+        best = { k, i };
+        bestD = d;
+      }
+    });
+  }
+  return best;
+}
+/** 아직 찾지 않은 자리: 은은하게 깜박이는 점선 상자. 짚어 주는 자리는 더 밝은 실선과 퍼지는 고리. */
+function drawGlow(ctx: CanvasRenderingContext2D, r: Rect, v: View, nudged: boolean): void {
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(r[0], r[1], r[2], r[3], 10);
+  if (nudged && v.nudge) {
+    const age = Math.min(1, Math.max(0, (v.now - v.nudge.t0) / NUDGE_MS));
+    const fade = age < 0.75 ? 1 : 1 - (age - 0.75) / 0.25;
+    ctx.fillStyle = `rgba(255,255,255,${0.16 * fade})`;
+    ctx.fill();
+    ctx.strokeStyle = `rgba(255,255,255,${0.22 * fade})`;
+    ctx.lineWidth = 9;
+    ctx.stroke();
+    ctx.strokeStyle = `rgba(255,255,255,${0.35 + 0.6 * fade})`;
+    ctx.lineWidth = 2.6;
+    ctx.stroke();
+    if (!v.still) {
+      const q = (age * 2) % 1; // 고리가 두 번 퍼진다
+      const g = 4 + q * 16;
+      ctx.beginPath();
+      ctx.roundRect(r[0] - g, r[1] - g, r[2] + g * 2, r[3] + g * 2, 10 + g);
+      ctx.strokeStyle = `rgba(255,255,255,${0.7 * (1 - q) * fade})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  } else {
+    const p = v.still ? 0.5 : 0.5 + 0.5 * Math.sin((v.now / 1700) * Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${0.02 + 0.05 * p})`;
+    ctx.fill();
+    ctx.strokeStyle = `rgba(255,255,255,${0.04 + 0.09 * p})`;
+    ctx.lineWidth = 6;
+    ctx.stroke();
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = `rgba(255,255,255,${0.25 + 0.4 * p})`;
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
 
-/** 두 그림을 w×h 판에 그린다. 눌러 찾을 자리(왼쪽 그림과 오른쪽 그림 각각)를 돌려준다. */
-function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, labels: boolean): Record<PairKey, Rect[]> {
+/** 두 그림을 w×h 판에 그린다. 눌러 찾을 자리(왼쪽 그림과 오른쪽 그림 각각)를 돌려준다.
+ *  live(가로 화면)이면 찾을 자리의 힌트와 찾은 자리의 이름표를 함께 그린다. 세로 화면의 작은 그림에는 힌트를 두지 않는다(눌러도 반응이 없어서). */
+function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, live: boolean): Record<PairKey, Rect[]> {
   const big = w > 500;
   const fs = big ? 13.5 : 12;
   const pw = w / 2;
@@ -43,9 +140,12 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
   const top = base - rise;
   const on = v.level > 0 && v.open;
   const hits = {} as Record<PairKey, Rect[]>;
-  const mark = (k: PairKey, r: Rect, name: string): void => {
-    (hits[k] ??= []).push(r);
+  /** 눌러 찾을 자리. side가 "right"면 이름표를 상자 오른쪽에 쓴다(위에 쓰면 다른 것에 걸리는 자리).
+   *  오른쪽 이름표가 maxX를 넘으면(좁은 무대) 상자 위 가장자리에 붙여 쓴다. */
+  const mark = (k: PairKey, r: Rect, name: string, side: "up" | "right" = "up", maxX = Infinity): void => {
+    const i = (hits[k] ??= []).push(r) - 1;
     const done = v.found.has(k);
+    if (live && !done) drawGlow(ctx, r, v, v.nudge?.k === k && v.nudge.i === i);
     if (v.hot === k || done) {
       ctx.save();
       ctx.strokeStyle = v.hot === k ? "#FFE08A" : "rgba(255,224,138,.45)";
@@ -56,7 +156,17 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
       ctx.stroke();
       ctx.restore();
     }
-    if (labels && done) xText(ctx, name, r[0] + r[2] / 2, r[1] - 9, { px: fs, color: "#FFE08A", w: 800 });
+    if (live && done) {
+      let fits = side === "right";
+      if (fits && maxX < Infinity) {
+        ctx.save();
+        ctx.font = `800 ${fs}px Pretendard, system-ui, sans-serif`; // xText와 같은 글꼴로 잰다
+        fits = r[0] + r[2] + 6 + ctx.measureText(name).width <= maxX;
+        ctx.restore();
+      }
+      if (fits) xText(ctx, name, r[0] + r[2] + 6, r[1] + r[3] / 2, { px: fs, color: "#FFE08A", w: 800, align: "left" });
+      else xText(ctx, name, r[0] + r[2] / 2, Math.max(r[1] - (side === "right" ? 2 : 9), SAFE_TOP), { px: fs, color: "#FFE08A", w: 800 });
+    }
   };
   // ── 왼쪽: 물길 ──
   const px = pw * 0.2;
@@ -148,14 +258,16 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
   ctx.stroke();
   xText(ctx, "물길", pw * 0.5, big ? base + 44 : 16, { px: fs + 1, w: 800 });
   xText(ctx, "전기 회로", ox + pw * 0.5, big ? base + 44 : 16, { px: fs + 1, w: 800 });
-  // 눌러 찾을 자리(왼쪽, 오른쪽)
+  // 눌러 찾을 자리(왼쪽, 오른쪽). 높이 차 상자는 위아래 화살표를 다 감싸고, 수도꼭지 상자는 꼭지 가운데에 둔다.
+  // 이름표를 상자 오른쪽에 쓰는 셋: 높이 차(위에 쓰면 물길 관에 걸린다. 물레방아 상자까지 자리가 모자라면 상자 위 가장자리),
+  // 물의 흐름(수도꼭지 이름표와 붙어 한 말로 읽힌다), 전류(위에 쓰면 폰에서 상태 줄에 가린다).
   mark("pump", [px - 22, top - 40, 44, 44], "펌프");
   mark("pump", [L - 22, mid - 34, 44, 68], "전지");
-  mark("gap", [gx - 22, top + 18, 44, base - top - 18], "높이 차");
+  mark("gap", [gx - 22, top + 12, 44, base - top - 14], "높이 차", "right", fx - wr * 0.55 - wr - 4);
   mark("gap", [L + 26, mid - 22, 50, 44], "전압");
-  mark("flow", [tx + 38, top - 34, 46, 30], "물의 흐름");
-  mark("flow", [(L + Rr) / 2 + 26, T - 34, 44, 30], "전류");
-  mark("tap", [tx - 22, top - 40, 34, 44], "수도꼭지");
+  mark("flow", [tx + 38, top - 34, 46, 30], "물의 흐름", "right");
+  mark("flow", [(L + Rr) / 2 + 26, T - 31, 46, 30], "전류", "right");
+  mark("tap", [tx - 22, top - 40, 44, 44], "수도꼭지");
   mark("tap", [(L + Rr) / 2 - 24, T - 20, 48, 40], "스위치");
   mark("wheel", [fx - wr * 0.55 - wr - 4, wy - wr - 4, wr * 2 + 8, wr * 2 + 8], "물레방아");
   mark("wheel", [Rr - 24, mid - 26, 48, 52], "전구");
@@ -167,7 +279,8 @@ export const waterLab: StepRenderer = (host, step, api) => {
   const f = xFrame(host, { title: s.title, steps: 3, api });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
-  const v: View = { level: 1, open: true, found: new Set(), hot: null, spin: 0, ph: 0 };
+  const still = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const v: View = { level: 1, open: true, found: new Set(), hot: null, spin: 0, ph: 0, now: 0, still, nudge: null };
   const tried = { off: false, strong: false };
   let rot: RotateStage | null = null;
   let rotLoop: Loop | null = null;
@@ -179,8 +292,11 @@ export const waterLab: StepRenderer = (host, step, api) => {
     v.ph += (dt / 60) * (on ? v.level : 0);
     v.spin += (dt / 60) * (on ? v.level * 1.6 : 0);
   };
-  st.run((ctx, w, h, _t, dt) => {
-    if (!rot) tick(dt);
+  st.run((ctx, w, h, t, dt) => {
+    if (!rot) {
+      tick(dt);
+      v.now = t;
+    }
     drawPair(ctx, w, h, v, false);
   });
 
@@ -197,7 +313,7 @@ export const waterLab: StepRenderer = (host, step, api) => {
     if (rot) return;
     const { enterRotateStage } = await import("../../../ui/rotateStage");
     if (!tm.alive()) return;
-    rot = enterRotateStage({ title: "닮은 곳을 눌러 짝을 찾아요", onLeave: leave });
+    rot = enterRotateStage({ title: "빛나는 곳을 눌러 짝을 찾아요", onLeave: leave });
     const cv = el("canvas", { class: "g2u7x-wcv" }) as HTMLCanvasElement;
     const status = el("div", { class: "g2u7x-wsay" });
     const lv = xSegs(
@@ -228,26 +344,44 @@ export const waterLab: StepRenderer = (host, step, api) => {
     const say = (msg?: string): void => {
       const left = PAIRS.filter((p) => !v.found.has(p.k)).length;
       const on = v.level > 0 && v.open;
-      const base = msg ?? (!on ? (v.level === 0 ? "펌프도 전지도 없어 물도 전류도 흐르지 않아요." : "수도꼭지를 잠그고 스위치를 열자 물도 전류도 멈췄어요.") : v.level === 2 ? "높이 차가 커지자 물이 세게 흐르고 전구도 더 밝아요." : "두 그림에서 닮은 곳을 눌러 보세요.");
-      status.innerHTML = missionDone() ? "다 찾았어요! <b>세로로 돌아가기</b>를 눌러 마무리해요." : `${base} <b>남은 짝 ${left}개</b>${tried.strong ? "" : " · 세게 해 보기"}${tried.off ? "" : " · 잠가 보기"}`;
+      const idle = left ? "빛나는 곳을 눌러 짝을 찾아보세요." : "짝을 모두 찾았어요.";
+      const base = msg ?? (!on ? (v.level === 0 ? "펌프도 전지도 없어 물도 전류도 흐르지 않아요." : "수도꼭지를 잠그고 스위치를 열자 물도 전류도 멈췄어요.") : v.level === 2 ? "높이 차가 커지자 물이 세게 흐르고 전구도 더 밝아요." : idle);
+      const todo = [left ? `<b>남은 짝 ${left}개</b>` : "", tried.strong ? "" : "세게 해 보기", tried.off ? "" : "잠가 보기"].filter(Boolean).join(" · ");
+      status.innerHTML = missionDone() ? "다 찾았어요! <b>세로로 돌아가기</b>를 눌러 마무리해요." : `${base} ${todo}`;
       status.dataset.done = missionDone() ? "1" : "0";
     };
     cv.addEventListener("pointerdown", (e) => {
       if (!rot) return;
       const p = rot.mapPoint(e);
-      for (const pair of PAIRS) {
-        if ((hits[pair.k] ?? []).some(([x, y, w2, h2]) => p.x >= x - 6 && p.x <= x + w2 + 6 && p.y >= y - 6 && p.y <= y + h2 + 6)) {
-          haptic(v.found.has(pair.k) ? HAPTIC.tap : HAPTIC.correct);
-          v.found.add(pair.k);
-          v.hot = pair.k;
-          say(`<b>${pair.a}</b>의 짝은 <b>${pair.b}</b>예요.`);
-          return;
-        }
+      const spot = pickSpot(hits, p);
+      if (spot) {
+        const pair = PAIRS.find((q) => q.k === spot.k)!;
+        haptic(v.found.has(pair.k) ? HAPTIC.tap : HAPTIC.correct);
+        v.found.add(pair.k);
+        v.hot = pair.k;
+        v.nudge = null;
+        say(`<b>${pair.a}</b>의 짝은 <b>${pair.b}</b>예요.`);
+        return;
       }
+      // 빈 곳: 가장 가까운 남은 자리를 잠깐 더 밝게 짚어 준다(짝이 무엇인지는 알려 주지 않는다)
+      const near = nearestOpen(hits, v.found, p);
+      if (!near) return;
+      haptic(HAPTIC.tap);
+      v.nudge = { ...near, t0: performance.now() };
+      say("빛나는 곳을 눌러야 짝을 알 수 있어요.");
     });
-    if (import.meta.env.DEV) (cv as unknown as { __hits: () => unknown }).__hits = () => hits;
+    if (import.meta.env.DEV) {
+      const dev = cv as unknown as { __hits: () => unknown; __hint: () => unknown };
+      dev.__hits = () => hits;
+      // 검사용: 지금 빛나는 자리("짝:쪽"), 짚어 주는 자리, 누르는 자리(여유를 넣은 상자)
+      dev.__hint = () => ({
+        glow: PAIRS.filter((p) => !v.found.has(p.k)).flatMap((p) => (hits[p.k] ?? []).map((_, i) => `${p.k}:${i}`)),
+        nudge: v.nudge ? `${v.nudge.k}:${v.nudge.i}` : null,
+        boxes: PAIRS.flatMap((p) => (hits[p.k] ?? []).map((r) => hitBox(r))),
+      });
+    }
     say();
-    rotLoop = createLoop((dt) => {
+    rotLoop = createLoop((dt, t) => {
       if (!rot) return;
       const { w, h } = rot.size();
       const d = Math.min(window.devicePixelRatio || 1, 2);
@@ -261,6 +395,8 @@ export const waterLab: StepRenderer = (host, step, api) => {
       ctx.setTransform(d, 0, 0, d, 0, 0);
       ctx.clearRect(0, 0, w, h);
       tick(dt);
+      v.now = t;
+      if (v.nudge && t - v.nudge.t0 > NUDGE_MS) v.nudge = null;
       hits = drawPair(ctx, w, h, v, true);
     }).start();
   }
@@ -270,6 +406,7 @@ export const waterLab: StepRenderer = (host, step, api) => {
     rot?.dispose();
     rot = null;
     v.hot = null;
+    v.nudge = null;
     f.pips(missionDone() ? 1 : 0);
     if (missionDone() && !asked) {
       asked = true;
@@ -277,7 +414,11 @@ export const waterLab: StepRenderer = (host, step, api) => {
       v.level = 1;
       v.open = true;
       tm.later(ask1, 500);
-    } else if (!finished) f.say("아직 찾지 못한 짝이 있어요. <b>가로 화면</b>에서 닮은 곳을 모두 눌러 보세요.");
+    } else if (!finished) {
+      // 짝이 남았으면 빛나는 곳으로, 짝은 다 찾았으면 아직 안 해 본 조작으로 안내한다
+      const rest = !tried.strong && !tried.off ? "펌프를 세게 해 보고, 수도꼭지도 잠가 봐요" : !tried.strong ? "펌프를 세게 해 봐요" : "수도꼭지를 잠가 봐요";
+      f.say(v.found.size < PAIRS.length ? "아직 찾지 못한 짝이 있어요. <b>가로 화면</b>에서 빛나는 곳을 모두 눌러 보세요." : `짝은 다 찾았어요. <b>가로 화면</b>에서 ${rest}.`);
+    }
   }
   function ask1(): void {
     f.say("두 그림을 견줘 봤어요. 아래 질문에 답해 보세요.");
@@ -304,7 +445,7 @@ export const waterLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
-  f.say("왼쪽은 물길, 오른쪽은 전기 회로예요. <b>가로 화면</b>에서 두 그림을 함께 움직이며 닮은 곳을 찾아요.");
+  f.say("왼쪽은 물길, 오른쪽은 전기 회로예요. <b>가로 화면</b>에서 빛나는 곳을 눌러 닮은 짝을 찾아요.");
   api.setCTA("가로 화면에서 짝을 찾아보세요", { enabled: false });
   return () => {
     tm.clear();

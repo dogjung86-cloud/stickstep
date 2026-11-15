@@ -3,9 +3,10 @@
 // 랩의 첫 판정에서는 한 번 틀려 본다(오답 화면도 한 화면 안인지). 그 길에서 모은 글에 금지어가 없는지도 본다.
 // 새로 쓴 문제는 정답을 한 번씩 눌러 정답으로 채점되는지 본다. 끝으로 토글을 끈 첫 레슨이 지금 판으로 열리는지 본다.
 // 실행: PORT=5587 node qa/check-g2u7v5.mjs [레슨 id ...] [--out 폴더] [--lab]   또는   DIST=<폴더> node qa/check-g2u7v5.mjs
+// NOGL=1을 붙이면 WebGL2를 끈 채(전동기 랩은 평면 무대). 전동기 랩은 입체 무대에서 힘 = 전류 × 자기장을 3D 좌표로 검산한다(__motor, 개발 서버).
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { launch, openLesson, fit, holdBtn, waitAsk, answer, next, texts, W, waitFor, ctaState, cta, choose, ds, waitPhase, tapText, tapKey, setRange, tapStage, tapRot, waitPips, click } from "./g2u7v5-lib.mjs";
+import { launch, openLesson, fit, holdBtn, waitAsk, answer, next, texts, W, waitFor, ctaState, cta, choose, ds, waitPhase, tapText, tapKey, setRange, tapStage, tapRot, waitPips, click, helper } from "./g2u7v5-lib.mjs";
 
 const args = process.argv.slice(2);
 const oi = args.indexOf("--out");
@@ -16,7 +17,14 @@ mkdirSync(OUT, { recursive: true });
 
 let pass = 0, fail = 0;
 const ok = (c, msg) => { if (c) pass++; else { fail++; console.log("  FAIL " + msg); } };
+const NOGL = !!process.env.NOGL;
 const { page, errors, close } = await launch();
+// NOGL=1: WebGL2를 쓸 수 없는 브라우저를 흉내 낸다(전동기 랩이 평면 무대로 뜨는지 본다). 전기 그네처럼 평면 무대가 없는 3D 랩은
+// three가 "WebGL context" 오류를 콘솔에 남기는데, 이 흉내에서는 예상한 것이라 오류로 세지 않는다.
+if (NOGL) await page.addInitScript(() => {
+  const orig = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function (type, ...a) { return type === "webgl2" ? null : orig.call(this, type, ...a); };
+});
 const seen = [];
 let cur = "";
 const at = async (mark, shot = true) => {
@@ -108,13 +116,47 @@ const LAB = {
   },
   async water() {
     await at("water-start");
+    ok((await helper(page)).includes("빛나는 곳"), `water: 세로 안내 글이 힌트와 다른 말("${await helper(page)}")`);
     await tapText(page, "가로 화면"); await W(page, 1200);
-    const hits = await page.evaluate(() => document.querySelector(".g2u7x-wcv").__hits());
-    for (const k of Object.keys(hits)) {
-      const [x, y, w, h] = hits[k][0];
-      await tapRot(page, x + w / 2, y + h / 2 + (k === "gap" ? 10 : 0));
-      await W(page, 250);
+    const look = () => page.evaluate(() => {
+      const c = document.querySelector(".g2u7x-wcv");
+      return { hits: c.__hits(), hint: c.__hint(), say: document.querySelector(".g2u7x-wsay").textContent, title: document.querySelector(".rot-title")?.textContent ?? "" };
+    });
+    // 힌트: 열자마자 다섯 쌍의 열 자리가 모두 빛나고, 제목과 상태 줄이 무엇을 할지 알려 준다
+    let s = await look();
+    ok(s.hint.glow.length === 10, `water: 빛나는 자리 ${s.hint.glow.length}곳(열 곳이어야)`);
+    ok(s.say.includes("빛나는 곳을 눌러") && s.title.includes("빛나는 곳"), `water: 상태 줄이나 제목에 할 일이 없음("${s.say}" / "${s.title}")`);
+    const small = s.hint.boxes.filter(([, , w, h]) => w < 48 || h < 48);
+    ok(small.length === 0, `water: 48px보다 작은 누르는 자리 ${small.length}곳`);
+    // 빛이 실제로 칠해졌는지: 그림이 없는 전압 자리의 오른쪽 테두리를 읽는다
+    const painted = await page.evaluate((r) => {
+      const c = document.querySelector(".g2u7x-wcv");
+      const d = c.width / c.clientWidth;
+      const g = c.getContext("2d");
+      let n = 0;
+      for (let y = r[1] + 8; y < r[1] + r[3] - 8; y += 2) if (g.getImageData(Math.round((r[0] + r[2]) * d), Math.round(y * d), 1, 1).data[3] > 0) n++;
+      return n;
+    }, s.hits.gap[1]);
+    ok(painted > 5, `water: 전압 자리의 빛이 칠해지지 않음(${painted})`);
+    // 빈 곳(전압 자리 오른쪽 30px)을 누르면 가장 가까운 남은 자리인 전압 자리를 짚는다
+    const vr = s.hits.gap[1];
+    await tapRot(page, vr[0] + vr[2] + 30, vr[1] + vr[3] / 2); await W(page, 300);
+    s = await look();
+    ok(s.hint.nudge === "gap:1" && s.say.includes("빛나는 곳을 눌러야"), `water: 빈 곳을 눌러도 가까운 자리를 짚지 않음(${s.hint.nudge}, "${s.say}")`);
+    await page.screenshot({ path: join(OUT, `${cur}-water-nudge.png`) });
+    // 짝을 다 찾기 전에 세로로 돌아가면 빛나는 곳을 마저 누르라고 한다
+    await page.evaluate(() => document.querySelector(".rot-exit").click()); await W(page, 900);
+    ok((await helper(page)).includes("빛나는 곳을 모두"), `water: 일찍 돌아온 안내가 다름("${await helper(page)}")`);
+    await at("water-early", false);
+    await tapText(page, "가로 화면"); await W(page, 1200);
+    // 다섯 쌍을 실제 포인터로: 왼쪽 그림에서 둘, 오른쪽 그림에서 셋(물건이 아닌 자리인 전압과 물의 흐름 포함)
+    for (const [k, i, a, b] of [["pump", 0, "펌프", "전지"], ["gap", 1, "물의 높이 차", "전압"], ["flow", 0, "물의 흐름", "전류"], ["tap", 1, "수도꼭지", "스위치"], ["wheel", 1, "물레방아", "전구"]]) {
+      const r = (await look()).hits[k][i];
+      await tapRot(page, r[0] + r[2] / 2, r[1] + r[3] / 2); await W(page, 250);
+      s = await look();
+      ok(s.say.includes(`${a}의 짝은 ${b}예요`), `water: ${k}:${i}를 눌렀는데 "${s.say}"`);
     }
+    ok(s.hint.glow.length === 0, `water: 다 찾았는데 빛나는 자리 ${s.hint.glow.length}곳`);
     await page.evaluate(() => document.querySelector('.g2u7x-wbar [data-k="2"]').click()); await W(page, 700);
     await page.screenshot({ path: join(OUT, `${cur}-water-rot.png`) });
     seen.push(...(await page.evaluate(() => [...document.querySelectorAll(".rot-stage *")].map((e) => (e.children.length ? "" : e.textContent.trim())).filter(Boolean))).map((t) => `${cur} water-rot: ${t}`));
@@ -311,18 +353,54 @@ const LAB = {
     await finishLab("swing", "전동기 속 코일 보기", 1);
   },
   async motor() {
+    // 무대: WebGL2가 되면 입체 무대(3d), 안 되면(NOGL=1) 예전 2D 그림의 평면 무대(flat)
+    await waitFor(page, () => !!document.querySelector(".screen.active .bv-stage")?.dataset.motor, null, 60);
+    const mode = await page.evaluate(() => document.querySelector(".screen.active .bv-stage").dataset.motor);
+    ok(mode === (NOGL ? "flat" : "3d"), `motor: 무대가 ${mode}(${NOGL ? "flat" : "3d"}이어야)`);
+    const m3 = () => page.evaluate(() => document.querySelector(".screen.active canvas.g2u7x-cv3d")?.__motor?.() ?? null);
+    const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+    const same = (a, b) => a.every((x, i) => Math.abs(x - b[i]) < 0.02);
     await at("motor-start");
     await tapText(page, "전류 흐르게"); await W(page, 1200);
     await at("motor-left");
+    if (mode === "3d") {
+      // 3D 좌표에서 검산: 힘 = 전류 × 자기장, 그린 화살표가 그 방향, 처음(N극 왼쪽, 왼쪽 변 전류가 뒤쪽 −z)엔 왼쪽 변이 아래(−y)
+      const m = await m3();
+      ok(!!m && same(m.left.force, cross(m.left.cur, m.field)) && same(m.left.drawn, m.left.force), `motor: 왼쪽 변의 힘이 전류 × 자기장이 아님(${JSON.stringify(m?.left)})`);
+      ok(!!m && same(m.field, [1, 0, 0]) && same(m.left.cur, [0, 0, -1]) && same(m.left.force, [0, -1, 0]), `motor: 처음 왼쪽 변의 힘이 아래가 아님(${JSON.stringify(m?.left)})`);
+      ok(!!m && !m.right.shown && m.left.shown, "motor: 예측 전에 오른쪽 변의 힘이 보이거나 왼쪽 변의 힘이 안 보임");
+      // 축을 가로지르는 앞뒤 변: 힘이 축 방향(z)뿐이고, 코일 면이 자기장과 나란한 지금(θ = 0)은 0
+      ok(!!m && [m.back.force, m.front.force].every((f) => Math.abs(f[0]) < 1e-3 && Math.abs(f[1]) < 1e-3 && Math.abs(f[2]) < 0.02), `motor: 앞뒤 변의 힘이 0이 아님(${JSON.stringify([m?.back, m?.front])})`);
+    }
     ok(await waitAsk(page), "motor: 예측 질문이 뜨지 않음");
     await W(page, 300);
     await at("motor-predict");
     await answer(page, true); await W(page, 1700);
     await at("motor-both");
+    if (mode === "3d") {
+      const m = await m3();
+      ok(!!m && m.right.shown && same(m.right.force, cross(m.right.cur, m.field)) && same(m.right.drawn, [0, 1, 0]), `motor: 예측 뒤 오른쪽 변의 힘이 위가 아님(${JSON.stringify(m?.right)})`);
+    }
     await tapText(page, "코일 놓기"); await W(page, 900);
     await at("motor-on");
+    if (mode === "3d") {
+      // 놓으면 돈다: 앞에서 볼 때 시계 반대 방향(θ가 커진다). 도는 동안에도 힘은 전류 × 자기장, 앞뒤 변은 축 방향뿐
+      const a = await m3();
+      await W(page, 600);
+      const b = await m3();
+      ok(!!a && !!b && b.th > a.th + 0.2, `motor: 놓아도 코일이 시계 반대 방향으로 돌지 않음(${a?.th} → ${b?.th})`);
+      ok(!!b && same(b.left.force, cross(b.left.cur, b.field)) && same(b.right.force, cross(b.right.cur, b.field)) && [b.back.force, b.front.force].every((f) => Math.abs(f[0]) < 1e-3 && Math.abs(f[1]) < 1e-3), `motor: 도는 동안의 힘이 어긋남(${JSON.stringify(b)})`);
+    }
     await tapText(page, "전류 방향"); await W(page, 700);
+    if (mode === "3d") {
+      const m = await m3();
+      ok(!!m && same(m.left.force, [0, 1, 0]), `motor: 전류를 바꿨는데 왼쪽 변의 힘이 위가 아님(${JSON.stringify(m?.left)})`);
+    }
     await tapText(page, "자석의 극"); await W(page, 900);
+    if (mode === "3d") {
+      const m = await m3();
+      ok(!!m && same(m.field, [-1, 0, 0]) && same(m.left.force, [0, -1, 0]), `motor: 극까지 바꿨는데 왼쪽 변의 힘이 아래가 아님(${JSON.stringify(m?.left)})`);
+    }
     await at("motor-flip");
     await finishLab("motor", "이름 붙이기", 1);
   },
@@ -407,7 +485,8 @@ for (const id of lessons) {
 const bad = seen.filter((t) => /[—–]|교과서|\p{Extended_Pictographic}/u.test(t.replace(/[↓→←↑⊙]/g, "")) || / - /.test(t));
 bad.slice(0, 12).forEach((t) => console.log("  금지어: " + t));
 ok(bad.length === 0, `금지어 ${bad.length}건`);
-ok(errors.length === 0, `페이지 오류 ${errors.length}건: ${errors.slice(0, 3).join(" | ")}`);
+const errs = NOGL ? errors.filter((e) => !/WebGL context/.test(e)) : errors;
+ok(errs.length === 0, `페이지 오류 ${errs.length}건: ${errs.slice(0, 3).join(" | ")}`);
 console.log(`\n${fail ? "FAIL" : "PASS"} ${pass}/${pass + fail}`);
 await close();
 process.exit(fail ? 1 : 0);

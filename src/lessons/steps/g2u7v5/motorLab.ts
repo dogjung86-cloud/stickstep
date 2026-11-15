@@ -9,11 +9,16 @@
 // 그림은 비스듬히 내려다본 모습이라 화면에서 오른쪽 위가 뒤쪽(먼 쪽)이다. 오른쪽 x, 위 y, 보는 사람 쪽 z로 두면 힘 = 전류 × 자기장.
 //   전류가 뒤쪽(−z)으로 흐르고 자기장이 오른쪽(+x)이면 (−z) × x = −y, 아래쪽 힘이다(2026-11-14에 부호를 바로잡았다. 그전에는 위쪽으로 그렸다).
 // 힘은 전류(코일 변의 방향)와 자기장(N극에서 S극)의 벡터곱으로 계산한다. 왼쪽에 온 변에는 늘 같은 방향의 전류가 흐른다고 둔다(실제 전동기의 정류자가 하는 일).
+// 입체 무대(2026-11-15, 사용자 요청): WebGL2가 되면 motorStage3d의 3D 장면(두 자석, 네 변 코일, 회전축, 정류자와 브러시, 고정 카메라)으로 그리고,
+//   안 되면 아래의 2D 그림을 평면 무대로 그린다. 걸음과 판정은 두 무대가 같다. 3D 좌표에서 다시 한 힘 검산은 motorStage3d 머리말.
 
+import { el } from "../../../core/dom";
+import { createLoop, type Loop } from "../../../core/anim";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
 import { X, xArrow, xBox, xCanvas, xFrame, xLog, xRow, xText, type LabStep } from "./kit";
+import { canMotor3d, mountMotor3d, type Motor3d } from "./motorStage3d";
 
 const A = 58; // 코일의 반 너비
 const B = 46; // 코일의 반 깊이
@@ -21,7 +26,6 @@ const B = 46; // 코일의 반 깊이
 export const motorLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
   const f = xFrame(host, { title: s.title, steps: 4, api });
-  const st = xCanvas(f.stage);
   const tm = bvTimers();
 
   let on = false;
@@ -139,17 +143,20 @@ export const motorLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
-  st.run((ctx, w, _h, _t, dt) => {
+  /** 코일 돌리기(두 무대가 함께 쓴다): 왼쪽 변이 위로 힘을 받으면 시계 방향(각이 줄어든다) */
+  const advance = (dt: number): void => {
+    const goal = on && hold === "free" ? -up() * 0.045 : 0;
+    speed += (goal - speed) * Math.min(1, dt * 0.03);
+    th += speed * dt;
+  };
+  /** 평면 무대(WebGL2가 없는 기기): 비스듬히 내려다본 2D 그림 */
+  const drawFlat = (ctx: CanvasRenderingContext2D, w: number): void => {
     const k = w / 346;
     ctx.save();
     ctx.scale(k, k);
     const cx = 173;
     const cy = 112;
     const P = (x: number, y: number, z: number): [number, number] => [cx + x + z * 0.5, cy - y - z * 0.3];
-    // 돌기: 왼쪽 변이 위로 힘을 받으면 시계 방향(각이 줄어든다)
-    const goal = on && hold === "free" ? -up() * 0.045 : 0;
-    speed += (goal - speed) * Math.min(1, dt * 0.03);
-    th += speed * dt;
     // 자석
     const nC = "#E0503A";
     const sC = "#3D8FE8";
@@ -205,13 +212,53 @@ export const motorLab: StepRenderer = (host, step, api) => {
     }
     xText(ctx, hold === "left" || hold === "both" ? "코일을 붙잡고 있어요(오른쪽 위가 뒤쪽)" : on ? "" : "전류가 흐르지 않아요", cx, 212, { px: 12, color: X.dim });
     ctx.restore();
-  });
+  };
+  let stopFlat: (() => void) | null = null;
+  const startFlat = (): void => {
+    if (stopFlat) return;
+    const st = xCanvas(f.stage);
+    st.run((ctx, w, _h, _t, dt) => {
+      advance(dt);
+      drawFlat(ctx, w);
+    });
+    stopFlat = () => st.stop();
+    f.stage.dataset.motor = "flat";
+  };
+  // 입체 무대: three는 열릴 때만 내려받는다. 열 수 없으면(WebGL2 없음, 만들기 실패, 내려받기 실패) 평면 무대로
+  let m3: Motor3d | null = null;
+  let loop: Loop | null = null;
+  if (canMotor3d()) {
+    const cv = el("canvas", { class: "g2u7x-cv3d still" }) as HTMLCanvasElement;
+    f.stage.appendChild(cv);
+    void mountMotor3d(cv, f.stage)
+      .catch(() => null)
+      .then((m) => {
+        if (!tm.alive()) return m?.dispose();
+        if (!m) {
+          cv.remove();
+          startFlat();
+          return;
+        }
+        m3 = m;
+        f.stage.dataset.motor = "3d";
+        loop = createLoop((dt) => {
+          advance(dt);
+          const tag = hold === "left" || hold === "both" ? "코일을 붙잡고 있어요" : on ? "" : "전류가 흐르지 않아요";
+          m.render({ on, cur, nLeft, th, rightForce: hold !== "left", held: hold !== "free", tag });
+        }).start();
+      });
+  } else startFlat();
 
   log.set(0, "붙잡고 있음");
   f.say("두 자석 사이의 코일을 손으로 붙잡고 있어요. <b>전류를 흐르게 해서</b> 왼쪽 변이 받는 힘부터 봐요.");
   api.setCTA("전류와 자석을 바꿔 보세요", { enabled: false });
   return () => {
     tm.clear();
-    st.stop();
+    loop?.stop();
+    loop = null;
+    m3?.dispose();
+    m3 = null;
+    stopFlat?.();
+    stopFlat = null;
   };
 };
