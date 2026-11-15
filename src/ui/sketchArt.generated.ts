@@ -1837,6 +1837,8 @@ export const CUT_ART: Record<string, string> = {
   "geo/g2u2l1": "sketch/cuts/geo/g2u2l1.svg",
   "geo/g2u2l1b": "sketch/cuts/geo/g2u2l1b.svg",
   "geo/g2u2l2": "sketch/cuts/geo/g2u2l2.svg",
+  "geo/g2u2l2b": "sketch/cuts/geo/g2u2l2b.svg",
+  "geo/g2u2l3": "sketch/cuts/geo/g2u2l3.svg",
   "geo/g2u2l4": "sketch/cuts/geo/g2u2l4.svg",
   "geo/g2u2l5": "sketch/cuts/geo/g2u2l5.svg",
   "geo/g2u2l6": "sketch/cuts/geo/g2u2l6.svg",

@@ -21,15 +21,60 @@ export const numbered = (steps: Step[]): Step[] => {
 };
 export const H = (t: string): string => `<b class='rm-h'>${t}</b>`;
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
-/** 지금 단원이 쓰는 손 사진(public/elec/figs)에 한글 이름표를 얹은 그림 블록. 사진 속에는 글자가 없다. */
-export const handFig = (file: string, alt: string, labels: { x: number; y: number; t: string; c: string }[], cap: string): Block =>
+/** 지금 단원이 쓰는 손 사진(public/elec/figs)에 한글 이름표를 얹은 그림 블록. 사진 속에는 글자가 없다.
+ *  overlay는 사진 좌표(960×720)로 그린 SVG 조각이다(화살표, 극 표시. 2026-11-15 그래픽 감사 C101, C106). 사진과 함께 커지고 줄어든다. */
+export const handFig = (file: string, alt: string, labels: { x: number; y: number; t: string; c: string }[], cap: string, overlay = ""): Block =>
   ({
     k: "figure",
-    svg: `<div style="position:relative"><img src="${IMG_BASE}elec/figs/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px"/>${labels
+    svg: `<div style="position:relative"><img src="${IMG_BASE}elec/figs/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px"/>${
+      overlay ? `<svg viewBox="0 0 960 720" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none">${overlay}</svg>` : ""
+    }${labels
       .map((l) => `<span style="position:absolute;left:${l.x}%;top:${l.y}%;transform:translate(-50%,-50%);background:rgba(255,255,255,.93);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:800;color:${l.c};white-space:nowrap;box-shadow:0 1px 4px rgba(20,30,50,.18)">${l.t}</span>`)
       .join("")}</div>`,
     cap,
   }) as Block;
+
+/** 사진 위에 얹는 굵은 화살표(SVG 조각). pts는 대의 꺾은점(마지막이 화살 끝), 테두리를 두른다. 곡선은 Q(가운데 점 하나)로. */
+export const photoArrow = (pts: [number, number][], color: string, outline: string, o: { w?: number; head?: number; curve?: boolean } = {}): string => {
+  const w = o.w ?? 11;
+  const head = o.head ?? 34;
+  const tip = pts[pts.length - 1];
+  const prev = pts[pts.length - 2];
+  const len = Math.hypot(tip[0] - prev[0], tip[1] - prev[1]);
+  const ux = (tip[0] - prev[0]) / len;
+  const uy = (tip[1] - prev[1]) / len;
+  const bx = tip[0] - ux * head * 0.82;
+  const by = tip[1] - uy * head * 0.82;
+  const hw = head * 0.6;
+  const tri = `${tip[0]},${tip[1]} ${bx - uy * hw},${by + ux * hw} ${bx + uy * hw},${by - ux * hw}`;
+  const body = [...pts.slice(0, -1), [bx, by] as [number, number]];
+  const d = o.curve && body.length === 3 ? `M${body[0][0]} ${body[0][1]}Q${body[1][0]} ${body[1][1]} ${body[2][0]} ${body[2][1]}` : `M${body.map((p) => p.join(" ")).join("L")}`;
+  return (
+    `<path d="${d}" fill="none" stroke="${outline}" stroke-width="${w + 7}" stroke-linecap="round" stroke-linejoin="round"/>` +
+    `<polygon points="${tri}" fill="${outline}" stroke="${outline}" stroke-width="7" stroke-linejoin="round"/>` +
+    `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>` +
+    `<polygon points="${tri}" fill="${color}"/>`
+  );
+};
+
+/** 그림 면에서 보는 사람 쪽으로 나오는 힘(청록): 손바닥에서 시작해 점점 굵어지는 화살표(가까울수록 크게 보이는 원근). */
+export const forceOut = (s: [number, number], t: [number, number]): string => {
+  const len = Math.hypot(t[0] - s[0], t[1] - s[1]);
+  const ux = (t[0] - s[0]) / len;
+  const uy = (t[1] - s[1]) / len;
+  const px = -uy;
+  const py = ux;
+  const head = 64;
+  const b: [number, number] = [t[0] - ux * head, t[1] - uy * head];
+  const at = (q: [number, number], w: number): string => `${(q[0] + px * w).toFixed(1)},${(q[1] + py * w).toFixed(1)}`;
+  const pts = [at(s, 5), at(b, 17), at(b, 40), `${t[0]},${t[1]}`, at(b, -40), at(b, -17), at(s, -5)].join(" ");
+  return (
+    `<ellipse cx="${s[0]}" cy="${s[1]}" rx="15" ry="10" fill="#0B5D52" opacity=".55"/>` +
+    `<polygon points="${pts}" fill="#0B5D52" stroke="#0B5D52" stroke-width="9" stroke-linejoin="round"/>` +
+    `<polygon points="${pts}" fill="#1FC8AE"/>` +
+    `<polygon points="${at(s, 1.5)} ${at(b, 6)} ${at(b, 1)} ${at(s, 0)}" fill="#B8F5EA" opacity=".8"/>`
+  );
+};
 
 const strawLab = lab("g2u7StrawLab");
 const rubLab = lab("g2u7RubLab");
@@ -79,7 +124,7 @@ export const L1: Step[] = numbered([
       {
         name: "전기력",
         color: "#12B886",
-        art: elecMiniArt("forceMini"),
+        art: x7Mini("forcePairMini"),
         text: "대전된 두 물체 사이에 작용하는 힘이에요. <b>다른 종류끼리는 끌어당기고, 같은 종류끼리는 밀어내요.</b>",
         examples: ["빨대와 털가죽: 끌어당김", "빨대와 빨대: 밀어냄"],
         more: `${H("실험과 이어 봐요")}문지른 빨간 빨대는 (−)전기, 털가죽은 (+)전기를 띠었어요. 서로 다른 종류라 털가죽을 가져가자 빨대가 끌려왔죠. 같은 털가죽으로 문지른 파란 빨대는 빨간 빨대와 똑같이 (−)전기를 띠어요. 같은 종류라 서로 밀어냈고요.${H("예를 들면")}머리를 빗은 뒤 머리카락이 빗에 달라붙는 것은 빗과 머리카락이 서로 다른 종류의 전기를 띠기 때문이에요. 한편 머리카락끼리는 같은 종류의 전기를 띠어 서로 밀어내요. 그래서 머리카락이 부스스하게 뜨기도 해요.${H("헷갈리지 마세요")}전기력은 <b>닿지 않아도</b> 작용해요. 실험에서 털가죽을 빨대 끝에 가까이 가져가기만 했는데도 빨대가 움직였어요.`,
@@ -146,7 +191,7 @@ export const L2: Step[] = numbered([
       {
         name: "정전기 유도",
         color: "#EFB800",
-        art: elecMiniArt("inductMini"),
+        art: x7Mini("inductNegMini"),
         text: "대전체를 가까이 하면 금속의 <b>가까운 쪽은 대전체와 다른 종류</b>, <b>먼 쪽은 같은 종류</b>의 전기를 띠어요.",
         examples: ["(−)막대: 가까운 쪽 (+)", "(+)막대: 가까운 쪽 (−)"],
         more: `${H("왜 그럴까요?")}(−)전기를 띤 막대를 가까이 하면 깡통 속 전자는 막대에게서 밀어내는 힘을 받아요. 금속 속 전자는 자유롭게 움직일 수 있어서 막대에서 먼 쪽으로 몰려가요. 그러면 막대와 가까운 쪽은 전자가 줄어 (+)전기를, 먼 쪽은 전자가 늘어 (−)전기를 띠어요.${H("(+)대전체라면")}반대로 (+)전기를 띤 물체를 가까이 하면 전자가 끌려와 가까운 쪽으로 모여요. 가까운 쪽이 (−)전기, 먼 쪽이 (+)전기를 띠죠. 어느 경우든 가까운 쪽은 대전체와 <b>다른 종류</b>의 전기예요.${H("헷갈리지 마세요")}움직이는 것은 이번에도 전자뿐이에요. 원자핵이 막대 쪽으로 끌려온 것이 아니에요. 그리고 깡통 전체의 전자 수는 변하지 않아요. 막대가 닿으면 이야기가 달라져요. 실험에서 막대가 닿자 전자가 직접 건너가 깡통이 밀려났죠.`,
@@ -154,7 +199,7 @@ export const L2: Step[] = numbered([
       {
         name: "끌려오는 까닭",
         color: "#12B886",
-        art: elecMiniArt("forceMini"),
+        art: x7Mini("pullMini"),
         text: "대전체와 가까운 쪽이 <b>다른 종류의 전기</b>를 띠므로, 금속 물체는 대전체 쪽으로 <b>끌려와요</b>.",
         examples: ["굴러오는 알루미늄 깡통", "일어서는 알루미늄박 인형"],
         more: `${H("힘을 따져 봐요")}깡통의 가까운 쪽은 막대와 다른 종류의 전기라 끌어당기는 힘을 받고, 먼 쪽은 같은 종류라 밀어내는 힘을 받아요. 그런데 가까운 쪽이 막대와 더 가까우니 끌어당기는 힘이 더 크게 작용해요. 그래서 깡통은 막대 쪽으로 굴러와요.${sciFigMore("g2u7l2f1", "왼쪽에서 (−)전기를 띤 막대를 가까이 하면 깡통 속 전자가 먼 오른쪽으로 몰리고, (+)전기를 띤 막대를 가까이 하면 전자가 가까운 왼쪽으로 몰려요. 두 경우 모두 가까운 쪽이 받는 끌어당기는 힘이 먼 쪽이 받는 밀어내는 힘보다 커서 깡통이 막대 쪽으로 굴러가요.", "깡통의 가까운 쪽은 끌리고 먼 쪽은 밀려요. 가까운 쪽이 막대에 더 가까워 끌어당기는 힘이 더 크니, 막대가 (−)전기를 띠든 (+)전기를 띠든 깡통은 막대 쪽으로 굴러가요.")}${H("어느 쪽에서 가져가도")}실험에서 막대를 왼쪽에서 가져가도, 오른쪽에서 가져가도 깡통은 늘 막대 쪽으로 굴러왔어요. (+)대전체를 가져가도 마찬가지예요. 가까운 쪽은 언제나 대전체와 다른 종류의 전기를 띠니까요.${H("예를 들면")}문지른 풍선을 알루미늄박 조각 위로 가져가면 조각이 풍선 쪽으로 딸려 올라와요. 도입에서 본 인형이 일어선 것도 같은 까닭이에요.`,
@@ -223,7 +268,7 @@ export const L3: Step[] = numbered([
       {
         name: "전류의 방향",
         color: "#3D8FE8",
-        art: elecMiniArt("sparkMini"),
+        art: x7Mini("currentDirMini"),
         text: "전류는 전지의 <b>(+)극에서 (−)극 쪽</b>으로 흘러요. 전자가 이동하는 방향과는 <b>반대</b>예요.",
         examples: ["전류: (+)극 → (−)극", "전자: (−)극 → (+)극"],
         more: `${H("왜 반대일까요?")}옛 과학자들은 전자가 있는 줄 모르던 때에 "(+)전하가 이동하는 방향"을 전류의 방향으로 정했어요. 나중에 실제로 움직이는 것은 (−)전하를 띤 전자이고, 그 방향이 반대라는 것을 알게 됐지요. 약속은 그대로 두었기 때문에 지금도 둘의 방향이 반대예요.${H("실험과 이어 봐요")}회로에서 전자는 전지의 (−)극에서 나와 전구를 지나 (+)극으로 들어갔어요. 전류의 방향 화살표는 그 반대로 그려졌고요. 전지를 돌려 끼우자 전자의 이동 방향도, 전류의 방향도 함께 뒤집혔어요.${H("헷갈리지 마세요")}전지를 돌려 끼워도 "전자는 (−)극에서 (+)극 쪽으로"라는 규칙은 변하지 않아요. 바뀐 것은 전지의 두 극이 놓인 자리예요.`,

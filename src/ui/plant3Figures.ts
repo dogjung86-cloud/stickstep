@@ -9,6 +9,30 @@ import { P3 } from "./plant3Kit";
 const svg = (vb: string, body: string, aria = ""): string =>
   `<svg viewBox="${vb}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${aria}">${body}</svg>`;
 
+const r1 = (v: number): string => (Math.round(v * 10) / 10).toString();
+/** 육각 고리의 꼭짓점(랩 무대 art.ts와 같은 계산). rot 30이면 위아래가 뾰족하다. */
+const hexPts = (x: number, y: number, r: number, rot = 0): string =>
+  [0, 1, 2, 3, 4, 5].map((k) => `${r1(x + Math.cos(((k * 60 + rot) * Math.PI) / 180) * r)},${r1(y + Math.sin(((k * 60 + rot) * Math.PI) / 180) * r)}`).join(" ");
+/** 설탕(고리 둘, 앰버). 랩 무대의 sucrose를 밝은 카드의 평면 색으로 옮긴 것. vertical이면 고리를 위아래로 잇는다. */
+const sugarPair = (x: number, y: number, r: number, vertical = false): string => {
+  const d = r * 0.95;
+  const [ax, ay, bx, by] = vertical ? [x, y - d, x, y + d] : [x - d, y, x + d, y];
+  const rot = vertical ? 30 : 0;
+  return `<polygon points="${hexPts(ax, ay, r, rot)}" fill="${P3.sugar}" stroke="#8A5A00" stroke-width="1.2" stroke-linejoin="round"/><polygon points="${hexPts(bx, by, r, rot)}" fill="${P3.sugar}" stroke="#8A5A00" stroke-width="1.2" stroke-linejoin="round"/><circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(r * 0.3)}" fill="#FFE9B0" stroke="#8A5A00" stroke-width=".8"/>`;
+};
+/** 녹말(고리 사슬, 남보라). 랩 무대의 starchChain처럼 고리를 잇고 조금 굽힌다. vertical이면 위아래로. */
+const starchLink = (x: number, y: number, n: number, r: number, vertical = false): string => {
+  const step = r * 1.72;
+  let s = "";
+  for (let i = 0; i < n; i++) {
+    const u = (i - (n - 1) / 2) * step;
+    const w = Math.sin(i * 1.1) * r * 0.3;
+    const [cx, cy] = vertical ? [x + w, y + u] : [x + u, y + w];
+    s += `<polygon points="${hexPts(cx, cy, r, vertical ? 0 : 30)}" fill="#7474F2" stroke="#2E2E9A" stroke-width="1.1" stroke-linejoin="round"/>`;
+  }
+  return s;
+};
+
 // ── recap 미니아트(64×64 플랫 문법 — 과학 *Figures 관례) ─────────────────
 const MINI: Record<string, () => string> = {
   // L1: 잎 + 해 — 광합성
@@ -48,6 +72,16 @@ const MINI: Record<string, () => string> = {
       <circle cx="56" cy="44" r="3.4" fill="${P3.co2}"/>
       <circle cx="56" cy="20" r="3.4" fill="${P3.o2}"/>
     `, "교차하는 이산화 탄소·산소 그래프"),
+  // L4: 호흡의 기체 그래프(빛을 막은 용기). gasSwap과 같은 틀에서 방향만 반대: 이산화 탄소(보라)가 오르고 산소(하늘색)가 내려간다.
+  gasSwapResp: () =>
+    svg("0 0 64 64", `
+      <line x1="10" y1="10" x2="10" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
+      <line x1="10" y1="54" x2="58" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
+      <path d="M14 46 C28 44 40 28 56 20" stroke="${P3.co2}" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <path d="M14 20 C28 22 40 38 56 44" stroke="${P3.o2}" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <circle cx="56" cy="20" r="3.4" fill="${P3.co2}"/>
+      <circle cx="56" cy="44" r="3.4" fill="${P3.o2}"/>
+    `, "이산화 탄소는 오르고 산소는 내려가는 그래프"),
   // L2: 청람색 반점이 생긴 잎 + 방울
   starchBlue: () =>
     svg("0 0 64 64", `
@@ -80,15 +114,18 @@ const MINI: Record<string, () => string> = {
       <line x1="10" y1="54" x2="58" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
       <path d="M12 52 C20 46 28 26 35 17.5 C36.5 15.8 38.5 15.8 40 18.2 C44 25 50 40 54 48" stroke="#F03E3E" stroke-width="3.6" fill="none" stroke-linecap="round"/>
     `, "정점을 지나 빠르게 감소하는 곡선"),
-  // L3: 온실 다이얼
-  greenhouseDial: () =>
+  // L3: 이산화 탄소 농도의 그래프. 빛의 세기 카드(curvePlateau)와 같은 늘다가 눕는 선을 이산화 탄소 색으로 긋고,
+  // 가로축 끝 아래에 이산화 탄소 분자(셋 일직선, 가운데 탄소만 조금 어둡게. 랩 무대의 분자 모형과 같은 색) 하나를 둔다.
+  // 분자 자리를 내려고 그래프 틀만 6 위로 올렸다(선의 모양은 같다).
+  co2Plateau: () =>
     svg("0 0 64 64", `
-      <path d="M8 52 v-18 a24 24 0 0 1 48 0 v18 Z" fill="none" stroke="${P3.leaf}" stroke-width="3.2"/>
-      <line x1="4" y1="52" x2="60" y2="52" stroke="${P3.leaf}" stroke-width="3.2" stroke-linecap="round"/>
-      <circle cx="32" cy="36" r="9" fill="#FFFFFF" stroke="#4E5968" stroke-width="2.6"/>
-      <line x1="32" y1="36" x2="37" y2="30" stroke="#4E5968" stroke-width="2.6" stroke-linecap="round"/>
-      <circle cx="18" cy="20" r="4.5" fill="${P3.light}"/>
-    `, "온실 안 조건 다이얼"),
+      <line x1="10" y1="6" x2="10" y2="48" stroke="#A9B6A9" stroke-width="2.4"/>
+      <line x1="10" y1="48" x2="58" y2="48" stroke="#A9B6A9" stroke-width="2.4"/>
+      <path d="M12 46 L32 14 L56 12" stroke="${P3.co2}" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="41" cy="57" r="3.8" fill="#BBA8F5" stroke="#5B45A8" stroke-width="1.3"/>
+      <circle cx="53" cy="57" r="3.8" fill="#BBA8F5" stroke="#5B45A8" stroke-width="1.3"/>
+      <circle cx="47" cy="57" r="3.7" fill="#8E83B8" stroke="#433A6E" stroke-width="1.3"/>
+    `, "이산화 탄소 농도에 따라 늘다가 일정해지는 그래프"),
   // L4: 상자에서 번개(양분→에너지)
   boltBox: () =>
     svg("0 0 64 64", `
@@ -135,14 +172,14 @@ const MINI: Record<string, () => string> = {
       <rect x="34" y="10" width="24" height="44" rx="8" fill="#FFF4E6" stroke="#FF922B" stroke-width="2.6"/>
       <path d="M12 22 h12 M12 32 h12 M12 42 h12 M40 22 h12 M40 32 h12 M40 42 h12" stroke="#8B95A1" stroke-width="2.4" stroke-linecap="round"/>
     `, "광합성과 호흡 비교표"),
-  // L6: 위아래 화살표가 달린 줄기와 설탕 알갱이(체관 이동)
+  // L6: 위아래 화살표가 달린 줄기와 설탕(체관 이동). 설탕은 랩 무대와 책 그림처럼 앰버 고리 둘(줄기에 들게 위아래로 이었다).
   sugarTruck: () =>
     svg("0 0 64 64", `
-      <rect x="27" y="8" width="10" height="48" rx="5" fill="#8FBE85" stroke="#4E7C46" stroke-width="2.4"/>
-      <circle cx="32" cy="22" r="4.5" fill="${P3.sugar}" stroke="#B8860B" stroke-width="1.6"/>
-      <circle cx="32" cy="42" r="4.5" fill="${P3.sugar}" stroke="#B8860B" stroke-width="1.6"/>
-      <path d="M14 24 v-10 M10 18 l4 -6 4 6 M14 40 v10 M10 46 l4 6 4 -6" stroke="#8B95A1" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-      <path d="M50 14 c-4 6 -10 8 -14 8 c1 -7 6 -11 14 -8 Z" fill="#51CF66" stroke="#1E5A2A" stroke-width="2"/>
+      <rect x="24" y="6" width="16" height="52" rx="7" fill="#8FBE85" stroke="#4E7C46" stroke-width="2.4"/>
+      ${sugarPair(32, 20, 4.4, true)}
+      ${sugarPair(32, 44, 4.4, true)}
+      <path d="M12 24 v-10 M8 18 l4 -6 4 6 M12 40 v10 M8 46 l4 6 4 -6" stroke="#8B95A1" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <path d="M54 14 c-4 6 -10 8 -14 8 c1 -7 6 -11 14 -8 Z" fill="#51CF66" stroke="#1E5A2A" stroke-width="2"/>
     `, "체관을 오르내리는 설탕"),
   // L6: 새싹+번개(이용)
   useGrow: () =>
@@ -151,16 +188,16 @@ const MINI: Record<string, () => string> = {
       <path d="M32 44 v-14 M32 34 c-7 -2 -10 -9 -9 -14 c7 0 11 6 11 11 M32 36 c7 -2 10 -9 9 -14 c-7 0 -11 6 -11 11" fill="#69C77E" stroke="#2E7D46" stroke-width="2.4"/>
       <path d="M50 8 l-6 10 h5 l-4 10 10 -13 h-5 l4 -7 Z" fill="${P3.energy}" stroke="#E8A80C" stroke-width="1.6" stroke-linejoin="round"/>
     `, "양분으로 자라는 새싹과 에너지"),
-  // L6: 저장 단지 셋(형태 다양)
+  // L6: 저장 단지 셋(형태 다양). 녹말은 고리 사슬(남보라), 설탕은 고리 둘(앰버)로 랩 무대와 같은 기호, 셋째 단지(단백질, 지방)는 점.
   storeJar: () =>
     svg("0 0 64 64", `
-      <path d="M8 32 c0 -6 14 -6 14 0 v16 c0 6 -14 6 -14 0 Z" fill="#EAF6EF" stroke="${P3.leafDeep}" stroke-width="2.4"/>
-      <path d="M25 26 c0 -6 14 -6 14 0 v22 c0 6 -14 6 -14 0 Z" fill="#FFF4E6" stroke="#E8A80C" stroke-width="2.4"/>
-      <path d="M42 32 c0 -6 14 -6 14 0 v16 c0 6 -14 6 -14 0 Z" fill="#FFF0F3" stroke="#C2566B" stroke-width="2.4"/>
-      <circle cx="15" cy="42" r="3" fill="${P3.starch}"/>
-      <circle cx="32" cy="38" r="3" fill="${P3.sugar}"/>
-      <circle cx="49" cy="42" r="3" fill="#C2566B"/>
-    `, "여러 형태의 저장 단지"),
+      <path d="M4 30 c0 -7 17 -7 17 0 v20 c0 7 -17 7 -17 0 Z" fill="#EAF6EF" stroke="${P3.leafDeep}" stroke-width="2.4"/>
+      <path d="M23.5 24 c0 -7 17 -7 17 0 v26 c0 7 -17 7 -17 0 Z" fill="#FFF4E6" stroke="#E8A80C" stroke-width="2.4"/>
+      <path d="M43 30 c0 -7 17 -7 17 0 v20 c0 7 -17 7 -17 0 Z" fill="#FFF0F3" stroke="#C2566B" stroke-width="2.4"/>
+      ${starchLink(12.5, 41, 3, 3.3, true)}
+      ${sugarPair(32, 40, 4.2, true)}
+      <circle cx="51.5" cy="41" r="3.4" fill="#C2566B"/>
+    `, "녹말, 설탕, 그 밖의 형태로 양분을 담은 저장 단지 셋"),
 } as const as Record<string, () => string>;
 
 /** recap 카드 미니아트 — 키가 없으면 잎 기본. */
@@ -282,26 +319,71 @@ export function leafFactorySceneFig(o?: { mode?: "play" | "quiz"; blank?: "co2" 
   );
 }
 
+/** 점들을 지나는 매끈한 선(넘치지 않는 단조 3차 보간). 온실 랩(energyLabs.ts)이 잰 점을 잇는 방식과 같다. */
+function monoPath(pts: [number, number][]): string {
+  const n = pts.length;
+  const dx = pts.slice(1).map((p, i) => p[0] - pts[i][0]);
+  const sl = pts.slice(1).map((p, i) => (p[1] - pts[i][1]) / dx[i]);
+  const m = pts.map((_, i) => (i === 0 ? sl[0] : i === n - 1 ? sl[n - 2] : sl[i - 1] * sl[i] <= 0 ? 0 : (sl[i - 1] + sl[i]) / 2));
+  for (let i = 0; i < n - 1; i++) {
+    if (sl[i] === 0) {
+      m[i] = 0;
+      m[i + 1] = 0;
+      continue;
+    }
+    const a = m[i] / sl[i];
+    const b = m[i + 1] / sl[i];
+    const h = a * a + b * b;
+    if (h > 9) {
+      const k = 3 / Math.sqrt(h);
+      m[i] = k * a * sl[i];
+      m[i + 1] = k * b * sl[i];
+    }
+  }
+  let d = `M${r1(pts[0][0])} ${r1(pts[0][1])}`;
+  for (let i = 0; i < n - 1; i++) {
+    const h = dx[i] / 3;
+    d += ` C${r1(pts[i][0] + h)} ${r1(pts[i][1] + m[i] * h)}, ${r1(pts[i + 1][0] - h)} ${r1(pts[i + 1][1] - m[i + 1] * h)}, ${r1(pts[i + 1][0])} ${r1(pts[i + 1][1])}`;
+  }
+  return d;
+}
+
 // ── 그래프 모양 3종 비교(factorShapesFig) — (가)(나)(다) 무명 곡선(퀴즈용) ──
-// (가) 증가 후 일정 · (나) 정점 뒤 빠른 감소 · (다) 계속 증가(직선). 축 라벨은 광합성량/요인 값.
+// (가) 증가 후 일정 · (나) 꼭대기를 지나 빠르게 감소 · (다) 계속 증가(직선).
+// 칸마다 세로축 '광합성량', 가로축 '요인의 값'(13px, 폰 표시 12px 남짓)을 단다. 세 선은 같은 색이다(모양만으로 고르게, 빨강은 오답 색이라 쓰지 않는다).
+// (나)는 온실 랩 온도 그래프의 잰 값(10~45 ℃: 0.2, 0.4, 0.62, 0.84, 1, 0.55, 0.15, 0.03)에 원점 하나를 앞에 두고 같은 방식으로 이었다:
+// 완만히 오르다 오른쪽 5/8 자리 꼭대기에서 가파르게 떨어진다. (가)는 정리 카드 미니아트, 온실 랩 이산화 탄소 그래프와 같은 꺾인 선 그대로.
 export function factorShapesFig(): string {
-  const panel = (ox: number, label: string, curve: string, color: string): string => `
+  const W = 106;
+  const O: [number, number] = [26, 96]; // 칸 안 원점
+  const AW = 72; // 가로축 길이
+  const AH = 80; // 세로축 길이
+  const X = (u: number): number => O[0] + 2 + u * (AW - 6);
+  const Y = (v: number): number => O[1] - 2.5 - v * (AH - 12);
+  const PEAK = [0, 0.2, 0.4, 0.62, 0.84, 1, 0.55, 0.15, 0.03];
+  const curves: string[] = [
+    `M${r1(X(0))} ${r1(Y(0))} L${r1(X(0.38))} ${r1(Y(0.92))} L${r1(X(1))} ${r1(Y(0.96))}`,
+    monoPath(PEAK.map((v, i) => [X(i / (PEAK.length - 1)), Y(v * 0.98)] as [number, number])),
+    `M${r1(X(0))} ${r1(Y(0))} L${r1(X(1))} ${r1(Y(1.03))}`,
+  ];
+  const panel = (ox: number, label: string, curve: string): string => `
     <g transform="translate(${ox} 0)">
-      <rect x="0" y="8" width="100" height="96" rx="10" fill="#FFFFFF" stroke="#E1EBE4" stroke-width="2"/>
-      <line x1="16" y1="20" x2="16" y2="84" stroke="#A9B6A9" stroke-width="2"/>
-      <line x1="16" y1="84" x2="90" y2="84" stroke="#A9B6A9" stroke-width="2"/>
-      <path d="${curve}" stroke="${color}" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <text x="50" y="122" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">${label}</text>
+      <rect x="0" y="6" width="${W}" height="116" rx="10" fill="#FFFFFF" stroke="#E1EBE4" stroke-width="2"/>
+      <line x1="${O[0]}" y1="${O[1] - AH}" x2="${O[0]}" y2="${O[1]}" stroke="#A9B6A9" stroke-width="2"/>
+      <line x1="${O[0]}" y1="${O[1]}" x2="${O[0] + AW}" y2="${O[1]}" stroke="#A9B6A9" stroke-width="2"/>
+      <path d="${curve}" stroke="${P3.leaf}" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="${O[0] - 9}" y="${O[1] - AH / 2}" transform="rotate(-90 ${O[0] - 9} ${O[1] - AH / 2})" text-anchor="middle" font-size="13" font-weight="700" fill="#6B7684">광합성량</text>
+      <text x="${O[0] + AW / 2}" y="${O[1] + 17}" text-anchor="middle" font-size="13" font-weight="700" fill="#6B7684">요인의 값</text>
+      <text x="${W / 2}" y="141" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">${label}</text>
     </g>`;
   return svg(
-    "0 0 340 132",
+    "0 0 340 150",
     `
-    ${panel(6, "(가)", "M18 82 L44 34 L86 32", P3.leaf)}
-    ${panel(120, "(나)", "M18 82 C30 74 40 42 50 27 C52 24.5 54 24.5 55.5 27.5 C62 40 72 66 82 78", "#F03E3E")}
-    ${panel(234, "(다)", "M18 82 L86 24", "#4DABF7")}
-    <text x="8" y="12" font-size="10.5" font-weight="700" fill="#8B95A1">세로축: 광합성량 · 가로축: 요인 값</text>
+    ${panel(6, "(가)", curves[0])}
+    ${panel(117, "(나)", curves[1])}
+    ${panel(228, "(다)", curves[2])}
     `,
-    "요인 값에 따른 광합성량 그래프 세 가지 모양, (가) 증가 후 일정, (나) 정점 뒤 감소, (다) 계속 증가",
+    "요인의 값에 따른 광합성량 그래프 세 가지 모양, (가) 늘다가 일정, (나) 늘다가 꼭대기를 지나 빠르게 감소, (다) 계속 증가",
   );
 }
 
@@ -354,20 +436,30 @@ export type PsFlowKey = "light" | "co2" | "water" | "glucose" | "o2" | "starch" 
 export function psFlowFig(o?: { blanks?: PsFlowKey[] }): string {
   const blanks = o?.blanks ?? [];
   const MASK = ["㉠", "㉡", "㉢", "㉣"];
+  // 가림 글자는 늘 같은 차례(장소, 빛, 이산화 탄소, 물, 포도당, 산소, 녹말)로 매긴다. 그림 몸과 aria가 같은 표를 쓴다.
+  const LABEL: Record<PsFlowKey, string> = { place: "엽록체", light: "빛에너지", co2: "이산화 탄소", water: "물", glucose: "포도당", o2: "산소", starch: "녹말" };
+  const N = { ...LABEL };
   let mi = 0;
-  const name = (key: PsFlowKey, label: string): string =>
-    blanks.includes(key) ? MASK[Math.min(mi++, MASK.length - 1)] : label;
+  (["place", "light", "co2", "water", "glucose", "o2", "starch"] as PsFlowKey[]).forEach((k) => {
+    if (blanks.includes(k)) N[k] = MASK[Math.min(mi++, MASK.length - 1)];
+  });
+  const name = (key: PsFlowKey, _label: string): string => N[key];
   const pill = (x: number, y: number, w: number, label: string, c: string, dark = false): string =>
     `<g><rect x="${x - w / 2}" y="${y - 12}" width="${w}" height="24" rx="12" fill="${dark ? c : "#FFFFFF"}" stroke="${c}" stroke-width="2.2"/>
      <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${dark ? "#FFFFFF" : "#333D4B"}">${label}</text></g>`;
-  const arrow = (x1: number, y1: number, x2: number, y2: number, c: string): string => {
+  const arrow = (x1: number, y1: number, x2: number, y2: number, c: string, halo = false): string => {
     const ang = Math.atan2(y2 - y1, x2 - x1);
     const hx = x2 - 9 * Math.cos(ang);
     const hy = y2 - 9 * Math.sin(ang);
     const px = 5.2 * Math.cos(ang + Math.PI / 2);
     const py = 5.2 * Math.sin(ang + Math.PI / 2);
-    return `<line x1="${x1}" y1="${y1}" x2="${hx}" y2="${hy}" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/>
-      <path d="M${x2} ${y2} L${hx + px} ${hy + py} L${hx - px} ${hy - py} Z" fill="${c}"/>`;
+    const head = `M${r1(x2)} ${r1(y2)} L${r1(hx + px)} ${r1(hy + py)} L${r1(hx - px)} ${r1(hy - py)} Z`;
+    // halo: 엽록체 테두리를 넘어 들어가는 화살은 흰 테를 먼저 깔아 테두리 위에서도 갈라 보이게 한다
+    const under = halo
+      ? `<line x1="${x1}" y1="${y1}" x2="${r1(hx)}" y2="${r1(hy)}" stroke="#FFFFFF" stroke-width="6.6" stroke-linecap="round"/><path d="${head}" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round"/>`
+      : "";
+    return `${under}<line x1="${x1}" y1="${y1}" x2="${r1(hx)}" y2="${r1(hy)}" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="${head}" fill="${c}"/>`;
   };
   return svg(
     "0 0 340 218",
@@ -392,15 +484,15 @@ export function psFlowFig(o?: { blanks?: PsFlowKey[] }): string {
     ${pill(44, 96, blanks.includes("co2") ? 40 : 92, name("co2", "이산화 탄소"), P3.co2)}
     ${arrow(58, 152, 100, 134, P3.water)}
     ${pill(44, 156, blanks.includes("water") ? 40 : 46, name("water", "물"), P3.water)}
-    <!-- 나오는 것(오른쪽) -->
-    ${arrow(248, 96, 288, 88, P3.glucose)}
+    <!-- 나오는 것(오른쪽). 포도당 화살은 이름표 왼쪽 아래에서 멈춰 촉이 가리지 않게 한다 -->
+    ${arrow(236, 99.5, 264, 91.5, P3.glucose)}
     ${pill(300, 84, blanks.includes("glucose") ? 40 : 66, name("glucose", "포도당"), P3.glucose)}
     ${arrow(250, 140, 288, 152, P3.o2)}
     ${pill(300, 158, blanks.includes("o2") ? 40 : 54, name("o2", "산소"), P3.o2)}
-    <!-- 포도당 → 녹말 저장 -->
-    ${arrow(300, 98, 300, 116, "#8B95A1")}
-    ${pill(300, 130, blanks.includes("starch") ? 40 : 54, name("starch", "녹말"), P3.starch)}
+    <!-- 포도당 → 녹말: 포도당에서 이어지는 짧은 화살이 엽록체 안으로 들어가 녹말 이름표에 닿는다(녹말은 엽록체 안에 저장) -->
+    ${arrow(292, 98, 236, 138, "#8B95A1", true)}
+    ${pill(212, 140, 40, name("starch", "녹말"), P3.starch)}
     `,
-    "광합성 과정 도식, 빛에너지·이산화 탄소·물이 엽록체로 들어가고 포도당(녹말로 저장)과 산소가 나온다",
+    `광합성 과정 도식. 들어가는 것: ${N.light}, ${N.co2}, ${N.water}. 일어나는 곳: ${N.place}. 나오는 것: ${N.glucose}, ${N.o2}. ${N.glucose}은 ${N.place} 안에서 ${N.starch}로 바뀌어 저장된다`,
   );
 }

@@ -133,31 +133,57 @@ export const strawLab: StepRenderer = (host, step, api) => {
     ctx.fillStyle = "rgba(255,255,255,.45)";
     ctx.fillRect(-len / 2 + 6, -3, len - 12, 2);
   };
+  // 털가죽(2026-11-15 그래픽 감사 C091): 둥근 가죽 조각 둘레에 부드러운 털 끝(짧은 곡선 결)을 두르고, 안쪽에 한 방향으로 빗긴 털결을 그린다.
+  //   예전 톱니 테두리의 다각형은 과자나 병뚜껑처럼 보였다. 털 끝의 길이와 휨은 각도로 정해져(무작위 아님) 매 장면 같은 모양이다.
   const fur = (ctx: CanvasRenderingContext2D, x: number, y: number): void => {
+    const RX = 29;
+    const RY = 19;
     ctx.save();
     ctx.translate(x, y);
-    ctx.fillStyle = "#B98554";
-    ctx.strokeStyle = "#7A5230";
-    ctx.lineWidth = 1.5;
+    ctx.lineCap = "round";
+    // 바깥 털 끝(어두운 결 위에 밝은 결)
+    for (const [col, lw, grow] of [["#6E4524", 2.6, 1], ["#D8A673", 1.6, 0.8]] as [string, number, number][]) {
+      ctx.strokeStyle = col;
+      ctx.lineWidth = lw;
+      for (let i = 0; i < 34; i++) {
+        const a = (i / 34) * Math.PI * 2;
+        const ex = Math.cos(a) * RX;
+        const ey = Math.sin(a) * RY;
+        const len = (6.5 + 2.5 * Math.sin(i * 2.3)) * grow;
+        const nx = Math.cos(a) * RY;
+        const ny = Math.sin(a) * RX;
+        const nl = Math.hypot(nx, ny);
+        const ux = nx / nl;
+        const uy = ny / nl;
+        const sway = 0.55; // 털 끝이 한쪽으로 살짝 휜다
+        ctx.beginPath();
+        ctx.moveTo(ex - ux * 3, ey - uy * 3);
+        ctx.quadraticCurveTo(ex + ux * len * 0.6, ey + uy * len * 0.6, ex + ux * len - uy * len * sway, ey + uy * len + ux * len * sway);
+        ctx.stroke();
+      }
+    }
+    // 가죽 조각
+    const g = ctx.createRadialGradient(-8, -6, 3, 0, 0, RX);
+    g.addColorStop(0, "#D49B63");
+    g.addColorStop(0.7, "#B07A47");
+    g.addColorStop(1, "#8A5A30");
+    ctx.fillStyle = g;
     ctx.beginPath();
-    for (let i = 0; i <= 24; i++) {
-      const a = (i / 24) * Math.PI * 2;
-      const r = 1 + (i % 2 ? 0.1 : -0.02);
-      const px = Math.cos(a) * 30 * r;
-      const py = Math.sin(a) * 20 * r;
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.closePath();
+    ctx.ellipse(0, 0, RX, RY, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(255,236,210,.6)";
-    for (let i = -2; i <= 2; i++) {
-      ctx.beginPath();
-      ctx.moveTo(i * 9 - 3, -6);
-      ctx.lineTo(i * 9 + 3, 6);
-      ctx.stroke();
-    }
+    // 안쪽 털결(빗긴 방향으로 짧은 곡선)
+    ctx.strokeStyle = "rgba(255,226,190,.55)";
+    ctx.lineWidth = 1.3;
+    for (let r = -1; r <= 1; r++)
+      for (let c = -2; c <= 2; c++) {
+        const px = c * 10 + (r % 2 ? 5 : 0);
+        const py = r * 9;
+        if ((px / (RX - 6)) ** 2 + (py / (RY - 5)) ** 2 > 1) continue;
+        ctx.beginPath();
+        ctx.moveTo(px - 4, py - 2);
+        ctx.quadraticCurveTo(px, py - 4, px + 4, py + 1);
+        ctx.stroke();
+      }
     ctx.restore();
   };
 

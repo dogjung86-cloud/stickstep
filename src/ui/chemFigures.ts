@@ -299,25 +299,52 @@ const MINI: Record<string, string> = {
   meltMini: `<path d="M12 10v42h42" stroke="#8B95A1" stroke-width="2.4"/>
     <path d="M16 46 L28 28 L44 28 L52 14" stroke="#E64980" stroke-width="3" fill="none"/>
     <path d="M28 28h16" stroke="#F0A422" stroke-width="4"/>`,
-  pressBoilMini: `<path d="M14 26h24v20a12 12 0 0 1-24 0z" fill="#EAF2FD" stroke="#8B95A1" stroke-width="2.2"/>
-    <rect x="12" y="20" width="28" height="7" rx="3" fill="#8B99AC"/>
-    <path d="M22 12q2-4 4 0M30 12q2-4 4 0" stroke="#C4CAD2" stroke-width="2"/>
-    <path d="M48 34h8M52 30l4 4-4 4" stroke="#F25C54" stroke-width="2.4" fill="none"/>`,
+  // 끓는점과 압력(2026-11-15 다시 그림): 뚜껑을 누르는 아래 화살(압력)과 온도계 옆 위 화살(끓는 온도가 올라감)
+  pressBoilMini: `<path d="M28 3V14M23 9L28 14.5L33 9" stroke="#3182F6" stroke-width="3.2"/>
+    <rect x="25" y="17.5" width="6" height="5" rx="1.5" fill="#5B6578"/>
+    <path d="M13 29V46a7 7 0 0 0 7 7H36a7 7 0 0 0 7-7V29" fill="#EAF2FD" stroke="#8B95A1" stroke-width="2.8"/>
+    <path d="M15.5 36H40.5V46a5 5 0 0 1-5 5H20.5a5 5 0 0 1-5-5Z" fill="#8CC4F8"/>
+    <rect x="9" y="22.5" width="38" height="7" rx="3" fill="#8B99AC"/>
+    <rect x="49" y="17" width="7" height="31" rx="3.5" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+    <path d="M52.5 46V24" stroke="#F25C54" stroke-width="3"/>
+    <circle cx="52.5" cy="50" r="4.6" fill="#F25C54"/>
+    <path d="M52.5 13V3M48.5 7.5L52.5 3L56.5 7.5" stroke="#F0A422" stroke-width="2.8"/>`,
+  // 끓는점(2026-11-15 새로): 끓는 냄비 속의 온도계. 끓는 동안 온도계 눈금은 멈춰 있다
+  boilPointMini: `<path d="M21 22q3-4 0-7.5t0-7.5M30 22q3-4 0-7.5t0-7.5" stroke="#ADB5BD" stroke-width="2.4" fill="none"/>
+    <path d="M14 30V47a7 7 0 0 0 7 7H43a7 7 0 0 0 7-7V30" fill="#EAF2FD" stroke="#8B95A1" stroke-width="2.8"/>
+    <path d="M16.5 36H47.5V47a5 5 0 0 1-5 5H21.5a5 5 0 0 1-5-5Z" fill="#8CC4F8"/>
+    <circle cx="22.5" cy="45.5" r="2.4" fill="#fff"/><circle cx="29" cy="41" r="2.8" fill="#fff"/><circle cx="30" cy="48.5" r="1.9" fill="#fff"/>
+    <path d="M11 30H53M7 34h7M50 34h7" stroke="#8B95A1" stroke-width="3"/>
+    <rect x="37.5" y="7" width="7" height="39" rx="3.5" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+    <path d="M41 44V20" stroke="#F25C54" stroke-width="3"/>
+    <circle cx="41" cy="47" r="4.6" fill="#F25C54"/>`,
   pureMixMini: `<circle cx="20" cy="24" r="4" fill="#5AA2F8"/><circle cx="30" cy="18" r="4" fill="#5AA2F8"/><circle cx="25" cy="34" r="4" fill="#5AA2F8"/>
     <path d="M38 12v44" stroke="#C4CAD2" stroke-width="2"/>
     <circle cx="48" cy="22" r="4" fill="#E64980"/><circle cx="56" cy="32" r="3.4" fill="#F0A422"/><circle cx="47" cy="40" r="3.4" fill="#12B886"/>`,
-  funnelMini: `<path d="M22 12h20l-7 24v10h-6V36z" fill="#EAF2FD" stroke="#8B95A1" stroke-width="2.2"/>
-    <path d="M24 20h16" stroke="#E8B54A" stroke-width="3"/>
-    <rect x="28" y="46" width="8" height="6" rx="2" fill="#8B99AC"/>
-    <path d="M32 52v6" stroke="#5AA2F8" stroke-width="2.6"/>`,
+  // 분별 깔때기(2026-11-15 다시 그림): 둥근 몸통 속 두 층(위 식용유, 아래 물), 손잡이를 세운 꼭지로 아래층이 나온다
+  funnelMini: `<rect x="27" y="2" width="10" height="5" rx="2" fill="#8B99AC"/>
+    <path d="M28.5 7V12C16 16 12 26 20 34L30 44H34L44 34C52 26 48 16 35.5 12V7Z" fill="#EAF2FD"/>
+    <path d="M21.5 17.5Q32 14.5 42.5 17.5L47.6 26H16.4Z" fill="#FFD98A"/>
+    <path d="M16.4 26H47.6C47.2 30 45.6 32.6 43.6 34.6L34 44H30L20.4 34.6C18.4 32.6 16.8 30 16.4 26Z" fill="#8CC4F8"/>
+    <path d="M28.5 7V12C16 16 12 26 20 34L30 44H34L44 34C52 26 48 16 35.5 12V7" stroke="#8B95A1" stroke-width="2.6"/>
+    <rect x="30.4" y="44" width="3.2" height="11" fill="#EAF2FD" stroke="#8B95A1" stroke-width="1.6"/>
+    <circle cx="32" cy="48.5" r="3.6" fill="#8B99AC"/>
+    <rect x="30.9" y="43.5" width="2.2" height="10" rx="1.1" fill="#4E5968"/>
+    <path d="M32 56.5V60" stroke="#5AA2F8" stroke-width="2.6"/>
+    <circle cx="32" cy="62" r="1.9" fill="#5AA2F8"/>`,
   crystalMini: `<path d="M24 40l8-14 8 14-8 10z" fill="#FFF6DE" stroke="#E8B54A" stroke-width="2"/>
     <path d="M14 48l5-8 5 8-5 6zM40 48l5-8 5 8-5 6z" fill="#FFF6DE" stroke="#E8B54A" stroke-width="1.8"/>
     <path d="M46 14l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" fill="#5AA2F8"/>`,
-  distillMini: `<path d="M18 14h12v10l-8 14a10 10 0 0 0 9 15h1" fill="none" stroke="#8B95A1" stroke-width="2.4"/>
-    <path d="M30 22q14-2 18 10" stroke="#8B95A1" stroke-width="2.4" fill="none"/>
-    <path d="M48 34v12" stroke="#5AA2F8" stroke-width="2.6"/>
-    <circle cx="48" cy="52" r="3" fill="#5AA2F8"/>
-    <path d="M20 52q4-6 0-10" stroke="#F25C54" stroke-width="2.2" fill="none"/>`,
+  // 증류(2026-11-15 다시 그림): 가지 달린 플라스크의 혼합물을 가열하면 유리관을 지나 얼음물 속 시험관에 모인다(랩 무대와 같은 구성)
+  distillMini: `<rect x="11.5" y="6.5" width="9" height="5.5" rx="1.5" fill="#8B99AC"/>
+    <path d="M13 12V22L5.5 38.5a3 3 0 0 0 2.7 4.3H23.8a3 3 0 0 0 2.7-4.3L19 22V12" fill="#EAF2FD" stroke="#8B95A1" stroke-width="2.6"/>
+    <path d="M9 32H23L25.6 38.4a2.2 2.2 0 0 1-2 3H8.4a2.2 2.2 0 0 1-2-3Z" fill="#B9A6FF"/>
+    <path d="M19 16H40.5Q43 16 43 19V38" stroke="#8B95A1" stroke-width="2.6" fill="none"/>
+    <path d="M16 59c-3.6-2.6-2.8-6.2 0-9.5 2.8 3.3 3.6 6.9 0 9.5z" fill="#F0A422"/>
+    <path d="M34.5 34H55.5V54a3 3 0 0 1-3 3H37.5a3 3 0 0 1-3-3Z" fill="#BFE0F8"/>
+    <path d="M39.5 25V47a3.5 3.5 0 0 0 7 0V25" fill="#fff" stroke="#8B95A1" stroke-width="2.2"/>
+    <path d="M41 42.5H45V47a2 2 0 0 1-4 0Z" fill="#B9A6FF"/>
+    <path d="M33 28V54a4 4 0 0 0 4 4H53a4 4 0 0 0 4-4V28" stroke="#8B95A1" stroke-width="2.6" fill="none"/>`,
   towerMini: `<rect x="22" y="12" width="20" height="42" rx="6" fill="#FFF3D9" stroke="#C9A26A" stroke-width="2.2"/>
     <path d="M24 24h16M24 34h16M24 44h16" stroke="#C9A26A" stroke-width="1.8"/>
     <path d="M42 20h10M42 32h10M42 44h10" stroke="#8B95A1" stroke-width="2.2"/>
@@ -353,6 +380,14 @@ const MINI: Record<string, string> = {
     <path d="M27 46l4-6 4 6-4 5z" fill="#FFF6DE" stroke="#E8B54A" stroke-width="1.8"/>
     <path d="M36 49l3-4.5 3 4.5-3 4z" fill="#FFF6DE" stroke="#E8B54A" stroke-width="1.6"/>
     <path d="M54 18v14M50 28l4 5 4-5" stroke="#5AA2F8" stroke-width="2.2" fill="none"/>`,
+  // 용해도 곡선(2026-11-15 새로): 축 두 개와 오른쪽 위로 휘어 오르는 곡선, 곡선 위의 점 하나(그 온도의 최대로 녹는 양)
+  solCurveMini: `<path d="M13 8V51H56" stroke="#8B95A1" stroke-width="2.8"/>
+    <path d="M14 47C30 46 42 36 52 13" stroke="#E64980" stroke-width="3.4"/>
+    <circle cx="38.9" cy="34.6" r="4.4" fill="#F0A422" stroke="#fff" stroke-width="1.6"/>`,
+  // 순물질과 혼합물의 가열 곡선(2026-11-15 새로): 같이 오르다가 순물질(파랑)은 평평해지고 혼합물(분홍)은 꺾인 뒤에도 계속 오른다
+  pureMixCurveMini: `<path d="M10 8V53H57" stroke="#8B95A1" stroke-width="2.8"/>
+    <path d="M12 50L28 26L55 13" stroke="#E64980" stroke-width="3.4"/>
+    <path d="M12 50L26 29H55" stroke="#5AA2F8" stroke-width="3.4"/>`,
 };
 
 export function chemMiniArt(key: string): string {

@@ -177,16 +177,7 @@
 .g2u4x-tb-card:disabled { opacity: .4; }
 
 /* ── 1족 금속과 물 랩 ────────────────────────────── */
-.g2u4x-al-piece.li { animation: g2u4xDriftLi 3.6s ease-in-out infinite alternate; }
-.g2u4x-al-piece.na { animation: g2u4xDriftNa 1.3s ease-in-out infinite alternate; }
-.g2u4x-al-piece.k { animation: g2u4xDriftNa .8s ease-in-out infinite alternate; }
-.g2u4x-al-piece.mg { animation: g2u4xSink 1.1s var(--ease-out) both; }
-@keyframes g2u4xDriftLi { 0% { transform: translateX(-22px); } 100% { transform: translateX(22px); } }
-@keyframes g2u4xDriftNa { 0% { transform: translateX(-62px); } 100% { transform: translateX(62px); } }
-@keyframes g2u4xSink { 0% { transform: translateY(-30px); } 100% { transform: translateY(96px); } }
-.g2u4x-al-fizz { fill: none; stroke: #E8F4FF; stroke-width: 1.2; animation: g2u4xFizz .9s linear infinite; }
-@keyframes g2u4xFizz { 0% { transform: translateY(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(-16px); opacity: 0; } }
-.g2u4x-al-flame { transform-box: fill-box; transform-origin: 50% 100%; animation: g2u4xFlame .28s ease-in-out infinite alternate; }
+/* 금속 조각, 기포, 불꽃은 움직이는 층(.g2u4x-al-fx)을 40 ms마다 다시 그려 움직인다(periodicLab.ts). 움직임 줄이기면 한 장면으로 멈춘다. */
 @keyframes g2u4xFlame { 0% { transform: scale(.9, .85); } 100% { transform: scale(1.08, 1.1); } }
 
 /* ── 18족 기체 랩 ────────────────────────────────── */
@@ -197,7 +188,7 @@
 @keyframes g2u4xBang { 0% { transform: scale(.3); opacity: 0; } 100% { transform: none; opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .g2u4x-al-piece, .g2u4x-nb-dot, .g2u4x-al-flame, .g2u4x-nb-flame { animation: none; }
+  .g2u4x-nb-dot, .g2u4x-nb-flame { animation: none; }
 }
 
 /* ══ 도입 장면 ═══════════════════════════════════════ */

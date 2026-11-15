@@ -1,7 +1,8 @@
 // [중2 Ⅱ v5] g2u2l1 랩 2, 3: 지구 속을 조사하는 방법과 층상 구조 모형.
 //
 // 랩 2 「지구 속을 끝까지 알려 준 방법은?」(g2u2ProbeLab)
-//   책의 그림(지구 내부를 조사하는 방법: 시추, 화산 분출물 조사, 지진파 연구)을 손으로 견준다.
+//   책의 그림(지구 내부를 조사하는 방법: 시추, 화산 분출물 조사, 지진파 연구)을 손으로 비교한다.
+//   알아낸 깊이 막대는 실제 비율이다(끝이 지구 중심 6400 km). 시추 약 12 km는 500분의 1이라 최소 굵기(1.5)로만 보인다.
 //   학생이 정하는 것: 세 방법 가운데 무엇을 어떤 차례로 써 볼지. 먼저 예측한다(정오를 매기지 않는다).
 //   실패가 보이는 길: 시추와 화산 분출물은 알아낸 깊이 막대가 거의 차지 않고 지구 속은 물음표로 남는다.
 //   판정 하나: 지구 속이 여러 층이라는 것을 알려 준 방법. 통찰 하나: 지진파 연구로 층상 구조를 알아냈다.
@@ -29,7 +30,7 @@ const COL = { crust: "#9C7B58", mantle: "#E8743B", outer: "#FFB454", inner: "#FF
 
 /* ══════════ 랩 2: 조사 방법 ══════════ */
 const WAYS = [
-  { k: "drill", name: "시추", sub: "땅을 직접 뚫기", reach: 2, read: "약 12 km" },
+  { k: "drill", name: "시추", sub: "땅을 직접 뚫기", reach: 1.5, read: "약 12 km" },
   { k: "volc", name: "화산 분출물", sub: "나온 물질 조사", reach: 5, read: "지표 부근" },
   { k: "wave", name: "지진파", sub: "지구 속을 지난 진동", reach: 100, read: "중심까지" },
 ] as const;
@@ -67,6 +68,7 @@ export const g2u2ProbeLab: StepRenderer = (host, step, api) => {
     </g>
     ${label(CX, 16, "지표", { size: 12, fill: G.dim, weight: 600 })}
     ${label(200, 34, "알아낸 깊이", { anchor: "start", size: 12.5, fill: G.dim })}
+    ${label(200, 50, "막대 끝이 지구 중심", { anchor: "start", size: 12, fill: G.dim, weight: 600 })}
     ${rows}
   </svg>`;
 
@@ -117,7 +119,7 @@ export const g2u2ProbeLab: StepRenderer = (host, step, api) => {
       }
       f.pips(2);
       const head = pred.startsWith("지진파") ? "예측대로" : "예측과 달리";
-      f.say(`${head} 중심까지 알려 준 방법은 하나뿐이었어요. 세 막대를 견줘 보세요.`);
+      f.say(`${head} 중심까지 알려 준 방법은 하나뿐이었어요. 세 막대를 비교해 보세요.`);
       tm.later(judge, 1000);
     }, k === "wave" ? 1700 : 1300);
   }
@@ -135,7 +137,7 @@ export const g2u2ProbeLab: StepRenderer = (host, step, api) => {
   gPredict(lab, "지구 <b>중심까지</b> 알려 줄 방법은 무엇일까요?", ["시추", "화산 분출물 조사", "지진파 연구"], (picked) => {
     pred = picked;
     f.slot.setControls(gGrid(3, ...picks));
-    f.say("방법을 하나씩 눌러 <b>얼마나 깊이</b>까지 알아내는지 견줘 보세요. 차례는 마음대로예요.");
+    f.say("방법을 하나씩 눌러 <b>얼마나 깊이</b>까지 알아내는지 비교해 보세요. 차례는 마음대로예요.");
     api.setCTA("세 방법을 모두 써 보세요", { enabled: false });
     nextHint();
   });

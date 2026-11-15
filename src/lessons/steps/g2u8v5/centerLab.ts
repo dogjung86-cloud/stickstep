@@ -16,8 +16,8 @@ const GAL: { name: string; x: number; y: number; c: string }[] = [
   { name: "은하 다", x: 2, y: -1, c: "#C9B6FF" },
   { name: "은하 라", x: -2, y: 1, c: "#9FE8C8" },
 ];
-const CELL = 38;
-const BIG = 1.35;
+const CELL = 30; // 모눈 한 칸(늘리기 전)
+const BIG = 1.5; // 공간이 늘어나는 배율. 세 관측 자리 어디서나 네 은하가 무대 가장자리 20px 안쪽에 든다(가장 먼 은하가 ±3칸 × 45 = 135px)
 
 export const centerLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
@@ -91,6 +91,8 @@ export const centerLab: StepRenderer = (host, step, api) => {
     const cy = h / 2;
     const me = GAL[view];
     const g = CELL * k;
+    // 안내 글은 늘어난 뒤의 은하와 겹치지 않는 쪽(위 또는 아래)에 둔다
+    const capBottom = GAL.some((q, i) => i !== view && cx + (q.x - me.x) * CELL * BIG < 175 && cy + (q.y - me.y) * CELL * BIG < 44);
     // 모눈(공간)
     for (let i = -8; i <= 8; i++) {
       const x = cx + (i - me.x) * g;
@@ -127,14 +129,62 @@ export const centerLab: StepRenderer = (host, step, api) => {
       ctx.arc(0, 0, 15, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
-      if (x > 20 && x < w - 20 && y > 10 && y < h - 10) sText(ctx, q.name, x, y > h - 40 ? y - 17 : y + 17, { color: i === view ? "#fff" : S.dim, px: 12, w: i === view ? 800 : 700 });
     });
+    // 이름표: 내가 선 은하는 흰 동그라미 바깥 아래에. 다른 은하는 화살표(처음 자리에서 지금 자리까지)와 겹치지 않는 자리를
+    // 차례로 찾는다(내가 선 곳에서 먼 쪽 위아래, 반대쪽 위아래, 왼쪽, 오른쪽).
+    const arrows = GAL.map((q, i) => (i === view || k <= 1.02 ? null : [cx + (q.x - me.x) * CELL, cy + (q.y - me.y) * CELL, cx + (q.x - me.x) * g, cy + (q.y - me.y) * g]));
+    ctx.save();
+    ctx.font = "700 12px Pretendard, system-ui, sans-serif";
+    // 가리면 안 되는 것: 흰 동그라미와 그 아래 이름표, 다섯 은하의 몸
+    const meW = ctx.measureText(me.name).width;
+    const blocks: [number, number, number, number][] = [
+      [cx - 21, cy - 21, cx + 21, cy + 21],
+      [cx - meW / 2, cy + 24, cx + meW / 2, cy + 38],
+      ...GAL.map((q): [number, number, number, number] => {
+        const gx = cx + (q.x - me.x) * g;
+        const gy = cy + (q.y - me.y) * g;
+        return [gx - 14, gy - 8, gx + 14, gy + 8];
+      }),
+    ];
+    const hits = (x0: number, y0: number, x1: number, y1: number): boolean =>
+      x0 < 4 || x1 > w - 4 || y0 < 3 || y1 > h - 3 ||
+      blocks.some((b) => x0 < b[2] + 2 && x1 > b[0] - 2 && y0 < b[3] + 2 && y1 > b[1] - 2) ||
+      arrows.some((a) => {
+        if (!a) return false;
+        for (let t = 0; t <= 1; t += 1 / 16) {
+          const px = a[0] + (a[2] - a[0]) * t;
+          const py = a[1] + (a[3] - a[1]) * t;
+          if (px > x0 - 4 && px < x1 + 4 && py > y0 - 4 && py < y1 + 4) return true;
+        }
+        return false;
+      });
+    GAL.forEach((q, i) => {
+      const x = cx + (q.x - me.x) * g;
+      const y = cy + (q.y - me.y) * g;
+      if (i === view) return sText(ctx, q.name, x, y + 31, { color: "#fff", px: 12, w: 800 });
+      if (x < 20 || x > w - 20 || y < 10 || y > h - 10) return;
+      const tw = ctx.measureText(q.name).width;
+      const out = y < cy - 2 ? -17 : 17;
+      const cands: [number, number, CanvasTextAlign][] = [
+        [x, y + out, "center"],
+        [x, y - out, "center"],
+        [x - 17, y, "right"],
+        [x + 17, y, "left"],
+      ];
+      const box = ([lx, ly, al]: [number, number, CanvasTextAlign]): [number, number, number, number] => {
+        const x0 = al === "center" ? lx - tw / 2 : al === "right" ? lx - tw : lx;
+        return [x0, ly - 7, x0 + tw, ly + 7];
+      };
+      const pick = cands.find((c) => !hits(...box(c))) ?? cands[0];
+      sText(ctx, q.name, pick[0], pick[1], { color: S.dim, px: 12, align: pick[2] });
+    });
+    ctx.restore();
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 1.6;
     ctx.beginPath();
     ctx.arc(cx, cy, 20, 0, Math.PI * 2);
     ctx.stroke();
-    sText(ctx, k > 1.02 ? "모눈 한 칸이 넓어졌어요" : "흰 동그라미가 내가 선 곳", 10, 14, { color: S.dim, px: 12, align: "left" });
+    sText(ctx, k > 1.02 ? "모눈 한 칸이 넓어졌어요" : "흰 동그라미가 내가 선 곳", 10, capBottom ? h - 13 : 14, { color: S.dim, px: 12, align: "left" });
   });
 
   f.say("모눈은 <b>우주 공간</b>이고, 은하들은 모눈 위에 놓여 있어요. <b>공간 늘리기</b>를 눌러 우주를 팽창시켜 보세요.");

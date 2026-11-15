@@ -230,7 +230,7 @@ export const raceLab: StepRenderer = (host, step, api) => {
   f.slot.setControls(el("div", { class: "u3x-row" }, m100, m200), hold);
   hold.disabled = true;
   api.setCTA("두 액체를 가열해 보세요", { enabled: false });
-  f.say("물과 식용유를 같은 세기로 가열해 온도를 견줄 거예요. 먼저 <b>예측</b>부터 해 봐요.");
+  f.say("물과 식용유를 같은 세기로 가열해 온도를 비교할 거예요. 먼저 <b>예측</b>부터 해 봐요.");
   f.slot.ask(
     "같은 양을 똑같이 가열하면 온도가 <b>더 빨리</b> 오르는 쪽은?",
     [{ t: "물" }, { t: "식용유" }, { t: "둘이 같다" }],

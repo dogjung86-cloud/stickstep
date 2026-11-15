@@ -43,6 +43,7 @@
 .g2u1x-strip span { white-space: pre; }
 .g2u1x-strip b { color: var(--ink); font-weight: 800; }
 .g2u1x-strip b.w { color: var(--red); }
+.g2u1x-strip b.k { color: var(--subj-chem-press); }
 .g2u1x-seg-b i { font-style: normal; font-size: 12px; font-weight: 800; color: var(--subj-chem-press); margin-left: 4px; }
 .g2u1x-cap { font-size: 12.5px; font-weight: 800; color: var(--n700); padding: 0 2px; }
 
@@ -57,7 +58,7 @@
 .g2u1x-flame { transform-box: fill-box; transform-origin: 50% 100%; animation: g2u1xFlick .28s ease-in-out infinite alternate; }
 @keyframes g2u1xFlick { 0% { transform: scale(.94, .9); } 100% { transform: scale(1.04, 1.06); } }
 .g2u1x-bub { animation: g2u1xBub 1.4s ease-in infinite; }
-@keyframes g2u1xBub { 0% { transform: translateY(6px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-34px); opacity: 0; } }
+@keyframes g2u1xBub { 0% { transform: translateY(6px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(var(--rise, -34px)); opacity: 0; } }
 
 /* ── 1. 측정 랩, 크기 랩 ─────────────────────────────── */
 .g2u1x-ms-pc { transition: transform .45s var(--ease-out); }
@@ -84,6 +85,8 @@
 .g2u1x-step .g2u1x-cv-card b { font-size: 13.5px; }
 .g2u1x-step .g2u1x-cv-card i, .g2u1x-step .g2u1x-fz-card i { font-size: 12px; }
 .g2u1x-cv-glow { transition: opacity .2s; }
+.g2u1x-fz-col { transition: opacity .25s; }
+.g2u1x-fz-hi { transition: opacity .2s; }
 
 /* ── 7~9. 볍씨 랩 ─────────────────────────────────── */
 .g2u1x-sd-seed { transition: transform .8s var(--ease-out), opacity .5s; }

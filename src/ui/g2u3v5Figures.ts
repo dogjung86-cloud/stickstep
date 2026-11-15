@@ -16,40 +16,52 @@ const MINI: Record<string, string> = {
   seePath: `<circle cx="13" cy="14" r="6" fill="#FFC83D"/><rect x="24" y="44" width="16" height="11" rx="2" fill="#F5F0E4" stroke="#C9413A" stroke-width="2"/><path d="M47 24c4-5 10-5 14 0c-4 5-10 5-14 0z" fill="#fff" stroke="${INK}" stroke-width="1.8"/><circle cx="54" cy="24" r="2.6" fill="${INK}"/><path d="M17 19L29 41" stroke="#F0A422" stroke-width="2.4"/><path d="M29 41l-5.4-3.2M29 41l.4-6.2" stroke="#F0A422" stroke-width="2.4"/><path d="M36 42L50 28" stroke="#F0A422" stroke-width="2.4"/><path d="M50 28l-6 .8M50 28l-.8 6" stroke="#F0A422" stroke-width="2.4"/>`,
 };
 
-/** 문제 그림: 모눈 위의 파동 한 장면. 진폭은 ampCells칸, 파장은 lenCells칸(한 칸 20). 마루와 골의 자리는 계산으로 찍는다. */
+/** 문제 그림: 모눈 위의 파동 한 장면. 진폭은 ampCells칸, 파장은 lenCells칸(한 칸 20).
+ *  마루가 모눈 세로선 위에 서게 위상을 잡는다(마루에서 마루까지 선에서 선으로 센다). 마루와 골은 가로선 위에 온다.
+ *  '진동 중심' 이름표는 파동이 진동 중심 아래로 내려가 있는 구간(골 둘레)의 점선 위에 둬 파동선과 겹치지 않는다. */
 export function waveGridFig(ampCells: number, lenCells: number): string {
   const C = 20;
   const W = 320;
   const H = 180;
   const x0 = 20;
+  const x1 = W - 20;
   const cy = 90;
+  const lam = lenCells * C;
+  const A = ampCells * C;
+  const crest0 = x0 + C * Math.ceil(lenCells / 4); // 첫 마루(세로선 위)
   let grid = "";
-  for (let x = x0; x <= W - 20; x += C) grid += `<line x1="${x}" y1="10" x2="${x}" y2="170" stroke="#E5E8EB"/>`;
-  for (let y = 10; y <= 170; y += C) grid += `<line x1="${x0}" y1="${y}" x2="${W - 20}" y2="${y}" stroke="#E5E8EB"/>`;
+  for (let x = x0; x <= x1; x += C) grid += `<line x1="${x}" y1="10" x2="${x}" y2="170" stroke="#E5E8EB"/>`;
+  for (let y = 10; y <= 170; y += C) grid += `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#E5E8EB"/>`;
   let d = "";
-  for (let x = x0; x <= W - 20; x += 2) {
-    const y = cy - ampCells * C * Math.sin((2 * Math.PI * (x - x0)) / (lenCells * C));
+  for (let x = x0; x <= x1; x += 2) {
+    const y = cy - A * Math.cos((2 * Math.PI * (x - crest0)) / lam);
     d += `${x === x0 ? "M" : "L"}${x} ${y.toFixed(1)}`;
   }
-  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="모눈 위에 그린 파동의 한 장면"><rect width="${W}" height="${H}" rx="12" fill="#fff"/>${grid}<line x1="${x0}" y1="${cy}" x2="${W - 20}" y2="${cy}" stroke="#8B95A1" stroke-width="1.5" stroke-dasharray="5 4"/><path d="${d}" fill="none" stroke="#2F8EE0" stroke-width="3" stroke-linejoin="round"/><text x="${W - 24}" y="${cy + 15}" text-anchor="end" font-size="12" font-weight="700" fill="#4E5968">진동 중심</text></svg>`;
+  // 이름표 자리: 골 둘레(골 ± 파장/4 안쪽은 파동이 점선 아래에 있다). 오른쪽 골부터 보고, 맞는 곳이 없으면 오른쪽 끝(흰 테두리로 읽힌다).
+  const half = 28; // 이름표 반폭(12.5px 굵은 글자 네 자와 띄어쓰기. 폰에서 12px 넘게 보인다)
+  const trough = crest0 + lam / 2 + Math.floor((x1 - lam / 4 - crest0 - lam / 2) / lam) * lam;
+  const lx = lam / 2 >= half * 2 && trough - lam / 4 >= x0 ? trough : x1 - half - 4;
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="모눈 위에 그린 파동의 한 장면"><rect width="${W}" height="${H}" rx="12" fill="#fff"/>${grid}<line x1="${x0}" y1="${cy}" x2="${x1}" y2="${cy}" stroke="#8B95A1" stroke-width="1.5" stroke-dasharray="5 4"/><path d="${d}" fill="none" stroke="#2F8EE0" stroke-width="3" stroke-linejoin="round"/><text x="${lx}" y="${cy - 8}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968" stroke="#fff" stroke-width="3" stroke-linejoin="round" paint-order="stroke">진동 중심</text></svg>`;
 }
 
-/** 문제 그림: 소리 분석 화면 세 장 (가)(나)(다). 칸마다 진폭(px)과 같은 시간 동안의 진동 횟수를 준다. */
+/** 문제 그림: 소리 분석 화면 세 장 (가)(나)(다). 칸마다 진폭(px)과 같은 시간 동안의 진동 횟수를 준다.
+ *  '시간' 글자는 파형이 닿지 않는 화면 아래 띠에 둔다(진폭 30까지는 파형이 18~78, 글자는 85 아래). 폰에서 12px 넘게 보이도록 13.5로 쓴다. */
 export function soundTrioFig(specs: { amp: number; cycles: number }[]): string {
   const W = 330;
-  const H = 128;
+  const H = 134;
   const pw = 98;
+  const ph = 94;
+  const cy = 48;
   const labels = ["(가)", "(나)", "(다)"];
   let out = "";
   specs.forEach((sp, i) => {
     const x0 = 8 + i * (pw + 10);
-    const cy = 52;
     let d = "";
     for (let x = 0; x <= pw - 12; x += 1.5) {
       const y = cy - sp.amp * Math.sin((x / (pw - 12)) * sp.cycles * Math.PI * 2);
       d += `${x === 0 ? "M" : "L"}${(x0 + 6 + x).toFixed(1)} ${y.toFixed(1)}`;
     }
-    out += `<rect x="${x0}" y="8" width="${pw}" height="88" rx="8" fill="#0B1524"/><line x1="${x0 + 4}" y1="${cy}" x2="${x0 + pw - 4}" y2="${cy}" stroke="rgba(232,238,249,.4)" stroke-dasharray="4 4"/><path d="${d}" fill="none" stroke="#63E6BE" stroke-width="2.2" stroke-linejoin="round"/><text x="${x0 + pw - 6}" y="90" text-anchor="end" font-size="11" font-weight="700" fill="rgba(232,238,249,.7)">시간</text><text x="${x0 + pw / 2}" y="116" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">${labels[i]}</text>`;
+    out += `<rect x="${x0}" y="6" width="${pw}" height="${ph}" rx="8" fill="#0B1524"/><line x1="${x0 + 4}" y1="${cy}" x2="${x0 + pw - 4}" y2="${cy}" stroke="rgba(232,238,249,.4)" stroke-dasharray="4 4"/><path d="${d}" fill="none" stroke="#63E6BE" stroke-width="2.2" stroke-linejoin="round"/><text x="${x0 + pw - 7}" y="95" text-anchor="end" font-size="13.5" font-weight="700" fill="rgba(232,238,249,.8)" stroke="#0B1524" stroke-width="3" stroke-linejoin="round" paint-order="stroke">시간</text><text x="${x0 + pw / 2}" y="123" text-anchor="middle" font-size="13.5" font-weight="800" fill="#333D4B">${labels[i]}</text>`;
   });
   return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="소리 분석 화면 세 장"><rect width="${W}" height="${H}" rx="12" fill="#fff"/>${out}</svg>`;
 }

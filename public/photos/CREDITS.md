@@ -46,9 +46,12 @@ NASA 이미지는 퍼블릭 도메인이며 NASA의 보증을 의미하지 않�
 - C.R. Scotese, **PALEOMAP Project** (PALEOMAP PaleoAtlas for GPlates) — 교육 목적 사용, 출처 표기.
 - 사용 시대: 현재(000) · 66 Ma(K-Pg 경계) · 150 Ma(쥐라기 후기) · 200 Ma(트라이아스-쥐라기 경계) · 280 Ma(페름기 초기, 판게아)
 - 중2 II 대륙 이동설 랩(driftLab)·판의 경계 랩(plateMap) 배경으로 사용.
+- `*-640.webp` 넷(000, 066, 150, 280)은 같은 지도를 640×320으로 줄인 사본이다(대륙 이동 네 장면 문제 그림 driftStagesFig, 2026-11-15).
 
 ## public/geo/{rocks,minerals,evid}/ — 암석·광물 표본, 증거·문제 사진
 - 전부 앱 자체 발주 생성 이미지(교육용 일러스트·실사풍) — 외부 저작물 아님.
+- 로컬 손질본(2026-11-15, 원본은 그대로 둠): `minerals/magnetite-plain.webp`(magnetite.webp에서 클립 셋을 지움),
+  `rocks/marble-plain.webp`(marble.webp의 진한 회색 결을 밝힘), `rocks/rhyolite-soft.webp`(rhyolite.webp의 흐름 줄무늬 대비를 낮춤).
 
 ## public/exam/ — 중2 종합 평가 실사 교체분
 | 파일 | 출처 · 크레딧 | 라이선스 |
@@ -272,6 +275,15 @@ HMI 백색광 전면 프레임(2024-04-26, NASA/SDO — Public Domain)에서 하
 | star/m13.webp | M13 헤라클레스 구상 성단(공 모양 밀집) | KPNO/NOIRLab/NSF/AURA/Tom Bash and John Fox/Adam Block — Wikimedia "M13 (noao-m13bash2).jpg" | CC BY 4.0 |
 | star/coalsack.webp | 석탄자루 암흑 성운(별밭 속 검은 영역) | ESO (eso1539a) | CC BY 4.0 |
 | star/lagoon.webp | 라군 성운(붉게 빛나며 번지는 방출 성운) | ESO/VPHAS+ team (eso1403a) | CC BY 4.0 |
+
+## g2u8 랩과 문제 그림 손질 파생본 (2026-11-15)
+원본은 지우지 않았다. 원본의 출처와 라이선스는 위 표와 같다.
+| 파일 | 내용 | 원본 | 라이선스 |
+|---|---|---|---|
+| star/albireo-pair.webp | 알비레오 이중성. 두 별 둘레를 좁게(400×180) 자르고 압축 자국을 약한 흐림으로 다듬어 2배로 다시 저장(레슨 4 문제 1. 시험 문항은 albireo.webp 그대로) | star/albireo.webp(Brucewaters, Wikimedia "Albireo Killarney Provincial Park Observatory.jpg") | CC BY 4.0(자르기와 흐림 손질을 함) |
+| star/disk-earth.webp | 지구 원판 256px, 원 바깥은 투명(레슨 8 탐사 랩의 거리 띠) | photos/earth_apollo17.jpg(NASA Apollo 17, The Blue Marble) | Public Domain (NASA) |
+| star/disk-moon.webp | 달 원판 256px, 원 바깥은 투명(같은 랩) | photos/moon_lro.jpg(NASA/GSFC/ASU, LRO) | Public Domain (NASA) |
+| star/disk-pluto.webp | 명왕성 원판 256px, 원 바깥은 투명(같은 랩) | star/pluto.webp(NASA/JHUAPL/SwRI, New Horizons) | Public Domain (NASA) |
 
 ## public/scifig/ (과학 개념·정리 그림에 들어간 실사, 2026-11-15)
 코드로 그린 과학 그림(`qa/scifig-g1`, `qa/scifig-g2`)은 아래 실사를 질감으로 입히거나 잘라 넣어 구웠다. 원본의 출처와 라이선스는 위 절과 같다.

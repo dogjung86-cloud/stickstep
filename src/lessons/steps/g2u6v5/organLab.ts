@@ -346,7 +346,7 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
           form[1] = 2;
           form[2] = 2;
         }
-        // 고른 것과 견준다(채점하지 않는다). 고른 것이 맞으면 hit, 고른 것이 틀리면 miss, 골랐어야 하는데 안 고르면 lack.
+        // 고른 것과 비교한다(채점하지 않는다). 고른 것이 맞으면 hit, 고른 것이 틀리면 miss, 골랐어야 하는데 안 고르면 lack.
         const none = !st.cut.some(Boolean);
         chips.forEach((c) => c.on(false));
         st.cut.forEach((c, i) => {

@@ -7,6 +7,7 @@
 // 더 멀리(D/2)에서는 두 시선이 붙임딱지 사이(3번과 4번 사이, 4번과 5번 사이)에 닿는다. 폭은 꼭 1칸이다.
 // 눈에서 칠판까지를 D라 하면 연필이 D/5, D/3, D/2에 있을 때 두 눈(간격이 붙임딱지 한 칸)의 시선은 칠판에서 4칸, 2칸, 1칸 벌어진다(간격 × (D/d − 1)).
 // 오른쪽의 작은 칸은 뜬 눈에 보이는 모습이다(연필이 몇 번 붙임딱지에 겹치는지).
+// 기록은 칠판 바로 아래에 거리마다 한 줄씩 금색 폭으로 쌓는다(4칸, 2칸, 1칸). 판정 때 조작 칸의 기록 줄이 숨어도 무대에서 세 기록을 비교할 수 있다.
 
 import type { StepRenderer } from "../../types";
 import { bvTimers } from "../bio6/b6Lab";
@@ -22,6 +23,9 @@ const GAP = 40; // 붙임딱지 간격
 const DIST: Record<Arm, number> = { bend: (EYE_Y - BOARD_Y) / 5, straight: (EYE_Y - BOARD_Y) / 3, far: (EYE_Y - BOARD_Y) / 2 };
 const ARMS: Arm[] = ["bend", "straight", "far"];
 const NAME: Record<Arm, string> = { bend: "팔을 굽혔을 때", straight: "팔을 폈을 때", far: "친구가 멀리서 들었을 때" };
+const SHORT: Record<Arm, string> = { bend: "팔 굽힘", straight: "팔 폄", far: "더 멀리" };
+const ROW0 = BOARD_Y + 19; // 칠판 아래 기록 줄(옮겨 간 폭)
+const ROW_GAP = 17;
 
 /** 감은 눈과 연필의 거리에 따라 연필 끝이 겹쳐 보이는 칠판의 가로 자리(가운데가 0). */
 const hitX = (arm: Arm, closed: Eye): number => {
@@ -169,23 +173,29 @@ export const pencilLab: StepRenderer = (host, step, api) => {
     const b = seen[key(arm, "R")];
     for (let i = 1; i <= 7; i++) {
       const x = cx + (i - 4) * GAP;
-      const hit = closed && Math.abs(hx - (i - 4) * GAP) < 6;
+      const hit = closed && !finished && Math.abs(hx - (i - 4) * GAP) < 6;
       const was = (a && onSticker(hitX(arm, "L"), i)) || (b && onSticker(hitX(arm, "R"), i));
       sDisk(ctx, x, BOARD_Y - 7, 12, hit ? S.gold : "#F3F6FB", hit ? "#fff" : was ? S.gold : undefined, was && !hit ? 3 : 2);
       sInk(ctx, String(i), x, BOARD_Y - 6.5);
     }
-    sText(ctx, "칠판", cx - 158, BOARD_Y + 22, { color: S.dim, px: 12, align: "left" });
-    // 이 거리에서 본 두 자리 사이의 폭
-    if (a && b) {
-      const x0 = cx + hitX(arm, "L");
-      const x1 = cx + hitX(arm, "R");
-      sLine(ctx, x0, BOARD_Y + 14, x1, BOARD_Y + 14, S.gold, 2.5);
-      sLine(ctx, x0, BOARD_Y + 9, x0, BOARD_Y + 19, S.gold, 2.5);
-      sLine(ctx, x1, BOARD_Y + 9, x1, BOARD_Y + 19, S.gold, 2.5);
-      sText(ctx, `${shift(arm)}칸`, cx, BOARD_Y + 28, { color: S.gold, px: 13, w: 800 });
-    }
-    // 시선
-    if (closed) {
+    sText(ctx, "칠판", cx + 159, BOARD_Y - 7, { color: S.dim, px: 12, align: "right" });
+    // 기록: 두 눈으로 다 본 거리마다 칠판에서 옮겨 간 폭을 한 줄씩 쌓는다(팔 굽힘, 팔 폄, 더 멀리). 판정 때도 남는다.
+    ARMS.forEach((am, i) => {
+      if (!both(am)) return;
+      const y = ROW0 + i * ROW_GAP;
+      const now = am === arm && !finished;
+      const x0 = cx + hitX(am, "L");
+      const x1 = cx + hitX(am, "R");
+      const col = now || finished ? S.gold : "rgba(255,209,102,.6)";
+      const lw = now ? 2.6 : 2.2;
+      sLine(ctx, x0, y, x1, y, col, lw);
+      sLine(ctx, x0, y - 5, x0, y + 5, col, lw);
+      sLine(ctx, x1, y - 5, x1, y + 5, col, lw);
+      sText(ctx, SHORT[am], 12, y, { color: now || finished ? S.ink : S.dim, px: 12, align: "left" });
+      sText(ctx, `${shift(am)}칸`, w - 12, y, { color: col, px: 13, w: 800, align: "right" });
+    });
+    // 시선(판정 때는 기록이 먼저라 걷는다)
+    if (closed && !finished) {
       const ex = cx + (closed === "L" ? HALF : -HALF);
       sLine(ctx, ex, EYE_Y, cx + hx, BOARD_Y + 4, S.sky, 2, [5, 5]);
     }
@@ -205,9 +215,9 @@ export const pencilLab: StepRenderer = (host, step, api) => {
     });
     sText(ctx, "위에서 내려다본 모습", 12, EYE_Y + 26, { color: S.dim, px: 12, align: "left" });
     // 뜬 눈에 보이는 모습(작은 칸): 연필이 몇 번 붙임딱지 앞에 겹쳐 보이는지
-    if (closed) {
+    if (closed && !finished) {
       const bx = 236;
-      const by = 96;
+      const by = 106;
       const mid = bx + 51;
       sBox(ctx, bx, by, 102, 84, 10, "rgba(20,32,60,.92)", "rgba(143,180,255,.5)", 1.2);
       sText(ctx, "눈에 보이는 모습", mid, by + 13, { color: S.dim, px: 12 });

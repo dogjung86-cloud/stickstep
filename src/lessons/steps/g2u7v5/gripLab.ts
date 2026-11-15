@@ -9,7 +9,7 @@
 
 import type { StepRenderer } from "../../types";
 import { bvTimers } from "../bio6/b6Lab";
-import { mCoil, mCompass, mSlot } from "./magKit";
+import { mCoil, mCoilEnds, mCompass, mSlot } from "./magKit";
 import { X, xArrow, xCanvas, xFrame, xText, type LabStep } from "./kit";
 
 const CX = 173;
@@ -63,8 +63,8 @@ export const gripLab: StepRenderer = (host, step, api) => {
     shown = true;
     showAt = now;
     const rd = ROUNDS[r];
-    if (rd.hide === "compass") f.say(`나침반의 N극이 <b>${rd.dir === 1 ? "오른쪽" : "왼쪽"}</b>을 가리켜요. 엄지가 가리킨 쪽이 맞았는지 견줘 보세요.`);
-    else f.say("전류 화살표가 나타났어요. 네 손가락이 감긴 방향과 같은지 견줘 보세요.");
+    if (rd.hide === "compass") f.say(`나침반의 N극이 <b>${rd.dir === 1 ? "오른쪽" : "왼쪽"}</b>을 가리켜요. 엄지가 가리킨 쪽이 맞았는지 비교해 보세요.`);
+    else f.say("전류 화살표가 나타났어요. 네 손가락이 감긴 방향과 같은지 비교해 보세요.");
   }
   function next(): void {
     r += 1;
@@ -87,14 +87,15 @@ export const gripLab: StepRenderer = (host, step, api) => {
     const showCmp = rd.hide !== "compass" || shown || end;
     ctx.save();
     ctx.scale(k, k);
-    // 전원 장치와 전선
+    // 전원 장치와 전선(코일의 두 끝, 왼쪽 아래와 오른쪽 아래에 잇는다)
+    const ends = mCoilEnds(CX, CY);
     ctx.strokeStyle = "rgba(255,196,90,.75)";
     ctx.lineWidth = 2.2;
     ctx.beginPath();
-    ctx.moveTo(CX - 53, CY);
-    ctx.lineTo(CX - 53, 206);
-    ctx.lineTo(CX + 53, 206);
-    ctx.lineTo(CX + 53, CY);
+    ctx.moveTo(ends.lx, ends.y);
+    ctx.lineTo(ends.lx, 206);
+    ctx.lineTo(ends.rx, 206);
+    ctx.lineTo(ends.rx, ends.y);
     ctx.stroke();
     ctx.fillStyle = "rgba(11,21,36,.9)";
     ctx.strokeStyle = X.line;
@@ -119,8 +120,9 @@ export const gripLab: StepRenderer = (host, step, api) => {
     if ((shown || end) && a > 0) {
       ctx.globalAlpha = a;
       xArrow(ctx, CX - rd.dir * 36, CY, CX + rd.dir * 36, CY, X.field, 2.8, 9);
-      xText(ctx, "N극", CX + rd.dir * 56, CY + 36, { px: 12.5, color: "#FFB3A6" });
-      xText(ctx, "S극", CX - rd.dir * 56, CY + 36, { px: 12.5, color: "#9CC8FF" });
+      // 극 이름표는 코일 끝의 바깥 아래(코일 끝에서 내려가는 전선과 겹치지 않게)
+      xText(ctx, "N극", CX + rd.dir * 78, CY + 36, { px: 12.5, color: "#FFB3A6" });
+      xText(ctx, "S극", CX - rd.dir * 78, CY + 36, { px: 12.5, color: "#9CC8FF" });
       xText(ctx, "엄지 방향", CX, CY + 36, { px: 12, color: X.field });
       ctx.globalAlpha = 1;
     }

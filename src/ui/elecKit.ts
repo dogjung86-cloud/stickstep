@@ -46,11 +46,12 @@ export function drawPlus(ctx: CanvasRenderingContext2D, x: number, y: number, r 
   ctx.restore();
 }
 
-/** 전선 — 폴리라인. on이면 앰버 전류 점이 흐른다(flow 0~1 위상). dir=-1이면 역방향. */
+/** 전선(폴리라인). on이면 앰버 전류 점이 흐른다(flow 0~1 위상). dir=-1이면 역방향.
+ *  color를 주면 전선의 속(심)을 그 색으로 칠한다(전지의 어느 극 쪽 높이인지 보일 때. 주지 않으면 예전과 같은 회색). */
 export function drawWire(
   ctx: CanvasRenderingContext2D,
   pts: { x: number; y: number }[],
-  o: { on?: boolean; flow?: number; dir?: 1 | -1; width?: number } = {},
+  o: { on?: boolean; flow?: number; dir?: 1 | -1; width?: number; color?: string } = {},
 ): void {
   if (pts.length < 2) return;
   const w = o.width ?? 4;
@@ -62,7 +63,7 @@ export function drawWire(
   ctx.beginPath();
   pts.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
   ctx.stroke();
-  ctx.strokeStyle = ELEC.wire;
+  ctx.strokeStyle = o.color ?? ELEC.wire;
   ctx.lineWidth = w;
   ctx.beginPath();
   pts.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));

@@ -1,13 +1,15 @@
 // [중2 Ⅷ v5] g2u8l3 magLab: 「밝은 별일수록 등급의 숫자는 어떻게 될까요?」
 // 책의 어디에서: 본문(히파르코스가 가장 밝은 별을 1등성, 가장 어두운 별을 6등성으로 정했다. 1등급은 6등급의 100배, 1등급 차이는 약 2.5배).
 // 한 통찰: 등급의 숫자가 작을수록 밝고, 1등급 작아질 때마다 약 2.5배 밝아진다.
-// 학생이 정하는 것: 밝은 별부터 고르는 차례(틀리면 이름이 붙지 않는다), 견줄 등급.
+// 학생이 정하는 것: 밝은 별부터 고르는 차례(틀리면 이름이 붙지 않는다), 비교할 등급.
 // 밝기의 비는 2.512의 거듭제곱이다(1, 약 2.5, 약 6.3, 약 16, 약 40, 100).
+// 막대는 한 눈금(직선)이라 어두운 등급의 막대가 낮다. 그래서 막대 사이마다 "×약 2.5" 뜀을 적고, 왼쪽 위 작은 칸에
+// 고른 등급과 한 등급 어두운 별을 같은 눈금으로 크게 그린다(어느 등급을 골라도 같은 모습이라 같은 배수가 보인다).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvRange, bvTimers } from "../bio6/b6Lab";
-import { S, sBox, sCanvas, sCap, sField, sFrame, sGlow, sLog, sText, type LabStep } from "./kit";
+import { S, sArrow, sBox, sCanvas, sCap, sField, sFrame, sGlow, sLog, sText, type LabStep } from "./kit";
 
 const RATIO = ["1", "약 2.5", "약 6.3", "약 16", "약 40", "100"]; // 6등급부터 1등급까지
 const VAL = [1, 2.512, 6.31, 15.85, 39.8, 100];
@@ -67,13 +69,13 @@ export const magLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: 5,
     value: 0,
-    label: "견줄 별의 등급",
+    label: "비교할 별의 등급",
     ticks: ["6등급", "5", "4", "3", "2", "1등급"],
     onInput: (v) => {
       sel = v;
       if (v === 1) log.set(0, "약 2.5배");
       if (v === 5) log.set(1, "100배");
-      f.say(v === 0 ? "6등급 별을 기준으로 견줘요. 막대를 밀어 등급을 바꿔 보세요." : `<b>${6 - v}등급</b> 별은 6등급 별보다 <b>${RATIO[v]}배</b> 밝아요.`);
+      f.say(v === 0 ? "6등급 별을 기준으로 비교해요. 막대를 밀어 등급을 바꿔 보세요." : `<b>${6 - v}등급</b> 별은 6등급 별보다 <b>${RATIO[v]}배</b> 밝아요.`);
       if (log.has(0) && log.has(1) && phase === "bars") {
         phase = "end";
         f.pips(2);
@@ -87,7 +89,7 @@ export const magLab: StepRenderer = (host, step, api) => {
   function toBars(): void {
     phase = "bars";
     f.slot.setControls(range.el, log.el);
-    f.say("이번에는 밝기를 견줘요. <b>막대를 밀어</b> 6등급에서 1등급까지 등급을 바꿔 보세요.");
+    f.say("이번에는 밝기를 비교해요. <b>막대를 밀어</b> 6등급에서 1등급까지 등급을 바꿔 보세요.");
   }
   function askFinal(): void {
     f.say("기록을 보고 아래 질문에 답해 보세요.");
@@ -117,21 +119,68 @@ export const magLab: StepRenderer = (host, step, api) => {
       });
       return;
     }
-    // 등급별 밝기 막대(6등급이 1)
+    // 등급별 밝기 막대(6등급이 1인 한 눈금. 1등급 막대가 6등급의 100배다)
     const bx = 30;
     const bw = (w - bx - 14) / 6;
-    const base = h - 34;
-    const top = 44;
+    const base = h - 54;
+    const top = 40;
+    const mid = (i: number): number => bx + i * bw + bw / 2;
     for (let i = 0; i < 6; i++) {
       const x = bx + i * bw; // 왼쪽이 6등급(막대의 차례와 같다)
       const hh = Math.max(1.5, (VAL[i] / 100) * (base - top));
       const on = i === sel;
       sBox(ctx, x + 8, base - hh, bw - 16, hh, 3, on ? S.gold : "rgba(255,233,168,.3)");
       sGlow(ctx, x + bw / 2, base + 2 - hh - 12, 4 + i * 1.6, S.star, 0.4);
-      sText(ctx, `${6 - i}등급`, x + bw / 2, base + 16, { color: on ? "#fff" : S.dim, px: 12, w: on ? 800 : 700 });
+      sText(ctx, `${6 - i}등급`, x + bw / 2, base + 13, { color: on ? "#fff" : S.dim, px: 12, w: on ? 800 : 700 });
+    }
+    // 막대 사이의 뜀: 한 등급 밝아질 때마다 같은 배수(약 2.5). 고른 등급과 한 등급 어두운 별 사이를 밝힌다.
+    for (let i = 0; i < 5; i++) {
+      const on = i === sel - 1;
+      const col = on ? S.gold : "rgba(232,238,249,.5)";
+      const x0 = mid(i) + 7;
+      const x1 = mid(i + 1) - 7;
+      const y0 = base + 23;
+      ctx.save();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = on ? 2.2 : 1.5;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x0, y0);
+      ctx.quadraticCurveTo((x0 + x1) / 2, y0 + 9, x1 - 2, y0 + 1);
+      ctx.stroke();
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.moveTo(x1 + 1, y0 - 1);
+      ctx.lineTo(x1 - 6, y0 - 2.5);
+      ctx.lineTo(x1 - 3.5, y0 + 4.5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      sText(ctx, "×약 2.5", (x0 + x1) / 2, base + 41, { color: on ? S.gold : S.dim, px: 12, w: on ? 800 : 700 });
     }
     sText(ctx, `${6 - sel}등급 별의 밝기는 6등급 별의`, 12, 16, { color: S.dim, px: 12, align: "left" });
     sText(ctx, `${RATIO[sel]}배`, 12, 34, { color: S.gold, px: 16, align: "left", w: 800 });
+    // 왼쪽 위 작은 칸: 고른 등급과 한 등급 어두운 별을 같은 눈금으로 크게(어느 등급을 골라도 늘 같은 모습)
+    const kx = 10;
+    const ky = 48;
+    const kw = 126;
+    const kh = 98;
+    sBox(ctx, kx, ky, kw, kh, 10, "rgba(20,32,60,.92)", "rgba(143,180,255,.45)", 1.2);
+    if (sel === 0) {
+      sText(ctx, "막대를 밀어", kx + kw / 2, ky + kh / 2 - 9, { color: S.dim, px: 12 });
+      sText(ctx, "등급을 골라 보세요", kx + kw / 2, ky + kh / 2 + 9, { color: S.dim, px: 12 });
+    } else {
+      sText(ctx, "한 등급 차이", kx + kw / 2, ky + 13, { color: S.dim, px: 12 });
+      const kb = ky + kh - 21;
+      const big = 50;
+      const small = big / 2.512;
+      sBox(ctx, kx + 20, kb - small, 26, small, 3, "rgba(255,233,168,.45)");
+      sBox(ctx, kx + 80, kb - big, 26, big, 3, S.gold);
+      sText(ctx, `${7 - sel}등급`, kx + 33, kb + 11, { color: S.dim, px: 12 });
+      sText(ctx, `${6 - sel}등급`, kx + 93, kb + 11, { color: "#fff", px: 12, w: 800 });
+      sArrow(ctx, kx + 36, kb - small - 7, kx + 74, kb - big + 3, S.gold, 2, 7);
+      sText(ctx, "×약 2.5", kx + 44, kb - big - 1, { color: S.gold, px: 12, w: 800 });
+    }
   });
 
   f.say("맨눈으로 보이는 별 여섯 개예요. <b>가장 밝게 보이는 별부터</b> 차례로 눌러 등성을 매겨 보세요.");

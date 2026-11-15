@@ -13,7 +13,7 @@
 //    한 통찰: 거친 면에서도 빛줄기 하나하나는 두 각이 같다. 닿는 곳마다 면의 기울기가 달라 흩어질 뿐이다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
-import { BEAM_GREEN, BEAM_WHITE, drawBeam, drawNormal, drawProtractor, laserBody, mirrorProp, capturePointer } from "../../../ui/lightKit";
+import { BEAM_GREEN, BEAM_WHITE, drawAngleArc, drawBeam, drawNormal, drawProtractor, laserBody, mirrorProp, capturePointer } from "../../../ui/lightKit";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvRange, bvTimers } from "../bio6/b6Lab";
 import { DW, LX, clamp, lxCanvas, lxFrame, lxAngle, lxLog, lxPill, lxSeg, lxText, rad } from "./lxKit";
@@ -262,6 +262,10 @@ export const roughLab: StepRenderer = (host, step, api) => {
     ],
     "flat",
     (k) => {
+      if (asked) {
+        seg.set(face); // 판정이 뜨는 동안 무대는 거친 면의 다섯 줄기로 둔다
+        return;
+      }
       face = k;
       haptic(HAPTIC.tap);
       touch();
@@ -274,6 +278,7 @@ export const roughLab: StepRenderer = (host, step, api) => {
     value: hx,
     label: "빛이 닿는 자리 옮기기",
     onInput: (v) => {
+      if (asked) return;
       hx = v;
       five = false;
       touch();
@@ -313,6 +318,11 @@ export const roughLab: StepRenderer = (host, step, api) => {
     asked = true;
     host.dataset.lx = "ask";
     tm.later(() => {
+      // 질문은 거친 면을 묻는다. 마지막에 매끈한 면을 비췄어도 무대를 거친 면의 다섯 줄기(닿는 자리마다 법선)로 돌려 둔다.
+      face = "rough";
+      five = true;
+      seg.set("rough");
+      f.say("거친 면의 다섯 줄기예요. 닿는 자리마다 <b>법선</b>(점선)을 보며 생각해 봐요.");
       f.slot.ask(
         "거친 면에서 반사한 빛이 여러 방향으로 흩어지는 까닭은 무엇일까요?",
         [{ t: "닿는 곳마다 면의 기울기가 달라서", ok: true }, { t: "거친 면에서는 두 각이 달라져서" }, { t: "거친 면이 빛을 모두 흡수해서" }],
@@ -362,10 +372,16 @@ export const roughLab: StepRenderer = (host, step, api) => {
     const rx = IN.x - 2 * dot * nx;
     const ry = IN.y - 2 * dot * ny;
     const len = detail ? 150 : 120;
+    const nd = Math.atan2(ny, nx);
+    if (!detail) {
+      // 다섯 줄기: 닿는 자리마다 짧은 법선(점선)과 작은 두 각(노랑, 파랑)을 옅게. 흩어지는 까닭(법선의 방향)이 결과와 한 그림에 모인다.
+      drawNormal(ctx, x, y, nd, 40, { alpha: 0.75 });
+      drawAngleArc(ctx, x, y, 13, nd, Math.atan2(-IN.y, -IN.x), LX.amber);
+      drawAngleArc(ctx, x, y, 13, nd, Math.atan2(ry, rx), LX.cyan);
+    }
     drawBeam(ctx, [{ x: x - IN.x * len, y: y - IN.y * len }, { x, y }], { rgb: detail ? BEAM_GREEN : BEAM_WHITE, flow, width: detail ? undefined : 1.4, alpha: detail ? undefined : 0.45, glow: detail });
     drawBeam(ctx, [{ x, y }, { x: x + rx * 104, y: y + ry * 104 }], { rgb: detail ? BEAM_GREEN : BEAM_WHITE, flow, arrow: true, width: detail ? undefined : 1.6 });
     if (!detail) return;
-    const nd = Math.atan2(ny, nx);
     drawNormal(ctx, x, y, nd, 70);
     const ang = Math.round((Math.acos(clamp(-dot, -1, 1)) * 180) / Math.PI);
     lxAngle(ctx, x, y, 34, nd, Math.atan2(-IN.y, -IN.x), LX.amber, `${ang}°`, 54);
@@ -386,8 +402,8 @@ export const roughLab: StepRenderer = (host, step, api) => {
   });
 
   touch();
-  f.say("빛 한 줄기가 면에 닿아요. <b>닿는 자리</b>를 옮기며 그 자리의 법선과 두 각을 견줘 보세요.");
-  api.setCTA("두 면에서 두 각을 견줘 보세요", { enabled: false });
+  f.say("빛 한 줄기가 면에 닿아요. <b>닿는 자리</b>를 옮기며 그 자리의 법선과 두 각을 비교해 보세요.");
+  api.setCTA("두 면에서 두 각을 비교해 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

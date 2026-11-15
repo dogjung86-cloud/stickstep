@@ -170,6 +170,20 @@ function restoreLabs(): void {
   regrouped.clear();
 }
 
+/** 개념 스텝에서 왼쪽에 크게 둘 그림. 보통은 첫 그림이다.
+ *  과학 개념 스텝(말머리 "과학 용어 정복하기"나 과학 단원 색의 말머리)에서 첫 그림이 스틱맨 비유 컷이고 뒤에 과학 그림(정밀 그림, 손 사진, 도해)이
+ *  있으면 그 과학 그림을 왼쪽에 두고 컷은 노트 위쪽으로 보낸다(2026-11-15 사용자 결정 "모두 수정", 그래픽 감사 X01:
+ *  비유 컷이 왼쪽 큰 칸을 차지해 정밀 그림이 노트 칸에 작게 들어갔다). 다른 과목의 개념 스텝은 예전처럼 첫 그림. */
+const SCI_TONES = ["bio", "heat", "matter", "force", "gas", "space", "chem", "geo", "light", "atom", "plant", "body", "elec", "star", "civ"];
+function conceptLeft(step: HTMLElement, first: HTMLElement): HTMLElement {
+  const k = step.querySelector<HTMLElement>(":scope > .kicker");
+  const sci = !!k && (k.textContent?.trim() === "과학 용어 정복하기" || SCI_TONES.some((t) => k.classList.contains(t)));
+  if (!sci) return first;
+  if (!first.querySelector('img[src*="/cuts/"]')) return first;
+  const fig = [...step.querySelectorAll<HTMLElement>(":scope > .c-figure")].find((f) => f !== first);
+  return fig ?? first;
+}
+
 /** 랩이 아닌 스텝에 종류 표식을 붙인다(배치는 CSS가 한다. 요소는 옮기지 않는다).
  *  왼쪽에 둘 것(.wd-left) = 도입 무대, 개념의 첫 그림, 문제의 질문과 그림. 나머지는 오른쪽 노트로 간다. */
 function tagStep(step: HTMLElement): void {
@@ -193,7 +207,7 @@ function tagStep(step: HTMLElement): void {
     t = "recap";
   } else if (fig) {
     t = "concept";
-    fig.classList.add("wd-left");
+    conceptLeft(step, fig).classList.add("wd-left");
   }
   step.dataset.wd = t;
   if (t !== "plain" && t !== "recap") step.classList.add("wd-split");

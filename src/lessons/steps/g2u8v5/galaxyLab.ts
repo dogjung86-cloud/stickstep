@@ -3,12 +3,14 @@
 // 한 통찰: 태양계는 은하 중심에서 떨어진 나선팔에 있어서, 중심 쪽을 볼 때와 바깥쪽을 볼 때 은하수가 다르게 보인다.
 // 학생이 정하는 것: 태양계가 있을 자리의 예측(그림을 누른다, 채점하지 않는다), 바라보는 방향.
 // 실사: 위에서 본 우리은하(NASA/JPL-Caltech, 상상도), 온 하늘의 은하수(ESO). 은하수 사진은 가운데가 은하 중심 방향이라, 방향에 따라 잘라 보여 준다.
+// 위에서 본 그림은 사진처럼 보여 밖에서 찍은 사진으로 여기기 쉬워 왼쪽 위에 늘 '상상도' 꼬리표를 단다(책 그림도 '(상상도)'를 붙인다).
+// 지름 자는 원반의 가운데를 지나고 양 끝 금이 원반 가장자리에 선다(위쪽 현을 지나면 길이가 그림의 폭과 어긋나 보였다).
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
-import { S, sArrow, sCanvas, sCap, sDisk, sFrame, sLine, sLog, sPhoto, sSegs, starPhoto, sText, type LabStep } from "./kit";
+import { S, sArrow, sBox, sCanvas, sCap, sDisk, sFrame, sLine, sLog, sPhoto, sSegs, starPhoto, sText, type LabStep } from "./kit";
 
 type Dir = "in" | "out";
 const IMG = 210; // 은하 그림의 한 변
@@ -35,7 +37,7 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
   const log = sLog(["은하 중심 쪽", "바깥쪽"], 2, true);
   const bShow = bvBtn("main", "실제 자리 확인하기");
   bShow.disabled = true;
-  f.slot.setControls(sCap("왼쪽 그림은 위에서 본 우리은하예요. <b>태양계가 있을 것 같은 곳</b>을 그림에서 눌러 보세요."), bShow);
+  f.slot.setControls(sCap("왼쪽 그림은 위에서 본 우리은하의 상상도예요. <b>태양계가 있을 것 같은 곳</b>을 그림에서 눌러 보세요."), bShow);
 
   st.cv.addEventListener("pointerdown", (e) => {
     if (shown) return;
@@ -102,6 +104,9 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
 
   st.run((ctx, w, _h, t) => {
     const G = (p: [number, number]): [number, number] => [IX + p[0] * IMG, IY + p[1] * IMG];
+    // 사진처럼 보이지만 우리은하를 밖에서 찍을 수는 없다: 왼쪽 위에 '상상도' 꼬리표
+    sBox(ctx, IX + 6, IY + 6, 52, 22, 11, "rgba(11,21,36,.78)", "rgba(255,255,255,.35)", 1);
+    sText(ctx, "상상도", IX + 32, IY + 17.5, { color: "#fff", px: 12, w: 800 });
     const c = G([0.5, 0.5]);
     const sun = G(SUN);
     if (guess) {
@@ -110,10 +115,17 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
       if (!shown) sText(ctx, "내 예측", g[0], g[1] - 16, { color: "#fff", px: 12 });
     }
     if (shown) {
-      // 지름과 중심에서 태양계까지
-      const y = IY + IMG * 0.5;
-      sLine(ctx, IX + IMG * (0.5 - R_GAL), y - 54, IX + IMG * (0.5 + R_GAL), y - 54, "rgba(255,255,255,.8)", 1.4);
-      sText(ctx, "지름 약 30000 pc", c[0], y - 66, { color: "#fff", px: 12 });
+      // 지름: 원반의 가운데(은하 중심)를 지나는 자, 양 끝은 원반 가장자리에 세운 금
+      const x0 = IX + IMG * (0.5 - R_GAL);
+      const x1 = IX + IMG * (0.5 + R_GAL);
+      const y = c[1];
+      sLine(ctx, x0, y, x1, y, "rgba(11,21,36,.75)", 4.2);
+      sLine(ctx, x0, y, x1, y, "rgba(255,255,255,.92)", 1.6);
+      [x0, x1].forEach((x) => {
+        sLine(ctx, x, y - 9, x, y + 9, "rgba(11,21,36,.75)", 4.2);
+        sLine(ctx, x, y - 9, x, y + 9, "#fff", 1.8);
+      });
+      sText(ctx, "지름 약 30000 pc", (x0 + c[0]) / 2 - 7, y + 13, { color: "#fff", px: 12 });
       sLine(ctx, c[0], c[1], sun[0], sun[1], S.ok, 2);
       sText(ctx, "약 8500 pc", c[0] + 44, (c[1] + sun[1]) / 2, { color: S.ok, px: 12, w: 800 });
       sText(ctx, "은하 중심", c[0], c[1] - 14, { color: "#fff", px: 12 });

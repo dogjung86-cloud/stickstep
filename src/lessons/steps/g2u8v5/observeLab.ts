@@ -92,11 +92,15 @@ export const observeLab: StepRenderer = (host, step, api) => {
       f.say("다섯 천체를 모두 기록했어요. 관측 기록을 한눈에 볼까요?");
       tm.later(() => {
         unzoom();
-        album.replaceChildren(
-          ...OBJ.map((x) =>
-            el("div", { class: "g2u8x-album-it" }, el("img", { attrs: { src: starPhoto(x.file), alt: x.alt, draggable: "false" } }), el("b", { text: x.k === "hh" ? "말머리성운" : x.t }), el("span", { text: FEATS[x.feat] })),
-          ),
-        );
+        // 사진첩: 윗줄에 별의 무리 둘, 아랫줄에 구름 셋(사진을 크게, 이름은 사진 위 꼬리표, 특징은 사진 아래 한 줄)
+        const item = (x: (typeof OBJ)[number]): HTMLElement =>
+          el(
+            "div",
+            { class: "g2u8x-album-it" },
+            el("div", { class: "g2u8x-album-ph" }, el("img", { attrs: { src: starPhoto(x.file), alt: x.alt, draggable: "false" } }), el("b", { text: x.k === "hh" ? "말머리성운" : x.t })),
+            el("span", { text: FEATS[x.feat] }),
+          );
+        album.replaceChildren(el("div", { class: "g2u8x-album-row two" }, ...OBJ.slice(0, 2).map(item)), el("div", { class: "g2u8x-album-row" }, ...OBJ.slice(2).map(item)));
         album.classList.add("on");
         seg.lock(true);
         askFinal();

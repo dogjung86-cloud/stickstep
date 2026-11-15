@@ -8,45 +8,76 @@
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvCard, bvCards } from "../bio6/b6Lab";
-import { P, bubbles, clamp, fx, g1Hold, g1Lab, g1Log, g1Predict, g1Row, seeded, svgOpen, tube, type G1Step } from "./g2u1Kit";
+import { P, bubbles, clamp, fx, g1Hold, g1Lab, g1Predict, g1Row, seeded, svgOpen, tube, type G1Step } from "./g2u1Kit";
 
 const SODA = "#FFD76A";
 
 // ── 1. 온도 ──
+// 무대: 물통 셋을 온도 순(얼음물, 실온, 뜨거운 물)으로 나란히 두고 물통마다 시험관 하나. 센 물통에는 기포와 센 수가 그대로 남아
+// 판정 때 세 결과(4, 11, 38)를 한눈에 비교한다. 지금 고른 물통만 밝고 아직 안 센 물통은 흐리다.
 const BATH = [
-  { key: "ice", name: "얼음물", t: 5, n: 4, show: 2, color: P.cold },
-  { key: "room", name: "실온의 물", t: 20, n: 11, show: 5, color: P.water },
-  { key: "hot", name: "뜨거운 물", t: 60, n: 38, show: 16, color: P.hot },
+  { key: "ice", name: "얼음물", t: 5, n: 4, show: 2, color: P.cold, op: 0.38 },
+  { key: "room", name: "실온의 물", t: 20, n: 11, show: 5, color: P.water, op: 0.38 },
+  { key: "hot", name: "뜨거운 물", t: 60, n: 38, show: 14, color: P.hot, op: 0.45 },
 ];
+const FZ_X = [60, 173, 286]; // 물통 셋의 가운데
+/** 물통 하나(물, 시험관, 기포 자리, 얼음이나 김, 센 수, 이름). 좌표는 계산으로 놓는다. */
+function fizzBath(b: (typeof BATH)[number], i: number): string {
+  const cx = FZ_X[i];
+  const ice =
+    b.key === "ice"
+      ? [[-32, 93, 12, 11, -14], [-21, 97, 10, 9, 12], [21, 95, 11, 10, 16], [32, 92, 10, 10, -10]]
+          .map(([dx, y, w, h, a]) => `<rect x="${cx + dx - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="2.5" fill="#E6F6FF" fill-opacity=".92" stroke="#9BD0F2" stroke-width="1.2" transform="rotate(${a} ${cx + dx} ${y})"/>`)
+          .join("")
+      : "";
+  const steam = b.key === "hot" ? [-28, 28].map((dx) => `<path d="M${cx + dx} 70 q5 -5 0 -10 q-5 -5 0 -10" stroke="rgba(255,255,255,.42)" stroke-width="2" stroke-linecap="round"/>`).join("") : "";
+  return `<g class="g2u1x-fz-col" data-i="${i}" style="opacity:.5">
+    <rect class="g2u1x-fz-hi" x="${cx - 54}" y="22" width="108" height="206" rx="14" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.24)" stroke-width="1.2" opacity="0"/>
+    ${steam}
+    <rect x="${cx - 41}" y="92" width="82" height="73" rx="6" fill="${b.color}" opacity="${b.op}"/>
+    <path d="M${cx - 44} 74 V158 a10 10 0 0 0 10 10 h68 a10 10 0 0 0 10 -10 V74 M${cx - 49} 74 h98" stroke="${P.glass}" stroke-width="2.4" stroke-linecap="round"/>
+    ${tube(cx, 32, 24, 128, SODA, "g2u1x-fz", 0.74)}
+    <g class="g2u1x-fz-bub"></g>
+    ${ice}
+    <text x="${cx}" y="203" text-anchor="middle" font-weight="800" fill="${P.text}"><tspan class="g2u1x-fz-n" font-size="28" fill="${P.dim}">?</tspan><tspan class="g2u1x-fz-u" font-size="13" dx="2"></tspan></text>
+    <text x="${cx}" y="222" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}">${b.name} ${b.t} ℃</text>
+  </g>`;
+}
 export const g2u1FizzLab: StepRenderer = (host, step, api) => {
   const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 3, cls: "g2u1x-fz" });
   const { f, tm } = lab;
   const rnd = seeded(23);
   f.stage.innerHTML = `${svgOpen}
-    <rect class="g2u1x-fz-bath" x="43" y="112" width="114" height="85" rx="6" fill="${P.water}" opacity="0"/>
-    <path d="M40 96 V190 a10 10 0 0 0 10 10 h100 a10 10 0 0 0 10 -10 V96 M34 96 h132" stroke="${P.glass}" stroke-width="2.4" stroke-linecap="round"/>
-    ${tube(100, 30, 34, 158, SODA, "g2u1x-fz", 0.72)}
-    <g class="g2u1x-fz-bub"></g>
-    <text class="g2u1x-fz-name" x="100" y="218" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}">물을 골라 시험관을 담가요</text>
-    <text x="262" y="92" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}">10초 동안 올라온 기포</text>
-    <text class="g2u1x-fz-n" x="262" y="136" text-anchor="middle" font-size="40" font-weight="800" fill="${P.text}">0</text>
-    <text x="262" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}">개</text>
+    <text x="173" y="15" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}">10초 동안 올라온 기포</text>
+    ${BATH.map(fizzBath).join("")}
   </svg>`;
-  const log = g1Log(lab, "r");
-  const bathEl = f.stage.querySelector(".g2u1x-fz-bath") as SVGRectElement;
-  const bub = f.stage.querySelector(".g2u1x-fz-bub") as SVGGElement;
-  const nEl = f.stage.querySelector(".g2u1x-fz-n") as SVGTextElement;
-  const nameEl = f.stage.querySelector(".g2u1x-fz-name") as SVGTextElement;
+  const cols = Array.from(f.stage.querySelectorAll<SVGGElement>(".g2u1x-fz-col"));
+  const part = <T extends Element>(i: number, s: string): T => cols[i].querySelector(s) as T;
   const cards = BATH.map((b) => bvCard("g2u1x-fz-card", { name: b.name, sub: `${b.t} ℃`, key: b.key }));
   const done = new Set<number>();
   let cur = -1;
   let p = 0;
   let pred = "";
 
+  /** 물통 밝기: 지금 고른 것은 밝게 테두리까지, 센 것은 밝게, 아직 안 센 것은 흐리게. */
+  function look(): void {
+    cols.forEach((g, i) => {
+      g.style.opacity = i === cur || done.has(i) ? "1" : ".5";
+      part(i, ".g2u1x-fz-hi").setAttribute("opacity", i === cur ? "1" : "0");
+    });
+  }
+  /** 물통 아래 숫자. null이면 아직 안 센 물통(물음표). */
+  function setN(i: number, v: number | null): void {
+    const n = part<SVGTSpanElement>(i, ".g2u1x-fz-n");
+    n.textContent = v === null ? "?" : String(v);
+    n.setAttribute("fill", v === null ? P.dim : P.text);
+    part(i, ".g2u1x-fz-u").textContent = v === null ? "" : "개";
+  }
+
   const hold = g1Hold(lab, "꾹 눌러 10초 동안 세기", (ms) => {
     if (cur < 0) return false;
     p = clamp(p + ms / 2400);
-    nEl.textContent = String(Math.round(BATH[cur].n * p));
+    setN(cur, Math.round(BATH[cur].n * p));
     if (p >= 1) {
       end();
       return false;
@@ -63,15 +94,18 @@ export const g2u1FizzLab: StepRenderer = (host, step, api) => {
     c.el.addEventListener("click", () => {
       if (done.has(i)) return;
       haptic(HAPTIC.tap);
+      // 세다 만 물통으로 돌아가면 기포와 숫자를 걷는다(센 물통만 기록이 남는다)
+      if (cur >= 0 && cur !== i) {
+        part(cur, ".g2u1x-fz-bub").innerHTML = "";
+        setN(cur, null);
+      }
       cur = i;
       p = 0;
       const b = BATH[i];
       cards.forEach((x, j) => x.on(i === j));
-      bathEl.setAttribute("fill", b.color);
-      bathEl.setAttribute("opacity", ".4");
-      nameEl.textContent = `${b.name} (${b.t} ℃)`;
-      nEl.textContent = "0";
-      bubbles(bub, b.show, 88, 110, 24, 60, rnd);
+      setN(i, 0);
+      bubbles(part(i, ".g2u1x-fz-bub"), b.show, FZ_X[i] - 6, 98, 12, 52, rnd);
+      look();
       hold.disabled = false;
       f.say(`차가운 탄산음료 시험관을 <b>${b.name}</b>에 담갔어요. 버튼을 <b>꾹 눌러</b> 기포를 세어 보세요.`);
       api.setCTA("꾹 눌러 기포를 세어 보세요", { enabled: false });
@@ -87,9 +121,10 @@ export const g2u1FizzLab: StepRenderer = (host, step, api) => {
     cards[cur].on(false);
     cards[cur].el.disabled = true;
     cards[cur].sub(`기포 ${b.n}개`);
-    log.add(`${b.name} ${b.t} ℃ <b>${b.n}개</b>`);
+    setN(cur, b.n);
     f.pips(done.size);
     cur = -1;
+    look();
     if (done.size < 3) {
       f.say(`${b.name}에서는 10초에 <b>${b.n}개</b>였어요. 다른 물에도 담가 비교해 보세요.`);
       api.setCTA(`다른 물에도 담가 보세요 (${done.size}/3)`, { enabled: false });

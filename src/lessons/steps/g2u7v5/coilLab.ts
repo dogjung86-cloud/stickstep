@@ -11,7 +11,7 @@
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
-import { mBar, mCoil, mCompass } from "./magKit";
+import { mBar, mCoil, mCoilEnds, mCompass } from "./magKit";
 import { X, xArrow, xBox, xCanvas, xFrame, xRow, xSegs, xText, type LabStep } from "./kit";
 
 const C = { x: 173, y: 112 };
@@ -210,7 +210,8 @@ export const coilLab: StepRenderer = (host, step, api) => {
     const k = w / 346;
     ctx.save();
     ctx.scale(k, k);
-    // 전원 장치와 전선
+    // 전원 장치와 전선(코일의 두 끝, 왼쪽 아래와 오른쪽 아래에 잇는다)
+    const ends = mCoilEnds(C.x, C.y);
     if (!magnet) {
       xBox(ctx, 12, 192, 84, 28, 8, "rgba(255,255,255,.07)", X.line);
       xText(ctx, "전원 장치", 54, 206.5, { px: 12, color: X.dim });
@@ -218,17 +219,17 @@ export const coilLab: StepRenderer = (host, step, api) => {
       ctx.lineWidth = 2.2;
       ctx.beginPath();
       ctx.moveTo(96, 200);
-      ctx.lineTo(120, 200);
-      ctx.lineTo(120, C.y);
+      ctx.lineTo(ends.lx, 200);
+      ctx.lineTo(ends.lx, ends.y);
       ctx.moveTo(96, 212);
-      ctx.lineTo(226, 212);
-      ctx.lineTo(226, C.y);
+      ctx.lineTo(ends.rx, 212);
+      ctx.lineTo(ends.rx, ends.y);
       ctx.stroke();
     }
     if (on && !magnet) {
       const up = dir === 1;
-      xArrow(ctx, 120, up ? 184 : 148, 120, up ? 148 : 184, X.cur, 2.4, 8);
-      xText(ctx, "전류", 112, 166, { px: 12, color: X.cur, align: "right" });
+      xArrow(ctx, ends.lx, up ? 186 : 150, ends.lx, up ? 150 : 186, X.cur, 2.4, 8);
+      xText(ctx, "전류", ends.lx - 8, 168, { px: 12, color: X.cur, align: "right" });
     }
     // 코일(또는 견주려고 놓은 막대자석)
     if (magnet) {

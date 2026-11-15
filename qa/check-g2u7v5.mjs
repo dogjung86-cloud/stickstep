@@ -112,7 +112,7 @@ const LAB = {
     await at("wire-closed");
     await tapText(page, "전지 돌려"); await W(page, 1200);
     await at("wire-flip");
-    await finishLab("wire", "물길과 견주기", 2);
+    await finishLab("wire", "물길과 비교하기", 2);
   },
   async water() {
     await at("water-start");

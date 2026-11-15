@@ -346,6 +346,8 @@ const LABS = {
 
 // ── 문제 ──
 async function answer() {
+  // 번들(DIST)로 돌 때는 단원 표(/src/…)를 불러올 수 없다. 불러 보면 404가 페이지 오류로 잡혀 진짜 오류를 가리므로 아예 건너뛴다(Ⅴ 검사와 같게).
+  if (L.DIST) return "skip";
   const r = await page.evaluate(async () => {
     const strip = (h) => { const d = document.createElement("div"); d.innerHTML = h; return d.textContent.replace(/\s+/g, ""); };
     const s = document.querySelector(".screen.active .step");

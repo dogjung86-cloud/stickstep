@@ -11,7 +11,25 @@
 //   거꾸로 고르면 건네줄 기체가 없어 교환이 일어나지 않는 것이 보인다.
 
 import type { StepRenderer } from "../../types";
-import { P, arrow, bad, bvBtn, chip, dot, g6Lab, g6Svg, good, row, tag, tap, toast, txt, type G6Step } from "./kit";
+import { gasSvg } from "./gasArt";
+import { P, arrow, bad, bvBtn, chip, g6Lab, g6Svg, good, row, tag, tap, toast, txt, type G6Step } from "./kit";
+
+let gasSeq = 0;
+// 공기(회청색 한 가지, 산소와 이산화 탄소 색과 다르다)
+const AIR = "#A9BCD6";
+const AIR_LINE = "#5E7391";
+const AIR_GAP = 15;
+const airDot = (x: number, y: number, r = 2.7): string => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="${AIR}" stroke="${AIR_LINE}" stroke-width=".8"/>`;
+/** 고르게 흩어진 점열(할턴 수열) */
+const halton = (i: number, b: number): number => {
+  let f = 1;
+  let r = 0;
+  for (let k = i; k > 0; k = Math.floor(k / b)) {
+    f /= b;
+    r += f * (k % b);
+  }
+  return r;
+};
 
 // ── 호흡운동 모형 ──────────────────────────────────────────────────
 export const g2u6ChestLab: StepRenderer = (host, step, api) => {
@@ -27,39 +45,83 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
   let seenOut = false;
 
   const vol = (): number => lift + pull; // -1 ~ 2
+  // 공기 알갱이(2026-11-15, 그래픽 감사 C086): 컵 안팎과 풍선 속에 같은 간격으로 놓고, 컵 속 압력이 낮아지면 컵 속 알갱이가 성글게,
+  // 높아지면 빽빽하게 놓는다(간격이 곧 압력이다). 공기의 화살과 알갱이는 산소, 이산화 탄소 색과 다른 회청색 한 가지다.
   const draw = (): void => {
     const top = 62 - lift * 16;
     const bot = 176;
     const v = sealed ? vol() : 0;
     const r = 15 + v * 5.5;
+    const press: "same" | "low" | "high" = !sealed || !lastMove ? "same" : lastMove === "up" ? "low" : "high";
+    const balloons = [150, 196].map((x, i) => ({ cx: x + (i ? 1 : -1) * (r * 0.35), cy: top + 54 + r, rx: r * 0.82, ry: r }));
     let out = "";
     // 빨대(위에서 들어와 두 갈래)
     out += `<path d="M173 ${top - 44} L173 ${top + 34} M173 ${top + 34} L150 ${top + 52} M173 ${top + 34} L196 ${top + 52}" fill="none" stroke="#9AD1F5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`;
-    // 작은 고무풍선 두 개
-    [150, 196].forEach((x, i) => {
-      const cx = x + (i ? 1 : -1) * (r * 0.35);
-      out += `<ellipse cx="${cx}" cy="${top + 54 + r}" rx="${r * 0.82}" ry="${r}" fill="#F58CA0" stroke="#B4405A" stroke-width="1.8"/><ellipse cx="${cx - r * 0.3}" cy="${top + 54 + r * 0.7}" rx="${r * 0.18}" ry="${r * 0.3}" fill="#FFD1DA" opacity=".8"/>`;
+    // 작은 고무풍선 두 개(속의 공기 알갱이는 바깥과 같은 간격)
+    balloons.forEach((b) => {
+      out += `<ellipse cx="${b.cx}" cy="${b.cy}" rx="${b.rx}" ry="${b.ry}" fill="#F58CA0" stroke="#B4405A" stroke-width="1.8"/><ellipse cx="${b.cx - r * 0.3}" cy="${top + 54 + r * 0.7}" rx="${r * 0.18}" ry="${r * 0.3}" fill="#FFD1DA" opacity=".8"/>`;
+      for (let y = b.cy - b.ry + 5; y < b.cy + b.ry - 3; y += AIR_GAP)
+        for (let x = b.cx - b.rx + 4; x < b.cx + b.rx - 3; x += AIR_GAP) {
+          const jx = x + ((Math.round(y) * 7) % 5) - 2;
+          if (((jx - b.cx) / (b.rx - 3.5)) ** 2 + ((y - b.cy) / (b.ry - 3.5)) ** 2 < 1) out += airDot(jx, y);
+        }
     });
     // 컵(위쪽 몸통은 올라가고, 아래 고무 막 자리는 그대로)
     out += `<path d="M118 ${top} L228 ${top} L238 ${bot} L108 ${bot} Z" fill="rgba(200,225,255,.08)" stroke="${P.glass}" stroke-width="2"/>`;
     // 갈비뼈 붙임딱지
     [0, 1, 2].forEach((k) => {
       const y = top + 26 + k * 30;
-      out += `<path d="M${116 - k * 1.5} ${y} q57 16 ${114 + k * 3} 0" fill="none" stroke="#E9EEF7" stroke-width="3" stroke-linecap="round" opacity=".5"/>`;
+      out += `<path d="M${116 - k * 1.5} ${y} q57 16 ${114 + k * 3} 0" fill="none" stroke="#E9EEF7" stroke-width="3" stroke-linecap="round" opacity=".38"/>`;
     });
+    // 컵 속 공기 알갱이: 컵 안(풍선과 빨대 밖, 고무 막 위)을 고르게 채운다. 간격은 압력에 따라
+    const memY = (x: number): number => {
+      const t = Math.max(0, Math.min(1, (x - 108) / 130));
+      return bot + 68 * pull * t * (1 - t);
+    };
+    const free = (x: number, y: number): boolean => {
+      const k = (y - top) / (bot - top);
+      if (y < top + 5 || y > memY(x) - 4) return false;
+      if (x < 118 - 10 * k + 4 || x > 228 + 10 * k - 4) return false;
+      if (balloons.some((b) => ((x - b.cx) / (b.rx + 4)) ** 2 + ((y - b.cy) / (b.ry + 4)) ** 2 < 1)) return false;
+      const seg = (ax: number, ay: number, bx: number, by: number): number => {
+        const t = Math.max(0, Math.min(1, ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / ((bx - ax) ** 2 + (by - ay) ** 2)));
+        return Math.hypot(x - ax - t * (bx - ax), y - ay - t * (by - ay));
+      };
+      return seg(173, top, 173, top + 34) > 7 && seg(173, top + 34, 150, top + 52) > 7 && seg(173, top + 34, 196, top + 52) > 7;
+    };
+    let area = 0;
+    for (let y = top; y < bot + 40; y += 3) for (let x = 104; x < 242; x += 3) if (free(x, y)) area += 9;
+    const gap = press === "low" ? AIR_GAP * 1.55 : press === "high" ? AIR_GAP * 0.74 : AIR_GAP;
+    const want = Math.round(area / (gap * gap));
+    let got = 0;
+    for (let i = 1; i < 4000 && got < want; i++) {
+      const x = 106 + halton(i, 2) * 134;
+      const y = top + halton(i, 3) * (bot + 36 - top);
+      if (!free(x, y)) continue;
+      out += airDot(x, y);
+      got += 1;
+    }
+    // 바깥 공기(컵 위, 빨대 둘레): 처음 컵 속과 같은 간격
+    for (let y = 10; y < top - 8; y += AIR_GAP)
+      for (let x = 128; x < 222; x += AIR_GAP) if (Math.abs(x - 173) > 8) out += airDot(x + ((Math.round(y) * 5) % 4) - 2, y);
     // 틈과 고무찰흙
     out += sealed ? `<ellipse cx="173" cy="${top}" rx="15" ry="6" fill="#F2B84B" stroke="#9A6A1C" stroke-width="1.4"/>` : `<ellipse cx="173" cy="${top}" rx="13" ry="4.5" fill="#0B1524" stroke="${P.bad}" stroke-width="1.6" stroke-dasharray="3 3"/>`;
     // 고무 막
     out += `<path d="M108 ${bot} Q173 ${bot + pull * 34} 238 ${bot}" fill="none" stroke="#C084FC" stroke-width="5" stroke-linecap="round"/>`;
     if (pull === 1) out += `<line x1="173" y1="${bot + 17}" x2="173" y2="${bot + 34}" stroke="#C084FC" stroke-width="3"/><circle cx="173" cy="${bot + 38}" r="5" fill="#C084FC"/>`;
-    // 공기의 이동
-    if (lastMove && sealed) out += lastMove === "up" ? arrow(173, top - 78, 173, top - 48, P.o2, 3.4, "g2u6x-pop") : arrow(173, top - 48, 173, top - 78, P.co2, 3.4, "g2u6x-pop");
+    // 공기의 이동: 빨대 속을 지나는 알갱이와 곁의 화살(들어올 때 아래로, 나갈 때 위로)
+    if (lastMove && sealed) {
+      const cls = lastMove === "up" ? "g2u6x-sink" : "g2u6x-rise";
+      out += [0, 1, 2].map((i) => `<circle class="${cls} d${i}" cx="173" cy="${top - 26 + i * 4}" r="3" fill="#fff" stroke="${AIR_LINE}" stroke-width="1"/>`).join("");
+      out += lastMove === "up" ? arrow(188, top - 40, 188, top - 6, AIR, 3, "g2u6x-pop") : arrow(188, top - 6, 188, top - 40, AIR, 3, "g2u6x-pop");
+    }
     if (lastMove && !sealed) out += arrow(203, top - 20, 184, top - 3, P.bad, 2.6, "g2u6x-blink");
     // 이름표와 읽을 값
     out += tag(54, 34, "빨대", { size: 12 }) + tag(54, 104, "플라스틱 컵", { size: 12 }) + tag(54, 190, "고무 막", { size: 12 }) + tag(292, 126, "작은 고무풍선", { size: 12 });
     const vt = vol() > 0 ? "커짐" : vol() < 0 ? "작아짐" : "처음과 같음";
-    const pt = !sealed ? "바깥과 같음" : lastMove === "up" ? "낮아짐" : lastMove === "down" ? "높아짐" : "바깥과 같음";
-    out += txt(338, 30, `컵 속 부피: ${vt}`, { anchor: "end", size: 12, fill: P.hi }) + txt(338, 48, `컵 속 압력: ${pt}`, { anchor: "end", size: 12, fill: pt === "낮아짐" ? P.o2 : pt === "높아짐" ? P.co2 : P.dim });
+    const pt = press === "low" ? "낮아짐" : press === "high" ? "높아짐" : "바깥과 같음";
+    out += txt(338, 30, `컵 속 부피: ${vt}`, { anchor: "end", size: 12.5, fill: P.hi }) + txt(338, 49, `컵 속 압력: ${pt}`, { anchor: "end", size: 12.5, fill: press === "same" ? P.dim : "#FFFFFF", weight: press === "same" ? 700 : 800 });
+    out += airDot(262, 221, 3.4) + txt(270, 225.5, "공기 알갱이", { anchor: "start", size: 12, fill: P.text });
     stage.set(out);
     host.dataset.g6Vol = String(vol());
     host.dataset.g6Sealed = sealed ? "1" : "0";
@@ -74,7 +136,7 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
     if (!sealed) {
       bad();
       host.dataset.g6Fail = "leak";
-      toast(lab, "풍선이 그대로예요", true);
+      toast(lab, "풍선이 그대로예요", true, true);
       f.say("빨대 옆 <b>틈</b>으로 공기가 드나들어 풍선은 변하지 않아요. 틈을 막아요.");
       return;
     }
@@ -93,6 +155,7 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
 
   const cSeal = chip("seal", "틈 막기", "막지 않음", () => {
     tap();
+    lab.f.stage.querySelector(".g2u6x-toast")?.remove();
     sealed = !sealed;
     cSeal.sub(sealed ? "고무찰흙으로 막음" : "막지 않음");
     cSeal.on(sealed);
@@ -147,41 +210,19 @@ export const g2u6GasLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
   const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-gas", wait: "두 곳에서 기체를 교환해 보세요" });
   const { f, tm } = lab;
-  const stage = g6Svg(lab, "왼쪽에 허파꽈리, 오른쪽에 조직세포, 그 아래를 지나는 모세혈관과 적혈구");
+  const stage = g6Svg(lab, "두 칸으로 나눈 무대. 왼쪽은 모세혈관이 감싼 허파꽈리, 오른쪽은 조직세포 곁을 지나는 모세혈관이고, 두 칸 사이는 심장을 거쳐 가는 길로 이어진다");
+  const ns = `g6g${++gasSeq}`;
   let site: "lung" | "cell" = "lung";
   let blood: "co2" | "o2" = "co2"; // 혈액이 많이 가진 기체
   let lungDone = false;
   let cellDone = false;
-  let missAt = "";
+  let missAt: "" | "lung" | "cell" = "";
+  let final = false;
   let busy = false;
 
+  // 그림은 gasArt.ts(두 칸 무대: 허파꽈리와 조직세포, 사이는 "심장을 거쳐" 길). 산소는 적혈구에, 이산화 탄소는 혈장에 그린다.
   const draw = (): void => {
-    let out = "";
-    // 모세혈관
-    out += `<rect x="14" y="150" width="318" height="40" rx="20" fill="${blood === "o2" ? "#5A2630" : "#3F2A4A"}" stroke="${blood === "o2" ? P.red : P.dark}" stroke-width="2"/>`;
-    out += txt(173, 212, "모세혈관", { size: 12, fill: P.dim });
-    // 허파꽈리
-    out += `<circle cx="82" cy="80" r="52" fill="rgba(124,200,255,.10)" stroke="#9AD1F5" stroke-width="2"/>` + tag(82, 24, "허파꽈리", { size: 12 });
-    // 조직세포
-    out += `<rect x="212" y="34" width="112" height="92" rx="20" fill="rgba(240,140,90,.14)" stroke="#F0A070" stroke-width="2"/><circle cx="268" cy="82" r="13" fill="rgba(240,140,90,.35)" stroke="#F0A070" stroke-width="1.4"/>` + tag(268, 24, "조직세포", { size: 12 });
-    // 허파꽈리 안의 기체
-    const lungO2 = lungDone ? 2 : 6;
-    for (let i = 0; i < lungO2; i++) out += dot(56 + (i % 3) * 26, 62 + Math.floor(i / 3) * 28, 6, P.o2, "#2F6FA8");
-    if (lungDone) for (let i = 0; i < 4; i++) out += dot(60 + (i % 2) * 40, 96 + Math.floor(i / 2) * 18, 6, P.co2, "#6A55B8", "g2u6x-pop");
-    // 조직세포 안의 기체
-    const cellCo2 = cellDone ? 1 : 5;
-    for (let i = 0; i < cellCo2; i++) out += dot(232 + (i % 3) * 30, 56 + Math.floor(i / 3) * 44, 6, P.co2, "#6A55B8");
-    if (cellDone) for (let i = 0; i < 4; i++) out += dot(246 + (i % 2) * 44, 66 + Math.floor(i / 2) * 34, 6, P.o2, "#2F6FA8", "g2u6x-pop");
-    // 적혈구와 혈액 속 기체
-    const bx = site === "lung" ? 82 : 268;
-    out += `<ellipse cx="${bx}" cy="170" rx="24" ry="13" fill="${blood === "o2" ? "#E8505B" : "#9C5A86"}" stroke="#fff" stroke-width="1.6"/>`;
-    for (let i = 0; i < 4; i++) out += dot(bx - 15 + i * 10, 170, 4, blood === "o2" ? P.o2 : P.co2, blood === "o2" ? "#2F6FA8" : "#6A55B8");
-    // 방금 일어난 이동
-    if (lungDone && site === "lung") out += arrow(70, 122, 70, 152, P.o2, 3, "g2u6x-pop") + arrow(98, 152, 98, 122, P.co2, 3, "g2u6x-pop");
-    if (cellDone && site === "cell") out += arrow(254, 152, 254, 124, P.o2, 3, "g2u6x-pop") + arrow(284, 124, 284, 152, P.co2, 3, "g2u6x-pop");
-    if (missAt) out += `<g class="g2u6x-blink">${arrow(missAt === "lung" ? 82 : 268, 150, missAt === "lung" ? 82 : 268, 128, P.bad, 3)}</g>`;
-    out += `<g>${dot(132, 222, 5, P.o2, "#2F6FA8")}${txt(141, 226, "산소", { anchor: "start", size: 12, fill: P.hi })}${dot(184, 222, 5, P.co2, "#6A55B8")}${txt(193, 226, "이산화 탄소", { anchor: "start", size: 12, fill: P.hi })}</g>`;
-    stage.set(out);
+    stage.set(gasSvg({ site, lungDone, cellDone, miss: missAt, final, ns }));
     host.dataset.g6Site = site;
     host.dataset.g6Blood = blood;
   };
@@ -197,7 +238,7 @@ export const g2u6GasLab: StepRenderer = (host, step, api) => {
       missAt = here;
       host.dataset.g6Fail = here;
       draw();
-      toast(lab, "기체가 이동하지 않았어요", true);
+      toast(lab, "기체가 이동하지 않았어요", true, true);
       f.say(here === "lung" ? "허파에 막 도착한 혈액에는 건넬 <b>산소</b>가 적어요. 산소는 허파꽈리 쪽에 많아요." : "조직세포는 산소를 써 버려서 건넬 <b>산소</b>가 없어요. 세포에는 이산화 탄소가 많아요.");
       tm.later(() => {
         missAt = "";
@@ -222,6 +263,9 @@ export const g2u6GasLab: StepRenderer = (host, step, api) => {
       f.say("산소가 세포로 가고 이산화 탄소가 혈액으로 들어왔어요. 혈액이 다시 <b>어두워졌어요</b>.");
       busy = true;
       tm.later(() => {
+        // 판정의 근거: 두 칸을 다 밝힌다(허파꽈리 쪽 관은 산소가 적은 색에서 많은 색으로 바뀌어 있다)
+        final = true;
+        draw();
         lab.judge("<b>허파꽈리</b>를 지나는 동안 혈액 속에서 늘어난 기체는?", [{ t: "산소", ok: true }, { t: "이산화 탄소" }, { t: "두 기체 모두" }], "허파꽈리에서 산소는 <b>혈액으로</b>, 이산화 탄소는 <b>허파꽈리로</b> 이동해요.", () =>
           lab.finish("허파꽈리에서는 <b>산소</b>가 혈액으로, 이산화 탄소가 허파꽈리로 이동해요. 조직세포에서는 산소가 세포로, <b>이산화 탄소</b>가 혈액으로 이동해요."),
         );

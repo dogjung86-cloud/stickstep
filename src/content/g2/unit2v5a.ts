@@ -10,7 +10,7 @@ const systemLab = lab("g2u2SystemLab");
 const probeLab = lab("g2u2ProbeLab");
 const layerLab = lab("g2u2LayerLab");
 
-// ══ 1. 지구계와 지구 내부: 지구의 물을 다 모으면(도입) → 풍경을 다섯 영역으로 → 용어 → 조사 방법 견주기 → 비율 모형 → 용어 → 정리 → 문제 ══
+// ══ 1. 지구계와 지구 내부: 지구의 물을 다 모으면(도입) → 풍경을 다섯 영역으로 → 용어 → 조사 방법 비교하기 → 비율 모형 → 용어 → 정리 → 문제 ══
 export const L1: Step[] = lessonSteps(
   [
     opener({ title: "지구의 물을 다 모으면?", scene: "g2u2-sea", wait: "먼저 예측하고 물을 모아 보세요", cta: "지구를 이루는 것 찾기" }),

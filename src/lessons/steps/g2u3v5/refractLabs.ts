@@ -20,7 +20,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import { BEAM_GREEN, BEAM_WHITE, drawBeam, drawNormal, eyeProp, laserBody } from "../../../ui/lightKit";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvRange, bvTimers } from "../bio6/b6Lab";
-import { LX, lxAngle, lxCanvas, lxFrame, lxLog, lxPill, lxText, rad } from "./lxKit";
+import { DW, LX, lxAngle, lxCanvas, lxFrame, lxLog, lxPill, lxText, rad } from "./lxKit";
 
 interface S {
   title: string;
@@ -31,12 +31,70 @@ const N_WATER = 1.33;
 // ══════════════════════════════════════════════════════════
 // 1) 수조와 레이저 지시기
 // ══════════════════════════════════════════════════════════
+// 레이저 지시기는 수조 밖(뚜껑 위나 옆 유리 밖)에 둔다. 빛은 투명한 뚜껑이나 얇은 옆 유리를 지나 들어간다(평행한 얇은 판은 방향을 바꾸지 않는다).
+// 들어가는 각 0~70°가 모두 뚜껑 가운데 쪽이나 옆 유리 가운데 쪽으로 들어오도록(모서리를 비켜 8px쯤) 수면 높이와 닿는 점을 골랐다.
 const TX0 = 44;
 const TX1 = 302;
-const TY0 = 30;
-const TY1 = 208;
-const WY = 112; // 수면
-const HX = 160; // 빛이 수면에 닿는 점
+const TY0 = 46; // 수조 위 끝(뚜껑은 TY0 - 7 ~ TY0 + 1)
+const TY1 = 210;
+const WY = 107; // 수면
+const HX = 133; // 빛이 수면에 닿는 점(0°일 때 레이저가 오른쪽 위 알림 띠와 겹치지 않는 자리)
+const LID_T = TY0 - 7;
+/** 수면의 닿는 점에서 빛을 거슬러 올라가 수조에 들어오는 자리(뚜껑 윗면 또는 왼쪽 옆 유리의 바깥면). a: 들어가는 각(라디안). */
+function entry(a: number): { x: number; y: number } {
+  const dx = Math.sin(a);
+  const dy = Math.cos(a);
+  const xl = HX - dx * ((WY - LID_T) / dy);
+  if (xl >= TX0 - 6) return { x: xl, y: LID_T };
+  const wx = TX0 - 1.25;
+  return { x: wx, y: WY - dy * ((HX - wx) / dx) };
+}
+/** 레이저 지시기의 앞끝: 들어오는 자리에서 빛을 거슬러 물러나며, 몸통(두께 19)의 앞 모서리가 뚜껑과 유리 밖에 놓이는 첫 자리. */
+function laserFront(a: number, e: { x: number; y: number }): { x: number; y: number } {
+  const dx = Math.sin(a);
+  const dy = Math.cos(a);
+  const out = (x: number, y: number): boolean => x < TX0 - 7 || y < LID_T - 1;
+  for (let g = 3; g < 80; g++) {
+    const fx = e.x - dx * g;
+    const fy = e.y - dy * g;
+    if (out(fx + dy * 9.5, fy - dx * 9.5) && out(fx - dy * 9.5, fy + dx * 9.5)) return { x: fx, y: fy };
+  }
+  return { x: e.x - dx * 80, y: e.y - dy * 80 };
+}
+
+/** 두 각의 이름표(오른쪽 위 띠): 노란 점은 들어간 각, 파란 점은 꺾인 각. */
+function angleLegend(ctx: CanvasRenderingContext2D, y: number): void {
+  ctx.save();
+  ctx.font = LX.font(12.5);
+  const A = "들어간 각";
+  const B = "꺾인 각";
+  const wa = ctx.measureText(A).width;
+  const wb = ctx.measureText(B).width;
+  const ww = 20 + wa + 14 + 8 + wb + 12;
+  const x = DW - 10 - ww;
+  ctx.fillStyle = "rgba(11,21,36,.72)";
+  ctx.strokeStyle = "rgba(255,255,255,.16)";
+  ctx.beginPath();
+  ctx.roundRect(x, y, ww, 26, 13);
+  ctx.fill();
+  ctx.stroke();
+  const dot = (cx: number, rgb: string): void => {
+    ctx.fillStyle = `rgba(${rgb},1)`;
+    ctx.beginPath();
+    ctx.arc(cx, y + 13, 3.4, 0, Math.PI * 2);
+    ctx.fill();
+  };
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "left";
+  dot(x + 12, LX.amber);
+  ctx.fillStyle = LX.ink;
+  ctx.fillText(A, x + 20, y + 13.5);
+  const x2 = x + 20 + wa + 14;
+  dot(x2, LX.cyan);
+  ctx.fillStyle = LX.ink;
+  ctx.fillText(B, x2 + 8, y + 13.5);
+  ctx.restore();
+}
 
 type Prep = "milk" | "smoke" | "dark";
 
@@ -121,7 +179,7 @@ export const tankLab: StepRenderer = (host, step, api) => {
   function startMeasure(): void {
     host.dataset.lx = "measure";
     f.slot.setControls(range.el, log.el, rec);
-    f.say("이제 레이저를 기울여 <b>들어간 각</b>과 <b>꺾인 각</b>을 견줘요. 각을 바꿔 세 번 기록해 보세요.");
+    f.say("이제 레이저를 기울여 <b>들어간 각</b>과 <b>꺾인 각</b>을 비교해요. 각을 바꿔 세 번 기록해 보세요.");
     api.setCTA("각을 바꿔 세 번 재 보세요", { enabled: false });
   }
   rec.addEventListener("click", () => {
@@ -195,19 +253,22 @@ export const tankLab: StepRenderer = (host, step, api) => {
       ctx.fill();
     }
     ctx.restore();
-    lxText(ctx, "공기", TX0 + 24, WY - 16, { color: LX.dim });
-    lxText(ctx, "물", TX0 + 18, WY + 18, { color: LX.dim });
+    lxText(ctx, "공기", TX1 - 26, WY - 16, { color: LX.dim });
+    lxText(ctx, "물", TX1 - 20, WY + 18, { color: LX.dim });
 
     // 레이저와 빛
     const a = rad(th);
     const r = Math.asin(Math.sin(a) / N_WATER);
-    const lx0 = HX - Math.sin(a) * 74;
-    const ly0 = WY - Math.cos(a) * 74;
+    const ent = entry(a);
+    const front = laserFront(a, ent);
     const bx = HX + Math.tan(r) * (TY1 - WY);
     const dim = dark ? 1 : 0.32;
     if (on) {
       const flow = (t / 900) % 1;
-      if (smoke) drawBeam(ctx, [{ x: lx0, y: ly0 }, { x: HX, y: WY }], { rgb: BEAM_GREEN, flow, alpha: dim, glow: dark });
+      // 수조 밖의 공기에는 연기가 없어 빛의 길이 보이지 않는다. 연기로 채운 수조 안(뚜껑 아래, 유리 안쪽)에서만 그린다.
+      const inT = ent.y <= LID_T + 0.01 ? (TY0 + 1 - LID_T) / Math.cos(a) : 2.6 / Math.sin(a);
+      const vis = { x: ent.x + Math.sin(a) * inT, y: ent.y + Math.cos(a) * inT };
+      if (smoke) drawBeam(ctx, [vis, { x: HX, y: WY }], { rgb: BEAM_GREEN, flow, alpha: dim, glow: dark });
       if (milk) drawBeam(ctx, [{ x: HX, y: WY }, { x: bx, y: TY1 - 2 }], { rgb: BEAM_GREEN, flow, alpha: dim, glow: dark });
       // 빛이 닿은 점
       [[HX, WY], [bx, TY1 - 2]].forEach(([x, y]) => {
@@ -218,19 +279,21 @@ export const tankLab: StepRenderer = (host, step, api) => {
       });
     }
     if (phase !== "prep") {
-      drawNormal(ctx, HX, WY, -Math.PI / 2, 62);
+      drawNormal(ctx, HX, WY, -Math.PI / 2, WY - TY0 - 6);
       drawNormal(ctx, HX, WY, Math.PI / 2, 80);
-      lxAngle(ctx, HX, WY, 36, -Math.PI / 2, -Math.PI / 2 - a, LX.amber, `${th}°`, 56);
+      lxAngle(ctx, HX, WY, 34, -Math.PI / 2, -Math.PI / 2 - a, LX.amber, `${th}°`, 50);
       lxAngle(ctx, HX, WY, 36, Math.PI / 2, Math.PI / 2 - r, LX.cyan, `${Math.round((r * 180) / Math.PI)}°`, 58);
     }
-    laserBody(ctx, lx0, ly0, Math.atan2(WY - ly0, HX - lx0), { len: 40 });
+    laserBody(ctx, front.x, front.y, Math.atan2(Math.cos(a), Math.sin(a)), { len: 36 });
     // 밝은 방
     if (!dark) {
       ctx.fillStyle = "rgba(214,226,244,.20)";
       ctx.fillRect(0, 0, 346, 230);
     }
-    if (phase === "prep") lxPill(ctx, dark ? "어두운 방" : "밝은 방", dark ? LX.blue : LX.gold, true);
-    else lxPill(ctx, "들어간 각(노랑), 꺾인 각(파랑)", LX.gold, true, 196);
+    // 알림 띠는 오른쪽 위(재는 동안 꺾인 빛의 끝과 수조 바닥을 가리지 않게). 재는 동안은 두 각의 색 점 이름표로 짧게 써서
+    // 레이저를 거의 세웠을 때(뚜껑 위 가운데)와도 겹치지 않는다.
+    if (phase === "prep") lxPill(ctx, dark ? "어두운 방" : "밝은 방", dark ? LX.blue : LX.gold, true, 6);
+    else angleLegend(ctx, 6);
   });
 
   f.say("수조의 물에 레이저를 비춰요. 먼저 <b>레이저 쏘기</b>를 눌러 빛이 지나가는 길이 보이는지 확인해요.");

@@ -31,10 +31,24 @@ type Pick = "amp" | "freq" | "shape";
 const ANSWER: Record<Factor, Pick> = { power: "amp", bar: "freq", inst: "shape" };
 const PICK_NAME: Record<Pick, string> = { amp: "진폭", freq: "진동수", shape: "파동의 모양" };
 
-/** 파동의 모양(봉우리를 1로 맞춘다). 악기가 달라도 진폭과 진동수는 같게 견줄 수 있다. */
-const shape = (inst: 0 | 1, x: number): number => (inst === 0 ? Math.sin(x) : (Math.sin(x) + 0.55 * Math.sin(3 * x) + 0.3 * Math.sin(2 * x + 0.6)) / 1.42);
-const ampOf = (s: Sound): number => (s.power ? 30 : 13);
+/** 리코더 파형: 기본음에 두 배 진동하는 소리를 절반 세기로 더한 꼴(sin x + 0.5 sin 2x). 한 주기에 큰 봉우리 하나와 골 하나,
+ *  그 사이 진동 중심에 어깨 하나가 생긴다. 봉우리와 골의 높이가 같은 모양이라(점대칭) 최댓값으로 나누면 봉우리도 골도 기준 소리와 꼭 같은 높이다.
+ *  (예전 꼴은 한 주기에 봉우리가 셋이고 그 가운데 하나만 기준 높이에 닿아, 진폭이 줄고 진동이 늘어난 것처럼 읽혔다.) */
+const REC_B = 0.5;
+const REC_PEAK = (() => {
+  let m = 0;
+  for (let i = 0; i <= 3600; i++) {
+    const x = (i / 3600) * Math.PI * 2;
+    m = Math.max(m, Math.abs(Math.sin(x) + REC_B * Math.sin(2 * x)));
+  }
+  return m;
+})();
+/** 파동의 모양(봉우리를 1로 맞춘다). 악기가 달라도 진폭과 진동수는 같게 비교할 수 있다. */
+const shape = (inst: 0 | 1, x: number): number => (inst === 0 ? Math.sin(x) : (Math.sin(x) + REC_B * Math.sin(2 * x)) / REC_PEAK);
+const ampOf = (s: Sound): number => (s.power ? 30 : 15);
 const cyclesOf = (s: Sound): number => (s.bar ? 6 : 3);
+/** 화면 제목의 둘째 칸: 칼림바는 막대, 리코더는 기준 소리와 비교한 음의 높이('긴 막대'는 리코더에 맞지 않는다) */
+const pitchLabel = (s: Sound): string => (s.inst ? (s.bar ? "높은 음" : "같은 높이의 음") : LABEL.bar[s.bar]);
 
 export const soundLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
@@ -67,7 +81,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
       g.gain.exponentialRampToValueAtTime(0.0001, t0 + (snd.inst ? 0.9 : 0.7));
       g.connect(ac.destination);
       const base = snd.bar ? 784 : 392;
-      const tones = snd.inst ? [[1, 1], [3, 0.5], [2, 0.3]] : [[1, 1]];
+      const tones = snd.inst ? [[1, 1], [2, REC_B]] : [[1, 1]]; // 화면의 파형과 같은 섞임
       tones.forEach(([k, a]) => {
         const o = ac!.createOscillator();
         const og = ac!.createGain();
@@ -96,7 +110,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       show = 0;
       const n = FACTORS.filter((x) => cur[x] !== BASE[x]).length;
-      f.say(n === 0 ? "기준 소리와 같아졌어요. <b>하나</b>를 골라 바꿔 보세요." : n === 1 ? "하나를 바꿨어요. 두 화면을 비교하고 <b>비교해 기록하기</b>를 눌러요." : "지금은 <b>두 가지 넘게</b> 바뀌어 있어요. 기준 소리와 하나만 다르게 해 보세요.");
+      f.say(n === 0 ? "기준 소리와 같아졌어요. <b>하나</b>를 골라 바꿔 보세요." : n === 1 ? "하나를 바꿨어요. 두 화면을 살펴보고 <b>비교해 기록하기</b>를 눌러요." : "지금은 <b>두 가지 넘게</b> 바뀌어 있어요. 기준 소리와 하나만 다르게 해 보세요.");
     });
     return b;
   });
@@ -139,14 +153,14 @@ export const soundLab: StepRenderer = (host, step, api) => {
     }
     if (done.has(diff[0])) {
       haptic(HAPTIC.wrong);
-      f.say(`${FACTOR_NAME[diff[0]]}는 이미 기록했어요. <b>다른 것</b>을 바꿔 견줘 보세요.`);
+      f.say(`${FACTOR_NAME[diff[0]]}는 이미 기록했어요. <b>다른 것</b>을 바꿔 비교해 보세요.`);
       return;
     }
     asking = diff[0];
     host.dataset.lx = "pick";
     actRow.hidden = true;
     pickRow.hidden = false;
-    f.say("두 화면을 비교해요. 기준 소리와 비교해 파동의 <b>무엇이</b> 달라졌나요?");
+    f.say("두 화면을 살펴봐요. 기준 소리와 비교해 파동의 <b>무엇이</b> 달라졌나요?");
   });
 
   function choose(p: Pick): void {
@@ -156,7 +170,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.wrong);
       flash = 1;
       const same = p === "amp" ? "<b>진폭</b>(위아래로 흔들리는 폭)은" : p === "freq" ? "<b>진동수</b>(같은 시간 동안 진동한 횟수)는" : "<b>파동의 모양</b>은";
-      f.say(`두 화면에서 ${same} 같아요. 다른 곳을 다시 견줘 보세요.`);
+      f.say(`두 화면에서 ${same} 같아요. 다른 곳을 다시 비교해 보세요.`);
       return;
     }
     haptic(HAPTIC.correct);
@@ -175,7 +189,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
     }
     end = true;
     host.dataset.lx = "ask";
-    f.say("세 가지를 모두 견줬어요. 표를 보며 생각해 봐요.");
+    f.say("세 가지를 모두 비교했어요. 표를 보며 생각해 봐요.");
     tm.later(() => {
       f.slot.ask(
         "짧은 막대를 세게 튕기면, 긴 막대를 약하게 튕긴 기준 소리와 비교해 파동은 어떻게 달라질까요?",
@@ -196,11 +210,17 @@ export const soundLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
+  // 화면 하나: 제목 줄, 파형(가운데 점선은 진동 중심), 위아래 진폭 점선(노랑), 맨 아래 줄에 '한 번 진동' 괄호(분홍)와 '가로: 시간'.
+  // 두 화면의 점선 높이와 괄호 폭을 나란히 비교하면 진폭, 진동수, 모양 가운데 무엇이 달라졌는지 눈으로 가릴 수 있다.
+  const AMP_RGB = "255,196,90";
+  const PER = "#FF8FB1";
   const panel = (ctx: CanvasRenderingContext2D, y0: number, snd: Sound, title: string, k: number, hot: boolean): void => {
     const x0 = 14;
     const w = 318;
-    const h = 96;
-    const cy = y0 + h / 2 + 6;
+    const h = 106;
+    const cy = y0 + 54;
+    const xs = x0 + 8; // 파형이 시작하는 자리(진동 중심에서 올라가기 시작한다)
+    const span = w - 16;
     ctx.fillStyle = hot ? "rgba(255,107,107,.16)" : "rgba(9,16,30,.85)";
     ctx.strokeStyle = "rgba(160,190,235,.35)";
     ctx.lineWidth = 1.5;
@@ -208,13 +228,14 @@ export const soundLab: StepRenderer = (host, step, api) => {
     ctx.roundRect(x0, y0, w, h, 10);
     ctx.fill();
     ctx.stroke();
-    // 모눈과 가운데 선
+    // 세로 모눈: 기준 소리 반 주기마다(두 화면이 같다)
+    const refP = span / cyclesOf(BASE);
     ctx.strokeStyle = "rgba(160,190,235,.12)";
     ctx.lineWidth = 1;
     ctx.beginPath();
-    for (let x = x0 + 53; x < x0 + w; x += 53) {
+    for (let x = xs + refP / 2; x < x0 + w - 4; x += refP / 2) {
       ctx.moveTo(x, y0 + 22);
-      ctx.lineTo(x, y0 + h - 6);
+      ctx.lineTo(x, y0 + 86);
     }
     ctx.stroke();
     ctx.strokeStyle = "rgba(232,238,249,.4)";
@@ -224,33 +245,58 @@ export const soundLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(x0 + w - 6, cy);
     ctx.stroke();
     ctx.setLineDash([]);
-    // 파동
     const A = ampOf(snd);
     const n = cyclesOf(snd);
+    // 진폭 점선: 봉우리 높이와 골 깊이
+    ctx.strokeStyle = `rgba(${AMP_RGB},.75)`;
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([2, 4]);
+    ctx.beginPath();
+    [cy - A, cy + A].forEach((yy) => {
+      ctx.moveTo(x0 + 6, yy);
+      ctx.lineTo(x0 + w - 6, yy);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // 파동
     ctx.strokeStyle = "#63E6BE";
     ctx.lineWidth = 2.4;
     ctx.beginPath();
-    const xe = x0 + 8 + (w - 16) * k;
-    for (let x = x0 + 8; x <= xe; x += 1.5) {
-      const ph = ((x - x0 - 8) / (w - 16)) * n * Math.PI * 2;
+    const xe = xs + span * k;
+    for (let x = xs; x <= xe; x += 1.5) {
+      const ph = ((x - xs) / span) * n * Math.PI * 2;
       const yy = cy - A * shape(snd.inst, ph);
-      if (x === x0 + 8) ctx.moveTo(x, yy);
+      if (x === xs) ctx.moveTo(x, yy);
       else ctx.lineTo(x, yy);
     }
     ctx.stroke();
-    lxText(ctx, title, x0 + 10, y0 + 13, { align: "left", color: LX.ink });
-    lxText(ctx, "가로: 시간", x0 + w - 10, y0 + 13, { align: "right", color: LX.dim });
+    // '한 번 진동' 괄호: 파형이 한 번 오르내리는 데 걸리는 폭
+    const P = span / n;
+    const by = y0 + 95;
+    ctx.strokeStyle = PER;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(xs, by);
+    ctx.lineTo(xs + P, by);
+    ctx.moveTo(xs, by - 5);
+    ctx.lineTo(xs, by + 5);
+    ctx.moveTo(xs + P, by - 5);
+    ctx.lineTo(xs + P, by + 5);
+    ctx.stroke();
+    lxText(ctx, "한 번 진동", xs + P + 8, by, { align: "left", color: PER });
+    lxText(ctx, title, x0 + 10, y0 + 12, { align: "left", color: LX.ink });
+    lxText(ctx, "가로: 시간", x0 + w - 10, by, { align: "right", color: LX.dim });
   };
 
   st.run((ctx, _t, dt) => {
     show = Math.min(1, show + 0.05 * dt);
     flash = Math.max(0, flash - 0.03 * dt);
-    panel(ctx, 6, BASE, "기준 소리: 칼림바, 긴 막대, 약하게", 1, false);
-    panel(ctx, 124, cur, `바꾼 소리: ${LABEL.inst[cur.inst]}, ${LABEL.bar[cur.bar]}, ${LABEL.power[cur.power]}`, show, flash > 0.4);
+    panel(ctx, 3, BASE, "기준 소리: 칼림바, 긴 막대, 약하게", 1, false);
+    panel(ctx, 121, cur, `바꾼 소리: ${LABEL.inst[cur.inst]}, ${pitchLabel(cur)}, ${LABEL.power[cur.power]}`, show, flash > 0.4);
   });
 
   f.say("위는 <b>기준 소리</b>의 화면이에요. 세기, 막대, 악기 가운데 <b>하나만</b> 바꿔 아래 화면과 비교하고 기록해 보세요.");
-  api.setCTA("세 가지를 하나씩 견줘 보세요", { enabled: false });
+  api.setCTA("세 가지를 하나씩 비교해 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();
