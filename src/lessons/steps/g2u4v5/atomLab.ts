@@ -6,11 +6,17 @@
 //     수소 원자에 양성자, 중성자, 전자를 하나씩 더해 본다(한 번에 하나만 바꾸고 되돌아온다). 이름표가 바뀌는 것은 양성자뿐이다.
 //     이어서 책의 표대로 탄소(양성자 6)와 산소(양성자 8) 원자를 학생이 만든다. 전자 수를 맞추지 않으면 완성되지 않는다.
 
+// 원자 모형은 책과 같은 구름 모형이다(kit의 cloudAtom): 옅은 파란 구름 가운데 원자핵, 전자는 고리 없이 구름 안에 고르게 흩는다.
+// 원자의 종류 랩은 원자핵을 양성자(빨강, +)와 중성자(회색) 알갱이 묶음으로 그리고 +N은 묶음 아래에 적는다(중성자를 더해도 그림이 바뀐다).
+
 import { el } from "../../../core/dom";
 import type { StepRenderer } from "../../types";
-import { atomModel, bad, bvBtn, g4Lab, g4Svg, good, row, stepper, tap, txt, type G4Step } from "./kit";
+import { bad, bvBtn, cloudAtom, cloudDefs, g4Lab, g4Svg, good, nucleusCluster, row, stepper, tap, txt, type G4Step } from "./kit";
 
 const signed = (n: number): string => (n === 0 ? "0" : n > 0 ? `+${n}` : `−${Math.abs(n)}`);
+/** 구름 위에서도 읽히게 어두운 테를 두른 글(12px 이상). */
+const haloTxt = (x: number, y: number, s: string, size: number, fill: string): string =>
+  `<text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="800" fill="${fill}" stroke="#0E1A2C" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke">${s}</text>`;
 
 // 원자핵 속: 양성자(빨강, +)와 중성자(회색)를 가운데부터 돌려 놓는다
 function core(cx: number, cy: number, p: number, n: number): string {
@@ -56,16 +62,20 @@ export const g2u4NeutralLab: StepRenderer = (host, step, api) => {
   let opened = false;
   let busy = false;
 
+  // 원자: 가운데 (110, 110), 구름 반지름 68. 원자핵 속 확대: 가운데 (276, 76), 반지름 38.
+  const AX = 110;
+  const AY = 110;
   const draw = (): void => {
     const r = ROUNDS[idx];
     stage.set(`
-      ${atomModel(112, 108, r.p, e, { nr: 19, r0: 44, gap: 24, er: 7 })}
-      ${txt(112, 22, `${r.name} 원자`, { size: 14, fill: "#fff", weight: 800 })}
+      ${cloudDefs(stage.ns)}
+      ${cloudAtom({ cx: AX, cy: AY, R: 68, p: r.p, e, ns: stage.ns, nr: 19, er: 7, phase: -2.3 })}
+      ${txt(AX, 24, `${r.name} 원자`, { size: 14, fill: "#fff", weight: 800 })}
       ${
         opened
           ? core(276, 76, r.p, r.n) +
             txt(276, 22, "원자핵 속", { size: 12.5, fill: "#FFB4A8" }) +
-            `<line x1="131" y1="104" x2="238" y2="80" stroke="#E8836B" stroke-width="1" stroke-dasharray="3 4" opacity=".7"/>` +
+            `<line x1="${AX + 19}" y1="${AY - 4}" x2="239" y2="84" stroke="#E8836B" stroke-width="1" stroke-dasharray="3 4" opacity=".8"/>` +
             txt(276, 136, `양성자 (+) ${r.p}개`, { size: 12.5, fill: "#FFB4A8" }) +
             txt(276, 154, `중성자 ${r.n}개`, { size: 12.5, fill: "#C6D3E6" })
           : ""
@@ -143,11 +153,18 @@ export const g2u4KindLab: StepRenderer = (host, step, api) => {
   let busy = false;
   let flash = "";
 
+  // 원자: 가운데 (106, 118), 구름 반지름 72. 원자핵은 알갱이 묶음, +N은 묶음 바로 아래.
+  const KX = 106;
+  const KY = 118;
   const draw = (): void => {
     const [name, sym] = NAMES[p];
     const charge = p - e;
+    const nuc = nucleusCluster(KX, KY, p, n);
+    const core = nuc.svg + haloTxt(KX, KY + nuc.R + 15, `+${p}`, 13, "#FFB4A8");
+    const avoid = { x0: KX - 14, y0: KY + nuc.R + 3, x1: KX + 14, y1: KY + nuc.R + 18 };
     stage.set(`
-      ${atomModel(112, 118, p, e, { nr: 19, r0: 40, gap: 22, er: 6.5 })}
+      ${cloudDefs(stage.ns)}
+      ${cloudAtom({ cx: KX, cy: KY, R: 72, p, e, ns: stage.ns, er: 6.5, rIn: nuc.R + 11, phase: -2.1, core, avoid })}
       <g class="${flash}"><rect x="212" y="26" width="120" height="58" rx="14" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.2)"/>
       ${txt(272, 50, name, { size: 17, fill: "#fff", weight: 800 })}${txt(272, 72, `원소 기호 ${sym}`, { size: 12.5 })}</g>
       ${txt(222, 112, `양성자 ${p}개`, { anchor: "start", size: 13, fill: "#FFB4A8" })}

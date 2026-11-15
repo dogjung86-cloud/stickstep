@@ -4,23 +4,32 @@
 //   g2u4MoveLab 「파란색은 어느 극으로 갈까요?」
 //     학생이 정하는 것: 세 가지 일의 차례. 실패하는 길 둘: 거름종이를 적시지 않으면 전류가 흐르지 않아 방울이 그 자리에 머문다.
 //     전원을 켜지 않으면 방울이 제자리에서 둥글게 번지기만 한다. 제대로 하면 파란색이 (−)극 쪽으로 옮겨 간다.
+//     판정 뒤 결론 앞에 '이온의 눈'을 한 번 보인다: 파란 구리 이온(+)은 (−)극 쪽으로, 색이 없는 황산 이온(−)은 (+)극 쪽으로(책 그림 Ⅳ-12).
 //   g2u4PoleLab 「보라색도 같은 쪽으로 갈까요?」
 //     과망가니즈산 칼륨 수용액의 보라색은 (+)극 쪽으로 간다. '이온의 눈'으로 색이 없는 칼륨 이온이 반대쪽으로 가는 것을 보고, 두 극을 바꾸어 본다.
 // 무대는 위에서 내려다본 그림이다. 왼쪽 집게가 (−)극, 오른쪽 집게가 (+)극(극을 바꾸면 뒤집힌다).
+// 거름종이 띠는 페트리 접시 안에 들고, 두 집게가 접시 가장자리에서 띠의 양 끝을 문다(접시 반지름 90, 띠 168×52의 모서리가 접시 안).
 
 import type { StepRenderer } from "../../types";
 import { bvTween } from "../bio6/b6Lab";
 import { bad, bvBtn, cap, g4Lab, g4Svg, good, tap, txt, type G4Lab, type G4Step } from "./kit";
 
 const MX = 173;
-const MY = 92;
+const MY = 98;
+const DISH = 90; // 페트리 접시 반지름
+const PX0 = 89; // 거름종이 띠 왼쪽 끝
+const PX1 = 257; // 오른쪽 끝
+const CLIP_L = 86; // 집게(접시 가장자리)
+const CLIP_R = 260;
+const TRAVEL = 55; // 얼룩이 옮겨 가는 거리
 interface View {
   wet: boolean;
   on: boolean;
   flip: boolean; // 극을 바꿨는가(왼쪽이 (+)극)
   color: string;
   drop: null | { x: number; rx: number; ry: number; a: number };
-  ions?: { t: number }; // 이온의 눈
+  /** 이온의 눈: 색을 띠는 이온(color, 전하 sign)과 짝인 색 없는 이온(반대 전하)이 서로 반대쪽 극으로 간다. t는 0에서 1. */
+  ions?: { t: number; color: string; line: string; sign: "+" | "−" };
 }
 
 function scene(v: View): string {
@@ -31,28 +40,31 @@ function scene(v: View): string {
   const clip = (x: number, c: string): string => `<rect x="${x - 9}" y="${MY - 22}" width="18" height="44" rx="4" fill="#59667C" stroke="#2A3345" stroke-width="1.4"/><rect x="${x - 4}" y="${MY - 16}" width="8" height="32" rx="2" fill="${c}"/>`;
   let ions = "";
   if (v.ions) {
-    const t = v.ions.t;
-    const dir = v.flip ? -1 : 1;
-    // 과망가니즈산 이온(보라, −)은 (+)극 쪽으로, 칼륨 이온(색 없음, +)은 (−)극 쪽으로
+    const { t, color, line, sign } = v.ions;
+    const toMinus = v.flip ? 1 : -1; // 양이온이 가는 쪽((−)극 쪽): 극을 바꾸지 않았으면 왼쪽
+    const dir = sign === "+" ? toMinus : -toMinus;
+    const other = sign === "+" ? "−" : "+";
     for (let i = 0; i < 4; i++) {
       const y = MY - 15 + i * 10;
-      const ax = MX + dir * (10 + t * (44 + i * 6));
-      const kx = MX - dir * (10 + t * (44 + i * 6));
-      ions += `<circle cx="${ax}" cy="${y}" r="6.5" fill="#8E3FD0" stroke="#E2C8FF" stroke-width="1"/>${txt(ax, y + 4.3, "−", { size: 12.5, fill: "#fff", weight: 800 })}`;
-      ions += `<circle cx="${kx}" cy="${y}" r="6.5" fill="#EEF2F8" stroke="#8795AA" stroke-width="1"/>${txt(kx, y + 4.3, "+", { size: 12.5, fill: "#3A4760", weight: 800 })}`;
+      const d = 10 + t * (44 + i * 6);
+      const ax = MX + dir * d;
+      const kx = MX - dir * d;
+      ions += `<circle cx="${ax}" cy="${y}" r="6.5" fill="${color}" stroke="${line}" stroke-width="1"/>${txt(ax, y + 4.3, sign, { size: 12.5, fill: "#fff", weight: 800 })}`;
+      ions += `<circle cx="${kx}" cy="${y}" r="6.5" fill="#EEF2F8" stroke="#8795AA" stroke-width="1"/>${txt(kx, y + 4.3, other, { size: 12.5, fill: "#3A4760", weight: 800 })}`;
     }
   }
   return `
-    <circle cx="${MX}" cy="${MY}" r="74" fill="rgba(160,200,255,.05)" stroke="#9CB4D6" stroke-width="2"/>
-    <rect x="62" y="${MY - 26}" width="222" height="52" rx="5" fill="${v.wet ? "#C9D6E4" : "#F5F1E8"}" stroke="${v.wet ? "#8FA3BC" : "#CFC8B8"}" stroke-width="1.2"/>
+    <circle cx="${MX}" cy="${MY}" r="${DISH}" fill="rgba(160,200,255,.05)" stroke="#9CB4D6" stroke-width="2"/>
+    <circle cx="${MX}" cy="${MY}" r="${DISH - 5}" fill="none" stroke="#9CB4D6" stroke-opacity=".35" stroke-width="1"/>
+    <rect x="${PX0}" y="${MY - 26}" width="${PX1 - PX0}" height="52" rx="5" fill="${v.wet ? "#C9D6E4" : "#F5F1E8"}" stroke="${v.wet ? "#8FA3BC" : "#CFC8B8"}" stroke-width="1.2"/>
     ${v.drop ? `<ellipse cx="${v.drop.x}" cy="${MY}" rx="${v.drop.rx}" ry="${v.drop.ry}" fill="${v.color}" opacity="${v.ions ? 0.25 : v.drop.a}"/>` : ""}
     ${ions}
-    ${clip(58, lc)}${clip(288, rc)}
-    <path d="M58 ${MY + 22} L58 190 L128 190 M288 ${MY + 22} L288 190 L218 190" stroke="#3E4C63" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="128" y="174" width="90" height="42" rx="8" fill="#243248" stroke="#3E5273" stroke-width="1.4"/>
-    <circle cx="146" cy="195" r="6" fill="${v.on ? "#7CF29C" : "#4A5870"}"/>
-    ${txt(182, 200, v.on ? "12 V 켜짐" : "전원 꺼짐", { size: 12.5, fill: v.on ? "#DFF8E6" : "#9AA8BC" })}
-    ${txt(30, MY + 5, L, { size: 13, fill: lc, weight: 800 })}${txt(318, MY + 5, R, { size: 13, fill: rc, weight: 800 })}
+    ${clip(CLIP_L, lc)}${clip(CLIP_R, rc)}
+    <path d="M${CLIP_L} ${MY + 22} L${CLIP_L} 211 L133 211 M${CLIP_R} ${MY + 22} L${CLIP_R} 211 L213 211" stroke="#3E4C63" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="133" y="196" width="80" height="30" rx="8" fill="#243248" stroke="#3E5273" stroke-width="1.4"/>
+    <circle cx="148" cy="211" r="5.5" fill="${v.on ? "#7CF29C" : "#4A5870"}"/>
+    ${txt(181, 215.5, v.on ? "12 V 켜짐" : "전원 꺼짐", { size: 12.5, fill: v.on ? "#DFF8E6" : "#9AA8BC" })}
+    ${txt(44, MY + 5, L, { size: 13, fill: lc, weight: 800 })}${txt(302, MY + 5, R, { size: 13, fill: rc, weight: 800 })}
   `;
 }
 
@@ -72,8 +84,23 @@ export const g2u4MoveLab: StepRenderer = (host, step, api) => {
   let moved = false;
   const draw = (): void => {
     stage.set(scene(v));
-    label.textContent = v.wet ? "질산 칼륨 수용액으로 적신 거름종이" : "마른 거름종이";
-    host.dataset.g4Move = `${v.wet ? "w" : ""}${v.on ? "o" : ""}${v.drop ? "d" : ""}${moved ? "m" : ""}`;
+    label.textContent = v.ions ? "파랑 (+): 구리 이온  ·  흰색 (−): 황산 이온" : v.wet ? "질산 칼륨 수용액으로 적신 거름종이" : "마른 거름종이";
+    host.dataset.g4Move = `${v.wet ? "w" : ""}${v.on ? "o" : ""}${v.drop ? "d" : ""}${moved ? "m" : ""}${v.ions ? "e" : ""}`;
+  };
+  // 판정 뒤 결론 앞: 이온의 눈으로 한 번(파란 구리 이온은 (−)극 쪽, 색이 없는 황산 이온은 (+)극 쪽)
+  const eye = (): void => {
+    api.setCTA("이온을 지켜보세요", { enabled: false });
+    f.say("파란 <b>구리 이온</b>은 (−)극 쪽으로, 색이 없는 <b>황산 이온</b>은 (+)극 쪽으로 가요.");
+    bvTween(
+      tm,
+      2400,
+      (t) => {
+        v.ions = { t, color: "#2F7BE8", line: "#CFE4FF", sign: "+" };
+        draw();
+      },
+      () => tm.later(() => lab.finish("구리 이온은 <b>(+)전하</b>를 띠어서 <b>(−)극</b> 쪽으로 이동해요."), 700),
+      (x) => x,
+    );
   };
 
   const bWet = bvBtn("g2u4x-mv-wet", "질산 칼륨 수용액으로 적시기");
@@ -93,7 +120,7 @@ export const g2u4MoveLab: StepRenderer = (host, step, api) => {
         tm,
         3200,
         (t) => {
-          v.drop = { x: MX - 62 * t, rx: 13 + 12 * t, ry: 13 - 2 * t, a: 0.9 - 0.15 * t };
+          v.drop = { x: MX - TRAVEL * t, rx: 13 + 12 * t, ry: 13 - 2 * t, a: 0.9 - 0.15 * t };
           draw();
         },
         () => {
@@ -103,9 +130,7 @@ export const g2u4MoveLab: StepRenderer = (host, step, api) => {
           f.pips(1);
           f.say("파란색이 <b>(−)극 쪽</b>으로 옮겨 갔어요. 이 파란색은 <b>구리 이온</b>의 색이에요.");
           tm.later(() => {
-            lab.judge("(−)극으로 끌려간 <b>구리 이온</b>은 어떤 전하를 띠나요?", [{ t: "(+)전하", ok: true }, { t: "(−)전하" }, { t: "전하를 띠지 않는다" }], "서로 다른 전하끼리 <b>끌어당겨요</b>.", () =>
-              lab.finish("구리 이온은 <b>(+)전하</b>를 띠어서 <b>(−)극</b> 쪽으로 이동해요."),
-            );
+            lab.judge("(−)극으로 끌려간 <b>구리 이온</b>은 어떤 전하를 띠나요?", [{ t: "(+)전하", ok: true }, { t: "(−)전하" }, { t: "전하를 띠지 않는다" }], "서로 다른 전하끼리 <b>끌어당겨요</b>.", eye);
           }, 1500);
         },
         (x) => x,
@@ -198,7 +223,7 @@ export const g2u4PoleLab: StepRenderer = (host, step, api) => {
   let pos = 0; // 방울의 자리(−1: 왼쪽 끝, +1: 오른쪽 끝)
   const put = (): void => {
     const a = Math.abs(pos);
-    v.drop = { x: MX + 62 * pos, rx: 13 + 12 * a, ry: 13 - 2 * a, a: 0.9 - 0.15 * a };
+    v.drop = { x: MX + TRAVEL * pos, rx: 13 + 12 * a, ry: 13 - 2 * a, a: 0.9 - 0.15 * a };
   };
   const draw = (): void => {
     stage.set(scene(v));
@@ -251,14 +276,14 @@ export const g2u4PoleLab: StepRenderer = (host, step, api) => {
   bEye.addEventListener("click", () => {
     bEye.disabled = true;
     tap();
-    v.ions = { t: 0 };
+    v.ions = { t: 0, color: "#8E3FD0", line: "#E2C8FF", sign: "−" };
     label.textContent = "보라 (−): 과망가니즈산 이온  ·  흰색 (+): 칼륨 이온";
     f.say("보라색 (−) 입자와 색이 없는 (+) 입자가 서로 <b>반대쪽</b>으로 가요.");
     bvTween(
       tm,
       2400,
       (t) => {
-        v.ions = { t };
+        v.ions = { t, color: "#8E3FD0", line: "#E2C8FF", sign: "−" };
         draw();
       },
       () => {

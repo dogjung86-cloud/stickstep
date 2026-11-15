@@ -2,13 +2,14 @@
 //   g2u4MolLab 「원자를 붙이거나 떼면 같은 물질일까요?」
 //     책의 해 보기(여러 가지 분자의 구성 알아보기: 일산화 탄소와 이산화 탄소처럼 원자의 종류가 같은 분자의 성질은 같을까)와 본문(물 분자를 나누면 물의 성질이 사라진다).
 //     학생이 정하는 것: 탄소 원자에 산소 원자를 붙이고 떼는 일, 물 분자를 원자로 나누는 일. 손을 대면 이름과 성질 카드가 그 자리에서 바뀐다.
+//     판정(CO와 CO₂는 같은 물질일까요?)이 뜨면 두 분자를 나란히 놓고 아래에 성질을 한 줄씩 적는다. 물 분자는 굽은 모양(결합 각 104.5°).
 //   g2u4IonLab 「전자를 주고받으면 원자는 어떻게 될까요?」
 //     책의 그림(이온의 형성)과 본문(나트륨 원자는 전자를 잃고 염소 원자는 전자를 얻는다). 학생이 전자를 한 개씩 건넨다. 양쪽의 (+)와 (−) 개수가 그 자리에서 바뀐다.
-//     나트륨과 염소(전자 1개) → 마그네슘과 산소(전자 2개).
+//     나트륨과 염소(전자 1개) → 마그네슘과 산소(전자 2개). 원자와 이온은 책처럼 구름 모형이고, 구름의 크기는 실제 반지름의 비를 따른다.
 
 import type { StepRenderer } from "../../types";
 import { bvTween } from "../bio6/b6Lab";
-import { ball, bond, bvBtn, electron, electronSpots, g4Lab, g4Svg, good, nucleus, row, tap, txt, type G4Step } from "./kit";
+import { ball, bond, bvBtn, cloud, cloudDefs, cloudSpots, electron, g4Lab, g4Svg, good, nucleus, row, spotAngle, tap, txt, type G4Step } from "./kit";
 
 // ── 분자 ────────────────────────────────────────────────────────────
 const CX = 173;
@@ -31,7 +32,25 @@ export const g2u4MolLab: StepRenderer = (host, step, api) => {
 
   const card = (name: string, formula: string, prop: string): string =>
     `<rect x="48" y="150" width="250" height="62" rx="14" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>${txt(64, 175, name, { anchor: "start", size: 15, fill: "#fff", weight: 800 })}${txt(282, 175, formula, { anchor: "end", size: 15, fill: "#FFE58A", weight: 800 })}${txt(64, 198, prop, { anchor: "start", size: 13 })}`;
+  // 판정 때: 두 분자를 나란히(왼쪽 CO, 오른쪽 CO₂), 그 아래 카드에 이름, 화학식, 성질 한 줄
+  const halfCard = (x: number, name: string, formula: string, prop: string): string =>
+    `<rect x="${x}" y="128" width="162" height="76" rx="14" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>${txt(x + 13, 155, name, { anchor: "start", size: 14, fill: "#fff", weight: 800 })}${txt(x + 149, 155, formula, { anchor: "end", size: 14, fill: "#FFE58A", weight: 800 })}${txt(x + 13, 184, prop, { anchor: "start", size: 12.5 })}`;
+  const compare = (): string => {
+    const y = 70;
+    const k = 1.5;
+    const L = 42;
+    const co = bond(88 - L / 2, y, 88 + L / 2, y) + ball(88 + L / 2, y, "O", { k }) + ball(88 - L / 2, y, "C", { k });
+    const co2 = bond(258 - L, y, 258 + L, y) + ball(258 - L, y, "O", { k }) + ball(258 + L, y, "O", { k }) + ball(258, y, "C", { k });
+    return co + co2 + halfCard(8, "일산화 탄소", "CO", "마시면 위험한 기체") + halfCard(176, "이산화 탄소", "CO₂", "탄산음료 속 기체");
+  };
+  // 물 분자: 두 수소가 산소에서 좌우로 52.25°씩 벌어진다(결합 각 104.5°, SCI_GUIDE Ⅳ의 굽은형)
+  const HOH = (104.5 / 2) * (Math.PI / 180);
   const draw = (): void => {
+    if (act === 0) {
+      stage.set(compare());
+      host.dataset.g4O = "cmp";
+      return;
+    }
     if (act === 1) {
       const c = CARB[o];
       const art =
@@ -40,11 +59,13 @@ export const g2u4MolLab: StepRenderer = (host, step, api) => {
       host.dataset.g4O = String(o);
       return;
     }
-    const d = split ? 1 : 0;
-    const hx1 = CX - 30 - d * 46;
-    const hx2 = CX + 30 + d * 46;
-    const hy = CY + 24 + d * 6;
-    const art = (split ? "" : bond(CX, CY - 6, hx1, hy) + bond(CX, CY - 6, hx2, hy)) + ball(hx1, hy, "H", { k: 1.7 }) + ball(hx2, hy, "H", { k: 1.7 }) + ball(CX, CY - 6 - d * 26, "O", { k: 1.7 });
+    const oy = CY - 10;
+    const L = 40;
+    const hx = L * Math.sin(HOH);
+    const hy = oy + L * Math.cos(HOH);
+    const art = split
+      ? ball(CX - hx - 46, hy + 10, "H", { k: 1.7 }) + ball(CX + hx + 46, hy + 10, "H", { k: 1.7 }) + ball(CX, oy - 22, "O", { k: 1.7 })
+      : bond(CX, oy, CX - hx, hy) + bond(CX, oy, CX + hx, hy) + ball(CX - hx, hy, "H", { k: 1.7 }) + ball(CX + hx, hy, "H", { k: 1.7 }) + ball(CX, oy, "O", { k: 1.7 });
     stage.set(art + (split ? card("수소 원자 2개, 산소 원자 1개", "", "물의 성질이 사라졌어요") : card("물 분자", "H₂O", "마실 수 있는 물의 성질")));
     host.dataset.g4Split = split ? "1" : "0";
   };
@@ -65,6 +86,7 @@ export const g2u4MolLab: StepRenderer = (host, step, api) => {
     act = 0;
     f.pips(1);
     tm.later(() => {
+      draw(); // 두 분자를 나란히 놓고 묻는다
       lab.judge("CO와 CO₂는 원자의 종류가 같아요. <b>같은 물질</b>일까요?", [{ t: "개수가 달라 다른 물질이다", ok: true }, { t: "종류가 같아 같은 물질이다" }, { t: "이름만 다른 같은 물질이다" }], "산소 원자 하나 차이로 <b>성질이 달라졌어요</b>.", act2);
     }, 1100);
   };
@@ -109,52 +131,78 @@ export const g2u4MolLab: StepRenderer = (host, step, api) => {
 };
 
 // ── 이온 ────────────────────────────────────────────────────────────
+// 원자와 이온은 책의 그림(이온의 형성)처럼 구름 모형으로 그린다: 옅은 파란 구름 가운데 +N 원자핵, 전자는 고리 없이 구름 안에 고르게(개수는 정확히).
+// 구름의 반지름은 실제 반지름(pm)의 비를 따른다. 원자: Na 186, Cl 99, Mg 160, O 73. 이온: Na⁺ 102, Cl⁻ 181, Mg²⁺ 72, O²⁻ 140
+// (Na⁺와 Cl⁻는 캔 음료 랩의 염화 나트륨과 같은 값). 그래서 양이온은 제 원자보다 작고 음이온은 제 원자보다 크다(음이온 > 원자 > 양이온).
+// 한 판의 두 원자는 같은 배율이고, 판마다 가장 큰 구름이 반지름 RMAX가 되게 맞춘다. 전자가 건너가는 동안 두 구름의 크기도 함께 바뀐다
+// (마그네슘처럼 둘을 건넬 때 하나만 건넌 사이는 원자와 이온의 가운데 크기로 둔다).
+interface Side {
+  name: string;
+  sym: string;
+  p: number;
+  ion: string;
+  ionName: string;
+  atomPm: number;
+  ionPm: number;
+}
 interface Pair {
-  a: { name: string; sym: string; p: number; ion: string; ionName: string };
-  b: { name: string; sym: string; p: number; ion: string; ionName: string };
+  a: Side;
+  b: Side;
   n: number; // 건넬 전자 수
 }
 const PAIRS: Pair[] = [
-  { a: { name: "나트륨", sym: "Na", p: 11, ion: "Na⁺", ionName: "나트륨 이온" }, b: { name: "염소", sym: "Cl", p: 17, ion: "Cl⁻", ionName: "염화 이온" }, n: 1 },
-  { a: { name: "마그네슘", sym: "Mg", p: 12, ion: "Mg²⁺", ionName: "마그네슘 이온" }, b: { name: "산소", sym: "O", p: 8, ion: "O²⁻", ionName: "산화 이온" }, n: 2 },
+  { a: { name: "나트륨", sym: "Na", p: 11, ion: "Na⁺", ionName: "나트륨 이온", atomPm: 186, ionPm: 102 }, b: { name: "염소", sym: "Cl", p: 17, ion: "Cl⁻", ionName: "염화 이온", atomPm: 99, ionPm: 181 }, n: 1 },
+  { a: { name: "마그네슘", sym: "Mg", p: 12, ion: "Mg²⁺", ionName: "마그네슘 이온", atomPm: 160, ionPm: 72 }, b: { name: "산소", sym: "O", p: 8, ion: "O²⁻", ionName: "산화 이온", atomPm: 73, ionPm: 140 }, n: 2 },
 ];
-const AX = 88;
-const BX = 258;
-const AY = 92;
-const R0 = 25;
-const GAP = 12.5;
+const AX = 86;
+const BX = 260;
+const AY = 104;
+const RMAX = 74;
+const NR = 11; // 원자핵 반지름(+17도 12px 글자로 든다)
+const ER = 4.3; // 전자 반지름
 const signed = (n: number): string => (n === 0 ? "0" : n > 0 ? `+${n}` : `−${Math.abs(n)}`);
+/** 전자를 m개 건넨 뒤의 구름 반지름(px). */
+const radius = (pr: Pair, side: Side, m: number): number => {
+  const k = RMAX / Math.max(pr.a.atomPm, pr.a.ionPm, pr.b.atomPm, pr.b.ionPm);
+  return k * (side.atomPm + ((side.ionPm - side.atomPm) * m) / pr.n);
+};
+/** 전자 자리(구름 반지름 R 안에 e개). */
+const spotsOf = (cx: number, e: number, R: number, phase: number): { x: number; y: number }[] => cloudSpots(cx, AY, e, NR + ER + 3, R - ER - 3, phase);
+/** 방향 맞추기: 건너갈 전자들(주는 쪽의 마지막 번호들)은 오른쪽을, 받을 자리(받는 쪽의 새 번호들)는 왼쪽을 보게 phase를 정한다. */
+const phases = (pr: Pair): { a: number; b: number } => ({
+  a: -spotAngle(pr.a.p - (pr.n + 1) / 2, 0),
+  b: Math.PI - spotAngle(pr.b.p + (pr.n - 1) / 2, 0),
+});
 
 export const g2u4IonLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G4Step;
   const lab = g4Lab(host, api, s, { steps: 4, cls: "g2u4x-ion", wait: "전자를 건네 보세요" });
   const { f, tm } = lab;
-  const stage = g4Svg(lab, "전자를 주고받는 두 원자의 모형");
+  const stage = g4Svg(lab, "전자를 주고받는 두 원자의 구름 모형");
   let pi = 0;
   let moved = 0;
   let busy = false;
   let named = false;
 
-  const atom = (cx: number, p: number, e: number): string => {
-    const spots = electronSpots(cx, AY, e, R0, GAP);
-    const shells = Math.max(1, ...spots.map((x) => x.shell + 1));
-    let out = "";
-    for (let i = 0; i < shells; i++) out += `<circle cx="${cx}" cy="${AY}" r="${R0 + GAP * i}" fill="none" stroke="#3B5273" stroke-width="1.1" stroke-dasharray="3 4"/>`;
-    return out + nucleus(cx, AY, p, 13.5) + spots.map((x) => electron(x.x, x.y, 4.6)).join("");
-  };
-  const read = (cx: number, o: Pair["a"], e: number): string => {
+  /** 원자 하나: 구름, 원자핵, 전자(자리 목록을 그대로 받는다). */
+  const atom = (cx: number, p: number, R: number, spots: { x: number; y: number }[]): string =>
+    cloud(cx, AY, R, stage.ns) + nucleus(cx, AY, p, NR) + spots.map((x) => electron(x.x, x.y, ER)).join("");
+  const read = (cx: number, o: Side, e: number): string => {
     const c = o.p - e;
     const ion = named && c !== 0;
     return (
-      txt(cx, 20, ion ? `${o.ionName} ${o.ion}` : `${o.name} 원자`, { size: 13.5, fill: ion ? "#FFE58A" : "#fff", weight: 800 }) +
-      txt(cx, 176, `(+) ${o.p}개  (−) ${e}개`, { size: 12.5 }) +
-      txt(cx, 196, `전하의 합 ${signed(c)}`, { size: 13.5, fill: c === 0 ? "#7CF29C" : c > 0 ? "#FFB4A8" : "#A8CCFF", weight: 800 })
+      txt(cx, 19, ion ? `${o.ionName} ${o.ion}` : `${o.name} 원자`, { size: 13.5, fill: ion ? "#FFE58A" : "#fff", weight: 800 }) +
+      txt(cx, 201, `(+) ${o.p}개  (−) ${e}개`, { size: 12.5 }) +
+      txt(cx, 221, `전하의 합 ${signed(c)}`, { size: 13.5, fill: c === 0 ? "#7CF29C" : c > 0 ? "#FFB4A8" : "#A8CCFF", weight: 800 })
     );
   };
-  const draw = (fly = ""): void => {
+  const arrow = `<path d="M163 ${AY} L185 ${AY} M179 ${AY - 5} L185 ${AY} L179 ${AY + 5}" stroke="#6F8AB0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const draw = (): void => {
     const pr = PAIRS[pi];
-    stage.set(`${atom(AX, pr.a.p, pr.a.p - moved)}${atom(BX, pr.b.p, pr.b.p + moved)}${read(AX, pr.a, pr.a.p - moved)}${read(BX, pr.b, pr.b.p + moved)}${fly}
-      <path d="M150 ${AY} L196 ${AY} M188 ${AY - 7} L196 ${AY} L188 ${AY + 7}" stroke="#5A7396" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+    const ph = phases(pr);
+    const ra = radius(pr, pr.a, moved);
+    const rb = radius(pr, pr.b, moved);
+    stage.set(`${cloudDefs(stage.ns)}${atom(AX, pr.a.p, ra, spotsOf(AX, pr.a.p - moved, ra, ph.a))}${atom(BX, pr.b.p, rb, spotsOf(BX, pr.b.p + moved, rb, ph.b))}${read(AX, pr.a, pr.a.p - moved)}${read(BX, pr.b, pr.b.p + moved)}${arrow}`);
     host.dataset.g4Moved = String(moved);
     host.dataset.g4Round = String(pi);
   };
@@ -201,20 +249,36 @@ export const g2u4IonLab: StepRenderer = (host, step, api) => {
     if (busy || moved >= pr.n) return;
     busy = true;
     tap();
-    // 건너가는 전자: 왼쪽 원자의 맨 바깥 전자 자리에서 오른쪽 원자의 새 자리로
-    const from = electronSpots(AX, AY, pr.a.p - moved, R0, GAP).pop()!;
-    const to = electronSpots(BX, AY, pr.b.p + moved + 1, R0, GAP).pop()!;
+    // 건너가는 전자: 주는 쪽의 맨 바깥 전자(마지막 번호)가 구름을 떠나 받는 쪽 구름의 새 자리(맨 바깥)로 간다.
+    // 그동안 주는 쪽 구름은 줄고 받는 쪽 구름은 커지며, 남은 전자는 제 방향 그대로 반지름만 따라간다.
+    const ph = phases(pr);
+    const k0 = moved;
+    const ea0 = pr.a.p - k0;
+    const eb0 = pr.b.p + k0;
+    const ra0 = radius(pr, pr.a, k0);
+    const ra1 = radius(pr, pr.a, k0 + 1);
+    const rb0 = radius(pr, pr.b, k0);
+    const rb1 = radius(pr, pr.b, k0 + 1);
+    const a0 = spotsOf(AX, ea0, ra0, ph.a);
+    const a1 = spotsOf(AX, ea0 - 1, ra1, ph.a);
+    const b0 = spotsOf(BX, eb0, rb0, ph.b);
+    const b1 = spotsOf(BX, eb0 + 1, rb1, ph.b);
+    const from = a0[ea0 - 1];
+    const to = b1[eb0];
     moved += 1;
-    const base = moved;
+    const lerp = (p: { x: number; y: number }, q: { x: number; y: number }, t: number): { x: number; y: number } => ({ x: p.x + (q.x - p.x) * t, y: p.y + (q.y - p.y) * t });
     bvTween(
       tm,
-      700,
+      900,
       (t) => {
-        // 날아가는 동안에는 받는 쪽에 아직 더하지 않는다
+        // 날아가는 동안 주는 쪽 글은 이미 줄었고, 받는 쪽 글은 아직 더하지 않는다
         const x = from.x + (to.x - from.x) * t;
-        const y = from.y + (to.y - from.y) * t - Math.sin(t * Math.PI) * 26;
-        const pr2 = PAIRS[pi];
-        stage.set(`${atom(AX, pr2.a.p, pr2.a.p - base)}${atom(BX, pr2.b.p, pr2.b.p + base - 1)}${read(AX, pr2.a, pr2.a.p - base)}${read(BX, pr2.b, pr2.b.p + base - 1)}${electron(x, y, 5.4)}`);
+        const y = from.y + (to.y - from.y) * t - Math.sin(t * Math.PI) * 30;
+        const ra = ra0 + (ra1 - ra0) * t;
+        const rb = rb0 + (rb1 - rb0) * t;
+        const sa = a1.map((q, i) => lerp(a0[i], q, t));
+        const sb = b0.map((q, i) => lerp(q, b1[i], t));
+        stage.set(`${cloudDefs(stage.ns)}${atom(AX, pr.a.p, ra, sa)}${atom(BX, pr.b.p, rb, sb)}${read(AX, pr.a, ea0 - 1)}${read(BX, pr.b, eb0)}${arrow}${electron(x, y, 5.2)}`);
       },
       () => {
         good();
@@ -228,7 +292,7 @@ export const g2u4IonLab: StepRenderer = (host, step, api) => {
     tap();
     moved -= 1;
     draw();
-    f.say("전자를 되돌렸어요. (+)와 (−)의 개수를 다시 견주어 보세요.");
+    f.say("전자를 되돌렸어요. (+)와 (−)의 개수를 다시 비교해 보세요.");
   });
   label();
   f.slot.setControls(give, back);
