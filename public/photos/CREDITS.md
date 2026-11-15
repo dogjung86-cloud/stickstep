@@ -279,6 +279,10 @@ HMI 백색광 전면 프레임(2024-04-26, NASA/SDO — Public Domain)에서 하
 |---|---|---|---|
 | g1/ 행성, 지구, 달 | public/textures/ 질감(+ saturn_ring.png) | Solar System Scope Textures | CC BY 4.0 |
 | g1/ 태양 | public/photos/sun_whitelight.jpg | NOIRLab/NSF/AURA | CC BY 4.0 |
+| g2/ 태양 | public/photos/sun_whitelight.jpg | NOIRLab/NSF/AURA | CC BY 4.0 |
+| g2/ 안드로메다은하 | public/photos/star/andromeda.webp | Bill Schoening, Vanessa Harvey/REU program/NOIRLab/NSF/AURA | CC BY 4.0 |
+| g2/ 우리은하 파노라마 | public/photos/star/milkyway-pan.webp | ESO/S. Brunier | CC BY 4.0 |
+| g2/ 지구, 목성, 달, 명왕성, 우리은하 상상도 | public/photos/ earth_apollo17.jpg, jupiter.jpg, moon_lro.jpg, star/pluto.webp, star/milkyway-top.webp | NASA 등(위 표) | Public Domain (NASA) |
 
 ## 사회 Ⅷ 다양한 문화의 이해 (public/soc/culture — qa/fetch-soc8-culture.mjs + retry)
 - ganggang.webp — 강강술래 공연(유네스코 인류무형유산) | File:Korean.Dance-03.jpg | CC BY 2.0 | photoren

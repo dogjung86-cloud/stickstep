@@ -823,6 +823,16 @@ src/
 - 그림을 고치면 검산 메모의 사실 목록과 함께 고친다. 확인은 `DIST=<개발 번들> node qa/scifig-g1/check-app.mjs`.
   자세한 것은 `qa/scifig-g1/README.md`.
 
+### 중2 (46장)
+- 헤드리스 크롬에서 캔버스와 SVG로 그려 3배 해상도 webp로 굽는다. 그림 하나 = `qa/scifig-g2/figs/<단원>/<키>.mjs`와
+  검산 메모 `<키>.md`. 빌드 `node qa/scifig-g2/build.mjs [키 …]`가 `public/scifig/g2/<단원>/<키>.webp`와
+  `src/content/g2/sciFigG2.ts`의 그림 표를 쓴다.
+- 단원 글 파일은 `sciFig(키, alt, cap)`(개념 스텝 블록)과 `sciFigMore(키, alt, cap)`(정리 카드 more 안)로 싣고,
+  alt와 cap의 정본은 단원 글 파일이다. 그림은 관련 용어 카드 뒤에 한 줄씩 넣는다.
+- 글자는 설계 폭 340px에서 13.5px 이상(폰 표시 12px 이상), 라벨은 그 스텝까지 배운 말만. 확인은
+  `PORT=<포트> node qa/scifig-g2/check.mjs [캡처 폴더]`(폰과 넓은 화면에서 로드, 한 화면 높이, 페이지 오류).
+  규칙과 도구는 `qa/scifig-g2/README.md`가 정본.
+
 ## 사회 트랙 — 정본은 SOC_GUIDE.md
 - **사회(soc) 트랙 작업 전 반드시 SOC_GUIDE.md(사회 헌법)를 읽는다** — Ⅰ~Ⅶ 제작 관례·대륙 공통
   문법·일반사회 문법·중립 가드 전문이 그쪽으로 분리됐다(2026-07-21, 원문 그대로). 최소 요약:
