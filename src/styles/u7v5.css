@@ -49,9 +49,14 @@
 .u7x-ec-inset span { z-index: 1; }
 
 /* 달의 위상: 궤도의 여덟 자리 표시와 찍은 사진 여덟 칸 */
-.u7x-mpos { position: absolute; left: 0; top: 0; width: 11px; height: 11px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .6); pointer-events: none; will-change: transform; }
-.u7x-mpos.on { background: #FFE08A; border-color: #FFE08A; }
-.u7x-mpos.here { box-shadow: 0 0 0 4px rgba(255, 224, 138, .3); }
+/* 안 찍은 자리는 작은 빈 고리. 찍은 자리(.on)는 3D의 작은 달이 대신하고, 달이 선 자리(.cur)는 달 바깥의 큰 고리(.u7x-mhere)가 대신한다 */
+.u7x-mpos { position: absolute; left: 0; top: 0; width: 11px; height: 11px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .6); pointer-events: none; will-change: transform; transition: opacity .2s; }
+.u7x-mpos.on, .u7x-mpos.cur { opacity: 0; }
+.u7x-mhere {
+  position: absolute; left: 0; top: 0; width: 40px; height: 40px; border-radius: 50%; pointer-events: none; will-change: transform;
+  border: 2px solid rgba(255, 255, 255, .88); box-shadow: 0 0 8px rgba(150, 190, 255, .55); opacity: 0; transition: opacity .2s;
+}
+.u7x-mhere.on { opacity: 1; }
 .u7x-films { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
 .u7x-film { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
 .u7x-film-cv { display: block; width: 100%; aspect-ratio: 1; border-radius: 9px; background: var(--n100); border: 1.5px dashed var(--n300); }

@@ -212,76 +212,109 @@ export function zodiacQuizFig(): string {
 
 // ── L5 달의 위상 ─────────────────────────────────────────────
 
+/** 달 사진을 햇빛 받은 달처럼 조금 밝히는 필터(사진이 고르게 어두운 편이라 작은 원판에서 회색 덩이로 보인다). */
+const MOON_BRIGHT = `<filter id="spf-mbr" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope="1.3" intercept=".04"/><feFuncG type="linear" slope="1.3" intercept=".04"/><feFuncB type="linear" slope="1.28" intercept=".04"/></feComponentTransfer></filter>`;
+
+/** 실사 달(photos/moon_lro.jpg, 원판 가운데 (700, 700), 반지름 약 700px) 위에 위상의 어두운 부분을 덮는다.
+ *  e는 삭에서 반시계로 잰 각(도): 0 삭, 90 상현(오른쪽 반달), 180 망, 270 하현(왼쪽 반달). 위에서 내려다본 궤도의 달은
+ *  햇빛이 오른쪽에서 오면 늘 오른쪽 반이 밝으므로 e = 90으로 그린다. 그림 안에 MOON_BRIGHT 필터(spf-mbr)가 있어야 한다.
+ *  어두운 부분 = 밝은 부분의 나머지: 왼쪽 반원 + 명암 경계(가로 반지름 r|cos e|인 타원 호). 이우는 달은 좌우로 뒤집는다. */
+function phaseMoon(id: string, cx: number, cy: number, r: number, e: number): string {
+  const s = r / 694;
+  const deg = ((e % 360) + 360) % 360;
+  const a = deg <= 180 ? deg : 360 - deg;
+  const rx = r * Math.abs(Math.cos((a * Math.PI) / 180));
+  const f = (v: number): string => v.toFixed(2);
+  const dark =
+    a > 179.5
+      ? ""
+      : `<path d="M${f(cx)} ${f(cy - r)}A${r} ${r} 0 0 0 ${f(cx)} ${f(cy + r)}A${f(Math.max(0.01, rx))} ${r} 0 0 ${a < 90 ? 0 : 1} ${f(cx)} ${f(cy - r)}Z" fill="#0B1222" opacity=".9"${deg > 180 ? ` transform="translate(${f(2 * cx)} 0) scale(-1 1)"` : ""}/>`;
+  return `<clipPath id="${id}"><circle cx="${f(cx)}" cy="${f(cy)}" r="${r}"/></clipPath>
+    <g clip-path="url(#${id})"><image href="${photo("moon_lro.jpg")}" x="${f(cx - 700 * s)}" y="${f(cy - 700 * s)}" width="${f(1400 * s)}" height="${f(1400 * s)}" preserveAspectRatio="none" filter="url(#spf-mbr)"/>${dark}</g>
+    <circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" stroke="#5A6C8E" stroke-width="1" opacity=".8"/>`;
+}
+
 /** 달 공전 8위치(마무리 9 — 태양 빛 오른쪽).
  *  라벨 배치는 자체 구도: (라)=오른쪽(삭)·(가)=위(상현)·(나)=왼쪽(망)·(다)=아래(하현).
- *  발문의 좌우 반전 함정((다) 하현을 "오른쪽이 밝다"로)과 짝. */
+ *  발문의 좌우 반전 함정((다) 하현을 "오른쪽이 밝다"로)과 짝.
+ *  달은 실사 위에 햇빛 쪽(오른쪽) 반만 밝게, 궤도에는 도는 방향(시계 반대) 화살 둘(보기 "(라)에서 (가)를 지나…"가 방향을 전제한다).
+ *  글자는 설계 10.5px 이상(폰 약 13px). */
 export function moonOrbitFig(): string {
   const cx = 140;
   const cy = 86;
   const R = 56;
+  const RY = R * 0.86;
   let moons = "";
   const labels: Record<number, string> = { 0: "(라)", 2: "(가)", 4: "(나)", 6: "(다)" };
   for (let i = 0; i < 8; i++) {
     const a = (i / 8) * Math.PI * 2;
     const x = cx + Math.cos(a) * R;
-    const y = cy - Math.sin(a) * R * 0.86;
-    // 밝은 반구는 항상 태양(오른쪽) 쪽
-    moons += `<g>
-      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#2E3A52"/>
-      <path d="M${x.toFixed(1)} ${(y - 8).toFixed(1)}a8 8 0 0 1 0 16z" fill="#EDE2BE"/>
-      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" stroke="#5A6C8E" stroke-width="1"/>
-    </g>`;
+    const y = cy - Math.sin(a) * RY;
+    moons += phaseMoon(`spf-mo${i}`, x, y, 8, 90); // 밝은 반구는 항상 태양(오른쪽) 쪽
     const lab = labels[i];
     if (lab) {
       const lx = cx + Math.cos(a) * (R + 24);
-      const ly = cy - Math.sin(a) * (R * 0.86 + 22);
+      const ly = cy - Math.sin(a) * (RY + 22);
       moons += `<text x="${lx.toFixed(1)}" y="${(ly + 4).toFixed(1)}" fill="#DCE8FF" font-size="11" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">${lab}</text>`;
     }
   }
+  // 도는 방향 화살(궤도 위, 두 달 사이): 각 a0에서 a1(도)까지, 끝에 화살촉
+  const at = (d: number): [number, number] => [cx + Math.cos((d * Math.PI) / 180) * R, cy - Math.sin((d * Math.PI) / 180) * RY];
+  const arrow = (a0: number, a1: number): string => {
+    let d = "";
+    for (let t = a0; t <= a1 + 0.01; t += 3) {
+      const [x, y] = at(t);
+      d += `${d ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+    }
+    const r1 = (a1 * Math.PI) / 180;
+    const tx = -R * Math.sin(r1);
+    const ty = -RY * Math.cos(r1);
+    const tl = Math.hypot(tx, ty);
+    const ux = tx / tl;
+    const uy = ty / tl;
+    const [ex, ey] = at(a1);
+    const tip = `${(ex + ux * 5).toFixed(1)} ${(ey + uy * 5).toFixed(1)}`;
+    const b1 = `${(ex - ux * 2 - uy * 4.2).toFixed(1)} ${(ey - uy * 2 + ux * 4.2).toFixed(1)}`;
+    const b2 = `${(ex - ux * 2 + uy * 4.2).toFixed(1)} ${(ey - uy * 2 - ux * 4.2).toFixed(1)}`;
+    return `<path d="${d}" stroke="#9DBBF0" stroke-width="2.2"/><path d="M${tip}L${b1}L${b2}z" fill="#9DBBF0"/>`;
+  };
   return panel(
     280,
     176,
     `
-    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R * 0.86}" stroke="#3D5378" stroke-width="1.4" stroke-dasharray="4 5"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${RY}" stroke="#3D5378" stroke-width="1.4" stroke-dasharray="4 5"/>
+    ${arrow(102, 121)}${arrow(282, 301)}
     ${moons}
     <circle cx="${cx}" cy="${cy}" r="11" fill="url(#spf-ea2)"/>
     <path d="M${cx - 4} ${cy - 2}q3-3 6-1t5 0" stroke="#7CA65A" stroke-width="1.6"/>
-    <text x="${cx}" y="${cy + 26}" fill="#BFD8FF" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">지구</text>
+    <text x="${cx}" y="${cy + 26}" fill="#BFD8FF" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">지구</text>
     <g stroke="#FFC24E" stroke-width="3">
       <path d="M268 62l-14 0M268 86l-14 0M268 110l-14 0"/>
     </g>
     <path d="M254 62l6-3.4v6.8zM254 86l6-3.4v6.8zM254 110l6-3.4v6.8z" fill="#FFC24E"/>
-    <text x="258" y="132" fill="#FFD79E" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">태양 빛</text>
+    <text x="258" y="132" fill="#FFD79E" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">태양 빛</text>
   `,
     `<radialGradient id="spf-ea2" cx=".35" cy=".3" r=".8">
       <stop offset="0" stop-color="#9FC6F4"/><stop offset="1" stop-color="#2E6FD4"/>
-    </radialGradient>`,
+    </radialGradient>${MOON_BRIGHT}`,
   );
 }
 
-/** 위상 5모양(①~⑤) — 상현 찾기 퀴즈. */
+/** 위상 5모양(①~⑤) — 상현 찾기 퀴즈. 실사 달 위에 어두운 부분을 덮는다(②는 초승달: 오른쪽 가장자리만 밝다).
+ *  예전에는 ②의 안쪽 호를 반지름 15의 원호로 써서 브라우저가 반지름을 20으로 키웠고, 두 호가 같은 반원을 지나 ①과 같은 빈 원이었다. */
 export function fivePhasesFig(): string {
-  const moon = (x: number, kind: string): string => {
-    const base = `<circle cx="${x}" cy="60" r="20" fill="#222E46" stroke="#5A6C8E" stroke-width="1.2"/>`;
-    const lit = "#EDE2BE";
-    if (kind === "new") return base;
-    if (kind === "crescent")
-      return `${base}<path d="M${x} 40a20 20 0 0 1 0 40 15 15 0 0 0 0-40z" fill="${lit}"/>`;
-    if (kind === "first") return `${base}<path d="M${x} 40a20 20 0 0 1 0 40z" fill="${lit}"/>`;
-    if (kind === "full") return `<circle cx="${x}" cy="60" r="20" fill="${lit}" stroke="#B8AB84" stroke-width="1.2"/>`;
-    return `${base}<path d="M${x} 40a20 20 0 0 0 0 40z" fill="${lit}"/>`; // last: 왼쪽 밝음
-  };
-  const kinds = ["new", "crescent", "first", "full", "last"];
+  const kinds = [0, 50, 90, 180, 270]; // 삭, 초승달, 상현달, 망, 하현달
   const nums = ["①", "②", "③", "④", "⑤"];
   return panel(
     280,
     116,
     kinds
-      .map((k, i) => {
+      .map((e, i) => {
         const x = 36 + i * 52;
-        return `${moon(x, k)}<text x="${x}" y="102" fill="#BFD4F2" font-size="12" text-anchor="middle" font-family="Pretendard, sans-serif">${nums[i]}</text>`;
+        return `${phaseMoon(`spf-5p${i}`, x, 60, 20, e)}<text x="${x}" y="102" fill="#BFD4F2" font-size="12" text-anchor="middle" font-family="Pretendard, sans-serif">${nums[i]}</text>`;
       })
       .join(""),
+    MOON_BRIGHT,
   );
 }
 
@@ -551,17 +584,24 @@ export function spaceMiniArt(key: string): string {
         <ellipse cx="72" cy="48" rx="2.6" ry="4" fill="#060A14" opacity=".85"/>`,
         sunG + earthG + moonG,
       );
-    case "clockmap": // 위상 지도(궤도 위 4위상)
+    case "clockmap": {
+      // 위상 지도(그림 Ⅶ-9의 두 고리): 안쪽 궤도 위의 달은 어느 자리에서나 햇빛 쪽(오른쪽) 반이 밝고,
+      // 바깥의 작은 원이 그 자리에서 지구에서 보이는 모양이다(삭은 안 보임, 위 상현은 오른쪽, 왼쪽 망은 둥글게, 아래 하현은 왼쪽).
+      // 예전에는 궤도 위에 보이는 모양을 그대로 얹어 망 자리 달이 통째로, 하현 자리 달이 태양 반대쪽이 밝았다(2026-11-15 그래픽 감사).
+      const half = (x: number, y: number, side: "R" | "L"): string =>
+        `<circle cx="${x}" cy="${y}" r="5.5" fill="#222E46" stroke="#5A6C8E" stroke-width=".9"/><path d="M${x} ${y - 5.5}a5.5 5.5 0 0 ${side === "R" ? 1 : 0} 0 11z" fill="url(#sma-mo)"/>`;
       return wrap(
-        `<ellipse cx="48" cy="48" rx="32" ry="26" stroke="#3D5378" stroke-width="1.2" stroke-dasharray="3 4"/>
-        <circle cx="48" cy="48" r="7" fill="url(#sma-ea)"/>
-        <circle cx="80" cy="48" r="6" fill="#222E46" stroke="#5A6C8E" stroke-width="1"/>
-        <circle cx="16" cy="48" r="6" fill="url(#sma-mo)"/>
-        <g><circle cx="48" cy="22" r="6" fill="#222E46"/><path d="M48 16a6 6 0 0 1 0 12z" fill="url(#sma-mo)"/></g>
-        <g><circle cx="48" cy="74" r="6" fill="#222E46"/><path d="M48 68a6 6 0 0 0 0 12z" fill="url(#sma-mo)"/></g>
+        `<ellipse cx="44" cy="48" rx="20" ry="18" stroke="#3D5378" stroke-width="1.2" stroke-dasharray="3 3.4"/>
+        <circle cx="44" cy="48" r="6.5" fill="url(#sma-ea)"/>
+        ${half(64, 48, "R")}${half(44, 30, "R")}${half(24, 48, "R")}${half(44, 66, "R")}
+        <circle cx="79" cy="48" r="5.5" fill="#222E46" stroke="#7B8DB0" stroke-width="1" stroke-dasharray="2 1.6"/>
+        ${half(44, 13, "R")}
+        <circle cx="9.5" cy="48" r="5.5" fill="url(#sma-mo)"/>
+        ${half(44, 83, "L")}
         <path d="M94 40l-6 8 6 8" stroke="#FFC24E" stroke-width="2" fill="none"/>`,
         earthG + moonG,
       );
+    }
     case "redmoon": // 개기월식 붉은 달
       return wrap(
         `<circle cx="48" cy="48" r="22" fill="url(#sma-red)"/>
