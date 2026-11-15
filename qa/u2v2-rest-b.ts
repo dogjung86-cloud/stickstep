@@ -5,6 +5,7 @@
 //             L4 mcq 11/multi 1 · diff 4/6/2 · 시각 9 · bogi 1
 import type { ExamItem } from "../src/content/exams/types";
 import { svgTable, dbox, slideStepsFig, bioFieldPairFig, bioCellRolesExamFig, vesselCrossFig } from "../src/ui/examFigures";
+import { slideBubbleFig, slidePairFig, cellTrioExamFig, cellShapeCardsArt } from "../src/ui/bio6Figures";
 
 const IMG_BASE = "";
 /** exam/u2 발주 실사. loading=lazy 금지(사고 #14). */
@@ -42,8 +43,8 @@ export const POOL_U2V2_REST_B: ExamItem[] = [
     lessonId: L3,
     type: "mcq",
     diff: 1,
-    prompt: "사진은 만들어 놓은 표본을 위에서 본 모습이에요. 덮개 유리 아래에 동그란 방울이 남아 있어요. 이 표본을 관찰할 때 생길 수 있는 문제로 가장 알맞은 것은?",
-    figure: ximg("coverslip-bubble.webp", "받침 유리 위에 덮개 유리가 덮여 있고 그 아래 가운데에 동그란 방울이 갇혀 있는 사진"),
+    prompt: "그림은 만들어 놓은 표본을 위에서 본 모습이에요. 덮개 유리 아래에 동그란 방울이 남아 있어요. 이 표본을 관찰할 때 생길 수 있는 문제로 가장 알맞은 것은?",
+    figure: slideBubbleFig("받침 유리 위에 덮개 유리가 덮여 있고 그 아래에 동그란 방울이 갇혀 있는 그림"),
     options: [
       "테두리가 진한 동그란 방울이 세포와 헷갈리고, 그 아래의 세포도 가려져요",
       "방울 때문에 배율이 저절로 낮아져 세포가 작게 보여요",
@@ -99,11 +100,8 @@ export const POOL_U2V2_REST_B: ExamItem[] = [
     lessonId: L3,
     type: "mcq",
     diff: 1,
-    prompt: "사진은 같은 시료로 만든 두 표본이에요. <b>(나)</b>와 같은 표본이 만들어진 까닭으로 가장 알맞은 것은?",
-    figure: xpair(
-      ["coverslip-clean.webp", "위에서 본 받침 유리와 덮개 유리. 사이에 아무것도 갇혀 있지 않다"],
-      ["coverslip-bubble.webp", "위에서 본 받침 유리와 덮개 유리. 그 아래 가운데에 동그란 방울이 갇혀 있다"],
-    ),
+    prompt: "그림은 같은 시료로 만든 두 표본이에요. <b>(나)</b>와 같은 표본이 만들어진 까닭으로 가장 알맞은 것은?",
+    figure: slidePairFig("위에서 본 받침 유리와 덮개 유리. 사이에 아무것도 갇혀 있지 않다", "위에서 본 받침 유리와 덮개 유리. 그 아래에 동그란 방울이 갇혀 있다"),
     options: [
       "덮개 유리를 한 번에 툭 내려놓아 사이에 공기가 갇혔기 때문이에요",
       "염색액을 너무 진하게 써서 색이 뭉쳤기 때문이에요",
@@ -300,11 +298,8 @@ export const POOL_U2V2_REST_B: ExamItem[] = [
     lessonId: L4,
     type: "mcq",
     diff: 1,
-    prompt: "사진은 한 동물의 몸에서 관찰한 세 가지 세포예요. 이 가운데 몸의 표면을 덮어 보호하는 일에 알맞은 세포와 그 까닭으로 옳은 것은?",
-    figure: ximg(
-      "cell-roles-triptych.webp",
-      "가늘고 길게 뻗은 세포, 가운데가 오목한 붉은 원반 여러 개, 납작한 세포가 이어 붙은 판을 나란히 나타낸 사진",
-    ),
+    prompt: "그림은 한 동물의 몸에서 관찰한 세 가지 세포예요. 이 가운데 몸의 표면을 덮어 보호하는 일에 알맞은 세포와 그 까닭으로 옳은 것은?",
+    figure: cellTrioExamFig("가늘고 길게 뻗은 세포, 가운데가 오목한 붉은 원반 여러 개, 납작한 세포가 이어 붙은 판을 나란히 나타낸 그림"),
     options: [
       "납작하게 이어 붙은 세포 · 적은 수로도 넓은 면을 빈틈없이 가릴 수 있기 때문이에요",
       "가늘고 길게 뻗은 세포 · 길이가 길어 넓은 면을 한 번에 가릴 수 있기 때문이에요",
@@ -363,12 +358,12 @@ export const POOL_U2V2_REST_B: ExamItem[] = [
     type: "mcq",
     diff: 2,
     prompt: "그림은 세포의 모양 다섯 가지를 카드로 늘어놓은 것이에요. 좁은 통로를 흐르며 산소를 실어 나르는 일에 가장 알맞은 모양은?",
-    figure: cellShapeCardsFig([
-      { photo: "figs/cell-brick.webp", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
-      { photo: "figs/cell-epithelial.webp", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
-      { photo: "figs/cell-ball.webp", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
-      { photo: "figs/cell-rbc.webp", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
-      { photo: "figs/cell-nerve.webp", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
+    figure: cellShapeCardsArt([
+      { kind: "brick", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
+      { kind: "epi", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
+      { kind: "ball", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
+      { kind: "rbc", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
+      { kind: "nerve", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
     ]),
     options: ["①", "②", "③", "④", "⑤"],
     answer: 3,
@@ -504,11 +499,8 @@ export const POOL_U2V2_REST_B: ExamItem[] = [
     lessonId: L4,
     type: "multi",
     diff: 3,
-    prompt: "사진은 한 동물의 몸에서 관찰한 세 가지 세포예요. 이 사진에 대한 설명으로 옳은 것을 <b>모두</b> 골라 보세요.",
-    figure: ximg(
-      "cell-roles-triptych.webp",
-      "가늘고 길게 뻗은 세포, 가운데가 오목한 붉은 원반 여러 개, 납작한 세포가 이어 붙은 판을 나란히 나타낸 사진",
-    ),
+    prompt: "그림은 한 동물의 몸에서 관찰한 세 가지 세포예요. 이 그림에 대한 설명으로 옳은 것을 <b>모두</b> 골라 보세요.",
+    figure: cellTrioExamFig("가늘고 길게 뻗은 세포, 가운데가 오목한 붉은 원반 여러 개, 납작한 세포가 이어 붙은 판을 나란히 나타낸 그림"),
     options: [
       "세 세포는 모두 세포막으로 둘러싸여 있어요",
       "한 몸 안에서 얻은 세포인데도 생김새가 서로 크게 달라요",

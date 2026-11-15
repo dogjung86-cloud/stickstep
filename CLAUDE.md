@@ -758,7 +758,7 @@ src/
   경로를 가리킨다.** 그 브랜치를 합칠 때는 만화 블록을 main의 `comic(comicStory(...))` 한 줄로 바꿔야
   한다. 그대로 합치면 그림이 뜨지 않고 폴백 스틱맨만 보인다(오류가 나지 않아 눈에 안 띈다).
 - **프리미엄 레슨의 문제 그림**: u2l7 거북 문제는 만화 장면 파일의 `extras()`가 뽑는 인물 없는 두 섬 그림
-  (`sketch/comics/u2l7/island-a.svg`·`island-b.svg`)을 `ppair`로 쓴다. 2컷의 구도를 바꿀 때 함께 본다.
+  (`sketch/comics/u2l7/island-a.svg`·`island-b.svg`)을 `ppair`로 쓴다. 2026-11-15부터 이 두 그림은 2컷과 따로 그린다(두 섬에 목 길이가 섞인 거북 셋, 먹이만 다름. 오랜 시간 뒤의 결과를 먼저 보이면 그림이 답을 알려 준다).
 
 ## 만화 컷 이미지 발주 (codex auth → ChatGPT 이미지 생성)
 - **중1 과학 만화 열 편은 2026-11-11에 코드 그림으로 바뀌었다(위 섹션).** 아래 발주 절차와 편별 기록 가운데 중1 과학
@@ -812,7 +812,7 @@ src/
   첫 블록의 스틱맨 비유 컷과는 따로다. 발주나 이미지 생성 없이 코드로 그려 webp로 굽고, 학년마다 도구가 따로다
   (중1 `qa/scifig-g1`, 중2 `qa/scifig-g2`). 그림에 들어간 실사의 출처는 `public/photos/CREDITS.md`의 `public/scifig/` 절.
 
-### 중1 (32장)
+### 중1 (35장)
 - 그리는 코드 `qa/scifig-g1/figs/<키>.mjs`(+ 검산 메모 `<키>.md`, 공용 `lib/cell`·`phasecurve`·`syringe`),
   빌드 `node qa/scifig-g1/build.mjs [키...]` → `public/scifig/g1/<단원>/<키>.webp`(생성물). 키는 `u<단원>l<레슨>f<번호>`.
 - 앱은 `src/content/sciFigG1.ts` 하나로 싣는다: 표 FIGS(크기, 대체 글, 캡션의 정본), 개념은 `sciFig(키)` 블록,

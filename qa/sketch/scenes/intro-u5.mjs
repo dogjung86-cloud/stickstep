@@ -122,21 +122,24 @@ export function sledBase() {
 }
 
 /* ══════════ 5. 빈 페트병 (u5l6) ══════════ */
-export const BTL = { water: 300, down: 118, hit: [380, 120, 220, 300] };
+// 빈 페트병은 아주 가벼워 거의 다 물 위로 뜬다(바닥 쪽 12px만 잠김, 2026-11-15 그래픽 손질: 예전에는 3분의 1쯤 잠겨 있었다).
+// down: 꾹 눌렀을 때 내려가는 거리(뚜껑까지 물에 잠기게). Y: 병을 그리는 높이를 예전보다 올린 양.
+export const BTL = { water: 300, down: 178, hit: [380, 96, 220, 262] }; // hit: 누르는 자리(병이 올라온 만큼 위로)
 export function bottleBase() {
   const sk = new Sk(W, H, { id: "u5p" });
   ground(sk, 510);
   drawFigure(sk, 170, 506, 0.56, pose({ elR: [80, -290], haR: [170, -330] }), { ...TEACHER });
-  // 병(앱이 위아래로 옮긴다): 물 위에 조금 잠긴 채 떠 있다
+  // 병(앱이 위아래로 옮긴다): 바닥만 조금 잠긴 채 물 위에 떠 있다
+  const Y = -50;
   g(sk, "opn-u5-btl", () => {
     const cx = 490;
-    const body = [...curve([[cx - 18, 196], [cx - 20, 214], [cx - 46, 240], [cx - 46, 352], [cx - 36, 362], [cx + 36, 362], [cx + 46, 352], [cx + 46, 240], [cx + 20, 214], [cx + 18, 196]], false, 4), ...dense([[cx + 18, 196], [cx - 18, 196]], 4)];
+    const body = [...curve([[cx - 18, 196 + Y], [cx - 20, 214 + Y], [cx - 46, 240 + Y], [cx - 46, 352 + Y], [cx - 36, 362 + Y], [cx + 36, 362 + Y], [cx + 46, 352 + Y], [cx + 46, 240 + Y], [cx + 20, 214 + Y], [cx + 18, 196 + Y]], false, 4), ...dense([[cx + 18, 196 + Y], [cx - 18, 196 + Y]], 4)];
     sk.fill(body, "#EAF6FF", { dx: 0, dy: 0, wob: 0.5, seed: 141 });
     sk.ink(body, { w: 8, wob: 0.7, seed: 142 });
-    const cap = rrect(cx - 22, 176, 44, 22, 6);
+    const cap = rrect(cx - 22, 176 + Y, 44, 22, 6);
     sk.fill(cap, C.blue, { dx: 0, dy: 0, wob: 0.3, seed: 143 });
     sk.ink(cap, { w: 6, wob: 0.4, seed: 144 });
-    sk.ink(dense([[cx - 30, 252], [cx - 30, 330]]), { w: 6, color: "#FFFFFF", wob: 0.3, seed: 145 });
+    sk.ink(dense([[cx - 30, 252 + Y], [cx - 30, 330 + Y]]), { w: 6, color: "#FFFFFF", wob: 0.3, seed: 145 });
   });
   // 물(병 앞에 반투명하게 덮는다)과 수조
   const water = poly([[306, BTL.water], [674, BTL.water], [674, 498], [306, 498]], 6);
@@ -145,8 +148,8 @@ export function bottleBase() {
   sk.ink(dense([[300, 170], [300, 504], [680, 504], [680, 170]], 6), { w: 10, wob: 0.8, seed: 153 });
   // 누르는 손(앱이 병을 따라 옮긴다)
   g(sk, "opn-u5-hand", () => {
-    sk.ink(dense([[490, 60], [490, 150]], 5), { w: 13, wob: 0.6, seed: 161 });
-    handDot(sk, [490, 158], C.skin, 162, 20);
+    sk.ink(dense([[490, 60 + Y], [490, 150 + Y]], 5), { w: 13, wob: 0.6, seed: 161 });
+    handDot(sk, [490, 158 + Y], C.skin, 162, 20);
   });
   // 튀어 오를 때의 물방울
   g(sk, "opn-u5-splash", () => {

@@ -21,7 +21,14 @@ const T0 = 20;
 const RISE = [19, 14, 9]; // 검은색, 파란색, 흰색
 const CX = [92, 176, 260];
 const PAPER = ["#2A2F38", "#3B82F6", "#F1F4F8"];
-const PAPER_LINE = ["#6B7686", "#8DB8FF", "#FFFFFF"];
+// 검은 색종이는 어두운 무대에 묻히지 않게 밝은 테두리를 둔다(2026-11-15 그래픽 감사)
+const PAPER_LINE = ["#B9C6D8", "#8DB8FF", "#FFFFFF"];
+// 햇빛: 왼쪽 위에서 내려오는 나란한 빛줄기(높이 72에 가로 30). 해에서 퍼지게 그리면 파란 컵으로 가는 빛이 파라솔 끝을 스쳐
+// 파란 컵도 그늘처럼 읽혔다(2026-11-15 그래픽 감사). 왼쪽 컵을 그늘에 두면 그 빛줄기는 파라솔 윗면에서 멈춘다.
+const RAY_TOP = 40;
+const RAY_END = 112;
+const RAY_DX = 30.2;
+const STOP = { x: 66.1, y: 59.8 }; // 왼쪽 컵으로 가는 빛줄기가 파라솔 윗면에 닿는 곳(파라솔 곡선과의 교점)
 const NAMES = ["검은 컵", "파란 컵", "흰 컵"];
 
 const COND: Record<Key, { name: string; same: string; diff: string }> = {
@@ -37,7 +44,7 @@ function stageSvg(): string {
       <ellipse cx="${cx}" cy="197" rx="34" ry="5" fill="#000" opacity=".28"/>
       <rect class="u1f-water" x="${cx - 23}" y="146" width="46" height="46" rx="3" fill="#6FB7FF" opacity=".55"/>
       <path d="M${cx - 26} 116 L${cx - 24} 194 H${cx + 24} L${cx + 26} 116" fill="rgba(255,255,255,.07)" stroke="#B9C8DE" stroke-width="1.6" stroke-linejoin="round"/>
-      <rect class="u1f-paper" x="${cx - 25.5}" y="154" width="51" height="38" rx="2" fill="${PAPER[i]}" stroke="${PAPER_LINE[i]}" stroke-width="1.2"/>
+      <rect class="u1f-paper" x="${cx - 25.5}" y="154" width="51" height="38" rx="2" fill="${PAPER[i]}" stroke="${PAPER_LINE[i]}" stroke-width="1.5"/>
       <rect x="${cx + 9}" y="104" width="7" height="82" rx="3.5" fill="#0E1A2E" stroke="#C9D5E8" stroke-width="1.1"/>
       <rect class="u1f-merc" x="${cx + 10.6}" y="170" width="3.8" height="14" rx="1.9" fill="#FF6B6B"/>
       <text class="u1f-temp" x="${cx}" y="98" text-anchor="middle">20 ℃</text>
@@ -52,7 +59,8 @@ function stageSvg(): string {
     <line x1="0" y1="198" x2="346" y2="198" stroke="#2A3E60" stroke-width="1.2"/>
     <circle cx="36" cy="36" r="34" fill="url(#u1fSun)"/>
     <circle cx="36" cy="36" r="15" fill="#FFD766"/>
-    ${CX.map((cx, i) => `<line class="u1f-ray" data-i="${i}" x1="54" y1="50" x2="${cx - 6}" y2="112" stroke="#FFE08A" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".5"/>`).join("")}
+    ${CX.map((cx, i) => `<line class="u1f-ray" data-i="${i}" x1="${cx - 4 - RAY_DX}" y1="${RAY_TOP}" x2="${cx - 4}" y2="${RAY_END}" stroke="#FFE08A" stroke-width="2.2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".7"/>`).join("")}
+    <line class="u1f-ray-stop" x1="${CX[0] - 4 - RAY_DX}" y1="${RAY_TOP}" x2="${STOP.x}" y2="${STOP.y}" stroke="#FFE08A" stroke-width="2.2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".7"/>
     ${cups}
     <g class="u1f-shade">
       <line x1="${CX[0] - 36}" y1="60" x2="${CX[0] - 36}" y2="198" stroke="#C9D5E8" stroke-width="2.4" stroke-linecap="round"/>
@@ -80,6 +88,7 @@ export const fairLab: StepRenderer = (host, step, api) => {
   const rays = q<SVGLineElement>(".u1f-ray");
   const cupEls = q<SVGGElement>(".u1f-cup");
   const shade = f.stage.querySelector(".u1f-shade") as SVGGElement;
+  const rayStop = f.stage.querySelector(".u1f-ray-stop") as SVGLineElement;
 
   // 다르게(true)인지. 처음은 도입 장면처럼 어긋나 있다.
   const diff: Record<Key, boolean> = { color: true, water: true, place: true };
@@ -120,6 +129,7 @@ export const fairLab: StepRenderer = (host, step, api) => {
     mls[0].classList.toggle("odd", big);
     shade.style.display = diff.place ? "" : "none";
     rays[0].style.display = diff.place ? "none" : "";
+    rayStop.style.display = diff.place ? "" : "none";
     cupEls[0].classList.toggle("dim", diff.place);
   }
 
@@ -246,6 +256,19 @@ export const fairLab: StepRenderer = (host, step, api) => {
   function finish(): void {
     setPhase("done");
     f.pips(3);
+    // 결론 무대는 공정한 실험으로 되돌린다(셋 다 햇빛, 모두 100 mL, 색깔만 다름). 판정에 쓴 '검은 컵만 그늘' 실험이 남으면 결론과 반대 장면이 된다(2026-11-15 그래픽 감사).
+    diff.color = true;
+    diff.water = false;
+    diff.place = false;
+    paintSetup();
+    paintConds();
+    const v = finalTemps();
+    showTemps(v);
+    temps.forEach((t) => t.classList.remove("top"));
+    temps[v.indexOf(Math.max(...v))].classList.add("top");
+    timeEl.textContent = "2시간 뒤";
+    verdictEl.textContent = "공정한 실험이에요";
+    verdictEl.className = "u1x-verdict show ok";
     f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
     f.slot.conclude("알아보려는 것 <b>하나만 다르게</b> 두고 나머지 조건은 모두 같게 맞춰요. 이렇게 조건을 맞추는 일이 <b>변인 통제</b>예요.");
     api.enableCTA(s.cta ?? "다음");

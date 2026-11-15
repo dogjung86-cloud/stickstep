@@ -6,6 +6,11 @@
 //   3 더운 방의 냉방기: 아래에 달면 아래쪽만 시원하고, 위에 달면 방 전체가 돈다.
 // 흐름은 정해 둔 흐름 무늬(대류 고리)를 따라 입자를 옮겨 그린다. 입자마다 온도가 있고 열원 곁을 지날 때 데워지거나 식는다.
 // 흐르지 않는 배치(난방기 위, 냉방기 아래)에서는 열원 쪽 띠만 온도가 바뀐다.
+// 2026-11-15 그래픽 감사 고침: 판정의 답 "입자가 직접 이동"이 한 장면에서는 흩어진 점이라 2초 가까이 지켜봐야 고리가 보였다.
+//   · 입자마다 지나온 자리를 옅어지는 꼬리로 그린다(흐를 때만).
+//   · 흐름이 생기면 고리 화살표(냄비 둘, 방 하나)가 차츰 진해진다. 열원 곁에서 오르는(냉방기는 내려오는) 길을 가장 굵고 진하게(책 그림 Ⅲ-5).
+//     고리는 흐름 무늬의 유선(ψ = sin(kπu)·sin(πv)의 등고선)을 따른다.
+//   · 방의 이름표(난방기, 위쪽 자리 따위)는 입자 위에 어두운 알약을 깔고 그린다(입자가 글자 위를 지나가던 것).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
@@ -13,7 +18,7 @@ import { tempColor, drawGlowParticle, drawFlame } from "../../../ui/thermo";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
 import { el } from "../../../core/dom";
-import { u3Frame, u3Canvas, pill, rr, txt, SUB, clamp, type Ctx } from "./kit";
+import { u3Frame, u3Canvas, pill, rr, txt, SUB, HOT, COLD, FONT, clamp, type Ctx } from "./kit";
 
 interface ConvStep {
   title: string;
@@ -29,8 +34,11 @@ interface P {
   T: number; // 0~1
   ju: number;
   jv: number;
+  tr: number[]; // 지나온 자리(u, v를 번갈아). 꼬리
 }
 const N = 64;
+const TRAIL = 8; // 꼬리 점 수
+const TRAIL_EVERY = 4; // 꼬리 점을 남기는 간격(프레임)
 const REGION: Record<Scene, { x: number; y: number; w: number; h: number }> = {
   pot: { x: 62, y: 62, w: 190, h: 112 },
   heater: { x: 22, y: 34, w: 302, h: 160 },
@@ -57,8 +65,10 @@ export const convLab: StepRenderer = (host, step, api) => {
 
   const seed = (): void => {
     // 고르게 흩는다(8×8 칸마다 하나, 칸 안에서는 아무 데나)
-    ps = Array.from({ length: N }, (_, i) => ({ u: ((i % 8) + 0.15 + Math.random() * 0.7) / 8, v: (Math.floor(i / 8) + 0.15 + Math.random() * 0.7) / 8, T: BASE[scene], ju: 0, jv: 0 }));
+    ps = Array.from({ length: N }, (_, i) => ({ u: ((i % 8) + 0.15 + Math.random() * 0.7) / 8, v: (Math.floor(i / 8) + 0.15 + Math.random() * 0.7) / 8, T: BASE[scene], ju: 0, jv: 0, tr: [] }));
+    trailClock = 0;
   };
+  let trailClock = 0;
   seed();
 
   const works = (): boolean => scene === "pot" || (scene === "heater" ? place === "bottom" : place === "top");
@@ -81,7 +91,14 @@ export const convLab: StepRenderer = (host, step, api) => {
     // 흐름 무늬: 냄비는 고리 둘(가운데에서 올라간다), 방은 고리 하나(열원이 있는 왼쪽 벽을 따라 오르거나 내린다)
     const A = scene === "pot" ? -0.0034 : scene === "heater" ? 0.0062 : -0.0062;
     const kx = scene === "pot" ? 2 : 1;
+    trailClock += dt;
+    const mark = trailClock >= TRAIL_EVERY;
+    if (mark) trailClock %= TRAIL_EVERY;
     for (const p of ps) {
+      if (mark) {
+        p.tr.push(p.u, p.v);
+        if (p.tr.length > TRAIL * 2) p.tr.splice(0, 2);
+      }
       p.ju += (Math.random() - 0.5) * 0.0016 * dt - p.ju * 0.08 * dt;
       p.jv += (Math.random() - 0.5) * 0.0016 * dt - p.jv * 0.08 * dt;
       const su = Math.sin(kx * Math.PI * p.u);
@@ -119,6 +136,46 @@ export const convLab: StepRenderer = (host, step, api) => {
     ctx.stroke();
   }
 
+  /** 고리 화살표(타원). dir +1이면 화면에서 시계 방향. src는 열원 곁 갈래의 각(그 갈래를 굵고 진하게, srcC 색으로). */
+  function loopArrow(ctx: Ctx, cx: number, cy: number, a: number, b: number, dir: 1 | -1, src: number, srcC: string, restC: string, alpha: number): void {
+    const SPAN = 0.95;
+    const at = (th: number): [number, number] => [cx + a * Math.cos(th), cy + b * Math.sin(th)];
+    const head = (th: number, color: string, size: number): void => {
+      const [x, y] = at(th);
+      const tx = -a * Math.sin(th) * dir;
+      const ty = b * Math.cos(th) * dir;
+      const l = Math.hypot(tx, ty) || 1;
+      const ux = tx / l;
+      const uy = ty / l;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x + ux * size, y + uy * size);
+      ctx.lineTo(x - ux * size * 0.7 - uy * size * 0.75, y - uy * size * 0.7 + ux * size * 0.75);
+      ctx.lineTo(x - ux * size * 0.7 + uy * size * 0.75, y - uy * size * 0.7 - ux * size * 0.75);
+      ctx.closePath();
+      ctx.fill();
+    };
+    ctx.save();
+    ctx.lineCap = "round";
+    // 나머지 갈래(가늘게)
+    ctx.globalAlpha = alpha * 0.55;
+    ctx.strokeStyle = restC;
+    ctx.lineWidth = 2.6;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, a, b, 0, src + SPAN + 0.12, src + 2 * Math.PI - SPAN - 0.12);
+    ctx.stroke();
+    head(src + Math.PI + 0.35 * dir, restC, 7);
+    // 열원 곁 갈래(굵고 진하게)
+    ctx.globalAlpha = alpha * 0.9;
+    ctx.strokeStyle = srcC;
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, a, b, 0, src - SPAN, src + SPAN);
+    ctx.stroke();
+    head(src + SPAN * dir, srcC, 10);
+    ctx.restore();
+  }
+
   const cv = u3Canvas(f.stage, (ctx, dt, tMs) => {
     host.dataset.u3Phase = phase;
     host.dataset.u3Scene = `${scene}:${judged ? (works() ? "ok" : "fail") : running ? "run" : "idle"}`;
@@ -154,6 +211,45 @@ export const convLab: StepRenderer = (host, step, api) => {
       ctx.lineWidth = 2.4;
       ctx.stroke();
       drawPerson(ctx, 190, R.y + R.h + 4);
+    }
+    // 고리 화살표: 흐름이 생기면 차츰 진해진다(흐르지 않는 배치에서는 생기지 않는다)
+    if (flow > 0.04) {
+      const al = Math.min(1, flow * 1.15);
+      if (scene === "pot") {
+        loopArrow(ctx, R.x + 0.25 * R.w, R.y + 0.52 * R.h, 0.16 * R.w, 0.3 * R.h, -1, 0, HOT, COLD, al);
+        loopArrow(ctx, R.x + 0.75 * R.w, R.y + 0.52 * R.h, 0.16 * R.w, 0.3 * R.h, 1, Math.PI, HOT, COLD, al);
+      } else if (scene === "heater") loopArrow(ctx, R.x + 0.5 * R.w, R.y + 0.5 * R.h, 0.38 * R.w, 0.3 * R.h, 1, Math.PI, HOT, COLD, al);
+      else loopArrow(ctx, R.x + 0.5 * R.w, R.y + 0.5 * R.h, 0.38 * R.w, 0.3 * R.h, -1, Math.PI, COLD, HOT, al);
+    }
+    // 꼬리(지나온 자리, 오래된 쪽일수록 옅다): 흐를 때만
+    if (flow > 0.06) {
+      const ta = Math.min(1, flow * 1.3);
+      ctx.lineCap = "round";
+      ctx.lineWidth = scene === "pot" ? 2.2 : 2.4;
+      for (const p of ps) {
+        const pts = p.tr;
+        const n = pts.length / 2;
+        if (n < 2) continue;
+        ctx.strokeStyle = tempColor(p.T);
+        for (let i = 1; i < n; i++) {
+          ctx.globalAlpha = ta * 0.55 * (i / n);
+          ctx.beginPath();
+          ctx.moveTo(R.x + pts[(i - 1) * 2] * R.w, R.y + pts[(i - 1) * 2 + 1] * R.h);
+          ctx.lineTo(R.x + pts[i * 2] * R.w, R.y + pts[i * 2 + 1] * R.h);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = ta * 0.6;
+        ctx.beginPath();
+        ctx.moveTo(R.x + pts[(n - 1) * 2] * R.w, R.y + pts[(n - 1) * 2 + 1] * R.h);
+        ctx.lineTo(R.x + p.u * R.w, R.y + p.v * R.h);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    // 입자(온도 색)
+    for (const p of ps) drawGlowParticle(ctx, R.x + p.u * R.w, R.y + p.v * R.h, 3.8, p.T, 1.7);
+    // 방의 냉난방기 자리와 이름표는 입자 위에(어두운 알약을 깔고)
+    if (scene !== "pot") {
       for (const pl of ["top", "bottom"] as Place[]) {
         const y = pl === "top" ? R.y + 2 : R.y + R.h - 30;
         const on = place === pl;
@@ -165,6 +261,8 @@ export const convLab: StepRenderer = (host, step, api) => {
           ctx.lineWidth = 1.6;
           ctx.stroke();
         } else {
+          ctx.fillStyle = "rgba(11,21,36,.75)";
+          ctx.fill();
           ctx.setLineDash([4, 4]);
           ctx.strokeStyle = "rgba(255,255,255,.4)";
           ctx.lineWidth = 1.4;
@@ -172,11 +270,15 @@ export const convLab: StepRenderer = (host, step, api) => {
           ctx.setLineDash([]);
         }
         // 이름표: 달린 기기에는 이름, 빈 자리에는 자리 이름
-        txt(ctx, on ? (scene === "heater" ? "난방기" : "냉방기") : pl === "top" ? "위쪽 자리" : "아래쪽 자리", R.x + 24, y + 14, { size: 12, align: "left", weight: 700, color: on ? "#E8EEF9" : SUB });
+        const name = on ? (scene === "heater" ? "난방기" : "냉방기") : pl === "top" ? "위쪽 자리" : "아래쪽 자리";
+        ctx.font = `700 12px ${FONT}`;
+        const w = ctx.measureText(name).width + 12;
+        rr(ctx, R.x + 21, y + 4, w, 20, 10);
+        ctx.fillStyle = "rgba(11,21,36,.88)";
+        ctx.fill();
+        txt(ctx, name, R.x + 27, y + 14.5, { size: 12, align: "left", weight: 700, color: on ? "#E8EEF9" : SUB });
       }
     }
-    // 입자(온도 색, 흐를 때는 짧은 꼬리)
-    for (const p of ps) drawGlowParticle(ctx, R.x + p.u * R.w, R.y + p.v * R.h, 3.8, p.T, 1.7);
     // 위쪽과 아래쪽의 온도
     const tx = scene === "pot" ? 300 : 286;
     pill(ctx, `위쪽 ${toC(scene, zone(true))}℃`, tx, scene === "pot" ? 84 : 52, { size: 12, dot: tempColor(zone(true)), bg: "rgba(11,21,36,.9)" });

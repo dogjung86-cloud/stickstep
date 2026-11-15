@@ -7,7 +7,7 @@
 //   moonweek   (u7l5) 밤하늘의 달(오른쪽 반달에서 보름달까지 여덟 장), 날짜 점 일곱 개, 아이
 //   bittensun  (u7l6) 관측 안경을 쓴 아이와 안경으로 본 해. 해를 가리는 둥근 것은 배경과 같은 색이라 파인 자리만 보인다
 // build-intro.mjs u7 이 build(add)를 불러 introArt.u7.generated.ts에 싣는다.
-import { Sk, C, dense, circ, ell, poly, rrect, arrow, sparkle, TAU } from "../lib/sk.mjs";
+import { Sk, C, dense, circ, ell, poly, rrect, arrow, sparkle, curve, TAU } from "../lib/sk.mjs";
 import { drawFigure, pose, STUDENT } from "../lib/figure.mjs";
 import { earth } from "../lib/props.mjs";
 
@@ -85,19 +85,22 @@ export function jupiterrowBase() {
 }
 
 /* ══════════ 3. 자리를 옮기는 그림자 (u7l4) ══════════
-   남쪽을 보고 선 그림이다. 해는 왼쪽(동)에서 떠서 가운데 높이(남) 지나 오른쪽(서)으로 진다. 그림자는 해의 반대쪽에 눕는다. */
+   남쪽을 보고 선 그림이다. 해는 왼쪽(동)에서 떠서 가운데 높이(남) 지나 오른쪽(서)으로 진다. 그림자는 해의 반대쪽에 눕는다.
+   한낮의 해는 길의 꼭대기, 곧 나무 바로 위(남쪽 하늘 가장 높은 곳)에 있고, 그림자는 나무 밑동에서 보는 사람 쪽(북쪽)으로 짧게 눕는다.
+   예전에는 한낮의 해가 꼭대기보다 오른쪽(서쪽)에 비켜 있고 그림자도 그만큼 왼쪽에 있었다(2026-11-15 그래픽 감사). */
 export const ST = { tree: 480 };
 export function shadowturnBase() {
   const sk = new Sk(W, H, { id: "st" });
   const gy = 432, tx = ST.tree;
+  const PX = 352, PY = 332; // 해가 지나는 길(타원). 꼭대기 (tx, gy - 20 - PY) = (480, 80)
   sk.fill(rrect(-20, gy, W + 40, H - gy + 20, 0), "#F4EEDD", { dx: 0, dy: 0, wob: 0, seed: 3, tex: false });
   sk.ink(dense([[20, gy], [940, gy + 2]], 8), { w: 8, color: C.grayLight, wob: 1.2, seed: 4 });
   // 해가 지나는 길
-  sk.ink(ell(tx, gy - 20, 352, 330, Math.PI * 1.06, Math.PI * 1.94), { w: 5, color: C.grayLight, wob: 0.6, seed: 5, dash: [3, 18] });
+  sk.ink(ell(tx, gy - 20, PX, PY, Math.PI * 1.06, Math.PI * 1.94), { w: 5, color: C.grayLight, wob: 0.6, seed: 5, dash: [3, 18] });
   // 그림자 셋(앱이 하나만 켠다)
   const shade = (cls, pts, seed) => g(sk, `opn-u7-st-sh ${cls}`, () => sk.fill(pts, "#6B7385", { dx: 0, dy: 0, wob: 0.6, seed, tex: false }));
   shade("h1", ell(tx + 196, gy + 34, 206, 24), 11);
-  shade("h2", ell(tx - 48, gy + 26, 98, 20), 12);
+  shade("h2", ell(tx, gy + 21, 70, 16), 12);
   shade("h3", ell(tx - 196, gy + 34, 206, 24), 13);
   // 나무
   const trunk = poly([[tx - 15, gy + 4], [tx - 12, gy - 128], [tx + 12, gy - 128], [tx + 15, gy + 4]], 4);
@@ -106,16 +109,17 @@ export function shadowturnBase() {
   const crown = circ(tx, gy - 190, 84, { over: 0.15, seed: 23, lump: 0.07 });
   sk.fill(crown, C.green, { dx: 1, dy: 1, wob: 0.8, seed: 24, tex: true });
   sk.ink(crown, { w: 10, wob: 0.9, seed: 25 });
-  // 해 셋(앱이 하나만 켠다)
-  const sunAt = (cls, x, y, seed) => g(sk, `opn-u7-st-sun ${cls}`, () => {
-    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4 + 0.2; sk.ink(dense([[x + 62 * Math.cos(a), y + 62 * Math.sin(a)], [x + 84 * Math.cos(a), y + 84 * Math.sin(a)]]), { w: 10, color: C.orange, wob: 0.4, seed: seed + i }); }
+  // 해 셋(앱이 하나만 켠다). 셋 다 길 위에 있다. 한낮의 해는 빛살을 조금 짧게(나무 꼭대기와 무대 위 끝에 닿지 않게)
+  const sunAt = (cls, x, y, seed, ray = 76) => g(sk, `opn-u7-st-sun ${cls}`, () => {
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4 + 0.2; sk.ink(dense([[x + 60 * Math.cos(a), y + 60 * Math.sin(a)], [x + ray * Math.cos(a), y + ray * Math.sin(a)]]), { w: 10, color: C.orange, wob: 0.4, seed: seed + i }); }
     const c = circ(x, y, 44, { over: 0.2, seed: seed + 9 });
     sk.fill(c, C.yellow, { dx: 1, dy: 1.2, wob: 0.6, seed: seed + 10 });
     sk.ink(c, { w: 10, wob: 0.6, seed: seed + 11 });
   });
-  sunAt("s1", 150, 300, 31);
-  sunAt("s2", tx + 150, 96, 51);
-  sunAt("s3", 810, 300, 71);
+  const onPath = (x) => gy - 20 - PY * Math.sqrt(1 - ((x - tx) / PX) ** 2);
+  sunAt("s1", 150, onPath(150), 31, 82);
+  sunAt("s2", tx, onPath(tx), 51, 72);
+  sunAt("s3", 810, onPath(810), 71, 82);
   return { sk };
 }
 
@@ -150,12 +154,38 @@ export function moonweekBase() {
    안경으로 본 하늘은 어둡고 해만 보인다. 해를 가리는 둥근 것은 하늘과 같은 색이라 파인 자리로만 드러난다(앱이 옮긴다).
    끝에서만 둥근 테두리를 보여 준다. */
 export const BS = { cx: 690, cy: 254, view: 204, sun: 122, from: [176, -128], to: [26, -18] };
+/** 태양 관측 안경(일식 안경): 납작한 마분지 테에 새까만 거름막 두 장, 콧등에 작은 해 무늬. 보통 안경(둥근 투명 알)과 한눈에 갈리게 그린다
+ *  (2026-11-15 그래픽 감사: 보통 안경을 쓰고 해를 보는 것처럼 보였다). 좌표는 머리 중심이 원점이고 머리 반지름이 100이다(figure.mjs의 drawHead와 같은 판). */
+function solarGlasses(sk, seed) {
+  const frame = curve([[-96, -20], [-48, -26], [0, -24], [48, -26], [96, -20], [98, 30], [22, 34], [12, 20], [-12, 20], [-22, 34], [-98, 30]], true, 4);
+  sk.fill(frame, "#F1F2F5", { dx: 0.6, dy: 0.8, wob: 0.6, seed });
+  sk.ink(frame, { w: 8, wob: 0.6, seed: seed + 1 });
+  for (const [sg, i] of [[-1, 0], [1, 1]]) {
+    const lens = rrect(sg > 0 ? 14 : -84, -12, 70, 38, 13);
+    sk.fill(lens, "#14161C", { dx: 0, dy: 0, wob: 0.3, seed: seed + 2 + i, tex: false });
+    sk.ink(lens, { w: 6, wob: 0.4, seed: seed + 4 + i });
+    const hx = sg > 0 ? 30 : -66;
+    sk.ink(dense([[hx, 14], [hx + 16, -4]]), { w: 6, color: "#8C93A8", wob: 0.2, seed: seed + 6 + i }); // 거름막의 은빛 반사
+  }
+  const mark = circ(0, -10, 8, { over: 0.1, seed: seed + 8 });
+  sk.fill(mark, C.orange, { dx: 0, dy: 0, wob: 0.3, seed: seed + 9, tex: false });
+  sk.ink(dense([[-98, -12], [-104, -16]]), { w: 7, wob: 0.2, seed: seed + 10 });
+  sk.ink(dense([[98, -12], [104, -16]]), { w: 7, wob: 0.2, seed: seed + 11 });
+}
 export function bittensunBase() {
   const sk = new Sk(W, H, { id: "bs" });
   const { cx, cy, view, sun } = BS;
   const DARK = "#1E2433";
   groundLine(sk);
-  drawFigure(sk, 170, GROUND - 2, 0.6, lookUp, { ...STUDENT, glasses: true });
+  drawFigure(sk, 170, GROUND - 2, 0.6, lookUp, { ...STUDENT });
+  // 머리 위에 관측 안경을 씌운다(drawFigure의 머리 자리와 같은 변환: 발 사이 원점, 0.6배, 머리 중심, 고개 기울기)
+  sk.save();
+  sk.translate(170, GROUND - 2);
+  sk.scale(0.6, 0.6);
+  sk.translate(lookUp.head[0], lookUp.head[1]);
+  sk.rotate(lookUp.tilt);
+  solarGlasses(sk, 81);
+  sk.restore();
   arrow(sk, [[300, 262], [440, 244]], { straight: true, w: 8, color: C.gray, head: 22, seed: 13, wob: 0.6, dash: [4, 16] });
   const lens = circ(cx, cy, view, { over: 0.06, seed: 21 });
   sk.fill(lens, DARK, { dx: 0, dy: 0, wob: 0.4, seed: 22, tex: false });

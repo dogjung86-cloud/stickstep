@@ -27,6 +27,12 @@ const INSET = 88; // 지구에서 본 달 창(px)
 const INSET_PAD = 8;
 const N = 8; // 자리 수(45° 간격). 0번이 태양 쪽이고 반시계로 센다
 const STEP = (Math.PI * 2) / N;
+// 궤도의 달 반지름. 예전 0.36(지름 20px 남짓)이라 '태양 쪽 절반이 밝다'가 무대에서 읽히지 않았다(2026-11-15 그래픽 감사).
+const MOON_R = 0.5;
+// 창(지구에서 본 달)과 찍은 사진은 예전 크기의 달로 그린다(창의 위상 그림은 여덟 자리 모두 바르다. 바꾸지 않는다).
+const INSET_MOON = 0.36 / MOON_R;
+// 찍은 자리에 남는 작은 달(반지름 0.3). 같은 햇빛을 받으니 어느 자리에서나 태양 쪽 절반만 밝다(책 250쪽 그림 Ⅶ-9의 안쪽 고리).
+const GHOST = 0.3 / MOON_R;
 
 // 자리마다: 찍힌 모습을 부르는 말, 사진 아래 이름표(네 자리만), 찍은 뒤 도움말
 const SPOTS: { look: string; name: string; say: string }[] = [
@@ -50,8 +56,11 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
   const sunTag = el("div", { class: "u7x-tag u7x-moon-sun", text: "태양" });
   const earthTag = el("div", { class: "u7x-tag u7x-moon-earth", text: "지구" });
   const inset = el("div", { class: "u7x-inset", attrs: { "aria-hidden": "true" } }, el("span", { text: "지구에서 본 달" }));
+  // 자리 표시: 아직 안 찍은 자리는 작은 빈 고리, 찍은 자리는 3D의 작은 달(ghosts)이 대신한다.
+  // 지금 달이 선 자리는 달을 덮지 않게 달 바깥을 두르는 큰 고리(here)로 보인다.
   const dots = Array.from({ length: N }, () => el("i", { class: "u7x-mpos" }));
-  f.stage.append(canvas, ...dots, pill, sunTag, earthTag, inset);
+  const here = el("i", { class: "u7x-mhere" });
+  f.stage.append(canvas, ...dots, here, pill, sunTag, earthTag, inset);
 
   // 조작 칸: 사진 여덟 칸(자리 차례) + 사진 찍기
   const films = SPOTS.map((_, k) => {
@@ -64,7 +73,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
   const shutter = bvBtn("main", "이 자리에서 사진 찍기");
   shutter.classList.add("u7x-shutter");
   f.slot.setControls(el("div", { class: "u7x-cap", text: "찍은 사진(자리 차례대로 놓여요)" }), strip, shutter);
-  f.say("달을 끌어 자리에 놓고 <b>사진 찍기</b>를 눌러요. 여덟 자리를 모두 찍어 견줘 봐요.");
+  f.say("달을 끌어 자리에 놓고 <b>사진 찍기</b>를 눌러요. 여덟 자리를 모두 찍어 비교해 봐요.");
   f.pips(1);
   api.setCTA("여덟 자리의 달을 찍어요", { enabled: false });
   host.dataset.u7Phase = "play";
@@ -142,6 +151,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
   let halo: T.Sprite | null = null;
   let earthCam: T.PerspectiveCamera | null = null;
   const sunParts: T.Object3D[] = []; // 태양과 햇빛 화살표(지구에서 본 달 창에는 그리지 않는다)
+  const ghosts: T.Mesh[] = []; // 찍은 자리의 작은 달(창에는 그리지 않는다)
   let loop: Loop | null = null;
 
   void (async () => {
@@ -184,8 +194,18 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     earth = S.makePlanet("earth", 0.95, 56);
     scene.add(earth);
     scene.add(S.makeOrbitLine(ORBIT_R, "#7C98C4", 0.6));
-    moon = S.makePlanet("moon", 0.36, 40);
+    moon = S.makePlanet("moon", MOON_R, 40);
     scene.add(moon);
+    // 찍은 자리의 작은 달: 지오메트리와 재질(실사 질감)을 궤도의 달과 함께 쓴다. 찍기 전에는 숨긴다.
+    for (let i = 0; i < N; i++) {
+      const g = new THREE.Mesh(moon.geometry, moon.material);
+      g.scale.setScalar(GHOST);
+      g.position.set(Math.cos(i * STEP) * ORBIT_R, 0, -Math.sin(i * STEP) * ORBIT_R);
+      g.rotation.y = i * STEP + Math.PI; // 늘 같은 면이 지구를 향한다
+      g.visible = false;
+      scene.add(g);
+      ghosts.push(g);
+    }
     halo = S.makeGlow(2.1, "rgba(150,190,255,.5)", 0.34);
     scene.add(halo);
 
@@ -258,7 +278,6 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     moon.position.set(px, 0, pz);
     moon.rotation.y = theta + Math.PI; // 늘 같은 면이 지구를 향한다
     halo.position.set(px, 0, pz);
-    halo.material.opacity = dragging ? 0.95 : 0.6;
 
     const dir = new THREE.Vector3(px, 0, pz).normalize();
     earthCam.position.copy(dir.clone().multiplyScalar(1.1));
@@ -279,14 +298,33 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     place(earthTag, 0, 0, 38);
     dots.forEach((d, i) => {
       place(d, Math.cos(i * STEP) * ORBIT_R, -Math.sin(i * STEP) * ORBIT_R, 0);
-      d.classList.toggle("here", i === k && !dragging);
+      d.classList.toggle("cur", i === k); // 달이 선 자리의 빈 고리는 달을 덮지 않게 걷는다
     });
+    // 찍은 자리의 작은 달: 궤도의 달과 겹치는 동안만 숨긴다
+    ghosts.forEach((g, i) => {
+      const d = Math.atan2(Math.sin(theta - i * STEP), Math.cos(theta - i * STEP));
+      g.visible = films[i].taken && Math.abs(d) > 0.26;
+    });
+    // 지금 자리 고리: 달의 화면 반지름을 재어 그 바깥을 두른다(가까운 자리일수록 달이 커 보인다)
+    {
+      v.set(px, 0, pz).project(st.camera);
+      const cx = ((v.x + 1) / 2) * w;
+      const cy = ((1 - v.y) / 2) * h;
+      const side = new THREE.Vector3().setFromMatrixColumn(st.camera.matrixWorld, 0).multiplyScalar(MOON_R);
+      v.set(px, 0, pz).add(side).project(st.camera);
+      const rr = Math.hypot(((v.x + 1) / 2) * w - cx, ((1 - v.y) / 2) * h - cy);
+      const dia = 2 * rr + 13;
+      here.style.width = here.style.height = `${dia.toFixed(1)}px`;
+      here.style.transform = `translate(-50%, -50%) translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px)`;
+      here.classList.toggle("on", !dragging);
+    }
 
     const r = st.renderer;
     r.setScissorTest(false);
     r.setViewport(0, 0, w, h);
+    halo.material.opacity = dragging ? 0.95 : 0.4;
     st.render();
-    // 오른쪽 위 창: 지구에서 본 달
+    // 오른쪽 위 창: 지구에서 본 달(예전과 같은 크기의 달, 같은 빛무리)
     const ix = w - INSET - INSET_PAD;
     const iy = h - INSET - INSET_PAD;
     r.setScissorTest(true);
@@ -295,7 +333,11 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     r.setClearColor(0x070d1a, 1);
     r.clear(true, true, false);
     for (const o of sunParts) o.visible = false; // 달 뒤의 태양이 비쳐 일식처럼 보이지 않게
+    for (const g of ghosts) g.visible = false; // 창에는 지금 자리의 달 하나만
+    moon.scale.setScalar(INSET_MOON);
+    halo.material.opacity = dragging ? 0.95 : 0.6;
     r.render(st.scene, earthCam);
+    moon.scale.setScalar(1);
     for (const o of sunParts) o.visible = true;
     r.setScissorTest(false);
     r.setClearColor(0x000000, 0);
@@ -316,7 +358,9 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
       if (ctx) {
         ctx.fillStyle = "#070d1a";
         ctx.fillRect(0, 0, side, side);
-        ctx.drawImage(canvas, (ix + 12) * pr, (INSET_PAD + 4) * pr, (INSET - 24) * pr, (INSET - 24) * pr, 0, 0, side, side);
+        // 창 전체를 담는다(달은 창 가운데에 지름의 0.85로 있다). 예전에는 가운데보다 8px 위의 64px만 잘라 담아
+        // 달의 양옆과 아래가 잘렸고, 초승달과 그믐달의 가는 빛이 잘려 나가 삭처럼 까맣게 찍혔다(2026-11-15 그래픽 감사).
+        ctx.drawImage(canvas, ix * pr, INSET_PAD * pr, INSET * pr, INSET * pr, 0, 0, side, side);
       }
       took(k);
     }

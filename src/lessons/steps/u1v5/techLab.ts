@@ -56,6 +56,12 @@ const room = (ox: number, oy: number, w: number, h: number, px = 0.8): string =>
     <path d="M${ox + w * px + 6} ${fy - 12} q-9 -12 -2 -22 q2 10 2 22 q0 -12 8 -18 q0 10 -8 18" fill="#3FBF7F"/>`;
 };
 
+// 첨단 바이오 장면의 두 사람: 다른 칸과 약의 색(c, deep), 옷, 머리.
+const BIO = [
+  { x: 92, c: "#FF9F43", deep: "#C96A12", shirt: "#3D7BE0", shirtLine: "#25539E", hair: "#3B2A20", skin: "#F2C9A0", long: false },
+  { x: 254, c: "#B197FC", deep: "#7A5BD6", shirt: "#26A27A", shirtLine: "#17704F", hair: "#5A3A28", skin: "#E9B98F", long: true },
+];
+
 const SCENE: Record<Key, string> = {
   ar: `
     <text x="84" y="32" text-anchor="middle" class="u1x-lb">실제 방</text>
@@ -125,38 +131,103 @@ const SCENE: Record<Key, string> = {
       <text x="258" y="145" text-anchor="middle" class="u1x-lb q">?</text>
       <text x="258" y="214" text-anchor="middle" class="u1x-lb dim">학습하기 전</text>
     </g>`,
-  bio: ["#FF9F43", "#B197FC"]
-    .map((c, p) => {
-      const x = p === 0 ? 92 : 254;
-      const rungs = Array.from({ length: 7 }, (_, i) => {
-        const rx = x - 39 + i * 13;
-        const special = i === (p === 0 ? 2 : 4);
-        return `<line x1="${rx}" y1="96" x2="${rx}" y2="122" stroke="${special ? c : "#63E6BE"}" stroke-width="${special ? 5 : 3.4}" stroke-linecap="round"/>${special ? `<g class="on"><circle cx="${rx}" cy="109" r="16" fill="none" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 4"/></g>` : ""}`;
-      }).join("");
-      return `
-      <circle cx="${x}" cy="44" r="16" fill="#E8EEF9"/>
-      <path d="M${x - 26} 84 q0 -22 26 -22 q26 0 26 22 z" fill="#C9D5E8"/>
-      <path d="M${x - 46} 96 q46 -10 92 0 M${x - 46} 122 q46 10 92 0" fill="none" stroke="#8FA3C2" stroke-width="2.2" stroke-linecap="round"/>
-      ${rungs}
-      <path d="M${x} 134 v20 m-6 -7 l6 7 l6 -7" fill="none" stroke="#8FA3C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <g class="off"><rect x="${x - 24}" y="164" width="48" height="22" rx="11" fill="#E8EEF9"/><rect x="${x - 24}" y="164" width="24" height="22" rx="11" fill="#A9B6C9"/></g>
-      <g class="on"><rect x="${x - 24}" y="164" width="48" height="22" rx="11" fill="#fff"/><rect x="${x - 24}" y="164" width="24" height="22" rx="11" fill="${c}"/></g>`;
-    })
-    .join("") + `
-    <text x="173" y="113" text-anchor="middle" class="u1x-lb">유전정보</text>
-    <g class="off"><text x="173" y="180" text-anchor="middle" class="u1x-lb dim">같은 약</text></g>
-    <g class="on"><text x="173" y="180" text-anchor="middle" class="u1x-lb hi">맞춤 약</text></g>`,
+  bio: bioScene(),
 };
+
+// 첨단 바이오 장면(2026-11-15 그래픽 감사 고침). 판정과 결론에 남는 장면이라 가장 공들인다.
+//   사람: 머리 모양과 옷이 다른 두 인물(얼굴은 비운다. 앱 화풍).
+//   유전정보: 짧은 이중 나선. 두 사람의 나선은 같고 같은 자리의 한 칸만 다르다(주황, 보라). 그 칸을 굵게 칠한다.
+//   약: 기울인 두 색 캡슐(옛 그림의 반쪽만 칠한 둥근 막대는 켜고 끄는 스위치로 읽혔다).
+//   켜면 그 칸에 점선 고리가 생기고, 그 칸에서 약까지 같은 색의 굵은 화살이 이어지며 캡슐이 그 색이 된다. 이 이음이 무대에서 가장 크고 진하다.
+//   끄면 두 사람이 똑같은 회색 캡슐을 받는다(유전정보를 읽지 않는다).
+//   두 사람의 색과 자리(BIO)는 SCENE보다 위에 둔다(SCENE을 만들 때 이 함수를 부른다).
+function bioScene(): string {
+  const people = BIO.map((p) => {
+    const x = p.x;
+    const back = p.long ? `<rect x="${x - 15}" y="17" width="30" height="31" rx="12" fill="${p.hair}"/>` : "";
+    const fringe = p.long
+      ? `<path d="M${x - 13} 29 Q${x - 12} 15.5 ${x} 16 Q${x + 12} 15.5 ${x + 13} 29 Q${x + 5} 22 ${x - 5} 23 Z" fill="${p.hair}"/>`
+      : `<path d="M${x - 13.4} 31 Q${x - 15} 14 ${x} 15.5 Q${x + 15} 14 ${x + 13.4} 28 Q${x + 7} 20.5 ${x - 3} 21.5 Q${x - 10} 23 ${x - 13.4} 31 Z" fill="${p.hair}"/>`;
+    return `
+      <path d="M${x - 30} 78 Q${x - 30} 55 ${x - 13} 51 L${x + 13} 51 Q${x + 30} 55 ${x + 30} 78 Z" fill="${p.shirt}" stroke="${p.shirtLine}" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M${x - 7} 51 L${x} 59 L${x + 7} 51" fill="none" stroke="#E8EEF9" stroke-width="1.6" stroke-linejoin="round" opacity=".85"/>
+      ${back}
+      <rect x="${x - 4.5}" y="40" width="9" height="12" rx="3" fill="${p.skin}" stroke="#B88660" stroke-width="1"/>
+      <circle cx="${x}" cy="30" r="13" fill="${p.skin}" stroke="#B88660" stroke-width="1.4"/>
+      ${fringe}`;
+  }).join("");
+  // 이중 나선: 폭 96, 두 바퀴. 가로대는 두 가닥이 가장 벌어진 자리에 여덟 개(길이가 모두 같다). 다른 칸은 다섯째(같은 자리).
+  const helix = BIO.map((p) => {
+    const x0 = p.x - 48;
+    const cy = 101;
+    const A = 12;
+    const wave = (sg: number): string =>
+      Array.from({ length: 49 }, (_, i) => `${i ? "L" : "M"}${(x0 + i * 2).toFixed(1)} ${(cy + sg * A * Math.sin((2 * Math.PI * i * 2) / 48)).toFixed(1)}`).join(" ");
+    const rungs = Array.from({ length: 8 }, (_, i) => {
+      const t = 6 + i * 12;
+      const rx = x0 + t;
+      const dy = Math.abs(A * Math.sin((2 * Math.PI * t) / 48));
+      if (i === 4) return "";
+      return `<line x1="${rx}" y1="${(cy - dy).toFixed(1)}" x2="${rx}" y2="${(cy + dy).toFixed(1)}" stroke="#63E6BE" stroke-width="3" stroke-linecap="round"/>`;
+    }).join("");
+    const sx = x0 + 54;
+    const sdy = Math.abs(A * Math.sin((2 * Math.PI * 54) / 48));
+    const special = `<line x1="${sx}" y1="${(cy - sdy).toFixed(1)}" x2="${sx}" y2="${(cy + sdy).toFixed(1)}" stroke="${p.c}" stroke-width="6.5" stroke-linecap="round"/>`;
+    return `
+      <path d="${wave(-1)}" fill="none" stroke="#5E7699" stroke-width="2.4" stroke-linecap="round"/>
+      ${rungs}${special}
+      <path d="${wave(1)}" fill="none" stroke="#B4C4DC" stroke-width="2.6" stroke-linecap="round"/>
+      <g class="on"><circle cx="${sx}" cy="${cy}" r="14" fill="none" stroke="#fff" stroke-width="1.8" stroke-dasharray="3 3.5"/></g>`;
+  }).join("");
+  // 이음과 약
+  const capsule = (cx: number, cy: number, left: string, line: string): string => `
+      <ellipse cx="${cx}" cy="${cy + 15}" rx="17" ry="3.2" fill="#000" opacity=".28"/>
+      <g transform="translate(${cx} ${cy}) rotate(-32)">
+        <path d="M0 -8.5 H-12 A8.5 8.5 0 0 0 -12 8.5 H0 Z" fill="${left}" stroke="${line}" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M0 -8.5 H12 A8.5 8.5 0 0 1 12 8.5 H0 Z" fill="#F4F6FA" stroke="#9AA7BA" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M-13 -4.6 H9" stroke="#fff" stroke-opacity=".6" stroke-width="2.4" stroke-linecap="round"/>
+      </g>`;
+  const meds = BIO.map((p) => {
+    const sx = p.x - 48 + 54;
+    return `
+      <g class="off">${capsule(sx, 166, "#B9C3D2", "#7D8AA0")}</g>
+      <g class="on">
+        <path d="M${sx} 119 V144" stroke="${p.c}" stroke-width="4.4" stroke-linecap="round"/>
+        <path d="M${sx - 7.5} 139 L${sx} 148 L${sx + 7.5} 139" fill="none" stroke="${p.c}" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+        ${capsule(sx, 166, p.c, p.deep)}
+      </g>`;
+  }).join("");
+  return `${people}${helix}${meds}
+    <text x="173" y="106" text-anchor="middle" class="u1x-lb">유전정보</text>
+    <g class="off"><text x="173" y="171" text-anchor="middle" class="u1x-lb dim">같은 약</text></g>
+    <g class="on"><text x="173" y="171" text-anchor="middle" class="u1x-lb hi">맞춤 약</text></g>`;
+}
+
+// 결론 무대: 네 장면을 켠 모습의 작은 칸 넷(2026-11-15 그래픽 감사 고침. 결론 글은 네 기술을 말하는데 무대에는 한 장면만 남았다).
+// 칸 안의 장면 글자는 작아서 숨기고(화면 12px 규칙), 인공지능 화면의 이름만 키워 남긴다. 칸 아래에 기술 이름.
+const CROP: Record<Key, string> = { ar: "0 14 346 204", iot: "20 18 316 196", ai: "8 22 330 180", bio: "34 8 280 184" };
+function summarySvg(): string {
+  return KEYS.map((k, i) => {
+    const x = 4 + (i % 2) * 171;
+    const y = 4 + Math.floor(i / 2) * 113;
+    return `<g>
+      <rect x="${x}" y="${y}" width="167" height="109" rx="12" fill="rgba(255,255,255,.04)" stroke="rgba(201,213,232,.28)" stroke-width="1.2"/>
+      <svg x="${x + 4}" y="${y + 3}" width="159" height="84" viewBox="${CROP[k]}"><g class="u1t-scene is-on u1t-mini">${SCENE[k]}</g></svg>
+      <text x="${x + 83.5}" y="${y + 101}" text-anchor="middle" class="u1x-lb hi">${TECH[k].name}</text>
+    </g>`;
+  }).join("");
+}
 
 export const techLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as TechStep;
   const tm = bvTimers();
   host.classList.add("u1x-step");
   const f = bvFrame(host, { title: s.title, steps: 5, cls: "u1t-stage", qCls: "u1t-q", api });
-  f.stage.innerHTML = `<svg viewBox="0 0 346 230" role="img" aria-label="첨단 과학기술을 끄고 켜 보는 장면">${KEYS.map((k) => `<g class="u1t-scene" data-k="${k}">${SCENE[k]}</g>`).join("")}</svg>`;
+  f.stage.innerHTML = `<svg viewBox="0 0 346 230" role="img" aria-label="첨단 과학기술을 끄고 켜 보는 장면">${KEYS.map((k) => `<g class="u1t-scene" data-k="${k}">${SCENE[k]}</g>`).join("")}<g class="u1t-sum"></g></svg>`;
   const nameEl = el("div", { class: "bv-pill u1t-name" });
   f.stage.appendChild(nameEl);
-  const scenes = Object.fromEntries(Array.from(f.stage.querySelectorAll<SVGGElement>(".u1t-scene")).map((g) => [g.dataset.k as Key, g])) as Record<Key, SVGGElement>;
+  const scenes = Object.fromEntries(Array.from(f.stage.querySelectorAll<SVGGElement>(".u1t-scene[data-k]")).map((g) => [g.dataset.k as Key, g])) as Record<Key, SVGGElement>;
+  const sum = f.stage.querySelector(".u1t-sum") as SVGGElement;
 
   const on: Record<Key, boolean> = { ar: false, iot: false, ai: false, bio: false };
   let cur: Key = "ar";
@@ -230,6 +301,11 @@ export const techLab: StepRenderer = (host, step, api) => {
   function finish(): void {
     f.pips(5);
     paint();
+    // 결론 무대: 네 장면을 켠 모습을 작은 칸 넷으로 모은다
+    KEYS.forEach((k) => (scenes[k].style.display = "none"));
+    nameEl.style.display = "none";
+    sum.innerHTML = summarySvg(); // 결론에서야 만든다(숨긴 칸의 글자가 무대 글자 검사에 잡히지 않게)
+    f.stage.querySelector("svg")?.setAttribute("aria-label", "네 기술을 켠 모습: 증강 현실, 사물 인터넷, 인공지능, 첨단 바이오");
     f.say("체험 끝! 아래에서 네 기술의 이름을 다시 읽어 봐요.");
     f.slot.conclude("<b>증강 현실</b>은 가상 이미지를 겹치고, <b>사물 인터넷</b>은 사물을 잇고, <b>인공지능</b>은 학습하고, <b>첨단 바이오</b>는 유전정보를 써요.");
     api.enableCTA(s.cta ?? "다음");

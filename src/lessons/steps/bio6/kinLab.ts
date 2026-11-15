@@ -130,8 +130,9 @@ export const kinLab: StepRenderer = (host, step, api) => {
     (sumR.lastElementChild as HTMLElement).textContent = String(right);
     sumL.classList.toggle("lead", left > right);
     sumR.classList.toggle("lead", right > left);
-    // 박쥐는 같은 점이 많은 쪽으로 다가간다
-    toks.bat.style.transform = `translateX(${(right - left) * 13}px)`;
+    // 박쥐는 같은 점이 많은 쪽으로 다가간다. 같은 점 하나에 26px(2026-11-15 그래픽 손질: 고치기 전 13px라 넷을 다 봐도
+    // 무대 폭의 8%만 움직여 도움말 "어느 쪽으로 다가갔는지 봐요"가 가리키는 움직임이 약했다. 넷을 다 보면 52px, 얼굴 사이 9px까지)
+    toks.bat.style.transform = `translateX(${(right - left) * 26}px)`;
     host.dataset.knlDone = KEYS.filter((k) => done.has(k)).join(",");
     host.dataset.knlL = String(left);
     host.dataset.knlR = String(right);
@@ -187,7 +188,7 @@ export const kinLab: StepRenderer = (host, step, api) => {
     tally();
     f.pips(KEYS.length + 1);
     f.say("박쥐의 가까운 사이를 찾았어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("생물은 겉모습 하나가 아니라 <b>여러 특징</b>을 견주어 나눠요. 같은 특징이 많을수록 가까운 사이예요.");
+    f.slot.conclude("생물은 겉모습 하나가 아니라 <b>여러 특징</b>을 비교해 나눠요. 같은 특징이 많을수록 가까운 사이예요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }

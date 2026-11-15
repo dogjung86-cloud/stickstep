@@ -214,7 +214,7 @@ const bow: OpenerScene = (c) => {
   c.controls.classList.add("opn-u5-two");
   bSmall.addEventListener("click", () => shoot("small"));
   bBig.addEventListener("click", () => shoot("big"));
-  const verdict = bet(c, "활시위를 더 많이 당겼다 놓으면 화살은 어떻게 날아갈까요?", ["더 멀리 날아가요", "똑같이 날아가요", "덜 날아가요"], "예측 완료! 두 가지로 쏴서 견줘 보세요.", () => undefined);
+  const verdict = bet(c, "활시위를 더 많이 당겼다 놓으면 화살은 어떻게 날아갈까요?", ["더 멀리 날아가요", "똑같이 날아가요", "덜 날아가요"], "예측 완료! 두 가지로 쏴서 비교해 보세요.", () => undefined);
 };
 
 // ── 4. 흙길과 빙판길 ────────────────────────────────────────────

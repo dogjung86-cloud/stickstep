@@ -27,6 +27,7 @@ type Route = "animal" | "plant";
 interface Level {
   rank: string;
   name: string;
+  /** 그림. public 아래 경로이거나, 코드 그림이면 data: 주소 */
   img: string;
   say: string;
 }
@@ -36,32 +37,107 @@ interface RouteDef {
   levels: Level[];
   /** k번째 그림이 k+1번째 그림 속에서 놓이는 자리(그림 중심에서의 px, 196px 상자 기준)와 크기 비. */
   anchor: [number, number, number][];
+  /** 멈춘 화면에서 k번째 그림이 들어간 자리를 두르는 고리(가로, 세로 반지름 px). k+1번째 그림 위에 그린다. */
+  ring: [number, number][];
+  /** 그 고리 곁에 놓는 앞 단계의 작은 그림 자리(그림 상자의 왼쪽 위 기준 가운데 px). k+1번째 그림마다. */
+  thumb: [number, number][];
 }
+
+// ── 세포와 조직 칸의 코드 그림(2026-11-15 그래픽 손질) ─────────────────────────
+// 고치기 전에는 발주 그림이라 동물 쪽 상피세포와 상피조직이 납작한 비늘 모양(입안, 피부의 상피)이었는데 다음 칸은 위였다.
+// 위 안쪽의 상피는 원기둥 모양이다(책 45쪽 그림, 같은 레슨 정리 그림 u2l5f2). 식물 쪽 잎살세포는 가로로 넓은 상자였는데
+// 다음 칸 울타리 조직의 세포는 세로로 길었다. 네 칸을 같은 모양의 세포로 다시 그린다: 원기둥 상피세포와 그 한 줄,
+// 세로로 긴 잎살세포와 그 세포가 나란히 선 울타리 조직. 세포 칸의 세포는 조직 칸 한가운데 세포와 같은 비율이라
+// 막대를 밀면 그 세포가 조직 속 제자리로 들어간다. 196×196 설계, 바탕 없음(무대가 어둡다). u2l4의 납작한 상피세포는 그대로 둔다.
+const svgUri = (body: string): string =>
+  `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196 196" width="196" height="196">${body}</svg>`)}`;
+const f1 = (v: number): string => v.toFixed(1);
+const NUC_GRAD = `<radialGradient id="n" cx=".38" cy=".3" r=".78"><stop offset="0" stop-color="#C3B1FF"/><stop offset=".55" stop-color="#7C5CF0"/><stop offset="1" stop-color="#5230C2"/></radialGradient>`;
+
+/** 원기둥 상피세포 하나의 몸(왼쪽 위 x0, y0, 폭 w, 높이 h). 꼭대기는 둥글고 핵은 아래쪽에 있다. */
+function columnCell(x0: number, y0: number, w: number, h: number, edge: number): string {
+  const r = w * 0.36;
+  const d = `M${f1(x0)} ${f1(y0 + r)}Q${f1(x0)} ${f1(y0)} ${f1(x0 + w / 2)} ${f1(y0)}Q${f1(x0 + w)} ${f1(y0)} ${f1(x0 + w)} ${f1(y0 + r)}L${f1(x0 + w)} ${f1(y0 + h)}L${f1(x0)} ${f1(y0 + h)}Z`;
+  const cx = x0 + w / 2;
+  const dots = [0.22, 0.34, 0.46].map((t, i) => `<circle cx="${f1(cx + (i - 1) * w * 0.2)}" cy="${f1(y0 + h * t)}" r="${f1(w * 0.05)}" fill="#E48AA8" opacity=".55"/>`).join("");
+  // 꼭대기의 잔털(책 그림과 같이 원기둥 상피세포의 윗면에 촘촘한 털이 있다)
+  const hair = Array.from({ length: 9 }, (_, i) => {
+    const x = x0 + w * (0.12 + (0.76 * i) / 8);
+    const t = (x - cx) / (w / 2);
+    const y = y0 + r * (1 - Math.sqrt(Math.max(0, 1 - t * t))) * 0.9;
+    return `M${f1(x)} ${f1(y + w * 0.02)}v${f1(-w * 0.13)}`;
+  }).join("");
+  return `<path d="${hair}" stroke="#D97A99" stroke-width="${f1(w * 0.035)}" stroke-linecap="round"/>
+    <path d="${d}" fill="url(#c)" stroke="#C75C80" stroke-width="${edge}" stroke-linejoin="round"/>
+    <path d="M${f1(x0 + w * 0.16)} ${f1(y0 + r * 1.1)}V${f1(y0 + h * 0.86)}" stroke="#fff" stroke-width="${f1(w * 0.06)}" stroke-linecap="round" opacity=".38"/>
+    ${dots}
+    <ellipse cx="${f1(cx)}" cy="${f1(y0 + h * 0.76)}" rx="${f1(w * 0.25)}" ry="${f1(h * 0.115)}" fill="url(#n)"/>
+    <ellipse cx="${f1(cx + w * 0.04)}" cy="${f1(y0 + h * 0.78)}" rx="${f1(w * 0.07)}" ry="${f1(h * 0.03)}" fill="#3F2499" opacity=".7"/>`;
+}
+const COL_DEFS = `<defs><linearGradient id="c" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFDCE6"/><stop offset=".5" stop-color="#F7B8C8"/><stop offset="1" stop-color="#E58FAA"/></linearGradient>${NUC_GRAD}</defs>`;
+/** 세포: 원기둥 상피세포 하나(폭 50, 높이 152, 가운데 98, 98). */
+const EPI_CELL = svgUri(`${COL_DEFS}${columnCell(73, 22, 50, 152, 1.8)}`);
+/** 조직: 원기둥 상피세포가 한 줄로 맞닿은 상피조직(세포 일곱, 폭 24, 높이 73). 가운데 세포가 (98, 98)이다. 아래에 바닥의 얇은 막. */
+const EPI_TISSUE = svgUri(
+  `${COL_DEFS}${Array.from({ length: 7 }, (_, i) => columnCell(14 + i * 24, 61.5, 24, 73, 1.2)).join("")}<path d="M12 135.6H184" stroke="#B04A70" stroke-width="2.2" stroke-linecap="round"/>`,
+);
+
+/** 세로로 긴 잎살세포 하나의 몸. 두꺼운 세포벽 안에 엽록체가 벽을 따라 늘어서 있다. */
+function palisadeCell(x0: number, y0: number, w: number, h: number, k: number): string {
+  const r = w / 2;
+  const wall = `<rect x="${f1(x0)}" y="${f1(y0)}" width="${f1(w)}" height="${f1(h)}" rx="${f1(r)}" fill="#C8E68C" stroke="#5E8F22" stroke-width="${f1(1.6 * k)}"/>`;
+  const inner = `<rect x="${f1(x0 + 3.4 * k)}" y="${f1(y0 + 3.4 * k)}" width="${f1(w - 6.8 * k)}" height="${f1(h - 6.8 * k)}" rx="${f1(r - 3.4 * k)}" fill="url(#p)" stroke="#9CC95A" stroke-width="${f1(0.9 * k)}"/>`;
+  const n = Math.max(3, Math.round((h - 2 * r) / (11 * k)) + 1);
+  const chl: string[] = [];
+  for (let i = 0; i < n; i++) {
+    const y = y0 + r * 0.9 + ((h - r * 1.8) * i) / (n - 1);
+    for (const side of [-1, 1]) {
+      const x = x0 + w / 2 + side * (w / 2 - 8.6 * k);
+      chl.push(`<ellipse cx="${f1(x)}" cy="${f1(y + (side > 0 ? 3 * k : 0))}" rx="${f1(3.2 * k)}" ry="${f1(4.8 * k)}" fill="url(#g)" stroke="#2F7A1F" stroke-width="${f1(0.7 * k)}"/>`);
+    }
+  }
+  const top = [0, 1, 2].map((j) => `<ellipse cx="${f1(x0 + w / 2 + (j - 1) * 7 * k)}" cy="${f1(y0 + 8.4 * k + (j === 1 ? -1.4 * k : 0))}" rx="${f1(3 * k)}" ry="${f1(2.4 * k)}" fill="url(#g)" stroke="#2F7A1F" stroke-width="${f1(0.7 * k)}"/>`);
+  const nuc = `<ellipse cx="${f1(x0 + w / 2)}" cy="${f1(y0 + h * 0.5)}" rx="${f1(4.6 * k)}" ry="${f1(5.6 * k)}" fill="url(#n)"/>`;
+  const hi = `<path d="M${f1(x0 + 3 * k)} ${f1(y0 + r)}V${f1(y0 + h - r)}" stroke="#fff" stroke-width="${f1(1.4 * k)}" stroke-linecap="round" opacity=".45"/>`;
+  return wall + inner + chl.join("") + top.join("") + nuc + hi;
+}
+const PAL_DEFS = `<defs><linearGradient id="p" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F7FCE3"/><stop offset="1" stop-color="#E6F4BE"/></linearGradient>
+  <radialGradient id="g" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#9BE36E"/><stop offset=".6" stop-color="#4CAF30"/><stop offset="1" stop-color="#2E7D1E"/></radialGradient>${NUC_GRAD}</defs>`;
+/** 세포: 세로로 긴 잎살세포 하나(폭 46, 높이 160, 가운데 98, 98). */
+const LEAF_CELL = svgUri(`${PAL_DEFS}${palisadeCell(75, 18, 46, 160, 2)}`);
+/** 조직: 잎살세포가 나란히 선 울타리 조직(세포 일곱, 폭 24, 높이 83.5). 가운데 세포가 (98, 98)이다. */
+const PALISADE = svgUri(`${PAL_DEFS}${Array.from({ length: 7 }, (_, i) => palisadeCell(14 + i * 24, 56.25, 24, 83.5, 1.04)).join("")}`);
 
 const ROUTES: Record<Route, RouteDef> = {
   animal: {
     card: "동물",
     sub: "사람의 몸",
     levels: [
-      { rank: "세포", name: "상피세포", img: "bio6/levels/epi-cell.webp", say: "<b>상피세포</b> 하나예요. 아래 막대를 밀어 세포를 모아 보세요." },
-      { rank: "조직", name: "상피조직", img: "bio6/levels/epi-tissue.webp", say: "모양과 하는 일이 비슷한 세포가 모여 <b>조직</b>이 됐어요. 상피조직이에요." },
+      { rank: "세포", name: "상피세포", img: EPI_CELL, say: "<b>상피세포</b> 하나예요. 아래 막대를 밀어 세포를 모아 보세요." },
+      { rank: "조직", name: "상피조직", img: EPI_TISSUE, say: "모양과 하는 일이 비슷한 세포가 모여 <b>조직</b>이 됐어요. 상피조직이에요." },
       { rank: "기관", name: "위", img: "bio6/levels/stomach.webp", say: "여러 조직이 모여 고유한 모양과 기능을 가진 <b>기관</b>이 됐어요. 위예요." },
       { rank: "기관계", name: "소화계", img: "bio6/levels/digestive.webp", say: "위, 작은창자처럼 관련된 일을 하는 기관이 모여 <b>기관계</b>가 됐어요. 소화계예요." },
       { rank: "개체", name: "사람", img: "bio2/levels/human.webp", say: "여러 기관계가 모여 하나의 생물, <b>개체</b>가 됐어요. 사람이에요." },
     ],
-    anchor: [[0, 2, 0.24], [30, 2, 0.26], [15, -4, 0.2], [0, -30, 0.6]],
+    // 세포 → 조직: 세포 칸의 세포(폭 50)가 조직 칸 가운데 세포(폭 24)로. 조직 → 위: 위 안쪽의 주름진 벽.
+    anchor: [[0, 0, 0.48], [30, 2, 0.26], [15, -4, 0.2], [0, -30, 0.6]],
+    ring: [[22, 44], [30, 18], [21, 21], [44, 58]],
+    thumb: [[30, 30], [30, 30], [30, 30], [30, 30]],
   },
   plant: {
     card: "식물",
     sub: "나무의 몸",
     levels: [
-      { rank: "세포", name: "잎살세포", img: "bio2/levels/leaf-cell.webp", say: "잎을 이루는 <b>잎살세포</b> 하나예요. 막대를 밀어 세포를 모아 보세요." },
-      { rank: "조직", name: "울타리 조직", img: "bio2/levels/palisade.webp", say: "비슷한 세포가 모여 <b>조직</b>이 됐어요. 울타리 조직이에요." },
+      { rank: "세포", name: "잎살세포", img: LEAF_CELL, say: "잎을 이루는 <b>잎살세포</b> 하나예요. 막대를 밀어 세포를 모아 보세요." },
+      { rank: "조직", name: "울타리 조직", img: PALISADE, say: "비슷한 세포가 모여 <b>조직</b>이 됐어요. 울타리 조직이에요." },
       { rank: "조직계", name: "잎의 조직계", img: "bio2/levels/tissue-system.webp", say: "여러 조직이 모여 <b>조직계</b>가 됐어요. 동물의 계단에는 없던 단계예요." },
       { rank: "기관", name: "잎", img: "bio2/levels/leaf.webp", say: "조직계가 모여 <b>기관</b>이 됐어요. 잎이에요. 뿌리와 줄기도 기관이에요." },
       { rank: "개체", name: "나무", img: "bio2/levels/tree.webp", say: "기관이 모여 하나의 생물, <b>개체</b>가 됐어요. 나무예요." },
     ],
-    anchor: [[-17, 0, 0.19], [0, -24, 0.5], [8, 4, 0.22], [26, -42, 0.1]],
+    // 세포 → 조직: 세포 칸의 세포(폭 46)가 조직 칸 가운데 세포(폭 24)로. 조직 → 조직계: 잎 단면의 울타리 조직 층(높이 62~100).
+    anchor: [[0, 0, 0.522], [0, -17, 0.43], [8, 4, 0.22], [26, -42, 0.1]],
+    ring: [[22, 50], [40, 22], [24, 24], [14, 14]],
+    thumb: [[30, 30], [30, 30], [30, 30], [30, 166]],
   },
 };
 const ORDER: Route[] = ["animal", "plant"];
@@ -83,14 +159,58 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
   const glow = el("div", { class: "blv-glow" });
   pic.appendChild(glow);
   const imgs: Record<Route, HTMLImageElement[]> = { animal: [], plant: [] };
+  const srcOf = (img: string): string => (img.startsWith("data:") ? img : bvSrc(img));
   ORDER.forEach((r) =>
     ROUTES[r].levels.forEach((lv) => {
-      const im = el("img", { class: "blv-img", attrs: { src: bvSrc(lv.img), alt: "", draggable: "false" } }) as HTMLImageElement;
+      const im = el("img", { class: "blv-img", attrs: { src: srcOf(lv.img), alt: "", draggable: "false" } }) as HTMLImageElement;
       im.style.opacity = "0";
       imgs[r].push(im);
       pic.appendChild(im);
     }),
   );
+  // 멈춘 화면: 앞 단계가 들어간 자리에 고리, 곁에 앞 단계의 작은 그림(손을 떼고 단계에 닿았을 때만. 끄는 동안은 숨긴다)
+  const mark2 = el("div", { class: "blv-mark", attrs: { "aria-hidden": "true" } });
+  mark2.innerHTML = `<svg viewBox="0 0 196 196"><path class="blv-mark-l"/><ellipse class="blv-mark-h"/><ellipse class="blv-mark-r"/></svg>`;
+  const thumb = el("div", { class: "blv-thumb", attrs: { "aria-hidden": "true" } }, el("img", { attrs: { alt: "", draggable: "false" } }));
+  pic.append(mark2, thumb);
+  const markLine = mark2.querySelector(".blv-mark-l") as SVGPathElement;
+  const markHalo = mark2.querySelector(".blv-mark-h") as SVGEllipseElement;
+  const markRing = mark2.querySelector(".blv-mark-r") as SVGEllipseElement;
+  const thumbImg = thumb.querySelector("img") as HTMLImageElement;
+  /** level 단계에 멈췄으면 그 앞 단계가 들어간 자리를 보인다(level 0이나 단계 사이면 숨긴다). */
+  function showMark(level: number | null): void {
+    if (level === null || level < 1) {
+      pic.classList.remove("marked");
+      return;
+    }
+    const R = ROUTES[route];
+    const [ax, ay] = R.anchor[level - 1];
+    const [rx, ry] = R.ring[level - 1];
+    const [tx, ty] = R.thumb[level - 1];
+    const cx = 98 + ax;
+    const cy = 98 + ay;
+    [markHalo, markRing].forEach((e) => {
+      e.setAttribute("cx", String(cx));
+      e.setAttribute("cy", String(cy));
+      e.setAttribute("rx", String(rx));
+      e.setAttribute("ry", String(ry));
+    });
+    // 작은 그림의 가장자리(반지름 22)에서 고리의 가장자리까지 잇는 선
+    const dx = cx - tx;
+    const dy = cy - ty;
+    const len = Math.hypot(dx, dy) || 1;
+    const ang = Math.atan2(dy, dx);
+    const rEdge = (rx * ry) / Math.hypot(ry * Math.cos(ang), rx * Math.sin(ang));
+    const x1 = tx + (dx / len) * 23;
+    const y1 = ty + (dy / len) * 23;
+    const x2 = cx - Math.cos(ang) * rEdge;
+    const y2 = cy - Math.sin(ang) * rEdge;
+    markLine.setAttribute("d", len > 23 + rEdge + 4 ? `M${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}` : "");
+    thumb.style.left = `${tx - 22}px`;
+    thumb.style.top = `${ty - 22}px`;
+    thumbImg.src = srcOf(R.levels[level - 1].img);
+    pic.classList.add("marked");
+  }
   const nameTag = el("div", { class: "blv-name" });
   const ladder = el("div", { class: "blv-ladder" });
   const rungs = Array.from({ length: 5 }, () => el("div", { class: "blv-rung" }, el("b"), el("span")));
@@ -122,7 +242,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     const last = ROUTES[r].levels[4];
     cards[r] = bvCard("blv-card", { name: ROUTES[r].card, sub: ROUTES[r].sub, icon: `<img src="${bvSrc(last.img)}" alt="" draggable="false" />`, key: r });
   });
-  const cmpBtn = bvBtn("main blv-cmp", "두 계단 견주어 보기");
+  const cmpBtn = bvBtn("main blv-cmp", "두 계단 비교하기");
   cmpBtn.hidden = true;
 
   const mark = (level: number): void => {
@@ -155,6 +275,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     const near = Math.round(v / 100);
     nameTag.textContent = R.levels[near].name;
     nameTag.classList.toggle("dim", Math.abs(v - near * 100) > 18);
+    showMark(Math.abs(v - near * 100) < 2 ? near : null);
   }
 
   function drawLadder(): void {
@@ -189,7 +310,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
         tm.later(() => {
           cmpBtn.hidden = false;
           range.el.hidden = true;
-          f.say("두 계단을 다 쌓았어요. 이제 <b>두 계단을 나란히</b> 놓고 견주어 봐요.");
+          f.say("두 계단을 다 쌓았어요. 이제 <b>두 계단을 나란히</b> 놓고 비교해 봐요.");
         }, 1300);
       }
     }
@@ -275,7 +396,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     phase = "duo";
     f.stage.classList.add("duo");
     mark(4);
-    f.say("왼쪽은 동물, 오른쪽은 식물의 계단이에요. 칸을 하나씩 견주어 봐요.");
+    f.say("왼쪽은 동물, 오른쪽은 식물의 계단이에요. 칸을 하나씩 비교해 봐요.");
     f.slot.ask(
       "동물의 계단에만 있는 단계는 무엇인가요?",
       [{ t: "기관계", ok: true }, { t: "조직계" }, { t: "기관" }],
@@ -299,7 +420,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     phase = "done";
     f.pips(3);
     mark(4);
-    f.say("두 계단을 견주어 봤어요. 아래에서 알게 된 것을 읽어 봐요.");
+    f.say("두 계단을 비교해 봤어요. 아래에서 알게 된 것을 읽어 봐요.");
     f.slot.conclude("생물의 몸은 <b>세포, 조직, 기관, 개체</b>의 단계로 이루어져요. 동물에는 기관계가, 식물에는 조직계가 더 있어요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));

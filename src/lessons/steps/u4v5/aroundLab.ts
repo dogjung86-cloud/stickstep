@@ -3,6 +3,8 @@
 // 여섯 가지 상태 변화 가운데 하나를 일으키면: 물질의 입자 배열이 바뀌고, 열에너지가 주변에서 물질로(또는 물질에서 주변으로) 흐르고, 주변의 온도계가 내려가거나 올라간다.
 // 주문: "주변을 시원하게 만드는 변화 셋을 찾아보세요." 따뜻해지는 변화를 고르면 온도계가 반대로 올라간다(틀린 선택도 그대로 보여 준다).
 // 셋을 찾은 뒤에는 남은 변화도 눌러 확인한다. 판정 질문은 따로 없다(찾기가 곧 판정이다). 시원한 쪽을 찾는 동안 한 번도 어긋나지 않았으면 맞힌 것으로 기록한다.
+// 색(2026-11-15 손질, 감사 하 후보): 따뜻해진 온도계와 카드는 주황(WARM). 빨강은 이 앱에서 오답의 색이라, 방출 변화를 고르면
+//   빨간 기둥과 오답 진동이 함께 와서 '따뜻함'과 '틀림'이 한 색으로 읽혔다. 열의 흐름 화살(주황)과 같은 계열이다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -30,6 +32,8 @@ const CHANGES: Change[] = [
 ];
 const WORD: Record<Ph, string> = { sol: "고체", liq: "액체", gas: "기체" };
 const BOX = { x: 14, y: 46, w: 168, h: 132 }; // 물질의 입자 창
+const WARM = "#FF922B"; // 따뜻해짐(주황)
+const COOL = "#74C0FC"; // 시원해짐(하늘)
 const TH = { x: 290, y0: 56, y1: 176 }; // 주변의 온도계(기둥의 위와 아래)
 
 export const u4AroundLab: StepRenderer = (host, step, api) => {
@@ -109,7 +113,7 @@ export const u4AroundLab: StepRenderer = (host, step, api) => {
       f.stage.classList.add(c.absorb ? "in" : "out");
       heat.textContent = c.absorb ? "열에너지 흡수" : "열에너지 방출";
       col.style.transform = `scaleY(${c.absorb ? 0.26 : 0.78})`;
-      const color = c.absorb ? "#74C0FC" : "#F0705E";
+      const color = c.absorb ? COOL : WARM;
       col.setAttribute("fill", color);
       bulb.setAttribute("fill", color);
     }, 350);

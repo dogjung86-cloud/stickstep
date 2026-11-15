@@ -10,6 +10,7 @@ import {
   svgTable, dbox,
   bioFieldPairFig, bioDiversityGridFig, bioKingdomClueTableFig, bioPopulationBarsFig,
 } from "../src/ui/examFigures";
+import { examPlantCellFig, examAnimalCellFig, cellShapeCardsArt, ladybugExamFig } from "../src/ui/bio6Figures";
 
 const IMG_BASE = "";
 /** exam/u2 발주 실사. loading=lazy 금지(사고 #14). */
@@ -604,16 +605,7 @@ export const POOL_U2V2_PILOT: ExamItem[] = [
     diff: 1,
     prompt:
       "그림은 어떤 세포를 나타낸 것으로, 세 곳이 ㉠~㉢으로 표시되어 있어요. ㉠~㉢ 가운데 <b>동물세포에서는 볼 수 없는</b> 것과, 이 세포의 가장 바깥을 두껍게 둘러싼 구조의 이름을 옳게 짝지은 것은?",
-    figure: cellPhotoFig({
-      photo: "figs/plant-cell.webp",
-      alt: "각진 상자 모양의 세포를 나타낸 그림. 가장 바깥에 두꺼운 테두리가 있고 안쪽에는 크고 둥근 덩어리 하나, 주황색 알갱이 여러 개, 초록색 알갱이 여러 개가 보인다",
-      // 좌표는 tmp 격자 캘리브레이션으로 확정(㉠ 보라 핵 · ㉡ 왼쪽 주황 알갱이 · ㉢ 아래쪽 초록 알갱이).
-      marks: [
-        { sym: "㉠", bx: 114, by: 16, tx: 62, ty: 30 },
-        { sym: "㉡", bx: -14, by: 56, tx: 18, ty: 56 },
-        { sym: "㉢", bx: 44, by: 112, tx: 47, ty: 80 },
-      ],
-    }),
+    // 코드 그림(2026-11-15): 발주 그림에 있던 이 책 밖의 구조를 걷고 레슨 그림과 같은 다섯 구조만. ㉠ 핵 · ㉡ 왼쪽 마이토콘드리아 · ㉢ 아래쪽 엽록체.
     options: ["㉠ · 세포막", "㉠ · 세포벽", "㉡ · 세포벽", "㉢ · 세포막", "㉢ · 세포벽"],
     answer: 4,
     shuffle: false,
@@ -656,16 +648,7 @@ export const POOL_U2V2_PILOT: ExamItem[] = [
     type: "multi",
     diff: 2,
     prompt: "그림은 어떤 세포를 나타낸 것이에요. ㉠~㉢에 대한 설명으로 옳은 것을 <b>모두</b> 골라 보세요.",
-    figure: cellPhotoFig({
-      photo: "figs/animal-cell.webp",
-      alt: "테두리가 둥글고 무른 세포를 나타낸 그림. 안쪽에 크고 둥근 덩어리 하나와 길쭉한 주황색 알갱이 여러 개가 보인다",
-      // 좌표는 tmp 격자 캘리브레이션으로 확정(㉠ 바깥 테두리 · ㉡ 보라 핵 · ㉢ 왼쪽 주황 알갱이).
-      marks: [
-        { sym: "㉠", bx: 50, by: -12, tx: 50, ty: 10 },
-        { sym: "㉡", bx: 114, by: 24, tx: 63, ty: 33 },
-        { sym: "㉢", bx: -14, by: 68, tx: 18, ty: 60 },
-      ],
-    }),
+    // 코드 그림(2026-11-15): 발주 그림에 있던 이 책 밖의 구조를 걷고 레슨 그림과 같은 구조만. ㉠ 바깥 테두리 · ㉡ 핵 · ㉢ 왼쪽 마이토콘드리아.
     options: [
       "㉠은 안과 밖을 가르고, 드나드는 물질을 가려 받아요",
       "㉡ 안에는 유전물질이 들어 있어요",
@@ -788,12 +771,12 @@ export const POOL_U2V2_PILOT: ExamItem[] = [
     type: "mcq",
     diff: 1,
     prompt: "그림은 세포의 모양 다섯 가지를 카드로 늘어놓은 것이에요. 멀리 떨어진 곳까지 신호를 보내는 일을 맡기에 가장 알맞은 모양은?",
-    figure: cellShapeCardsFig([
-      { photo: "figs/cell-ball.webp", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
-      { photo: "figs/cell-nerve.webp", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
-      { photo: "figs/cell-rbc.webp", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
-      { photo: "figs/cell-epithelial.webp", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
-      { photo: "figs/cell-brick.webp", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
+    figure: cellShapeCardsArt([
+      { kind: "ball", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
+      { kind: "nerve", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
+      { kind: "rbc", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
+      { kind: "epi", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
+      { kind: "brick", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
     ]),
     options: ["①", "②", "③", "④", "⑤"],
     answer: 1,
@@ -1033,8 +1016,8 @@ export const POOL_U2V2_PILOT: ExamItem[] = [
     type: "mcq",
     diff: 1,
     prompt:
-      "사진은 한 잎에서 함께 관찰한 <b>같은 종류</b>의 무당벌레예요. 등에 있는 점의 수와 무늬가 개체마다 조금씩 달라요. 이런 차이를 무엇이라고 하며, 그렇게 부르려면 어떤 조건이 필요할까요?",
-    figure: ximg("ladybug-variation.webp", "잎 위에 나란히 앉은 무당벌레 다섯 마리. 등의 점 수와 무늬가 개체마다 조금씩 다르다"),
+      "그림은 한 잎에서 함께 관찰한 <b>같은 종류</b>의 무당벌레예요. 등에 있는 점의 수와 무늬가 개체마다 조금씩 달라요. 이런 차이를 무엇이라고 하며, 그렇게 부르려면 어떤 조건이 필요할까요?",
+    figure: ladybugExamFig("잎 위에 나란히 앉은 무당벌레 다섯 마리. 등의 색과 점 무늬가 개체마다 다르다"),
     options: [
       "변이 · 같은 종류의 개체 사이에서 나타나는 차이일 때만 그렇게 불러요",
       "변이 · 서로 다른 종류의 생물을 비교했을 때만 그렇게 불러요",

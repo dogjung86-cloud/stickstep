@@ -74,6 +74,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
   const seen = new Set<Dir>();
   let phase: "look" | "pole" | "ask" | "done" = "look";
   let poleFound = false;
+  let bigArrow = false; // 판정에 답한 뒤부터 북극성 둘레의 큰 화살
   let disposed = false;
   host.dataset.u7Phase = phase;
 
@@ -161,7 +162,12 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     f.slot.ask(
       "북쪽 하늘의 별들은 <b>어느 방향</b>으로 돌았나요?",
       [{ t: "시계 반대 방향", ok: true }, { t: "시계 방향" }],
-      (ok) => api.recordQuiz(ok),
+      (ok) => {
+        // 답한 뒤에는 무대에 도는 방향을 큰 화살로 확인해 준다(묻는 동안에는 자취의 옅고 진함과 작은 화살촉만)
+        bigArrow = true;
+        draw();
+        api.recordQuiz(ok);
+      },
       { why: "자취의 끝(밝은 점)이 시계 반대 방향으로 나아갔어요.", onNext: conclude },
     );
   }
@@ -214,24 +220,40 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     ctx.fillRect(0, 0, W, H);
 
     const list = stars[dir];
-    const lineTo = (st: Star): void => {
+    // 자취: 지나온 쪽(처음)은 옅게, 지금의 별 쪽은 진하게, 끝에 작은 화살촉. 멈춘 그림만 보고도 어느 쪽으로 움직였는지 읽힌다
+    // (예전에는 처음부터 끝까지 같은 밝기라 정지 화면에서 방향이 없었다, 2026-11-15 그래픽 감사).
+    const trail = (st: Star): void => {
       const n = Math.max(2, Math.ceil(t * 4));
-      ctx.beginPath();
-      for (let i = 0; i <= n; i++) {
-        const [x, y] = st.at((t * i) / n, W);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      const p: [number, number][] = [];
+      for (let i = 0; i <= n; i++) p.push(st.at((t * i) / n, W));
+      const aMax = 0.32 + st.b * 0.58;
+      ctx.lineWidth = st.b > 0.9 ? 2 : 1.5;
+      ctx.lineCap = "butt";
+      for (let i = 1; i <= n; i++) {
+        const k = i / n;
+        ctx.strokeStyle = `rgba(176,206,255,${(0.05 + (aMax - 0.05) * k * k).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.moveTo(p[i - 1][0], p[i - 1][1]);
+        ctx.lineTo(p[i][0], p[i][1]);
+        ctx.stroke();
       }
+      const [ex, ey] = p[n];
+      const [bx, by] = p[Math.max(0, n - 2)];
+      const len = Math.hypot(ex - bx, ey - by);
+      if (len < 6 || Math.hypot(ex - p[0][0], ey - p[0][1]) < 16) return;
+      const ux = (ex - bx) / len;
+      const uy = (ey - by) / len;
+      ctx.strokeStyle = `rgba(196,220,255,${aMax.toFixed(3)})`;
+      ctx.lineWidth = 1.5;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(ex - ux * 6.5 - uy * 3.6, ey - uy * 6.5 + ux * 3.6);
+      ctx.lineTo(ex - ux * 1.5, ey - uy * 1.5);
+      ctx.lineTo(ex - ux * 6.5 + uy * 3.6, ey - uy * 6.5 - ux * 3.6);
       ctx.stroke();
     };
+    if (t > 0) for (const st of list) trail(st);
     ctx.lineCap = "round";
-    if (t > 0) {
-      for (const st of list) {
-        ctx.strokeStyle = `rgba(170,200,255,${0.2 + st.b * 0.3})`;
-        ctx.lineWidth = st.b > 0.9 ? 2 : 1.4;
-        lineTo(st);
-      }
-    }
     if (dir === "N") {
       // 북두칠성의 별을 잇는 선(지금 시각의 자리)
       ctx.strokeStyle = "rgba(255,226,160,.55)";
@@ -268,6 +290,29 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
         ctx.textAlign = "center";
         ctx.fillStyle = "#FFEFC4";
         ctx.fillText("북극성", px, py - 18);
+      }
+      // 판정에 답한 뒤와 결론: 북극성 둘레에 도는 방향(시계 반대)을 큰 화살 하나로(책 245쪽 그림 Ⅶ-7, 같은 레슨의 북쪽 하늘 문제 그림처럼)
+      if (bigArrow) {
+        const R = 46;
+        const a0 = (38 * Math.PI) / 180; // 오른쪽 아래에서
+        const a1 = (-62 * Math.PI) / 180; // 오른쪽 위로(화면에서 시계 반대)
+        ctx.strokeStyle = "#FFD25E";
+        ctx.lineWidth = 2.8;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(px, py, R, a0, a1, true);
+        ctx.stroke();
+        const hx = px + R * Math.cos(a1);
+        const hy = py + R * Math.sin(a1);
+        const ux = Math.sin(a1); // 각이 줄어드는 쪽의 접선
+        const uy = -Math.cos(a1);
+        ctx.fillStyle = "#FFD25E";
+        ctx.beginPath();
+        ctx.moveTo(hx + ux * 8, hy + uy * 8);
+        ctx.lineTo(hx - ux * 2 - uy * 6, hy - uy * 2 + ux * 6);
+        ctx.lineTo(hx - ux * 2 + uy * 6, hy - uy * 2 - ux * 6);
+        ctx.closePath();
+        ctx.fill();
       }
     }
 

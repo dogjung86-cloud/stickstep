@@ -4,16 +4,28 @@
 // 조작: 예측(정오를 매기지 않는다) → 잉크 넣기 → 저을지 가만히 둘지 고르기 → 시간 막대를 밀어 지켜보기 → 식초 떨어뜨리기 → 시간 막대 → 판정 하나.
 // 저으면 금방 섞이지만 무엇 때문에 섞였는지 알 수 없다(책의 주의: 물이 움직이지 않게). 새 물로 다시 하게 한다.
 // 시간 막대는 되돌아가지 않는다(지나간 시간은 그대로다). 판정은 무대에 남은 것(바깥 고리가 늦게 변했다)으로 답할 수 있는 것만 묻는다.
+// 그림(2026-11-15 다시 그림, 감사 상·중 후보): 비커의 물은 거의 맑게 두고 잉크는 진한 남색 구름으로 바닥에서 번진다(넣기 전에는 잉크가 없다).
+//   접시는 책처럼 초록 BTB 방울이고, 가운데의 식초 입자(보라)가 사방으로 퍼져 나가 입자가 닿은 방울만 노랗게 변한다(책 그림 Ⅳ-1).
+//   판정으로 넘어가면 무대를 두 칸('조금 뒤', '한참 뒤')으로 나눠 바뀐 차례와 퍼진 입자를 함께 남긴다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvCard, bvCards, bvRange, bvTween } from "../bio6/b6Lab";
-import { A, beaker, seeded, svgOpen, u4Lab, u4Predict, type Pt, type U4Step } from "./u4Kit";
+import { beaker, beakerLiquidD, seeded, svgOpen, u4Lab, u4Predict, type Pt, type U4Step } from "./u4Kit";
 
 const BX = 103, BY = 40, BW = 140, BH = 160; // 비커
 const DROP: Pt = { x: 173, y: 186 }; // 잉크가 들어가는 자리(바닥 가까이)
 const DISH: Pt = { x: 173, y: 118 };
+const DR = 90; // 접시 반지름
 const R_IN = 32, R_OUT = 62;
+const INK = "#2C3AA8"; // 잉크(진한 남색)
+const VIN = "#6741D9"; // 식초 입자(보라)
+const T_MID = 0.38; // 비교판 왼쪽 칸('조금 뒤')의 시간
+
+/** 식초 입자 무리의 퍼진 정도(가운데가 가장 빽빽하고 바깥으로 갈수록 성긴 무리의 크기). 처음에 빠르고 갈수록 느려진다. */
+const sigma = (t: number): number => 61 * Math.pow(Math.max(0, t), 0.7);
+/** 방울이 노랗게 변하는 때: 무리의 크기(×1.55)가 그 방울까지 닿을 때(가운데 농도의 3할쯤이 닿을 때). */
+const reachT = (d: number): number => Math.pow(d / (1.55 * 61), 1 / 0.7);
 
 export const u4InkLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
@@ -21,57 +33,128 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
   const { f, tm } = lab;
   const rnd = seeded(41);
 
-  const parts = Array.from({ length: 26 }, () => ({ x: BX + 14 + rnd() * (BW - 28), y: BY + 42 + rnd() * (BH - 56), delay: rnd() * 0.5 }));
+  // 잉크 구름: 바닥의 한 점에서 위와 옆으로 번지는 덩어리들(시간이 갈수록 커지고 옅어지며 물 전체의 색이 짙어진다)
+  const blobs = Array.from({ length: 9 }, (_, i) => {
+    const up = i / 8;
+    return {
+      dx: (rnd() - 0.5) * (40 + 70 * up),
+      rise: 14 + 104 * up + rnd() * 10,
+      grow: 16 + 22 * rnd() + 12 * up,
+      delay: 0.08 * up + rnd() * 0.06,
+      a: 0.92 - 0.3 * up,
+    };
+  });
+  // BTB 방울: 안쪽 고리 6, 바깥 고리 10. 식초 입자의 앞머리가 닿는 때에 노랗게 변한다
   const btb: (Pt & { at: number })[] = [];
-  for (let i = 0; i < 6; i++) {
-    const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
-    btb.push({ x: DISH.x + R_IN * Math.cos(a), y: DISH.y + R_IN * Math.sin(a), at: 0.22 + 0.03 * (i % 3) });
-  }
-  for (let i = 0; i < 10; i++) {
-    const a = (i / 10) * Math.PI * 2 + 0.2;
-    btb.push({ x: DISH.x + R_OUT * Math.cos(a), y: DISH.y + R_OUT * Math.sin(a), at: 0.62 + 0.035 * (i % 4) });
-  }
+  const ring = (n: number, r: number, a0: number): void => {
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + a0;
+      btb.push({ x: DISH.x + r * Math.cos(a), y: DISH.y + r * Math.sin(a), at: reachT(r) + 0.012 * (i % 4) });
+    }
+  };
+  ring(6, R_IN, -Math.PI / 2);
+  ring(10, R_OUT, 0.2);
+  // 식초 입자 72개: 처음에는 가운데 방울 안. 시간이 가면 가운데가 가장 빽빽한 무리(정규 분포)로 퍼지고,
+  // 접시 끝에 닿은 입자는 그 자리에 머물러 한참 뒤에는 접시 전체에 고르게 퍼진다(차례 u가 같으면 무리 안의 자리와 마지막 자리가 짝이다)
+  const vp = Array.from({ length: 72 }, (_, i) => {
+    const u = Math.min(0.985, (i + 0.15 + 0.7 * rnd()) / 72);
+    return {
+      a: rnd() * Math.PI * 2,
+      r0: 5.5 * Math.sqrt(rnd()),
+      g: Math.sqrt(-2 * Math.log(1 - u)),
+      fin: 85 * Math.sqrt(u),
+      wob: (rnd() - 0.5) * 0.6,
+      ph: rnd() * 6.3,
+    };
+  });
+  const vpAt = (p: (typeof vp)[number], t: number): Pt => {
+    const r = Math.max(p.r0, Math.min(p.fin, p.g * sigma(t)));
+    const a = p.a + p.wob * Math.sin(p.ph + 4 * t) * (r / DR);
+    return { x: r * Math.cos(a), y: r * Math.sin(a) };
+  };
+
+  const liqD = beakerLiquidD(BX, BY, BW, BH, 0.8);
+  // 접시 한 장(가운데 0,0 기준). k는 크기 배율, live면 움직일 입자와 방울에 class를 붙인다
+  const dishSvg = (t: number, live: boolean): string => {
+    const drops = btb
+      .map((b, i) => {
+        const yel = t >= b.at;
+        const x = (b.x - DISH.x).toFixed(1), y = (b.y - DISH.y).toFixed(1);
+        return `<g class="u4x-ink-btb${yel ? " yel" : ""}"${live ? ` data-i="${i}"` : ""}>
+          <circle cx="${x}" cy="${y}" r="7.2" fill="url(#u4inkG)" stroke="#2B8A3E" stroke-width="1"/>
+          <circle class="u4x-ink-btby" cx="${x}" cy="${y}" r="7.2" fill="url(#u4inkY)" stroke="#E8A200" stroke-width="1"/>
+          <ellipse cx="${(+x - 2.4).toFixed(1)}" cy="${(+y - 2.6).toFixed(1)}" rx="2.3" ry="1.6" fill="#fff" opacity=".75"/>
+        </g>`;
+      })
+      .join("");
+    const parts = vp
+      .map((p) => {
+        const q = vpAt(p, t);
+        return `<circle class="u4x-ink-vp" cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="2.7" fill="${VIN}" stroke="#fff" stroke-width=".7"${live ? ' opacity="0"' : ""}/>`;
+      })
+      .join("");
+    return `<circle r="${DR}" fill="url(#u4inkDish)"/>
+      <circle r="${DR - 1.6}" stroke="#7F93B0" stroke-opacity=".28" stroke-width="2.2"/>
+      <circle r="${DR - 4}" stroke="#fff" stroke-opacity=".55" stroke-width="1"/>
+      <circle r="${DR}" stroke="#C9D8EA" stroke-width="3.2"/>
+      <path d="M${-DR * 0.74} ${-DR * 0.5} A${DR - 6} ${DR - 6} 0 0 1 ${-DR * 0.28} ${-DR * 0.86}" stroke="#fff" stroke-width="3.4" stroke-linecap="round" opacity=".85"/>
+      ${drops}
+      <circle class="u4x-ink-vin" r="8.5" fill="url(#u4inkV)" stroke="#D9A400" stroke-width="1.6"${live ? ' opacity="0"' : ""}/>
+      <g class="u4x-ink-vps">${parts}</g>`;
+  };
+  const lidSvg = (live: boolean): string => `<g class="u4x-ink-lid"${live ? ' opacity="0"' : ""}>
+      <circle r="${DR + 6}" stroke="#DCEBFF" stroke-opacity=".75" stroke-width="2.4"/>
+      <path d="M${-DR * 0.82} ${-DR * 0.42} A${DR + 2} ${DR + 2} 0 0 1 ${-DR * 0.42} ${-DR * 0.84}" stroke="#fff" stroke-width="3.6" stroke-linecap="round" opacity=".55"/>
+    </g>`;
 
   f.stage.innerHTML = `${svgOpen}
     <defs>
-      <radialGradient id="u4inkBlob" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="${A.ink}" stop-opacity="0.95"/><stop offset="1" stop-color="${A.ink}" stop-opacity="0"/></radialGradient>
-      <radialGradient id="u4inkDish" cx="0.4" cy="0.35" r="0.8"><stop offset="0" stop-color="#F7FAFD"/><stop offset="1" stop-color="#D5DEE9"/></radialGradient>
-      <clipPath id="u4inkClip"><rect x="${BX + 3}" y="${BY + BH * 0.2}" width="${BW - 6}" height="${BH * 0.8 - 3}" rx="5"/></clipPath>
+      <radialGradient id="u4inkBlob" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="${INK}" stop-opacity="1"/><stop offset="0.55" stop-color="${INK}" stop-opacity="0.55"/><stop offset="1" stop-color="${INK}" stop-opacity="0"/></radialGradient>
+      <linearGradient id="u4inkWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF4FB"/><stop offset="1" stop-color="#D3E0EF"/></linearGradient>
+      <radialGradient id="u4inkDish" cx="0.42" cy="0.36" r="0.75"><stop offset="0" stop-color="#FAFCFE"/><stop offset="0.75" stop-color="#E7EDF5"/><stop offset="1" stop-color="#D2DCE8"/></radialGradient>
+      <radialGradient id="u4inkG" cx="0.38" cy="0.32" r="0.75"><stop offset="0" stop-color="#B2F2BB"/><stop offset="0.55" stop-color="#51CF66"/><stop offset="1" stop-color="#2F9E44"/></radialGradient>
+      <radialGradient id="u4inkY" cx="0.38" cy="0.32" r="0.75"><stop offset="0" stop-color="#FFF3BF"/><stop offset="0.55" stop-color="#FFD43B"/><stop offset="1" stop-color="#F59F00"/></radialGradient>
+      <radialGradient id="u4inkV" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#FFFDF3"/><stop offset="1" stop-color="#FFE8A3"/></radialGradient>
+      <clipPath id="u4inkClip"><path d="${liqD}"/></clipPath>
+      <linearGradient id="u4inkTube" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F4F8FC" stop-opacity=".9"/><stop offset=".5" stop-color="#C9D6E6" stop-opacity=".55"/><stop offset="1" stop-color="#EEF3F9" stop-opacity=".85"/></linearGradient>
+      <radialGradient id="u4inkBulb" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#C6CED8"/><stop offset="0.6" stop-color="#7D8896"/><stop offset="1" stop-color="#4E5866"/></radialGradient>
     </defs>
     <g class="u4x-ink-a">
       <ellipse cx="173" cy="208" rx="86" ry="7" fill="#000" opacity="0.32"/>
-      ${beaker(BX, BY, BW, BH, A.water, "u4x-ink", 0.8)}
+      ${beaker(BX, BY, BW, BH, "url(#u4inkWater)", "u4x-ink", 0.8)}
       <g clip-path="url(#u4inkClip)">
-        <rect class="u4x-ink-tint" x="${BX}" y="${BY}" width="${BW}" height="${BH}" fill="${A.ink}" opacity="0"/>
-        <circle class="u4x-ink-blob" cx="${DROP.x}" cy="${DROP.y}" r="0" fill="url(#u4inkBlob)"/>
-        ${parts.map(() => `<circle class="u4x-ink-part" cx="${DROP.x}" cy="${DROP.y}" r="3" fill="#C3CFFF" opacity="0"/>`).join("")}
+        <rect class="u4x-ink-tint" x="${BX}" y="${BY}" width="${BW}" height="${BH}" fill="#3B4CCA" opacity="0"/>
+        ${blobs.map(() => `<ellipse class="u4x-ink-blob" cx="${DROP.x}" cy="${DROP.y}" rx="0" ry="0" fill="url(#u4inkBlob)" opacity="0"/>`).join("")}
       </g>
       <path class="u4x-ink-rod" d="M${DROP.x + 26} ${BY - 26} L${DROP.x + 4} ${BY + BH - 22}" stroke="rgba(235,242,250,.9)" stroke-width="5" stroke-linecap="round" opacity="0"/>
       <g class="u4x-ink-dropper">
-        <rect x="${DROP.x - 4}" y="${BY - 34}" width="8" height="${DROP.y - BY + 22}" rx="3" fill="rgba(240,244,250,.9)" stroke="#8B9BB0" stroke-width="1.4"/>
-        <path d="M${DROP.x - 4} ${DROP.y - 12} l4 9 l4 -9 Z" fill="#8B9BB0"/>
-        <ellipse cx="${DROP.x}" cy="${BY - 40}" rx="10" ry="9" fill="#F0705E" stroke="#B4483A" stroke-width="1.4"/>
+        <rect x="${DROP.x - 4.5}" y="${BY - 34}" width="9" height="${DROP.y - BY + 22}" rx="3.5" fill="url(#u4inkTube)" stroke="#8B9BB0" stroke-width="1.2"/>
+        <rect class="u4x-ink-load" x="${DROP.x - 2.6}" y="${DROP.y - 46}" width="5.2" height="34" rx="2" fill="${INK}"/>
+        <path d="M${DROP.x - 4.5} ${DROP.y - 12} l4.5 10 l4.5 -10 Z" fill="#B7C3D3" stroke="#8B9BB0" stroke-width="1"/>
+        <path d="M${DROP.x - 9} ${BY - 33} h18" stroke="#6B7685" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="${DROP.x}" cy="${BY - 44}" rx="10" ry="11" fill="url(#u4inkBulb)" stroke="#3F4855" stroke-width="1.4"/>
+        <ellipse cx="${DROP.x - 3.5}" cy="${BY - 48}" rx="2.6" ry="3.6" fill="#fff" opacity=".45"/>
       </g>
     </g>
     <g class="u4x-ink-b" style="display:none">
       <ellipse cx="${DISH.x}" cy="214" rx="96" ry="7" fill="#000" opacity="0.32"/>
-      <circle cx="${DISH.x}" cy="${DISH.y}" r="90" fill="url(#u4inkDish)" stroke="${A.glass}" stroke-width="3"/>
-      ${btb.map((b) => `<circle class="u4x-ink-btb" cx="${b.x.toFixed(1)}" cy="${b.y.toFixed(1)}" r="7" fill="${A.btb}" stroke="#fff" stroke-width="1.4"/>`).join("")}
-      <circle class="u4x-ink-vin" cx="${DISH.x}" cy="${DISH.y}" r="8" fill="#FFFDF2" stroke="#E0B400" stroke-width="2.4" opacity="0"/>
-      <g class="u4x-ink-lid" opacity="0">
-        <circle cx="${DISH.x}" cy="${DISH.y}" r="97" stroke="rgba(220,235,255,.9)" stroke-width="3"/>
-        <path d="M${DISH.x - 70} ${DISH.y - 56} a90 90 0 0 1 40 -28" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
-      </g>
+      <g class="u4x-ink-live" transform="translate(${DISH.x} ${DISH.y})">${dishSvg(0, true)}${lidSvg(true)}</g>
+      <g class="u4x-ink-pair" style="display:none"></g>
     </g>
   </svg>`;
   const q = <T extends Element>(sel: string): T => f.stage.querySelector(sel) as T;
   const sceneA = q<SVGGElement>(".u4x-ink-a");
   const sceneB = q<SVGGElement>(".u4x-ink-b");
-  const blob = q<SVGCircleElement>(".u4x-ink-blob");
+  const blobEls = Array.from(f.stage.querySelectorAll<SVGEllipseElement>(".u4x-ink-blob"));
   const tint = q<SVGRectElement>(".u4x-ink-tint");
+  const water = q<SVGPathElement>(".u4x-ink-liq");
+  water.setAttribute("opacity", "0.95");
   const dropper = q<SVGGElement>(".u4x-ink-dropper");
-  const partEls = Array.from(f.stage.querySelectorAll<SVGCircleElement>(".u4x-ink-part"));
-  const btbEls = Array.from(f.stage.querySelectorAll<SVGCircleElement>(".u4x-ink-btb"));
+  const load = q<SVGRectElement>(".u4x-ink-load");
+  const live = q<SVGGElement>(".u4x-ink-live");
+  const pair = q<SVGGElement>(".u4x-ink-pair");
+  const btbEls = Array.from(live.querySelectorAll<SVGGElement>(".u4x-ink-btb"));
+  const vpEls = Array.from(live.querySelectorAll<SVGCircleElement>(".u4x-ink-vp"));
   const vin = q<SVGCircleElement>(".u4x-ink-vin");
   const lid = q<SVGGElement>(".u4x-ink-lid");
   const rod = q<SVGPathElement>(".u4x-ink-rod");
@@ -80,22 +163,35 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
   let pred = "";
   let pA = 0;
 
+  /** 잉크: t=0이면 아무것도 없다. 넣은 직후에는 바닥의 진한 점, 시간이 가면 구름이 위와 옆으로 번지고 물 전체가 고르게 짙어진다. */
   function paintInk(t: number): void {
-    blob.setAttribute("r", (12 + 70 * t).toFixed(1));
-    blob.setAttribute("opacity", (1 - t).toFixed(2));
-    tint.setAttribute("opacity", (0.4 * t).toFixed(2));
-    partEls.forEach((c, k) => {
-      const p = parts[k];
-      const u = Math.max(0, Math.min(1, (t - p.delay * 0.6) / (1 - p.delay * 0.6)));
+    blobEls.forEach((c, k) => {
+      if (t <= 0) {
+        c.setAttribute("opacity", "0");
+        return;
+      }
+      const b = blobs[k];
+      const u = Math.max(0, Math.min(1, (t - b.delay) / (1 - b.delay)));
       const e = 1 - (1 - u) * (1 - u);
-      c.setAttribute("cx", (DROP.x + (p.x - DROP.x) * e).toFixed(1));
-      c.setAttribute("cy", (DROP.y + (p.y - DROP.y) * e).toFixed(1));
-      c.setAttribute("opacity", t > 0 ? "0.9" : "0");
+      const r = 7 + b.grow * e + 26 * t;
+      c.setAttribute("cx", (DROP.x + b.dx * e).toFixed(1));
+      c.setAttribute("cy", (DROP.y - 2 - b.rise * e).toFixed(1));
+      c.setAttribute("rx", r.toFixed(1));
+      c.setAttribute("ry", (r * 0.82).toFixed(1));
+      const fade = Math.pow(Math.max(0, 1 - t), 1.15);
+      c.setAttribute("opacity", (k === 0 ? Math.max(fade, 0.2 * (1 - t)) : b.a * fade * Math.min(1, u * 5 + 0.15)).toFixed(2));
     });
+    tint.setAttribute("opacity", (0.5 * Math.pow(Math.max(0, t), 1.25)).toFixed(3));
     host.dataset.u4Ink = t.toFixed(2);
   }
+  /** 접시: 식초 입자를 시간 t의 자리로, 입자가 닿은 방울만 노랗게. */
   function paintDish(t: number): void {
-    btbEls.forEach((c, k) => c.setAttribute("fill", t >= btb[k].at ? A.yellow : A.btb));
+    vpEls.forEach((c, k) => {
+      const p = vpAt(vp[k], t);
+      c.setAttribute("cx", p.x.toFixed(1));
+      c.setAttribute("cy", p.y.toFixed(1));
+    });
+    btbEls.forEach((g, k) => g.classList.toggle("yel", t >= btb[k].at));
     host.dataset.u4Dish = t.toFixed(2);
   }
 
@@ -128,6 +224,20 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     return r;
   };
 
+  /** 판정 무대: 같은 접시를 '조금 뒤'와 '한참 뒤' 두 칸으로. 안쪽 고리만 노란 때와 모두 노란 때, 그때마다 식초 입자가 퍼진 곳을 함께 둔다. */
+  function showPair(): void {
+    const k = 0.82;
+    const cell = (cx: number, label: string, t: number): string => `
+      <text x="${cx}" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#DCE7F5">${label}</text>
+      <ellipse cx="${cx}" cy="${206}" rx="${80}" ry="6" fill="#000" opacity="0.3"/>
+      <g transform="translate(${cx} ${120}) scale(${k})">${dishSvg(t, false)}${lidSvg(false)}</g>`;
+    pair.innerHTML = cell(88, "조금 뒤", T_MID) + cell(258, "한참 뒤", 1);
+    live.style.display = "none";
+    pair.style.display = "";
+    sceneB.querySelector("ellipse")?.setAttribute("opacity", "0");
+    host.dataset.u4Pair = "1";
+  }
+
   const addInk = bvBtn("main u4x-ink-add", "스포이트로 잉크 넣기");
   const toDish = bvBtn("main u4x-ink-next", "다음 실험: 접시와 식초");
   const addVin = bvBtn("main u4x-ink-vinbtn", "식초 떨어뜨리고 뚜껑 덮기");
@@ -145,8 +255,10 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
   addInk.addEventListener("click", () => {
     addInk.disabled = true;
     haptic(HAPTIC.tap);
+    load.setAttribute("opacity", "1");
     dropper.style.transform = "translateY(0)";
     tm.later(() => {
+      load.setAttribute("opacity", "0");
       paintInk(0.02);
       pA = 0.02;
     }, 500);
@@ -206,6 +318,8 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     addVin.disabled = true;
     haptic(HAPTIC.tap);
     vin.setAttribute("opacity", "1");
+    vpEls.forEach((c) => c.setAttribute("opacity", "1"));
+    paintDish(0);
     tm.later(() => lid.setAttribute("opacity", "1"), 350);
     tm.later(() => {
       f.say("뚜껑을 덮어 <b>바람이 없어요</b>. 시간을 보내며 어느 방울부터 변하는지 보세요.");
@@ -220,6 +334,7 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
   });
 
   function judge(): void {
+    showPair();
     f.slot.ask(
       "<b>바깥쪽 방울</b>이 더 늦게 노랗게 변한 까닭은?",
       [
@@ -237,6 +352,7 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
 
   // 처음: 예측
   paintInk(0);
+  load.setAttribute("opacity", "0");
   f.say("비커 바닥에 잉크를 넣고 <b>젓지 않을</b> 거예요. 먼저 예측해 보세요.");
   u4Predict(lab, "바닥에 넣은 잉크를 <b>젓지 않고</b> 두면 어떻게 될까요?", ["물 전체로 퍼진다", "바닥에만 머문다", "물 위로 떠올라 모인다"], (picked) => {
     pred = picked;

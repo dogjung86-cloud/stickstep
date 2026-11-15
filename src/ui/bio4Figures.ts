@@ -66,20 +66,36 @@ const MINI: Record<string, () => string> = {
       <circle cx="28" cy="46" r="14" fill="#E7F0FF" stroke="#7FA8E0" stroke-width="2.6"/>
       <circle cx="28" cy="46" r="5.5" fill="#3B5BDB"/>
     `, "염색 방울과 푸르게 물든 핵"),
-  // L4: 세 세포 실루엣 나란히 — 신경(선)·적혈구(원반)·상피(타일)
+  // L4: 세 세포 나란히. 세포 맡기기 랩, 문제 그림(bio6Figures.cellArt)과 같은 모양과 색(2026-11-15):
+  // 주황 신경세포(가지가 난 몸과 긴 축삭), 빨간 적혈구(가운데가 오목한 원반), 분홍 상피세포(빈틈없이 맞물린 타일)
   cellTypes: () => svg("0 0 64 64", `
-      <path d="M8 50 C16 38 20 26 24 16" stroke="#9775FA" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="26" cy="12" r="5" fill="#7048E8"/>
-      <ellipse cx="40" cy="30" rx="11" ry="9" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4"/>
-      <ellipse cx="40" cy="29" rx="5" ry="3.6" fill="#F03E3E" opacity="0.5"/>
-      <path d="M34 48 l16 -3 4 9 -16 3 Z" fill="#A5D8FF" stroke="#1971C2" stroke-width="2.2" stroke-linejoin="round"/>
-    `, "신경세포·적혈구·상피세포"),
-  // L4: 모양=일 — 퍼즐 조각이 자리에 딱
+      <path d="M13 15L6 8M13 15L4 17M13 15L12 5M13 15L21 8M13 15L8 24M17 19C22 28 24 37 28 46M28 46L24 53M28 46L29 54M28 46L34 51" stroke="#B86A1E" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M13 15L6 8M13 15L4 17M13 15L12 5M13 15L21 8M13 15L8 24M17 19C22 28 24 37 28 46M28 46L24 53M28 46L29 54M28 46L34 51" stroke="#F6B26B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="14" cy="16" r="5.4" fill="#F6B26B" stroke="#B86A1E" stroke-width="1.4"/>
+      <circle cx="14.5" cy="16.5" r="2.2" fill="#7048E8"/>
+      <circle cx="46" cy="18" r="10.5" fill="#E5484D" stroke="#A01B24" stroke-width="1.6"/>
+      <ellipse cx="46.6" cy="18.8" rx="5" ry="4.4" fill="#B3262E" opacity=".85"/>
+      <path d="M38.8 15a8 8 0 0 1 5 -5.6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".55"/>
+      <g fill="#F7B8C8" stroke="#C75C80" stroke-width="1.4" stroke-linejoin="round">
+        <path d="M40 34.5l5.6 3.2v6.5L40 47.4l-5.6-3.2v-6.5z"/><path d="M51.2 34.5l5.6 3.2v6.5l-5.6 3.2-5.6-3.2v-6.5z"/>
+        <path d="M45.6 44.2l5.6 3.2v6.5l-5.6 3.2-5.6-3.2v-6.5z"/><path d="M56.8 44.2l5.6 3.2v6.5l-5.6 3.2-5.6-3.2v-6.5z" opacity=".95"/>
+      </g>
+      <g fill="#7048E8"><circle cx="40" cy="41" r="1.8"/><circle cx="51.2" cy="41" r="1.8"/><circle cx="45.6" cy="50.6" r="1.8"/><circle cx="56.8" cy="50.6" r="1.8"/></g>
+    `, "신경세포, 적혈구, 상피세포"),
+  // L4: 모양과 일의 짝(2026-11-15, 고치기 전 퍼즐 조각은 무엇인지 읽히지 않았다): 랩에서 맡긴 일 둘.
+  // 위: 보내는 곳(노란 신호)에서 받는 곳(고리)까지 길게 뻗어 닿는 신경세포. 아래: 좁은 혈관을 지나는 작은 적혈구.
   fitJob: () => svg("0 0 64 64", `
-      <path d="M10 22 h18 v-8 a6 6 0 0 1 12 0 v8 h14 v32 h-44 Z" fill="#E9FAC8" stroke="${B4.bioDeep}" stroke-width="2.6" stroke-linejoin="round"/>
-      <circle cx="32" cy="38" r="7" fill="${B4.bio}" opacity="0.85"/>
-      <path d="M46 10 l8 8" stroke="${B4.membrane}" stroke-width="3.4" stroke-linecap="round"/>
-    `, "자리에 꼭 맞는 퍼즐 조각"),
+      <path d="M8 8H56M8 5v6M56 5v6" stroke="#ADB5BD" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="0"/>
+      <circle cx="8" cy="20" r="4.4" fill="#FFE066" stroke="#E8A800" stroke-width="1.4"/>
+      <circle cx="56" cy="20" r="5" fill="#fff" stroke="#6B7684" stroke-width="2"/><circle cx="56" cy="20" r="1.8" fill="#6B7684"/>
+      <path d="M16 20H48M48 20l3.4-3M48 20h4M48 20l3.4 3" stroke="#B86A1E" stroke-width="4.2" stroke-linecap="round"/>
+      <path d="M16 20H48M48 20l3.4-3M48 20h4M48 20l3.4 3" stroke="#F6B26B" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="16" cy="20" r="4.2" fill="#F6B26B" stroke="#B86A1E" stroke-width="1.4"/><circle cx="16.4" cy="20.4" r="1.6" fill="#7048E8"/>
+      <path d="M4 34h14c7 0 9 5 16 5h26M4 58h14c7 0 9-5 16-5h26" stroke="#E8A7AA" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M24 46h8M26 42.6h5M26 49.4h5" stroke="#ADB5BD" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="43" cy="46" r="5.6" fill="#E5484D" stroke="#A01B24" stroke-width="1.4"/>
+      <ellipse cx="43.3" cy="46.4" rx="2.6" ry="2.3" fill="#B3262E" opacity=".85"/>
+    `, "먼 곳까지 닿는 긴 신경세포와 좁은 혈관을 지나는 적혈구"),
   // L5: 구성 단계 계단(작→큰)
   stackLadder: () => svg("0 0 64 64", `
       <path d="M8 54 h12 v-10 h12 v-10 h12 v-10 h12 v-12" stroke="${B4.bioDeep}" stroke-width="3" fill="none" stroke-linejoin="round"/>
@@ -319,27 +335,30 @@ export function cellTypeArt(kind: "nerve" | "rbc" | "epi"): string {
 
 /** blanks: 가릴 단계 인덱스(0=종 … 6=계) — 퀴즈용. 무인자는 concept·recap 완성본. */
 export function rankLadderFig(blanks?: number[]): string {
+  // 2026-11-15 그래픽 손질: 예시 이름이 그림 밖으로 잘려("척삭동물문"이 "척삭동물", "동물계"가 "동물") 보였고 "큰 단위"가 계 알약에 가렸다.
+  // 알약 폭을 줄여 이름 자리를 확보하고, 예시와 축 글자를 13.5px로(개념 그림 칸에서 0.92배로 줄어 폰 표시 12.5px), 축 글자는 알약과 겹치지 않는 왼쪽 위아래에.
   const RANKS = ["종", "속", "과", "목", "강", "문", "계"];
   const EXAMPLES = ["들고양이종", "고양이속", "고양이과", "식육목", "포유강", "척삭동물문", "동물계"];
   const marks = ["(가)", "(나)", "(다)", "(라)", "(마)", "(바)", "(사)"];
+  const CX = 150;
   let bi = 0;
   const rows = RANKS.map((r, i) => {
-    const w = 96 + i * 32;
-    const x = 170 - w / 2;
-    const y = 12 + i * 30;
+    const w = 64 + i * 22;
+    const x = CX - w / 2;
+    const y = 18 + i * 30;
     const blanked = blanks?.includes(i);
     const label = blanked ? marks[bi++] : r;
     return `
       <rect x="${x}" y="${y}" width="${w}" height="24" rx="12" fill="${blanked ? "#FFF3BF" : "#E6FCF1"}" stroke="${blanked ? "#E8A80C" : "#63C79B"}" stroke-width="2"/>
-      <text x="170" y="${y + 16.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#1F4B38">${label}</text>
-      <text x="${x + w + 8}" y="${y + 16.5}" font-size="10.5" font-weight="700" fill="#8B95A1">${EXAMPLES[i]}</text>`;
+      <text x="${CX}" y="${y + 16.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#1F4B38">${label}</text>
+      <text x="${x + w + 8}" y="${y + 17}" font-size="13.5" font-weight="700" fill="#6B7684">${EXAMPLES[i]}</text>`;
   }).join("");
-  return `<svg viewBox="0 0 340 226" fill="none" xmlns="http://www.w3.org/2000/svg" role="img"
+  return `<svg viewBox="0 0 340 238" fill="none" xmlns="http://www.w3.org/2000/svg" role="img"
     aria-label="종에서 계까지 점점 커지는 분류체계 사다리">
-    <path d="M28 26 v166" stroke="#C9D6CE" stroke-width="2.4"/>
-    <path d="M28 198 l-5 -9 h10 Z" fill="#C9D6CE"/>
-    <text x="28" y="16" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8B95A1">작은 단위</text>
-    <text x="28" y="214" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8B95A1">큰 단위</text>
+    <path d="M20 24 v184" stroke="#C9D6CE" stroke-width="2.4"/>
+    <path d="M20 214 l-5 -9 h10 Z" fill="#C9D6CE"/>
+    <text x="4" y="14" font-size="13.5" font-weight="700" fill="#6B7684">작은 단위</text>
+    <text x="4" y="233" font-size="13.5" font-weight="700" fill="#6B7684">큰 단위</text>
     ${rows}
   </svg>`;
 }

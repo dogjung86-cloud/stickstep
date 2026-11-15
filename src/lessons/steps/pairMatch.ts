@@ -9,7 +9,13 @@ import type { StepRenderer } from "../types";
 interface Pair {
   a: string; // 왼쪽(예: 원소 기호 — HTML 허용)
   b: string; // 오른쪽(예: 이름)
+  /** 선택: 칩 글 앞에 붙이는 작은 그림(SVG). 없으면 글만 그대로(중1 Ⅱ u2l10이 쓴다, 2026-11-15). */
+  aArt?: string;
+  bArt?: string;
 }
+/** 그림이 있으면 [그림][글] 두 칸으로, 없으면 예전과 같은 글 그대로. */
+const chipOf = (side: "a" | "b", text: string, art?: string): { class: string; html: string } =>
+  art ? { class: `pm-chip pm-${side} pm-has-art`, html: `<span class="pm-art" aria-hidden="true">${art}</span><span class="pm-tx">${text}</span>` } : { class: `pm-chip pm-${side}`, html: text };
 interface PairMatchStep {
   title: string;
   lead?: string;
@@ -55,7 +61,7 @@ export const pairMatch: StepRenderer = (host, step, api) => {
   const aChips: HTMLButtonElement[] = [];
   const order = shuffled(s.pairs.map((_, i) => i));
   order.forEach((i) => {
-    const chip = el("button", { class: "pm-chip pm-a", html: s.pairs[i].a, attrs: { type: "button" } });
+    const chip = el("button", { ...chipOf("a", s.pairs[i].a, s.pairs[i].aArt), attrs: { type: "button" } });
     chip.addEventListener("click", () => {
       if (done || chip.classList.contains("ok")) return;
       haptic(HAPTIC.select);
@@ -68,7 +74,7 @@ export const pairMatch: StepRenderer = (host, step, api) => {
     colA.appendChild(chip);
   });
   shuffled(s.pairs.map((_, i) => i)).forEach((i) => {
-    const chip = el("button", { class: "pm-chip pm-b", html: s.pairs[i].b, attrs: { type: "button" } });
+    const chip = el("button", { ...chipOf("b", s.pairs[i].b, s.pairs[i].bArt), attrs: { type: "button" } });
     chip.addEventListener("click", () => {
       if (done || chip.classList.contains("ok")) return;
       if (selA < 0) {

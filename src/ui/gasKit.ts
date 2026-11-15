@@ -95,10 +95,9 @@ export class GasBox {
     return this.hitWindow.reduce((a, x) => a + x, 0);
   }
 
-  draw(ctx: CanvasRenderingContext2D, hue = 205, speedScale = 1): void {
+  draw(ctx: CanvasRenderingContext2D, hue = 205, speedScale = 1, r = 4.6): void {
     // 입자(발광점 — 코어 + 글로우), 속력 배율이 크면 살짝 더 밝게
     for (const p of this.parts) {
-      const r = 4.6;
       const glow = ctx.createRadialGradient(p.x, p.y, 0.5, p.x, p.y, r * 3.2);
       glow.addColorStop(0, `hsla(${hue}, 90%, 72%, ${0.5 + 0.15 * (speedScale - 1)})`);
       glow.addColorStop(1, `hsla(${hue}, 90%, 60%, 0)`);
@@ -122,12 +121,13 @@ export class GasBox {
       ctx.lineTo(p.x - p.vx * speedScale * 4.5, p.y - p.vy * speedScale * 4.5);
       ctx.stroke();
     }
-    // 벽 충돌 플래시
+    // 벽 충돌 플래시: 빠른 입자일수록 길고 굵고 진하다(샤를 법칙의 '더 세게'). 속력 배율 1(보일 랩)에서는 예전 그대로다
+    const sc = Math.max(0.5, Math.min(1.7, Math.pow(speedScale, 1.3)));
     for (const f of this.flashes) {
-      const a = (1 - f.age) * 0.55;
-      const len = 10 + f.age * 8;
+      const a = Math.min(0.9, (1 - f.age) * 0.55 * (0.6 + 0.4 * sc));
+      const len = (10 + f.age * 8) * sc;
       ctx.strokeStyle = `rgba(255,214,138,${a.toFixed(3)})`;
-      ctx.lineWidth = 3 - f.age * 2;
+      ctx.lineWidth = (3 - f.age * 2) * sc;
       ctx.beginPath();
       if (f.side === "L" || f.side === "R") {
         ctx.moveTo(f.x, f.y - len / 2);

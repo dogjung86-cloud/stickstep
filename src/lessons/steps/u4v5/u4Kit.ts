@@ -252,15 +252,126 @@ export function loose(cols: number, rows: number, cx: number, baseY: number, gap
   return pts;
 }
 
-/** 비커. 왼쪽 위 (x, y), 폭 w, 높이 h. 액체는 class="<ns>-liq". */
+// ── 유리 기구(어두운 무대용, 2026-11-15 다시 그림) ─────────────────────
+// 파운드리 재질 문법의 SVG판(ui/labProps.ts의 캔버스 유리와 같은 색): ① 벽은 위 밝고 가운데 가라앉고 아래 되살아나는 세로 그라데이션
+// ② 몸통은 양끝이 조금 밝은 옅은 가로 그라데이션 ③ 안쪽 벽 선으로 유리 두께, 두꺼운 바닥 띠, 입구 테 ④ 왼쪽 위 빛의 반사 줄.
+// 유리는 옅게 둔다. 무대의 요점(잉크, 물방울, 막, 테이프)이 유리보다 진해야 한다.
+// 그라데이션 id는 부를 때마다 새로 붙인다(한 무대에 기구가 여럿이어도, 같은 랩이 두 번 그려져도 겹치지 않게).
+let glassN = 0;
+const glassId = (ns: string): string => `${ns}-gl${++glassN}`;
+
+/** 벽(세로), 몸통(가로), 반사 줄(세로 페이드) 그라데이션. */
+function glassDefs(id: string, x0: number, x1: number, y0: number, y1: number): string {
+  return `<defs>
+    <linearGradient id="${id}w" gradientUnits="userSpaceOnUse" x1="0" y1="${y0}" x2="0" y2="${y1}"><stop offset="0" stop-color="#E4F0FF" stop-opacity=".95"/><stop offset=".45" stop-color="#94B4DE" stop-opacity=".58"/><stop offset="1" stop-color="#C2DBF8" stop-opacity=".86"/></linearGradient>
+    <linearGradient id="${id}f" gradientUnits="userSpaceOnUse" x1="${x0}" y1="0" x2="${x1}" y2="0"><stop offset="0" stop-color="#CFE3FF" stop-opacity=".17"/><stop offset=".16" stop-color="#CFE3FF" stop-opacity=".05"/><stop offset=".55" stop-color="#CFE3FF" stop-opacity=".02"/><stop offset=".86" stop-color="#CFE3FF" stop-opacity=".07"/><stop offset="1" stop-color="#CFE3FF" stop-opacity=".15"/></linearGradient>
+    <linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".62"/><stop offset=".7" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>`;
+}
+
+/** 비커 안쪽(액체가 차는 곳)의 윤곽. 위는 평평하고 아래 두 모서리가 둥글다. 액체와 자르기(clipPath)에 같이 쓴다. */
+export function beakerLiquidD(x: number, y: number, w: number, h: number, level: number): string {
+  const r = 7;
+  const x0 = x + 2.6;
+  const x1 = x + w - 2.6;
+  const yb = y + h - 5.2; // 두꺼운 바닥 위
+  const ly = Math.min(yb - 2, y + h - h * level);
+  return `M${x0} ${ly.toFixed(1)} V${yb - r} A${r} ${r} 0 0 0 ${x0 + r} ${yb} H${x1 - r} A${r} ${r} 0 0 0 ${x1} ${yb - r} V${ly.toFixed(1)} Z`;
+}
+
+/** 비커. 왼쪽 위 (x, y), 폭 w, 높이 h. 액체는 class="<ns>-liq"(level이 0이면 그리지 않는다), 수면 줄은 class="<ns>-liqs". */
 export function beaker(x: number, y: number, w: number, h: number, fill: string, ns: string, level = 0.8): string {
-  const lh = h * level;
+  const id = glassId(ns);
+  const r = 10;
+  const yb = y + h;
+  const ly = y + h - h * level;
+  const body = `M${x} ${y} V${yb - r} A${r} ${r} 0 0 0 ${x + r} ${yb} H${x + w - r} A${r} ${r} 0 0 0 ${x + w} ${yb - r} V${y}`;
+  const ti = 2.4; // 유리 두께
+  const inner = `M${x + ti} ${y + 4} V${yb - r} A${r - ti} ${r - ti} 0 0 0 ${x + r} ${yb - ti} H${x + w - r} A${r - ti} ${r - ti} 0 0 0 ${x + w - ti} ${yb - r} V${y + 4}`;
+  // 눈금: 오른쪽 벽 안쪽에 짧고 긴 줄을 번갈아(숫자는 쓰지 않는다)
+  const ticks = [1, 2, 3, 4]
+    .map((k) => {
+      const ty = yb - 8 - (k * (h - 26)) / 5;
+      const len = k % 2 === 0 ? 15 : 9;
+      return `<path d="M${x + w - ti - 2 - len} ${ty.toFixed(1)} H${x + w - ti - 2}" stroke="#D6E6FA" stroke-opacity=".62" stroke-width="1.3" stroke-linecap="round"/>`;
+    })
+    .join("");
+  const liquid =
+    level > 0
+      ? `<path class="${ns}-liq" d="${beakerLiquidD(x, y, w, h, level)}" fill="${fill}" opacity="0.46"/>
+    <path class="${ns}-liqs" d="M${x + 4} ${ly.toFixed(1)} H${x + w - 4}" stroke="#EAF4FF" stroke-opacity=".6" stroke-width="1.4" stroke-linecap="round"/>`
+      : "";
   return `<g>
-    <rect class="${ns}-liq" x="${x + 3}" y="${y + h - lh}" width="${w - 6}" height="${lh - 3}" rx="5" fill="${fill}" opacity="0.42"/>
-    <path d="M${x} ${y} v${h - 10} a10 10 0 0 0 10 10 h${w - 20} a10 10 0 0 0 10 -10 v${-(h - 10)}" stroke="${A.glass}" stroke-width="2.6"/>
-    <path d="M${x - 6} ${y} h${w + 12}" stroke="${A.glass}" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M${x + 8} ${y + 14} v${h - 36}" stroke="${A.glassHi}" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    ${glassDefs(id, x, x + w, y, yb)}
+    <path d="${body} Z" fill="url(#${id}f)"/>
+    ${liquid}
+    <path d="${inner}" stroke="#fff" stroke-opacity=".17" stroke-width="1"/>
+    <path d="M${x + r * 0.7} ${yb - 2.6} H${x + w - r * 0.7}" stroke="#BED8F8" stroke-opacity=".34" stroke-width="4.2" stroke-linecap="round"/>
+    <path d="M${x + r} ${yb - 5.4} H${x + w - r}" stroke="#fff" stroke-opacity=".16" stroke-width="1"/>
+    ${ticks}
+    <path d="${body}" stroke="url(#${id}w)" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M${x - 3} ${y} H${x + w + 3}" stroke="#E6F1FF" stroke-opacity=".95" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M${x - 2.6} ${y + 0.6} q-5 -0.6 -7.2 -4.2" stroke="#E6F1FF" stroke-opacity=".9" stroke-width="2.4" stroke-linecap="round"/>
+    <rect x="${x + 5.4}" y="${y + 9}" width="3.4" height="${(h - 32).toFixed(1)}" rx="1.7" fill="url(#${id}s)"/>
+    <path d="M${x + 11.5} ${y + 14} V${y + h * 0.42}" stroke="#fff" stroke-opacity=".2" stroke-width="1.1" stroke-linecap="round"/>
+    <path d="M${x + w - 4} ${y + 16} V${y + h * 0.55}" stroke="#fff" stroke-opacity=".14" stroke-width="1.4" stroke-linecap="round"/>
   </g>`;
+}
+
+/** 위가 넓은 유리컵(앞뒤 두 겹). 입구 가운데 (cx, topY), 바닥 높이 botY, 입구 반폭 topHalf, 바닥 반폭 botHalf.
+ *  back은 내용물 앞에, front는 내용물 뒤에 놓는다(유리 너머로 얼음과 물이 보이게). */
+export function cup(cx: number, topY: number, botY: number, topHalf: number, botHalf: number, ns: string): { back: string; front: string } {
+  const id = glassId(ns);
+  const r = 8;
+  const L = cx - topHalf;
+  const R = cx + topHalf;
+  const bl = cx - botHalf;
+  const br = cx + botHalf;
+  // 옆벽은 곧은 비탈, 바닥 두 모서리는 둥글게
+  const k = (topHalf - botHalf) / (botY - topY); // 아래로 1 내려갈 때 안으로 들어오는 양
+  const body = `M${L} ${topY} L${bl + k * r} ${botY - r} Q${bl} ${botY} ${bl + r} ${botY} H${br - r} Q${br} ${botY} ${br - k * r} ${botY - r} L${R} ${topY}`;
+  const ti = 2.4;
+  const inner = `M${L + ti + 0.5} ${topY + 4} L${bl + ti + k * r} ${botY - r} Q${bl + ti} ${botY - ti} ${bl + r} ${botY - ti} H${br - r} Q${br - ti} ${botY - ti} ${br - ti - k * r} ${botY - r} L${R - ti - 0.5} ${topY + 4}`;
+  const back = `<g>${glassDefs(id, L, R, topY, botY)}<path d="${body} Z" fill="url(#${id}f)"/></g>`;
+  const front = `<g>
+    <path d="${inner}" stroke="#fff" stroke-opacity=".17" stroke-width="1"/>
+    <path d="M${bl + r * 0.6} ${botY - 2.6} H${br - r * 0.6}" stroke="#BED8F8" stroke-opacity=".34" stroke-width="4.2" stroke-linecap="round"/>
+    <path d="${body}" stroke="url(#${id}w)" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M${L - 3} ${topY} H${R + 3}" stroke="#E6F1FF" stroke-opacity=".95" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M${L + 7} ${topY + 10} L${bl + 6 + k * 12} ${botY - 14}" stroke="url(#${id}s)" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M${R - 5} ${topY + 14} L${br - 4 - k * 30} ${botY - 30}" stroke="#fff" stroke-opacity=".13" stroke-width="1.4" stroke-linecap="round"/>
+  </g>`;
+  return { back, front };
+}
+
+/** 가늘고 긴 유리병(앞뒤 두 겹). 몸통 왼쪽 위 (x, y), 폭 w, 몸통 높이 h(목은 몸통 위로 neck만큼). 뚜껑과 내용물은 부르는 쪽이 그린다.
+ *  눈금(ticks)을 주면 오른쪽 벽 안쪽에 그 수만큼 짧은 줄을 긋는다. */
+export function bottle(x: number, y: number, w: number, h: number, ns: string, o: { neck?: number; neckW?: number; ticks?: number } = {}): { back: string; front: string } {
+  const id = glassId(ns);
+  const neck = o.neck ?? 12;
+  const nw = Math.min(w - 8, o.neckW ?? w * 0.62);
+  const nx = x + (w - nw) / 2;
+  const r = Math.min(8, w * 0.25);
+  const sh = Math.min(10, w * 0.3); // 어깨 높이
+  const yb = y + h;
+  const body = `M${nx} ${y - neck} V${y} Q${nx} ${y + sh * 0.2} ${x} ${y + sh} V${yb - r} Q${x} ${yb} ${x + r} ${yb} H${x + w - r} Q${x + w} ${yb} ${x + w} ${yb - r} V${y + sh} Q${nx + nw} ${y + sh * 0.2} ${nx + nw} ${y} V${y - neck}`;
+  const ti = 2.2;
+  const ticks = Array.from({ length: o.ticks ?? 0 }, (_, i) => {
+    const ty = yb - 10 - ((i + 1) * (h - sh - 18)) / ((o.ticks ?? 0) + 1);
+    const len = i % 2 === 1 ? 10 : 6;
+    return `<path d="M${x + w - ti - 1.5 - len} ${ty.toFixed(1)} H${x + w - ti - 1.5}" stroke="#D6E6FA" stroke-opacity=".6" stroke-width="1.2" stroke-linecap="round"/>`;
+  }).join("");
+  const back = `<g>${glassDefs(id, x, x + w, y - neck, yb)}<path d="${body} Z" fill="url(#${id}f)"/></g>`;
+  const front = `<g>
+    <path d="M${x + ti} ${y + sh + 2} V${yb - r} Q${x + ti} ${yb - ti} ${x + r} ${yb - ti} H${x + w - r} Q${x + w - ti} ${yb - ti} ${x + w - ti} ${yb - r} V${y + sh + 2}" stroke="#fff" stroke-opacity=".17" stroke-width="1"/>
+    <path d="M${x + r * 0.7} ${yb - 2.4} H${x + w - r * 0.7}" stroke="#BED8F8" stroke-opacity=".34" stroke-width="4" stroke-linecap="round"/>
+    ${ticks}
+    <path d="${body}" stroke="url(#${id}w)" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M${nx - 2} ${y - neck} H${nx + nw + 2}" stroke="#E6F1FF" stroke-opacity=".95" stroke-width="3" stroke-linecap="round"/>
+    <rect x="${x + 4.4}" y="${y + sh + 4}" width="3" height="${Math.max(8, h - sh - 24).toFixed(1)}" rx="1.5" fill="url(#${id}s)"/>
+    <path d="M${x + w - 3.6} ${y + sh + 8} V${y + h * 0.5}" stroke="#fff" stroke-opacity=".13" stroke-width="1.3" stroke-linecap="round"/>
+  </g>`;
+  return { back, front };
 }
 
 /** 전자저울. 왼쪽 위 (x, y), 폭 w. 표시창 글자는 class="<ns>-read". */
@@ -274,19 +385,47 @@ export function scale(x: number, y: number, w: number, ns: string, read = "0.00 
   </g>`;
 }
 
-/** 삼각 플라스크. 바닥 가운데 (cx, baseY), 높이 h. 액체는 class="<ns>-liq". */
+/** 삼각 플라스크. 바닥 가운데 (cx, baseY), 높이 h. 액체는 class="<ns>-liq"(액체와 수면 줄을 묶은 g. 투명도는 이 g에 준다). */
 export function flask(cx: number, baseY: number, h: number, ns: string, fill: string, level = 0.3): string {
+  const id = glassId(ns);
   const bw = h * 0.62;
   const nw = h * 0.16;
   const ny = baseY - h;
-  const sh = baseY - h * 0.55;
-  const liqTop = baseY - h * 0.5 * level - 4;
-  const t = (baseY - liqTop) / (baseY - sh);
-  const lw = bw + (nw - bw) * Math.min(1, t);
+  const shY = ny + h * 0.45; // 목이 끝나고 어깨가 시작하는 높이
+  const r = 8;
+  const slope = (bw - nw) / (baseY - r - shY); // 아래로 1 내려갈 때 밖으로 나가는 양
+  const body = `M${cx - nw} ${ny} V${shY} L${cx - bw} ${baseY - r} Q${cx - bw - 0.6} ${baseY} ${cx - bw + r} ${baseY} H${cx + bw - r} Q${cx + bw + 0.6} ${baseY} ${cx + bw} ${baseY - r} L${cx + nw} ${shY} V${ny}`;
+  const ti = 2.4;
+  const inner = `M${cx - nw + ti} ${ny + 4} V${shY + 1} L${cx - bw + ti + 0.6} ${baseY - r} Q${cx - bw + ti} ${baseY - ti} ${cx - bw + r + 1} ${baseY - ti} H${cx + bw - r - 1} Q${cx + bw - ti} ${baseY - ti} ${cx + bw - ti - 0.6} ${baseY - r} L${cx + nw - ti} ${shY + 1} V${ny + 4}`;
+  // 액체: 바닥 띠 위에서 level만큼(원뿔 몸통 높이 기준). 수면 폭은 그 높이의 벽 사이
+  const yb = baseY - 4.6;
+  const liqTop = baseY - (baseY - r - shY) * level - 4;
+  const half = (yy: number): number => (yy >= shY ? nw + (yy - shY) * slope : nw) - ti - 0.4;
+  const lw = half(liqTop);
+  const bwIn = half(baseY - r);
+  const liq = `M${cx - lw} ${liqTop.toFixed(1)} H${cx + lw} L${cx + bwIn} ${baseY - r} Q${cx + bwIn} ${yb} ${cx + bwIn - 6} ${yb} H${cx - bwIn + 6} Q${cx - bwIn} ${yb} ${cx - bwIn} ${baseY - r} Z`;
+  // 눈금: 원뿔 오른쪽 벽 안쪽에 셋
+  const ticks = [0.3, 0.5, 0.7]
+    .map((f, i) => {
+      const ty = baseY - r - (baseY - r - shY) * f;
+      const xr = cx + half(ty) - 1.2;
+      return `<path d="M${(xr - (i === 1 ? 12 : 7)).toFixed(1)} ${ty.toFixed(1)} H${xr.toFixed(1)}" stroke="#D6E6FA" stroke-opacity=".6" stroke-width="1.2" stroke-linecap="round"/>`;
+    })
+    .join("");
   return `<g>
-    <path class="${ns}-liq" d="M${cx - lw + 3} ${liqTop} h${(lw - 3) * 2} L${cx + bw - 3} ${baseY - 3} h${-(bw - 3) * 2} Z" fill="${fill}" opacity="0.6"/>
-    <path d="M${cx - nw} ${ny} v${h * 0.45} L${cx - bw} ${baseY - 8} a8 8 0 0 0 8 8 h${(bw - 8) * 2} a8 8 0 0 0 8 -8 L${cx + nw} ${ny + h * 0.45} v${-h * 0.45}" stroke="${A.glass}" stroke-width="2.6" stroke-linejoin="round"/>
-    <path d="M${cx - nw - 4} ${ny} h${nw * 2 + 8}" stroke="${A.glass}" stroke-width="2.6" stroke-linecap="round"/>
+    ${glassDefs(id, cx - bw, cx + bw, ny, baseY)}
+    <path d="${body} Z" fill="url(#${id}f)"/>
+    <g class="${ns}-liq" opacity="0.6">
+      <path d="${liq}" fill="${fill}"/>
+      <path d="M${(cx - lw + 1.5).toFixed(1)} ${liqTop.toFixed(1)} H${(cx + lw - 1.5).toFixed(1)}" stroke="#F2F8FF" stroke-opacity=".7" stroke-width="1.4" stroke-linecap="round"/>
+    </g>
+    <path d="${inner}" stroke="#fff" stroke-opacity=".17" stroke-width="1"/>
+    <path d="M${cx - bw + r * 0.8} ${baseY - 2.6} H${cx + bw - r * 0.8}" stroke="#BED8F8" stroke-opacity=".34" stroke-width="4.2" stroke-linecap="round"/>
+    ${ticks}
+    <path d="${body}" stroke="url(#${id}w)" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M${cx - nw - 3} ${ny} H${cx + nw + 3}" stroke="#E6F1FF" stroke-opacity=".95" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M${cx - nw + 4.2} ${ny + 6} V${shY - 2}" stroke="#fff" stroke-opacity=".34" stroke-width="2" stroke-linecap="round"/>
+    <path d="M${cx - nw + 2} ${shY + 7} L${cx - bw + 9} ${baseY - 13}" stroke="url(#${id}s)" stroke-width="3" stroke-linecap="round"/>
   </g>`;
 }
 

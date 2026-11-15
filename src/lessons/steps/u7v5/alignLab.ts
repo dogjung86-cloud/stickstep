@@ -9,7 +9,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvCapture, bvSvgPoint, bvTimers, bvTween } from "../bio6/b6Lab";
 import { u7Frame, u7Goals, u7Dev } from "./kit";
-import { ecDefs, stars } from "./eclipseKit";
+import { ecDefs, stars, discImage, moonBrightDef, moonAt0 } from "./eclipseKit";
 
 interface AlignStep {
   title: string;
@@ -53,8 +53,7 @@ export const u7AlignLab: StepRenderer = (host, step, api) => {
     <path d="M${EARTH.x} ${EARTH.y - EARTH.r}A${EARTH.r} ${EARTH.r} 0 0 1 ${EARTH.x} ${EARTH.y + EARTH.r}Z" fill="#06101f" opacity=".62"/>
     <g class="u7x-ecl-moon">
       <circle r="17" fill="#9DBBF0" opacity=".2" class="u7x-ecl-halo"/>
-      <circle r="${MOON_R}" fill="#2A3448"/>
-      <path d="M0 ${-MOON_R}A${MOON_R} ${MOON_R} 0 0 0 0 ${MOON_R}Z" fill="url(#al-moon)"/>
+      ${moonAt0("al-", MOON_R, "left")}
     </g>
     <text class="u7x-st sun" x="${SUN.x}" y="${SUN.y + SUN.r + 17}" text-anchor="middle">태양</text>
     <text class="u7x-st" x="${EARTH.x}" y="${EARTH.y + EARTH.r + 16}" text-anchor="middle">지구</text>
@@ -65,7 +64,8 @@ export const u7AlignLab: StepRenderer = (host, step, api) => {
   const line = svg.querySelector(".u7x-ecl-line") as SVGLineElement;
   const pill = el("div", { class: "bv-pill u7x-pill", text: "달을 끌어 보세요" });
   const inset = el("div", { class: "u7x-inset u7x-ec-inset", attrs: { "aria-hidden": "true" } });
-  inset.innerHTML = `<svg viewBox="0 0 88 88"><rect width="88" height="88" fill="#070d1a"/><circle cx="44" cy="34" r="24" fill="#1B2436"/><path class="u7x-ecl-lit" fill="#EFE8D0"/></svg><span>지구에서 본 달</span>`;
+  // 창의 달: 실사 원판을 밝은 부분의 모양(litPath)으로 잘라 보인다. 어두운 부분은 짙은 원판 그대로.
+  inset.innerHTML = `<svg viewBox="0 0 88 88"><defs><clipPath id="al-litc"><path class="u7x-ecl-lit"/></clipPath>${moonBrightDef("al-ibr")}</defs><rect width="88" height="88" fill="#070d1a"/><circle cx="44" cy="34" r="24" fill="#1B2436"/><g clip-path="url(#al-litc)">${discImage("moon", 44, 34, 24, ' filter="url(#al-ibr)"')}</g></svg><span>지구에서 본 달</span>`;
   const lit = inset.querySelector(".u7x-ecl-lit") as SVGPathElement;
   f.stage.append(pill, inset);
 

@@ -5,7 +5,8 @@
 // 볼 것: 자리마다 풍선을 누르는 압력(화살표의 길이와 값)과 풍선의 부피(몇 배). 풍선 속 입자의 수는 어디서나 같다.
 // 판정: 산 위에서 풍선이 커진 까닭 → 누르는 압력이 4배인 바닷속 30 m에서의 부피.
 // 값은 자연값이다: 물속에서는 10 m마다 약 1기압이 더해지고, 높이 3000 m에서 약 0.7기압, 5500 m에서 약 0.5기압.
-// 풍선은 넓이가 부피에 비례하게 그린다(4분의 1과 2배가 눈에 보이게).
+// 풍선은 넓이가 부피에 비례하게 그린다. 부피는 오른쪽 아래 칸 막대(바닷가 4칸)로도 따로 보인다(원의 지름에 기대지 않게).
+// 누르는 압력의 화살은 기압에 비례하는 길이와 굵기로 그린다(1기압 16px, 4기압 64px). 풍선에는 매듭과 끈이 있다(묶여 있어 입자가 드나들지 못한다).
 // 옛 판(잠수부 방울을 버튼으로 띄우고 감압 용기의 마시멜로를 부풀린다)과 다른 점: 풍선 하나가 수압과 대기압을 한 줄로 오가고,
 //          커지는 쪽과 작아지는 쪽을 모두 손으로 만든다. 마시멜로 장면은 교과서에 없어 뺐다.
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -13,15 +14,17 @@ import { bvRange } from "../bio6/b6Lab";
 import type { StepRenderer } from "../../types";
 import { u6Lab, rr, txt, ease, noteRow, chip, dots, stepDots, drawDots } from "./u6Kit";
 
+// y는 풍선과 이름표의 높이. 가장 깊은 자리에서도 가장 긴 화살(4기압)이 무대 안에 들어오게 잡았다.
 const STOPS = [
-  { name: "바닷속 30 m", p: 4, y: 206 },
-  { name: "바닷속 20 m", p: 3, y: 178 },
-  { name: "바닷속 10 m", p: 2, y: 150 },
-  { name: "바닷가", p: 1, y: 118 },
-  { name: "산 3000 m", p: 0.7, y: 76 },
-  { name: "산 5500 m", p: 0.5, y: 40 },
+  { name: "바닷속 30 m", p: 4, y: 172 },
+  { name: "바닷속 20 m", p: 3, y: 148 },
+  { name: "바닷속 10 m", p: 2, y: 124 },
+  { name: "바닷가", p: 1, y: 98 },
+  { name: "산 3000 m", p: 0.7, y: 64 },
+  { name: "산 5500 m", p: 0.5, y: 32 },
 ];
-const SEA = 122; // 해수면
+const SEA = 102; // 해수면
+const ARROW = 16; // 1기압의 화살 길이(px)
 const fmtP = (p: number): string => (p >= 1 ? `${p}기압` : `${p.toFixed(1)}기압`);
 const fmtV = (p: number): string => {
   const v = 1 / p;
@@ -100,7 +103,7 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
   function askWhy(): void {
     lab.phase("ask");
     frame.pips(1);
-    frame.say("자리마다 적힌 <b>압력</b>과 풍선의 크기를 견줘 보세요.");
+    frame.say("자리마다 적힌 <b>압력</b>과 풍선의 크기를 비교해 보세요.");
     frame.slot.ask(
       "산 위에서 풍선이 <b>커진</b> 까닭은 무엇일까요?",
       [{ t: "풍선을 누르는 압력이 작아져서", ok: true }, { t: "풍선 속 입자가 늘어나서" }, { t: "산 위의 공기가 풍선에 들어가서" }],
@@ -125,21 +128,21 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
     ctx.fillRect(0, 0, 346, SEA);
     ctx.fillStyle = "#3B4A63";
     ctx.beginPath();
-    ctx.moveTo(108, SEA);
-    ctx.lineTo(134, 74);
-    ctx.lineTo(144, 82);
-    ctx.lineTo(162, 28);
-    ctx.lineTo(178, 72);
-    ctx.lineTo(186, 66);
-    ctx.lineTo(200, SEA);
+    ctx.moveTo(114, SEA);
+    ctx.lineTo(140, 60);
+    ctx.lineTo(150, 68);
+    ctx.lineTo(168, 18);
+    ctx.lineTo(184, 58);
+    ctx.lineTo(192, 52);
+    ctx.lineTo(202, SEA);
     ctx.closePath();
     ctx.fill();
     ctx.fillStyle = "rgba(240,246,255,.85)";
     ctx.beginPath();
-    ctx.moveTo(162, 28);
-    ctx.lineTo(155, 49);
-    ctx.lineTo(162, 45);
-    ctx.lineTo(169, 49);
+    ctx.moveTo(168, 18);
+    ctx.lineTo(161, 38);
+    ctx.lineTo(168, 34);
+    ctx.lineTo(175, 38);
     ctx.closePath();
     ctx.fill();
     const sea = ctx.createLinearGradient(0, SEA, 0, 230);
@@ -150,7 +153,7 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
     ctx.strokeStyle = "rgba(190,225,255,.8)";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    for (let x = 0; x <= 198; x += 6) {
+    for (let x = 0; x <= 200; x += 6) {
       const wy = SEA + Math.sin(x / 22 + tMs / 600) * 1.4;
       if (x === 0) ctx.moveTo(x, wy);
       else ctx.lineTo(x, wy);
@@ -167,27 +170,15 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
       txt(ctx, st.name, 212, st.y, { color: on ? "#FFFFFF" : "#C3D2E8", size: 12.5 });
       txt(ctx, fmtP(st.p), 336, st.y, { color: on ? "#FFD68A" : "#C3D2E8", align: "right", size: 12.5 });
     });
-    // 풍선: 누르는 압력 화살표(길이가 압력), 몸통, 입자, 매듭과 추
-    const bx = 58;
-    const by = Math.max(r + 6, Math.min(224 - r, y));
-    ctx.strokeStyle = "#FFD68A";
-    ctx.fillStyle = "#FFD68A";
-    ctx.lineWidth = 2.4;
-    for (let k = 0; k < 4; k++) {
-      const a = (k * Math.PI) / 2 + Math.PI / 4;
-      const len = 3 + pShown * 7;
-      const x1 = bx + Math.cos(a) * (r + 5);
-      const y1 = by + Math.sin(a) * (r + 5);
-      const x0 = bx + Math.cos(a) * (r + 5 + len);
-      const y0 = by + Math.sin(a) * (r + 5 + len);
-      ctx.beginPath();
-      ctx.moveTo(x0, y0);
-      ctx.lineTo(x1, y1);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(x1, y1, 2.6, 0, Math.PI * 2);
-      ctx.fill();
-    }
+    // 풍선: 묶은 매듭과 끈, 몸통, 입자. 누르는 압력은 기압에 비례하는 길이와 굵기의 화살 넷(사방에서 안쪽으로)
+    const bx = 62;
+    const by = y;
+    ctx.strokeStyle = "rgba(201,214,236,.75)";
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(bx, by + r + 6);
+    ctx.bezierCurveTo(bx - 5, by + r + 13, bx + 5, by + r + 19, bx - 1, by + r + 28);
+    ctx.stroke();
     ctx.beginPath();
     ctx.arc(bx, by, r, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255,120,150,.2)";
@@ -195,14 +186,61 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
     ctx.strokeStyle = "rgba(255,170,190,.95)";
     ctx.lineWidth = 2.2;
     ctx.stroke();
+    ctx.fillStyle = "rgba(255,170,190,.95)";
+    ctx.beginPath();
+    ctx.moveTo(bx, by + r - 1);
+    ctx.lineTo(bx + 4.5, by + r + 6);
+    ctx.lineTo(bx - 4.5, by + r + 6);
+    ctx.closePath();
+    ctx.fill();
     stepDots(ps, r, dt);
     drawDots(ctx, ps, bx, by, 205, 2.4);
-    // 값: 물속에서는 풍선의 오른쪽에, 물 위에서는 풍선의 아래에 적는다
-    const under = idx >= 3;
-    const lx = under ? Math.max(48, bx) : bx + r + 12 + pShown * 7;
-    const ly = under ? by + r + 30 : by;
-    txt(ctx, `부피 ${fmtV(STOPS[idx].p)}`, lx, ly - 8, { color: "#FFFFFF", size: 13, weight: 800, align: under ? "center" : "left" });
-    txt(ctx, "입자 8개", lx, ly + 8, { color: "#C9D6EC", align: under ? "center" : "left" });
+    const L = ARROW * pShown;
+    const w = 1.6 + pShown * 0.9;
+    const head = 4 + pShown * 1.1;
+    ctx.strokeStyle = "#FFD68A";
+    ctx.fillStyle = "#FFD68A";
+    ctx.lineCap = "round";
+    for (let k = 0; k < 4; k++) {
+      const a = (k * Math.PI) / 2 + Math.PI / 4;
+      const c = Math.cos(a);
+      const sn = Math.sin(a);
+      const r1 = r + 3; // 화살 끝(풍선 쪽)
+      const r0 = r1 + L; // 화살 꼬리
+      ctx.lineWidth = w;
+      ctx.beginPath();
+      ctx.moveTo(bx + c * r0, by + sn * r0);
+      ctx.lineTo(bx + c * (r1 + head * 0.8), by + sn * (r1 + head * 0.8));
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(bx + c * r1, by + sn * r1);
+      ctx.lineTo(bx + c * (r1 + head) - sn * head * 0.75, by + sn * (r1 + head) + c * head * 0.75);
+      ctx.lineTo(bx + c * (r1 + head) + sn * head * 0.75, by + sn * (r1 + head) - c * head * 0.75);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // 부피는 오른쪽 아래 칸 막대로 따로(바닷가 4칸, 산 5500 m 8칸, 바닷속 30 m 1칸): 원의 크기에 기대지 않게
+    const cells = 4 / pShown;
+    txt(ctx, "부피", 208, 198, { color: "#C9D6EC", size: 12.5 });
+    for (let i = 0; i < 8; i++) {
+      const x = 240 + i * 12;
+      rr(ctx, x, 191, 10, 14, 3);
+      ctx.fillStyle = "rgba(255,255,255,.1)";
+      ctx.fill();
+      const f = Math.max(0, Math.min(1, cells - i));
+      if (f > 0) {
+        rr(ctx, x, 191, 10 * f, 14, 3);
+        ctx.fillStyle = "rgba(255,150,178,.92)";
+        ctx.fill();
+      }
+    }
+    ctx.strokeStyle = "rgba(255,255,255,.55)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(240 + 4 * 12 - 1, 187);
+    ctx.lineTo(240 + 4 * 12 - 1, 209);
+    ctx.stroke();
+    txt(ctx, `부피 ${fmtV(STOPS[idx].p)} · 입자 8개`, 208, 219, { color: "#FFFFFF", size: 12.5, weight: 800 });
   });
 
   return () => lab.cleanup();

@@ -39,66 +39,83 @@ function flockAt(isle: "A" | "B", step: number): Beak[] {
   return f;
 }
 
+// ── 그림(2026-11-15 그래픽 손질: 바뀌는 결과인 부리가 무대에서 가장 크게) ──────────────────────
+// 고치기 전에는 새 몸이 약 18px, 부리가 7~16px라 결과(무리의 부리)가 작았고, 섬 위쪽 하늘은 비고 먹이도 작았다.
+// 판의 폭(164px, 한 줄에 세 마리)은 그대로 두고 비율만 바꾼다: 몸은 작고 옅게, 머리와 부리를 1.5배쯤 키워 부리가 가장 진하다.
+// 섬 이름과 먹이는 위쪽 하늘 띠로 올려 키운다(씨앗 더미, 나무 속 애벌레를 확대한 원). 구성 막대는 굵게(14px) 하고 칸마다 수를 쓴다.
 const BEAK_PATH: Record<Beak, string> = {
-  T: "M12.4 -10.4l12.6 5 -12.6 6.4Z",
-  L: "M12.8 -7.6l19 2.2 -19 2.6Z",
-  S: "M12.8 -7.6l7 2.3 -7 2.5Z",
+  T: "M13.4 -15.6l20.5 8.2 -20.5 9.6Z",
+  L: "M14.2 -10.4l29.6 3.4 -29.6 4Z",
+  S: "M14.2 -10.4l10.6 3.4 -10.6 3.7Z",
 };
-/** 새 한 마리(원점이 몸 가운데). 몸은 모두 같고 부리만 다르다. */
+/** 새 한 마리(원점이 몸 가운데). 몸은 모두 같고 부리만 다르다. 몸은 작고 옅게, 머리와 부리는 크게. */
 const bird = (b: Beak): string => `
-  <path d="M-9 1l-8 -4 2 7Z" fill="#E8DCC4" stroke="#6B5B45" stroke-width="1.3" stroke-linejoin="round"/>
-  <path d="M-2 8v5M3 8v5" stroke="#6B5B45" stroke-width="1.4" stroke-linecap="round"/>
-  <ellipse cx="0" cy="1.5" rx="10.5" ry="7.6" fill="#FFF6E6" stroke="#6B5B45" stroke-width="1.5"/>
-  <path d="M-5 0q5 6 10 1" fill="none" stroke="#B9A88A" stroke-width="1.4" stroke-linecap="round"/>
-  <circle cx="8.6" cy="-5.2" r="5.8" fill="#FFF6E6" stroke="#6B5B45" stroke-width="1.5"/>
-  <path d="${BEAK_PATH[b]}" fill="${COLOR[b]}" stroke="#5F3D12" stroke-width="1" stroke-linejoin="round"/>
-  <circle cx="10" cy="-6.4" r="1.25" fill="#2B2B2B"/>`;
+  <path d="M-7 1l-6.5 -3.4 1.6 5.6Z" fill="#F4EBDA" stroke="#B5A68C" stroke-width="1.1" stroke-linejoin="round"/>
+  <path d="M-1.6 6.6v4.2M2.6 6.6v4.2" stroke="#B5A68C" stroke-width="1.2" stroke-linecap="round"/>
+  <ellipse cx="0" cy="1.2" rx="8.2" ry="6" fill="#FFFBF2" stroke="#B5A68C" stroke-width="1.1"/>
+  <circle cx="7.6" cy="-7" r="7.6" fill="#FFF7E8" stroke="#8C7A5C" stroke-width="1.3"/>
+  <path d="${BEAK_PATH[b]}" fill="${COLOR[b]}" stroke="#4A2E0B" stroke-width="1.3" stroke-linejoin="round"/>
+  <circle cx="9.6" cy="-8.8" r="1.6" fill="#2B2B2B"/>`;
 
 const PANEL_W = 164;
 const PANEL = { A: 6, B: 176 };
-/** 자리 좌표(섬 안, 판의 왼쪽 위 기준). 먹이 그림이 놓이는 왼쪽을 비워 둔다. */
-const SLOT_XY: [number, number][] = [0, 1, 2].flatMap((r) => [0, 1, 2].map((c) => [57 + c * 39, 100 + r * 26] as [number, number]));
+/** 자리 좌표(섬 안, 판의 왼쪽 위 기준). 섬의 폭 전체를 쓴다(먹이는 하늘 띠로 올렸다). */
+const SLOT_XY: [number, number][] = [0, 1, 2].flatMap((r) => [0, 1, 2].map((c) => [24 + c * 48 + (r === 1 ? 4 : 0), 108 + r * 24] as [number, number]));
+const SLOT_K = 0.86;
 
+/** 섬 (가)의 먹이: 크고 단단한 씨앗 더미(하늘 띠 오른쪽). */
 const SEEDS = `
-  <g stroke="#7A5524" stroke-width="1.3">
-    <ellipse cx="17" cy="128" rx="7.5" ry="6" fill="#C9975A"/><ellipse cx="27" cy="140" rx="7.5" ry="6" fill="#B98244"/>
-    <ellipse cx="15" cy="150" rx="7.5" ry="6" fill="#B98244"/><ellipse cx="28" cy="158" rx="6.8" ry="5.4" fill="#D4A66C"/>
+  <g stroke="#6B4A1F" stroke-width="1.4">
+    ${[[108, 76, 10, 7.6, -12], [127, 78, 10.4, 7.8, 8], [146, 75, 9.6, 7.4, -4], [117, 64, 9.8, 7.4, 18], [137, 63, 10, 7.6, -14], [127, 52, 9.4, 7.2, 4]]
+      .map(([x, y, rx, ry, a]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(${a} ${x} ${y})" fill="#B98244"/>`)
+      .join("")}
   </g>
-  <path d="M13.5 126.5q3 -2.4 6 0M23.5 138.5q3 -2.4 6 0M11.5 148.5q3 -2.4 6 0M24.8 156.6q3 -2.4 6 0" fill="none" stroke="#F3D9B0" stroke-width="1.2" stroke-linecap="round"/>`;
+  ${[[108, 76, -12], [127, 78, 8], [146, 75, -4], [117, 64, 18], [137, 63, -14], [127, 52, 4]]
+    .map(([x, y, a]) => `<path d="M${x - 5} ${y - 2}q5 -4 10 0" transform="rotate(${a} ${x} ${y})" fill="none" stroke="#F3D9B0" stroke-width="1.6" stroke-linecap="round" opacity=".85"/>`)
+    .join("")}`;
+/** 섬 (나)의 먹이: 나무줄기 속 작은 곤충(애벌레). 줄기의 구멍과 그 속을 확대한 원. */
 const TREE = `
-  <circle cx="19" cy="78" r="16" fill="#3E8E4E" stroke="#27633A" stroke-width="1.4"/><circle cx="31" cy="87" r="10" fill="#4BA35C" stroke="#27633A" stroke-width="1.4"/>
-  <path d="M11 160V94q0 -4 4 -4h8q4 0 4 4v66Z" fill="#A9743F" stroke="#6E4520" stroke-width="1.5" stroke-linejoin="round"/>
-  <path d="M15 100v10M22 122v12M16 146v8" stroke="#6E4520" stroke-width="1.1" stroke-linecap="round" opacity=".7"/>
-  <ellipse cx="19" cy="114" rx="4.2" ry="5.6" fill="#4A2C12"/><ellipse cx="19" cy="140" rx="4.2" ry="5.6" fill="#4A2C12"/>
-  <circle cx="19" cy="115" r="2.1" fill="#C0EB75"/><circle cx="19" cy="141" r="2.1" fill="#C0EB75"/>`;
+  <path d="M96 92V34q0 -5 5 -5h10q5 0 5 5v58Z" fill="#A9743F" stroke="#6E4520" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M100 40v9M110 58v10M101 74v8" stroke="#6E4520" stroke-width="1.1" stroke-linecap="round" opacity=".7"/>
+  <ellipse cx="106" cy="62" rx="4.4" ry="5.8" fill="#3E240E"/>
+  <path d="M110.5 58.5L128 46M110.5 65.5L128 78" stroke="#FFF2CC" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <circle cx="141" cy="62" r="19" fill="#5A3516" stroke="#FFF2CC" stroke-width="2.2"/>
+  <path d="M130 66c3 -8 9 -10 14 -8s9 2 11 -3" fill="none" stroke="#8BD44A" stroke-width="7" stroke-linecap="round"/>
+  <path d="M130 66c3 -8 9 -10 14 -8s9 2 11 -3" fill="none" stroke="#C6F28E" stroke-width="3" stroke-linecap="round"/>
+  <path d="M136 59.6l1 4M141.5 58.4l.4 4M147 58.6l-.4 4" stroke="#5C9A23" stroke-width="1.2" stroke-linecap="round"/>
+  <circle cx="155.5" cy="55" r="1.5" fill="#2B2B2B"/>`;
 
 function panel(isle: "A" | "B"): string {
   const x = PANEL[isle];
   const name = isle === "A" ? "섬 (가)" : "섬 (나)";
-  const food = isle === "A" ? "크고 단단한 씨앗" : "나무 속 작은 곤충";
-  const slots = SLOT_XY.map(([sx, sy], i) => `<g transform="translate(${sx} ${sy}) scale(.84)"><g class="bki-slot" data-i="${i}"></g></g>`).join("");
-  const segs = Array.from({ length: 9 }, (_, i) => `<rect class="bki-seg" x="${2 + i * 18}" y="181" width="16" height="9" rx="3"/>`).join("");
+  const food = isle === "A" ? ["크고 단단한", "씨앗"] : ["나무 속", "작은 곤충"];
+  const slots = SLOT_XY.map(([sx, sy], i) => `<g transform="translate(${sx} ${sy}) scale(${SLOT_K})"><g class="bki-slot" data-i="${i}"></g></g>`).join("");
+  const blocks = (["T", "L", "S"] as Beak[])
+    .map((k) => `<g class="bki-blk" data-k="${k}"><rect class="bki-seg" y="179" height="14" rx="4" fill="${COLOR[k]}"/><text class="bki-n" y="190.4" text-anchor="middle" font-size="12.5" font-weight="800" fill="${k === "S" ? "#13233D" : "#fff"}"></text></g>`)
+    .join("");
   return `
   <g class="bki-isle" data-isle="${isle}" transform="translate(${x} 0)">
-    <clipPath id="bkiClip${isle}"><rect x="0" y="6" width="${PANEL_W}" height="170" rx="14"/></clipPath>
+    <clipPath id="bkiClip${isle}"><rect x="0" y="6" width="${PANEL_W}" height="168" rx="14"/></clipPath>
     <g clip-path="url(#bkiClip${isle})">
-      <rect x="0" y="6" width="${PANEL_W}" height="170" fill="url(#bkiSea)"/>
-      <path d="M-6 164q14 -6 28 0t28 0 28 0 28 0 28 0 28 0v18H-6Z" fill="#2F6FA8" opacity=".55"/>
-      <ellipse cx="84" cy="140" rx="84" ry="54" fill="#E7D7A6" stroke="#B9A56A" stroke-width="1.6"/>
-      <path d="M14 112q70 -44 140 0q-70 -20 -140 0Z" fill="#9CCB6B" opacity=".85"/>
+      <rect x="0" y="6" width="${PANEL_W}" height="168" fill="url(#bkiSea)"/>
+      <path d="M-6 162q14 -6 28 0t28 0 28 0 28 0 28 0 28 0v18H-6Z" fill="#2F6FA8" opacity=".55"/>
+      <ellipse cx="84" cy="140" rx="86" ry="52" fill="#E7D7A6" stroke="#B9A56A" stroke-width="1.6"/>
+      <path d="M8 104q76 -40 152 0q-76 -18 -152 0Z" fill="#9CCB6B" opacity=".85"/>
     </g>
-    <rect x="0" y="6" width="${PANEL_W}" height="170" rx="14" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
-    <text x="10" y="27" font-size="13.5" font-weight="800" fill="#0B2545">${name}</text>
-    <text x="10" y="46" font-size="12.5"><tspan font-weight="700" fill="#234A75">먹이: </tspan><tspan font-weight="800" fill="#0B2545">${food}</tspan></text>
+    <rect x="0" y="6" width="${PANEL_W}" height="168" rx="14" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
+    <text x="10" y="27" font-size="14" font-weight="800" fill="#0B2545">${name}</text>
+    <text x="10" y="47" font-size="12.5" font-weight="700" fill="#234A75">먹이</text>
+    <text x="10" y="63" font-size="13" font-weight="800" fill="#0B2545">${food[0]}</text>
+    <text x="10" y="79" font-size="13" font-weight="800" fill="#0B2545">${food[1]}</text>
     ${isle === "A" ? SEEDS : TREE}
     ${slots}
-    ${segs}
+    ${blocks}
   </g>`;
 }
 
 function stageSvg(): string {
   const item = (b: Beak, x: number): string =>
-    `<g transform="translate(${x} 211)"><circle cx="0" cy="0" r="6.5" fill="#FFF6E6" stroke="#6B5B45" stroke-width="1.3"/><path d="M5 -3.4l${b === "T" ? "9 3 -9 4.4" : b === "L" ? "14 1.6 -14 2.2" : "5 1.6 -5 1.8"}Z" fill="${COLOR[b]}" stroke="#5F3D12" stroke-width=".9" stroke-linejoin="round"/><circle cx="2" cy="-1.6" r="1.1" fill="#2B2B2B"/><text x="${b === "L" ? 23 : 18}" y="4.4" font-size="12.5" font-weight="700" fill="#DCE6F5">${LABEL[b]}</text></g>`;
+    `<g transform="translate(${x} 213)"><circle cx="0" cy="0" r="6.5" fill="#FFF6E6" stroke="#6B5B45" stroke-width="1.3"/><path d="M5 -3.4l${b === "T" ? "9 3 -9 4.4" : b === "L" ? "14 1.6 -14 2.2" : "5 1.6 -5 1.8"}Z" fill="${COLOR[b]}" stroke="#5F3D12" stroke-width=".9" stroke-linejoin="round"/><circle cx="2" cy="-1.6" r="1.1" fill="#2B2B2B"/><text x="${b === "L" ? 23 : 18}" y="4.4" font-size="12.5" font-weight="700" fill="#DCE6F5">${LABEL[b]}</text></g>`;
   return `<svg class="bki-svg" viewBox="0 0 346 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="먹이가 다른 두 섬에 사는 새 무리">
     <defs><linearGradient id="bkiSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FD0F2"/><stop offset=".55" stop-color="#5FB3E4"/><stop offset="1" stop-color="#3E8FCB"/></linearGradient></defs>
     ${panel("A")}${panel("B")}
@@ -131,11 +148,26 @@ export const beakIslesLab: StepRenderer = (host, step, api) => {
         slot.innerHTML = forward ? `<g class="bki-gone">${bird(prev)}</g><g class="bki-born" style="--d:${(0.32 + (i % 3) * 0.08).toFixed(2)}s">${bird(b)}</g>` : `<g>${bird(b)}</g>`;
       });
       shown[isle] = flock;
-      // 구성 막대: 두꺼운, 긴, 짧은 순서로 모아 칠한다
+      // 구성 막대: 두꺼운, 긴, 짧은 순서로 모아 그 수만큼의 폭으로 칠하고 칸 안에 수를 쓴다
       const order: Beak[] = ["T", "L", "S"];
-      const sorted = order.flatMap((k) => flock.filter((x) => x === k));
-      root.querySelectorAll<SVGRectElement>(".bki-seg").forEach((seg, i) => seg.setAttribute("fill", COLOR[sorted[i]]));
-      host.dataset[isle === "A" ? "bkiA" : "bkiB"] = order.map((k) => flock.filter((x) => x === k).length).join(",");
+      const counts = order.map((k) => flock.filter((x) => x === k).length);
+      const GAP = 3;
+      const shownN = counts.filter((c) => c > 0).length;
+      const unit = (PANEL_W - GAP * (shownN - 1)) / 9;
+      let bx = 0;
+      order.forEach((k, j) => {
+        const blk = root.querySelector(`.bki-blk[data-k="${k}"]`) as SVGGElement;
+        const rect = blk.querySelector("rect") as SVGRectElement;
+        const txt = blk.querySelector("text") as SVGTextElement;
+        const w = counts[j] * unit;
+        rect.setAttribute("x", bx.toFixed(1));
+        rect.setAttribute("width", Math.max(0, w).toFixed(1));
+        txt.setAttribute("x", (bx + w / 2).toFixed(1));
+        txt.textContent = counts[j] ? String(counts[j]) : "";
+        blk.style.display = counts[j] ? "" : "none";
+        if (counts[j]) bx += w + GAP;
+      });
+      host.dataset[isle === "A" ? "bkiA" : "bkiB"] = counts.join(",");
     });
     cur = n;
     host.dataset.bkiStep = String(n);

@@ -50,7 +50,7 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
   const bHi = bvBtn("", "(+)극 쪽 도선 칠하기");
   const bLo = bvBtn("", "(−)극 쪽 도선 칠하기");
   const log = xLog(["병렬일 때 A와 B", "직렬일 때 A와 B"], 1, true);
-  const toSer = bvBtn("main", "같은 저항을 직렬로 바꿔 견주기");
+  const toSer = bvBtn("main", "같은 저항을 직렬로 바꿔 비교하기");
   toSer.disabled = true;
   f.slot.setControls(xRow(bHi, bLo), log.el, toSer);
 

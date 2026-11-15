@@ -233,7 +233,7 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
     }),
   );
   const flow = bvBtn("main g2u6x-flow-btn", "영양소 20개 흘려보내기");
-  const sum = bvBtn("g2u6x-go", "세 벽 견주기");
+  const sum = bvBtn("g2u6x-go", "세 벽 비교하기");
   sum.disabled = true;
   flow.addEventListener("click", () => {
     if (busy) return;

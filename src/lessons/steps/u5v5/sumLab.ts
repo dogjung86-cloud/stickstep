@@ -5,14 +5,16 @@
 // 실패하는 길: 주문과 다르면 수레가 딴 쪽으로 가거나 느리게 간다. 무대의 초록 화살표(합친 힘)와 아래 셈이 그 자리에서 보여 준다.
 // 흐름: 오른쪽 500 N(같은 방향) → 반대로 밀어 왼쪽 100 N → 둘 다 미는데 0 N(평형) → 판정 → 결론.
 // 옛 랩(tugOfWar)은 반대 방향 줄다리기의 사람 수만 바꿨다. 여기서는 두 힘의 방향까지 정해 더하기와 빼기를 모두 만든다.
+// 움직임(2026-11-15 그래픽 손질): 마찰이 없는 바닥이라 수레는 합친 힘이 있으면 '점점 빨라지고', 합친 힘이 0이면 멈춰 있던 그대로다.
+//   힘을 바꿀 때마다 수레는 처음 자리에서 멈춘 채 다시 출발한다(잠깐 사라졌다 나타나는 되감기). 그래서 "힘이 0이면 선다"로 읽히지 않는다(u5l7 개념과 같은 약속).
+// 화살표는 수레 몸에서 시작한다(세 줄: 가, 합친 힘, 나). 판정 동안에는 질문의 장면(가 오른쪽 200 N, 나는 ?)을, 답한 뒤와 결론에는 답의 장면을 그린다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
-import { drawCrate, drawForceArrow } from "../../../ui/forceProps";
 import { drawStickman, posePush, poseStand } from "../../../ui/stick";
 import type { StepRenderer } from "../../types";
 import { bvTimers } from "../bio6/b6Lab";
-import { clamp, U5, u5Canvas, u5Frame, u5Pill, u5Text } from "./u5Kit";
+import { clamp, U5, u5Arrow, u5Canvas, u5Frame, u5Pill, u5Text } from "./u5Kit";
 
 interface S {
   title: string;
@@ -42,8 +44,29 @@ export const sumLab: StepRenderer = (host, step, api) => {
   let order = 0;
   let hold = 0; // 주문을 채운 채 버틴 시간(ms)
   let lock = false;
-  let scroll = 0; // 바닥이 흘러간 거리(수레는 가운데에 그대로 둔다)
+  // 수레의 움직임: 처음 자리에서 멈춘 채 출발해 합친 힘에 비례한 가속도로 점점 빨라진다. 한 번 출발한 뒤 RUN_MS가 지나거나 LIM만큼 가면 되감아 다시 출발한다.
+  const ACC = 0.005; // 100 N마다 가속도(px/프레임²)
+  const RUN_MS = 1700;
+  const LIM = 30;
+  let pos = 0; // 처음 자리에서 간 거리(px)
   let vel = 0;
+  let runT = 0;
+  let rew = 0; // 되감기 남은 시간(ms, 0이면 아님): 사라졌다가 처음 자리에서 다시 나타난다
+  let rewound = false;
+  const REW = 380;
+  const rewind = (): void => {
+    runT = 0;
+    if (Math.abs(pos) < 0.5 && Math.abs(vel) < 0.01) {
+      pos = 0;
+      vel = 0;
+      return;
+    }
+    rew = REW;
+    rewound = false;
+  };
+  // 판정과 결론의 장면: 판정 동안은 질문(가 오른쪽 200 N, 나는 ?), 답한 뒤에는 답(나 왼쪽 200 N)
+  let scene: "play" | "ask" | "reveal" = "play";
+  const ASK_F: Force[] = [{ dir: 1, n: 2 }, { dir: -1, n: 2 }];
 
   const rows = F.map((_, i) => {
     const l = el("button", { class: "u5x-seg u5x-dir", text: "← 왼쪽", attrs: { type: "button" } }) as HTMLButtonElement;
@@ -87,6 +110,7 @@ export const sumLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     F[i] = { ...F[i], ...patch, n: clamp(patch.n ?? F[i].n, 0, 3) } as Force;
     hold = 0;
+    rewind(); // 힘을 바꾸면 처음 자리에서 멈춘 채 다시 출발한다
     paint();
   }
 
@@ -99,6 +123,7 @@ export const sumLab: StepRenderer = (host, step, api) => {
     order = n;
     f.pips(n);
     hold = 0;
+    if (n > 0) rewind();
     if (n < 3) f.say(says[n]);
     paint();
     if (n === 3) {
@@ -110,10 +135,15 @@ export const sumLab: StepRenderer = (host, step, api) => {
   };
 
   function askFinal(): void {
+    scene = "ask";
+    rewind();
     f.slot.ask(
       "마찰이 없는 바닥에 수레가 멈춰 있어요. 한 사람이 오른쪽으로 200 N으로 밀면 다른 사람은?",
       [{ t: "왼쪽으로 200 N으로 밀어요", ok: true }, { t: "오른쪽으로 200 N으로 밀어요" }, { t: "밀지 않고 있어요" }],
-      (ok) => api.recordQuiz(ok),
+      (ok) => {
+        scene = "reveal";
+        api.recordQuiz(ok);
+      },
       { why: "멈춰 있으려면 합친 힘이 0이어야 해요. <b>같은 크기, 반대 방향</b>이에요.", onNext: finish },
     );
   }
@@ -125,18 +155,32 @@ export const sumLab: StepRenderer = (host, step, api) => {
 
   st.run((ctx, w, h, t, dt) => {
     const gy = h - 30;
-    const n = net();
-    // 합친 힘만큼 수레가 빨라진다(바닥의 눈금이 반대로 흐른다)
-    vel += (n * 0.9 - vel) * Math.min(1, 0.05 * dt);
-    scroll -= vel * dt;
+    const ms = dt * 16.7;
+    const FF = scene === "play" ? F : ASK_F; // 판정과 결론에서는 질문과 답의 장면
+    const n = FF[0].dir * FF[0].n + FF[1].dir * FF[1].n;
+    // 움직임: 되감는 동안은 멈추고, 그 밖에는 합친 힘에 비례한 가속도로 점점 빨라진다(마찰이 없는 바닥)
+    if (rew > 0) {
+      rew = Math.max(0, rew - ms);
+      if (!rewound && rew <= REW / 2) {
+        rewound = true;
+        pos = 0;
+        vel = 0;
+      }
+    } else if (scene === "play") {
+      vel += n * ACC * dt;
+      pos += vel * dt;
+      runT += ms;
+      if (n !== 0 && (runT > RUN_MS || Math.abs(pos) > LIM)) rewind(); // 한 번 출발을 보인 뒤 처음 자리에서 다시
+    }
+    const fade = rew > 0 ? Math.min(1, Math.abs(rew - REW / 2) / (REW / 2)) : 1;
     if (order < 3 && ORDERS[order].ok(F[0], F[1])) {
-      hold += dt * 16.7;
+      hold += ms;
       if (hold > 1300) {
         haptic(HAPTIC.correct);
         setOrder(order + 1);
       }
     } else hold = 0;
-    // 바닥과 흐르는 눈금
+    // 바닥과 고정된 눈금(수레가 눈금 위를 지나간다)
     ctx.strokeStyle = "rgba(178,204,238,.55)";
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -145,56 +189,109 @@ export const sumLab: StepRenderer = (host, step, api) => {
     ctx.stroke();
     ctx.lineWidth = 1.5;
     ctx.strokeStyle = "rgba(178,204,238,.35)";
-    for (let i = -1; i < 12; i++) {
-      const x = ((i * 36 + scroll) % (w + 36) + (w + 36)) % (w + 36) - 18;
+    for (let x = 4; x < w + 10; x += 24) {
       ctx.beginPath();
       ctx.moveTo(x, gy + 5);
       ctx.lineTo(x - 8, gy + 14);
       ctx.stroke();
     }
     const cx = w / 2;
-    // 수레
-    drawCrate(ctx, cx, gy - 9, 56, 40, t, 0);
-    ctx.fillStyle = "#93A3C0";
-    [-18, 18].forEach((dx) => {
+    const CW = 100; // 수레 몸 폭
+    const CH = 64; // 수레 몸 높이(화살표 세 줄이 들어간다)
+    const WR = 11; // 바퀴 반지름
+    const AP = 24; // 화살표: 100 N에 24px
+    const by = gy - WR - 4; // 수레 몸 바닥
+    const cy = by - CH / 2; // 수레 몸의 가운데 높이(세 화살표의 가운데 줄)
+    // 처음 자리(멈춰 있던 자리): 수레가 떠나 있으면 옅은 점선 윤곽으로 남긴다
+    if (Math.abs(pos) > 3) {
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = "rgba(201,219,245,.32)";
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.arc(cx + dx, gy - 8, 8, 0, Math.PI * 2);
+      ctx.roundRect(cx - CW / 2, by - CH, CW, CH, 7);
+      ctx.stroke();
+      ctx.restore();
+      u5Text(ctx, "처음 자리", cx, gy + 14, { color: U5.dim, px: 12 });
+    }
+    const X = cx + pos; // 수레의 지금 가운데
+    ctx.save();
+    ctx.globalAlpha = fade;
+    // 수레: 화살표가 잘 보이게 차분한 남회색 몸(근-동조 그라데이션, 왼쪽 위 빛, 최암색 윤곽)
+    const cg = ctx.createLinearGradient(0, by - CH, 0, by);
+    cg.addColorStop(0, "#6B7EA2");
+    cg.addColorStop(0.55, "#4E6085");
+    cg.addColorStop(1, "#3A4968");
+    ctx.fillStyle = cg;
+    ctx.strokeStyle = "#26324B";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.roundRect(X - CW / 2, by - CH, CW, CH, 7);
+    ctx.fill();
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.22)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(X - CW / 2 + 6, by - CH + 2.5);
+    ctx.lineTo(X + CW / 2 - 6, by - CH + 2.5);
+    ctx.stroke();
+    [-30, 30].forEach((dx) => {
+      const wg = ctx.createRadialGradient(X + dx - 3, gy - WR - 3, 1, X + dx, gy - WR, WR);
+      wg.addColorStop(0, "#C4D0E4");
+      wg.addColorStop(1, "#7F8FAD");
+      ctx.fillStyle = wg;
+      ctx.beginPath();
+      ctx.arc(X + dx, gy - WR, WR, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "#3B4A68";
+      ctx.strokeStyle = "#2E3B55";
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(cx + dx, gy - 8);
-      ctx.lineTo(cx + dx + 7 * Math.cos(-scroll / 8), gy - 8 + 7 * Math.sin(-scroll / 8));
+      ctx.moveTo(X + dx, gy - WR);
+      ctx.lineTo(X + dx + (WR - 2) * Math.cos(pos / WR), gy - WR + (WR - 2) * Math.sin(pos / WR));
       ctx.stroke();
     });
-    // 사람: 오른쪽으로 미는 사람은 수레 왼쪽에, 왼쪽으로 미는 사람은 수레 오른쪽에 선다
+    // 사람: 오른쪽으로 미는 사람은 수레 왼쪽에, 왼쪽으로 미는 사람은 수레 오른쪽에 선다. 판정 동안 '나'는 그리지 않는다(물음표)
     const used = { L: 0, R: 0 };
-    F.forEach((x, i) => {
+    FF.forEach((x, i) => {
+      if (scene === "ask" && i === 1) return;
       const k = x.dir > 0 ? "L" : "R";
       const slot = used[k]++;
-      const px = cx - x.dir * (28 + 30 + slot * 24); // 같은 쪽에 둘이 서면 나란히 붙어 함께 민다
-      drawStickman(ctx, px, gy, 56, x.n ? posePush(x.n / 3, t, i) : poseStand(t, i), { flip: x.dir < 0, color: COL[i], alpha: x.n ? 1 : 0.45 });
-      u5Text(ctx, NAMES[i], px - x.dir * 4, gy - 68, { color: COL[i], px: 13 });
+      const px = X - x.dir * (CW / 2 + 37 + slot * 30); // 같은 쪽에 둘이 서면 나란히 붙어 함께 민다
+      drawStickman(ctx, px, gy, 76, x.n ? posePush(x.n / 3, t, i) : poseStand(t, i), { flip: x.dir < 0, color: COL[i], alpha: x.n ? 1 : 0.45 });
+      // 같은 쪽에 둘이 서면 뒷사람의 이름표를 한 줄 위로(겹치지 않게)
+      u5Text(ctx, x.n ? `${NAMES[i]} ${x.n * 100} N` : NAMES[i], px - x.dir * 4, gy - 98 - slot * 17, { color: COL[i], px: 13 });
     });
-    // 힘 화살표 세 줄: 가, 나, 합친 힘(100 N에 22px)
-    const ax = cx;
-    F.forEach((x, i) => {
-      const y = 64 + i * 21;
-      if (x.n) {
-        drawForceArrow(ctx, ax, y, x.dir * x.n * 22, 0, { color: COL[i], width: 4 });
-        u5Text(ctx, `${NAMES[i]} ${x.n * 100} N`, ax - x.dir * 34, y, { color: COL[i], px: 12 });
+    // 힘 화살표 세 줄은 수레 몸의 가운데에서 시작한다(100 N에 AP px): 위 줄 가, 가운데 줄 합친 힘, 아래 줄 나
+    const rowY = [cy - 19, cy + 19];
+    FF.forEach((x, i) => {
+      if (scene === "ask" && i === 1) {
+        u5Text(ctx, "?", X + 9, rowY[1], { color: COL[1], px: 16, w: 800 });
+        return;
       }
+      if (x.n) u5Arrow(ctx, X, rowY[i], x.dir * x.n * AP, 0, { color: COL[i], width: 5 });
     });
-    const y3 = 108;
-    if (n !== 0) drawForceArrow(ctx, ax, y3, n * 22, 0, { color: U5.up, width: 6 });
-    else {
+    if (n !== 0) u5Arrow(ctx, X, cy, n * AP, 0, { color: U5.up, width: 7 });
+    else if (FF[0].n + FF[1].n > 0) {
+      ctx.fillStyle = "#0B1524";
+      ctx.beginPath();
+      ctx.arc(X, cy, 7.5, 0, Math.PI * 2);
+      ctx.fill();
       ctx.fillStyle = U5.up;
       ctx.beginPath();
-      ctx.arc(ax, y3, 5, 0, Math.PI * 2);
+      ctx.arc(X, cy, 5.5, 0, Math.PI * 2);
       ctx.fill();
     }
-    u5Text(ctx, `합친 힘 ${Math.abs(n) * 100} N`, ax - (n >= 0 ? 1 : -1) * 52, y3, { color: "#9BE8C4", px: 12.5 });
-    u5Pill(ctx, n === 0 ? (F[0].n + F[1].n ? "힘이 서로 지워져 멈춰 있어요" : "아무도 밀지 않아요") : `수레가 ${side(n)}으로 가요`, n === 0 ? U5.up : U5.gold);
+    u5Text(ctx, `합친 힘 ${Math.abs(n) * 100} N`, X, by - CH - 44, { color: "#9BE8C4", px: 14 });
+    ctx.restore();
+    const pill =
+      scene === "ask"
+        ? "수레가 멈춰 있어요"
+        : n === 0
+          ? FF[0].n + FF[1].n
+            ? "힘이 서로 지워져 멈춰 있어요"
+            : "아무도 밀지 않아요"
+          : `수레가 ${side(n)}으로 점점 빨라져요`;
+    u5Pill(ctx, pill, n === 0 ? U5.up : U5.gold);
   });
 
   setOrder(0);

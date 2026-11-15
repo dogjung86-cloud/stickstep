@@ -183,7 +183,7 @@ export const cellWorkLab: StepRenderer = (host, step, api) => {
   function askPlant2(): void {
     hideTags = true; // 그림의 이름표 둘("엽록체", "세포벽")이 그대로 답이라 가린다(2026-11-11 눈검수)
     setOff(null, false);
-    f.say("다시 모두 일해요. 마지막으로 앞에서 본 동물세포와 견주어 봐요.");
+    f.say("다시 모두 일해요. 마지막으로 앞에서 본 동물세포와 비교해 봐요.");
     f.slot.ask(
       "식물세포에는 있고 동물세포에는 없는 구조는?",
       [{ t: "엽록체와 세포벽", ok: true }, { t: "엽록체와 핵" }, { t: "세포벽과 세포막" }],

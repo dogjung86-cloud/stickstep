@@ -15,7 +15,7 @@ import { mBar, mCoil, mCompass } from "./magKit";
 import { X, xArrow, xBox, xCanvas, xFrame, xRow, xSegs, xText, type LabStep } from "./kit";
 
 const C = { x: 173, y: 112 };
-const MAG_BUSY = "지금은 막대자석을 놓아 견주는 중이에요. <b>코일로 돌아가서</b> 바꿔 보세요.";
+const MAG_BUSY = "지금은 막대자석을 놓아 비교하는 중이에요. <b>코일로 돌아가서</b> 바꿔 보세요.";
 const SPOTS: [number, number][] = [[76, 112], [270, 112], [173, 50], [173, 172], [104, 58], [258, 164]];
 
 export const coilLab: StepRenderer = (host, step, api) => {
@@ -58,7 +58,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
       return false;
     },
   );
-  const cmp = bvBtn("", "막대자석으로 바꿔 견주기");
+  const cmp = bvBtn("", "막대자석으로 바꿔 비교하기");
   f.slot.setControls(xRow(sw, flip), power.el, cmp);
 
   function need(): void {
@@ -136,7 +136,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
       return;
     }
     magnet = !magnet;
-    cmp.textContent = magnet ? "코일로 돌아가기" : "막대자석으로 바꿔 견주기";
+    cmp.textContent = magnet ? "코일로 돌아가기" : "막대자석으로 바꿔 비교하기";
     if (magnet) {
       seen.mag = true;
       f.say("코일 자리에 막대자석을 놓아도 바늘이 <b>똑같이</b> 가리켜요. 코일의 한쪽 끝이 N극인 셈이에요.");

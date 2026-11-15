@@ -150,15 +150,54 @@ export function lunarState(deg: number): LunarState {
 // ── 그림 조각 ──────────────────────────────────────────────────────
 export const pts = (p: Pt[]): string => p.map((q) => `${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(" ");
 
-/** 그라데이션 묶음. id는 랩마다 다른 접두를 준다(앞 스텝의 그림이 아직 문서에 남아 있어도 겹치지 않게). */
+// 천체의 겉은 실사 원판이다(CLAUDE.md 아트 파이프라인의 천체 규칙, 2026-11-15 그래픽 감사: 단색 그라데이션 원이었다).
+// 사진(public/photos, 출처는 photos/CREDITS.md)마다 원판의 중심과 반지름을 사진 픽셀로 적어 두고, 원의 테두리 상자에 맞춰 채운다.
+// 반지름은 가장자리의 어두운 띠가 들어오지 않게 실제 원판보다 조금 작게 잡았다(원 맞춤으로 잰 값: 달 700, 지구 860, 태양 724).
+const BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+export const DISC = {
+  sun: { file: "sun_whitelight.jpg", W: 1785, H: 1733, cx: 917, cy: 849.5, r: 712 },
+  earth: { file: "earth_apollo17.jpg", W: 1920, H: 1921, cx: 957, cy: 953.6, r: 848 },
+  moon: { file: "moon_lro.jpg", W: 1400, H: 1400, cx: 700, cy: 700, r: 694 },
+} as const;
+export type DiscKind = keyof typeof DISC;
+
+/** 달 사진(moon_lro)을 햇빛 받은 달처럼 조금 밝히는 필터(사진이 고르게 어두운 편이라 작은 원판에서 회색 덩이로 보인다). 같은 SVG의 defs에 둔다. */
+export const moonBrightDef = (id: string): string =>
+  `<filter id="${id}" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope="1.3" intercept=".04"/><feFuncG type="linear" slope="1.3" intercept=".04"/><feFuncB type="linear" slope="1.28" intercept=".04"/></feComponentTransfer></filter>`;
+
+/** 중심 (cx, cy), 반지름 r인 원에 맞춘 실사 사진(<image>). 원으로 자르는 것은 부르는 쪽이 한다. */
+export function discImage(kind: DiscKind, cx: number, cy: number, r: number, extra = ""): string {
+  const d = DISC[kind];
+  const s = r / d.r;
+  return `<image href="${BASE}photos/${d.file}" x="${(cx - d.cx * s).toFixed(2)}" y="${(cy - d.cy * s).toFixed(2)}" width="${(d.W * s).toFixed(2)}" height="${(d.H * s).toFixed(2)}" preserveAspectRatio="none"${extra}/>`;
+}
+
+/** 원의 테두리 상자에 맞추는 실사 채움(fill="url(#id)"로 쓴다). */
+function discPattern(id: string, kind: DiscKind): string {
+  const d = DISC[kind];
+  const w = 2 * d.r;
+  return `<pattern id="${id}" patternContentUnits="objectBoundingBox" width="1" height="1"><image href="${BASE}photos/${d.file}" x="${(-(d.cx - d.r) / w).toFixed(5)}" y="${(-(d.cy - d.r) / w).toFixed(5)}" width="${(d.W / w).toFixed(5)}" height="${(d.H / w).toFixed(5)}" preserveAspectRatio="none"/></pattern>`;
+}
+
+/** 채움 묶음(태양, 지구는 실사 원판 채움 fill="url(#접두sun)", 빛무리와 코로나는 그라데이션, 달 사진을 밝히는 필터 접두mbr).
+ *  id는 랩마다 다른 접두를 준다(앞 스텝의 그림이 아직 문서에 남아 있어도 겹치지 않게). 달은 채움이 아니라 moonAt0으로 그린다. */
 export function ecDefs(p: string): string {
   return `<defs>
-    <radialGradient id="${p}sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFF1BE"/><stop offset=".62" stop-color="#FFC24E"/><stop offset="1" stop-color="#F08A24"/></radialGradient>
+    ${discPattern(`${p}sun`, "sun")}
     <radialGradient id="${p}glow" cx=".5" cy=".5" r=".5"><stop offset=".45" stop-color="#FFB03A" stop-opacity=".5"/><stop offset="1" stop-color="#FFB03A" stop-opacity="0"/></radialGradient>
-    <radialGradient id="${p}earth" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#7FB2F0"/><stop offset=".6" stop-color="#2E6FD4"/><stop offset="1" stop-color="#1B4B9E"/></radialGradient>
-    <radialGradient id="${p}moon" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#F3EDD8"/><stop offset="1" stop-color="#BDB08A"/></radialGradient>
+    ${discPattern(`${p}earth`, "earth")}
+    ${moonBrightDef(`${p}mbr`)}
     <radialGradient id="${p}corona" cx=".5" cy=".5" r=".5"><stop offset=".5" stop-color="#F2F6FF" stop-opacity=".95"/><stop offset=".72" stop-color="#DCE8FF" stop-opacity=".4"/><stop offset="1" stop-color="#DCE8FF" stop-opacity="0"/></radialGradient>
   </defs>`;
+}
+
+/** 원점에 놓는 실사 달(달의 무리는 transform으로 옮긴다). lit가 "left"면 햇빛이 오는 왼쪽 반만 밝고 오른쪽 반은 어두운 원판,
+ *  "full"이면 둥근 달 전체. ecDefs(p)의 밝히기 필터(접두mbr)를 쓴다. 채움(pattern)으로 하지 않는 까닭: 패턴 속 사진에 필터를 걸면
+ *  크롬이 타일의 4분의 1만 그렸다. 원으로 자른 사진은 창의 달과 같은 방식이라 안전하다. */
+export function moonAt0(p: string, r: number, lit: "left" | "full"): string {
+  const img = discImage("moon", 0, 0, r, ` filter="url(#${p}mbr)"`);
+  if (lit === "full") return `<clipPath id="${p}mfc"><circle r="${r}"/></clipPath><g clip-path="url(#${p}mfc)">${img}</g>`;
+  return `<circle r="${r}" fill="#2A3448"/><clipPath id="${p}mlc"><path d="M0 ${-r}A${r} ${r} 0 0 0 0 ${r}Z"/></clipPath><g clip-path="url(#${p}mlc)">${img}</g>`;
 }
 
 export function stars(list: [number, number][]): string {

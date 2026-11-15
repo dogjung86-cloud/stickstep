@@ -33,7 +33,7 @@ export function jupiterRow(c: OpenerCtx): void {
     onLetGo: () => c.say("아직 자리가 남았어요. 끝까지 <b>꾹</b> 눌러 주세요."),
     onDone: () => {
       c.face("surprised");
-      c.say(`${verdict(hit)} 지구가 <b>열한 개</b>쯤 들어가요. 이렇게 큰 행성이 또 있을까요? 여덟 행성을 견줘 봐요.`);
+      c.say(`${verdict(hit)} 지구가 <b>열한 개</b>쯤 들어가요. 이렇게 큰 행성이 또 있을까요? 여덟 행성을 비교해 봐요.`);
       c.finish();
     },
   });

@@ -9,7 +9,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvCapture, bvSvgPoint, bvTimers, bvTween } from "../bio6/b6Lab";
 import { u7Frame, u7Goals, u7Dev } from "./kit";
-import { LUNAR, lunarMoonAt, lunarShadowHalf, lunarState, ecDefs, stars } from "./eclipseKit";
+import { LUNAR, lunarMoonAt, lunarShadowHalf, lunarState, ecDefs, moonAt0, stars, discImage, moonBrightDef } from "./eclipseKit";
 
 interface LabStep {
   title: string;
@@ -55,7 +55,7 @@ export const u7LunarLab: StepRenderer = (host, step, api) => {
     <g class="u7x-lu-people" opacity="0">${who(-42, "가")}${who(42, "나")}</g>
     <g class="u7x-lu-moon">
       <circle r="17" fill="#9DBBF0" opacity=".2" class="u7x-ecl-halo"/>
-      <circle r="${rm}" fill="url(#lu-moon)"/>
+      ${moonAt0("lu-", rm, "full")}
     </g>
     <g clip-path="url(#lu-sh)"><circle class="u7x-lu-dim" r="${rm}" fill="#1C0B09" opacity=".86"/></g>
     <text class="u7x-st sun" x="6" y="78">햇빛</text>
@@ -70,16 +70,25 @@ export const u7LunarLab: StepRenderer = (host, step, api) => {
   const people = svg.querySelector(".u7x-lu-people") as SVGGElement;
   const pill = el("div", { class: "bv-pill u7x-pill", text: "" });
   const inset = el("div", { class: "u7x-inset u7x-ec-inset", attrs: { "aria-hidden": "true" } });
+  // 창의 달은 실사(moon_lro) 원판이다. 그림자는 둥근 면으로 덮고, 개기월식에는 같은 사진을 붉게 물들인 판을 얹는다
+  // (무늬가 그대로 남는 붉은 달. 예전에는 손그림 원 위에 납작한 빨간 원이었다, 2026-11-15 그래픽 감사).
   inset.innerHTML = `<svg viewBox="0 0 88 88">
-    <defs><clipPath id="lu-im"><circle cx="${IN.cx}" cy="${IN.cy}" r="${IN.r}"/></clipPath></defs>
+    <defs>
+      <clipPath id="lu-im"><circle cx="${IN.cx}" cy="${IN.cy}" r="${IN.r}"/></clipPath>
+      <filter id="lu-redf" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.6 0.4 0.1 0 0.04  0.17 0.12 0.03 0 0.006  0.07 0.05 0.015 0 0  0 0 0 1 0"/>
+      </filter>
+      ${moonBrightDef("lu-ibr")}
+    </defs>
     <rect width="88" height="88" fill="#070d1a"/>
-    <circle cx="${IN.cx}" cy="${IN.cy}" r="${IN.r}" fill="#EFE8D0"/>
-    <circle cx="${IN.cx - 8}" cy="${IN.cy - 6}" r="5" fill="#D6CDAE"/><circle cx="${IN.cx + 9}" cy="${IN.cy + 7}" r="6.5" fill="#D6CDAE"/><circle cx="${IN.cx + 5}" cy="${IN.cy - 12}" r="3" fill="#D6CDAE"/>
-    <g clip-path="url(#lu-im)"><circle class="u7x-lu-ish" cy="${IN.cy}" fill="#1C0B09" opacity=".9"/></g>
-    <circle class="u7x-lu-red" cx="${IN.cx}" cy="${IN.cy}" r="${IN.r}" fill="#C24A2C" opacity="0"/>
+    <g clip-path="url(#lu-im)">
+      ${discImage("moon", IN.cx, IN.cy, IN.r, ' filter="url(#lu-ibr)"')}
+      <circle class="u7x-lu-ish" cy="${IN.cy}" fill="#120808" opacity=".9"/>
+      <g class="u7x-lu-red" opacity="0">${discImage("moon", IN.cx, IN.cy, IN.r, ' filter="url(#lu-redf)"')}</g>
+    </g>
   </svg><span>지구에서 본 달</span>`;
   const ish = inset.querySelector(".u7x-lu-ish") as SVGCircleElement;
-  const red = inset.querySelector(".u7x-lu-red") as SVGCircleElement;
+  const red = inset.querySelector(".u7x-lu-red") as SVGGElement;
   f.stage.append(pill, inset);
 
   const goalsUi = u7Goals(1, [
@@ -107,7 +116,7 @@ export const u7LunarLab: StepRenderer = (host, step, api) => {
     // 창: 달은 가운데에 두고 그림자(둥근 면)를 옮긴다. 달이 그림자의 오른쪽에 있으면 그림자는 달의 왼쪽에 있다.
     ish.setAttribute("cx", (IN.cx - st.h * K).toFixed(2));
     ish.setAttribute("r", (st.w * K).toFixed(2));
-    red.setAttribute("opacity", st.kind === "total" ? ".82" : "0");
+    red.setAttribute("opacity", st.kind === "total" ? "1" : "0");
     const side = st.h > 0 ? "왼쪽" : "오른쪽";
     pill.textContent = st.kind === "total" ? "개기월식, 붉은 달" : st.kind === "partial" ? `부분월식, ${side}이 가려졌어요` : "가려지지 않았어요";
     host.dataset.u7Kind = st.kind;

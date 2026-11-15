@@ -39,6 +39,8 @@ const EXAM_HELPERS = [
   "bioDiversityGridFig", "bioKingdomClueTableFig", "bioPopulationBarsFig",
 ];
 const BIO3_HELPERS = ["classRankFig", "kingdomKeyFig", "orgLevelFig"];
+// 2026-11-15 그래픽 손질: 사진 문항 일부를 코드 그림으로 바꾸며 bio6Figures에서 가져오는 헬퍼(스테이징 qa/u2v2-*.ts에도 같은 호출이 있다).
+const BIO6_HELPERS = ["examPlantCellFig", "examAnimalCellFig", "slideBubbleFig", "slidePairFig", "cellTrioExamFig", "cellShapeCardsArt", "ladybugExamFig"];
 
 // ── 1. 스테이징에서 문항 블록 + 최상위 로컬 상수 추출 ──
 // 로컬 const(공유 자료셋 등)는 쓰는 레슨 파일에 함께 심는다(m1u3 v2 · u1 v2 이식 관행).
@@ -164,6 +166,7 @@ for (const [lid, L] of Object.entries(LESSON)) {
   const body = arr.map((b) => b.text).join("\n");
   const usedExam = EXAM_HELPERS.filter((h) => new RegExp(`\\b${h}\\(`).test(body));
   const usedBio3 = BIO3_HELPERS.filter((h) => new RegExp(`\\b${h}\\(`).test(body));
+  const usedBio6 = BIO6_HELPERS.filter((h) => new RegExp(`\\b${h}\\(`).test(body));
   const n = Number(lid.replace("u2l", ""));
   const header = `// 중1 과학 Ⅱ. 생물의 구성과 다양성 · 단원 종합 평가 풀 v2: 레슨 ${n} ${L.label} (u2e${L.start}~e${L.end}${FULL ? "" : " 중 " + arr.length + "문항"})
 // ⚠ 이 파일은 qa/build-u2v2-lessons.mjs가 스테이징(qa/u2v2-*.ts)에서 재생성한다 · 직접 수정 금지.
@@ -173,6 +176,7 @@ for (const [lid, L] of Object.entries(LESSON)) {
   const importLines = [`import type { ExamItem } from "./types";`];
   if (usedExam.length) importLines.push(`import { ${usedExam.join(", ")} } from "../../ui/examFigures";`);
   if (usedBio3.length) importLines.push(`import { ${usedBio3.join(", ")} } from "../../ui/bio3Figures";`);
+  if (usedBio6.length) importLines.push(`import { ${usedBio6.join(", ")} } from "../../ui/bio6Figures";`);
   const local = [`const L = "${lid}";`];
   // 스니펫 검출은 문항 본문뿐 아니라 **함께 심을 로컬 const 본문까지** 훑는다 —
   // ecoPair처럼 로컬 헬퍼가 bimg를 감싸 쓰면 본문만 봐서는 bimg가 안 잡혀 tsc가 죽는다(실사고).

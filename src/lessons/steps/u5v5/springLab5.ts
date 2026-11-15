@@ -5,21 +5,26 @@
 // 실패하는 길: 늘이지 않고 기록하거나 같은 길이를 또 기록하면 점이 늘지 않는다. 5 N 맞히기에서는 센서의 값을 가려 두므로 길이가 틀리면 어긋난 값이 드러난다.
 // 흐름: 길이 셋을 골라 기록 → 직선 → (센서를 가린 채) 5 N이 되게 늘이기 → 판정(14 cm면) → 결론. '손 놓기'를 누르면 고리가 당긴 쪽과 반대로 돌아간다.
 // 옛 랩(springLab)은 정해 준 4, 8, 12 cm에서 저절로 기록됐다. 수치는 1 cm에 0.5 N으로 같다.
+// 그래픽 손질(2026-11-15): 고리에 힘 센서(u5l5, u5l6 랩과 같은 파란 기기)를 줄로 걸었다. 두 화살표는 고리(작용점)에서 시작해
+//   당기는 힘은 줄을 따라 센서 쪽으로, 되당기는 힘은 용수철 쪽으로. 이름표는 화살표 위에 늘 보인다. 센서를 가리는 동안은 센서 화면에 덮개.
+//   센서가 12 cm에서도 무대 안에 들도록 벽과 용수철을 왼쪽으로 옮기고 처음 길이를 줄였다(1 cm = 13px, 끄는 거리는 그대로).
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
-import { drawForceArrow, drawSpring } from "../../../ui/forceProps";
+import { drawSpring } from "../../../ui/forceProps";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvCapture, bvTimers } from "../bio6/b6Lab";
-import { clamp, U5, u5Canvas, u5Frame, u5Pill, u5Read, u5Text } from "./u5Kit";
+import { clamp, U5, u5Arrow, u5Canvas, u5Frame, u5Pill, u5Read, u5Text } from "./u5Kit";
 
 interface S {
   title: string;
   cta?: string;
 }
-const X0 = 28; // 벽
-const L0 = 74; // 용수철의 처음 길이(px)
+const X0 = 22; // 벽
+const L0 = 58; // 용수철의 처음 길이(px)
 const CM = 13; // 1 cm = 13px
+const ROPE = 62; // 고리 가운데에서 센서까지(가장 긴 화살표 6 N = 54px가 줄 위에 든다)
+const SW = 30; // 센서 폭
 const K = 0.5; // 1 cm에 0.5 N
 const GOAL = 5; // 맞힐 힘(N)
 
@@ -66,7 +71,10 @@ export const springLab5: StepRenderer = (host, step, api) => {
   st.cv.addEventListener("pointerdown", (e) => {
     if (phase === "end") return;
     const p = st.pt(e);
-    if (Math.hypot(p.x - (hookX() + 12), p.y - SY) > 56) return;
+    // 고리 둘레나 고리에 건 힘 센서를 잡는다
+    const sx = hookX() + 12 + ROPE;
+    const onSensor = p.x > sx - 8 && p.x < sx + SW + 8 && Math.abs(p.y - SY) < 26;
+    if (!onSensor && Math.hypot(p.x - (hookX() + 12), p.y - SY) > 56) return;
     bvCapture(st.cv, e.pointerId);
     dragging = true;
     held = true;
@@ -173,12 +181,43 @@ export const springLab5: StepRenderer = (host, step, api) => {
     ctx.beginPath();
     ctx.roundRect(X0 - 16, SY - 44, 16, 88, 4);
     ctx.fill();
-    drawSpring(ctx, X0, SY, hx, SY, { coils: 11, radius: 12, endLen: 8 });
+    drawSpring(ctx, X0, SY, hx, SY, { coils: 9, radius: 12, endLen: 8 });
     ctx.strokeStyle = "#E8EEF9";
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.arc(hx + 12, SY, 11, 0, Math.PI * 2);
     ctx.stroke();
+    // 힘 센서: 고리에 줄로 걸었다(학생이 끄는 손잡이). 가리는 동안은 화면에 덮개
+    const hide = phase === "goal" && reveal === 0;
+    const sx = hx + 12 + ROPE;
+    ctx.strokeStyle = "rgba(232,238,249,.85)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(hx + 23, SY);
+    ctx.lineTo(sx, SY);
+    ctx.stroke();
+    const sg = ctx.createLinearGradient(0, SY - 11, 0, SY + 11);
+    sg.addColorStop(0, "#6F8FC6");
+    sg.addColorStop(1, "#2E4878");
+    ctx.fillStyle = sg;
+    ctx.beginPath();
+    ctx.roundRect(sx, SY - 11, SW, 22, 6);
+    ctx.fill();
+    ctx.fillStyle = "#0B1524";
+    ctx.beginPath();
+    ctx.roundRect(sx + 5, SY - 5, SW - 10, 10, 2);
+    ctx.fill();
+    if (hide) {
+      ctx.fillStyle = "#8A97AB";
+      ctx.beginPath();
+      ctx.roundRect(sx + 4, SY - 6, SW - 8, 12, 2);
+      ctx.fill();
+      u5Text(ctx, "?", sx + SW / 2, SY + 0.5, { px: 12, color: "#fff", w: 800 });
+    } else {
+      ctx.fillStyle = "#7CF0B5";
+      ctx.fillRect(sx + 7, SY - 1.5, (SW - 14) * Math.min(1, (ext * K) / 6), 3);
+    }
+    u5Text(ctx, "힘 센서", sx + SW, SY + 23, { px: 12, color: U5.dim, align: "right" });
     if (!dragging && !held && ext < 0.05 && phase !== "end") {
       const pulse = 0.5 + 0.5 * Math.sin(t / 300);
       ctx.strokeStyle = `rgba(90,162,248,${0.35 + pulse * 0.45})`;
@@ -217,15 +256,14 @@ export const springLab5: StepRenderer = (host, step, api) => {
     ctx.lineTo(hx, ry);
     ctx.stroke();
     ctx.setLineDash([]);
-    // 두 힘: 손이 당기는 힘(오른쪽)과 용수철이 되당기는 힘(왼쪽). 1 N에 9px. 센서를 가린 동안에는 길이를 고정해 그린다.
-    const hide = phase === "goal" && reveal === 0;
+    // 두 힘: 센서가 고리를 당기는 힘(오른쪽)과 용수철이 되당기는 힘(왼쪽). 둘 다 고리 가운데(작용점)에서 시작하고 1 N에 9px.
+    // 센서를 가린 동안에는 길이를 고정해 그린다. 이름표는 화살표 위에 늘 보인다.
     if (force > 0.15) {
-      const ay = SY - 34;
       const len = hide ? 22 : force * 9;
-      drawForceArrow(ctx, hx + 12, ay, len, 0, { color: U5.push, width: 4 });
-      drawForceArrow(ctx, hx + 12, ay, -len, 0, { color: U5.back, width: 4 });
-      u5Text(ctx, "되당기는 힘", hx + 6, ay - 14, { color: "#FFB3B3", px: 12, align: "right" });
-      if (hx + 70 < w - 62) u5Text(ctx, "당기는 힘", hx + 18, ay - 14, { color: "#B5D4FF", px: 12, align: "left" });
+      u5Arrow(ctx, hx + 12, SY, len, 0, { color: U5.push, width: 4 });
+      u5Arrow(ctx, hx + 12, SY, -len, 0, { color: U5.back, width: 4 });
+      u5Text(ctx, "되당기는 힘", hx + 4, SY - 27, { color: "#FFB3B3", px: 12, align: "right" });
+      u5Text(ctx, "당기는 힘", hx + 20, SY - 27, { color: "#B5D4FF", px: 12, align: "left" });
     }
     if (flash > 0) {
       ctx.fillStyle = `rgba(240,164,34,${flash * 0.1})`;

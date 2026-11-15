@@ -9,7 +9,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvCapture, bvSvgPoint, bvTimers, bvTween } from "../bio6/b6Lab";
 import { u7Frame, u7Goals, u7Dev } from "./kit";
-import { SOLAR, solarMoonAt, groundAt, solarView, solarZones, shadowPolys, pts, ecDefs, stars, sunInsetSvg, paintSunInset, type SolarView } from "./eclipseKit";
+import { SOLAR, solarMoonAt, groundAt, solarView, solarZones, shadowPolys, pts, ecDefs, moonAt0, stars, sunInsetSvg, paintSunInset, type SolarView } from "./eclipseKit";
 
 interface LabStep {
   title: string;
@@ -42,8 +42,7 @@ function solarScene(stage: HTMLElement, p: string, drag: "moon" | "person", extr
     ${extra}
     <g class="u7x-ec-moon">
       ${drag === "moon" ? '<circle r="24" fill="#9DBBF0" opacity=".2" class="u7x-ecl-halo"/>' : ""}
-      <circle r="${rm}" fill="#2A3448"/>
-      <path d="M0 ${-rm}A${rm} ${rm} 0 0 0 0 ${rm}Z" fill="url(#${p}moon)"/>
+      ${moonAt0(p, rm, "left")}
     </g>
     <g class="u7x-ec-person">
       ${drag === "person" ? '<circle cx="-8" r="14" fill="#fff" opacity=".2" class="u7x-ecl-halo"/>' : ""}
@@ -175,7 +174,7 @@ export const u7SolarWhereLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("사람을 다시 옮기며 세 곳을 견줘 봐도 좋아요.");
+    f.say("사람을 다시 옮기며 세 곳을 비교해 봐도 좋아요.");
     f.slot.conclude("일식은 <b>달의 그림자가 닿은 곳</b>에서만 보여요. 가장 짙은 가운데에서는 <b>개기일식</b>, 그 둘레의 옅은 곳에서는 <b>부분일식</b>이에요.");
     api.enableCTA(doneCta);
   }

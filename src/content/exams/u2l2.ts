@@ -5,6 +5,7 @@
 // 언어 가드 금지어 목록은 설계표 §0-3이 정본(검사기가 소스 전체를 스캔하므로 여기 나열하지 않는다).
 import type { ExamItem } from "./types";
 import { svgTable, dbox } from "../../ui/examFigures";
+import { examPlantCellFig, examAnimalCellFig } from "../../ui/bio6Figures";
 
 const L = "u2l2";
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -12,25 +13,6 @@ const ximg = (file: string, alt: string): string =>
   `<img src="${IMG_BASE}exam/u2/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
 const bimg = (path: string, alt: string, ratio = "4 / 3"): string =>
   `<img src="${IMG_BASE}bio3/${path}" alt="${alt}" style="display:block;width:100%;aspect-ratio:${ratio};object-fit:cover;border-radius:14px;background:#EEF1F4" />`;
-/** 발주 세포 실사 위에 기호 배지를 얹는다(라스터+벡터 하이브리드 · SCI_GUIDE 관례).
- *  좌표는 "이미지 상자 기준 %"(0~100) · 배지는 여백으로 빼도 되게 음수·100 초과를 허용한다. */
-const cellPhotoFig = (o: { photo: string; alt: string; marks: { sym: string; bx: number; by: number; tx: number; ty: number }[] }): string => {
-  const ov = o.marks
-    .map(
-      (m) => `<line x1="${m.bx}" y1="${m.by}" x2="${m.tx}" y2="${m.ty}" stroke="#20262E" stroke-width="0.8" stroke-linecap="round"/>
-        <circle cx="${m.tx}" cy="${m.ty}" r="1.7" fill="#20262E"/>
-        <circle cx="${m.bx}" cy="${m.by}" r="5.4" fill="#FFFFFF" stroke="#20262E" stroke-width="0.9"/>
-        <text x="${m.bx}" y="${m.by + 2.3}" text-anchor="middle" font-size="6.4" font-weight="900" fill="#20262E">${m.sym}</text>`,
-    )
-    .join("");
-  return `<div style="position:relative;width:100%;background:#F4F7F6;border-radius:14px;padding:26px 0">
-    <div style="position:relative;width:74%;margin:0 auto">
-      <img src="${IMG_BASE}bio3/${o.photo}" alt="${o.alt}" style="display:block;width:100%;border-radius:8px" />
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible" aria-hidden="true">${ov}</svg>
-    </div>
-  </div>`;
-};
-
 export const POOL_U2L2: ExamItem[] = [
   {
     id: "u2e217",
@@ -58,16 +40,15 @@ export const POOL_U2L2: ExamItem[] = [
     diff: 1,
     prompt:
       "그림은 어떤 세포를 나타낸 것으로, 세 곳이 ㉠~㉢으로 표시되어 있어요. ㉠~㉢ 가운데 <b>동물세포에서는 볼 수 없는</b> 것과, 이 세포의 가장 바깥을 두껍게 둘러싼 구조의 이름을 옳게 짝지은 것은?",
-    figure: cellPhotoFig({
-      photo: "figs/plant-cell.webp",
-      alt: "각진 상자 모양의 세포를 나타낸 그림. 가장 바깥에 두꺼운 테두리가 있고 안쪽에는 크고 둥근 덩어리 하나, 주황색 알갱이 여러 개, 초록색 알갱이 여러 개가 보인다",
-      // 좌표는 tmp 격자 캘리브레이션으로 확정(㉠ 보라 핵 · ㉡ 왼쪽 주황 알갱이 · ㉢ 아래쪽 초록 알갱이).
-      marks: [
-        { sym: "㉠", bx: 114, by: 16, tx: 62, ty: 30 },
-        { sym: "㉡", bx: -14, by: 56, tx: 18, ty: 56 },
-        { sym: "㉢", bx: 44, by: 112, tx: 47, ty: 80 },
+    // 코드 그림(2026-11-15): 발주 그림에 있던 이 책 밖의 구조를 걷고 레슨 그림과 같은 다섯 구조만. ㉠ 핵 · ㉡ 왼쪽 마이토콘드리아 · ㉢ 아래쪽 엽록체.
+    figure: examPlantCellFig(
+      "각진 상자 모양의 세포를 나타낸 그림. 가장 바깥에 두꺼운 테두리가 있고 안쪽에는 크고 둥근 덩어리 하나, 주황색 알갱이 여러 개, 초록색 알갱이 여러 개가 보인다",
+      [
+        { sym: "㉠", bx: 318, by: 40, tx: 172, ty: 112 },
+        { sym: "㉡", bx: 18, by: 78, tx: 80, ty: 106 },
+        { sym: "㉢", bx: 96, by: 236, tx: 126, ty: 188 },
       ],
-    }),
+    ),
     options: ["㉠ · 세포막", "㉠ · 세포벽", "㉡ · 세포벽", "㉢ · 세포막", "㉢ · 세포벽"],
     answer: 4,
     shuffle: false,
@@ -81,7 +62,7 @@ export const POOL_U2L2: ExamItem[] = [
     type: "mcq",
     diff: 1,
     prompt: "그림은 어떤 세포를 나타낸 것이에요. 이 세포에서 <b>볼 수 없는</b> 구조와 그 까닭을 옳게 짝지은 것은?",
-    figure: bimg("figs/animal-cell.webp", "테두리가 둥근 세포 안에 크고 둥근 덩어리 하나와 길쭉한 주황색 알갱이 여러 개가 그려진 그림"),
+    figure: examAnimalCellFig("테두리가 둥근 세포 안에 크고 둥근 덩어리 하나와 길쭉한 주황색 알갱이 여러 개가 그려진 그림"),
     options: [
       "엽록체 · 동물은 빛으로 양분을 만들지 않고 먹이에서 얻기 때문이에요",
       "핵 · 동물세포에는 유전물질이 들어 있지 않기 때문이에요",
@@ -251,16 +232,15 @@ export const POOL_U2L2: ExamItem[] = [
     type: "multi",
     diff: 2,
     prompt: "그림은 어떤 세포를 나타낸 것이에요. ㉠~㉢에 대한 설명으로 옳은 것을 <b>모두</b> 골라 보세요.",
-    figure: cellPhotoFig({
-      photo: "figs/animal-cell.webp",
-      alt: "테두리가 둥글고 무른 세포를 나타낸 그림. 안쪽에 크고 둥근 덩어리 하나와 길쭉한 주황색 알갱이 여러 개가 보인다",
-      // 좌표는 tmp 격자 캘리브레이션으로 확정(㉠ 바깥 테두리 · ㉡ 보라 핵 · ㉢ 왼쪽 주황 알갱이).
-      marks: [
-        { sym: "㉠", bx: 50, by: -12, tx: 50, ty: 10 },
-        { sym: "㉡", bx: 114, by: 24, tx: 63, ty: 33 },
-        { sym: "㉢", bx: -14, by: 68, tx: 18, ty: 60 },
+    // 코드 그림(2026-11-15): 발주 그림에 있던 이 책 밖의 구조를 걷고 레슨 그림과 같은 구조만. ㉠ 바깥 테두리 · ㉡ 핵 · ㉢ 왼쪽 마이토콘드리아.
+    figure: examAnimalCellFig(
+      "테두리가 둥글고 무른 세포를 나타낸 그림. 안쪽에 크고 둥근 덩어리 하나와 길쭉한 주황색 알갱이 여러 개가 보인다",
+      [
+        { sym: "㉠", bx: 170, by: 16, tx: 170, ty: 38 },
+        { sym: "㉡", bx: 320, by: 116, tx: 200, ty: 117 },
+        { sym: "㉢", bx: 18, by: 172, tx: 86, ty: 136 },
       ],
-    }),
+    ),
     options: [
       "㉠은 안과 밖을 가르고, 드나드는 물질을 가려 받아요",
       "㉡ 안에는 유전물질이 들어 있어요",
@@ -346,8 +326,7 @@ export const POOL_U2L2: ExamItem[] = [
     type: "multi",
     diff: 3,
     prompt: "그림은 식물세포를 나타낸 것이에요. 이 세포에 대한 설명으로 옳은 것을 <b>모두</b> 골라 보세요.",
-    figure: bimg(
-      "figs/plant-cell.webp",
+    figure: examPlantCellFig(
       "각진 세포의 바깥에 두꺼운 테두리가 있고 안쪽에 크고 둥근 덩어리 하나, 주황색 알갱이 여러 개, 초록색 알갱이 여러 개가 그려진 그림",
     ),
     options: [

@@ -5,6 +5,7 @@
 // 언어 가드 금지어 목록은 설계표 §0-3이 정본(검사기가 소스 전체를 스캔하므로 여기 나열하지 않는다).
 import type { ExamItem } from "./types";
 import { dbox, traitBarsFig } from "../../ui/examFigures";
+import { ladybugExamFig } from "../../ui/bio6Figures";
 
 const L = "u2l7";
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -18,8 +19,8 @@ export const POOL_U2L7: ExamItem[] = [
     type: "mcq",
     diff: 1,
     prompt:
-      "사진은 한 잎에서 함께 관찰한 <b>같은 종류</b>의 무당벌레예요. 등에 있는 점의 수와 무늬가 개체마다 조금씩 달라요. 이런 차이를 무엇이라고 하며, 그렇게 부르려면 어떤 조건이 필요할까요?",
-    figure: ximg("ladybug-variation.webp", "잎 위에 나란히 앉은 무당벌레 다섯 마리. 등의 점 수와 무늬가 개체마다 조금씩 다르다"),
+      "그림은 한 잎에서 함께 관찰한 <b>같은 종류</b>의 무당벌레예요. 등에 있는 점의 수와 무늬가 개체마다 조금씩 달라요. 이런 차이를 무엇이라고 하며, 그렇게 부르려면 어떤 조건이 필요할까요?",
+    figure: ladybugExamFig("잎 위에 나란히 앉은 무당벌레 다섯 마리. 등의 색과 점 무늬가 개체마다 다르다"),
     options: [
       "변이 · 같은 종류의 개체 사이에서 나타나는 차이일 때만 그렇게 불러요",
       "변이 · 서로 다른 종류의 생물을 비교했을 때만 그렇게 불러요",

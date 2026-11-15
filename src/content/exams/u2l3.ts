@@ -5,6 +5,7 @@
 // 언어 가드 금지어 목록은 설계표 §0-3이 정본(검사기가 소스 전체를 스캔하므로 여기 나열하지 않는다).
 import type { ExamItem } from "./types";
 import { dbox, slideStepsFig, bioFieldPairFig } from "../../ui/examFigures";
+import { slideBubbleFig, slidePairFig } from "../../ui/bio6Figures";
 
 const L = "u2l3";
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -50,8 +51,8 @@ export const POOL_U2L3: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     diff: 1,
-    prompt: "사진은 만들어 놓은 표본을 위에서 본 모습이에요. 덮개 유리 아래에 동그란 방울이 남아 있어요. 이 표본을 관찰할 때 생길 수 있는 문제로 가장 알맞은 것은?",
-    figure: ximg("coverslip-bubble.webp", "받침 유리 위에 덮개 유리가 덮여 있고 그 아래 가운데에 동그란 방울이 갇혀 있는 사진"),
+    prompt: "그림은 만들어 놓은 표본을 위에서 본 모습이에요. 덮개 유리 아래에 동그란 방울이 남아 있어요. 이 표본을 관찰할 때 생길 수 있는 문제로 가장 알맞은 것은?",
+    figure: slideBubbleFig("받침 유리 위에 덮개 유리가 덮여 있고 그 아래에 동그란 방울이 갇혀 있는 그림"),
     options: [
       "테두리가 진한 동그란 방울이 세포와 헷갈리고, 그 아래의 세포도 가려져요",
       "방울 때문에 배율이 저절로 낮아져 세포가 작게 보여요",
@@ -129,11 +130,8 @@ export const POOL_U2L3: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     diff: 1,
-    prompt: "사진은 같은 시료로 만든 두 표본이에요. <b>(나)</b>와 같은 표본이 만들어진 까닭으로 가장 알맞은 것은?",
-    figure: xpair(
-      ["coverslip-clean.webp", "위에서 본 받침 유리와 덮개 유리. 사이에 아무것도 갇혀 있지 않다"],
-      ["coverslip-bubble.webp", "위에서 본 받침 유리와 덮개 유리. 그 아래 가운데에 동그란 방울이 갇혀 있다"],
-    ),
+    prompt: "그림은 같은 시료로 만든 두 표본이에요. <b>(나)</b>와 같은 표본이 만들어진 까닭으로 가장 알맞은 것은?",
+    figure: slidePairFig("위에서 본 받침 유리와 덮개 유리. 사이에 아무것도 갇혀 있지 않다", "위에서 본 받침 유리와 덮개 유리. 그 아래에 동그란 방울이 갇혀 있다"),
     options: [
       "덮개 유리를 한 번에 툭 내려놓아 사이에 공기가 갇혔기 때문이에요",
       "염색액을 너무 진하게 써서 색이 뭉쳤기 때문이에요",

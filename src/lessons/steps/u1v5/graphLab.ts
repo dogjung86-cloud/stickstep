@@ -4,7 +4,9 @@
 //       표의 값과 1 ℃ 안쪽이면 그 값에 붙는다. 더 어긋나면 빨갛게 흔들리고 표의 값을 다시 알려 준다(다시 찍는다).
 // 흐름: 여섯 점(컵 셋 × 1시간 뒤, 2시간 뒤. 처음 온도 20 ℃는 찍혀 있다) → 판정 → 결론.
 // 값은 앞 랩(fairLab)의 공정한 실험 결과와 같다: 검은색 20, 30, 39 / 파란색 20, 27, 34 / 흰색 20, 25, 29.
-// 그래프 좌표(viewBox 346×230): 20 ℃ = y 186, 40 ℃ = y 22(1 ℃ = 8.2). 시간 축 x = 76, 190, 304.
+// 그래프 좌표(viewBox 346×230): 20 ℃ = y 186, 40 ℃ = y 22(1 ℃ = 8.2). 시간 축 x = 70, 178, 286.
+// 2026-11-15 그래픽 감사: 판정의 답인 검은색 컵의 선이 밝은 회색이라 흰색 선과 비슷했다. 검은 선은 밝은 테두리를 두른 굵고 짙은 선으로,
+// 선 끝(2시간 뒤 점 오른쪽)에 이름과 값을 붙인다. 그 자리를 내려고 시간 축을 왼쪽으로 조금 당겼다(세로 눈금은 그대로).
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -17,12 +19,14 @@ interface GraphStep {
 }
 
 const SERIES = [
-  { name: "검은색", dot: "#2B3440", ring: "#E8EEF9", line: "#9AA7BA", v: [20, 30, 39] },
-  { name: "파란색", dot: "#4C9BFF", ring: "#CFE3FF", line: "#4C9BFF", v: [20, 27, 34] },
-  { name: "흰색", dot: "#FFFFFF", ring: "#FFFFFF", line: "#FFFFFF", v: [20, 25, 29] },
+  { name: "검은색", dot: "#2B3440", ring: "#E8EEF9", line: "#232B38", casing: "#E8EEF9", label: "#E8EEF9", v: [20, 30, 39] },
+  { name: "파란색", dot: "#4C9BFF", ring: "#CFE3FF", line: "#4C9BFF", casing: "", label: "#8EC2FF", v: [20, 27, 34] },
+  { name: "흰색", dot: "#FFFFFF", ring: "#FFFFFF", line: "#FFFFFF", casing: "", label: "#FFFFFF", v: [20, 25, 29] },
 ];
 const TIMES = ["처음", "1시간 뒤", "2시간 뒤"];
-const XS = [76, 190, 304];
+const XS = [70, 178, 286];
+const GX0 = 46; // 그래프 판의 왼쪽(세로축)
+const GX1 = 304; // 그래프 판의 오른쪽(그 오른쪽은 선 끝 이름표 자리)
 const Y20 = 186;
 const PER = 8.2;
 const yOf = (t: number): number => Y20 - (t - 20) * PER;
@@ -30,24 +34,25 @@ const NS = "http://www.w3.org/2000/svg";
 
 function stageSvg(): string {
   const grid = [20, 25, 30, 35, 40]
-    .map((t) => `<line x1="52" y1="${yOf(t)}" x2="326" y2="${yOf(t)}" stroke="#22344F" stroke-width="1"/><text x="44" y="${yOf(t) + 4.5}" text-anchor="end" class="u1g-ax">${t}</text>`)
+    .map((t) => `<line x1="${GX0}" y1="${yOf(t)}" x2="${GX1}" y2="${yOf(t)}" stroke="#22344F" stroke-width="1"/><text x="${GX0 - 7}" y="${yOf(t) + 4.5}" text-anchor="end" class="u1g-ax">${t}</text>`)
     .join("");
   const minor = Array.from({ length: 21 }, (_, i) => 20 + i)
     .filter((t) => t % 5)
-    .map((t) => `<line x1="52" y1="${yOf(t)}" x2="326" y2="${yOf(t)}" stroke="#17263D" stroke-width="1"/>`)
+    .map((t) => `<line x1="${GX0}" y1="${yOf(t)}" x2="${GX1}" y2="${yOf(t)}" stroke="#17263D" stroke-width="1"/>`)
     .join("");
   const cols = XS.map((x, i) => `<line x1="${x}" y1="${yOf(40)}" x2="${x}" y2="${Y20}" stroke="#22344F" stroke-width="1"/><text x="${x}" y="206" text-anchor="middle" class="u1g-ax">${TIMES[i]}</text>`).join("");
   return `<svg viewBox="0 0 346 230" role="img" aria-label="시간에 따른 물의 온도 그래프">
     ${minor}${grid}${cols}
     <text x="14" y="14" class="u1g-ax">온도(℃)</text>
     ${SERIES.map((sr, i) => `<circle cx="${150 + i * 64}" cy="10" r="5" fill="${sr.dot}" stroke="${sr.ring}" stroke-width="1.6"/><text x="${159 + i * 64}" y="14.5" class="u1g-ax lg">${sr.name}</text>`).join("")}
-    <line x1="52" y1="${yOf(40) - 6}" x2="52" y2="${Y20}" stroke="#8FA3C2" stroke-width="1.6"/>
-    <line x1="52" y1="${Y20}" x2="330" y2="${Y20}" stroke="#8FA3C2" stroke-width="1.6"/>
+    <line x1="${GX0}" y1="${yOf(40) - 6}" x2="${GX0}" y2="${Y20}" stroke="#8FA3C2" stroke-width="1.6"/>
+    <line x1="${GX0}" y1="${Y20}" x2="${GX1 + 4}" y2="${Y20}" stroke="#8FA3C2" stroke-width="1.6"/>
     <rect class="u1g-col" x="0" y="${yOf(40) - 6}" width="56" height="${Y20 - yOf(40) + 12}" rx="10" fill="#4C9BFF" opacity="0"/>
     <g class="u1g-lines"></g>
     <g class="u1g-dots"></g>
+    <g class="u1g-ends"></g>
     <g class="u1g-ghost" style="display:none">
-      <line class="u1g-gl" x1="52" x2="326" stroke="#FFD766" stroke-width="1.2" stroke-dasharray="4 4"/>
+      <line class="u1g-gl" x1="${GX0}" x2="${GX1}" stroke="#FFD766" stroke-width="1.2" stroke-dasharray="4 4"/>
       <circle class="u1g-gc" r="8" fill="#FFD766" stroke="#fff" stroke-width="2"/>
       <rect class="u1g-gb" width="52" height="24" rx="12" fill="#FFD766"/>
       <text class="u1g-gt" text-anchor="middle"></text>
@@ -64,6 +69,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
   const svg = f.stage.querySelector("svg") as SVGSVGElement;
   const lines = svg.querySelector(".u1g-lines") as SVGGElement;
   const dots = svg.querySelector(".u1g-dots") as SVGGElement;
+  const ends = svg.querySelector(".u1g-ends") as SVGGElement;
   const ghost = svg.querySelector(".u1g-ghost") as SVGGElement;
   const gl = svg.querySelector(".u1g-gl") as SVGLineElement;
   const gc = svg.querySelector(".u1g-gc") as SVGCircleElement;
@@ -108,15 +114,39 @@ export const graphLab: StepRenderer = (host, step, api) => {
     if (pop) c.setAttribute("class", "u1g-pop");
     dots.appendChild(c);
     if (ti > 0) {
-      const l = document.createElementNS(NS, "line");
-      l.setAttribute("x1", String(XS[ti - 1]));
-      l.setAttribute("y1", yOf(sr.v[ti - 1]).toFixed(1));
-      l.setAttribute("x2", String(XS[ti]));
-      l.setAttribute("y2", yOf(sr.v[ti]).toFixed(1));
-      l.setAttribute("stroke", sr.line);
-      l.setAttribute("stroke-width", "2.6");
-      l.setAttribute("stroke-linecap", "round");
-      lines.appendChild(l);
+      // 검은색 선은 밝은 테두리(굵은 밝은 선) 위에 짙은 선을 겹쳐 어두운 무대에서도 가장 또렷하게
+      const seg = (color: string, w: string): void => {
+        const l = document.createElementNS(NS, "line");
+        l.setAttribute("x1", String(XS[ti - 1]));
+        l.setAttribute("y1", yOf(sr.v[ti - 1]).toFixed(1));
+        l.setAttribute("x2", String(XS[ti]));
+        l.setAttribute("y2", yOf(sr.v[ti]).toFixed(1));
+        l.setAttribute("stroke", color);
+        l.setAttribute("stroke-width", w);
+        l.setAttribute("stroke-linecap", "round");
+        lines.appendChild(l);
+      };
+      if (sr.casing) {
+        seg(sr.casing, "6.6");
+        seg(sr.line, "3.6");
+      } else seg(sr.line, "2.6");
+    }
+    if (ti === 2) {
+      // 선 끝 이름표: 이름과 값(2시간 뒤 점의 오른쪽)
+      const y = yOf(sr.v[ti]);
+      const t1 = document.createElementNS(NS, "text");
+      t1.setAttribute("x", String(XS[ti] + 10));
+      t1.setAttribute("y", (y - 2).toFixed(1));
+      t1.setAttribute("class", `u1g-end${pop ? " u1g-pop" : ""}`);
+      t1.setAttribute("fill", sr.label);
+      t1.textContent = sr.name;
+      const t2 = document.createElementNS(NS, "text");
+      t2.setAttribute("x", String(XS[ti] + 10));
+      t2.setAttribute("y", (y + 13).toFixed(1));
+      t2.setAttribute("class", `u1g-end v${pop ? " u1g-pop" : ""}`);
+      t2.setAttribute("fill", sr.label);
+      t2.textContent = `${sr.v[ti]} ℃`;
+      ends.append(t1, t2);
     }
   }
 
@@ -170,7 +200,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
       paintTurn();
       if (idx >= ORDER.length) {
         busy = true;
-        f.say("여섯 점을 모두 찍었어요. 세 선이 올라가는 모습을 견줘 봐요.");
+        f.say("여섯 점을 모두 찍었어요. 세 선이 올라가는 모습을 비교해 봐요.");
         tm.later(askFinal, 1700);
       }
       return;

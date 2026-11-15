@@ -10,7 +10,7 @@ export const speedOf = (t: number): number => 0.55 + (Math.sqrt((273 + t) / 293)
 
 export interface VSyringe {
   box: GasBox;
-  /** 주사기를 그린다. cx 가운데, bot 바닥, vol 부피(mL), temp 속 기체의 온도. capped면 끝에 마개가 있다. */
+  /** 주사기를 그린다. cx 가운데, bot 바닥, vol 부피(mL), temp 속 기체의 온도. capped면 끝에 마개가 있다. marks면 눈금(28~36 mL)과 숫자 36, 28. */
   draw: (ctx: CanvasRenderingContext2D, dt: number, o: { cx: number; bot: number; vol: number; temp: number; capped: boolean; marks?: boolean }) => void;
 }
 
@@ -33,7 +33,8 @@ export function vSyringe(n: number, pxPerMl: number, halfW = 20): VSyringe {
       }
       const sp = speedOf(temp);
       box.step(dt, b, sp);
-      const top = bot - 38 * pxPerMl - 14;
+      // 통: 37 mL 눈금 조금 위까지(가장 큰 부피 36 mL의 피스톤이 통 안에 든다)
+      const top = bot - 37 * pxPerMl - 10;
       rr(ctx, cx - halfW - 4, top, halfW * 2 + 8, bot - top + 4, 6);
       ctx.fillStyle = "rgba(200,220,250,.10)";
       ctx.fill();
@@ -53,6 +54,7 @@ export function vSyringe(n: number, pxPerMl: number, halfW = 20): VSyringe {
         for (const mv of [28, 30, 32, 34, 36]) {
           const y = bot - mv * pxPerMl;
           ctx.strokeStyle = "rgba(205,224,252,.55)";
+          ctx.lineWidth = 1.2;
           ctx.beginPath();
           ctx.moveTo(cx + halfW - 8, y);
           ctx.lineTo(cx + halfW + 4, y);
@@ -67,19 +69,58 @@ export function vSyringe(n: number, pxPerMl: number, halfW = 20): VSyringe {
       ctx.fillStyle = "#A9BCDB";
       ctx.fill();
       ctx.fillStyle = "#7F95B9";
-      ctx.fillRect(cx - 4, b.y0 - 8 - 26, 8, 26);
-      rr(ctx, cx - halfW + 4, b.y0 - 8 - 32, halfW * 2 - 8, 7, 3);
+      ctx.fillRect(cx - 4, b.y0 - 8 - 24, 8, 24);
+      rr(ctx, cx - halfW + 4, b.y0 - 8 - 30, halfW * 2 - 8, 7, 3);
       ctx.fill();
     },
   };
 }
 
-/** 물이 든 비커. temp에 따라 물빛이 달라지고, 차가우면 얼음 조각이, 뜨거우면 김이 보인다. */
+/** 물이 든 비커. 물은 맑은 물빛이고, 뜨거우면 바닥의 주황 기운과 오르는 물결, 물결 모양의 김, 차가우면 수면에 뜬 얼음 조각이 보인다.
+ *  얼음은 주사기 눈금(오른쪽 위)을 가리지 않게 수면의 양 끝에만 둔다. */
 export function beaker(ctx: CanvasRenderingContext2D, x: number, top: number, w: number, bot: number, temp: number, tMs: number): void {
-  const k = temp / 80;
-  rr(ctx, x + 2, top + 14, w - 4, bot - top - 16, 9);
-  ctx.fillStyle = `rgba(${Math.round(60 + 170 * k)}, ${Math.round(150 - 30 * k)}, ${Math.round(235 - 150 * k)}, .34)`;
+  const k = Math.max(0, Math.min(1, temp / 80));
+  const surf = top + 14;
+  const lerp = (a: number, c: number): number => Math.round(a + (c - a) * k);
+  // 물은 온도와 상관없이 맑은 물빛이다(어두운 무대에서 주황을 칠하면 흙탕물이나 국물처럼 보인다).
+  // 뜨거운 물은 바닥의 옅은 주황 기운과 물속에서 일렁이며 오르는 주황 물결, 수면 위의 김으로 알린다.
+  const water = ctx.createLinearGradient(0, surf, 0, bot);
+  water.addColorStop(0, "rgba(160, 205, 250, .13)");
+  water.addColorStop(1, "rgba(100, 165, 240, .27)");
+  rr(ctx, x + 2, surf, w - 4, bot - surf - 2, 9);
+  ctx.fillStyle = water;
   ctx.fill();
+  if (temp > 40) {
+    const hk = (temp - 40) / 40;
+    ctx.save();
+    rr(ctx, x + 2, surf, w - 4, bot - surf - 2, 9);
+    ctx.clip();
+    const glow = ctx.createLinearGradient(0, bot - 40, 0, bot);
+    glow.addColorStop(0, "rgba(255,170,100,0)");
+    glow.addColorStop(1, `rgba(255,170,100,${(0.22 * hk).toFixed(3)})`);
+    ctx.fillStyle = glow;
+    ctx.fillRect(x, bot - 40, w, 40);
+    ctx.strokeStyle = `rgba(255,190,130,${(0.45 * hk).toFixed(3)})`;
+    ctx.lineWidth = 1.3;
+    for (const fx of [0.12, 0.88]) {
+      const ox = x + w * fx;
+      const ph = (tMs / 1400 + fx) % 1;
+      const y0 = bot - 6 - ph * (bot - surf - 20);
+      ctx.beginPath();
+      ctx.moveTo(ox, y0);
+      ctx.bezierCurveTo(ox - 4, y0 - 6, ox + 4, y0 - 12, ox, y0 - 18);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  // 수면
+  ctx.strokeStyle = `rgba(${lerp(190, 255)}, ${lerp(225, 214)}, ${lerp(255, 170)}, .55)`;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(x + 3, surf);
+  ctx.lineTo(x + w - 3, surf);
+  ctx.stroke();
+  // 유리 벽
   ctx.strokeStyle = "rgba(190,214,250,.55)";
   ctx.lineWidth = 1.6;
   ctx.beginPath();
@@ -91,20 +132,25 @@ export function beaker(ctx: CanvasRenderingContext2D, x: number, top: number, w:
   ctx.lineTo(x + w, top);
   ctx.stroke();
   if (temp < 8) {
-    ctx.fillStyle = `rgba(225,242,255,${(0.8 * (8 - temp)) / 8})`;
-    for (const [dx, dy] of [[6, 18], [w - 20, 22], [8, 46]]) {
-      rr(ctx, x + dx, top + dy + Math.sin(tMs / 500 + dx) * 1.5, 13, 11, 3);
+    ctx.fillStyle = `rgba(232,246,255,${((0.85 * (8 - temp)) / 8).toFixed(3)})`;
+    ctx.strokeStyle = `rgba(255,255,255,${((0.9 * (8 - temp)) / 8).toFixed(3)})`;
+    ctx.lineWidth = 1;
+    for (const [dx, dy, s] of [[4, -4, 10], [w - 14, -3, 10], [5, 6, 8]] as [number, number, number][]) {
+      rr(ctx, x + dx, surf + dy + Math.sin(tMs / 600 + dx) * 0.8, s, s - 1, 2.5);
       ctx.fill();
+      ctx.stroke();
     }
   }
   if (temp > 60) {
-    ctx.strokeStyle = `rgba(255,255,255,${((temp - 60) / 20) * 0.4})`;
-    ctx.lineWidth = 2;
-    for (const dx of [14, w - 14]) {
-      const ph = tMs / 400 + dx;
+    // 김: 수면 위로 피어오르는 물결 모양의 선
+    ctx.strokeStyle = `rgba(255,255,255,${(((temp - 60) / 20) * 0.45).toFixed(3)})`;
+    ctx.lineWidth = 1.8;
+    ctx.lineCap = "round";
+    for (const dx of [7, w - 7]) {
+      const ph = Math.sin(tMs / 500 + dx) * 2;
       ctx.beginPath();
-      ctx.moveTo(x + dx, top + 8);
-      ctx.quadraticCurveTo(x + dx + Math.sin(ph) * 6, top - 4, x + dx, top - 14);
+      ctx.moveTo(x + dx, surf - 4);
+      ctx.bezierCurveTo(x + dx - 5 + ph, surf - 10, x + dx + 5 + ph, surf - 16, x + dx + ph, surf - 24);
       ctx.stroke();
     }
   }

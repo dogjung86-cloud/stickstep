@@ -4,91 +4,122 @@
 // 통찰 하나: 줄어드는 일은 액체의 표면에서 일어난다(표면이 넓으면 같은 시간에 더 많이 줄어든다).
 // 조작: 예측 → 바르는 법 고르기(어느 쪽을 먼저 해도 된다) → 꾹 눌러 시간 보내기 → 다른 쪽도 → 판정 하나.
 // 수치(0.50 g에서 0.31 g, 0.44 g)는 이 랩에서 정한 값이다.
+// 무대(2026-11-15 다시 그림, 감사 상 후보): 처음부터 두 칸(넓게 펴 바른 것, 한 덩이로 올린 것)을 같은 크기로 나란히 둔다. 칸마다 거름종이 위
+//   소독제를 입자로(두 칸 모두 12개), 공기와 닿는 표면을 밝은 줄로, 날아간 입자는 위에 남기고, 저울 숫자는 그 칸 아래에 둔다.
+//   판정 때 두 칸이 함께 남아 표면의 넓이와 날아간 입자 수(6개와 2개), 줄어든 숫자를 나란히 견줄 수 있다.
 
-import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvCard, bvCards } from "../bio6/b6Lab";
-import { A, loose, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type Pt, type U4Step } from "./u4Kit";
+import { A, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type Pt, type U4Step } from "./u4Kit";
 
 type Way = "spread" | "lump";
 const M0 = 0.5;
 const END: Record<Way, number> = { spread: 0.31, lump: 0.44 };
-const NAME: Record<Way, string> = { spread: "넓게 펴 바른 것", lump: "한 덩이로 올린 것" };
+const LABEL: Record<Way, string> = { spread: "넓게 펴 바른 것", lump: "한 덩이로 올린 것" };
 const NEED = 3200; // 한 번 지켜보는 데 눌러야 하는 시간(ms)
-const WIN = { x: 196, y: 12, w: 138, h: 206 };
-const PX = 97; // 접시 가운데
+const PW = 165; // 칸 폭
+const OX: Record<Way, number> = { spread: 4, lump: 177 }; // 칸의 왼쪽
+const PR = 5.6; // 입자 반지름
+const PAPER = 141; // 거름종이 윗면
+const GAP = 11.6; // 액체 입자 사이
+
+/** 칸 하나의 입자 자리(액체), 날아갈 입자의 차례와 날아간 뒤의 자리, 표면 줄. 두 칸 모두 입자 12개. */
+function layout(w: Way, cx: number, rnd: () => number): { pts: Pt[]; fly: number[]; to: Pt[]; surf: string; tag: Pt } {
+  const y0 = PAPER - PR - 0.4;
+  if (w === "spread") {
+    // 한 겹으로 얇고 넓게(입자 12개가 한 줄)
+    const pts = Array.from({ length: 12 }, (_, i) => ({ x: cx + (i - 5.5) * GAP, y: y0 + (rnd() - 0.5) * 1.2 }));
+    const fly = [3, 8, 1, 10, 5, 6];
+    const to = fly.map((i, k) => ({ x: pts[i].x + (rnd() - 0.5) * 14, y: 56 + ((k * 37) % 44) + rnd() * 6 }));
+    const xL = pts[0].x - PR - 0.6, xR = pts[11].x + PR + 0.6, top = y0 - PR - 1.4;
+    const surf = `M${xL} ${PAPER - 1} V${top + 4} Q${xL} ${top} ${xL + 4} ${top} H${xR - 4} Q${xR} ${top} ${xR} ${top + 4} V${PAPER - 1}`;
+    return { pts, fly, to, surf, tag: { x: cx, y: top - 7 } };
+  }
+  // 좁고 두껍게(아래부터 5, 4, 3개의 무더기)
+  const rows = [5, 4, 3];
+  const pts: Pt[] = [];
+  rows.forEach((n, r) => {
+    for (let i = 0; i < n; i++) pts.push({ x: cx + (i - (n - 1) / 2) * GAP + (rnd() - 0.5) * 0.8, y: y0 - r * GAP * 0.87 });
+  });
+  const fly = [10, 9];
+  const to = [{ x: cx - 16, y: 64 }, { x: cx + 24, y: 82 }];
+  const half = 2 * GAP + PR + 0.8;
+  const top = y0 - 2 * GAP * 0.87 - PR - 1.2;
+  const surf = `M${cx - half} ${PAPER - 1} C${cx - half} ${top + 18} ${cx - 22} ${top} ${cx} ${top} C${cx + 22} ${top} ${cx + half} ${top + 18} ${cx + half} ${PAPER - 1}`;
+  return { pts, fly, to, surf, tag: { x: cx, y: top - 7 } };
+}
 
 export const u4EvapLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
   const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-evap" });
   const { f, tm } = lab;
   const rnd = seeded(53);
+  const L: Record<Way, ReturnType<typeof layout>> = {
+    spread: layout("spread", OX.spread + PW / 2, rnd),
+    lump: layout("lump", OX.lump + PW / 2, rnd),
+  };
 
-  f.stage.innerHTML = `${svgOpen}
-    <defs><linearGradient id="u4evGel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4F8FF"/><stop offset="1" stop-color="#8FD3F4"/></linearGradient></defs>
-    ${scale(22, 160, 150, "u4x-evap", "0.00 g")}
-    <ellipse cx="${PX}" cy="156" rx="58" ry="9" fill="rgba(210,225,245,.25)" stroke="${A.glass}" stroke-width="2.2"/>
-    <ellipse cx="${PX}" cy="153" rx="47" ry="7" fill="#F4F6F9" stroke="#C9D3DE" stroke-width="1.2"/>
-    <ellipse class="u4x-evap-gel" cx="${PX}" cy="151" rx="0" ry="0" fill="url(#u4evGel)" stroke="#6FB9E0" stroke-width="1"/>
-    <g class="u4x-evap-win" opacity="0">
-      <rect x="${WIN.x}" y="${WIN.y}" width="${WIN.w}" height="${WIN.h}" rx="14" fill="rgba(124,107,255,.10)" stroke="rgba(155,140,255,.5)" stroke-width="1.6"/>
-      <text x="${WIN.x + WIN.w / 2}" y="${WIN.y + 19}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9BEFF">입자의 눈</text>
-      <text x="${WIN.x + WIN.w / 2}" y="${WIN.y + WIN.h - 8}" text-anchor="middle" font-size="12" font-weight="700" fill="${A.dim}">소독제의 표면</text>
-      <g class="u4x-evap-ps"></g>
-    </g>
-  </svg>`;
-  const log = el("div", { class: "u4x-evap-log" });
-  f.stage.appendChild(log);
-  const read = f.stage.querySelector(".u4x-evap-read") as SVGTextElement;
-  const gel = f.stage.querySelector(".u4x-evap-gel") as SVGEllipseElement;
-  const win = f.stage.querySelector(".u4x-evap-win") as SVGGElement;
-  const ps = f.stage.querySelector(".u4x-evap-ps") as SVGGElement;
+  const panel = (w: Way): string => {
+    const ox = OX[w];
+    const cx = ox + PW / 2;
+    const l = L[w];
+    return `<g class="u4x-evap-pn" data-k="${w}">
+      <text class="u4x-evap-lb" x="${cx}" y="17" text-anchor="middle" font-size="12.5" font-weight="800">${LABEL[w]}</text>
+      <rect class="u4x-evap-fr" x="${ox + 5}" y="25" width="${PW - 10}" height="128" rx="12" fill="rgba(124,107,255,.10)" stroke-width="1.5"/>
+      <text x="${cx}" y="40" text-anchor="middle" font-size="12" font-weight="800" fill="#C9BEFF">입자의 눈</text>
+      <rect x="${ox + 11}" y="${PAPER}" width="${PW - 22}" height="6" rx="2" fill="#E4EAF1" opacity=".88"/>
+      <g class="u4x-evap-liq" opacity="0">
+        <path d="${l.surf}" stroke="#7EE8F2" stroke-width="7" stroke-opacity=".22" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${l.surf}" stroke="#8EF0F8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="${l.tag.x}" y="${l.tag.y}" text-anchor="middle" font-size="12" font-weight="800" fill="#8EF0F8">표면</text>
+        ${l.pts
+          .map((p, i) => {
+            const k = l.fly.indexOf(i);
+            const d = k >= 0 ? { x: l.to[k].x - p.x, y: l.to[k].y - p.y } : { x: 0, y: 0 };
+            return `<g class="u4x-evap-p" data-i="${i}" style="--dx:${d.x.toFixed(1)}px;--dy:${d.y.toFixed(1)}px">
+              <rect class="u4x-evap-tr" x="${(p.x - 2.2).toFixed(1)}" y="${(p.y + PR - 1).toFixed(1)}" width="4.4" height="17" rx="2.2" fill="url(#u4evTr)"/>
+              <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${PR}" fill="${A.part}" stroke="${A.partEdge}" stroke-width="1.2"/>
+            </g>`;
+          })
+          .join("")}
+      </g>
+      ${scale(ox + 10, 158, PW - 20, `u4x-evap-${w}`, "0.00 g")}
+    </g>`;
+  };
+  f.stage.innerHTML = `${svgOpen}<defs><linearGradient id="u4evTr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9BEFF" stop-opacity=".9"/><stop offset="1" stop-color="#C9BEFF" stop-opacity="0"/></linearGradient></defs>${panel("spread")}${panel("lump")}</svg>`;
+  const q = <T extends Element>(sel: string): T => f.stage.querySelector(sel) as T;
+  const P = (w: Way) => {
+    const g = q<SVGGElement>(`.u4x-evap-pn[data-k="${w}"]`);
+    return {
+      g,
+      liq: g.querySelector(".u4x-evap-liq") as SVGGElement,
+      read: g.querySelector(`.u4x-evap-${w}-read`) as SVGTextElement,
+      parts: Array.from(g.querySelectorAll<SVGGElement>(".u4x-evap-p")),
+    };
+  };
+  const pn: Record<Way, ReturnType<typeof P>> = { spread: P("spread"), lump: P("lump") };
 
   let pred = "";
   let way: Way = "spread";
   let t = 0; // 지금 실험의 진행(0~1)
-  let pts: Pt[] = [];
-  let pEls: SVGCircleElement[] = [];
-  let fly: number[] = []; // 날아갈 입자의 차례(맨 윗줄 = 표면)
-  const flown = new Set<number>();
   const done = new Set<Way>();
 
   function setup(w: Way): void {
     way = w;
     t = 0;
-    flown.clear();
-    const baseY = WIN.y + WIN.h - 34;
-    // 액체라서 가깝지만 가지런하지 않게 놓는다. 맨 윗줄이 표면이다(뒤에서부터 윗줄).
-    if (w === "spread") {
-      pts = loose(6, 2, WIN.x + WIN.w / 2, baseY, 19, rnd);
-      fly = [6, 9, 7, 10, 8, 3];
-    } else {
-      pts = loose(3, 4, WIN.x + WIN.w / 2, baseY, 19, rnd);
-      fly = [8, 9];
-    }
-    ps.innerHTML = pts.map((p) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6.5" fill="${A.part}" stroke="${A.partEdge}" stroke-width="1.2"/>`).join("");
-    pEls = Array.from(ps.querySelectorAll("circle"));
-    win.setAttribute("opacity", "1");
+    (Object.keys(pn) as Way[]).forEach((k) => pn[k].g.classList.toggle("now", k === w));
+    pn[w].g.classList.add("on");
+    pn[w].liq.setAttribute("opacity", "1");
     paint();
   }
 
   function paint(): void {
     const m = M0 + (END[way] - M0) * t;
-    read.textContent = `${m.toFixed(2)} g`;
-    const k = 1 - 0.4 * t * (way === "spread" ? 1 : 0.35);
-    gel.setAttribute("rx", ((way === "spread" ? 40 : 15) * k).toFixed(1));
-    gel.setAttribute("ry", ((way === "spread" ? 4.5 : 9) * k).toFixed(1));
-    gel.setAttribute("cy", (way === "spread" ? 151 : 147).toFixed(0));
-    const want = Math.floor(t * fly.length + 0.001);
-    while (flown.size < want) {
-      const i = fly[flown.size];
-      flown.add(i);
-      const c = pEls[i];
-      c.style.transition = "transform 1.1s ease-out, opacity 1.1s ease-out";
-      c.style.transform = `translate(${((rnd() - 0.5) * 50).toFixed(0)}px, ${(-(pts[i].y - WIN.y - 44) + rnd() * 20).toFixed(0)}px)`;
-      c.style.opacity = "0.18";
-    }
+    pn[way].read.textContent = `${m.toFixed(2)} g`;
+    const l = L[way];
+    const want = Math.floor(t * l.fly.length + 0.001);
+    l.fly.forEach((i, k) => pn[way].parts[i].classList.toggle("fly", k < want));
     host.dataset.u4Evap = t.toFixed(2);
   }
 
@@ -126,14 +157,14 @@ export const u4EvapLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.correct);
     hold.disabled = true;
     done.add(way);
+    pn[way].g.classList.remove("now");
     cards[way].done();
     cards[way].el.disabled = true;
     cards[way].sub(`${M0.toFixed(2)} → ${END[way].toFixed(2)} g`);
-    log.appendChild(el("div", { html: `${NAME[way]} <b>${M0.toFixed(2)} → ${END[way].toFixed(2)} g</b>` }));
     f.pips(done.size);
     if (done.size === 1) {
       const head = pred.startsWith("점점 줄어") ? "예측대로" : "예측과 달리";
-      f.say(`${head} 숫자가 <b>줄었어요</b>. 같은 양을 <b>다르게 발라</b> 같은 시간 동안 견주어요.`);
+      f.say(`${head} 숫자가 <b>줄었어요</b>. 같은 양을 <b>다르게 발라</b> 같은 시간 동안 비교해요.`);
       tm.later(choose, 700);
     } else {
       f.say("같은 양, 같은 시간인데 <b>넓게 펴 바른 쪽</b>이 훨씬 많이 줄었어요.");

@@ -7,6 +7,13 @@
 // 흐름: 예측(정오 없음) → 1 → 2 → 3 → 판정 → 결론.
 // 띠의 모양은 계산으로 그린다: 휜 정도(곡률)가 정해지면 띠는 원호이고, 두 겹은 그 원호에서 두께의 반만큼 안팎으로 떨어진 선이다
 // (바깥 겹이 저절로 더 길다). 휘는 정도는 잘 보이게 실제보다 크게 잡았다.
+// 2026-11-15 그래픽 감사 고침:
+//   · 다리미 장면: 띠는 데워지자마자 휘기 시작해 끝이 접점에서 떨어졌는데 끊기기 전까지 '전기가 흘러요'가 함께 보였다.
+//     이제 접점은 띠 끝 아래를 받치는 탄성 접점(용수철 판)이라 띠 끝을 따라 올라가며 붙어 있다가, 끊기는 순간 제자리로 튕겨 내려가
+//     그때에만 틈이 생긴다(틈을 노란 점선 고리로 가장 진하게). 식어 띠 끝이 내려오면 접점이 다시 올라와 붙는다.
+//     회로에 콘센트를 그리고, 띠는 데워질수록 달아오른 빛을 두른다.
+//   · 색의 뜻: 많이 늘어나는 금속은 구리색, 적게 늘어나는 금속은 짙은 회색, 알루미늄박은 은백색(같은 파랑 회색이 '많이'와 '적게'를 오갔다).
+//     정리 카드 미니아트 둘(heatFigures의 diffExpand, bimetalArt)도 같은 색이다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
@@ -25,10 +32,21 @@ const Y0 = 104;
 const LEN = 178;
 const THICK = 7;
 const BEND = 0.0046; // 가장 뜨거울 때의 곡률(1/px)
-const C_AL = "#C9D3E0";
+const C_AL = "#D5DBE3"; // 알루미늄박(은백색)
 const C_PAPER = "#F1E3BE";
-const C_SMALL = "#8FA3C4"; // 열팽창 정도가 작은 금속
-const C_BIG = "#D08A5A"; // 열팽창 정도가 큰 금속
+const C_SMALL = "#737D8A"; // 열팽창 정도가 작은 금속(짙은 회색)
+const C_BIG = "#C8794A"; // 열팽창 정도가 큰 금속(구리색)
+const CUT = 0.36; // 접점이 떨어지는 열(이때 띠 끝은 26px쯤 올라가 있다)
+const REJOIN = 0.1; // 다시 붙는 열
+const POST_X = 286; // 탄성 접점의 기둥
+const REST = Y0 + THICK + 4.5; // 접점 단추 가운데의 제자리(곧은 띠의 아랫면에 닿는다)
+
+/** 두 #rrggbb 색을 t(0~1)만큼 섞는다. */
+function mix(a: string, b: string, t: number): string {
+  const p = (c: string, i: number): number => parseInt(c.slice(1 + i * 2, 3 + i * 2), 16);
+  const ch = (i: number): number => Math.round(p(a, i) + (p(b, i) - p(a, i)) * t);
+  return `rgb(${ch(0)},${ch(1)},${ch(2)})`;
+}
 
 export const tapeLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as TapeStep;
@@ -45,9 +63,9 @@ export const tapeLab: StepRenderer = (host, step, api) => {
   let pred = "";
 
   /** 띠 한 겹. off: 가운데 원호에서 위쪽(+)이나 아래쪽(-)으로 떨어진 거리. kappa > 0이면 위로 휜다. */
-  function layer(ctx: Ctx, kappa: number, off: number, color: string): void {
+  function layer(ctx: Ctx, kappa: number, off: number, color: string, width = THICK): void {
     ctx.strokeStyle = color;
-    ctx.lineWidth = THICK;
+    ctx.lineWidth = width;
     ctx.lineCap = "butt";
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -69,6 +87,32 @@ export const tapeLab: StepRenderer = (host, step, api) => {
     ctx.fill();
     txt(ctx, label, x + 21, y + 0.5, { size: 12.5, align: "left", weight: 600 });
   };
+  /** 띠 끝(아랫면)의 자리. */
+  const endBottom = (kappa: number): { x: number; y: number } => {
+    const th = kappa * LEN;
+    const px = Math.abs(kappa) < 1e-5 ? LEN : Math.sin(th) / kappa;
+    const py = Math.abs(kappa) < 1e-5 ? 0 : -(1 - Math.cos(th)) / kappa;
+    return { x: X0 + px + Math.sin(th) * THICK, y: Y0 + py + Math.cos(th) * THICK };
+  };
+  let leafY = REST; // 탄성 접점 단추의 가운데 y
+
+  /** 벽의 콘센트(전원). 왼쪽과 오른쪽에 전선이 붙는다. */
+  function outlet(ctx: Ctx, x: number, y: number, live: boolean): void {
+    rr(ctx, x - 14, y - 14, 28, 28, 6);
+    const g = ctx.createLinearGradient(0, y - 14, 0, y + 14);
+    g.addColorStop(0, "#F4F6FA");
+    g.addColorStop(1, "#C9D2DE");
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = live ? "#FFD666" : "#8794AA";
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+    ctx.fillStyle = "#2B3440";
+    rr(ctx, x - 6.5, y - 6, 3.4, 10, 1.7);
+    ctx.fill();
+    rr(ctx, x + 3.1, y - 6, 3.4, 10, 1.7);
+    ctx.fill();
+  }
 
   const cv = u3Canvas(f.stage, (ctx, dt, tMs) => {
     host.dataset.u3Phase = stage;
@@ -92,42 +136,83 @@ export const tapeLab: StepRenderer = (host, step, api) => {
     rr(ctx, 40, Y0 - 13, 30, 26, 5);
     ctx.fillStyle = "#55657C";
     ctx.fill();
+    let gapRing: { x: number; y: number; r: number } | null = null;
     if (iron) {
-      // 회로: 고정대 → 전원 → 전열선 → 접점
-      if (contact && heat > 0.36) {
+      // 회로: 콘센트 → 고정대 → 띠 → 접점 → 기둥 → 전열선 → 콘센트
+      if (contact && heat > CUT) {
         contact = false;
         cuts += 1;
         onCut();
-      } else if (!contact && heat < 0.1) contact = true;
+      } else if (!contact && heat < REJOIN) contact = true;
       const live = power && contact;
-      ctx.strokeStyle = live ? "#FFD666" : "rgba(205,225,250,.45)";
+      const end = endBottom(kappa);
+      // 탄성 접점: 붙어 있는 동안 띠 끝을 따라 올라가고, 끊기면 제자리로 튕겨 내려간다
+      const target = contact ? end.y + 4.5 : REST;
+      leafY += (target - leafY) * Math.min(1, (contact ? 0.6 : 0.35) * dt);
+      const wire = live ? "#FFD666" : "rgba(205,225,250,.45)";
+      ctx.strokeStyle = wire;
       ctx.lineWidth = 2.4;
       ctx.lineJoin = "round";
       ctx.beginPath();
-      ctx.moveTo(38, Y0 + 13);
-      ctx.lineTo(38, 196);
-      ctx.lineTo(X0 + LEN + 8, 196);
-      ctx.lineTo(X0 + LEN + 8, Y0 + 12);
+      ctx.moveTo(56, Y0 + 13);
+      ctx.lineTo(56, 196);
+      ctx.lineTo(POST_X, 196);
       ctx.stroke();
-      // 접점(띠 끝 아래의 받침)
-      rr(ctx, X0 + LEN - 6, Y0 + 5, 28, 8, 3);
-      ctx.fillStyle = "#AEB9CC";
-      ctx.fill();
+      outlet(ctx, 82, 196, live);
+      txt(ctx, "콘센트", 82, 220, { size: 12, color: SUB, weight: 600 });
       // 전열선(물결)
       ctx.strokeStyle = live ? "#FF7A3D" : "rgba(205,225,250,.5)";
       ctx.lineWidth = 3;
       ctx.beginPath();
       for (let i = 0; i <= 24; i++) {
-        const x = 110 + i * 4;
+        const x = 118 + i * 4;
         const y = 196 + (i % 2 ? -6 : 6) * (i === 0 || i === 24 ? 0 : 1);
         if (i) ctx.lineTo(x, y);
         else ctx.moveTo(x, y);
       }
       ctx.stroke();
-      txt(ctx, "전열선", 158, 218, { size: 12, color: SUB, weight: 600 });
-      pill(ctx, !power ? "전원 꺼짐" : live ? "전기가 흘러요" : "전기가 끊겼어요", 262, 150, { size: 12.5, dot: live ? "#FFD666" : "#8794AA" });
+      txt(ctx, "전열선", 166, 220, { size: 12, color: SUB, weight: 600 });
+      // 탄성 접점의 기둥과 용수철 판, 단추
+      rr(ctx, POST_X - 4, 126, 8, 72, 3);
+      ctx.fillStyle = "#55657C";
+      ctx.fill();
+      const tipX = end.x - 6;
+      ctx.strokeStyle = "#AEB9CC";
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(POST_X, 130);
+      ctx.quadraticCurveTo(tipX + 26, leafY + 22, tipX + 3, leafY + 3);
+      ctx.stroke();
+      ctx.fillStyle = "#E8EDF4";
+      ctx.beginPath();
+      ctx.arc(tipX, leafY, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#7D8AA0";
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+      txt(ctx, "접점", tipX - 8, leafY + 12, { size: 12, color: "#C9D5E8", align: "right", weight: 700 });
+      if (live) {
+        // 붙은 자리로 전기가 흐른다
+        const sg = ctx.createRadialGradient(tipX, end.y, 0.5, tipX, end.y, 9);
+        sg.addColorStop(0, "rgba(255,240,170,.95)");
+        sg.addColorStop(1, "rgba(255,214,102,0)");
+        ctx.fillStyle = sg;
+        ctx.beginPath();
+        ctx.arc(tipX, end.y, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (power && leafY - 4.5 - end.y > 3) gapRing = { x: tipX, y: (end.y + leafY - 4.5) / 2, r: (leafY - 4.5 - end.y) / 2 + 9 };
+      pill(ctx, !power ? "전원 꺼짐" : live ? "전기가 흘러요" : "전기가 끊겼어요", 286, 216, { size: 12.5, dot: live ? "#FFD666" : "#8794AA" });
       swatch(ctx, 70, 26, C_SMALL, "열팽창 정도가 작은 금속");
       swatch(ctx, 70, 44, C_BIG, "열팽창 정도가 큰 금속");
+      // 데워진 띠의 빛(달아오를수록 진하게): 띠 둘레에 번지는 주황 빛
+      if (heat > 0.03) {
+        ctx.save();
+        ctx.shadowColor = `rgba(255,140,60,${Math.min(0.95, heat * 2.2).toFixed(2)})`;
+        ctx.shadowBlur = 16;
+        layer(ctx, kappa, 0, `rgba(255,170,100,${Math.min(0.6, heat * 1.4).toFixed(2)})`, THICK * 2 + 2);
+        ctx.restore();
+      }
     } else {
       hotPlate(ctx, 90, 200, 170, heating ? 1 : 0);
       if (heat > 0.05) {
@@ -147,8 +232,23 @@ export const tapeLab: StepRenderer = (host, step, api) => {
       swatch(ctx, 70, 44, botC, paperOnTop ? "알루미늄박 (아래)" : "종이 (아래)");
       if (heat < 0.03 && !reached) txt(ctx, "가열 전: 곧게 펴져 있어요", 170, 138, { size: 12, color: SUB, weight: 600 });
     }
-    layer(ctx, kappa, THICK / 2, topC);
-    layer(ctx, kappa, -THICK / 2, botC);
+    // 다리미의 두 금속은 데워질수록 달아오른 색으로(온도 색)
+    const hot = iron ? Math.min(1, heat * 1.8) : 0;
+    layer(ctx, kappa, THICK / 2, hot ? mix(topC, "#FFB07A", 0.35 * hot) : topC);
+    layer(ctx, kappa, -THICK / 2, hot ? mix(botC, "#FF9A50", 0.3 * hot) : botC);
+    if (gapRing) {
+      // 접점에서 떨어진 틈: 무대에서 가장 진하게
+      const pulse = 1 + 0.08 * Math.sin(tMs / 160);
+      ctx.save();
+      ctx.setLineDash([4, 3]);
+      ctx.strokeStyle = "#FFD666";
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.arc(gapRing.x, gapRing.y, gapRing.r * pulse, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+      txt(ctx, "떨어졌어요", gapRing.x + gapRing.r + 6, gapRing.y, { size: 12.5, color: "#FFD666", align: "left", weight: 800 });
+    }
   });
 
   const hold = u3Hold("가열하기 (꾹 누르고 있기)", (down) => {
