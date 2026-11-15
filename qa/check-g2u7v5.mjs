@@ -5,7 +5,7 @@
 // 실행: PORT=5587 node qa/check-g2u7v5.mjs [레슨 id ...] [--out 폴더] [--lab]   또는   DIST=<폴더> node qa/check-g2u7v5.mjs
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { launch, openLesson, fit, holdBtn, waitAsk, answer, next, texts, W, waitFor, ctaState, cta, choose, ds, waitPhase, tapText, tapKey, setRange, tapStage, tapRot, waitPips, click } from "./g2u7v5-lib.mjs";
+import { launch, openLesson, fit, holdBtn, waitAsk, answer, next, texts, W, waitFor, ctaState, cta, choose, ds, waitPhase, tapText, tapKey, setRange, tapStage, tapRot, waitPips, click, helper } from "./g2u7v5-lib.mjs";
 
 const args = process.argv.slice(2);
 const oi = args.indexOf("--out");
@@ -108,13 +108,47 @@ const LAB = {
   },
   async water() {
     await at("water-start");
+    ok((await helper(page)).includes("빛나는 곳"), `water: 세로 안내 글이 힌트와 다른 말("${await helper(page)}")`);
     await tapText(page, "가로 화면"); await W(page, 1200);
-    const hits = await page.evaluate(() => document.querySelector(".g2u7x-wcv").__hits());
-    for (const k of Object.keys(hits)) {
-      const [x, y, w, h] = hits[k][0];
-      await tapRot(page, x + w / 2, y + h / 2 + (k === "gap" ? 10 : 0));
-      await W(page, 250);
+    const look = () => page.evaluate(() => {
+      const c = document.querySelector(".g2u7x-wcv");
+      return { hits: c.__hits(), hint: c.__hint(), say: document.querySelector(".g2u7x-wsay").textContent, title: document.querySelector(".rot-title")?.textContent ?? "" };
+    });
+    // 힌트: 열자마자 다섯 쌍의 열 자리가 모두 빛나고, 제목과 상태 줄이 무엇을 할지 알려 준다
+    let s = await look();
+    ok(s.hint.glow.length === 10, `water: 빛나는 자리 ${s.hint.glow.length}곳(열 곳이어야)`);
+    ok(s.say.includes("빛나는 곳을 눌러") && s.title.includes("빛나는 곳"), `water: 상태 줄이나 제목에 할 일이 없음("${s.say}" / "${s.title}")`);
+    const small = s.hint.boxes.filter(([, , w, h]) => w < 48 || h < 48);
+    ok(small.length === 0, `water: 48px보다 작은 누르는 자리 ${small.length}곳`);
+    // 빛이 실제로 칠해졌는지: 그림이 없는 전압 자리의 오른쪽 테두리를 읽는다
+    const painted = await page.evaluate((r) => {
+      const c = document.querySelector(".g2u7x-wcv");
+      const d = c.width / c.clientWidth;
+      const g = c.getContext("2d");
+      let n = 0;
+      for (let y = r[1] + 8; y < r[1] + r[3] - 8; y += 2) if (g.getImageData(Math.round((r[0] + r[2]) * d), Math.round(y * d), 1, 1).data[3] > 0) n++;
+      return n;
+    }, s.hits.gap[1]);
+    ok(painted > 5, `water: 전압 자리의 빛이 칠해지지 않음(${painted})`);
+    // 빈 곳(전압 자리 오른쪽 30px)을 누르면 가장 가까운 남은 자리인 전압 자리를 짚는다
+    const vr = s.hits.gap[1];
+    await tapRot(page, vr[0] + vr[2] + 30, vr[1] + vr[3] / 2); await W(page, 300);
+    s = await look();
+    ok(s.hint.nudge === "gap:1" && s.say.includes("빛나는 곳을 눌러야"), `water: 빈 곳을 눌러도 가까운 자리를 짚지 않음(${s.hint.nudge}, "${s.say}")`);
+    await page.screenshot({ path: join(OUT, `${cur}-water-nudge.png`) });
+    // 짝을 다 찾기 전에 세로로 돌아가면 빛나는 곳을 마저 누르라고 한다
+    await page.evaluate(() => document.querySelector(".rot-exit").click()); await W(page, 900);
+    ok((await helper(page)).includes("빛나는 곳을 모두"), `water: 일찍 돌아온 안내가 다름("${await helper(page)}")`);
+    await at("water-early", false);
+    await tapText(page, "가로 화면"); await W(page, 1200);
+    // 다섯 쌍을 실제 포인터로: 왼쪽 그림에서 둘, 오른쪽 그림에서 셋(물건이 아닌 자리인 전압과 물의 흐름 포함)
+    for (const [k, i, a, b] of [["pump", 0, "펌프", "전지"], ["gap", 1, "물의 높이 차", "전압"], ["flow", 0, "물의 흐름", "전류"], ["tap", 1, "수도꼭지", "스위치"], ["wheel", 1, "물레방아", "전구"]]) {
+      const r = (await look()).hits[k][i];
+      await tapRot(page, r[0] + r[2] / 2, r[1] + r[3] / 2); await W(page, 250);
+      s = await look();
+      ok(s.say.includes(`${a}의 짝은 ${b}예요`), `water: ${k}:${i}를 눌렀는데 "${s.say}"`);
     }
+    ok(s.hint.glow.length === 0, `water: 다 찾았는데 빛나는 자리 ${s.hint.glow.length}곳`);
     await page.evaluate(() => document.querySelector('.g2u7x-wbar [data-k="2"]').click()); await W(page, 700);
     await page.screenshot({ path: join(OUT, `${cur}-water-rot.png`) });
     seen.push(...(await page.evaluate(() => [...document.querySelectorAll(".rot-stage *")].map((e) => (e.children.length ? "" : e.textContent.trim())).filter(Boolean))).map((t) => `${cur} water-rot: ${t}`));
