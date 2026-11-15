@@ -5,12 +5,14 @@
 // 실패하는 길: 어중간하게 잠긴 자리에서 기록하면 표에 적히지 않는다. 이미 적은 자리를 또 기록해도 마찬가지다.
 // 흐름: 잠기기 전, 절반, 완전히(차례는 자유) → 예상(큰 추) → 큰 추를 완전히 잠그고 기록 → 판정(왜 더 줄었나) → 결론.
 // 옛 랩(buoyancyLab)은 추를 내리면 저절로 채워졌고 추가 하나였다. 값(자체 제작): 두 추 모두 20 N, 작은 추 17 N과 14 N, 큰 추 8 N.
+// 그래픽 손질(2026-11-15, 세부보다 요점): 무대 왼쪽에 중력 20 N 막대 하나를 '센서 눈금'(위, 센서가 받치는 몫)과 '물이 미는 힘'(아래, 초록)으로 나눠 칠한다.
+//   추가 잠길수록 초록이 자라고 센서 몫이 준다(줄어든 눈금 = 물이 미는 힘). 추의 두 힘은 추 가운데(작용점)에서 위아래로(1 N에 APX px).
+//   판정 동안은 큰 추 곁에 작은 추의 윤곽을, 막대에는 작은 추의 몫(6 N)을 점선으로 둔다(두 추의 부피와 물이 미는 힘 비교).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
-import { drawForceArrow } from "../../../ui/forceProps";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvCapture, bvTimers } from "../bio6/b6Lab";
-import { clamp, U5, u5Canvas, u5Frame, u5Log, u5Pill, u5Read, u5Text } from "./u5Kit";
+import { clamp, U5, u5Arrow, u5Canvas, u5Frame, u5Log, u5Pill, u5Read, u5Text } from "./u5Kit";
 
 interface S {
   title: string;
@@ -20,7 +22,13 @@ const WY = 124; // 물의 겉면
 const TOP = 100; // 추 바닥의 가장 높은 자리
 const BOT = 208; // 추 바닥의 가장 낮은 자리(비커 바닥 바로 위)
 const AIR = 20;
-const SIZE = { small: { w: 34, h: 44, lift: 6 }, big: { w: 48, h: 62, lift: 12 } };
+const SIZE = { small: { w: 34, h: 44, lift: 6, rise: 5 }, big: { w: 48, h: 62, lift: 12, rise: 10 } }; // rise: 다 잠겼을 때 물이 오르는 높이(부피에 비례, 1 : 2)
+const APX = 2; // 추의 두 화살표: 1 N에 2px(가장 낮은 자리에서도 중력 화살표가 무대 안에 든다)
+// 왼쪽 막대: 위 끝 BT에서 아래 끝 BB까지가 중력 20 N
+const BX = 16;
+const BW = 22;
+const BT = 66;
+const BB = 202;
 
 export const buoyLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
@@ -137,7 +145,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     const Z = SIZE[kind];
     const cx = w * 0.56;
     const sb = sub();
-    const wy = WY - sb * (kind === "big" ? 9 : 5); // 추가 잠긴 만큼 물이 올라온다
+    const wy = WY - sb * Z.rise; // 추가 잠긴 부피만큼 물이 올라온다(큰 추는 작은 추의 2배)
     // 스탠드
     ctx.strokeStyle = "rgba(190,204,230,.85)";
     ctx.lineWidth = 4;
@@ -163,7 +171,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     ctx.beginPath();
     ctx.roundRect(cx - 10, 30, 20, 11, 2);
     ctx.fill();
-    ctx.fillStyle = "#7CF0B5";
+    ctx.fillStyle = "#9CC2FF"; // 센서 화면(초록은 '물이 미는 힘'의 색이라 쓰지 않는다)
     ctx.fillRect(cx - 7, 34, 14 * (read() / AIR), 3);
     // 줄
     ctx.strokeStyle = "rgba(232,238,249,.8)";
@@ -221,14 +229,78 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(bx1, 96);
     ctx.lineTo(bx1 + 4, 92);
     ctx.stroke();
-    // 두 힘: 중력(아래, 늘 20 N)과 물이 미는 힘(위, 잠긴 만큼). 두 화살표 모두 1 N에 2.6px(길이가 크기다).
-    drawForceArrow(ctx, cx + Z.w / 2 + 12, y - Z.h, 0, AIR * 2.6, { color: U5.back, width: 4 });
-    u5Text(ctx, "중력 20 N", bx1 + 14, Math.min(y + 14, h - 16), { color: "#FFB3B3", px: 12, align: "left" });
-    if (sb > 0.05 && !asking) {
-      drawForceArrow(ctx, cx - Z.w / 2 - 12, y - Z.h / 2, 0, -Z.lift * sb * 2.6, { color: U5.up, width: 4 });
-      u5Text(ctx, "물이 미는 힘", 14, 56, { color: "#9BE8C4", px: 12, align: "left" });
-      u5Text(ctx, `${(Z.lift * sb).toFixed(1)} N`, 14, 73, { color: "#9BE8C4", px: 13, align: "left" });
+    // 판정 동안: 큰 추 곁에 작은 추의 윤곽(무게는 같고 부피는 절반)을 옅게 둔다
+    if (asking) {
+      const S = SIZE.small;
+      const ox = cx + Z.w / 2 + 2 + S.w / 2;
+      ctx.save();
+      ctx.setLineDash([4, 3]);
+      ctx.strokeStyle = "rgba(255,224,138,.8)";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.roundRect(ox - S.w / 2, y - S.h, S.w, S.h, 5);
+      ctx.stroke();
+      ctx.restore();
+      u5Text(ctx, "작은 추", ox, y - S.h - 10, { color: "#FFE08A", px: 12 });
     }
+    // 추의 두 힘: 추 가운데(작용점)에서 아래로 중력(늘 20 N), 위로 물이 미는 힘(잠긴 만큼). 1 N에 APX px
+    const my = y - Z.h / 2;
+    u5Arrow(ctx, cx, my, 0, AIR * APX, { color: U5.back, width: 4 });
+    u5Text(ctx, "중력", cx - 9, my + AIR * APX - 6, { color: "#FFB3B3", px: 12, align: "right" });
+    if (sb > 0.05) u5Arrow(ctx, cx, my, 0, -Z.lift * sb * APX, { color: U5.up, width: 4 });
+    // 왼쪽 막대: 중력 20 N = 센서가 받치는 힘(위) + 물이 미는 힘(아래, 초록). 잠길수록 초록이 자란다
+    const water = Z.lift * sb;
+    const sensor = AIR - water;
+    const k = (BB - BT) / AIR;
+    const yb = BB - water * k;
+    ctx.fillStyle = "#6F8DBF";
+    ctx.fillRect(BX, BT, BW, yb - BT);
+    if (water > 0) {
+      const gg = ctx.createLinearGradient(BX, 0, BX + BW, 0);
+      gg.addColorStop(0, "#2FA97B");
+      gg.addColorStop(0.45, "#4BD3A0");
+      gg.addColorStop(1, "#2B9E72");
+      ctx.fillStyle = gg;
+      ctx.fillRect(BX, yb, BW, BB - yb);
+      ctx.strokeStyle = "#E8EEF9";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(BX - 3, yb);
+      ctx.lineTo(BX + BW + 3, yb);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(232,238,249,.5)";
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(BX, BT, BW, BB - BT);
+    // 막대 왼쪽의 빨간 괄호: 막대 전체가 중력 20 N
+    ctx.strokeStyle = U5.back;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(BX - 3, BT);
+    ctx.lineTo(BX - 8, BT);
+    ctx.lineTo(BX - 8, BB);
+    ctx.lineTo(BX - 3, BB);
+    ctx.stroke();
+    u5Text(ctx, "중력 20 N", BX - 8, BT - 12, { color: "#FFB3B3", px: 12.5, align: "left" });
+    // 판정 동안: 작은 추의 몫(6 N)을 점선으로
+    if (asking) {
+      const ys = BB - SIZE.small.lift * k;
+      ctx.save();
+      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = "#FFE08A";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(BX - 3, ys);
+      ctx.lineTo(BX + BW + 8, ys);
+      ctx.stroke();
+      ctx.restore();
+      u5Text(ctx, "작은 추 6 N", BX + BW + 10, ys, { color: "#FFE08A", px: 12, align: "left" });
+    }
+    // 막대 오른쪽 이름표(위: 센서 몫, 아래: 물이 미는 힘)
+    u5Text(ctx, "센서 눈금", BX + BW + 6, BT + 9, { color: "#B9CCEC", px: 12, align: "left" });
+    u5Text(ctx, `${sensor.toFixed(1)} N`, BX + BW + 6, BT + 26, { color: "#DCE7FA", px: 13.5, align: "left" });
+    u5Text(ctx, "물이 미는 힘", BX + BW + 6, BB - 25, { color: "#9BE8C4", px: 12, align: "left" });
+    u5Text(ctx, `${water.toFixed(1)} N`, BX + BW + 6, BB - 8, { color: "#9BE8C4", px: 13.5, align: "left" });
     if (!drag && !lock) {
       const pulse = 0.5 + 0.5 * Math.sin(t / 300);
       ctx.strokeStyle = `rgba(240,164,34,${0.4 + pulse * 0.5})`;
