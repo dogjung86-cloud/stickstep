@@ -13,7 +13,7 @@ import type { Step } from "../lessons/types";
 import type { Block } from "../ui/blocks";
 import { lesson, concept, comic, opener, recap, mcq, ox, multi, binSort, order, pairMatch, cut, magnifyLab, cellWorkLab, slideBuildLab, scopeCompareLab, cellFitLab, levelBuildLab, ecoMapLab, beakIslesLab, kinLab, rankWidenLab, kingdomPathLab, foodWebLab } from "./dsl";
 import { b4MiniArt, rankLadderFig } from "../ui/bio4Figures";
-import { onionRulerFig, foodWebFig, cellPartsFigV5, cellTrioFig } from "../ui/bio6Figures";
+import { onionRulerFig, foodWebFig, cellPartsFigV5, cellTrioFig, slideBubbleScopeFig, tissueVsCirculatoryFig, PAIR_ART } from "../ui/bio6Figures";
 import { organism } from "../ui/figures";
 import { comicStory } from "../ui/sketchArt";
 import { sciFig, sciFigMore } from "./sciFigG1";
@@ -22,6 +22,13 @@ const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.
 /** public 아래 사진 한 장. lazy 로딩 금지(스크롤 컨테이너 안에서 안 뜬다). */
 const pimg = (path: string, alt: string): string =>
   `<img src="${IMG_BASE}${path}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
+/** public 아래 사진 한 장의 일부만(원본 px 상자 [x0, y0, x1, y1], 원본 폭 W). 그림이 답을 알려 주는 부분을 잘라 낼 때 쓴다.
+ *  문제 그림 칸의 img 규칙(.q-figure-art img의 max-height, object-fit: contain)을 풀어야 잘린 자리가 맞는다. */
+const pcrop = (path: string, alt: string, [x0, y0, x1, y1]: [number, number, number, number], W = 960): string => {
+  const w = x1 - x0;
+  const h = y1 - y0;
+  return `<div style="position:relative;width:100%;aspect-ratio:${w} / ${h};overflow:hidden;border-radius:14px"><img src="${IMG_BASE}${path}" alt="${alt}" style="position:absolute;left:${((-x0 / w) * 100).toFixed(2)}%;top:${((-y0 / h) * 100).toFixed(2)}%;width:${((W / w) * 100).toFixed(2)}%;height:auto;max-width:none;max-height:none;object-fit:fill;border-radius:0"/></div>`;
+};
 /** 그림 두 장을 나란히 놓고 아래에 (가), (나) 이름표를 붙인다(이어받은 문제들이 쓴다). */
 const ppair = (a: string, altA: string, b: string, altB: string, labA = "(가)", labB = "(나)"): string =>
   `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -29,6 +36,14 @@ const ppair = (a: string, altA: string, b: string, altB: string, labA = "(가)",
     <figure style="margin:0"><img src="${IMG_BASE}${b}" alt="${altB}" style="display:block;width:100%;border-radius:12px"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">${labB}</figcaption></figure>
   </div>`;
 
+/** u2l10 짝 잇기의 짝과 카드 그림(공용 짝 잇기의 선택 항목 aArt, bArt). 변수로 넘겨 dsl의 짝 타입(a, b)을 그대로 둔다. */
+const U2L10_PAIRS = [
+  { a: "벼", b: "식량", aArt: PAIR_ART.rice, bArt: PAIR_ART.bowl },
+  { a: "푸른곰팡이", b: "의약품", aArt: PAIR_ART.mold, bArt: PAIR_ART.medicine },
+  { a: "누에고치", b: "섬유", aArt: PAIR_ART.cocoon, bArt: PAIR_ART.fiber },
+  { a: "편백나무", b: "목재", aArt: PAIR_ART.hinoki, bArt: PAIR_ART.timber },
+  { a: "고양이의 눈", b: "발명의 아이디어", aArt: PAIR_ART.catEye, bArt: PAIR_ART.reflector },
+];
 const term = (name: string, def: string): Block => ({ k: "term", name, def });
 const memo = (html: string, tone: "amber" | "blue" = "amber"): Block => ({ k: "note", tone, html });
 /** 개념 스텝("과학 용어 정복하기") */
@@ -411,8 +426,8 @@ export const UNIT2: Unit = {
           explainBad: "입안 세포로 했던 순서를 떠올려 봐요. 재료를 올린 <b>다음</b> 물들이고, 물들인 <b>다음</b> 덮개 유리를 덮고, 마지막에 거름종이로 넘친 용액을 닦아요.",
         }),
         mcq({
-          prompt: "친구가 만든 표본을 위에서 보니 사진처럼 동그란 것이 갇혀 있어요. 다시 만들 때 해 줄 말로 알맞은 것은?",
-          figure: pimg("exam/u2/coverslip-bubble.webp", "덮개 유리 아래에 동그란 것이 갇힌 표본"),
+          prompt: "친구가 만든 표본을 위에서 보니 그림처럼 동그란 것이 갇혀 있어요. 다시 만들 때 해 줄 말로 알맞은 것은?",
+          figure: slideBubbleScopeFig("위에서 본 표본. 덮개 유리 아래에 동그란 것이 셋 갇혀 있고, 곁의 현미경으로 본 모습에는 세포 위에 테두리가 굵은 동그라미가 보인다"),
           options: [
             "덮개 유리를 한쪽부터 비스듬히 대고 천천히 덮어 봐",
             "염색액을 두 방울 더 떨어뜨려 봐",
@@ -704,8 +719,8 @@ export const UNIT2: Unit = {
           explainBad: "차례로 짝지어요. 학생=<b>세포</b>, 학급=<b>조직</b>, 학년=<b>기관</b>, 학교=<b>개체</b>. 학년은 세 번째 칸, 기관이에요.",
         }),
         mcq({
-          prompt: "사진 (가)는 식물에서, (나)는 동물에서 볼 수 있는 단계예요. 각각 어떤 단계일까요?",
-          figure: ppair("bio2/levels/tissue-system.webp", "잎 단면의 조직계 도해", "bio2/levels/circulatory.webp", "심장과 온몸 혈관망 도해"),
+          prompt: "그림 (가)는 식물에서, (나)는 동물에서 볼 수 있는 단계예요. 각각 어떤 단계일까요?",
+          figure: tissueVsCirculatoryFig(),
           options: [
             "(가) 조직계, (나) 기관계",
             "(가) 기관계, (나) 조직계",
@@ -971,7 +986,7 @@ export const UNIT2: Unit = {
         // 그림은 v3가 고른 두 섬 그림((가), (나) 이름표가 붙은 한 쌍)을 그대로 쓴다.
         mcq({
           prompt: "목 길이가 조금씩 다른 거북 무리가 두 섬에 나뉘어 살아요. (가) 섬에는 키 큰 선인장이, (나) 섬에는 키 작은 풀이 많아요. 아주 오랜 시간이 지나면 각 섬의 거북 무리는 어떻게 될까요?",
-          figure: ppair("sketch/comics/u2l7/island-a.svg", "키 큰 선인장 곁에 선 거북", "sketch/comics/u2l7/island-b.svg", "낮은 풀밭에 선 거북"),
+          figure: ppair("sketch/comics/u2l7/island-a.svg", "목 길이가 다른 거북 셋과 키 큰 선인장", "sketch/comics/u2l7/island-b.svg", "목 길이가 다른 거북 셋과 낮은 풀"),
           options: [
             "(가)엔 목이 긴 무리, (나)엔 목이 짧은 무리가 남는다",
             "(가)엔 목이 짧은 무리, (나)엔 목이 긴 무리가 남는다",
@@ -1120,7 +1135,8 @@ export const UNIT2: Unit = {
         }),
         mcq({
           prompt: "당나귀와 말은 짝짓기하여 노새를 낳을 수 있어요. 그런데도 둘을 같은 종으로 분류하지 않는 까닭은?",
-          figure: pimg("bio2/quiz/species-mule.webp", "당나귀와 말, 그리고 노새"),
+          // 원본 그림 끝의 새끼 위 금지 표시가 정답("번식 능력이 없다")을 그림으로 알려 줘서 말, 당나귀, 노새까지만 잘라 보인다(2026-11-15)
+          figure: pcrop("bio2/quiz/species-mule.webp", "말과 당나귀, 그리고 둘 사이에서 태어난 노새", [0, 195, 755, 690]),
           options: [
             "노새가 번식 능력이 없기 때문",
             "당나귀와 말의 생김새가 다르기 때문",
@@ -1242,13 +1258,13 @@ export const UNIT2: Unit = {
           note: {
             tone: "bio",
             title: "5계 비교표",
-            html: `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11.5px;text-align:center">
-              <tr style="color:#4E5968"><th style="padding:4px 2px;border-bottom:1.5px solid #D7DEE6">계</th><th style="border-bottom:1.5px solid #D7DEE6">핵막</th><th style="border-bottom:1.5px solid #D7DEE6">세포벽</th><th style="border-bottom:1.5px solid #D7DEE6">양분 얻기</th><th style="border-bottom:1.5px solid #D7DEE6">대표</th></tr>
-              <tr><td style="padding:4px 2px;font-weight:800">원핵생물</td><td>×</td><td>○</td><td>종류마다 달라요</td><td>대장균</td></tr>
-              <tr style="background:#F7FBF8"><td style="padding:4px 2px;font-weight:800">원생생물</td><td>○</td><td>종류마다</td><td>종류마다 달라요</td><td>아메바·해캄</td></tr>
-              <tr><td style="padding:4px 2px;font-weight:800">균계</td><td>○</td><td>○</td><td>분해(광합성 ×)</td><td>버섯·효모</td></tr>
-              <tr style="background:#F7FBF8"><td style="padding:4px 2px;font-weight:800">식물계</td><td>○</td><td>○</td><td>광합성 ○</td><td>소나무</td></tr>
-              <tr><td style="padding:4px 2px;font-weight:800">동물계</td><td>○</td><td>×</td><td>섭취(운동 ○)</td><td>꿀벌·박새</td></tr>
+            html: `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.35;text-align:center">
+              <tr style="color:#4E5968"><th style="padding:4px 3px;border-bottom:1.5px solid #D7DEE6">계</th><th style="padding:4px 3px;border-bottom:1.5px solid #D7DEE6">핵막</th><th style="padding:4px 3px;border-bottom:1.5px solid #D7DEE6">세포벽</th><th style="padding:4px 3px;border-bottom:1.5px solid #D7DEE6">양분 얻기</th><th style="padding:4px 3px;border-bottom:1.5px solid #D7DEE6">대표</th></tr>
+              <tr><td style="padding:5px 3px;font-weight:800;white-space:nowrap">원핵생물</td><td style="padding:5px 3px">×</td><td style="padding:5px 3px">○</td><td style="padding:5px 3px">종류마다 달라요</td><td style="padding:5px 3px">대장균</td></tr>
+              <tr style="background:#F7FBF8"><td style="padding:5px 3px;font-weight:800;white-space:nowrap">원생생물</td><td style="padding:5px 3px">○</td><td style="padding:5px 3px">종류마다</td><td style="padding:5px 3px">종류마다 달라요</td><td style="padding:5px 3px">아메바, 해캄</td></tr>
+              <tr><td style="padding:5px 3px;font-weight:800;white-space:nowrap">균계</td><td style="padding:5px 3px">○</td><td style="padding:5px 3px">○</td><td style="padding:5px 3px">분해(광합성 ×)</td><td style="padding:5px 3px">버섯, 효모</td></tr>
+              <tr style="background:#F7FBF8"><td style="padding:5px 3px;font-weight:800;white-space:nowrap">식물계</td><td style="padding:5px 3px">○</td><td style="padding:5px 3px">○</td><td style="padding:5px 3px">광합성 ○</td><td style="padding:5px 3px">소나무</td></tr>
+              <tr><td style="padding:5px 3px;font-weight:800;white-space:nowrap">동물계</td><td style="padding:5px 3px">○</td><td style="padding:5px 3px">×</td><td style="padding:5px 3px">섭취(운동 ○)</td><td style="padding:5px 3px">꿀벌, 박새</td></tr>
             </table></div>`,
           },
           cta: "문제 풀기",
@@ -1262,7 +1278,7 @@ export const UNIT2: Unit = {
             { id: "prot", label: "원생생물계", color: "#4DABF7", hint: "나머지 무리" },
             { id: "fungi", label: "균계", color: "#F08C00", hint: "분해" },
             { id: "plant", label: "식물계", color: "#2F9E44", hint: "광합성" },
-            { id: "animal", label: "동물계", color: "#E03131", hint: "섭취·운동" },
+            { id: "animal", label: "동물계", color: "#7048E8", hint: "섭취·운동" },
           ],
           items: [
             { label: "젖산균", bin: "prok", svg: organism("젖산균") },
@@ -1417,13 +1433,8 @@ export const UNIT2: Unit = {
           lead: "우리는 여러 생물에게서 많은 것을 얻어요. 생물과 얻는 것을 이어요.",
           aLabel: "생물",
           bLabel: "우리가 얻는 것",
-          pairs: [
-            { a: "벼", b: "식량" },
-            { a: "푸른곰팡이", b: "의약품" },
-            { a: "누에고치", b: "섬유" },
-            { a: "편백나무", b: "목재" },
-            { a: "고양이의 눈", b: "발명의 아이디어" },
-          ],
+          // 카드마다 작은 코드 그림(2026-11-15): 고양이의 눈과 도로 반사판 같은 짝이 글만으로는 낯설었다
+          pairs: U2L10_PAIRS,
           explainGood: "모두 이었어요! 식량, 의약품, 섬유, 목재, 발명의 아이디어까지. 생물이 다양할수록 우리가 얻는 것도 많아요.",
           explainBad: "헷갈린 짝만 다시 봐요. <b>벼는 식량</b>, <b>푸른곰팡이는 의약품</b>, <b>누에고치는 섬유</b>, <b>편백나무는 목재</b>를 줘요. 고양이의 눈은 밤길을 밝히는 도로 반사판의 아이디어가 됐어요.",
         }),
@@ -1432,7 +1443,7 @@ export const UNIT2: Unit = {
           lead: "여덟 장의 카드를 '감소 원인'과 '유지 방안'으로 나눠요.",
           instruction: "카드를 끌어서 알맞은 통에!",
           bins: [
-            { id: "cause", label: "감소 원인", color: "#F04452", hint: "다양성을 깎는 것" },
+            { id: "cause", label: "감소 원인", color: "#E8590C", hint: "다양성을 깎는 것" },
             { id: "action", label: "유지 방안", color: "#12B886", hint: "다양성을 지키는 것" },
           ],
           items: [

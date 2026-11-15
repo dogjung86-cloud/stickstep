@@ -10,7 +10,7 @@ import {
   svgTable, dbox,
   bioFieldPairFig, bioDiversityGridFig, bioKingdomClueTableFig, bioPopulationBarsFig,
 } from "../src/ui/examFigures";
-import { examPlantCellFig, examAnimalCellFig } from "../src/ui/bio6Figures";
+import { examPlantCellFig, examAnimalCellFig, cellShapeCardsArt, ladybugExamFig } from "../src/ui/bio6Figures";
 
 const IMG_BASE = "";
 /** exam/u2 발주 실사. loading=lazy 금지(사고 #14). */
@@ -771,12 +771,12 @@ export const POOL_U2V2_PILOT: ExamItem[] = [
     type: "mcq",
     diff: 1,
     prompt: "그림은 세포의 모양 다섯 가지를 카드로 늘어놓은 것이에요. 멀리 떨어진 곳까지 신호를 보내는 일을 맡기에 가장 알맞은 모양은?",
-    figure: cellShapeCardsFig([
-      { photo: "figs/cell-ball.webp", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
-      { photo: "figs/cell-nerve.webp", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
-      { photo: "figs/cell-rbc.webp", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
-      { photo: "figs/cell-epithelial.webp", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
-      { photo: "figs/cell-brick.webp", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
+    figure: cellShapeCardsArt([
+      { kind: "ball", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
+      { kind: "nerve", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
+      { kind: "rbc", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
+      { kind: "epi", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
+      { kind: "brick", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
     ]),
     options: ["①", "②", "③", "④", "⑤"],
     answer: 1,
@@ -1016,8 +1016,8 @@ export const POOL_U2V2_PILOT: ExamItem[] = [
     type: "mcq",
     diff: 1,
     prompt:
-      "사진은 한 잎에서 함께 관찰한 <b>같은 종류</b>의 무당벌레예요. 등에 있는 점의 수와 무늬가 개체마다 조금씩 달라요. 이런 차이를 무엇이라고 하며, 그렇게 부르려면 어떤 조건이 필요할까요?",
-    figure: ximg("ladybug-variation.webp", "잎 위에 나란히 앉은 무당벌레 다섯 마리. 등의 점 수와 무늬가 개체마다 조금씩 다르다"),
+      "그림은 한 잎에서 함께 관찰한 <b>같은 종류</b>의 무당벌레예요. 등에 있는 점의 수와 무늬가 개체마다 조금씩 달라요. 이런 차이를 무엇이라고 하며, 그렇게 부르려면 어떤 조건이 필요할까요?",
+    figure: ladybugExamFig("잎 위에 나란히 앉은 무당벌레 다섯 마리. 등의 색과 점 무늬가 개체마다 다르다"),
     options: [
       "변이 · 같은 종류의 개체 사이에서 나타나는 차이일 때만 그렇게 불러요",
       "변이 · 서로 다른 종류의 생물을 비교했을 때만 그렇게 불러요",

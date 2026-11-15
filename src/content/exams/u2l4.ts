@@ -5,20 +5,12 @@
 // 언어 가드 금지어 목록은 설계표 §0-3이 정본(검사기가 소스 전체를 스캔하므로 여기 나열하지 않는다).
 import type { ExamItem } from "./types";
 import { svgTable, dbox, vesselCrossFig, bioCellRolesExamFig } from "../../ui/examFigures";
+import { cellTrioExamFig, cellShapeCardsArt } from "../../ui/bio6Figures";
 
 const L = "u2l4";
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const ximg = (file: string, alt: string): string =>
   `<img src="${IMG_BASE}exam/u2/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
-/** 세포 모양 후보 카드 ①~⑤ · 발주 실사 5종을 3+2 격자로(라벨형 shuffle:false 전용). */
-const cellShapeCardsFig = (shapes: { photo: string; alt: string }[]): string =>
-  `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${shapes
-    .map(
-      (s, i) =>
-        `<figure style="margin:0;position:relative"><img src="${IMG_BASE}bio3/${s.photo}" alt="${s.alt}" style="display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:10px;background:#F7F8FA" /><figcaption style="position:absolute;left:6px;top:6px;background:rgba(255,255,255,.95);border-radius:999px;width:22px;height:22px;line-height:22px;text-align:center;font-size:13px;font-weight:900;color:#20262E;box-shadow:0 1px 4px rgba(10,20,40,.22)">${"①②③④⑤"[i]}</figcaption></figure>`,
-    )
-    .join("")}</div>`;
-
 export const POOL_U2L4: ExamItem[] = [
   {
     id: "u2e249",
@@ -44,11 +36,8 @@ export const POOL_U2L4: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     diff: 1,
-    prompt: "사진은 한 동물의 몸에서 관찰한 세 가지 세포예요. 이 가운데 몸의 표면을 덮어 보호하는 일에 알맞은 세포와 그 까닭으로 옳은 것은?",
-    figure: ximg(
-      "cell-roles-triptych.webp",
-      "가늘고 길게 뻗은 세포, 가운데가 오목한 붉은 원반 여러 개, 납작한 세포가 이어 붙은 판을 나란히 나타낸 사진",
-    ),
+    prompt: "그림은 한 동물의 몸에서 관찰한 세 가지 세포예요. 이 가운데 몸의 표면을 덮어 보호하는 일에 알맞은 세포와 그 까닭으로 옳은 것은?",
+    figure: cellTrioExamFig("가늘고 길게 뻗은 세포, 가운데가 오목한 붉은 원반 여러 개, 납작한 세포가 이어 붙은 판을 나란히 나타낸 그림"),
     options: [
       "납작하게 이어 붙은 세포 · 적은 수로도 넓은 면을 빈틈없이 가릴 수 있기 때문이에요",
       "가늘고 길게 뻗은 세포 · 길이가 길어 넓은 면을 한 번에 가릴 수 있기 때문이에요",
@@ -67,12 +56,12 @@ export const POOL_U2L4: ExamItem[] = [
     type: "mcq",
     diff: 1,
     prompt: "그림은 세포의 모양 다섯 가지를 카드로 늘어놓은 것이에요. 멀리 떨어진 곳까지 신호를 보내는 일을 맡기에 가장 알맞은 모양은?",
-    figure: cellShapeCardsFig([
-      { photo: "figs/cell-ball.webp", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
-      { photo: "figs/cell-nerve.webp", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
-      { photo: "figs/cell-rbc.webp", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
-      { photo: "figs/cell-epithelial.webp", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
-      { photo: "figs/cell-brick.webp", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
+    figure: cellShapeCardsArt([
+      { kind: "ball", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
+      { kind: "nerve", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
+      { kind: "rbc", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
+      { kind: "epi", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
+      { kind: "brick", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
     ]),
     options: ["①", "②", "③", "④", "⑤"],
     answer: 1,
@@ -146,12 +135,12 @@ export const POOL_U2L4: ExamItem[] = [
     type: "mcq",
     diff: 2,
     prompt: "그림은 세포의 모양 다섯 가지를 카드로 늘어놓은 것이에요. 좁은 통로를 흐르며 산소를 실어 나르는 일에 가장 알맞은 모양은?",
-    figure: cellShapeCardsFig([
-      { photo: "figs/cell-brick.webp", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
-      { photo: "figs/cell-epithelial.webp", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
-      { photo: "figs/cell-ball.webp", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
-      { photo: "figs/cell-rbc.webp", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
-      { photo: "figs/cell-nerve.webp", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
+    figure: cellShapeCardsArt([
+      { kind: "brick", alt: "각진 직사각형 세포가 벽돌처럼 줄지어 맞물린 모습" },
+      { kind: "epi", alt: "납작한 세포 여러 개가 서로 맞물려 한 겹의 판을 이룬 모습" },
+      { kind: "ball", alt: "속이 꽉 찬 공 모양의 둥근 세포 하나" },
+      { kind: "rbc", alt: "가운데가 오목하게 눌린 붉은 원반 모양의 세포 여러 개" },
+      { kind: "nerve", alt: "가늘고 길게 뻗은 세포 하나. 한쪽 끝에 여러 갈래로 갈라진 가지가 있다" },
     ]),
     options: ["①", "②", "③", "④", "⑤"],
     answer: 3,
@@ -309,11 +298,8 @@ export const POOL_U2L4: ExamItem[] = [
     lessonId: L,
     type: "multi",
     diff: 3,
-    prompt: "사진은 한 동물의 몸에서 관찰한 세 가지 세포예요. 이 사진에 대한 설명으로 옳은 것을 <b>모두</b> 골라 보세요.",
-    figure: ximg(
-      "cell-roles-triptych.webp",
-      "가늘고 길게 뻗은 세포, 가운데가 오목한 붉은 원반 여러 개, 납작한 세포가 이어 붙은 판을 나란히 나타낸 사진",
-    ),
+    prompt: "그림은 한 동물의 몸에서 관찰한 세 가지 세포예요. 이 그림에 대한 설명으로 옳은 것을 <b>모두</b> 골라 보세요.",
+    figure: cellTrioExamFig("가늘고 길게 뻗은 세포, 가운데가 오목한 붉은 원반 여러 개, 납작한 세포가 이어 붙은 판을 나란히 나타낸 그림"),
     options: [
       "세 세포는 모두 세포막으로 둘러싸여 있어요",
       "한 몸 안에서 얻은 세포인데도 생김새가 서로 크게 달라요",

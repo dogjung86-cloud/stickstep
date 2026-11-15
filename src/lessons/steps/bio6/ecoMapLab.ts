@@ -6,13 +6,15 @@
 //   습지로 바꾸기(가운데 칸) · 갯벌로 바꾸기(오른쪽 칸): 사는 환경이 한 가지 늘고 그곳의 생물 4종류가 더해진다. 되돌리면 함께 사라진다.
 //   무당벌레 보기: 숲속 무당벌레 다섯 마리를 가까이 본다. 겉날개의 색과 무늬가 저마다 다르다(세 번째 눈금).
 // 처음 환경을 바꿀 때 예측 질문(채점하지 않음). 셋을 다 해 보면 확인 버튼 → 판정(채점): 환경을 바꾸자 종류가 늘어난 까닭.
-// 그림: 구작 생태계 그림(bio3/eco)과 무당벌레 사진(exam/u2/ladybug-variation). 칸마다 적힌 생물은 그 그림에 실제로 보이는 것만 썼다.
+// 그림: 구작 생태계 그림(bio3/eco)과 무당벌레 다섯 마리(코드 그림 bio6Figures.ladybugRowSvg, 2026-11-15 그래픽 손질. 고치기 전 사진은
+//   다섯 마리가 거의 같은 빨강이라 같은 종류 안의 차이가 약했고 넓은 화면에서 흐렸다). 칸마다 적힌 생물은 그 그림에 실제로 보이는 것만 썼다.
 // 눈금의 '생물의 종류'는 그림에 적힌 생물을 센 값(칸마다 4)이다. 모형이라는 점은 도움말이 "이 땅"이라고 부르는 것으로 드러낸다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
 import { bvCanvas, bvSrc } from "../../../ui/bio6Kit";
+import { LADYBUG_SWATCH, ladybugIconSvg, ladybugRowSvg } from "../../../ui/bio6Figures";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvCard, bvCards, bvFrame, bvTimers, type BvCard } from "./b6Lab";
 
@@ -31,7 +33,12 @@ const HAB: Record<Hab, { name: string; img: string; kinds: [string, string]; siz
 const PER_PLOT = 20; // 한 칸에 사는 생물의 수(모형)
 type Key = "wet" | "flat" | "bug";
 const KEYS: Key[] = ["wet", "flat", "bug"];
-const BUG_DOTS = ["#E03131", "#F76707", "#C92A2A", "#F03E3E", "#E8590C"];
+/** 셋째 눈금의 점 다섯: 무당벌레 다섯 마리의 겉날개 색(검정 바탕은 붉은 점을 함께, 어두운 무대에서 보이게 옅은 테). */
+const bugDot = (sw: { base: string; red: boolean }, i: number): string => {
+  const spot = sw.red ? "#E5352A" : "#161616";
+  if (i === 0) return sw.base;
+  return `radial-gradient(circle at 33% 40%, ${spot} 0 1.5px, transparent 1.8px), radial-gradient(circle at 68% 64%, ${spot} 0 1.5px, transparent 1.8px), ${sw.base}`;
+};
 
 export const ecoMapLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as EmpStep;
@@ -67,8 +74,7 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
     return { root, alt, chip, kinds };
   });
   // 무당벌레를 가까이 본 모습(땅 위에 겹쳐 뜬다)
-  const bugImg = el("div", { class: "emp-bug-img" });
-  bugImg.style.backgroundImage = `url(${bvSrc("exam/u2/ladybug-variation.webp")})`;
+  const bugImg = el("div", { class: "emp-bug-img", html: ladybugRowSvg(330, 118, "잎 위의 같은 종류 무당벌레 다섯 마리. 겉날개의 색과 점 무늬가 저마다 다르다", 26) });
   const bug = el("div", { class: "emp-bug" }, bugImg, el("div", { class: "emp-chip", text: "숲속의 무당벌레 다섯 마리" }));
 
   // ── 무대: 눈금 셋과 생물의 수 ────────────────────────────────────
@@ -76,9 +82,9 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
   const envVal = el("b", { text: "1가지" });
   const kindFill = el("i");
   const kindVal = el("b", { text: "4가지" });
-  const varDots = BUG_DOTS.map((c) => {
-    const d = el("i");
-    d.style.background = c;
+  const varDots = LADYBUG_SWATCH.map((sw, i) => {
+    const d = el("i", { class: sw.red ? "dark" : "" });
+    d.style.background = bugDot(sw, i);
     return d;
   });
   const varVal = el("b", { text: "?" });
@@ -104,7 +110,7 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
   const cards = {} as Record<Key, BvCard>;
   cards.wet = bvCard("emp-card col", { name: "습지로 바꾸기", sub: "가운데 칸", icon: `<img src="${bvSrc(HAB.wet.img)}" alt="" draggable="false" />`, key: "wet" });
   cards.flat = bvCard("emp-card col", { name: "갯벌로 바꾸기", sub: "오른쪽 칸", icon: `<img src="${bvSrc(HAB.flat.img)}" alt="" draggable="false" />`, key: "flat" });
-  cards.bug = bvCard("emp-card col bug", { name: "무당벌레 보기", sub: "숲속에서", icon: `<img src="${bvSrc("exam/u2/ladybug-variation.webp")}" alt="" draggable="false" />`, key: "bug" });
+  cards.bug = bvCard("emp-card col bug", { name: "무당벌레 보기", sub: "숲속에서", icon: ladybugIconSvg(2), key: "bug" });
   const doneBtn = bvBtn("main emp-check", "알게 된 것 확인하기");
   doneBtn.hidden = true;
 
