@@ -155,6 +155,14 @@
   font-size: 12.5px; font-weight: 800; color: var(--n500); background: var(--n100); border: 1px solid var(--n200); transition: background .25s, color .25s, border-color .25s;
 }
 .u7x-lamp.on { background: #FFF3D6; color: #9A5B00; border-color: #F5C56B; }
+/* 칩의 작은 그림(오로라 띠, 안테나, 송전탑): 글과 함께 켜진다. 오로라 띠는 켜지면 초록, 안테나의 ×는 켜질 때만 */
+.u7x-lamp { display: flex; justify-content: center; gap: 2px; }
+.u7x-lamps .u7x-lamp i.u7x-lampic { display: block; flex: none; width: 14px; height: 14px; margin: 0; color: inherit; }
+.u7x-lampic svg { display: block; width: 14px; height: 14px; }
+.u7x-lamp b { font-weight: 800; letter-spacing: -.03em; }
+.u7x-lamp.on .u7x-au { stroke: #12A36B; }
+.u7x-lamp .u7x-x { opacity: 0; transition: opacity .25s; }
+.u7x-lamp.on .u7x-x { opacity: 1; }
 
 /* 계절과 별자리: 읽을 값 두 줄 */
 .u7x-read { display: grid; gap: 6px; }

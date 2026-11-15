@@ -49,10 +49,10 @@ export function sunspotGraphFig(): string {
     160,
     `
     <path d="M34 128h224M34 128V18" stroke="#4A5F86" stroke-width="1.6"/>
-    <text x="16" y="24" fill="#8FA6CE" font-size="9" font-family="Pretendard, sans-serif">흑점 수(개)</text>
-    <text x="250" y="146" fill="#8FA6CE" font-size="9" font-family="Pretendard, sans-serif">연도</text>
+    <text x="40" y="16" fill="#9FB4D8" font-size="10.5" font-weight="700" font-family="Pretendard, sans-serif">흑점 수(개)</text>
+    <text x="262" y="154" fill="#9FB4D8" font-size="10.5" font-weight="700" text-anchor="end" font-family="Pretendard, sans-serif">연도</text>
     ${[["1990", 44], ["1995", 90], ["2000", 136], ["2005", 182], ["2010", 228]]
-      .map(([t, x]) => `<text x="${x}" y="142" fill="#8FA6CE" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">${t}</text><path d="M${x} 128v3" stroke="#4A5F86" stroke-width="1.2"/>`)
+      .map(([t, x]) => `<text x="${x}" y="143" fill="#9FB4D8" font-size="10.5" text-anchor="middle" font-family="Pretendard, sans-serif">${t}</text><path d="M${x} 128v3" stroke="#4A5F86" stroke-width="1.2"/>`)
       .join("")}
     <path d="M40 38 C 50 40, 62 60, 76 82 C 90 104, 96 116, 103 120 C 112 125, 120 96, 130 62 C 136 46, 140 40, 145 42 C 150 46, 154 44, 162 58 C 176 82, 198 112, 216 124 C 224 129, 234 118, 244 102"
       stroke="#FFB03A" stroke-width="2.6" fill="none"/>
@@ -435,41 +435,63 @@ function lunarPathSvg(sy: 1 | -1): string {
   );
 }
 
-/** 태양 구조 핫스팟 그림 — 실제 관측 사진 2패널.
- *  왼쪽: 평소의 태양(백색광, 광구·흑점 — NOIRLab 1989 극대기).
- *  오른쪽: 개기일식(NASA 2017 — 코로나·홍염·붉은 가장자리).
- *  unit7.ts 핫스팟 spot 좌표(%)와 반드시 함께 맞출 것. */
+/** 태양 구조 핫스팟 그림: 실제 관측 사진 세 칸(2026-11-15 그래픽 손질). unit7.ts 핫스팟은 pad0이라 spot 좌표(%) = 이 viewBox(280×184) 좌표 비율이다.
+ *  왼쪽: 평소의 태양(백색광, NOIRLab 1989 극대기, 원판 가운데 (905, 855) 반지름 760px). 광구와 흑점.
+ *  가운데: 개기일식(NASA 2017, 달 가운데 (958, 597) 반지름 255.3px). 코로나.
+ *  오른쪽: 태양의 오른쪽 가장자리를 채층에서 나오는 빛(304Å)으로 크게 찍은 사진(NASA SDO, 2048px 사진의 (1700, 600)부터 0.3배). 채층과 홍염 고리.
+ *  예전 두 칸 그림은 개기일식 사진에서 채층과 홍염이 거의 안 보여(채층 자리가 흰 코로나) 누를 자리 고리가 그 자리를 덮었다.
+ *  작은 대상(흑점, 홍염)은 누를 자리를 비켜 두고 짧은 지시선으로 잇는다(누를 자리 고리는 26px라 대상을 덮는다). */
 export function sunAnatomyFig(): string {
-  return `<svg viewBox="0 0 280 190" ${NS} fill="none" stroke-linecap="round" aria-hidden="true">
+  const A = { x: 52, y: 72, r: 44 };
+  const B = { x: 146, y: 72, r: 46, moon: 25 };
+  const C = { x: 198, y: 22, w: 76, h: 100, sx: 1700, sy: 600, s: 0.3 };
+  const sa = A.r / 760;
+  const sb = B.moon / 255.3;
+  const t = (x: number, y: number, str: string, fill: string, size = 10.5, w = 700): string =>
+    `<text x="${x}" y="${y}" fill="${fill}" font-size="${size}" font-weight="${w}" text-anchor="middle" font-family="Pretendard, sans-serif">${str}</text>`;
+  // 지시선: 대상 쪽 끝에 점선 고리(흑점 둘, 홍염 고리를 둘러싼다), 누를 자리 쪽 끝은 누를 자리 고리 밑으로 들어간다
+  const lead = (x1: number, y1: number, x2: number, y2: number, ring: number): string =>
+    `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="rgba(6,10,20,.75)" stroke-width="3"/><path d="M${x1} ${y1}L${x2} ${y2}" stroke="#FFF2D8" stroke-width="1.3"/>` +
+    `<circle cx="${x1}" cy="${y1}" r="${ring}" stroke="#FFF2D8" stroke-width="1.2" stroke-dasharray="2.4 2"/>`;
+  return `<svg viewBox="0 0 280 184" ${NS} fill="none" stroke-linecap="round" aria-hidden="true">
     <defs>
-      <linearGradient id="spf-ansky" x1="0" y1="0" x2="0" y2="190" gradientUnits="userSpaceOnUse">
+      <linearGradient id="spf-ansky" x1="0" y1="0" x2="0" y2="184" gradientUnits="userSpaceOnUse">
         <stop offset="0" stop-color="#0A1226"/><stop offset="1" stop-color="#141F3A"/>
       </linearGradient>
-      <clipPath id="spf-anL"><circle cx="72" cy="92" r="52"/></clipPath>
-      <clipPath id="spf-anR"><circle cx="208" cy="92" r="56"/></clipPath>
+      <clipPath id="spf-anL"><circle cx="${A.x}" cy="${A.y}" r="${A.r}"/></clipPath>
+      <clipPath id="spf-anM"><circle cx="${B.x}" cy="${B.y}" r="${B.r}"/></clipPath>
+      <clipPath id="spf-anR"><rect x="${C.x}" y="${C.y}" width="${C.w}" height="${C.h}" rx="10"/></clipPath>
       <radialGradient id="spf-anGlow" cx=".5" cy=".5" r=".5">
         <stop offset="0" stop-color="#FFC85E" stop-opacity=".4"/><stop offset="1" stop-color="#FFC85E" stop-opacity="0"/>
       </radialGradient>
     </defs>
-    <rect x="2" y="2" width="276" height="186" rx="14" fill="url(#spf-ansky)"/>
-    ${star(20, 22)}${star(140, 16, 1, 0.6)}${star(262, 26)}${star(266, 166, 1, 0.55)}${star(16, 164, 1, 0.55)}
+    <rect x="2" y="2" width="276" height="180" rx="14" fill="url(#spf-ansky)"/>
+    ${star(14, 14)}${star(104, 12, 1, 0.6)}${star(186, 14)}${star(266, 140, 1, 0.55)}${star(12, 124, 1, 0.55)}
     <!-- 왼쪽: 평소의 태양(백색광 사진, 광구와 흑점) -->
-    <circle cx="72" cy="92" r="60" fill="url(#spf-anGlow)"/>
+    <circle cx="${A.x}" cy="${A.y}" r="${A.r + 8}" fill="url(#spf-anGlow)"/>
     <g clip-path="url(#spf-anL)">
-      <image href="${photo("sun_whitelight.jpg")}" x="5.7" y="27.9" width="131.3" height="127.5" preserveAspectRatio="none"/>
+      <image href="${photo("sun_whitelight.jpg")}" x="${(A.x - 905 * sa).toFixed(2)}" y="${(A.y - 855 * sa).toFixed(2)}" width="${(1785 * sa).toFixed(2)}" height="${(1733 * sa).toFixed(2)}"/>
     </g>
-    <circle cx="72" cy="92" r="52" stroke="rgba(224,132,20,.7)" stroke-width="1.4"/>
-    <!-- 오른쪽: 개기일식 사진(코로나·홍염) -->
+    <!-- 가운데: 개기일식 사진(코로나) -->
+    <g clip-path="url(#spf-anM)">
+      <image href="${photo("eclipse_corona.jpg")}" x="${(B.x - 958 * sb).toFixed(2)}" y="${(B.y - 597 * sb).toFixed(2)}" width="${(1920 * sb).toFixed(2)}" height="${(1280 * sb).toFixed(2)}"/>
+    </g>
+    <circle cx="${B.x}" cy="${B.y}" r="${B.r}" stroke="rgba(170,192,232,.4)" stroke-width="1.2"/>
+    <!-- 오른쪽: 가장자리를 크게(채층에서 나오는 빛으로 찍은 사진) -->
     <g clip-path="url(#spf-anR)">
-      <image href="${photo("eclipse_corona.jpg")}" x="90.1" y="18.6" width="233" height="155.5" preserveAspectRatio="none"/>
+      <rect x="${C.x}" y="${C.y}" width="${C.w}" height="${C.h}" fill="#0A0503"/>
+      <image href="${photo("sun_304.jpg")}" x="${(C.x - C.sx * C.s).toFixed(2)}" y="${(C.y - C.sy * C.s).toFixed(2)}" width="${(2048 * C.s).toFixed(2)}" height="${(2048 * C.s).toFixed(2)}"/>
     </g>
-    <circle cx="208" cy="92" r="56" stroke="rgba(170,192,232,.4)" stroke-width="1.2"/>
-    <!-- 패널 라벨 -->
-    <rect x="47" y="150" width="50" height="18" rx="9" fill="rgba(14,24,46,.78)" stroke="rgba(255,190,90,.4)" stroke-width="1"/>
-    <text x="72" y="163" fill="#FFD79E" font-size="10" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">평소</text>
-    <rect x="172" y="150" width="72" height="18" rx="9" fill="rgba(14,24,46,.78)" stroke="rgba(170,192,232,.4)" stroke-width="1"/>
-    <text x="208" y="163" fill="#C8D8F8" font-size="10" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">개기일식 때</text>
-    <text x="140" y="182" fill="#8FA6CE" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">실제 관측 사진이에요. 평소엔 광구가 눈부셔서 대기는 개기일식 때 드러나요</text>
+    <rect x="${C.x}" y="${C.y}" width="${C.w}" height="${C.h}" rx="10" stroke="rgba(255,140,90,.45)" stroke-width="1.2"/>
+    <!-- 작은 대상의 지시선(흑점 둘, 홍염 고리) -->
+    ${lead(53, 68, 78, 44, 6.5)}
+    ${lead(224, 60, 256, 44, 9)}
+    <!-- 칸 이름 -->
+    ${t(A.x, 133, "평소", "#FFD79E")}
+    ${t(B.x, 133, "개기일식 때", "#C8D8F8")}
+    ${t(C.x + C.w / 2, 136, "가장자리 확대", "#FFB89A")}
+    ${t(140, 158, "실제 관측 사진이에요. 대기는 개기일식 때 보여요.", "#A9BCDD", 10.5, 600)}
+    ${t(140, 174, "오른쪽은 채층에서 나오는 빛으로 찍은 사진이에요.", "#A9BCDD", 10.5, 600)}
   </svg>`;
 }
 
