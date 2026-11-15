@@ -9,16 +9,18 @@
 //   판정 둘: ① 침을 넣은 쪽에서 일어난 일(두 검사를 다 읽어야 오답을 지운다)
 //            ② 증류수 쪽 결과로 알 수 있는 것(같은 물, 같은 시간이었으니 시간이나 따뜻한 물 탓이 아니라 침 때문이다).
 //
-// g2u6EnzymeLab 「소화액마다 어떤 영양소를 분해할까요?」
-//   책의 해 보기 「소화 과정을 소화효소의 작용과 관련지어 추론하기」와 그림(영양소의 소화 과정).
-//   학생이 정하는 것: 세 영양소를 세 곳의 소화액에 넣어 보는 아홉 칸의 차례. 분해되지 않는 칸도 해 본다.
+// g2u6EnzymeLab 「영양소는 어디에서 무엇이 될까요?」 (organLab.ts, 2026-11-15 소화기관 그림 랩으로 교체)
+//   책의 해 보기 「소화 과정을 소화효소의 작용과 관련지어 추론하기」와 그림 Ⅵ-4. 앞에서 본 몸의 소화기관을 따라가며
+//   기관마다 그 소화액이 분해할 영양소를 학생이 고른다. 자세한 설계는 organLab.ts 머리말. 몸 그림은 digestBody.ts.
 //
 // g2u6VilliLab 「작은창자 안쪽 벽은 왜 주름져 있을까요?」
-//   책의 그림(작은창자 안쪽의 구조와 융털). 학생이 정하는 것: 벽의 모양(매끈한 벽, 주름진 벽, 주름과 융털).
-//   같은 수의 영양소를 흘려보내 흡수된 수를 견준다. 흡수된 수는 벽 선의 길이(계산)에 비례한다.
+//   책의 그림 Ⅵ-5(작은창자 안쪽의 구조와 융털의 속 구조). 학생이 정하는 것: 벽의 모양(매끈한 벽, 주름진 벽, 주름과 융털).
+//   같은 수의 영양소를 흘려보내 흡수된 수를 견준다. 흡수된 수는 영양소와 닿는 겉면의 길이(계산)에 비례한다.
+//   그림은 villiArt.ts(2026-11-15 사용자 요청으로 자른 벽 덩어리, 손가락 모양 융털, 융털 속 확대 칸을 그려 넣었다).
 
 import type { StepRenderer } from "../../types";
-import { P, bad, bvBtn, bvTween, chip, dot, g6Lab, g6Svg, good, noteLine, onStageTap, row, tag, tap, toast, tube, txt, type G6Step } from "./kit";
+import { P, bad, bvBtn, bvTween, chip, dot, g6Lab, g6Svg, good, row, tag, tap, toast, tube, txt, type G6Step } from "./kit";
+import { VILLI_ABSORBED, VILLI_TOTAL, villiInset, villiInsetLink, villiWall, villiWallLabels } from "./villiArt";
 
 // ── 침의 소화 작용 ─────────────────────────────────────────────────
 // fail: 침이 일을 못 한 까닭의 말. 얼음물에서도 아주 조금은 작용하므로 "거의"를 붙인다(레슨 문제의 "잘 작용하지 못해서"와 맞춘다).
@@ -176,148 +178,11 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
   return lab.cleanup;
 };
 
-// ── 소화액과 영양소 ────────────────────────────────────────────────
-const ORGANS = [
-  { name: "입", juice: "침" },
-  { name: "위", juice: "위액" },
-  { name: "작은창자", juice: "이자액" },
-];
-const FOODS = [
-  { name: "녹말", color: "#8E8EF5" },
-  { name: "단백질", color: P.protein },
-  { name: "지방", color: "#F2D15C" },
-];
-// [영양소][기관] = 소화효소 이름과 생긴 것. 없으면 분해되지 않는다.
-const CUT: (null | { enz: string; out: string; parts: number })[][] = [
-  [{ enz: "아밀레이스", out: "엿당", parts: 3 }, null, { enz: "아밀레이스", out: "포도당", parts: 6 }],
-  [null, { enz: "펩신", out: "더 작은 단백질", parts: 2 }, { enz: "트립신", out: "아미노산", parts: 6 }],
-  [null, null, { enz: "라이페이스", out: "지방산과 모노글리세라이드", parts: 6 }],
-];
+// ── 소화기관을 따라가며(organLab.ts) ───────────────────────────────
+export { g2u6EnzymeLab } from "./organLab";
 
-export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
-  const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-enzyme", wait: "아홉 칸을 모두 눌러 보세요" });
-  const { f } = lab;
-  const stage = g6Svg(lab, "세 영양소를 입, 위, 작은창자의 소화액에 넣어 보는 표");
-  const done = new Set<string>();
-  let last = "";
-  let asking = false;
-
-  const CX = (c: number): number => 76 + c * 90;
-  const CY = (r: number): number => 44 + r * 60;
-  const chain = (x: number, y: number, color: string, parts: number): string => {
-    // 구슬 여섯 개. parts 조각으로 끊는다(1이면 한 줄).
-    const per = 6 / parts;
-    const gap = parts === 1 ? 0 : parts === 6 ? 4.5 : 7;
-    const w = 6 * 9 + (parts - 1) * gap;
-    let out = "";
-    let px = x - w / 2 + 4.5;
-    for (let i = 0; i < 6; i++) {
-      if (i > 0 && i % per !== 0) out += `<line x1="${px - 9}" y1="${y}" x2="${px}" y2="${y}" stroke="${color}" stroke-width="3"/>`;
-      if (i > 0 && i % per === 0) px += gap;
-      out += dot(px, y, 4.5, color);
-      px += 9;
-    }
-    return out;
-  };
-  const draw = (): void => {
-    let out = "";
-    ORGANS.forEach((o, c) => (out += txt(CX(c) + 43, 16, o.name, { size: 13, fill: P.hi, weight: 800 }) + txt(CX(c) + 43, 32, o.juice, { size: 12, fill: P.dim })));
-    FOODS.forEach((fd, r) => {
-      out += txt(36, CY(r) + 24, fd.name, { size: 13, fill: fd.color, weight: 800 }) + chain(36, CY(r) + 40, fd.color, 1);
-      ORGANS.forEach((_, c) => {
-        const k = `${r}-${c}`;
-        const hit = CUT[r][c];
-        const d = done.has(k);
-        out += `<g data-k="c${k}"${last === k ? ` class="g2u6x-pop"` : ""}><rect x="${CX(c)}" y="${CY(r)}" width="86" height="54" rx="12" fill="${d ? (hit ? "rgba(111,208,140,.14)" : "rgba(200,225,255,.05)") : "rgba(200,225,255,.09)"}" stroke="${d ? (hit ? P.good : "#3A4D6E") : "#6C86AE"}" stroke-width="1.5"/>`;
-        if (!d) out += txt(CX(c) + 43, CY(r) + 32, "넣어 보기", { size: 12, fill: P.dim });
-        else out += chain(CX(c) + 43, CY(r) + 18, fd.color, hit ? hit.parts : 1) + txt(CX(c) + 43, CY(r) + 43, hit ? hit.enz : "그대로", { size: 12, fill: hit ? "#C9F2D5" : P.dim });
-        out += `</g>`;
-      });
-    });
-    stage.set(out);
-    host.dataset.g6Done = String(done.size);
-  };
-  const count = noteLine("");
-  const go = bvBtn("main g2u6x-go", "결과 정리하기");
-  go.disabled = true;
-  const note = (): void => {
-    count.innerHTML = `넣어 본 칸 <b>${done.size} / 9</b><br>초록 칸은 영양소가 <b>분해된</b> 곳이고, 칸 안의 이름은 그 일을 한 소화효소예요.`;
-  };
-
-  onStageTap(stage, (key) => {
-    if (asking || !key.startsWith("c")) return;
-    const k = key.slice(1);
-    if (done.has(k)) return;
-    const [r, c] = k.split("-").map(Number);
-    const hit = CUT[r][c];
-    done.add(k);
-    last = k;
-    draw();
-    note();
-    const fd = FOODS[r].name;
-    const o = ORGANS[c];
-    if (hit) {
-      good();
-      const extra = r === 2 ? " 쓸개즙이 이 일을 도와요." : "";
-      if (c === 2 && r < 2) {
-        f.say(`이자액 속 <b>${hit.enz}</b>${r === 1 ? "이" : "가"} ${fd}을 분해하고, 작은창자에서 <b>${hit.out}</b>까지 분해돼요.`);
-      } else
-      f.say(`${o.juice} 속 <b>${hit.enz}</b>${hit.enz === "펩신" || hit.enz === "트립신" ? "이" : "가"} ${fd}을 <b>${hit.out}</b>${hit.out.endsWith("당") || hit.out.endsWith("산") ? "으로" : "로"} 분해했어요.${extra}`);
-    } else {
-      tap();
-      f.say(`${o.juice}은 ${fd}을 분해하지 못해요. ${fd}은 그대로예요.`);
-    }
-    if (done.size === 9) {
-      f.pips(1);
-      go.disabled = false;
-    }
-  });
-  go.addEventListener("click", () => {
-    if (asking) return;
-    asking = true;
-    tap();
-    last = "";
-    draw();
-    lab.judge("세 영양소가 <b>모두</b> 분해된 곳은?", [{ t: "작은창자", ok: true }, { t: "입" }, { t: "위" }], "이자액에는 세 영양소의 소화효소가 <b>모두</b> 들어 있어요.", () => {
-      f.pips(2);
-      lab.judge("위액 속 <b>펩신</b>이 분해한 영양소는?", [{ t: "단백질", ok: true }, { t: "녹말" }, { t: "지방" }], "소화효소마다 분해하는 영양소가 <b>정해져</b> 있어요.", () =>
-        lab.finish("소화효소는 <b>정해진 영양소</b>만 분해해요. 작은창자에서 녹말은 <b>포도당</b>, 단백질은 <b>아미노산</b>, 지방은 <b>지방산과 모노글리세라이드</b>가 돼요."),
-      );
-    });
-  });
-  f.slot.setControls(count, go);
-  note();
-  draw();
-  f.say("왼쪽의 영양소를 위쪽의 소화액에 넣어요. <b>칸을 눌러</b> 분해되는지 알아봐요.");
-  return lab.cleanup;
-};
-
-// ── 작은창자 안쪽 벽 ────────────────────────────────────────────────
-type Pt = [number, number];
-/** 벽의 윗선(왼쪽에서 오른쪽으로). level 0 매끈, 1 주름, 2 주름과 융털. */
-function wallLine(level: number): Pt[] {
-  const pts: Pt[] = [];
-  const x0 = 20;
-  const x1 = 326;
-  const base = 176;
-  const n = 300;
-  for (let i = 0; i <= n; i++) {
-    const u = i / n;
-    const x = x0 + (x1 - x0) * u;
-    let y = base;
-    if (level >= 1) y -= 44 * Math.pow(Math.sin(u * Math.PI * 4), 2); // 주름 네 개
-    if (level >= 2) y -= 13 * Math.pow(Math.abs(Math.sin(u * Math.PI * 26)), 0.7); // 융털
-    pts.push([x, y]);
-  }
-  return pts;
-}
-const lineLen = (p: Pt[]): number => p.slice(1).reduce((a, q, i) => a + Math.hypot(q[0] - p[i][0], q[1] - p[i][1]), 0);
-const WALLS = [0, 1, 2].map(wallLine);
-const LENS = WALLS.map(lineLen);
-const TOTAL = 20;
-/** 흡수된 수: 가장 넓은 벽이 20개를 모두 흡수한다고 놓고 벽 선의 길이에 비례하게 정한다. */
-export const VILLI_ABSORBED = LENS.map((l) => Math.round((TOTAL * l) / LENS[2]));
+// ── 작은창자 안쪽 벽(그림은 villiArt.ts, 2026-11-15 책의 그림 Ⅵ-5처럼 자세히 다시 그림) ──────────
+export { VILLI_ABSORBED };
 const WALL_NAMES = ["매끈한 벽", "주름진 벽", "주름과 융털"];
 
 export const g2u6VilliLab: StepRenderer = (host, step, api) => {
@@ -331,23 +196,26 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
   let busy = false;
 
   const draw = (): void => {
-    const w = WALLS[level];
-    const path = `M${w.map((p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" L")}`;
-    let out = `<path d="${path} L326 222 L20 222 Z" fill="#E7A0A6" stroke="#B45C68" stroke-width="2" stroke-linejoin="round"/>`;
-    out += txt(173, 212, "작은창자의 벽", { size: 12, fill: "#5A1E28" });
-    out += txt(24, 62, "작은창자 안", { anchor: "start", size: 12, fill: P.dim });
+    const wall = villiWall(level);
+    let out = wall.svg + villiWallLabels(level);
+    out += txt(16, 56, "작은창자 안", { anchor: "start", size: 12, fill: P.dim });
+    if (level === 2) out += villiInsetLink();
     const got = VILLI_ABSORBED[level];
-    for (let i = 0; i < TOTAL; i++) {
-      const sx = 30 + (i % 10) * 31 + (i >= 10 ? 15 : 0);
-      const sy = i >= 10 ? 96 : 78;
+    const tg = wall.targets;
+    for (let i = 0; i < VILLI_TOTAL; i++) {
+      const sx = 26 + (i % 10) * 20 + (i >= 10 ? 10 : 0);
+      const sy = i >= 10 ? 90 : 70;
       const absorbed = i < got;
-      // 흡수되는 것은 벽 선 위의 고르게 나눈 자리로, 나머지는 오른쪽으로 흘러 나간다.
-      const target = w[Math.round(((i + 0.5) / got) * (w.length - 1)) % w.length] ?? w[0];
-      if (run < 0) out += dot(sx, sy, 5, P.glucose, "#8A5A0A");
-      else if (absorbed) out += dot(sx + (target[0] - sx) * run, sy + (target[1] + 7 - sy) * run, 5, P.glucose, "#8A5A0A");
-      else out += `<g opacity="${(1 - run * 0.85).toFixed(2)}">${dot(sx + 70 * run, sy, 5, P.glucose, "#8A5A0A")}</g>`;
+      // 흡수되는 것은 벽에 고르게 나눈 자리(융털이 있으면 융털 끝)로, 나머지는 오른쪽으로 흘러 나간다.
+      const spread = [-3, 2, -1, 3, -2, 1][i % 6]; // 주름 꼭대기에만 모이지 않게 조금씩 비킨다
+      const target = tg[Math.max(0, Math.min(tg.length - 1, Math.floor(((i + 0.5) / got) * tg.length) + (level === 2 ? 0 : spread)))] ?? tg[0];
+      const tx = Math.max(9, target[0]);
+      if (run < 0) out += dot(sx, sy, 4.6, P.glucose, "#8A5A0A");
+      else if (absorbed) out += dot(sx + (tx - sx) * run, sy + (target[1] - sy) * run, 4.6, P.glucose, "#8A5A0A");
+      else out += `<g opacity="${(1 - run * 0.85).toFixed(2)}">${dot(sx + 70 * run, sy, 4.6, P.glucose, "#8A5A0A")}</g>`;
     }
-    out += `<g>${result.map((r, i) => tag([46, 130, 266][i], 30, `${["매끈", "주름", "주름과 융털"][i]} ${r === null ? "?" : `${r}개`}`, { size: 12, fill: i === level ? "#fff" : P.dim, stroke: i === level ? "#9CC2FF" : "#3A4D6E" })).join("")}</g>`;
+    if (level === 2) out += villiInset();
+    out += `<g>${result.map((r, i) => tag([46, 130, 266][i], 26, `${["매끈", "주름", "주름과 융털"][i]} ${r === null ? "?" : `${r}개`}`, { size: 12, fill: i === level ? "#fff" : P.dim, stroke: i === level ? "#9CC2FF" : "#3A4D6E" })).join("")}</g>`;
     stage.set(out);
     host.dataset.g6Level = String(level);
     host.dataset.g6Runs = String(result.filter((r) => r !== null).length);
@@ -361,7 +229,7 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
       run = -1;
       chips.forEach((c, j) => c.on(j === i));
       draw();
-      f.say(`<b>${n}</b>이에요. 영양소 20개를 흘려보내 몇 개가 흡수되는지 봐요.`);
+      f.say(`<b>${n}</b>이에요. 영양소 ${VILLI_TOTAL}개를 흘려보내 몇 개가 흡수되는지 봐요.`);
     }),
   );
   const flow = bvBtn("main g2u6x-flow-btn", "영양소 20개 흘려보내기");
@@ -391,7 +259,7 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
   sum.addEventListener("click", () => {
     if (busy) return;
     tap();
-    lab.judge("주름과 융털이 있을 때 <b>더 많이</b> 흡수된 까닭은?", [{ t: "영양소와 닿는 표면적이 넓어서", ok: true }, { t: "영양소의 크기가 더 작아져서" }, { t: "벽이 더 두꺼워져서" }], "같은 길이의 창자라도 벽이 구불구불할수록 <b>닿는 면</b>이 넓어요.", () =>
+    lab.judge("주름과 융털이 있을 때 <b>더 많이</b> 흡수된 까닭은?", [{ t: "영양소와 닿는 표면적이 넓어서", ok: true }, { t: "영양소의 크기가 더 작아져서" }, { t: "근육층이 더 두꺼워져서" }], "같은 길이의 창자라도 벽이 구불구불할수록 <b>닿는 면</b>이 넓어요.", () =>
       lab.finish("작은창자 안쪽 벽은 <b>주름과 융털</b> 덕분에 영양소와 닿는 <b>표면적</b>이 매우 넓어요. 그래서 영양소를 효율적으로 흡수해요."),
     );
   });

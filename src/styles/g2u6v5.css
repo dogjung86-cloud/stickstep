@@ -68,6 +68,24 @@
   content: ""; position: absolute; right: 5px; top: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--subj-body);
 }
 .g2u6x-chipbtn.miss { border-color: var(--red); animation: g2u6xShake .4s ease-in-out 1; }
+/* 소화기관 랩(organLab): 고른 것과 실제를 견준 표시. 초록은 맞음, 빨강은 틀림 한 가지 뜻. 점선은 골랐어야 하는데 빠뜨린 것.
+   ro는 견준 뒤 누를 수 없는 상태(disabled로 잠그면 흐려져 표시까지 흐려진다). */
+.g2u6x-chipbtn.hit { border-color: var(--green); background: #EFFBF4; box-shadow: 0 0 0 1px var(--green) inset; }
+.g2u6x-chipbtn.hit i { color: var(--green-press); }
+.g2u6x-chipbtn.miss { background: #FFF2F3; box-shadow: 0 0 0 1px var(--red) inset; }
+.g2u6x-chipbtn.miss i { color: var(--red-press); }
+.g2u6x-chipbtn.lack { border: 1.5px dashed var(--red); }
+.g2u6x-chipbtn.lack i { color: var(--red-press); }
+.g2u6x-chipbtn.ro { pointer-events: none; }
+/* 고르는 중(아직 견주기 전)은 파랑. 단원 색(분홍, 빨강 계열)으로 두면 틀린 것처럼 보였다(2026-11-15 눈검수). */
+.g2u6x-chipbtn.pk.on { border-color: var(--blue); background: var(--blue-tint); box-shadow: 0 0 0 1px var(--blue) inset; }
+.g2u6x-chipbtn.pk.on i { color: var(--blue-press); }
+.g2u6x-mk { position: absolute; right: 5px; top: 5px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+.g2u6x-chipbtn.hit .g2u6x-mk { background: var(--green); }
+.g2u6x-chipbtn.miss .g2u6x-mk { background: var(--red); }
+.g2u6x-mk svg { display: block; width: 10px; height: 10px; }
+.g2u6x-note .g2u6x-dim { color: var(--n500); font-weight: 600; }
+.g2u6x-note .g2u6x-sep { color: var(--n400); }
 
 /* ══ 도입 장면 ═══════════════════════════════════════ */
 .opn-g2u6-btn {
