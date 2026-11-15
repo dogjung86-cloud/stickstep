@@ -66,38 +66,95 @@ function cutU6l1() {
   return sk;
 }
 
-/* ---------- u6l2: 시소, 한쪽이 내려가면 다른 쪽이 올라간다 ---------- */
+/* ---------- u6l2: 피자 한 판을 둘이 나누면 반쪽, 넷이 나누면 4분의 1쪽(반비례) ---------- */
+// 시소(한쪽이 내려간 만큼 다른 쪽이 올라감)는 합이 일정한 관계라 반비례가 아니다(감사 2026-11-15). 곱이 일정한 장면으로 바꿨다:
+// 나누는 사람이 2명에서 4명(2배)이 되면 한 사람의 조각은 반쪽에서 4분의 1쪽(2분의 1)이 된다. 사람 수 × 조각 = 피자 한 판.
+// 위에는 같은 크기의 피자 한 판이 2조각, 4조각으로 나뉜 모습(위에서 본 모습), 아래에는 같은 크기의 접시에 받은 조각을 든 사람들.
+const KID_A = { hair: "bob", hairColor: "#8A5A33", seed: 141 };
+const KID_B = { hair: "short", hairColor: "#3F3A36", seed: 151 };
+// 위에서 본 피자 조각(가운데 cx, cy, 반지름 r, a0~a1 부채꼴). 크러스트, 치즈, 페퍼로니, 허브
+function pizzaPiece(sk, cx, cy, r, a0, a1, sd, o = {}) {
+  const sy = o.sy ?? 1; // 1이면 위에서 본 모습, 1보다 작으면 비스듬히 본 모습
+  const P = (a, k) => [cx + r * k * Math.cos(a), cy + r * k * Math.sin(a) * sy];
+  const n = Math.max(6, Math.ceil(((a1 - a0) * r) / 10));
+  const rim = [];
+  for (let i = 0; i <= n; i++) rim.push(P(a0 + ((a1 - a0) * i) / n, 1));
+  const shape = [[cx, cy], ...rim, [cx, cy]];
+  sk.fill(shape, "#E7A957", { dx: 0, dy: 0, wob: 0.3, seed: sd, tex: 0.7 });
+  const inner = [];
+  for (let i = 0; i <= n; i++) inner.push(P(a0 + ((a1 - a0) * i) / n, 0.84));
+  sk.fill([[cx, cy], ...inner, [cx, cy]], "#FBCB4C", { dx: 0, dy: 0, wob: 0.3, seed: sd + 1, tex: 0.6 });
+  // 페퍼로니와 허브: 조각 안의 고정된 자리
+  const tops = o.tops ?? [];
+  for (const [t, k, i] of tops.map((v, j) => [...v, j])) {
+    const a = a0 + (a1 - a0) * t;
+    const [x, y] = P(a, k);
+    const pr = r * 0.13;
+    const pe = ell(x, y, pr, pr * sy);
+    sk.fill(pe, "#D9533B", { dx: 0, dy: 0, wob: 0.2, seed: sd + 5 + i });
+    sk.ink(pe, { w: 3.5, color: "#A33A26", seed: sd + 20 + i, wob: 0.2 });
+  }
+  for (const [t, k, i] of (o.herbs ?? []).map((v, j) => [...v, j])) {
+    const a = a0 + (a1 - a0) * t;
+    const [x, y] = P(a, k);
+    sk.ink(dense([[x - 5, y], [x + 5, y - 2 * sy]]), { w: 5, color: "#4F9A47", seed: sd + 40 + i, wob: 0.2 });
+  }
+  sk.ink(shape, { w: o.w ?? 7, seed: sd + 60, wob: 0.4 });
+}
+// 위에서 본 피자 한 판을 n조각으로 나눠 조금씩 벌려 놓는다(나무 판 위)
+function wholePizza(sk, cx, cy, r, n, sd) {
+  const board = circ(cx, cy, r + 22, { over: 0.1, seed: sd });
+  sk.fill(board, "#C99A62", { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd + 1, tex: 0.8 });
+  sk.ink(board, { w: 8, seed: sd + 2, wob: 0.3 });
+  const gap = 9;
+  for (let i = 0; i < n; i++) {
+    const a0 = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+    const a1 = a0 + (2 * Math.PI) / n;
+    const am = (a0 + a1) / 2;
+    const tops = n === 2 ? [[0.2, 0.55], [0.5, 0.35], [0.8, 0.6], [0.45, 0.72]] : [[0.3, 0.55], [0.7, 0.6]];
+    const herbs = n === 2 ? [[0.32, 0.3], [0.65, 0.5], [0.15, 0.78]] : [[0.5, 0.35], [0.2, 0.78]];
+    pizzaPiece(sk, cx + gap * Math.cos(am), cy + gap * Math.sin(am), r, a0, a1, sd + 10 + i * 70, { tops, herbs, w: 7 });
+  }
+}
+// 받은 조각을 두 손으로 앞에 들어 보이는 사람. 조각은 위에서 본 모습 그대로(반지름이 같아 반쪽과 4분의 1쪽의 크기를 바로 비교한다)
+const PR = 56;
+function holder(sk, x, gy, s, who, kind, sd) {
+  const cy = kind === "half" ? gy - 72 : gy - 66; // 반쪽: 곧은 변의 가운데, 4분의 1쪽: 뾰족한 끝
+  const hands = kind === "half" ? [[x - PR + 4, cy - 4], [x + PR - 4, cy - 4]] : [[x - PR * 0.68, cy - PR * 0.62], [x + PR * 0.68, cy - PR * 0.62]];
+  const L = (p) => [(p[0] - x) / s, (p[1] - gy) / s];
+  const P = pose({ elL: [-86, -232], haL: L(hands[0]), elR: [86, -232], haR: L(hands[1]), tilt: 0 });
+  drawFigure(sk, x, gy, s, P, { ...who, hands: false });
+  const tops = kind === "half" ? [[0.2, 0.55], [0.5, 0.35], [0.8, 0.6], [0.45, 0.72]] : [[0.3, 0.55], [0.7, 0.6]];
+  const herbs = kind === "half" ? [[0.32, 0.3], [0.65, 0.5], [0.15, 0.78]] : [[0.5, 0.35], [0.2, 0.78]];
+  if (kind === "half") pizzaPiece(sk, x, cy, PR, Math.PI, 2 * Math.PI, sd, { tops, herbs, w: 6 });
+  else pizzaPiece(sk, x, cy, PR, (-3 * Math.PI) / 4, -Math.PI / 4, sd, { tops, herbs, w: 6 });
+  for (const [i, h] of hands.entries()) handDot(sk, h, C.skin, sd + 90 + i * 2, 11);
+}
 function cutU6l2() {
   const sk = new Sk(W, H, { id: "b" });
-  const GY = 672, PV = [480, 552], th = 0.27, HL = 330, T = 24;
-  const u = [Math.cos(th), -Math.sin(th)], n = [Math.sin(th), Math.cos(th)]; // 판 방향(오른쪽 위), 판 아래쪽
-  const at = (d, off = 0) => [PV[0] + u[0] * d + n[0] * off, PV[1] + u[1] * d + n[1] * off];
-  ground(sk, GY, 11);
-  // 받침
-  thin(sk, 0.78, () => {
-    const base = poly([[PV[0] - 70, GY], [PV[0] + 70, GY], [PV[0], PV[1] + 8]], 4);
-    sk.fill(base, "#3F7CC0", { seed: 21, tex: 0.7, dx: 0.6, dy: 0.8 }); sk.ink(base, { w: 12, seed: 22 });
-    // 판
-    const plank = poly([at(-HL), at(HL), at(HL, T), at(-HL, T)], 4);
-    sk.fill(plank, "#E9A93C", { seed: 23, tex: true, texAng: -th });
-    sk.ink(plank, { w: 12, seed: 24 });
-    const pin = circ(PV[0], PV[1] + 12, 10, { over: 0.1, seed: 25 }); sk.fill(pin, "#8A9099", { dx: 0, dy: 0, wob: 0.2, seed: 26 }); sk.ink(pin, { w: 7, seed: 27 });
+  const P0 = [16, 472], P1 = [488, 944], PT = 16, PB = 704, GY = 684;
+  [P0, P1].forEach(([a, b], i) => {
+    const r = rrect(a, PT, b - a, PB - PT, 22);
+    sk.fill(r, "#FFF6E9", { dx: 0, dy: 0, wob: 0.3, seed: 11 + i });
+    thin(sk, 0.6, () => sk.ink(r, { w: 9, seed: 13 + i, color: "#E3D6C2" }));
   });
-  // 쌤: 낮아진 왼쪽 끝에 앉아 발을 땅에 댄다(오른쪽을 본다)
-  const ts = 0.72, seatT = at(-250), hipT = [seatT[0], seatT[1] - 12];
-  const PT = pose(local(hipT[0], GY, ts, { hip: hipT, neck: [hipT[0] + 6, hipT[1] - 94], head: [hipT[0] + 12, hipT[1] - 162],
-    knL: [hipT[0] + 62, hipT[1] - 8], ftL: [hipT[0] + 70, GY], knR: [hipT[0] + 68, hipT[1] - 14], ftR: [hipT[0] + 86, GY],
-    elL: [hipT[0] + 28, hipT[1] - 48], haL: [hipT[0] + 58, hipT[1] - 22], elR: [hipT[0] + 34, hipT[1] - 44], haR: [hipT[0] + 66, hipT[1] - 18], tilt: 0.04 }));
-  drawFigure(sk, hipT[0], GY, ts, PT, { ...TEACHER, name: "teacher", coat: { ...TEACHER.coat, len: 18 } });
-  // 아이: 올라간 오른쪽 끝에서 다리를 늘어뜨리고, 한 손은 번쩍(왼쪽을 본다)
-  const ks = 0.72, seatK = at(250), hipK = [seatK[0], seatK[1] - 12], gK = at(300);
-  const PK = pose(local(hipK[0], GY, ks, { hip: hipK, neck: [hipK[0] - 6, hipK[1] - 94], head: [hipK[0] - 12, hipK[1] - 162],
-    knL: [hipK[0] - 54, hipK[1] + 2], ftL: [hipK[0] - 60, hipK[1] + 78], knR: [hipK[0] - 48, hipK[1] - 4], ftR: [hipK[0] - 46, hipK[1] + 72],
-    elL: [hipK[0] + 34, hipK[1] - 50], haL: [gK[0], gK[1] - 6], elR: [hipK[0] + 92, hipK[1] - 128], haR: [hipK[0] + 128, hipK[1] - 208], tilt: -0.06 }));
-  drawFigure(sk, hipK[0], GY, ks, PK, { ...STUDENT, name: "student", mirror: false, flip: -1 });
-  // 내려간 만큼 올라간다(같은 길이의 청록 화살표)
-  arrow(sk, [[118, PV[1] - 36], [118, PV[1] + 50]], { w: 9, color: C.teal, straight: true, seed: 41, head: 24, wob: 0.2 });
-  arrow(sk, [[858, PV[1] + 4], [858, PV[1] - 82]], { w: 9, color: C.teal, straight: true, seed: 42, head: 24, wob: 0.2 });
+  // 위: 같은 크기의 피자 한 판(왼쪽 2조각, 오른쪽 4조각)
+  thin(sk, 0.85, () => {
+    wholePizza(sk, 244, 196, 100, 2, 21);
+    wholePizza(sk, 716, 196, 100, 4, 221);
+  });
+  // 가운데: 나누는 사람이 늘어나는 쪽으로
+  arrow(sk, [[446, 196], [514, 196]], { w: 9, color: C.teal, straight: true, seed: 71, head: 22, wob: 0.2 });
+  // 아래: 왼쪽은 둘이 반쪽씩, 오른쪽은 넷이 4분의 1쪽씩
+  ground(sk, GY, 43, 36, 452);
+  ground(sk, GY, 73, 508, 924);
+  const s = 0.48;
+  holder(sk, 150, GY, s, { ...TEACHER, name: "teacher" }, "half", 301);
+  holder(sk, 338, GY, s, { ...STUDENT, name: "student" }, "half", 341);
+  holder(sk, 550, GY, s, { ...TEACHER }, "quarter", 381);
+  holder(sk, 660, GY, s, { ...STUDENT }, "quarter", 421);
+  holder(sk, 770, GY, s, KID_A, "quarter", 461);
+  holder(sk, 880, GY, s, KID_B, "quarter", 501);
   return sk;
 }
 
@@ -253,7 +310,7 @@ function cutU6l4() {
 export function cuts() {
   return [
     { name: "u6l1", theme: "gas6", orig: null, sk: cutU6l1(), alt: "눈밭에서 운동화를 신은 아이는 무릎까지 빠져 있고, 넓적한 눈신발을 신은 쌤은 눈 위에 서서 손을 내미는 장면", cap: "같은 눈인데 누구는 푹, 누구는 사뿐. 닿는 넓이가 달라서예요" },
-    { name: "u6l2", theme: "gas6", orig: null, sk: cutU6l2(), alt: "시소의 한쪽에 앉은 쌤이 내려가자 반대쪽의 아이가 그만큼 올라가는 장면", cap: "한쪽이 내려가면 다른 쪽은 올라가요" },
+    { name: "u6l2", theme: "gas6", orig: null, sk: cutU6l2(), alt: "같은 크기의 피자 한 판을 왼쪽에서는 쌤과 아이 둘이 반쪽씩, 오른쪽에서는 넷이 4분의 1쪽씩 나눠 든 장면", cap: "피자 한 판을 둘이 나누면 반쪽, 넷이 나누면 4분의 1쪽이에요" },
     { name: "u6l3", theme: "gas6", orig: null, sk: cutU6l3(), alt: "산꼭대기에서 배낭을 연 아이가 빵빵해진 과자 봉지를 꺼내 들고 놀라는 장면, 산 아래에 작은 마을", cap: "산꼭대기에서 과자 봉지가 빵빵해졌어요" },
     { name: "u6l4", theme: "gas6", orig: null, sk: cutU6l4(), alt: "겨울 운동장에서 찌그러진 축구공을 든 아이와, 난로 옆에서 다시 탱탱해진 공을 든 쌤", cap: "찬 바깥에선 쭈글, 따뜻한 난로 옆에선 탱탱" },
   ];
