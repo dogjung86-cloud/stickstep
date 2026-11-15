@@ -3,7 +3,8 @@
 //   누르는 곳이 48px 이상인지, 잘린 글과 작은 글자가 없는지, 페이지 오류가 없는지, 끝 버튼으로 다음 스텝이 열리는지 본다.
 //   랩의 첫 판정에서는 한 번 틀려 본다(틀림 표시, 정답 카드, '다음'). 실험 랩에서는 실패하는 길도 한 번 간다.
 //   새로 쓴 선택형 문제는 정답을 눌러 정답으로 채점되는지 본다. 그 길에서 모은 화면 글에 대시, '교과서', 이모지가 없는지도 본다.
-//   끝으로 토글을 끈 채 첫 레슨이 지금 화면(훅)으로 열리는지 본다.
+//   랩 무대의 그림(2026-11-15 다시 그림)은 시점마다 무대 SVG 안의 url(#id) 참조(그라데이션, 자르기)가 같은 무대 안에 있는지 본다
+//   (id가 다른 화면의 것을 잡으면 색이 빠진다). 정본이 v5가 되어 예전의 토글 검사(토글을 끈 첫 레슨)는 뺐다.
 // 실행: PORT=5585 node qa/check-g2u5v5.mjs [캡처 폴더]     ONLY=g2u5l2 를 붙이면 그 레슨만 돈다.
 //       DIST=<개발 모드 번들 폴더> node qa/check-g2u5v5.mjs  (번들 만드는 법은 qa/u4v5-lib.mjs 머리말. 이때 문제 채점 검사는 건너뛴다)
 import { mkdirSync } from "node:fs";
@@ -25,8 +26,8 @@ const texts = [];
 let quizzes = 0;
 let shots = 0;
 
-async function open(id, v5 = true) {
-  await page.goto(`${L.BASE}/?g2u5v5${v5 ? "" : "=0"}&open=${id}`, { waitUntil: "domcontentloaded" });
+async function open(id) {
+  await page.goto(`${L.BASE}/?open=${id}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => {
     const s = document.querySelector(".screen.active .step");
     return !!s && (!s.classList.contains("opn-step") || (s.dataset.opnPhase && s.dataset.opnPhase !== "load"));
@@ -54,6 +55,20 @@ async function at(id, mark, shot = true) {
   ok(m.cut.length === 0, `${id} ${mark}: 잘린 글 ${m.cut.join(" | ")}`);
   ok(m.small.length === 0, `${id} ${mark}: 작은 글자 ${m.small.map((s) => s.t + ":" + s.px).join(", ")}`);
   ok(!m.helperOver, `${id} ${mark}: 도움말이 두 줄을 넘음`);
+  const miss = await page.evaluate(() => {
+    const svg = document.querySelector(".screen.active .g2u5x-step .bv-stage > svg");
+    if (!svg) return [];
+    const out = [];
+    svg.querySelectorAll("[fill^='url(#'], [stroke^='url(#'], [clip-path^='url(#']").forEach((e) => {
+      ["fill", "stroke", "clip-path"].forEach((a) => {
+        const v = e.getAttribute(a);
+        const mm = v && v.match(/^url\(#([^)]+)\)/);
+        if (mm && !svg.querySelector(`[id="${mm[1]}"]`)) out.push(mm[1]);
+      });
+    });
+    return [...new Set(out)];
+  });
+  ok(miss.length === 0, `${id} ${mark}: 무대 밖을 가리키는 그림 참조 ${miss.slice(0, 4).join(", ")}`);
   texts.push(m.text);
   if (shot) {
     shots += 1;
@@ -453,13 +468,6 @@ ok(!/교과서/.test(all), "화면 글에 '교과서'가 있음");
 ok(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(all), "화면 글에 이모지가 있음: " + (all.match(/.{0,8}[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}].{0,8}/u)?.[0] ?? ""));
 ok(!/ - /.test(all), "화면 글에 삽입구용 하이픈이 있음: " + (all.match(/.{0,12} - .{0,12}/)?.[0] ?? ""));
 
-// 토글을 끈 화면
-if (!ONLY || ONLY === "off") {
-  await open("g2u5l2", false);
-  const k = await kind();
-  ok(k === "hook", `토글을 끈 첫 레슨이 지금 화면(훅)으로 열리지 않음: ${k}`);
-  await page.screenshot({ path: join(OUT, "off-g2u5l2.png") });
-}
 ok(errors.length === 0, "페이지 오류: " + errors.slice(0, 5).join(" | "));
 console.log(`\n문제 ${quizzes}개 채점 확인. 통과 ${pass}, 실패 ${fail}`);
 await browser.close();

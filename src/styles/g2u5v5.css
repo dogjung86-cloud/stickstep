@@ -49,6 +49,13 @@
 .g2u5x-shake { animation: g2u5xShake .4s ease-in-out 2; }
 @keyframes g2u5xShake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 .g2u5x-ray { animation: g2u5xFlow 1.4s ease-in-out infinite; }
+/* 입자가 들어오고 나가는 흐름(2026-11-15 그림 다시 그리기): 입자를 감싼 g에 --dx, --dy(어긋난 거리)를 준다.
+   들어오는 것은 어긋난 자리에서 제자리로, .out은 제자리에서 어긋난 자리로 간다. 움직임 줄이기면 제자리에 멈춰 보인다. */
+.g2u5x-mv { animation: g2u5xMv 1.8s linear infinite; }
+.g2u5x-mv.out { animation-name: g2u5xMvOut; }
+@keyframes g2u5xMv { 0% { transform: translate(var(--dx), var(--dy)); opacity: 0; } 20%, 75% { opacity: 1; } 100% { transform: translate(0, 0); opacity: 0; } }
+@keyframes g2u5xMvOut { 0% { transform: translate(0, 0); opacity: 0; } 20%, 75% { opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .g2u5x-mv { animation: none !important; } }
 
 /* ── 조작 부품 ────────────────────────────────────── */
 .g2u5x-row { display: grid; gap: 8px; }
