@@ -2022,8 +2022,10 @@ export function geoPressFig(o: { mode: "candidates" | "pair" }): string {
 
 /** 판의 구조 단면 시험판. 이름(대륙 지각, 해양 지각, 맨틀의 윗부분, 판)을 ㉠~㉣로 감춘다(라벨 인쇄판은
  *  이름·두께 문항 정답 유출, geoCycleQuizFig 계보). ㉠ 대륙 지각, ㉡ 해양 지각, ㉢ 판에 든 맨틀의 윗부분,
- *  ㉣ 판(양쪽 묶음 표시에 같은 기호). 세로는 레슨 그림 g2u2l9f1처럼 실제 비율(깊이 1 km = 1 px, 가로는 줄임):
- *  바다 4 km, 해양 지각 5 km(바닥 9 km), 대륙 지각 35 km(산 아래 뿌리 55 km). 판의 아랫면(점선)은 대륙 쪽
+ *  ㉣ 판(대륙 쪽 묶음 표시 하나). 바다 쪽 판의 두께는 점선이 보인다. 바다 쪽에도 ㉡을 감싸는 묶음을 달면
+ *  e343(판에 드는 것을 ㉠~㉢에서 고르기)의 답이 그림에 드러나서 달지 않는다.
+ *  세로는 레슨 그림 g2u2l9f1처럼 실제 비율(깊이 1 km = 1 px, 가로는 줄임): 바다 4 km, 해양 지각 5 km(바닥 9 km),
+ *  대륙 지각 35 km(산 아래 뿌리 55 km, 그 위 윗면에 산맥. 윗면의 산 높이만 과장). 판의 아랫면(점선)은 대륙 쪽
  *  140 km, 바다 쪽 100 km이고 대륙 가장자리 아래에서 매끈하게 이어진다(대륙 지각을 포함한 판이 더 두껍다).
  *  판 아래의 맨틀도 고체라 흐르는 무늬를 넣지 않는다. */
 export function geoPlateQuizFig(): string {
@@ -2058,11 +2060,13 @@ export function geoPlateQuizFig(): string {
   const coast = `C${COAST + 6} ${Y - 4} ${COAST + 2} ${Y - 9} ${COAST + 10} ${Y - 11} S${COAST + 18} ${Y - 13} ${COAST + 20} ${Y - 14}`;
   const lTop = surf(L);
   const lMid = Math.round((lTop + Y + 140) / 2);
-  const rMid = Math.round((Y + sea(R) + Y + 100) / 2);
-  return `<svg viewBox="0 0 344 ${BOTTOM + 26}" ${NS} fill="none" role="img" aria-label="땅의 단면 그림. 왼쪽 뭍과 오른쪽 바다 밑의 겉껍질 층, 그 아래 층이 있고, 그 아래 층을 가로지르는 점선과 양쪽에 위쪽 구간을 묶은 표시, 동그라미 기호 네 개가 붙어 있어요. 세로는 실제 비율로 그렸어요">
+  return `<svg viewBox="0 0 344 ${BOTTOM + 26}" ${NS} fill="none" role="img" aria-label="땅의 단면 그림. 왼쪽 뭍과 오른쪽 바다 밑의 겉껍질 층, 그 아래 층이 있고, 그 아래 층을 가로지르는 점선과 왼쪽에 위쪽 구간을 묶은 표시, 동그라미 기호 네 개가 붙어 있어요. 세로는 실제 비율로 그렸어요">
     <path d="M${L} ${Y} L${COAST} ${Y} ${coast} L${L + 12} ${Y - 14} Z" fill="#9BCB7A"/>
     <path d="M${COAST} ${Y} ${coast} L${R + 12} ${Y - 14} L${R} ${Y} Z" fill="#A9D8F5"/>
-    <path d="M74 53 q4 -3 8 0 M112 49 q4 -3 8 0 M138 55 q4 -3 8 0" stroke="#5E9A3E" stroke-width="1.4"/>
+    <path d="M88 56 L99 41 L111 56 Z" fill="#8E969E"/><path d="M99 41 L111 56 L103 56 Z" fill="#737B83"/><path d="M95 46.5 L99 41 L103 46.5 L100.5 45 L99 46.8 L97.2 45 Z" fill="#F4F6F8"/>
+    <path d="M74 58 L84 46 L94 58 Z" fill="#9AA2A9"/><path d="M84 46 L94 58 L88 58 Z" fill="#7D858C"/><path d="M80.8 50 L84 46 L87.2 50 L85 48.8 L84 50.2 L82.6 48.8 Z" fill="#F4F6F8"/>
+    <path d="M104 58 L113 48 L122 58 Z" fill="#9AA2A9"/><path d="M113 48 L122 58 L116 58 Z" fill="#7D858C"/>
+    <path d="M58 54 q4 -3 8 0 M134 51 q4 -3 8 0 M146 57 q4 -3 8 0" stroke="#5E9A3E" stroke-width="1.4"/>
     <path d="M214 53 q6 -2.5 12 0 M246 56 q6 -2.5 12 0 M268 50 q6 -2.5 12 0" stroke="#E3F3FD" stroke-width="1.4"/>
     <path d="M${L} ${Y} L${L + 12} ${Y - 14} L${R + 12} ${Y - 14} L${R} ${Y}" stroke="#4E4432" stroke-width="1.2"/>
     <rect x="${L}" y="${Y}" width="${R - L}" height="${BOTTOM - Y}" fill="#EF9A63"/>
@@ -2082,8 +2086,6 @@ export function geoPlateQuizFig(): string {
     ${tag(164, 140, "㉢")}
     <path d="${brace(38, lTop, Y + 140, -1)}" stroke="#4E5968" stroke-width="1.8"/>
     ${tag(14, lMid, "㉣")}
-    <path d="${brace(300, Y + sea(R), Y + 100, 1)}" stroke="#4E5968" stroke-width="1.8"/>
-    ${tag(324, rMid, "㉣")}
     <text x="${(L + R) / 2}" y="${BOTTOM + 18}" text-anchor="middle" font-size="13" font-weight="700" fill="#6B7684">세로만 실제 비율(가로는 줄임)</text>
   </svg>`;
 }
