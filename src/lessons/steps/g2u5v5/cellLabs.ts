@@ -4,71 +4,25 @@
 //   책의 그림(상추와 검정말의 잎세포를 현미경으로 본 모습)을 손으로 한다. 학생이 정하는 것: 현미경에 올릴 표본.
 //   초록색인 검정말 잎과 상추 잎의 세포에는 초록 알갱이가 가득하고, 초록색이 아닌 양파 속껍질의 세포에는 없다(견줄 대상).
 //   판정: 초록 알갱이가 보인 표본. 결론: 초록색 부분의 세포에는 엽록체가 있고 광합성은 여기서 일어난다.
+//   그림(2026-11-15 다시 그림): 시야는 책의 사진처럼 세포벽, 벽을 따라 늘어선 엽록체, 눈금 막대(40 μm, 세 표본 같은 배율)를 그린다. 처음에는 광학 현미경.
 //
 // g2u5SupplyLab 「무엇이 다 있어야 양분이 만들어질까요?」
 //   책의 광합성 과정 그림을 손으로 움직인다. 학생이 정하는 것: 빛, 이산화 탄소, 물을 주고 끊는 일.
 //   실패하는 길: 셋 가운데 하나라도 없으면 포도당과 산소가 생기지 않는다(무엇이 없는지 무대에 뜬다).
 //   판정: 광합성으로 만들어진 것. 결론: 빛에너지로 이산화 탄소와 물을 써서 포도당과 산소를 만든다.
+//   그림(2026-11-15 다시 그림): 왼쪽은 흙에 뿌리를 내린 식물(물은 뿌리털에서 줄기의 물관을 따라 잎으로), 오른쪽 원은 잎의 한 점을 크게 본
+//   잎세포 속 엽록체(두 겹 막, 그라나). 예전 그림은 잎만 한 타원을 엽록체라 불러 크기가 맞지 않았다.
 
 import type { StepRenderer } from "../../types";
-import { P, arrow, bad, bvBtn, chip, g5Lab, g5Svg, gasDot, good, row, tag, tap, txt, type G5Step } from "./kit";
+import { P, bad, bvBtn, chip, g5Lab, good, row, tag, tap, txt, type G5Step } from "./kit";
+import { beam, f1, g5Layers, glucose, label, leafBlade, memo, mol, newNs, particleDefs, plantDefs, rng, rootStrand, sun, sunDefs, type Pt } from "./art";
+import { chloroplast, elodeaField, lettuceField, microDefs, microscope, onionField, scopeOverlay } from "./microArt";
 
 // ── 현미경 관찰 ─────────────────────────────────────────────────────
-const rnd = (n: number): number => {
-  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
-  return x - Math.floor(x);
-};
 const CX = 112;
 const CY = 118;
 const R = 92;
-
-function cellsOf(kind: "elodea" | "lettuce" | "onion"): string {
-  let out = "";
-  if (kind === "elodea") {
-    // 검정말: 벽돌처럼 늘어선 긴 네모 세포, 벽을 따라 초록 알갱이
-    for (let r = 0; r < 9; r++) {
-      for (let c = -1; c < 6; c++) {
-        const x = CX - R + c * 46 + (r % 2) * 23 - 6;
-        const y = CY - R + r * 24 - 8;
-        out += `<rect x="${x}" y="${y}" width="46" height="24" fill="#E3F4D8" stroke="#5C9A52" stroke-width="1.6"/>`;
-        for (let k = 0; k < 7; k++) {
-          const s = r * 31 + c * 7 + k;
-          const side = k % 4;
-          const t = 0.15 + rnd(s) * 0.7;
-          const gx = side < 2 ? x + 6 + t * 34 : side === 2 ? x + 7 : x + 39;
-          const gy = side === 0 ? y + 6 : side === 1 ? y + 18 : y + 6 + t * 12;
-          out += `<ellipse cx="${gx.toFixed(1)}" cy="${gy.toFixed(1)}" rx="4" ry="2.9" fill="#2E9E48" stroke="#1F6B3A" stroke-width=".7" transform="rotate(${Math.round(rnd(s + 9) * 90 - 45)} ${gx.toFixed(1)} ${gy.toFixed(1)})"/>`;
-        }
-      }
-    }
-  } else if (kind === "lettuce") {
-    // 상추: 둥글둥글한 세포가 빽빽하고 초록 알갱이가 흩어져 있다
-    for (let r = 0; r < 7; r++) {
-      for (let c = -1; c < 7; c++) {
-        const x = CX - R + c * 33 + (r % 2) * 16.5;
-        const y = CY - R + r * 29 + 4;
-        out += `<ellipse cx="${x}" cy="${y}" rx="17.5" ry="15.5" fill="#E8F6DF" stroke="#6AA85E" stroke-width="1.5"/>`;
-        for (let k = 0; k < 6; k++) {
-          const s = r * 53 + c * 11 + k;
-          const a = rnd(s) * Math.PI * 2;
-          const d = 4 + rnd(s + 3) * 8;
-          out += `<circle cx="${(x + Math.cos(a) * d).toFixed(1)}" cy="${(y + Math.sin(a) * d * 0.85).toFixed(1)}" r="3" fill="#34A853" stroke="#1F6B3A" stroke-width=".7"/>`;
-        }
-      }
-    }
-  } else {
-    // 양파 속껍질: 길쭉한 세포마다 핵 하나, 초록 알갱이는 없다
-    for (let r = 0; r < 9; r++) {
-      for (let c = -1; c < 4; c++) {
-        const x = CX - R + c * 66 + (r % 2) * 33 - 8;
-        const y = CY - R + r * 23 - 6;
-        out += `<rect x="${x}" y="${y}" width="66" height="23" rx="5" fill="#FAF3F0" stroke="#B79C94" stroke-width="1.5"/>`;
-        out += `<circle cx="${x + 18 + rnd(r * 17 + c) * 30}" cy="${y + 11.5}" r="3.6" fill="#D9BDB3" stroke="#A88478" stroke-width=".8"/>`;
-      }
-    }
-  }
-  return out;
-}
+const BOX: [number, number, number, number] = [CX - R, CY - R, CX + R, CY + R];
 
 const SPEC = {
   elodea: { name: "검정말 잎", color: "초록색", grains: "가득", say: "검정말 잎의 세포예요. 세포마다 <b>초록 알갱이</b>가 가득해요." },
@@ -81,22 +35,28 @@ export const g2u5ScopeLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
   const lab = g5Lab(host, api, s, { steps: 2, cls: "g2u5x-scope", wait: "세 표본을 관찰해 보세요" });
   const { f } = lab;
-  const stage = g5Svg(lab, "현미경으로 본 표본의 세포");
+  const A = newNs("sc");
+  const st = g5Layers(lab, "현미경으로 본 표본의 세포", ["defs", "view", "frame", "info"]);
+  const fields = memo<string>();
   const seen = new Set<SpecKey>();
   let now: SpecKey | null = null;
+  st.set("defs", `<defs>${microDefs(A)}<clipPath id="${A}clip"><circle cx="${CX}" cy="${CY}" r="${R}"/></clipPath><radialGradient id="${A}dark" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#23365A"/><stop offset="1" stop-color="#121E33"/></radialGradient></defs>`);
+  st.set(
+    "frame",
+    // 접안렌즈의 테(검은 띠와 금속 테, 위쪽의 빛 반사)
+    `<circle cx="${CX}" cy="${CY}" r="${R + 2}" fill="none" stroke="#070D18" stroke-width="7"/><circle cx="${CX}" cy="${CY}" r="${R + 6}" fill="none" stroke="#46587A" stroke-width="2.4"/>` +
+      `<path d="M${f1(CX - (R + 6) * Math.cos(0.5))} ${f1(CY - (R + 6) * Math.sin(0.5))} A${R + 6} ${R + 6} 0 0 1 ${f1(CX + (R + 6) * Math.cos(1.2))} ${f1(CY - (R + 6) * Math.sin(1.2))}" fill="none" stroke="#9DB3D6" stroke-width="1.4" opacity=".7"/>`,
+  );
 
   const draw = (): void => {
     const sp = now ? SPEC[now] : null;
-    const view = now
-      ? `<g clip-path="url(#g2u5xScope)"><rect x="${CX - R}" y="${CY - R}" width="${R * 2}" height="${R * 2}" fill="#F4F8EE"/><g class="g2u5x-focus">${cellsOf(now)}</g></g>`
-      : `<circle cx="${CX}" cy="${CY}" r="${R}" fill="#1A2942"/>${txt(CX, CY - 4, "표본을 골라", { size: 13 })}${txt(CX, CY + 14, "현미경에 올려요", { size: 13 })}`;
+    if (now) {
+      const k = now;
+      const field = fields(k, () => (k === "elodea" ? elodeaField(A, BOX) : k === "lettuce" ? lettuceField(A, BOX) : onionField(A, BOX)));
+      st.set("view", `<g clip-path="url(#${A}clip)"><g class="g2u5x-focus">${field}</g>${scopeOverlay(A, CX, CY, R, { px: 40, text: "40 μm" })}</g>`);
+    } else st.set("view", `<circle cx="${CX}" cy="${CY}" r="${R}" fill="url(#${A}dark)"/>${txt(CX, CY - 4, "표본을 골라", { size: 13 })}${txt(CX, CY + 14, "현미경에 올려요", { size: 13 })}`);
     const row3 = (y: number, k: string, v: string, hot = false): string => txt(232, y, k, { anchor: "start", size: 12, fill: P.dim }) + txt(232, y + 18, v, { anchor: "start", size: 14, fill: hot ? P.leafHi : "#E8EEF9", weight: 800 });
-    stage.set(`
-      <defs><clipPath id="g2u5xScope"><circle cx="${CX}" cy="${CY}" r="${R}"/></clipPath></defs>
-      ${view}
-      <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="#0A1322" stroke-width="7"/><circle cx="${CX}" cy="${CY}" r="${R + 4}" fill="none" stroke="#46587A" stroke-width="2"/>
-      ${sp ? row3(58, "올린 표본", sp.name) + row3(108, "표본의 색", sp.color) + row3(158, "초록 알갱이", sp.grains, sp.grains === "가득") : txt(280, 118, "400배로 확대", { size: 12.5, fill: P.dim })}
-    `);
+    st.set("info", sp ? row3(58, "올린 표본", sp.name) + row3(108, "표본의 색", sp.color) + row3(158, "초록 알갱이", sp.grains, sp.grains === "가득") : microscope(288, 214, 1.1) + label(288, 50, "광학 현미경", { fill: P.dim, size: 12 }));
     host.dataset.g5Spec = now ?? "";
     host.dataset.g5Seen = String(seen.size);
   };
@@ -138,46 +98,128 @@ const FEED: Record<Feed, { name: string; lack: string }> = {
   water: { name: "물", lack: "물이 없어요" },
 };
 
+// 무대 배치: 왼쪽은 식물(흙 위 188), 오른쪽 원(가운데 IC, 반지름 IR)은 잎의 한 점을 크게 본 잎세포와 엽록체.
+const GROUND = 188;
+const IC: Pt = [262, 118];
+const IR = 72;
+const ZOOM: Pt = [134, 101]; // 잎에서 크게 본 자리
+const CHL: Pt = [262, 120]; // 원 안의 엽록체 가운데
+
+/** 흙(알갱이와 틈). wet이면 알갱이 사이에 물이 있다. */
+function soil(ns: string, wet: boolean): string {
+  const r = rng(13);
+  let s = `<rect x="0" y="${GROUND}" width="346" height="${230 - GROUND}" fill="${wet ? "#3A281C" : "#4E3B2C"}"/>`;
+  s += `<path d="M0 ${GROUND} L346 ${GROUND}" stroke="${wet ? "#6B4A32" : "#7C6048"}" stroke-width="2"/>`;
+  for (let i = 0; i < 70; i++) {
+    const x = r() * 346;
+    const y = GROUND + 4 + r() * (230 - GROUND - 4);
+    const rx = 1.4 + r() * 2.8;
+    s += `<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="${f1(rx)}" ry="${f1(rx * (0.6 + r() * 0.3))}" fill="${["#6B4A32", "#7C5A3E", "#5A3E2B", "#8A6A4C"][i % 4]}" opacity="${wet ? 0.85 : 0.7}" transform="rotate(${Math.round(r() * 180)} ${f1(x)} ${f1(y)})"/>`;
+  }
+  if (wet)
+    [[30, 204], [46, 218], [84, 208], [98, 222], [20, 224], [70, 226]].forEach(([x, y]) => {
+      s += `<path d="M${x} ${y - 4.5} q3.2 4.2 3.2 6.2 a3.2 3.2 0 0 1 -6.4 0 q0 -2 3.2 -6.2 Z" fill="${P.water}" stroke="#1F5F9A" stroke-width=".7"/><circle cx="${x - 1}" cy="${y + 1}" r=".9" fill="#E6F4FF"/>`;
+    });
+  void ns;
+  return s;
+}
+
+/** 왼쪽의 식물: 줄기, 잎 셋, 곁눈, 뿌리(뿌리털). water면 줄기의 물관(파랑 점선)이 흐른다. */
+function plant(ns: string, water: boolean): string {
+  let s = "";
+  // 뿌리: 원뿌리와 곁뿌리, 끝 가까이에 뿌리털
+  s += rootStrand(ns, [[64, GROUND - 2], [63, 200], [61, 212], [60, 228]], 4.6, { hairs: 16, seed: 3, hairLen: 5 });
+  s += rootStrand(ns, [[63, 196], [52, 202], [40, 209], [28, 213]], 2.4, { hairs: 12, seed: 5, hairLen: 4 });
+  s += rootStrand(ns, [[63, 199], [76, 205], [88, 212], [100, 216]], 2.4, { hairs: 12, seed: 7, hairLen: 4 });
+  s += rootStrand(ns, [[61, 210], [50, 218], [42, 228]], 1.8, { hairs: 8, seed: 9, hairLen: 3.5 });
+  // 줄기(아래가 굵다)
+  const stem = `M60.6 ${GROUND} C60 160, 62 132, 64.6 104 C66 88, 67 78, 68.4 66 L71.6 66 C70.6 78, 70 88, 69 104 C67 132, 66.4 160, 67.4 ${GROUND} Z`;
+  s += `<path d="${stem}" fill="url(#${ns}stem)" stroke="#1F4F1F" stroke-width=".8"/>`;
+  if (water) s += `<path d="M64 ${GROUND + 2} C63.6 160, 64.6 132, 66.6 104 L${ZOOM[0] - 18} ${ZOOM[1] + 1}" stroke="${P.water}" stroke-width="1.6" fill="none" stroke-dasharray="3 3" class="g2u5x-dash"/>`;
+  // 잎: 크게 볼 잎(오른쪽 위), 아래 왼쪽 잎, 꼭대기 어린잎 둘
+  s += leafBlade(ns, 66.6, 104, -14, 78, 21, { pet: 10, seed: 3 });
+  s += leafBlade(ns, 65, 138, 196, 52, 15, { pet: 7, seed: 5 });
+  s += leafBlade(ns, 70, 70, -62, 30, 9, { pet: 4, seed: 8 });
+  s += leafBlade(ns, 69.4, 74, 232, 26, 8, { pet: 4, seed: 9 });
+  s += `<ellipse cx="70.2" cy="64" rx="3.2" ry="4.6" fill="#7CC26C" stroke="#2F6F2F" stroke-width=".7"/>`;
+  return s;
+}
+
 export const g2u5SupplyLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
   const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-supply", wait: "세 가지를 주고 끊어 보세요" });
   const { f, tm } = lab;
-  const stage = g5Svg(lab, "빛, 이산화 탄소, 물을 받는 잎과 그 속의 엽록체");
+  const A = newNs("sp");
+  const st = g5Layers(lab, "빛, 이산화 탄소, 물을 받는 식물과 잎세포 속의 엽록체", ["defs", "scene", "cell", "fx", "tag"]);
+  const art = memo<string>();
   const on: Record<Feed, boolean> = { light: false, co2: false, water: false };
   let ran = false; // 셋 다 주어 만들어지는 것을 봤다
   let cut = false; // 그 뒤 하나를 끊어 멈추는 것을 봤다
+  st.set(
+    "defs",
+    `<defs>${particleDefs(A)}${plantDefs(A)}${sunDefs(A)}${microDefs(A)}<clipPath id="${A}in"><circle cx="${IC[0]}" cy="${IC[1]}" r="${IR}"/></clipPath>` +
+      `<radialGradient id="${A}cyto" cx=".45" cy=".4" r=".75"><stop offset="0" stop-color="#E3F3CF"/><stop offset="1" stop-color="#B9DDA0"/></radialGradient></defs>`,
+  );
 
   const running = (): boolean => on.light && on.co2 && on.water;
   const lacks = (): Feed[] => (Object.keys(on) as Feed[]).filter((k) => !on[k]);
 
-  // 잎: 가운데 (196, 112), 엽록체는 그 안의 타원. 줄기는 x 96. 흙은 y 196 아래.
+  /** 원 안: 잎세포의 한 부분(세포벽, 세포질, 액포의 가장자리)과 엽록체 셋(가운데 하나가 크다). 빛이 없으면 원 전체가 어둡다(엽록체의 색은 그대로). */
+  const cellView = (dark: boolean): string =>
+    art(`cell${dark}`, () => {
+      let c = `<g clip-path="url(#${A}in)"><rect x="${IC[0] - IR}" y="${IC[1] - IR}" width="${IR * 2}" height="${IR * 2}" fill="url(#${A}cyto)"/>`;
+      // 이웃 세포와 맞닿은 세포벽(왼쪽 위에서 비스듬히), 오른쪽 아래의 액포
+      c += `<path d="M${IC[0] - IR} ${IC[1] - 30} C${IC[0] - 40} ${IC[1] - 50}, ${IC[0] - 20} ${IC[1] - 66}, ${IC[0] - 8} ${IC[1] - IR}" fill="none" stroke="#7FB06A" stroke-width="7"/><path d="M${IC[0] - IR} ${IC[1] - 30} C${IC[0] - 40} ${IC[1] - 50}, ${IC[0] - 20} ${IC[1] - 66}, ${IC[0] - 8} ${IC[1] - IR}" fill="none" stroke="#E9F6DA" stroke-width="1.4"/>`;
+      c += `<path d="M${IC[0] + 10} ${IC[1] + IR} C${IC[0] + 22} ${IC[1] + 44}, ${IC[0] + 50} ${IC[1] + 34}, ${IC[0] + IR} ${IC[1] + 26}" fill="#D9EEF3" stroke="#8DB7B0" stroke-width="1" opacity=".9"/>`;
+      c += chloroplast(A, IC[0] - 46, IC[1] - 46, 46, 24, { rot: -38, seed: 2, starch: 1 });
+      c += chloroplast(A, IC[0] + 50, IC[1] + 50, 40, 22, { rot: -20, seed: 4 });
+      c += chloroplast(A, CHL[0], CHL[1], 116, 58, { rot: -10, seed: 7, starch: 2 });
+      if (dark) c += `<rect x="${IC[0] - IR}" y="${IC[1] - IR}" width="${IR * 2}" height="${IR * 2}" fill="#050B16" opacity=".5"/>`;
+      c += `</g>`;
+      return c;
+    });
+
   const draw = (): void => {
     const run = running();
-    const dim = (v: boolean): string => (v ? "1" : ".28");
-    const hex = (x: number, y: number, i: number): string =>
-      `<polygon class="g2u5x-pop" style="animation-delay:${i * 0.35}s" points="${[0, 1, 2, 3, 4, 5].map((k) => `${(x + Math.cos((k * Math.PI) / 3) * 7).toFixed(1)},${(y + Math.sin((k * Math.PI) / 3) * 7).toFixed(1)}`).join(" ")}" fill="${P.sugar}" stroke="#8A5A00" stroke-width="1.2"/>`;
     const lk = lacks();
-    stage.set(`
-      <rect x="0" y="196" width="346" height="34" fill="#3B2A1E"/><line x1="0" y1="196" x2="346" y2="196" stroke="#6B4A32" stroke-width="2"/>
-      <path d="M96 196 C 96 160, 98 140, 104 122" fill="none" stroke="#2F7D46" stroke-width="7" stroke-linecap="round"/>
-      <path d="M96 196 C 92 206, 84 212, 74 218 M96 196 C 100 208, 108 214, 118 220 M96 198 L96 222" fill="none" stroke="#B79469" stroke-width="2.4" stroke-linecap="round"/>
-      <path d="M104 122 C 130 66, 250 52, 292 100 C 262 158, 150 170, 104 122 Z" fill="${P.leaf}" stroke="${P.leafDark}" stroke-width="2"/>
-      <path d="M104 122 C 170 108, 240 102, 290 100" fill="none" stroke="${P.leafDark}" stroke-width="1.4" opacity=".6"/>
-      <ellipse cx="200" cy="112" rx="50" ry="27" fill="#1E7A3C" stroke="#0F4F26" stroke-width="1.6"/>
-      ${txt(200, 96, "엽록체", { size: 12, fill: "#CFF5D6" })}
-      <g opacity="${dim(on.light)}"><circle cx="36" cy="34" r="15" fill="${P.energy}" stroke="#B8860B" stroke-width="1.5"/>${[0, 1, 2, 3, 4, 5, 6, 7].map((k) => `<line x1="${36 + Math.cos((k * Math.PI) / 4) * 20}" y1="${34 + Math.sin((k * Math.PI) / 4) * 20}" x2="${36 + Math.cos((k * Math.PI) / 4) * 26}" y2="${34 + Math.sin((k * Math.PI) / 4) * 26}" stroke="${P.energy}" stroke-width="2.4" stroke-linecap="round"/>`).join("")}</g>
-      ${on.light ? arrow(58, 46, 150, 92, P.energy, 2.6, "g2u5x-flow") : ""}
-      ${txt(36, 74, "빛", { size: 12.5, fill: on.light ? P.energy : P.dim })}
-      <g opacity="${dim(on.co2)}">${gasDot(314, 150, "co2")}${gasDot(326, 164, "co2")}${gasDot(306, 168, "co2")}</g>
-      ${on.co2 ? arrow(302, 152, 252, 132, P.co2, 2.6, "g2u5x-flow") : ""}
-      ${txt(302, 190, "이산화 탄소", { size: 12.5, fill: on.co2 ? P.co2 : P.dim })}
-      <g opacity="${dim(on.water)}"><path d="M40 204 q5 -9 10 0 a5 5 0 0 1 -10 0 Z M56 212 q5 -9 10 0 a5 5 0 0 1 -10 0 Z" fill="${P.water}" stroke="#2F6FA8" stroke-width="1"/></g>
-      ${on.water ? `<path d="M90 190 C 90 160, 92 140, 98 124" fill="none" stroke="${P.water}" stroke-width="3" stroke-linecap="round" stroke-dasharray="5 6" class="g2u5x-dash"/>` + arrow(110, 122, 150, 116, P.water, 2.6, "g2u5x-flow") : ""}
-      ${txt(30, 190, "물", { size: 12.5, fill: on.water ? P.water : P.dim })}
-      ${run ? hex(182, 116, 0) + hex(200, 122, 1) + hex(218, 116, 2) + txt(200, 152, "포도당", { size: 12.5, fill: P.sugar }) : ""}
-      ${run ? gasDot(238, 62, "o2", 5.5, "g2u5x-rise") + gasDot(254, 56, "o2", 5.5, "g2u5x-rise d1") + gasDot(246, 70, "o2", 5.5, "g2u5x-rise d2") + txt(286, 44, "산소", { size: 12.5, fill: P.o2 }) : ""}
-      ${run ? tag(196, 26, "양분을 만드는 중", { fill: P.leafHi }) : tag(196, 26, lk.length === 3 ? "아무것도 주지 않았어요" : `멈춤: ${FEED[lk[0]].lack}`, { fill: P.bad })}
-    `);
+    // 식물과 흙, 해, 크게 보기 선(움직이지 않는 그림)
+    st.set(
+      "scene",
+      art(`scene${on.light}${on.water}`, () => {
+        let sc = soil(A, on.water) + plant(A, on.water);
+        sc += sun(A, 28, 30, 12, on.light);
+        if (on.light) sc += beam(A, [42, 42], [124, 90], 10, { cls: "g2u5x-flow" }) + beam(A, [40, 50], [106, 104], 8, { cls: "g2u5x-flow" });
+        // 크게 보기: 잎 위의 네모와 원으로 이어지는 점선
+        sc += `<rect x="${ZOOM[0] - 4}" y="${ZOOM[1] - 4}" width="8" height="8" fill="none" stroke="#9CC2FF" stroke-width="1.2"/>`;
+        sc += `<path d="M${ZOOM[0] + 4} ${ZOOM[1] - 4} L${f1(IC[0] - IR * 0.5)} ${f1(IC[1] - IR * 0.87)} M${ZOOM[0] + 4} ${ZOOM[1] + 4} L${f1(IC[0] - IR * 0.5)} ${f1(IC[1] + IR * 0.87)}" stroke="#9CC2FF" stroke-width="1" stroke-dasharray="3 3" opacity=".7"/>`;
+        sc += label(28, 60, "빛", { fill: on.light ? P.energy : P.dim });
+        sc += label(18, 182, "물", { fill: on.water ? P.water : P.dim, anchor: "start" });
+        return sc;
+      }),
+    );
+    // 원 안의 잎세포와 엽록체(빛이 없으면 조금 어둡다)
+    st.set("cell", cellView(!on.light) + `<circle cx="${IC[0]}" cy="${IC[1]}" r="${IR}" fill="none" stroke="#9CC2FF" stroke-width="1.6"/>` + label(IC[0] - 2, IC[1] + 48, "엽록체", { fill: "#CFF5D6" }));
+    // 들어오고 나가는 입자. 원 안의 것은 원 밖으로 삐져나오지 않게 자른다.
+    let inner = "";
+    let fx = "";
+    if (on.light) [[-30, -54], [-8, -60], [14, -58]].forEach(([dx, dy], i) => (inner += beam(A, [CHL[0] + dx - 14, CHL[1] + dy], [CHL[0] + dx + 4, CHL[1] + dy + 34], 7, { cls: "g2u5x-flow", op: 0.9 - i * 0.1 })));
+    // 물: 잎맥의 물관에서 이웃 세포를 지나 왼쪽에서 들어온다
+    if (on.water) [0, 0.6, 1.2].forEach((d, i) => (inner += `<g class="g2u5x-mv" style="--dx:-30px;--dy:8px;animation-delay:-${d}s">${mol(A, "h2o", CHL[0] - 54 + i * 4, CHL[1] + 14 + i * 5, 0.9)}</g>`));
+    // 이산화 탄소: 잎 아랫면의 기공으로 들어와 세포 사이 공기 틈에서 아래로부터 들어온다
+    if (on.co2) {
+      [[116, 134], [134, 146], [150, 130]].forEach(([x, y], i) => (fx += `<g class="g2u5x-mv" style="--dx:0px;--dy:14px;animation-delay:-${i * 0.6}s">${mol(A, "co2", x, y, 0.8, { rot: i * 30 - 20 })}</g>`));
+      [0, 0.6, 1.2].forEach((d, i) => (inner += `<g class="g2u5x-mv" style="--dx:8px;--dy:34px;animation-delay:-${d}s">${mol(A, "co2", CHL[0] + 18 + i * 8, CHL[1] + 30 + i * 2, 0.85, { rot: 30 })}</g>`));
+    }
+    fx += label(124, 174, "이산화 탄소", { fill: on.co2 ? P.co2 : P.dim, size: 12 });
+    if (run) {
+      [[-16, -2], [2, 9], [20, -1]].forEach(([dx, dy], i) => (inner += glucose(A, CHL[0] + dx, CHL[1] + dy, 6, { cls: "g2u5x-pop", style: `animation-delay:${i * 0.35}s` })));
+      fx += label(CHL[0] + 2, CHL[1] + 28, "포도당", { fill: P.sugar, size: 12 });
+      // 산소: 엽록체에서 나와 세포 밖으로(기공을 지나 잎 밖으로 나간다)
+      [0, 0.6, 1.2].forEach((d, i) => (fx += `<g class="g2u5x-mv out" style="--dx:34px;--dy:-34px;animation-delay:-${d}s">${mol(A, "o2", CHL[0] + 30 + i * 6, CHL[1] - 30 - i * 6, 0.95)}</g>`));
+      fx += label(318, 40, "산소", { fill: P.o2 });
+    }
+    st.set("fx", `<g clip-path="url(#${A}in)">${inner}</g>${fx}`);
+    st.set("tag", run ? tag(158, 22, "양분을 만드는 중", { fill: P.leafHi }) : tag(158, 22, lk.length === 3 ? "아무것도 주지 않았어요" : `멈춤: ${FEED[lk[0]].lack}`, { fill: P.bad }));
     host.dataset.g5Run = run ? "1" : "0";
   };
 
