@@ -66,7 +66,13 @@
 /* 태양계: 돌아온 뒤 채우는 특징 표 */
 .u7x-seg.three { grid-template-columns: repeat(3, 1fr); }
 .u7x-tablestage { display: block; padding: 8px 12px; }
-.u7x-ftable { display: grid; grid-template-columns: 86px repeat(3, 1fr); align-items: center; height: 100%; }
+.u7x-ftable { display: grid; grid-template-columns: 98px repeat(3, 1fr); align-items: center; height: 100%; }
+/* 줄 이름 앞의 작은 그림(가로 화면에서 본 천체). 첫 칸을 틀리면(.u7x-lit) 행성과 위성은 반쪽이 어두워지고 태양만 빛난다 */
+.u7x-ftable .u7x-frow { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.u7x-ftable .u7x-ficon { flex: none; display: block; width: 24px; height: 24px; }
+.u7x-ficon svg { display: block; }
+.u7x-ficon .u7x-night, .u7x-ficon .u7x-glow { opacity: 0; transition: opacity .5s; }
+.u7x-lit .u7x-ficon .u7x-night, .u7x-lit .u7x-ficon .u7x-glow { opacity: 1; }
 .u7x-ftable b { font-size: 12.5px; font-weight: 800; color: #FFE9B8; text-align: center; white-space: nowrap; }
 .u7x-ftable span { font-size: 13px; font-weight: 800; color: #E8EEF9; white-space: nowrap; }
 .u7x-ftable em { justify-self: center; width: 22px; height: 22px; border-radius: 50%; border: 1.5px dashed rgba(255, 255, 255, .28); }
@@ -113,6 +119,20 @@
 .u7x-rotdone-btn { height: 48px; padding: 0 16px; border: 0; border-radius: 12px; background: #fff; color: var(--ink); font-size: 14px; font-weight: 800; }
 .u7x-rotdone-btn:active { transform: scale(.965); }
 .sp3-card.show ~ .u7x-rotdone { display: none; }
+/* 태양계 순항: 천체 이름표(화면 글자로 천체를 따라다닌다)와 비율 알림 */
+.u7x-tlabels { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.u7x-tlabel {
+  position: absolute; left: 0; top: 0; padding: 2px 8px; border-radius: 999px; white-space: nowrap; will-change: transform, opacity;
+  font-size: 12.5px; line-height: 17px; font-weight: 800; color: #E4EDFF; letter-spacing: -.02em;
+  background: rgba(10, 18, 36, .58); border: 1px solid rgba(140, 165, 215, .34); opacity: 0;
+}
+.u7x-tlabel.sun { color: #FFE2A6; }
+.u7x-tlabel.dim { color: #C9D4E8; }
+.u7x-ratio {
+  position: absolute; left: 12px; top: 50px; z-index: 3; pointer-events: none; white-space: nowrap;
+  font-size: 12px; font-weight: 700; color: #A9BBDA; text-shadow: 0 1px 3px rgba(0, 0, 0, .85); transition: opacity .3s;
+}
+.u7x-ratio.hide { opacity: 0; }
 .u7x-toast { word-break: keep-all; } /* 천체 카드를 읽는 동안에는 가리지 않는다 */
 /* 일식의 지상 보기: 알림을 아래 두 단추 사이로 내린다(검은 해와 코로나를 덮지 않게) */
 .sp3-toast.u7x-toast.low { bottom: 12px; max-width: min(46%, 360px); }

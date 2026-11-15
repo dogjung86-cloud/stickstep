@@ -64,24 +64,34 @@ export function sunspotGraphFig(): string {
   );
 }
 
-/** 누운 자전축(천왕성). */
+/** 누운 자전축(천왕성). 천왕성은 실사(photos/uranus.jpg, 보이저 2, 원판 가운데 (596.4, 596.1), 반지름 482.7px) 위에
+ *  고리와 자전축만 코드로 얹는다. 자전축 기울기 97.8°라 축은 궤도면에서 약 8° 들려 있고, 고리는 축에 수직이라 거의 세로로 선다.
+ *  고리의 뒤쪽 반은 행성 뒤로(먼저 그림), 앞쪽 반은 행성 앞으로(나중에 그림). 글자는 설계 10.5px 이상(폰 약 12.6px). */
 export function uranusTiltFig(): string {
+  const cx = 140;
+  const cy = 64;
+  const R = 26;
+  const s = R / 482.7;
+  const ring = (half: "back" | "front"): string =>
+    `<path d="M${cx} ${cy - 47}A9 47 0 0 ${half === "front" ? 1 : 0} ${cx} ${cy + 47}" stroke="#A8DCE2" stroke-width="2.4" opacity="${half === "front" ? 0.95 : 0.55}"/>`;
   return panel(
     280,
     132,
     `
     ${star(30, 26)}${star(250, 30)}${star(224, 108, 1, 0.6)}${star(52, 104, 1, 0.6)}
-    <path d="M28 66h224" stroke="#4A5F86" stroke-width="1.4" stroke-dasharray="5 5"/>
-    <text x="234" y="82" fill="#8FA6CE" font-size="9" font-family="Pretendard, sans-serif">공전 궤도면</text>
-    <circle cx="140" cy="66" r="26" fill="url(#spf-ur)"/>
-    <ellipse cx="140" cy="66" rx="7" ry="38" stroke="#9FD4DA" stroke-width="2.6" opacity=".8"/>
-    <path d="M96 66h16M168 66h16" stroke="#FFD25E" stroke-width="2.6"/>
-    <path d="M184 66l-7-4v8z" fill="#FFD25E"/>
-    <text x="140" y="122" fill="#BFD4F2" font-size="10" text-anchor="middle" font-family="Pretendard, sans-serif">자전축이 궤도면과 거의 나란!</text>
+    <path d="M22 ${cy}h236" stroke="#4A5F86" stroke-width="1.4" stroke-dasharray="5 5"/>
+    <text x="262" y="${cy + 16}" fill="#9FB4D8" font-size="10.5" font-weight="700" text-anchor="end" font-family="Pretendard, sans-serif">공전 궤도면</text>
+    <g transform="rotate(-8 ${cx} ${cy})">${ring("back")}</g>
+    <clipPath id="spf-urc"><circle cx="${cx}" cy="${cy}" r="${R}"/></clipPath>
+    <image href="${photo("uranus.jpg")}" x="${(cx - 596.4 * s).toFixed(2)}" y="${(cy - 596.1 * s).toFixed(2)}" width="${(1200 * s).toFixed(2)}" height="${(1200 * s).toFixed(2)}" clip-path="url(#spf-urc)"/>
+    <g transform="rotate(-8 ${cx} ${cy})">
+      ${ring("front")}
+      <path d="M${cx - R - 30} ${cy}H${cx - R - 3}M${cx + R + 3} ${cy}H${cx + R + 30}" stroke="#FFD25E" stroke-width="2.6"/>
+      <path d="M${cx + R + 38} ${cy}l-9-4.6v9.2z" fill="#FFD25E"/>
+    </g>
+    <text x="${cx + R + 40}" y="${cy - 14}" fill="#FFE08A" font-size="10.5" font-weight="800" font-family="Pretendard, sans-serif">자전축</text>
+    <text x="${cx}" y="123" fill="#C9DAF4" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">자전축이 궤도면과 거의 나란해요</text>
   `,
-    `<radialGradient id="spf-ur" cx=".35" cy=".3" r=".8">
-      <stop offset="0" stop-color="#C8F0F2"/><stop offset=".6" stop-color="#7CCFD6"/><stop offset="1" stop-color="#4A9BA4"/>
-    </radialGradient>`,
   );
 }
 
@@ -520,15 +530,30 @@ export function spaceMiniArt(key: string): string {
   </radialGradient>`;
 
   switch (key) {
-    case "family": // 태양 + 행성 줄
+    case "family": {
+      // 태양 + 행성 여덟(카드 글 '행성 여덟 개'와 맞춘다). 왼쪽 아래 귀퉁이의 태양 둘레, 가까운 차례의 궤도 호 위에 하나씩.
+      // [궤도 반지름, 각(°, 오른쪽이 0이고 위로 잰다), 크기, 색]. 크기는 무리끼리만 대강(목성형이 크다).
+      const SX = 8;
+      const SY = 88;
+      const P: [number, number, number, string][] = [
+        [28, 70, 1.7, "#A7A39E"], [33, 52, 2.5, "#E2B96B"], [38, 34, 2.6, "#4D8FE6"], [43, 16, 2.1, "#D0673F"],
+        [52, 78, 5.2, "#D9B07E"], [61, 55, 4.4, "#E8D49E"], [70, 34, 3.3, "#9BDDE2"], [78, 14, 3.2, "#5E86E8"],
+      ];
+      let orbits = "";
+      let dots = "";
+      P.forEach(([o, a, r, c], i) => {
+        const x = SX + o * Math.cos((a * Math.PI) / 180);
+        const y = SY - o * Math.sin((a * Math.PI) / 180);
+        orbits += `<circle cx="${SX}" cy="${SY}" r="${o}" stroke="#7E9FD6" stroke-width=".8" opacity=".28"/>`;
+        if (i === 5) dots += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(r * 2).toFixed(1)}" ry="${(r * 0.55).toFixed(1)}" stroke="#D9C08A" stroke-width="1.3" transform="rotate(-16 ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+        dots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="${c}"/>`;
+      });
       return wrap(
-        `<circle cx="18" cy="48" r="16" fill="url(#sma-sun)"/>
-        <circle cx="46" cy="48" r="3.4" fill="#9C9894"/>
-        <circle cx="57" cy="48" r="4.6" fill="#E2B96B"/>
-        <circle cx="69" cy="48" r="4.8" fill="url(#sma-ea)"/>
-        <circle cx="82" cy="48" r="4" fill="#C05B3C"/>`,
-        sunG + earthG,
+        `<clipPath id="sma-fam-c"><rect x="2" y="2" width="92" height="92" rx="18"/></clipPath>
+        <g clip-path="url(#sma-fam-c)">${orbits}<circle cx="${SX}" cy="${SY}" r="24" fill="url(#sma-sun)"/></g>${dots}`,
+        sunG,
       );
+    }
     case "orbiters": // 혜성 꼬리 + 위성
       return wrap(
         `<circle cx="30" cy="60" r="11" fill="url(#sma-sun)"/>
