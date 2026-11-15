@@ -25,7 +25,7 @@ import {
 let glOk: boolean | null = null;
 export function canRide3d(): boolean {
   try {
-    if (sessionStorage.getItem("ss.rideflat") === "1") return false; // 검사와 견주어 보기용: 평면 무대로
+    if (sessionStorage.getItem("ss.rideflat") === "1") return false; // 검사와 비교해 보기용: 평면 무대로
   } catch {
     /* 세션 저장소를 못 쓰는 환경 */
   }

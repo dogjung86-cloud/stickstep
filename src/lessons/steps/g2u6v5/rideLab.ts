@@ -23,7 +23,7 @@
 //   스크롤하지 않고 누를 수 있고, 마지막 판정은 조작 칸에 뜨며 그때 조작 칸을 화면 안으로 당긴다(누른 보기 바로 아래에 정답 카드).
 //   넓은 화면은 이 무대를 자기 배율(--rdk)로 키운다(--lk는 230 높이 기준이라 그대로 쓰면 넘친다. 맞추는 일은 이 파일이 한다).
 // 표식: data-g6-stage("3d" | "flat"), data-g6-ready, data-g6-step(국면), data-g6-seg, data-g6-picks, data-g6-fail, data-g6-phase(판정).
-//   세션에 "ss.rideflat" = "1"을 심으면 평면 무대로 뜬다(검사와 견주어 보기용).
+//   세션에 "ss.rideflat" = "1"을 심으면 평면 무대로 뜬다(검사와 비교해 보기용).
 
 import { el } from "../../../core/dom";
 import { isWide } from "../../../core/wide";

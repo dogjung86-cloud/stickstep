@@ -4,7 +4,7 @@
 //   책의 과정 1~2: 홈판의 세로줄에 증류수, 밥물, 양파즙, 달걀흰자액, 식용유를 넣고
 //   가로줄 (가)에 아이오딘-아이오딘화 칼륨 용액, (나)에 뷰렛 용액, (다)에 수단 Ⅲ 용액을 떨어뜨려 색깔 변화를 본다.
 //   학생이 정하는 것: 어느 시약을 어느 홈에 떨어뜨릴지(열다섯 홈). 증류수 줄을 채울지.
-//   실패하는 길: 증류수 줄을 비운 채 결과를 읽으려 하면 시약 자체의 색과 견줄 수 없다고 막는다.
+//   실패하는 길: 증류수 줄을 비운 채 결과를 읽으려 하면 시약 자체의 색과 비교할 수 없다고 막는다.
 //   결과: 밥물 = 아이오딘 청람색, 달걀흰자액 = 뷰렛 보라색, 식용유 = 수단 Ⅲ 선홍색, 양파즙과 증류수는 변화 없음.
 //
 // g2u6BenedictLab 「양파즙에는 아무 영양소도 없을까요?」
@@ -60,7 +60,8 @@ export const g2u6PlateLab: StepRenderer = (host, step, api) => {
         out += `<g data-k="w${k}"><circle cx="${X(c)}" cy="${Y(r)}" r="26" fill="transparent"/><circle cx="${X(c)}" cy="${Y(r)}" r="21" fill="${SAMPLE_FILL[c]}" stroke="${on ? "#9CC2FF" : P.glass}" stroke-width="${on ? 1.8 : 1.3}"/>`;
         if (has) out += `<circle${last === k ? ` class="g2u6x-pop"` : ""} cx="${X(c)}" cy="${Y(r)}" r="${hit ? 18 : 11}" fill="${hit ? rg.hit : rg.plain}" opacity="${hit ? 0.96 : 0.8}"/>`;
         out += `</g>`;
-        if (reading && hit) out += tag(X(c), Y(r) + 5, rg.hitName, { size: 12, bg: "#0E1A2E", stroke: "#fff" });
+        // 색 이름은 홈 아래쪽 밖(다음 줄 홈과의 틈)에 적는다. 홈 가운데에 얹으면 판정하는 순간 반응 색을 가렸다(2026-11-15, 그래픽 감사 C080)
+        if (reading && hit) out += `<text x="${X(c)}" y="${Y(r) + 33}" text-anchor="middle" font-size="12" font-weight="800" fill="#FFFFFF" stroke="#0B1524" stroke-width="3.5" paint-order="stroke" stroke-linejoin="round">${rg.hitName}</text>`;
       });
     });
     if (last && !reading) {
@@ -120,7 +121,7 @@ export const g2u6PlateLab: StepRenderer = (host, step, api) => {
       lab.slip();
       host.dataset.g6Fail = "water";
       toast(lab, "증류수 줄이 비어 있어요", true);
-      f.say("증류수에도 떨어뜨려야 <b>시약 자체의 색</b>과 견줄 수 있어요. 증류수 줄을 채워요.");
+      f.say("증류수에도 떨어뜨려야 <b>시약 자체의 색</b>과 비교할 수 있어요. 증류수 줄을 채워요.");
       return;
     }
     tap();
@@ -172,7 +173,8 @@ export const g2u6BenedictLab: StepRenderer = (host, step, api) => {
       if (added && i === 4) out += `<rect x="${X(i) - 11.5}" y="${50 + 126 * 0.42}" width="23" height="12" fill="rgba(245,208,80,.9)"/>`;
       out += txt(X(i), 30, n, { size: 12, fill: P.hi });
       if (heat < 1 && bath === "hot" && i === 2) out += txt(173, 214, "뜨거운 물에 담가 둔 시험관", { size: 12, fill: "#FFC2AC" });
-      if (heat >= 1) out += tag(X(i), 214, i === 2 ? "황적색" : "변화 없음", { size: 12, fill: i === 2 ? "#FFD2A8" : P.dim });
+      // 결과는 그 시험관의 색 이름으로 짧게(옛 '변화 없음'은 시험관 간격보다 넓어 이웃끼리 겹쳤다)
+      if (heat >= 1) out += tag(X(i), 214, i === 2 ? "황적색" : "푸른색", { size: 12, fill: i === 2 ? "#FFD2A8" : "#9CCFF5" });
     });
     stage.set(out);
     host.dataset.g6Added = added ? "1" : "0";

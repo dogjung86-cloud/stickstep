@@ -15,9 +15,19 @@ const LOOK: Record<Kind, { r: number; fill: string; line: string; name: string }
   rbc: { r: 9, fill: "#E8505B", line: "#8E1E2A", name: "적혈구" },
   pro: { r: 8, fill: P.protein, line: "#8A4520", name: "단백질" },
   glu: { r: 5, fill: P.glucose, line: "#8A5A0A", name: "포도당" },
-  urea: { r: 5, fill: P.urea, line: "#5B3A9A", name: "요소" },
+  urea: { r: 5, fill: P.urea, line: "#4E7A2A", name: "요소" },
   water: { r: 4.5, fill: P.water, line: "#1E5E96", name: "물" },
 };
+// 무대(2026-11-15 다시 그림, 그래픽 감사 C089): 책의 그림 「오줌이 만들어지는 과정」처럼 모세혈관이 위에서 세뇨관을 따라 감싸고(고리 셋)
+// 콩팥정맥으로 나가며, 세뇨관 끝은 콩팥깔때기로 이어져 오줌이 아래에 넓게 모인다. 알갱이가 옮겨 간 자리에는 여과, 재흡수, 분비 화살이 그 이름과 함께 남는다.
+// 토리 가운데 (72, 112), 세뇨관은 y 112의 가로 관(오른쪽 끝에서 아래로 꺾여 콩팥깔때기), 모세혈관 띠는 y 50.
+const G: [number, number] = [72, 112];
+const TUBE_Y = 112;
+const CAP_Y = 50;
+/** 세뇨관을 감싸는 모세혈관 고리의 가운데 x: 포도당, 물, 요소가 이 고리에서 오간다 */
+const LOOP = { glu: 152, water: 202, urea: 252 };
+/** 여과, 재흡수, 분비 화살의 색(책 그림의 주황, 초록, 갈색 주황) */
+const ARROW = { filt: "#F59F4C", reab: "#3DBB72", secr: "#C9853A" };
 interface Tok {
   kind: Kind;
   /** 여과 전 토리 안의 자리 */
@@ -26,29 +36,30 @@ interface Tok {
   t: [number, number] | null;
   /** 모세혈관 안의 자리(여과되지 않고 남거나 재흡수된 뒤) */
   c: [number, number];
+  /** 오줌으로 콩팥깔때기에 모인 자리 */
+  u?: [number, number];
   /** 처음에는 혈액에 남았다가 분비되는 요소 */
   secrete?: boolean;
 }
-// 세뇨관은 y 44~70의 가로 관, 모세혈관은 y 121~147의 가로 관이다.
 const TOKS: Tok[] = [
-  { kind: "rbc", g: [62, 68], t: null, c: [100, 134] },
-  { kind: "pro", g: [76, 81], t: null, c: [124, 134] },
-  { kind: "glu", g: [60, 85], t: [136, 57], c: [148, 130] },
-  { kind: "glu", g: [78, 62], t: [176, 57], c: [166, 138] },
-  { kind: "water", g: [69, 75], t: [156, 52], c: [184, 130] },
-  { kind: "water", g: [56, 76], t: [196, 62], c: [202, 138] },
-  { kind: "water", g: [83, 72], t: [216, 52], c: [220, 130] },
-  { kind: "water", g: [70, 61], t: [256, 62], c: [238, 138] },
-  { kind: "urea", g: [66, 92], t: [236, 57], c: [256, 130] },
-  { kind: "urea", g: [85, 88], t: [276, 57], c: [272, 138] },
-  { kind: "urea", g: [53, 67], t: null, c: [64, 134], secrete: true },
+  { kind: "rbc", g: [64, 104], t: null, c: [96, CAP_Y] },
+  { kind: "pro", g: [82, 120], t: null, c: [118, CAP_Y] },
+  { kind: "glu", g: [62, 122], t: [138, 108], c: [146, CAP_Y - 1] },
+  { kind: "glu", g: [84, 100], t: [164, 116], c: [160, CAP_Y + 2] },
+  { kind: "water", g: [72, 112], t: [190, 106], c: [192, CAP_Y - 1] },
+  { kind: "water", g: [58, 112], t: [212, 117], c: [206, CAP_Y + 2] },
+  { kind: "water", g: [88, 112], t: [226, 107], c: [218, CAP_Y - 1] },
+  { kind: "water", g: [72, 126], t: [240, 115], c: [230, CAP_Y + 2], u: [286, 194] },
+  { kind: "urea", g: [70, 96], t: [256, 108], c: [246, CAP_Y - 1], u: [278, 180] },
+  { kind: "urea", g: [56, 100], t: [274, 116], c: [260, CAP_Y + 2], u: [304, 190] },
+  { kind: "urea", g: [86, 128], t: null, c: [272, CAP_Y], u: [322, 180], secrete: true },
 ];
 
 export const g2u6NephronLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
   const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-nephron", wait: "오줌을 만들어 내보내 보세요" });
   const { f, tm } = lab;
-  const stage = g6Svg(lab, "토리와 보먼주머니, 세뇨관, 세뇨관을 둘러싼 모세혈관으로 이루어진 콩팥단위 모식도");
+  const stage = g6Svg(lab, "토리와 보먼주머니, 세뇨관, 세뇨관을 감싸고 콩팥정맥으로 나가는 모세혈관, 오줌이 모이는 콩팥깔때기로 이루어진 콩팥단위 모식도");
   let phase: "start" | "filtered" | "out" = "start";
   const back: Record<"glu" | "water" | "urea", boolean> = { glu: false, water: false, urea: false };
   let secreted = false;
@@ -58,35 +69,64 @@ export const g2u6NephronLab: StepRenderer = (host, step, api) => {
   const place = (t: Tok, i: number): { at: "glom" | "tube" | "cap" | "urine"; p: [number, number] } => {
     if (phase === "start") return { at: "glom", p: t.g };
     if (!t.t) {
-      if (t.secrete && secreted) return phase === "out" ? { at: "urine", p: [316, 140] } : { at: "tube", p: [296, 57] };
+      if (t.secrete && secreted) return phase === "out" ? { at: "urine", p: t.u ?? [306, 190] } : { at: "tube", p: [LOOP.urea + 14, TUBE_Y] };
       return { at: "cap", p: t.c };
     }
     const k = t.kind as "glu" | "water" | "urea";
     // 물은 대부분만 되돌린다(넷 가운데 셋).
     const goBack = back[k] && !(k === "water" && i === 7);
     if (goBack) return { at: "cap", p: t.c };
-    if (phase === "out") return { at: "urine", p: [309 + (i % 2) * 14, 150 + (i % 4) * 11] };
+    if (phase === "out") return { at: "urine", p: t.u ?? [276 + (i % 3) * 22, 176 + (i % 4) * 7] };
     return { at: "tube", p: t.t };
+  };
+  /** 굵은 화살(위아래) */
+  const vArrow = (x: number, y0: number, y1: number, color: string): string => {
+    const d = y1 > y0 ? 1 : -1;
+    return `<g class="g2u6x-pop"><line x1="${x}" y1="${y0}" x2="${x}" y2="${y1 - d * 8}" stroke="${color}" stroke-width="3.6" stroke-linecap="round"/><polygon points="${x},${y1} ${x - 6},${y1 - d * 10} ${x + 6},${y1 - d * 10}" fill="${color}" stroke="#0B1524" stroke-width=".8"/></g>`;
   };
   const draw = (): void => {
     let out = "";
-    // 들어가는 혈관(콩팥동맥에서)과 나가는 혈관: 둘 다 보먼주머니의 열린 쪽(왼쪽)으로 드나든다
-    const vessel = (d: string, w: number): string => `<path d="${d}" fill="none" stroke="#7A2F3C" stroke-width="${w}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#4A1C26" stroke-width="${w - 5}" stroke-linecap="round"/>`;
-    out += vessel("M40 134 L286 134", 28);
-    // 세뇨관(보먼주머니에 이어져 오른쪽으로, 끝에서 아래로 꺾여 콩팥깔때기로)
-    const TUBE = "M100 57 L316 57 L316 188";
-    out += `<path d="${TUBE}" fill="none" stroke="#C9B26A" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>`;
-    // 보먼주머니: 토리를 감싸는 주머니. 왼쪽이 열려 있고 오른쪽은 세뇨관으로 이어진다
-    out += `<path d="M34 50 Q40 34 70 34 Q100 34 108 46 L108 70 Q104 116 70 116 Q40 116 34 100" fill="#2A2616" stroke="#C9B26A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-    out += `<path d="${TUBE}" fill="none" stroke="#2A2616" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>`;
-    out += vessel("M2 56 Q24 56 50 66", 13) + vessel("M50 88 Q24 92 22 112 Q22 128 42 133", 13);
+    const vessel = (d: string, w: number): string => `<path d="${d}" fill="none" stroke="#7A2F3C" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#4A1C26" stroke-width="${w - 5}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    // 콩팥동맥에서 토리로 들어오는 혈관(왼쪽 아래)과, 토리에서 나와 위로 올라가 모세혈관 띠가 되는 혈관(오른쪽 끝에서 콩팥정맥으로)
+    out += vessel("M-4 182 Q30 172 46 136", 13);
+    out += vessel(`M50 92 Q36 62 70 ${CAP_Y} L352 ${CAP_Y}`, 16);
+    // 세뇨관(보먼주머니에서 오른쪽으로, 끝에서 아래로 꺾여 콩팥깔때기로)
+    const TUBE = `M104 ${TUBE_Y} L302 ${TUBE_Y} L302 150`;
+    out += `<path d="${TUBE}" fill="none" stroke="#C9B26A" stroke-width="30" stroke-linejoin="round"/>`;
+    // 콩팥깔때기: 오줌이 넓게 모이는 곳
+    out += `<path d="M264 156 Q264 148 274 148 L330 148 Q340 148 340 158 L340 196 Q340 210 326 210 L278 210 Q264 210 264 196 Z" fill="#2A2616" stroke="#C9B26A" stroke-width="3.5"/>`;
+    if (phase === "out") out += `<path class="g2u6x-pop" d="M268 170 Q302 162 336 170 L336 196 Q336 206 326 206 L278 206 Q268 206 268 196 Z" fill="#F2DE8A" opacity=".24"/>`;
+    out += `<path d="${TUBE}" fill="none" stroke="#2A2616" stroke-width="25" stroke-linejoin="round"/><rect x="290" y="140" width="24" height="18" fill="#2A2616"/>`;
+    // 보먼주머니: 토리를 감싸는 주머니(왼쪽이 혈관 쪽으로 열려 있고 오른쪽은 세뇨관으로 이어진다)
+    out += `<path d="M48 80 Q60 70 76 72 Q108 76 110 104 L110 120 Q106 150 76 152 Q58 152 46 142" fill="#2A2616" stroke="#C9B26A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`;
     // 토리: 모세혈관이 실뭉치처럼 뭉친 곳
-    out += `<circle cx="70" cy="75" r="27" fill="#4A1C26"/>` + [0, 36, 72, 108, 144].map((r) => `<ellipse cx="70" cy="75" rx="25" ry="11" fill="none" stroke="#C24A5A" stroke-width="4.2" transform="rotate(${r} 70 75)"/>`).join("") + `<circle cx="70" cy="75" r="27" fill="none" stroke="#7A2F3C" stroke-width="2.4"/>`;
-    out += txt(16, 44, "혈액", { size: 12, fill: "#F0A0AA" });
+    out +=
+      `<circle cx="${G[0]}" cy="${G[1]}" r="27" fill="#4A1C26"/>` +
+      [0, 36, 72, 108, 144].map((r) => `<ellipse cx="${G[0]}" cy="${G[1]}" rx="25" ry="11" fill="none" stroke="#C24A5A" stroke-width="4.2" transform="rotate(${r} ${G[0]} ${G[1]})"/>`).join("") +
+      `<circle cx="${G[0]}" cy="${G[1]}" r="27" fill="none" stroke="#7A2F3C" stroke-width="2.4"/>`;
+    // 세뇨관을 감싸는 모세혈관 고리(세뇨관 위에 그린다)
+    Object.values(LOOP).forEach((x) => {
+      const d = `M${x - 14} ${CAP_Y + 6} L${x - 14} ${TUBE_Y + 18} Q${x - 14} ${TUBE_Y + 26} ${x} ${TUBE_Y + 26} Q${x + 14} ${TUBE_Y + 26} ${x + 14} ${TUBE_Y + 18} L${x + 14} ${CAP_Y + 6}`;
+      out += `<path d="${d}" fill="none" stroke="#7A2F3C" stroke-width="6.5" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#4A1C26" stroke-width="3" stroke-linejoin="round"/>`;
+    });
     // 이름표
-    out += `<line x1="70" y1="27" x2="70" y2="50" stroke="#8CA2C0" stroke-width="1.2"/><line x1="118" y1="92" x2="104" y2="96" stroke="#8CA2C0" stroke-width="1.2"/>`;
-    out += tag(70, 20, "토리", { size: 12 }) + tag(154, 96, "보먼주머니", { size: 12 }) + tag(206, 28, "세뇨관", { size: 12 }) + tag(196, 168, "모세혈관", { size: 12 });
-    out += txt(316, 222, "오줌", { size: 12.5, fill: "#F2DE8A", weight: 800 });
+    out += txt(8, 198, "콩팥동맥", { size: 12, fill: "#F0A0AA", anchor: "start" });
+    out += `<polygon points="346,${CAP_Y} 336,${CAP_Y - 6} 336,${CAP_Y + 6}" fill="#F0A0AA"/>` + txt(340, 30, "콩팥정맥", { size: 12, fill: "#F0A0AA", anchor: "end" });
+    out += `<line x1="62" y1="26" x2="70" y2="84" stroke="#8CA2C0" stroke-width="1.2"/>` + tag(54, 21, "토리", { size: 12 });
+    out += `<line x1="66" y1="160" x2="72" y2="153" stroke="#8CA2C0" stroke-width="1.2"/>` + tag(56, 172, "보먼주머니", { size: 12 });
+    out += tag(176, 21, "모세혈관", { size: 12 }) + `<line x1="176" y1="28" x2="176" y2="${CAP_Y - 8}" stroke="#8CA2C0" stroke-width="1.2"/>`;
+    out += tag(300, 85, "세뇨관", { size: 12 });
+    out += txt(302, 226, "콩팥깔때기", { size: 12, fill: "#F2DE8A", weight: 800 });
+    if (phase === "out") out += txt(302, 166, "오줌", { size: 12.5, fill: "#F2DE8A", weight: 800 });
+    // 여과, 재흡수, 분비: 일어난 자리에 화살과 이름이 남는다
+    if (phase !== "start")
+      out +=
+        `<g class="g2u6x-pop"><path d="M84 112 L99 112 M84 104 L98 98 M84 120 L98 126" stroke="${ARROW.filt}" stroke-width="3" stroke-linecap="round"/><polygon points="105,112 97,107.5 97,116.5" fill="${ARROW.filt}"/><polygon points="104,95 95,95.5 100,103" fill="${ARROW.filt}"/><polygon points="104,129 100,121 95,128.5" fill="${ARROW.filt}"/></g>` +
+        txt(124, 160, "여과", { size: 12.5, fill: ARROW.filt, weight: 800 });
+    const reab = (["glu", "water", "urea"] as const).filter((k) => phase !== "start" && back[k]);
+    reab.forEach((k) => (out += vArrow(LOOP[k], TUBE_Y - 12, CAP_Y + 10, ARROW.reab)));
+    if (reab.length) out += txt(LOOP[reab[0]] - 20, 84, "재흡수", { size: 12.5, fill: ARROW.reab, weight: 800, anchor: "end" });
+    if (secreted) out += vArrow(LOOP.urea + 14, CAP_Y + 10, TUBE_Y - 12, ARROW.secr) + txt(LOOP.urea - 6, 160, "분비", { size: 12.5, fill: ARROW.secr, weight: 800 });
     // 알갱이
     TOKS.forEach((t, i) => {
       const pl = place(t, i);
@@ -94,11 +134,11 @@ export const g2u6NephronLab: StepRenderer = (host, step, api) => {
       out += dot(pl.p[0], pl.p[1], lk.r, lk.fill, lk.line, "g2u6x-pop");
     });
     // 범례
-    let lx = 16;
+    let lx = 14;
     (Object.keys(LOOK) as Kind[]).forEach((k) => {
       const lk = LOOK[k];
-      out += dot(lx, 200, Math.min(lk.r, 6), lk.fill, lk.line) + txt(lx + 10, 204, lk.name, { anchor: "start", size: 12, fill: P.hi });
-      lx += 22 + lk.name.length * 12;
+      out += dot(lx, 218, Math.min(lk.r, 6), lk.fill, lk.line) + txt(lx + 10, 222, lk.name, { anchor: "start", size: 12, fill: P.hi });
+      lx += 21 + lk.name.length * 12.2;
     });
     stage.set(out);
     host.dataset.g6Stage = phase;
@@ -139,7 +179,7 @@ export const g2u6NephronLab: StepRenderer = (host, step, api) => {
     host.dataset.g6Fail = kind;
     phase = "out";
     draw();
-    toast(lab, msg, true);
+    toast(lab, msg, true, true);
     f.say(say);
     tm.later(() => {
       phase = "filtered";
