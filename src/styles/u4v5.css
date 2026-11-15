@@ -105,6 +105,10 @@
 /* ── 올리브유, 풍선 랩 ───────────────────────────── */
 .u4x-olive-bath, .u4x-olive-tape1, .u4x-olive-tape2 { transition: opacity .35s; }
 .u4x-olive-oil { transition: fill .5s; }
+/* 병은 얼리는 동안 저울 옆 비커로 옮겨 간다(바깥 g에 transform 속성이 없어야 CSS 이동이 튀지 않는다) */
+.u4x-olive-jar { transition: transform .55s var(--ease-out); }
+.u4x-olive-mark, .u4x-olive-cmp, .u4x-olive-cnt, .u4x-olive-ghost, .u4x-olive-wmark, .u4x-balloon-ghost { transition: opacity .45s; }
+@media (prefers-reduced-motion: reduce) { .u4x-olive-jar { transition: none; } }
 .u4x-olive-p, .u4x-balloon-p { transition: transform .22s linear; }
 .u4x-balloon-wind { opacity: 0; transition: opacity .2s; }
 .u4x-balloon.warm .u4x-balloon-wind.warm, .u4x-balloon.cool .u4x-balloon-wind.cool { opacity: 1; animation: u4xWind .5s linear infinite; }

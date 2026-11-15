@@ -5,90 +5,266 @@
 // 닦지 않고 바로 재면 차가운 병 겉에 맺힌 물방울 때문에 숫자가 커진다(책의 주의: 물기를 닦은 후 즉시 측정). 닦고 다시 재게 한다.
 // 통찰 하나: 응고해도 질량은 그대로이고 부피만 준다. 입자 창에서 입자의 수는 그대로이고 사이만 가까워진다.
 // 수치(12.60 g)는 이 랩에서 정한 값이다.
+//
+// 그림(2026-11-15 손질, 감사 상 후보): 판정의 근거인 높이 변화가 테이프 두 줄 사이 3px라 안 보였다.
+//   병을 가늘고 길게 그려 같은 비율(약 12%)로 줄어도 14px 내려가게 하고, 판정 때 두 테이프 사이를 노란 괄호와 "줄어든 높이"로 묶는다.
+//   입자 창에는 병의 단면(유리 벽, 기름, 액면 선)을 그리고, 판정 때 '얼리기 전'과 '얼린 뒤' 두 칸을 나란히 둔다(같은 단면, 같은 입자 12개).
+//   얼리는 동안 병은 저울에서 내려 저울 옆 얼음과 소금 비커에 넣는다(저울 위에 비커를 그리면 비커째 재는 것처럼 읽혔다). 저울은 그동안 0.00 g.
+//   얼리는 동안 입자가 한 줄로 겹치던 것은 액체 자리와 고체 자리의 짝을 거리가 짧아지게 다시 맺어 고쳤다(pairUp).
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn } from "../bio6/b6Lab";
-import { A, grid, loose, partWin, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type U4Step } from "./u4Kit";
+import { A, beaker, bottle, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type Pt, type U4Step } from "./u4Kit";
 
 const MASS = "12.60 g";
 const WET = "12.74 g"; // 닦지 않고 쟀을 때(겉에 맺힌 물방울의 질량이 더해진다)
-const WIN = { x: 196, y: 12, w: 138, h: 206 };
-const JX = 75, JW = 44, JTOP = 96, JBOT = 160; // 병 안쪽
-const DROP = 7; // 얼었을 때 내려가는 높이
+const ZERO = "0.00 g";
 const NEED = 3000;
+
+// ── 저울 위의 가늘고 긴 병(무대 왼쪽). 유리는 단원 공용 bottle(), 뚜껑과 기름과 테이프는 여기서 그린다 ──
+const SC = { x: 6, y: 168, w: 118 }; // 전자저울(왼쪽 위, 폭)
+const BX = SC.x + SC.w / 2; // 병의 가운데 x
+const BW = 15; // 병 바깥 반폭
+const BOT = SC.y; // 병 바닥(저울판 윗면)
+const BODY = 36; // 병 몸통의 위(그 위로 목 9px)
+const OIL_BOT = BOT - 4.4; // 기름 바닥(유리의 두꺼운 바닥 띠 위)
+const LIQ = 112; // 얼리기 전 올리브유 기둥의 높이
+const DROP = 14; // 얼어서 내려간 높이(기둥의 약 12%)
+const L0 = OIL_BOT - LIQ; // 얼리기 전 액면(빨간 테이프)
+const L1 = L0 + DROP; // 얼린 뒤 액면(파란 테이프)
+// 얼리는 동안 병을 넣는 얼음과 소금 비커(저울 옆)
+const BATH = { x: 152, w: 66, top: 122, bot: 206 };
+const MOVE = { dx: BATH.x + BATH.w / 2 - BX, dy: BATH.bot - 3 - BOT };
+
+// ── 입자 창(무대 오른쪽): 병 단면을 크게 본 창. 실험하는 동안은 C 하나('입자의 눈'), 판정 때 B('얼리기 전')를 왼쪽에 더한다 ──
+const WIN_Y = 12, WIN_H = 206;
+const WB = { x: 146, w: 94 };
+const WC = { x: 246, w: 94 };
+const R = 7; // 입자 반지름(두 창 모두 같다)
+const FLOOR = 202; // 단면의 바닥(입자 아랫면)
+const SEC = 31; // 단면 안쪽 반폭
+const SEC_TOP = 98; // 단면 유리 벽의 위 끝
+
+const GAP = 2 * R + 0.5; // 입자 가운데 사이의 가장 짧은 거리(서로 겹치지 않게)
+
+/** 겹친 입자를 서로 밀어 떼고 단면 안에 둔다(몇 번 되풀이). 같은 입력이면 늘 같은 자리가 나온다. */
+function relax(ps: Pt[], cx: number, iter: number): Pt[] {
+  const out = ps.map((p) => ({ x: p.x, y: p.y }));
+  for (let k = 0; k < iter; k++) {
+    for (let i = 0; i < out.length; i++)
+      for (let j = i + 1; j < out.length; j++) {
+        const a = out[i], b = out[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let d = Math.hypot(dx, dy);
+        if (d >= GAP) continue;
+        if (d < 1e-3) [dx, dy, d] = [1, 0, 1];
+        const m = (GAP - d) / 2;
+        a.x -= (dx / d) * m;
+        a.y -= (dy / d) * m;
+        b.x += (dx / d) * m;
+        b.y += (dy / d) * m;
+      }
+    for (const p of out) {
+      p.x = Math.min(cx + SEC - R, Math.max(cx - SEC + R, p.x));
+      p.y = Math.min(FLOOR - R, p.y);
+    }
+  }
+  return out;
+}
+
+/** 액체: 서로 가깝지만 가지런하지 않게(세 개씩 네 줄, 줄마다 어긋나고 조금씩 흩어진다). */
+function liquidPts(cx: number, rnd: () => number): Pt[] {
+  const pts: Pt[] = [];
+  for (let k = 0; k < 4; k++)
+    for (let c = 0; c < 3; c++)
+      pts.push({ x: cx + (c - 1) * 16.5 + (k % 2 ? 3.5 : -3.5) + (rnd() - 0.5) * 5, y: FLOOR - R - k * 14.2 + (rnd() - 0.5) * 3.6 });
+  return relax(pts, cx, 20);
+}
+/** 고체: 가지런히 붙어서(네 개씩 세 줄). */
+function solidPts(cx: number): Pt[] {
+  const pts: Pt[] = [];
+  for (let k = 0; k < 3; k++) for (let c = 0; c < 4; c++) pts.push({ x: cx + (c - 1.5) * 14.6, y: FLOOR - R - k * 14.6 });
+  return pts;
+}
+const topOf = (ps: Pt[]): number => Math.min(...ps.map((p) => p.y)) - R - 1.5;
+
+/** to를 from의 차례에 맞게 다시 늘어놓는다. 짝 사이 거리의 합이 줄어드는 동안 두 짝을 맞바꾼다
+ *  (거리 합이 가장 짧은 짝 맺기는 길이 서로 엇갈리지 않는다. 예전에는 줄 차례가 뒤집혀 입자가 한 줄로 겹쳤다). */
+function pairUp(from: Pt[], to: Pt[]): Pt[] {
+  const out = to.slice();
+  const d = (a: Pt, b: Pt): number => Math.hypot(a.x - b.x, a.y - b.y);
+  for (let pass = 0, better = true; better && pass < 40; pass++) {
+    better = false;
+    for (let i = 0; i < out.length; i++)
+      for (let j = i + 1; j < out.length; j++)
+        if (d(from[i], out[j]) + d(from[j], out[i]) < d(from[i], out[i]) + d(from[j], out[j]) - 1e-6) {
+          [out[i], out[j]] = [out[j], out[i]];
+          better = true;
+        }
+  }
+  return out;
+}
 
 export const u4OliveLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
   const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-olive" });
   const { f, tm } = lab;
   const rnd = seeded(77);
+  const ns = `u4o${Math.random().toString(36).slice(2, 7)}`; // 그라데이션 id(같은 id가 다른 화면에 남아 있으면 색이 빠진다)
 
-  const cx = WIN.x + WIN.w / 2;
-  // 액체는 가깝지만 가지런하지 않게, 고체는 더 가까이 가지런하게(입자의 수는 같다)
-  const liq = loose(4, 3, cx, WIN.y + WIN.h - 34, 19, rnd).concat(loose(1, 1, cx, WIN.y + WIN.h - 34 - 19 * 2.7, 19, rnd));
-  const sol = grid(4, 3, cx, WIN.y + WIN.h - 48, 15);
+  const cB = WB.x + WB.w / 2;
+  const cC = WC.x + WC.w / 2;
+  const liqB = liquidPts(cB, rnd);
+  const liqC = liqB.map((p) => ({ x: p.x - cB + cC, y: p.y }));
+  const solC = pairUp(liqC, solidPts(cC));
+  const lvl0 = topOf(liqC); // 창 안의 액면: 얼리기 전
+  const lvl1 = topOf(solC); // 얼린 뒤
+
+  const dot = (p: Pt, cls: string): string =>
+    `<circle class="${cls}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${R}" fill="url(#${ns}p)" stroke="${A.partEdge}" stroke-width="1.1"/>`;
+  /** 병 단면: 유리 벽(위가 열린 U), 액면까지의 기름 빛, 액면 선. */
+  const section = (cx: number, lv: number, cls: string, line: string): string => `
+    <rect class="${cls}-fill" x="${cx - SEC}" y="${lv.toFixed(1)}" width="${SEC * 2}" height="${(FLOOR + 1 - lv).toFixed(1)}" rx="3" fill="rgba(255,255,255,.06)"/>
+    <path d="M${cx - SEC - 1.5} ${SEC_TOP} V${FLOOR - 6} a8 8 0 0 0 8 8 h${SEC * 2 - 13} a8 8 0 0 0 8 -8 V${SEC_TOP}" stroke="rgba(190,210,240,.55)" stroke-width="1.6"/>
+    <path class="${cls}-line" d="M${cx - SEC} ${lv.toFixed(1)} h${SEC * 2}" stroke="${line}" stroke-width="2.4" stroke-linecap="round"/>`;
+  const winRect = (x: number, w: number): string =>
+    `<rect x="${x}" y="${WIN_Y}" width="${w}" height="${WIN_H}" rx="14" fill="rgba(124,107,255,.10)" stroke="rgba(155,140,255,.5)" stroke-width="1.6"/>`;
+  const cubes = (pos: [number, number, number][]): string =>
+    pos.map(([x, y, sz]) => `<rect x="${x}" y="${y}" width="${sz}" height="${sz}" rx="3.5" fill="url(#${ns}ice)" stroke="#9CCBEF" stroke-width="1.2"/>`).join("");
+  const grains = Array.from({ length: 40 }, () => [BATH.x + 6 + rnd() * (BATH.w - 12), BATH.top + 16 + rnd() * (BATH.bot - BATH.top - 24)])
+    .filter(([x]) => Math.abs(x - (BATH.x + BATH.w / 2)) > BW + 2)
+    .map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.6" fill="#fff" opacity="0.9"/>`)
+    .join("");
+
+  const glass = bottle(BX - BW, BODY, BW * 2, BOT - BODY, `${ns}b`, { neck: 9, neckW: 18 });
+  const oilRect = (cls: string, fill: string, op: string): string =>
+    `<rect class="${cls}" x="${BX - BW + 2.6}" y="${L0}" width="${BW * 2 - 5.2}" height="${OIL_BOT - L0}" rx="3" fill="${fill}" opacity="${op}"/>`;
 
   f.stage.innerHTML = `${svgOpen}
-    ${scale(22, 160, 150, "u4x-olive", "0.00 g")}
-    <g class="u4x-olive-bath" opacity="0">
-      <path d="M48 84 v64 a10 10 0 0 0 10 10 h78 a10 10 0 0 0 10 -10 v-64" fill="rgba(160,205,245,.16)" stroke="${A.glass}" stroke-width="2.2"/>
-      ${[[56, 132], [124, 128], [58, 104], [126, 100], [90, 146]].map(([x, y]) => `<rect x="${x}" y="${y}" width="13" height="12" rx="3" fill="#DDEFFF" stroke="#8FC1E8" stroke-width="1"/>`).join("")}
-    </g>
+    <defs>
+      <linearGradient id="${ns}oil" x1="0" x2="1"><stop offset="0" stop-color="#FFD24D"/><stop offset=".5" stop-color="${A.oil}"/><stop offset="1" stop-color="#D99500"/></linearGradient>
+      <linearGradient id="${ns}frz" x1="0" x2="1"><stop offset="0" stop-color="#FFF8DC"/><stop offset=".5" stop-color="${A.oilFrozen}"/><stop offset="1" stop-color="#E9D58C"/></linearGradient>
+      <linearGradient id="${ns}lid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B7C4D4"/><stop offset=".5" stop-color="#8B9BB0"/><stop offset="1" stop-color="#6B7B90"/></linearGradient>
+      <linearGradient id="${ns}ice" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2FAFF" stop-opacity=".9"/><stop offset=".55" stop-color="#CBE6FA" stop-opacity=".62"/><stop offset="1" stop-color="#A7D0EE" stop-opacity=".55"/></linearGradient>
+      <radialGradient id="${ns}p" cx=".35" cy=".32" r=".75"><stop offset="0" stop-color="#D9D2FF"/><stop offset=".55" stop-color="${A.part}"/><stop offset="1" stop-color="#7464E0"/></radialGradient>
+    </defs>
+    ${scale(SC.x, SC.y, SC.w, "u4x-olive", ZERO)}
     <g class="u4x-olive-jar">
-      <rect class="u4x-olive-oil" x="${JX}" y="${JTOP}" width="${JW}" height="${JBOT - JTOP}" rx="5" fill="${A.oil}" opacity="0.9"/>
-      <rect x="${JX - 2}" y="84" width="${JW + 4}" height="${JBOT - 84 + 2}" rx="6" stroke="${A.glass}" stroke-width="2.4"/>
-      <rect x="${JX + 2}" y="72" width="${JW - 4}" height="13" rx="3" fill="#8B9BB0" stroke="#5C6B7A" stroke-width="1.2"/>
-      <path d="M${JX + 5} 100 v52" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-      <rect class="u4x-olive-tape1" x="${JX - 8}" y="${JTOP - 2}" width="${JW + 16}" height="4" rx="1.5" fill="#F0705E" opacity="0"/>
-      <g class="u4x-olive-dew">${[[JX - 1, 104], [JX + JW + 1, 118], [JX - 1, 134], [JX + JW + 1, 146], [JX + 8, 152]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="3.6" fill="#BFE6FF" stroke="#6FB9E0" stroke-width="0.8"/>`).join("")}</g>
-      <rect class="u4x-olive-tape2" x="${JX - 8}" y="${JTOP + DROP - 2}" width="${JW + 16}" height="4" rx="1.5" fill="#6C8CFF" opacity="0"/>
+      <ellipse cx="${BX}" cy="${BOT}" rx="${BW + 4}" ry="2.6" fill="#000" opacity="0.32"/>
+      ${glass.back}
+      ${oilRect("u4x-olive-oil", `url(#${ns}oil)`, "1")}
+      ${oilRect("u4x-olive-ice", `url(#${ns}frz)`, "0")}
+      ${glass.front}
+      <rect x="${BX - 11}" y="${BODY - 9 - 12}" width="22" height="13" rx="3.5" fill="url(#${ns}lid)" stroke="#56657A" stroke-width="1.4"/>
+      <rect class="u4x-olive-tape1" x="${BX - BW - 6}" y="${L0 - 2}" width="${BW * 2 + 12}" height="4" rx="1.5" fill="#F0705E" opacity="0"/>
+      <rect class="u4x-olive-tape2" x="${BX - BW - 6}" y="${L1 - 2}" width="${BW * 2 + 12}" height="4" rx="1.5" fill="#6C8CFF" opacity="0"/>
+      <g class="u4x-olive-dew">${[[BX - BW - 1, 92], [BX + BW + 1, 108], [BX - BW - 1, 130], [BX + BW + 1, 146], [BX - BW - 1, 156], [BX + 6, 161]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="3.6" fill="#BFE6FF" stroke="#6FB9E0" stroke-width="0.8"/>`).join("")}</g>
     </g>
-    ${partWin(WIN.x, WIN.y, WIN.w, WIN.h, liq, "u4x-olive")}
+    <g class="u4x-olive-bath" opacity="0">
+      ${cubes([[BATH.x + 4, BATH.top + 30, 14], [BATH.x + 5, BATH.top + 52, 13], [BATH.x + 3, BATH.top + 70, 13], [BATH.x + BATH.w - 18, BATH.top + 24, 14], [BATH.x + BATH.w - 17, BATH.top + 46, 13], [BATH.x + BATH.w - 18, BATH.top + 66, 14], [BATH.x + BATH.w / 2 - 6, BATH.bot - 17, 12]])}
+      ${grains}
+      ${beaker(BATH.x, BATH.top, BATH.w, BATH.bot - BATH.top, "#CFE6FF", `${ns}k`, 0)}
+      <text x="${BATH.x + BATH.w / 2}" y="${BATH.bot + 17}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#CFE3FF">얼음과 소금</text>
+    </g>
+    <g class="u4x-olive-mark" opacity="0">
+      <rect x="${BX - BW + 2.6}" y="${L0 + 2}" width="${BW * 2 - 5.2}" height="${DROP - 4}" fill="#FFE58A" opacity="0.3"/>
+      <path d="M${BX + BW + 7} ${L0} h6 V${L1} h-6" stroke="#FFE58A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="${BX + BW + 18}" y="${L0 + 4}" font-size="12.5" font-weight="800" fill="#FFE58A">줄어든</text>
+      <text x="${BX + BW + 18}" y="${L0 + 19}" font-size="12.5" font-weight="800" fill="#FFE58A">높이</text>
+    </g>
+    <g class="u4x-olive-cmp" opacity="0">
+      ${winRect(WB.x, WB.w)}
+      <text x="${cB}" y="${WIN_Y + 21}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9BEFF">얼리기 전</text>
+      <text x="${cB}" y="${WIN_Y + 40}" text-anchor="middle" font-size="12" font-weight="700" fill="#9C90DA">입자 12개</text>
+      ${section(cB, lvl0, "u4x-olive-b", "#F0705E")}
+      ${liqB.map((p) => dot(p, "u4x-olive-p u4x-olive-pb")).join("")}
+    </g>
+    <g class="u4x-olive-win">
+      ${winRect(WC.x, WC.w)}
+      <text class="u4x-olive-ttl" x="${cC}" y="${WIN_Y + 21}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9BEFF">입자의 눈</text>
+      <text class="u4x-olive-cnt" x="${cC}" y="${WIN_Y + 40}" text-anchor="middle" font-size="12" font-weight="700" fill="#9C90DA" opacity="0">입자 12개</text>
+      <path class="u4x-olive-ghost" d="M${cC - SEC} ${lvl0.toFixed(1)} h${SEC * 2}" stroke="#F0705E" stroke-width="1.6" stroke-dasharray="4 3" opacity="0"/>
+      ${section(cC, lvl0, "u4x-olive-c", "rgba(255,255,255,.6)")}
+      <path class="u4x-olive-wmark" d="M${cC + SEC + 3} ${lvl0.toFixed(1)} h5 V${lvl1.toFixed(1)} h-5" stroke="#FFE58A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>
+      ${liqC.map((p) => dot(p, "u4x-olive-p u4x-olive-pc")).join("")}
+    </g>
   </svg>`;
   const q = <T extends Element>(sel: string): T => f.stage.querySelector(sel) as T;
   const read = q<SVGTextElement>(".u4x-olive-read");
+  const jar = q<SVGGElement>(".u4x-olive-jar");
   const oil = q<SVGRectElement>(".u4x-olive-oil");
-  const bath = q<SVGGElement>(".u4x-olive-bath");
+  const ice = q<SVGRectElement>(".u4x-olive-ice");
+  const baths = Array.from(f.stage.querySelectorAll<SVGGElement>(".u4x-olive-bath"));
   const tape1 = q<SVGRectElement>(".u4x-olive-tape1");
   const tape2 = q<SVGRectElement>(".u4x-olive-tape2");
-  const pEls = Array.from(f.stage.querySelectorAll<SVGCircleElement>(".u4x-olive-p"));
+  const mark = q<SVGGElement>(".u4x-olive-mark");
+  const cmp = q<SVGGElement>(".u4x-olive-cmp");
+  const ttl = q<SVGTextElement>(".u4x-olive-ttl");
+  const cnt = q<SVGTextElement>(".u4x-olive-cnt");
+  const ghost = q<SVGPathElement>(".u4x-olive-ghost");
+  const wmark = q<SVGPathElement>(".u4x-olive-wmark");
+  const cFill = q<SVGRectElement>(".u4x-olive-c-fill");
+  const cLine = q<SVGPathElement>(".u4x-olive-c-line");
+  const pB = Array.from(f.stage.querySelectorAll<SVGCircleElement>(".u4x-olive-pb"));
+  const pC = Array.from(f.stage.querySelectorAll<SVGCircleElement>(".u4x-olive-pc"));
 
   let pred = "";
   let t = 0;
+  let bathOn = false;
+  /** 병의 자리: 저울 위(false) 또는 얼음과 소금 비커 속(true). */
+  const inBath = (on: boolean): void => {
+    if (on === bathOn) return;
+    bathOn = on;
+    jar.style.transform = on ? `translate(${MOVE.dx}px, ${MOVE.dy}px)` : "";
+    baths.forEach((g) => g.setAttribute("opacity", on ? "1" : "0"));
+    if (on) read.textContent = ZERO;
+  };
   const paint = (): void => {
-    oil.setAttribute("y", (JTOP + DROP * t).toFixed(1));
-    oil.setAttribute("height", (JBOT - JTOP - DROP * t).toFixed(1));
-    oil.setAttribute("fill", t > 0.55 ? A.oilFrozen : A.oil);
-    pEls.forEach((c, k) => {
-      c.setAttribute("cx", (liq[k].x + (sol[k].x - liq[k].x) * t).toFixed(1));
-      c.setAttribute("cy", (liq[k].y + (sol[k].y - liq[k].y) * t).toFixed(1));
+    const y = L0 + DROP * t;
+    for (const r of [oil, ice]) {
+      r.setAttribute("y", y.toFixed(1));
+      r.setAttribute("height", (OIL_BOT - y).toFixed(1));
+    }
+    const k = Math.min(1, Math.max(0, (t - 0.3) / 0.55)); // 하얗게 굳는 정도
+    ice.setAttribute("opacity", k.toFixed(2));
+    const lv = lvl0 + (lvl1 - lvl0) * t;
+    cFill.setAttribute("y", lv.toFixed(1));
+    cFill.setAttribute("height", (FLOOR + 1 - lv).toFixed(1));
+    cLine.setAttribute("d", `M${cC - SEC} ${lv.toFixed(1)} h${SEC * 2}`);
+    // 짝지은 자리 사이를 곧게 가되, 가다가 맞닿는 입자는 서로 밀어 겹치지 않게 한다(액체 넉 줄이 고체 석 줄로 바뀌는 길)
+    const ps = relax(liqC.map((p, i) => ({ x: p.x + (solC[i].x - p.x) * t, y: p.y + (solC[i].y - p.y) * t })), cC, 12);
+    pC.forEach((c, i) => {
+      c.setAttribute("cx", ps[i].x.toFixed(1));
+      c.setAttribute("cy", ps[i].y.toFixed(1));
     });
     host.dataset.u4Olive = t.toFixed(2);
   };
-  // 액체일 때는 입자가 조금씩 자리를 옮긴다(얼수록 잦아든다)
+  // 액체일 때는 입자가 조금씩 자리를 옮긴다(얼수록 잦아든다). '얼리기 전' 칸의 입자는 늘 액체다.
   const jitter = (): void => {
     if (!tm.alive()) return;
-    if (t < 1) {
-      const amp = 3.2 * (1 - t);
-      pEls.forEach((c) => (c.style.transform = `translate(${((rnd() - 0.5) * amp).toFixed(1)}px, ${((rnd() - 0.5) * amp).toFixed(1)}px)`));
-    } else pEls.forEach((c) => (c.style.transform = ""));
+    const wob = (c: SVGCircleElement, amp: number): void => {
+      c.style.transform = amp > 0.05 ? `translate(${((rnd() - 0.5) * amp).toFixed(1)}px, ${((rnd() - 0.5) * amp).toFixed(1)}px)` : "";
+    };
+    pC.forEach((c) => wob(c, 3.2 * (1 - t)));
+    pB.forEach((c) => wob(c, 3.2));
     tm.later(jitter, 240);
   };
 
   const weigh = bvBtn("main u4x-olive-weigh", "높이를 표시하고 질량 재기");
   const hold = u4Hold(lab, "꾹 눌러 얼음과 소금으로 얼리기", (ms) => {
-    bath.setAttribute("opacity", "1");
-    read.setAttribute("opacity", "0.25");
+    inBath(true);
     t = Math.min(1, t + ms / NEED);
     paint();
     if (t < 1) return true;
     haptic(HAPTIC.correct);
     hold.disabled = true;
     tape2.setAttribute("opacity", "1");
+    // 입자 창에도 두 테이프처럼: 얼린 뒤 액면은 파랑, 얼리기 전 액면은 빨간 점선으로 남긴다
+    cLine.setAttribute("stroke", "#6C8CFF");
+    ghost.setAttribute("opacity", "0.85");
     f.pips(1);
-    f.stage.classList.add("dew");
     f.say("하얗게 굳었어요. 높이가 <b>내려가</b> 파란 테이프를 붙였어요. 이제 질량을 다시 재요.");
     f.slot.setControls(el("div", { class: "u4x-row" }, rush, again));
     api.setCTA("다시 재 보세요", { enabled: false });
@@ -100,8 +276,8 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
   rush.addEventListener("click", () => {
     rush.disabled = true;
     haptic(HAPTIC.wrong);
-    bath.setAttribute("opacity", "0");
-    read.setAttribute("opacity", "1");
+    inBath(false);
+    f.stage.classList.add("dew");
     read.textContent = WET;
     f.say(`숫자가 <b>${WET}</b>으로 커졌어요. 차가운 병 겉에 <b>물방울</b>이 맺혀서예요. 닦고 다시 재요.`);
   });
@@ -126,12 +302,18 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
   again.addEventListener("click", () => {
     again.disabled = true;
     rush.disabled = true;
+    inBath(false);
     f.stage.classList.remove("dew");
     haptic(HAPTIC.correct);
-    bath.setAttribute("opacity", "0");
-    read.setAttribute("opacity", "1");
     read.textContent = MASS;
     f.pips(2);
+    // 판정 무대: 병의 두 테이프 사이를 괄호로 묶고, 입자 창을 '얼리기 전'과 '얼린 뒤' 두 칸으로
+    mark.setAttribute("opacity", "1");
+    cmp.setAttribute("opacity", "1");
+    ttl.textContent = "얼린 뒤";
+    cnt.setAttribute("opacity", "1");
+    wmark.setAttribute("opacity", "1");
+    host.dataset.u4OliveCmp = "1";
     const head = pred.startsWith("그대로") ? "예측대로" : "예측과 달리";
     f.say(`${head} 질량은 <b>그대로 ${MASS}</b>이에요. 그런데 높이(부피)는 줄었어요.`);
     tm.later(judge, 1100);

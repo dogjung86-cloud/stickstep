@@ -4,6 +4,8 @@
 // 조작: 예측 → 꾹 눌러 따뜻한 바람 보내기(풍선이 부풀고 입자가 흩어진다) → 판정 하나(다시 식히면?) → 꾹 눌러 식혀서 확인.
 // 통찰 하나: 기화하면 입자 사이가 멀어져 부피가 크게 늘지만 입자의 수(질량)는 그대로다.
 // 수치(86.40 g)는 이 랩에서 정한 값이다.
+// 결론 무대(2026-11-15 손질, 감사 하 후보): 식힌 뒤 결론("기화하면 부피가 크게 늘어요")이 뜰 때 무대에는 쪼그라든 풍선만 남았다.
+//   가장 크게 부풀었던 풍선의 윤곽을 점선으로 남기고 "데웠을 때"라고 적어 두 크기를 한 장면에 둔다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
@@ -14,6 +16,8 @@ const FX = 97, BASE = 160, FH = 62; // 플라스크 바닥 가운데와 높이
 const NECK = BASE - FH;
 const WIN = { x: 196, y: 12, w: 138, h: 206 };
 const NEED = 3000;
+const SMALL = { rx: 11, ry: 13 }; // 쪼그라든 풍선
+const BIG = { rx: SMALL.rx + 28, ry: SMALL.ry + 31 }; // 가장 크게 부푼 풍선
 
 export const u4BalloonLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
@@ -28,6 +32,10 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
   f.stage.innerHTML = `${svgOpen}
     <defs><radialGradient id="u4bBal" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FFB3C6"/><stop offset="0.6" stop-color="#F06595"/><stop offset="1" stop-color="#C2255C"/></radialGradient></defs>
     ${scale(22, 160, 150, "u4x-balloon", MASS)}
+    <g class="u4x-balloon-ghost" opacity="0">
+      <ellipse cx="${FX}" cy="${NECK + 1 - BIG.ry}" rx="${BIG.rx}" ry="${BIG.ry}" stroke="#FFB3C6" stroke-width="1.8" stroke-dasharray="5 4"/>
+      <text x="${FX}" y="${NECK + 1 - BIG.ry * 1.42}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#FFC9D6">데웠을 때</text>
+    </g>
     <ellipse class="u4x-balloon-b" cx="${FX}" cy="${NECK - 12}" rx="11" ry="13" fill="url(#u4bBal)" stroke="#A61E4D" stroke-width="1.4"/>
     ${flask(FX, BASE, FH, "u4x-balloon", "#BFE3FF", 0.3)}
     <path d="M${FX - 12} ${NECK + 2} h24" stroke="#C2255C" stroke-width="5" stroke-linecap="round"/>
@@ -37,6 +45,7 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
   </svg>`;
   const q = <T extends Element>(sel: string): T => f.stage.querySelector(sel) as T;
   const balloon = q<SVGEllipseElement>(".u4x-balloon-b");
+  const ghost = q<SVGGElement>(".u4x-balloon-ghost");
   const liqEl = q<SVGPathElement>(".u4x-balloon-liq");
   const pEls = Array.from(f.stage.querySelectorAll<SVGCircleElement>(".u4x-balloon-p"));
 
@@ -44,8 +53,8 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
   let e = 0; // 기화한 정도(0~1)
   const paint = (): void => {
     const k = 1 - (1 - e) * (1 - e);
-    const ry = 13 + 31 * k;
-    balloon.setAttribute("rx", (11 + 28 * k).toFixed(1));
+    const ry = SMALL.ry + (BIG.ry - SMALL.ry) * k;
+    balloon.setAttribute("rx", (SMALL.rx + (BIG.rx - SMALL.rx) * k).toFixed(1));
     balloon.setAttribute("ry", ry.toFixed(1));
     balloon.setAttribute("cy", (NECK + 1 - ry).toFixed(1));
     liqEl.setAttribute("opacity", (0.6 * (1 - k)).toFixed(2));
@@ -88,6 +97,8 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
       if (e > 0) return true;
       haptic(HAPTIC.correct);
       cool.disabled = true;
+      ghost.setAttribute("opacity", "1"); // 데웠을 때의 크기를 점선으로 남긴다
+      host.dataset.u4BalloonGhost = "1";
       tm.later(() => lab.finish("기화하면 입자 사이가 멀어져 <b>부피가 크게 늘어요</b>. 입자의 수는 그대로라 <b>질량은 변하지 않아요</b>."), 700);
       f.say("풍선이 다시 <b>쪼그라들었어요</b>. 저울의 숫자는 이번에도 그대로예요.");
       return false;
