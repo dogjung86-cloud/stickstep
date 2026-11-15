@@ -7,6 +7,7 @@
 // 판정의 근거(확대한 입자 모형과 성분 목록)는 무대에 남는다. 다 가르면 판정 질문 하나, 결론 한 문장.
 
 import { el } from "../../../core/dom";
+import { ELEMS } from "../../../ui/chemKit";
 import type { StepRenderer } from "../../types";
 import { bad, ball, bond, g4Lab, g4Svg, good, row, tap, toast, txt, type G4Step } from "./kit";
 
@@ -35,14 +36,30 @@ interface Config {
 // ── 입자 그림(좌표는 원의 가운데 108,116 기준으로 계산한다) ──
 const CX = 108;
 const CY = 116;
-const grid = (sym: string, k: number, gap: number, rows = 4, cols = 4, charge?: (i: number, j: number) => { sym: string; charge: string }): string => {
+const grid = (sym: string, k: number, gap: number, rows = 4, cols = 4): string => {
   let out = "";
   for (let j = 0; j < rows; j++)
     for (let i = 0; i < cols; i++) {
       const x = CX + (i - (cols - 1) / 2) * gap;
       const y = CY + (j - (rows - 1) / 2) * gap;
-      const c = charge?.(i, j);
-      out += c ? ball(x, y, c.sym, { k, label: false }) + txt(x, y + 4.5, c.charge, { size: 13, fill: "#fff", weight: 800 }) : ball(x, y, sym, { k, label: false });
+      out += ball(x, y, sym, { k, label: false });
+    }
+  return out;
+};
+// 염화 나트륨 한 층: 나트륨 이온(Na⁺)과 염화 이온(Cl⁻)이 번갈아 놓인다. 원자일 때는 나트륨이 염소보다 크지만 이온이 되면
+// 반대라서, 원자 공의 크기(chemKit)를 그대로 쓰지 않고 이온 반지름(Na⁺ 102 pm, Cl⁻ 181 pm, 염화 이온이 지름 약 1.8배)의 비로 잰다.
+// 이웃한 두 이온의 중심 사이 30 px에 반지름의 합 27 px(거의 맞닿게).
+const ION_PM = { Na: 102, Cl: 181 } as const;
+const salt = (): string => {
+  const gap = 30;
+  const px = (gap - 3) / (ION_PM.Na + ION_PM.Cl);
+  let out = "";
+  for (let j = 0; j < 4; j++)
+    for (let i = 0; i < 4; i++) {
+      const x = CX + (i - 1.5) * gap;
+      const y = CY + (j - 1.5) * gap;
+      const sym = (i + j) % 2 ? "Cl" : "Na";
+      out += ball(x, y, sym, { k: (ION_PM[sym] * px) / ELEMS[sym].r, label: false }) + txt(x, y + 4.5, sym === "Cl" ? "−" : "+", { size: 13, fill: "#fff", weight: 800 });
     }
   return out;
 };
@@ -127,7 +144,7 @@ const CAN: Config = {
     {
       key: "salt",
       name: "염화 나트륨",
-      art: grid("Na", 0.82, 30, 4, 4, (i, j) => ((i + j) % 2 ? { sym: "Cl", charge: "−" } : { sym: "Na", charge: "+" })),
+      art: salt(),
       comps: [["Na", "나트륨"], ["Cl", "염소"]],
       bin: "ion",
       hint: "입자마다 (+)와 (−) 전하를 띠고 있어요",
