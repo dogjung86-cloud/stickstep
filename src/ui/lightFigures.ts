@@ -391,22 +391,161 @@ export function xyloBarsFig(): string {
 }
 
 // ── recap 미니 아트(64×64) ──────────────────────────────────
+// 아래 다섯 그림은 모양을 손으로 찍지 않고 식에서 뽑는다(반사 법칙, 굴절로 떠오른 깊이, 거울과 렌즈의 식, 원의 교점).
+const r1 = (v: number): string => String(Math.round(v * 10) / 10);
+const deg = (d: number): number => (d * Math.PI) / 180;
+interface P2 {
+  x: number;
+  y: number;
+}
+
+/** 정반사와 난반사: 나란히 들어온 빛 셋이 기울기가 다른 세 조각에 닿아, 조각마다 법선대로(반사 법칙) 흩어진다. */
+function diffuseMini(): string {
+  // 거친 면(꺾인 선). 빛이 닿는 조각은 1, 3, 5번이고 법선의 기울기는 -27°, +4°, +20°다.
+  const S: P2[] = [{ x: 6, y: 46 }, { x: 12, y: 49.5 }, { x: 22, y: 49.5 - 10 * Math.tan(deg(27)) }, { x: 26, y: 48.6 }, { x: 36, y: 48.6 + 10 * Math.tan(deg(4)) }, { x: 40, y: 45.4 }, { x: 50, y: 45.4 + 10 * Math.tan(deg(20)) }, { x: 58, y: 45.6 }];
+  const a = deg(15); // 들어오는 빛: 연직에서 15°, 왼쪽 위에서
+  const d = { x: Math.sin(a), y: Math.cos(a) };
+  const surf = S.map((p, i) => `${i ? "L" : "M"}${r1(p.x)} ${r1(p.y)}`).join("");
+  let rays = "";
+  // [조각 번호, 조각 위의 자리(0~1), 반사한 빛의 길이]
+  ([[1, 0.5, 21], [3, 0.5, 30], [5, 0.5, 20]] as const).forEach(([i, t, len]) => {
+    const p = S[i];
+    const q = S[i + 1];
+    const h = { x: p.x + (q.x - p.x) * t, y: p.y + (q.y - p.y) * t };
+    const L = Math.hypot(q.x - p.x, q.y - p.y);
+    const n = { x: (q.y - p.y) / L, y: -(q.x - p.x) / L }; // 위를 향한 법선
+    const k = d.x * n.x + d.y * n.y;
+    const r = { x: d.x - 2 * k * n.x, y: d.y - 2 * k * n.y };
+    const back = (h.y - 10) / d.y; // 들어오는 빛은 모두 y=10에서 출발(나란하다)
+    rays += `<path d="M${r1(h.x - d.x * back)} 10L${r1(h.x)} ${r1(h.y)}" stroke="#F0A422" stroke-width="2"/>`;
+    rays += `<path d="M${r1(h.x)} ${r1(h.y)}L${r1(h.x + r.x * len)} ${r1(h.y + r.y * len)}" stroke="#37B6D8" stroke-width="2"/>`;
+  });
+  return `<path d="${surf}L58 56H6z" fill="#E3E8EF"/><path d="${surf}" stroke="#5E6B7E" stroke-width="2.4" fill="none"/>${rays}`;
+}
+
+/** 굴절 때문에 꺾여 보이는 빨대: 물속 부분은 떠올라 보여 수면 쪽으로 눕는다(옆에서 볼 때 깊이가 절반쯤으로 보인다). */
+function strawMini(): string {
+  const wy = 32; // 수면
+  const s = { x: 34, y: wy }; // 빨대가 수면을 지나는 점
+  const tilt = Math.tan(deg(30)); // 빨대는 연직에서 30° 기울어 있다
+  const top = { x: s.x + (wy - 5) * tilt, y: 5 };
+  const tipReal = { x: s.x - (56 - wy) * tilt, y: 56 }; // 실제 끝(깊이 24)
+  const tipSeen = { x: tipReal.x, y: wy + (tipReal.y - wy) * 0.5 }; // 보이는 끝(깊이 12)
+  return `<path d="M12 26h40l-4 30a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" fill="#F7FAFE" stroke="#8B95A1" stroke-width="2.2"/>
+    <path d="M13.3 ${wy}h37.4l-3.1 23.6a3 3 0 0 1-3 2.6H19.4a3 3 0 0 1-3-2.6z" fill="#D6E8FB"/>
+    <path d="M14 ${wy}h36" stroke="#5AA2F8" stroke-width="2"/>
+    <path d="M${r1(top.x)} ${r1(top.y)}L${r1(s.x)} ${r1(s.y)}" stroke="#F0A422" stroke-width="3.4"/>
+    <path d="M${r1(s.x)} ${r1(s.y)}L${r1(tipSeen.x)} ${r1(tipSeen.y)}" stroke="#F0A422" stroke-width="3.8" opacity=".8"/>`;
+}
+
+/** 세운 화살표(물체 또는 상). base는 밑동, tip은 끝(밑동보다 위면 바로, 아래면 거꾸로). 화살촉은 끝에 둔다. */
+function arrowMini(x: number, base: number, tip: number, color: string, w: number, head: number, half: number): string {
+  const s = Math.sign(tip - base);
+  const neck = tip - s * head;
+  return `<path d="M${r1(x)} ${r1(base)}V${r1(neck)}" stroke="${color}" stroke-width="${w}"/><path d="M${r1(x - half)} ${r1(neck)}L${r1(x)} ${r1(tip)}L${r1(x + half)} ${r1(neck)}z" fill="${color}"/>`;
+}
+
+/** 오목 거울(가운데가 물체에서 먼 쪽으로 들어간 면). 먼 물체의 상은 거울과 물체 사이에 작고 거꾸로 선다(1/d + 1/d' = 1/f). */
+function ccvMirrorMini(): string {
+  // 면: M24 8 Q4 32 24 56 → x = 14 + (y-32)²/57.6, 꼭짓점 x=14, 곡률 반지름 28.8, f = 14.4
+  const vx = 14;
+  const f = 14.4;
+  const ox = 54; // 물체(밑동은 가운데 줄 y=32)
+  const d = ox - vx;
+  const di = 1 / (1 / f - 1 / d);
+  const m = -di / d; // 음수면 거꾸로
+  const H = 20;
+  // 뒷면 빗금: 곡선 바깥(왼쪽)으로 뻗는 짧은 선 넷. 가운데 줄 높이(y=32)는 비워 가운데 줄이 거울을 뚫고 지나는 것처럼 보이지 않게 한다.
+  const hatch = [13, 22.5, 41.5, 51]
+    .map((y) => {
+      const t = (y - 8) / 48;
+      const x = 24 - 40 * t + 40 * t * t;
+      const tx = 40 * (2 * t - 1);
+      const ty = 48;
+      const L = Math.hypot(tx, ty);
+      const nx = -ty / L; // 바깥쪽(왼쪽)
+      const ny = tx / L;
+      return `M${r1(x + nx * 1.8)} ${r1(y + ny * 1.8)}l${r1(nx * 6.5)} ${r1(ny * 6.5)}`;
+    })
+    .join("");
+  return `<path d="M${vx} 32H60" stroke="#D5DBE3" stroke-width="1.4"/>
+    <path d="M24 8Q4 32 24 56" stroke="#5E6B7E" stroke-width="3" fill="none"/>
+    <path d="${hatch}" stroke="#B0B8C1" stroke-width="1.8"/>
+    ${arrowMini(ox, 32, 32 - H, "#F0A422", 2.8, 5, 4)}
+    ${arrowMini(vx + di, 32, 32 - H * m, "#37B6D8", 2.2, 3.6, 2.8)}`;
+}
+
+/** 볼록 렌즈와 먼 물체: 렌즈 건너편에 작고 거꾸로 선 상(1/d + 1/d' = 1/f). 물체와 상의 밑동은 가운데 줄에 맞춘다. */
+function cvxLensMini(): string {
+  const lx = 32;
+  const f = 7.5;
+  const ox = 10;
+  const d = lx - ox;
+  const di = 1 / (1 / f - 1 / d);
+  const m = -di / d;
+  const H = 19;
+  return `<path d="M4 32H60" stroke="#D5DBE3" stroke-width="1.4"/>
+    <path d="M32 6Q42 32 32 58Q22 32 32 6z" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="2.2"/>
+    ${arrowMini(ox, 32, 32 - H, "#F0A422", 2.8, 5, 4)}
+    ${arrowMini(lx + di, 32, 32 - H * m, "#37B6D8", 2.2, 3.6, 2.8)}`;
+}
+
+/** 빛의 삼원색: 세 원을 원색으로 칠하고, 겹친 곳(노랑, 자홍, 청록, 가운데 흰색)은 원의 교점과 호를 계산해 직접 칠한다.
+ *  섞기 효과(mix-blend-mode)는 밝은 카드 위에서 흰색으로 날아가 쓰지 않는다. id도 쓰지 않는다(같은 화면에 여러 번 놓여도 색이 빠지지 않게). */
+function colorTriMini(): string {
+  const r = 13.5;
+  const R = { x: 32, y: 24 };
+  const G = { x: 24, y: 24 + 8 * Math.sqrt(3) };
+  const B = { x: 40, y: 24 + 8 * Math.sqrt(3) };
+  const meet = (a: P2, b: P2): [P2, P2] => {
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const dd = Math.hypot(dx, dy);
+    const h = Math.sqrt(r * r - (dd / 2) * (dd / 2));
+    const mx = (a.x + b.x) / 2;
+    const my = (a.y + b.y) / 2;
+    return [
+      { x: mx - (dy / dd) * h, y: my + (dx / dd) * h },
+      { x: mx + (dy / dd) * h, y: my - (dx / dd) * h },
+    ];
+  };
+  const inside = (p: P2, c: P2): boolean => Math.hypot(p.x - c.x, p.y - c.y) < r - 1e-6;
+  const toward = (c: P2, o: P2): P2 => {
+    const L = Math.hypot(o.x - c.x, o.y - c.y);
+    return { x: c.x + ((o.x - c.x) / L) * r, y: c.y + ((o.y - c.y) / L) * r };
+  };
+  // 원 c 위에서 p → q로 가는 짧은 호(그 호는 via를 지난다)
+  const arc = (c: P2, p: P2, q: P2, via: P2): string => {
+    const ang = (o: P2): number => Math.atan2(o.y - c.y, o.x - c.x);
+    let t = ang(via) - ang(p);
+    while (t <= -Math.PI) t += 2 * Math.PI;
+    while (t > Math.PI) t -= 2 * Math.PI;
+    return `A${r} ${r} 0 0 ${t > 0 ? 1 : 0} ${r1(q.x)} ${r1(q.y)}`;
+  };
+  const lens = (a: P2, b: P2, fill: string): string => {
+    const [p, q] = meet(a, b);
+    return `<path d="M${r1(p.x)} ${r1(p.y)}${arc(a, p, q, toward(a, b))}${arc(b, q, p, toward(b, a))}z" fill="${fill}"/>`;
+  };
+  const C = { x: (R.x + G.x + B.x) / 3, y: (R.y + G.y + B.y) / 3 };
+  const vRG = meet(R, G).find((p) => inside(p, B))!;
+  const vRB = meet(R, B).find((p) => inside(p, G))!;
+  const vGB = meet(G, B).find((p) => inside(p, R))!;
+  const white = `<path d="M${r1(vRG.x)} ${r1(vRG.y)}${arc(R, vRG, vRB, toward(R, C))}${arc(B, vRB, vGB, toward(B, C))}${arc(G, vGB, vRG, toward(G, C))}z" fill="#FFFFFF"/>`;
+  const disc = (c: P2, fill: string): string => `<circle cx="${r1(c.x)}" cy="${r1(c.y)}" r="${r}" fill="${fill}"/>`;
+  return `${disc(R, "#E5322E")}${disc(G, "#12A84E")}${disc(B, "#2454D8")}${lens(R, G, "#FFD43B")}${lens(R, B, "#E040C0")}${lens(G, B, "#22C3E6")}${white}`;
+}
+
 const MINI: Record<string, string> = {
   reflectLaw: `<path d="M8 50h48" stroke="#5E6B7E" stroke-width="2.8"/>
     <path d="M32 50V14" stroke="#8B95A1" stroke-width="1.8" stroke-dasharray="4 4"/>
     <path d="M12 18L32 50l20-32" stroke="#F0A422" stroke-width="2.8" fill="none"/>
     <path d="M24 34a14 14 0 0 1 16 0" stroke="#37B6D8" stroke-width="2" fill="none"/>`,
-  diffuse: `<path d="M8 46l8-5 8 6 8-6 8 5 8-5 8 6" stroke="#5E6B7E" stroke-width="2.6" fill="none"/>
-    <path d="M14 12l6 30M30 12l2 29M46 12l-4 30" stroke="#F0A422" stroke-width="2" fill="none"/>
-    <path d="M20 42l10-18M32 41l-6-20M42 42l12-14" stroke="#37B6D8" stroke-width="2" fill="none"/>`,
+  diffuse: diffuseMini(),
   refractBend: `<path d="M8 34h48" stroke="#5AA2F8" stroke-width="2.4"/>
     <rect x="8" y="34" width="48" height="22" rx="4" fill="#5AA2F8" opacity=".18"/>
     <path d="M14 8L32 34l10 22" stroke="#F0A422" stroke-width="2.8" fill="none"/>
     <path d="M32 34l16 22" stroke="#B0B8C1" stroke-width="1.8" stroke-dasharray="3 4"/>`,
-  strawBend: `<path d="M14 30h36l-3 24a4 4 0 0 1-4 4H21a4 4 0 0 1-4-4z" fill="#EAF3FE" stroke="#8B95A1" stroke-width="2.2"/>
-    <path d="M18 34h28" stroke="#5AA2F8" stroke-width="2"/>
-    <path d="M42 8L32 33" stroke="#F0A422" stroke-width="3"/>
-    <path d="M32 33l-5 20" stroke="#F0A422" stroke-width="3.6" opacity=".75"/>`,
+  strawBend: strawMini(),
   lampSee: `<circle cx="18" cy="16" r="8" fill="#FFD98A" stroke="#E8961E" stroke-width="2"/>
     <path d="M18 16l24 14" stroke="#F0A422" stroke-width="2.2"/>
     <path d="M42 30l10 14" stroke="#F0A422" stroke-width="2.2"/>
@@ -428,18 +567,8 @@ const MINI: Record<string, string> = {
     <path d="M10 24l4-5 4 5z" fill="#F0A422"/>
     <path d="M30 36v-7" stroke="#37B6D8" stroke-width="2.2"/>
     <path d="M27.5 29l2.5-3.4 2.5 3.4z" fill="#37B6D8"/>`,
-  ccvMirror: `<path d="M24 8Q48 32 24 56" stroke="#5E6B7E" stroke-width="3" fill="none"/>
-    <path d="M18 16l-8-6M18 48l-8 6M16 32H8" stroke="#B0B8C1" stroke-width="1.8"/>
-    <path d="M46 40V22" stroke="#F0A422" stroke-width="2.8"/>
-    <path d="M42 22l4-5 4 5z" fill="#F0A422"/>
-    <path d="M56 34v14" stroke="#37B6D8" stroke-width="2.2"/>
-    <path d="M53.5 48l2.5 3.4 2.5-3.4z" fill="#37B6D8"/>`,
-  cvxLens: `<path d="M32 6Q42 32 32 58Q22 32 32 6z" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="2.2"/>
-    <path d="M4 32h10M50 32h10" stroke="#B0B8C1" stroke-width="1.8"/>
-    <path d="M12 40V24" stroke="#F0A422" stroke-width="2.8"/>
-    <path d="M8 24l4-5 4 5z" fill="#F0A422"/>
-    <path d="M52 26v20" stroke="#37B6D8" stroke-width="2.2"/>
-    <path d="M49.5 46l2.5 3.4 2.5-3.4z" fill="#37B6D8" transform="rotate(180 52 47.7)"/>`,
+  ccvMirror: ccvMirrorMini(),
+  cvxLens: cvxLensMini(),
   ccvLens: `<path d="M24 8h16Q34 32 40 56H24Q30 32 24 8z" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="2.2"/>
     <path d="M2 32h10M52 32h10" stroke="#B0B8C1" stroke-width="1.8"/>
     <path d="M10 42V22" stroke="#F0A422" stroke-width="2.8"/>
@@ -451,17 +580,16 @@ const MINI: Record<string, string> = {
     <ellipse cx="33" cy="46" rx="7" ry="3.6" fill="#4CAF50" transform="rotate(28 33 46)"/>
     <path d="M44 10l8 8M48 8l6 12" stroke="#F25C54" stroke-width="2.2"/>
     <path d="M8 12l8 6" stroke="#F25C54" stroke-width="2.2"/>`,
-  colorTri: `<circle cx="32" cy="22" r="13" fill="#E5322E" opacity=".85"/>
-    <circle cx="24" cy="36" r="13" fill="#12A84E" opacity=".8" style="mix-blend-mode:screen"/>
-    <circle cx="40" cy="36" r="13" fill="#2454D8" opacity=".8" style="mix-blend-mode:screen"/>`,
+  colorTri: colorTriMini(),
   pixelMini: `<rect x="10" y="14" width="44" height="36" rx="6" fill="#10161F"/>
     <rect x="16" y="20" width="8" height="24" rx="2.5" fill="#E5322E"/>
     <rect x="28" y="20" width="8" height="24" rx="2.5" fill="#12A84E"/>
     <rect x="40" y="20" width="8" height="24" rx="2.5" fill="#3A6CFF" opacity=".3"/>
     <path d="M10 58h44" stroke="#FFD978" stroke-width="3"/>`,
+  // 물결선은 이차 곡선 넷이다. 첫 마루는 (12.5, 22), 첫 골은 (25.5, 42)(곡선의 꼭짓점 = 조절점까지의 절반 높이). 두 점을 그 자리에 찍는다.
   waveMini: `<path d="M6 32q6.5-20 13 0t13 0 13 0 13 0" stroke="#37B6D8" stroke-width="2.8" fill="none"/>
-    <circle cx="12.5" cy="18" r="2.6" fill="#F0A422"/>
-    <circle cx="19" cy="46" r="2.6" fill="#5AA2F8"/>
+    <circle cx="12.5" cy="22" r="3.2" fill="#F0A422" stroke="#fff" stroke-width="1.2"/>
+    <circle cx="25.5" cy="42" r="3.2" fill="#3D6BF2" stroke="#fff" stroke-width="1.2"/>
     <path d="M12.5 10h26M12.5 6v8M38.5 6v8" stroke="#8A6BFF" stroke-width="1.8"/>`,
   mediumBall: `<path d="M6 36q6.5-14 13 0t13 0 13 0 13 0" stroke="#5AA2F8" stroke-width="2.6" fill="none"/>
     <circle cx="32" cy="24" r="6" fill="#fff" stroke="#5E6B7E" stroke-width="2"/>

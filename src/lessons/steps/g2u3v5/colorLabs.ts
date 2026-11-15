@@ -109,22 +109,157 @@ export const lampLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
-  const LAMP = { x: 150, y: 16 };
-  const PETAL = { x: 118, y: 104 };
-  const LEAF = { x: 156, y: 164 };
+  // 무대: 조명이 비추는 회색 판 앞에 장미가 서 있다. 판은 모든 색의 빛을 조금씩 반사해 조명의 색으로 어둑하게 물들고,
+  // 반사할 빛이 없는 꽃잎과 잎은 그 앞에 검은 실루엣(밝은 테 한 줄)으로 선다. 남색 무대에 바로 두면 검은 꽃이 사라진 것처럼 읽혔다.
+  const LAMP = { x: 128, y: 16 };
+  const PETAL = { x: 118, y: 96 }; // 꽃 가운데
+  const LEAF = { x: 150, y: 160 }; // 오른쪽 잎(빛은 이 점보다 8 위, 잎맥 위에 닿는다)
   const EYE = { x: 312, y: 112 };
+  const BOARD = { x: 40, y: 38, w: 212, h: 176 };
+  type Tone = { base: string; hi: string; lo: string; deep: string; rim: string | null };
+  const PETAL_TONE: Record<"lit" | "black" | "off", Tone> = {
+    lit: { base: "#E2362F", hi: "#FF6E5E", lo: "#A8211E", deep: "#741214", rim: null },
+    black: { base: "#1A151B", hi: "#2B242D", lo: "#100C11", deep: "#080609", rim: "rgba(226,232,242,.42)" },
+    off: { base: "#4A2427", hi: "#5D2E32", lo: "#35181B", deep: "#250F12", rim: null },
+  };
+  const LEAF_TONE: Record<"lit" | "black" | "off", Tone> = {
+    lit: { base: "#3DAA57", hi: "#6ECB80", lo: "#2A8443", deep: "#B9ECC4", rim: null },
+    black: { base: "#151917", hi: "#232927", lo: "#0C0F0D", deep: "#2F3633", rim: "rgba(226,232,242,.42)" },
+    off: { base: "#24432D", hi: "#2E5438", lo: "#1A3222", deep: "#3E6148", rim: null },
+  };
+  const toneOf = (on: boolean): "lit" | "black" | "off" => (!light ? "off" : on ? "lit" : "black");
+  /** 판: 조명 빛의 0.6배(가운데)에서 0.32배(가장자리)로 물든다. 조명이 꺼져 있으면 어두운 회색. */
+  const drawBoard = (ctx: CanvasRenderingContext2D): void => {
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(BOARD.x, BOARD.y, BOARD.w, BOARD.h, 14);
+    if (light) {
+      const [r, g, b] = LIGHTS[light].css.split(",").map(Number);
+      const mix = (k: number): string => `rgb(${Math.round(r * k)},${Math.round(g * k)},${Math.round(b * k)})`;
+      const grad = ctx.createRadialGradient(PETAL.x + 6, PETAL.y + 20, 12, PETAL.x + 6, PETAL.y + 20, 150);
+      grad.addColorStop(0, mix(0.6));
+      grad.addColorStop(1, mix(0.32));
+      ctx.fillStyle = grad;
+    } else ctx.fillStyle = "#283041";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(232,238,249,.16)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.restore();
+  };
+  /** 잎 하나: 밑동 b에서 끝 tip까지, 너비 w. 반쪽은 어둡게, 가운데 잎맥과 곁잎맥을 긋는다. */
+  const drawLeaf = (ctx: CanvasRenderingContext2D, b: { x: number; y: number }, tip: { x: number; y: number }, w: number, tn: Tone): void => {
+    const dx = tip.x - b.x;
+    const dy = tip.y - b.y;
+    const L = Math.hypot(dx, dy);
+    const nx = -dy / L;
+    const ny = dx / L;
+    const mx = (b.x + tip.x) / 2;
+    const my = (b.y + tip.y) / 2;
+    const side = (s: number): void => {
+      ctx.quadraticCurveTo(mx + nx * w * s, my + ny * w * s, tip.x, tip.y);
+    };
+    ctx.save();
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y);
+    side(1);
+    ctx.quadraticCurveTo(mx - nx * w, my - ny * w, b.x, b.y);
+    ctx.fillStyle = tn.base;
+    ctx.fill();
+    if (tn.rim) {
+      ctx.strokeStyle = tn.rim;
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+    }
+    // 아래쪽 반은 그늘
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y);
+    ctx.quadraticCurveTo(mx - nx * w, my - ny * w, tip.x, tip.y);
+    ctx.closePath();
+    ctx.fillStyle = tn.lo;
+    ctx.fill();
+    // 잎맥
+    ctx.strokeStyle = tn.deep;
+    ctx.lineWidth = 1.2;
+    ctx.globalAlpha = tn.rim ? 1 : 0.75;
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y);
+    ctx.lineTo(tip.x, tip.y);
+    [0.3, 0.52, 0.74].forEach((k) => {
+      const px = b.x + dx * k;
+      const py = b.y + dy * k;
+      const reach = w * 0.5 * (1 - Math.abs(k - 0.5));
+      [1, -1].forEach((s) => {
+        ctx.moveTo(px, py);
+        ctx.lineTo(px + (dx / L) * reach * 0.9 + nx * reach * s, py + (dy / L) * reach * 0.9 + ny * reach * s);
+      });
+    });
+    ctx.stroke();
+    ctx.restore();
+  };
+  /** 장미(앞에서 본 겹꽃잎): 바깥 다섯, 가운데 다섯, 안쪽 셋, 말린 속. 색 면을 크게 두고 톤은 셋만 쓴다. */
+  const drawRose = (ctx: CanvasRenderingContext2D, tn: Tone): void => {
+    const { x: fx, y: fy } = PETAL;
+    const petal = (dist: number, a: number, rr: number, rt: number, fill: string, edge: string | null): void => {
+      const ar = (a * Math.PI) / 180;
+      ctx.beginPath();
+      ctx.ellipse(fx + Math.cos(ar) * dist, fy + Math.sin(ar) * dist, rr, rt, ar, 0, Math.PI * 2);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      if (edge) {
+        ctx.strokeStyle = edge;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+    };
+    ctx.save();
+    // 실루엣의 밝은 테: 바깥 꽃잎 둘레만 한 번
+    if (tn.rim) {
+      ctx.strokeStyle = tn.rim;
+      ctx.lineWidth = 2.6;
+      for (let k = 0; k < 5; k++) {
+        const ar = ((-90 + 72 * k) * Math.PI) / 180;
+        ctx.beginPath();
+        ctx.ellipse(fx + Math.cos(ar) * 20, fy + Math.sin(ar) * 20, 14, 18, ar, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+    for (let k = 0; k < 5; k++) petal(20, -90 + 72 * k, 14, 18, tn.base, tn.lo);
+    for (let k = 0; k < 5; k++) petal(12, -54 + 72 * k, 11, 14, tn.lo, tn.deep);
+    for (let k = 0; k < 3; k++) petal(5.5, -70 + 120 * k, 8, 10, tn.base, tn.lo);
+    // 말린 속
+    ctx.fillStyle = tn.deep;
+    ctx.beginPath();
+    ctx.arc(fx, fy, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = tn.hi;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (let i = 0; i <= 30; i++) {
+      const th = (i / 30) * Math.PI * 3;
+      const rr = 1 + (i / 30) * 4.6;
+      const px = fx + Math.cos(th) * rr;
+      const py = fy + Math.sin(th) * rr;
+      if (i) ctx.lineTo(px, py);
+      else ctx.moveTo(px, py);
+    }
+    ctx.stroke();
+    ctx.restore();
+  };
   st.run((ctx, t) => {
     const has = light ? LIGHTS[light].has : [];
-    // 조명
+    drawBoard(ctx);
+    // 조명(빛 원뿔은 옅게: 판의 색이 조명의 색을 말한다)
     if (light) {
-      const cone = ctx.createLinearGradient(0, LAMP.y, 0, 214);
-      cone.addColorStop(0, `rgba(${LIGHTS[light].css},.34)`);
-      cone.addColorStop(1, `rgba(${LIGHTS[light].css},.04)`);
+      const cone = ctx.createLinearGradient(0, LAMP.y, 0, 150);
+      cone.addColorStop(0, `rgba(${LIGHTS[light].css},.26)`);
+      cone.addColorStop(1, `rgba(${LIGHTS[light].css},0)`);
       ctx.fillStyle = cone;
       ctx.beginPath();
       ctx.moveTo(LAMP.x - 12, LAMP.y + 8);
-      ctx.lineTo(40, 214);
-      ctx.lineTo(250, 214);
+      ctx.lineTo(LAMP.x - 80, 150);
+      ctx.lineTo(LAMP.x + 80, 150);
       ctx.lineTo(LAMP.x + 12, LAMP.y + 8);
       ctx.closePath();
       ctx.fill();
@@ -138,32 +273,28 @@ export const lampLab: StepRenderer = (host, step, api) => {
     ctx.ellipse(LAMP.x, LAMP.y + 9, 11, 4, 0, 0, Math.PI * 2);
     ctx.fill();
     // 장미: 줄기, 잎, 꽃잎
-    const petal = has.includes("r") ? "#E8453C" : light ? "#1C1216" : "#5A2A2E";
-    const petalIn = has.includes("r") ? "#B92D2A" : light ? "#120B0E" : "#40181C";
-    const leaf = has.includes("g") ? "#3FAE5A" : light ? "#101812" : "#274A30";
-    ctx.strokeStyle = leaf;
+    const pt = PETAL_TONE[toneOf(has.includes("r"))];
+    const lt = LEAF_TONE[toneOf(has.includes("g"))];
+    ctx.save();
+    ctx.lineCap = "round";
+    if (lt.rim) {
+      ctx.strokeStyle = lt.rim;
+      ctx.lineWidth = 7.6;
+      ctx.beginPath();
+      ctx.moveTo(PETAL.x + 2, PETAL.y + 30);
+      ctx.quadraticCurveTo(PETAL.x + 9, 166, PETAL.x + 3, 210);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = lt.base;
     ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.moveTo(PETAL.x + 2, PETAL.y + 24);
-    ctx.quadraticCurveTo(PETAL.x + 8, 170, PETAL.x + 2, 212);
+    ctx.moveTo(PETAL.x + 2, PETAL.y + 30);
+    ctx.quadraticCurveTo(PETAL.x + 9, 166, PETAL.x + 3, 210);
     ctx.stroke();
-    ctx.fillStyle = leaf;
-    ctx.beginPath();
-    ctx.ellipse(LEAF.x, LEAF.y, 26, 11, -0.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(PETAL.x - 30, LEAF.y + 16, 22, 9, 0.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = petal;
-    [[-16, 4], [16, 4], [0, -14], [-10, 16], [10, 16]].forEach(([dx, dy]) => {
-      ctx.beginPath();
-      ctx.arc(PETAL.x + dx, PETAL.y + dy, 17, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    ctx.fillStyle = petalIn;
-    ctx.beginPath();
-    ctx.arc(PETAL.x, PETAL.y + 2, 9, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.restore();
+    drawLeaf(ctx, { x: PETAL.x + 6, y: 166 }, { x: PETAL.x + 60, y: 136 }, 17, lt);
+    drawLeaf(ctx, { x: PETAL.x + 5, y: 188 }, { x: PETAL.x - 44, y: 170 }, 15, lt);
+    drawRose(ctx, pt);
     // 빛의 길: 조명에 든 색마다 한 줄기씩. 반사하는 색만 눈으로 간다
     const flow = (t / 900) % 1;
     const ray = (target: { x: number; y: number }, keep: Ch, off: number): void => {
@@ -182,12 +313,12 @@ export const lampLab: StepRenderer = (host, step, api) => {
     };
     if (light) {
       ray(PETAL, "r", 0);
-      ray(LEAF, "g", 10);
+      ray(LEAF, "g", 0);
     }
     eyeProp(ctx, EYE.x, EYE.y, Math.PI, 14);
     lxText(ctx, "눈", EYE.x, EYE.y + 24, { color: LX.dim });
-    lxText(ctx, "꽃잎", PETAL.x - 44, PETAL.y - 8, { color: LX.dim });
-    lxText(ctx, "잎", LEAF.x + 36, LEAF.y + 14, { color: LX.dim });
+    lxText(ctx, "꽃잎", PETAL.x - 54, PETAL.y - 26, { color: LX.ink });
+    lxText(ctx, "잎", PETAL.x + 76, 130, { color: LX.ink });
     if (light) lxPill(ctx, `${LIGHTS[light].name}: ${look(light)}`, `rgb(${LIGHTS[light].css})`, true, 196);
     else lxPill(ctx, "조명이 꺼져 있어요", LX.dim, true, 196);
   });

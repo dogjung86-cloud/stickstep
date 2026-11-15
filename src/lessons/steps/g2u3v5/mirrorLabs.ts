@@ -127,7 +127,7 @@ export const halfMirrorLab: StepRenderer = (host, step, api) => {
     }
     end = true;
     sync();
-    f.say(`이번에도 앞 ${da}칸, 뒤 ${da}칸에서 꼭 겹쳤어요. 두 기록을 견줘 봐요.`);
+    f.say(`이번에도 앞 ${da}칸, 뒤 ${da}칸에서 꼭 겹쳤어요. 두 기록을 비교해 봐요.`);
     host.dataset.lx = "ask";
     tm.later(() => {
       f.slot.ask(
@@ -315,7 +315,7 @@ export const extendLab: StepRenderer = (host, step, api) => {
     end = true;
     keep.disabled = true;
     host.dataset.lx = "ask";
-    f.say("눈을 어디에 두어도 연장선은 거울 뒤의 <b>한 점</b>을 지나요. 거울까지의 거리도 견줘 보세요.");
+    f.say("눈을 어디에 두어도 연장선은 거울 뒤의 <b>한 점</b>을 지나요. 거울까지의 거리도 비교해 보세요.");
     tm.later(() => {
       f.slot.ask(
         "거울에서 반사한 빛을 본 눈은 그 빛이 어디에서 나온 것으로 느낄까요?",

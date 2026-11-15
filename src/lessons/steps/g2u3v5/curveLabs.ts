@@ -194,7 +194,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
     }
     end = true;
     host.dataset.lx = "ask";
-    f.say("네 칸을 모두 채웠어요. 두 표를 견줘 봐요.");
+    f.say("네 칸을 모두 채웠어요. 두 표를 비교해 봐요.");
     tm.later(() => {
       if (lens)
         f.slot.ask(
@@ -223,18 +223,23 @@ export const curveLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
-  // 옆에서 본 실험 모습
+  // 옆에서 본 실험 모습. '물체' 이름표는 인형 아래(바닥 밑)에, 거울과 렌즈의 이름은 그 위에 둔다.
+  // 그래서 인형을 가장 멀리 옮겨도 이름표가 눈 그림이나 보이는 모습 창에 겹치지 않는다.
+  // 렌즈 판은 렌즈를 가운데 쪽으로 옮겨 눈과 렌즈 사이를 띄운다(멀리 있는 물체의 거꾸로 선 상은 렌즈에서 멀리 떨어져 본다).
   const GY = 168; // 바닥
+  const LENS_X = 80; // 렌즈 판의 렌즈 자리
+  const PX_MIRROR = 5.6; // 막대 한 칸의 길이(거울 판): 가장 멀리 옮겨도 인형이 눈 앞에 남는다
+  const PX_LENS = 4.4; // 막대 한 칸의 길이(렌즈 판): 가장 멀리 옮겨도 인형이 보이는 모습 창 앞에 남는다
+  const objX = (): number => (lens ? LENS_X + 14 + v * PX_LENS : 170 - 18 - v * PX_MIRROR);
   const drawSide = (ctx: CanvasRenderingContext2D): void => {
     ctx.strokeStyle = "rgba(178,204,238,.5)";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(8, GY);
-    ctx.lineTo(182, GY);
+    ctx.lineTo(186, GY);
     ctx.stroke();
-    const px = 6.2; // 막대 한 칸의 길이
     if (lens) {
-      const lx0 = 52;
+      const lx0 = LENS_X;
       // 렌즈(옆모습)
       ctx.save();
       ctx.fillStyle = "rgba(150,210,255,.45)";
@@ -256,10 +261,10 @@ export const curveLab: StepRenderer = (host, step, api) => {
       ctx.fill();
       ctx.stroke();
       ctx.restore();
-      doll(ctx, lx0 + 14 + v * px, GY - 17, 34);
+      doll(ctx, objX(), GY - 17, 34);
       eyeProp(ctx, 18, GY - 44, 0, 12);
       lxText(ctx, "눈", 18, GY - 66, { color: LX.dim });
-      lxText(ctx, name(), lx0 + 4, GY + 16, { color: LX.ink });
+      lxText(ctx, name(), lx0, GY - 92, { color: LX.ink });
     } else {
       const mx = 170;
       // 거울(옆모습): 반사하는 면은 왼쪽
@@ -283,12 +288,12 @@ export const curveLab: StepRenderer = (host, step, api) => {
         ctx.stroke();
       }
       ctx.restore();
-      doll(ctx, mx - 18 - v * px, GY - 17, 34);
+      doll(ctx, objX(), GY - 17, 34);
       eyeProp(ctx, 14, GY - 44, 0, 12);
       lxText(ctx, "눈", 14, GY - 66, { color: LX.dim });
-      lxText(ctx, name(), mx - 26, GY + 16, { color: LX.ink });
+      lxText(ctx, name(), mx - 4, GY - 94, { color: LX.ink });
     }
-    lxText(ctx, "물체", lens ? 52 + 14 + v * 6.2 : 170 - 18 - v * 6.2, GY - 46, { color: LX.dim });
+    lxText(ctx, "물체", objX(), GY + 15, { color: LX.dim });
   };
 
   st.run((ctx) => {
@@ -399,7 +404,7 @@ export const useLab: StepRenderer = (host, step, api) => {
       const n = CARS.filter((c) => inView(k, c.x, c.y)).length;
       log.set(["plane", "convex", "concave"].indexOf(k), `차 ${n}대 보임`);
       f.pips(Math.min(2, tried.size));
-      if (k === "convex") f.say(tried.size > 1 ? "볼록 거울에는 <b>넓은 범위</b>가 비쳐 양쪽에서 오는 차가 모두 보여요." : "양쪽 차가 모두 보여요! <b>다른 거울</b>도 세워 비치는 범위를 견줘 보세요.");
+      if (k === "convex") f.say(tried.size > 1 ? "볼록 거울에는 <b>넓은 범위</b>가 비쳐 양쪽에서 오는 차가 모두 보여요." : "양쪽 차가 모두 보여요! <b>다른 거울</b>도 세워 비치는 범위를 비교해 보세요.");
       else f.say(`${NAMES[k]}에는 <b>좁은 범위</b>만 비쳐요. 양옆에서 달려오는 차가 보이지 않아요.`);
       if (tried.has("convex") && tried.size >= 2) {
         asked = true;
@@ -470,10 +475,12 @@ export const useLab: StepRenderer = (host, step, api) => {
     ctx.fill();
     lxText(ctx, "건물", 72, 166, { color: LX.dim });
     lxText(ctx, "건물", 274, 166, { color: LX.dim });
-    // 거울에 비치는 범위
+    // 거울에 비치는 범위: 두 끝에서 반사한 빛 사이. 거울 가운데에서 반사한 빛은 내 차 쪽(아래)으로 오므로,
+    // 두 끝 광선을 무대 밖까지 뻗은 뒤 아래쪽을 돌아 닫는다(예전 도형은 끝 광선을 일정 길이에서 곧게 이어 닫아 볼록 거울 범위가 내 차 쪽 길 중간에서 끊겼다).
     if (kind) {
       const l = endRay(kind, -1);
       const r = endRay(kind, 1);
+      const far = 1000;
       ctx.save();
       ctx.beginPath();
       ctx.rect(0, 48, 346, 54);
@@ -482,8 +489,9 @@ export const useLab: StepRenderer = (host, step, api) => {
       ctx.fillStyle = "rgba(255,216,74,.34)";
       ctx.beginPath();
       ctx.moveTo(l.px, l.py);
-      ctx.lineTo(l.px + l.rx * 500, l.py + l.ry * 500);
-      ctx.lineTo(r.px + r.rx * 500, r.py + r.ry * 500);
+      ctx.lineTo(l.px + l.rx * far, l.py + l.ry * far);
+      ctx.lineTo(MC.x, MC.y + far);
+      ctx.lineTo(r.px + r.rx * far, r.py + r.ry * far);
       ctx.lineTo(r.px, r.py);
       ctx.closePath();
       ctx.fill();
@@ -492,27 +500,40 @@ export const useLab: StepRenderer = (host, step, api) => {
     CARS.forEach((c) => car(ctx, c.x, c.y, "#FF8787", false, !!kind && inView(kind, c.x, c.y), t));
     car(ctx, DRV.x, DRV.y, "#4DABF7", true, false, t);
     lxText(ctx, "내 차", DRV.x + 44, DRV.y, { color: LX.ink });
-    // 거울
+    // 거울: 비추는 면은 아래(길 쪽). 뒷면(위쪽)에 짧은 빗금을 그어 볼록과 오목이 그릇 모양과 헷갈리지 않게 한다.
     ctx.save();
-    ctx.strokeStyle = "#E8EEF9";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    const bow = kind === "convex" ? 9 : kind === "concave" ? -4 : 0;
-    ctx.moveTo(MC.x - MC.a, MC.y);
-    ctx.quadraticCurveTo(MC.x, MC.y + bow * 2, MC.x + MC.a, MC.y);
-    ctx.stroke();
     ctx.strokeStyle = "#93A3C0";
     ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.moveTo(MC.x, MC.y - 2);
+    ctx.moveTo(MC.x, MC.y - 4);
     ctx.lineTo(MC.x, 14);
     ctx.stroke();
+    const bow = kind === "convex" ? 9 : kind === "concave" ? -4 : 0;
+    const mirY = (u: number): number => MC.y + bow * 2 * 2 * u * (1 - u); // 곡선 위의 높이(u: 왼쪽 끝 0 ~ 오른쪽 끝 1)
+    ctx.strokeStyle = "rgba(160,178,210,.9)";
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    for (let i = 0; i <= 6; i++) {
+      const u = i / 6;
+      const x = MC.x - MC.a + 2 * MC.a * u;
+      const y = mirY(u) - 2.5;
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 4, y - 6);
+    }
+    ctx.stroke();
+    ctx.strokeStyle = "#E8EEF9";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(MC.x - MC.a, MC.y);
+    ctx.quadraticCurveTo(MC.x, MC.y + bow * 2, MC.x + MC.a, MC.y);
+    ctx.stroke();
     ctx.restore();
-    lxText(ctx, kind ? NAMES[kind] : "거울을 세울 자리", MC.x + 66, 24, { color: LX.ink });
-    if (kind) lxPill(ctx, "노란 곳: 거울에 비치는 범위", LX.gold, false, 198);
+    lxText(ctx, kind ? NAMES[kind] : "거울을 세울 자리", MC.x - 66, 24, { color: LX.ink });
+    // 알림 띠는 오른쪽 위(내 차를 가리지 않게)
+    if (kind) lxPill(ctx, "노란 곳: 비치는 범위", LX.gold, true, 6);
   });
 
-  f.say("건물에 가려 양옆에서 오는 차가 보이지 않아요. 길 건너편에 세울 <b>거울</b>을 골라 비치는 범위를 견줘 보세요.");
+  f.say("건물에 가려 양옆에서 오는 차가 보이지 않아요. 길 건너편에 세울 <b>거울</b>을 골라 비치는 범위를 비교해 보세요.");
   api.setCTA("양쪽 차가 다 보이게 해 보세요", { enabled: false });
   return () => {
     tm.clear();

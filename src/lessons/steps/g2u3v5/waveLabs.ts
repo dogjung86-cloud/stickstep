@@ -417,8 +417,55 @@ export const waveLab: StepRenderer = (host, step, api) => {
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 1.5;
     ctx.stroke();
-    lxPill(ctx, `코르크: 한 번 진동에 ${freq === 1 ? "1" : freq === 2 ? "0.5" : "0.25"}초`, LX.gold, false, 196);
-    lxPill(ctx, "느린 화면", LX.blue, true, 196);
+    // 시간 줄: 코르크가 1초 동안 오르내린 모습. 1초를 네 칸(칸마다 0.25초)으로 나누고, 1초에 진동한 횟수만큼 봉우리가 선다.
+    // 그래서 한 번 진동하는 시간이 칸 수로 보인다(1번이면 네 칸, 2번이면 두 칸, 4번이면 한 칸). 움직이는 점은 지금의 코르크다.
+    const TS = { x: X0, y: 211, cw: 36, a: 8 };
+    const tw = TS.cw * 4;
+    ctx.save();
+    ctx.fillStyle = "rgba(9,16,30,.6)";
+    ctx.strokeStyle = "rgba(160,190,235,.28)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(TS.x, TS.y - 13, tw, 26, 5);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    for (let i = 1; i < 4; i++) {
+      ctx.moveTo(TS.x + TS.cw * i, TS.y - 13);
+      ctx.lineTo(TS.x + TS.cw * i, TS.y + 13);
+    }
+    ctx.stroke();
+    ctx.setLineDash([3, 4]);
+    ctx.strokeStyle = "rgba(232,238,249,.35)";
+    ctx.beginPath();
+    ctx.moveTo(TS.x + 2, TS.y);
+    ctx.lineTo(TS.x + tw - 2, TS.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = "#F0A422";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i <= 96; i++) {
+      const s = i / 96;
+      const xx = TS.x + s * tw;
+      const yy = TS.y - TS.a * Math.sin(2 * Math.PI * freq * s);
+      if (i) ctx.lineTo(xx, yy);
+      else ctx.moveTo(xx, yy);
+    }
+    ctx.stroke();
+    // 지금의 코르크: 코르크의 위상이 0이 되는 때를 시간 줄의 0초로 맞춘다(움직임이 그 줄 위에서 그대로 겹친다)
+    const tau = (((freq * clock - (kx - X0) / lam) / freq) % 1 + 1) % 1;
+    ctx.fillStyle = "#F0A422";
+    ctx.beginPath();
+    ctx.arc(TS.x + tau * tw, TS.y - TS.a * Math.sin(2 * Math.PI * freq * tau), 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.restore();
+    lxText(ctx, "1초", TS.x + tw + 6, TS.y, { color: LX.dim, align: "left" });
+    lxText(ctx, `한 번 진동에 ${freq === 1 ? "1" : freq === 2 ? "0.5" : "0.25"}초`, X1 + 6, TS.y, { color: LX.gold, align: "right" }); // 코르크의 색(진폭 화살표의 노랑과 따로)
+    lxText(ctx, "느린 화면", X1, 14, { color: LX.dim, align: "right" });
   });
 
   f.say("수면의 가장 높은 곳이 <b>마루</b>, 가장 낮은 곳이 <b>골</b>이에요. 흔드는 폭을 바꿔 진동 중심에서 마루까지를 <b>3칸</b>으로 만들어 보세요.");
