@@ -9,7 +9,7 @@
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
-import { BEAM_WHITE, drawArrowHead, drawBeam, eyeProp, type Pt } from "../../../ui/lightKit";
+import { BEAM_WHITE, drawArrowHead, drawBeam, drawNormal, eyeProp, type Pt } from "../../../ui/lightKit";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
 import { LX, lxCanvas, lxFrame, lxPill, lxText } from "./lxKit";
@@ -32,10 +32,11 @@ interface Scene {
 }
 const SCENES: Scene[] = [
   { key: "room", obj: "책", pos: { lamp: { x: 66, y: 52 }, obj: { x: 150, y: 176 }, eye: { x: 292, y: 96 } } },
-  { key: "tank", obj: "물고기", pos: { lamp: { x: 60, y: 46 }, obj: { x: 150, y: 172 }, eye: { x: 298, y: 62 } } },
+  // 어항: 전등을 조금 낮춰 들어가는 빛이 더 비스듬해지게(꺾임 약 14°), 눈을 올려 나오는 빛이 벽 꼭대기를 넉넉히 넘게(약 17px) 했다.
+  { key: "tank", obj: "물고기", pos: { lamp: { x: 54, y: 60 }, obj: { x: 150, y: 172 }, eye: { x: 292, y: 50 } } },
 ];
 const WATER_Y = 112;
-const TANK = { x0: 78, x1: 246, y1: 210 };
+const TANK = { x0: 78, x1: 246, y1: 210, top: WATER_Y - 14 };
 const N_WATER = 1.33;
 
 /** 공기 쪽 점 a와 물속 점 w를 잇는 빛이 수면에서 꺾이는 자리(x). */
@@ -334,10 +335,10 @@ export const pathLab: StepRenderer = (host, step, api) => {
       ctx.strokeStyle = "rgba(214,230,250,.75)";
       ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(TANK.x0, WATER_Y - 22);
+      ctx.moveTo(TANK.x0, TANK.top);
       ctx.lineTo(TANK.x0, TANK.y1);
       ctx.lineTo(TANK.x1, TANK.y1);
-      ctx.lineTo(TANK.x1, WATER_Y - 22);
+      ctx.lineTo(TANK.x1, TANK.top);
       ctx.stroke();
       lxText(ctx, "물", TANK.x0 + 16, TANK.y1 - 14, { color: LX.dim });
       lxText(ctx, "공기", TANK.x1 + 22, WATER_Y - 12, { color: LX.dim });
@@ -371,6 +372,31 @@ export const pathLab: StepRenderer = (host, step, api) => {
       ctx.arc(P[sel].x, P[sel].y, 27, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
+    }
+    // 판정 국면(어항에서 물고기가 보인 뒤): 두 꺾이는 자리에 짧은 법선 점선과 '곧게 갔다면' 흐린 점선
+    if (scn.key === "tank" && seen) {
+      const bends: { from: Pt; at: Pt }[] = [
+        { from: P.lamp, at: { x: bendX(P.lamp, P.obj), y: WATER_Y } },
+        { from: P.obj, at: { x: bendX(P.eye, P.obj), y: WATER_Y } },
+      ];
+      bends.forEach(({ from, at }, i) => {
+        drawNormal(ctx, at.x, at.y, -Math.PI / 2, 24, { alpha: 0.7 });
+        drawNormal(ctx, at.x, at.y, Math.PI / 2, 24, { alpha: 0.7 });
+        const dx = at.x - from.x;
+        const dy = at.y - from.y;
+        const L = Math.hypot(dx, dy);
+        const end = { x: at.x + (dx / L) * 50, y: at.y + (dy / L) * 50 };
+        ctx.save();
+        ctx.strokeStyle = "rgba(232,238,249,.62)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(at.x, at.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.stroke();
+        ctx.restore();
+        if (i === 1) lxText(ctx, "곧게 갔다면", end.x - 8, end.y - 4, { color: LX.dim, align: "right" });
+      });
     }
     // 화살표
     const flow = (t / 900) % 1;
