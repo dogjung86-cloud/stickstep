@@ -5,12 +5,14 @@
 // 실패하는 길: 길이가 모자라면 못 미치고, 넘치면 지나치고, 방향이 틀리면 딴 쪽으로 간다(그 결과를 보여 준 뒤 제자리로 돌린다).
 // 흐름: 상자를 오른쪽 점선으로 → 왼쪽 점선으로 → 찰흙을 점선 모양으로 → 판정 → 결론.
 // 옛 랩(forceStudio)은 공을 마음대로 쏘는 놀이였다. 여기서는 목표에 맞는 힘을 화살표로 '주문'해야 한다.
+// 찰흙 장면(2026-11-15 그래픽 손질): 누르는 화살표는 찰흙 윗면 가운데(손이 닿은 곳, 작용점)에서 아래로 그린다. 3칸까지 들어가게 바닥을 조금 올렸다.
+// 결론 무대의 상자 두 줄에는 처음 자리(점선 윤곽)와 상자가 간 자리(옅은 상자)를 함께 남긴다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { drawCrate, drawForceArrow } from "../../../ui/forceProps";
 import type { StepRenderer } from "../../types";
 import { bvCapture, bvTimers } from "../bio6/b6Lab";
-import { clamp, U5, u5Canvas, u5Frame, u5Log, u5Pill, u5Read, u5Text } from "./u5Kit";
+import { clamp, U5, u5Arrow, u5Canvas, u5Frame, u5Log, u5Pill, u5Read, u5Text } from "./u5Kit";
 
 interface S {
   title: string;
@@ -40,7 +42,8 @@ export const arrowLab: StepRenderer = (host, step, api) => {
   let squash = 0; // 찰흙이 눌린 칸 수(움직이는 동안 소수)
   const kept: { col: number; n: number; dir: number }[] = []; // 성공한 화살표(무대에 남긴다)
 
-  const GY = (h: number): number => h - 30;
+  // 바닥 높이. 찰흙 장면(m ≥ 2)은 누르는 화살표(윗면에서 아래로 3칸까지)가 무대 안에 들도록 바닥을 올린다
+  const GY = (h: number): number => (m >= 2 ? h - 74 : h - 30);
   const cx = (col: number): number => X0 + col * C + C / 2;
   const says = [
     "상자에 손을 대고 <b>오른쪽</b>으로 끌어 화살표를 그려요. 모눈 한 칸이 <b>10 N</b>이에요. 상자를 점선 자리에 딱 맞게 보내요.",
@@ -178,6 +181,14 @@ export const arrowLab: StepRenderer = (host, step, api) => {
       ctx.lineTo(X0 + 12 * C, y);
       ctx.stroke();
     }
+    if (m >= 2) {
+      // 찰흙 장면: 올린 바닥 아래를 옅은 흙빛으로(누르는 화살표가 바닥 아래까지 지나간다)
+      const gg = ctx.createLinearGradient(0, gy, 0, h);
+      gg.addColorStop(0, "rgba(120,150,200,.16)");
+      gg.addColorStop(1, "rgba(120,150,200,0)");
+      ctx.fillStyle = gg;
+      ctx.fillRect(0, gy, w, h - gy);
+    }
     ctx.strokeStyle = "rgba(178,204,238,.6)";
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -185,14 +196,34 @@ export const arrowLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(w, gy);
     ctx.stroke();
     u5Text(ctx, "한 칸 = 10 N", w - 14, gy + 16, { color: U5.dim, px: 12, align: "right" });
-    // 성공한 화살표는 흐리게 남는다(길이를 견주는 근거)
-    kept.forEach((k, i) => {
-      // 상자 임무 중에는 그린 자리에, 찰흙 임무부터는 위쪽에 나란히 올려 둔다(찰흙과 겹치지 않게)
-      const ky = m >= 2 ? 80 + i * 26 : gy - C / 2;
+    // 성공한 화살표는 흐리게 남는다(길이를 견주는 근거). 찰흙을 누르는 동안(m = 2)은 찰흙만 보이게 걷어 두었다가
+    // 판정과 결론(m = 3)에서 위쪽에 두 줄로 다시 놓는다(처음 자리, 화살표, 상자가 간 자리)
+    if (m !== 2) kept.forEach((k, i) => {
+      const ky = m >= 2 ? 66 + i * 28 : gy - C / 2;
       const x = cx(k.col) + (k.dir * C) / 2;
-      ctx.strokeStyle = "rgba(201,219,245,.35)";
+      if (m >= 2) {
+        // 상자가 간 자리: 옅은 상자. 처음 자리(점선 윤곽)와 바닥 쪽 점선으로 잇는다(움직임이 바뀐 결과)
+        const end = k.col + k.dir * k.n;
+        ctx.save();
+        ctx.globalAlpha = 0.42;
+        drawCrate(ctx, cx(end), ky + C / 2 - 2, C - 4, C - 4, t, 0);
+        ctx.restore();
+        ctx.save();
+        ctx.setLineDash([3, 4]);
+        ctx.strokeStyle = "rgba(201,219,245,.45)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cx(k.col), ky + C / 2 - 2);
+        ctx.lineTo(cx(end), ky + C / 2 - 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.save();
+      ctx.setLineDash(m >= 2 ? [3, 3] : []);
+      ctx.strokeStyle = "rgba(201,219,245,.42)";
       ctx.lineWidth = 1.5;
       ctx.strokeRect(cx(k.col) - C / 2 + 2, ky - C / 2 + 2, C - 4, C - 4);
+      ctx.restore();
       drawForceArrow(ctx, x, ky, k.dir * k.n * C, 0, { color: U5.push, alpha: m >= 2 ? 0.75 : 0.38, width: 3.5 });
       u5Text(ctx, `${k.n * 10} N`, x + k.dir * (k.n * C + 24), ky, { color: U5.dim, px: 12 });
     });
@@ -250,16 +281,17 @@ export const arrowLab: StepRenderer = (host, step, api) => {
       draw(CLAY_NEED, true);
       const top = gy - (2 * C - live * (C / 2));
       if (m === 3) {
-        // 찰흙을 누른 화살표도 남긴다(시작점은 찰흙의 처음 윗면)
-        drawForceArrow(ctx, mid + 60, gy - 2 * C, 0, CLAY_NEED * C, { color: U5.push, alpha: 0.75, width: 3.5 });
-        u5Text(ctx, "20 N", mid + 86, gy - C - 4, { color: U5.dim, px: 12 });
+        // 찰흙을 누른 화살표도 남긴다. 시작점은 손이 닿은 곳, 지금 찰흙 윗면의 가운데(작용점). 찰흙과 바닥을 지나 아래로 2칸
+        u5Arrow(ctx, mid, top, 0, CLAY_NEED * C, { color: U5.push, alpha: 0.85, width: 3.5 });
+        u5Text(ctx, "20 N", mid + 12, gy + 15, { color: U5.dim, px: 12, align: "left" });
       }
       if (bad > 0) {
         ctx.fillStyle = `rgba(242,87,87,${bad * 0.35})`;
         ctx.fillRect(mid - 70, top, 140, gy - top);
       }
       if (drag && drag.n > 0) {
-        drawForceArrow(ctx, mid, gy - 2 * C - drag.n * C, 0, drag.n * C, { color: U5.push, width: 5 });
+        // 끄는 동안의 화살표도 손이 닿은 찰흙 윗면에서 손가락을 따라 아래로(한 칸 = 10 N)
+        u5Arrow(ctx, mid, top, 0, drag.n * C, { color: U5.push, width: 5 });
         u5Read(ctx, w, String(drag.n * 10), "N", `아래로 ${drag.n}칸`);
       } else if (!busy && m === 2) {
         const pulse = 0.5 + 0.5 * Math.sin(t / 300);

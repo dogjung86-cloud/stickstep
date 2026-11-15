@@ -7,6 +7,7 @@ import { localPt, stageDpr } from "../../../core/wide";
 import { el } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
 import { haptic, HAPTIC } from "../../../core/haptics";
+import { drawForceArrow } from "../../../ui/forceProps";
 import type { StepAPI } from "../../types";
 import { bvCapture, bvFrame, type BvFrame } from "../bio6/b6Lab";
 
@@ -190,6 +191,72 @@ export function u5Log(rows: { name: string; hint?: string }[], cols = 1): U5Log 
 }
 
 export const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
+
+/** 힘 화살표(ui/forceProps의 drawForceArrow) 둘레에 테를 먼저 두른다. 물체(상자, 추, 용수철) 위를 지나는 화살표가 묻히지 않게.
+ *  테 색의 기본은 무대 바탕색(어두운 남색)이라 빈 무대 위에서는 보이지 않고 물체 위에서만 화살표의 가장자리가 선다. halo에 색을 주면 그 색으로.
+ *  화살표의 약속(단원 전체): 시작점 = 작용점(물체에 닿은 자리나 물체 가운데), 길이 = 값에 비례(덧붙이는 길이 없이),
+ *  색 = 가한 힘 파랑(U5.push), 중력과 방해하는 힘과 되당기는 힘 빨강(U5.back), 떠받치는 힘과 부력과 합친 힘 초록(U5.up). */
+export function u5Arrow(ctx: CanvasRenderingContext2D, x: number, y: number, dx: number, dy: number, o: { color: string; width?: number; alpha?: number; halo?: boolean | string; dash?: boolean }): void {
+  const len = Math.hypot(dx, dy);
+  if (len < 3) return;
+  const w = o.width ?? 4;
+  const a = o.alpha ?? 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const headL = Math.min(16, 8 + len * 0.12); // drawForceArrow와 같은 촉 길이
+  const tipX = x + dx;
+  const tipY = y + dy;
+  if (o.dash) {
+    // 옅은 점선 화살표(견주어 보는 자리, 다른 장면의 값). 촉은 속이 빈 꼴
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.strokeStyle = o.color;
+    ctx.lineWidth = Math.max(2, w * 0.6);
+    ctx.lineCap = "round";
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(tipX - ux * headL, tipY - uy * headL);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(tipX, tipY);
+    ctx.lineTo(tipX - ux * headL - uy * headL * 0.52, tipY - uy * headL + ux * headL * 0.52);
+    ctx.lineTo(tipX - ux * headL + uy * headL * 0.52, tipY - uy * headL - ux * headL * 0.52);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+    return;
+  }
+  if (o.halo !== false) {
+    const hc = typeof o.halo === "string" ? o.halo : "#0B1524";
+    ctx.save();
+    ctx.globalAlpha = 0.92 * a;
+    ctx.strokeStyle = hc;
+    ctx.fillStyle = hc;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = w + 3.4;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(tipX - ux * (headL - 2), tipY - uy * (headL - 2));
+    ctx.stroke();
+    ctx.lineWidth = 3.4;
+    ctx.beginPath();
+    ctx.moveTo(tipX, tipY);
+    ctx.lineTo(tipX - ux * headL - uy * headL * 0.52, tipY - uy * headL + ux * headL * 0.52);
+    ctx.lineTo(tipX - ux * headL + uy * headL * 0.52, tipY - uy * headL - ux * headL * 0.52);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(2.6, w * 0.6) + 1.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  drawForceArrow(ctx, x, y, dx, dy, { color: o.color, width: w, alpha: a });
+}
 
 /** 바닥(밝은 선 + 아래 어두운 흙). */
 export function u5Floor(ctx: CanvasRenderingContext2D, w: number, y: number, h: number, tone = "rgba(178,204,238,.5)"): void {
