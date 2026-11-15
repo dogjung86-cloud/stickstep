@@ -27,6 +27,8 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, .35); animation: g2u6xToast 1.9s var(--ease-out) both; z-index: 3;
 }
 .g2u6x-toast.bad { background: rgba(240, 68, 82, .95); }
+/* 실패 장면이 판정의 근거인 랩(판막, 콩팥단위): 알림은 무대 아래 가장자리에(장면을 덮지 않게) */
+.g2u6x-toast.low { top: auto; bottom: 7px; transform: translateX(-50%); padding: 6px 13px; font-size: 13px; }
 @keyframes g2u6xToast { 0% { opacity: 0; margin-top: 8px; } 12%, 80% { opacity: 1; margin-top: 0; } 100% { opacity: 0; } }
 .g2u6x-pop { animation: g2u6xPop .4s var(--ease-out) both; }
 @keyframes g2u6xPop { 0% { opacity: 0; } 100% { opacity: 1; } }

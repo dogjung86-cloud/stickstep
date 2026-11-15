@@ -23,12 +23,23 @@ export function plateRowFig(): string {
   return svg(150, body, "같은 음료를 담은 홈 세 개에 아이오딘-아이오딘화 칼륨 용액, 뷰렛 용액, 수단 Ⅲ 용액을 각각 떨어뜨린 결과");
 }
 
-/** 침의 소화 작용 실험: 녹말 용액 + 증류수 (가), 녹말 용액 + 침 용액 (나)를 따뜻한 물에 담갔다. */
+/** 침의 소화 작용 실험: 녹말 용액 + 증류수 (가), 녹말 용액 + 침 용액 (나)를 37 ℃의 물이 담긴 비커에 담갔다.
+ *  물 높이가 시험관 속 용액보다 위다(용액이 물에 다 잠기게 둔다). 시험관은 반투명이라 잠긴 부분에 물이 비친다(2026-11-15, 그래픽 감사 C081). */
 export function salivaTubesFig(): string {
+  const WATER = 62; // 물의 높이
   const tube = (x: number, label: string, sub: string): string =>
-    `<path d="M${x - 13} 34 L${x - 13} 112 A13 13 0 0 0 ${x + 13} 112 L${x + 13} 34" fill="#FFFFFF" stroke="#8FA3BC" stroke-width="2"/><path d="M${x - 11} 66 L${x - 11} 112 A11 11 0 0 0 ${x + 11} 112 L${x + 11} 66 Z" fill="#EEF0EA"/>${t(x, 24, label, { weight: 800 })}${t(x, 152, "녹말 용액", { size: 12.5 })}${t(x, 168, sub, { size: 12.5, fill: "#C2255C", weight: 800 })}`;
-  const body = `<rect x="46" y="76" width="248" height="56" rx="10" fill="#FFF1DC" stroke="#F0B860" stroke-width="2"/>${t(170, 102, "37 ℃의 물", { size: 12.5, fill: "#9A6A1C" })}${tube(96, "(가)", "+ 증류수")}${tube(244, "(나)", "+ 침 용액")}`;
-  return svg(182, body, "녹말 용액과 증류수를 넣은 시험관 (가), 녹말 용액과 침 용액을 넣은 시험관 (나)를 37도의 물에 담근 모습");
+    `<path d="M${x - 13} 30 L${x - 13} 128 A13 13 0 0 0 ${x + 13} 128 L${x + 13} 30" fill="rgba(255,255,255,.28)" stroke="#8FA3BC" stroke-width="2"/>` +
+    `<path d="M${x - 11} 78 L${x - 11} 128 A11 11 0 0 0 ${x + 11} 128 L${x + 11} 78 Z" fill="#F4F4EC" fill-opacity=".72"/><line x1="${x - 11}" y1="78" x2="${x + 11}" y2="78" stroke="#C9CCBD" stroke-width="1.4"/>` +
+    `<line x1="${x - 17}" y1="30" x2="${x + 17}" y2="30" stroke="#8FA3BC" stroke-width="2.4" stroke-linecap="round"/>` +
+    `${t(x, 20, label, { weight: 800 })}${t(x, 170, "녹말 용액", { size: 12.5 })}${t(x, 187, sub, { size: 12.5, fill: "#C2255C", weight: 800 })}`;
+  // 비커: 유리 벽과 물(물 높이 WATER에서 바닥까지)
+  const beaker =
+    `<path d="M54 ${WATER} L54 142 Q54 150 62 150 L278 150 Q286 150 286 142 L286 ${WATER} Z" fill="#FFE3B8" fill-opacity=".7"/>` +
+    `<line x1="54" y1="${WATER}" x2="286" y2="${WATER}" stroke="#F0B860" stroke-width="2"/>` +
+    `<path d="M48 42 L54 46 L54 142 Q54 150 62 150 L278 150 Q286 150 286 142 L286 46 L292 42" fill="none" stroke="#8FA3BC" stroke-width="2.4" stroke-linejoin="round"/>` +
+    `<path d="M60 52 L60 136" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".7"/>`;
+  const body = `${beaker}${t(170, 112, "37 ℃의 물", { size: 12.5, fill: "#9A6A1C" })}${tube(102, "(가)", "+ 증류수")}${tube(238, "(나)", "+ 침 용액")}`;
+  return svg(200, body, "녹말 용액과 증류수를 넣은 시험관 (가), 녹말 용액과 침 용액을 넣은 시험관 (나)를 37도의 물이 담긴 비커에 담근 모습");
 }
 
 /** 호흡운동 모형: 컵 속의 작은 고무풍선, 빨대, 고무 막에 (가)~(라) 기호를 붙였다. */

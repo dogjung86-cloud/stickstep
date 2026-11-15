@@ -14,168 +14,73 @@
 //   길이 이어지지 않은 곳이나 거꾸로 가는 곳을 누르면 갈 수 없다고 알려 준다.
 
 import type { StepRenderer } from "../../types";
-import { P, arrow, bad, bvBtn, chip, dot, g6Lab, g6Svg, good, noteLine, onStageTap, row, tag, tap, toast, txt, type G6Step } from "./kit";
+import { bloodSvg, type BloodJob } from "./bloodArt";
+import { heartSvg, type HeartScene } from "./heartArt";
+import { P, bad, bvBtn, chip, g6Lab, g6Svg, good, noteLine, onStageTap, row, tap, toast, txt, type G6Step } from "./kit";
 
 // ── 심장과 판막 ────────────────────────────────────────────────────
+// 그림은 heartArt.ts(앞에서 본 심장의 단면. 혈관의 자리는 책의 심장 그림, 순환 여행 랩과 같다).
+// 수축한 결과(동맥으로, 또는 판막 없이 심방으로 거꾸로)는 3초 동안 남기고, 그사이 다른 단추를 누르면 곧바로 처음 모습으로 돌아간다.
+// 판정 동안에는 판막을 뺀 채 거꾸로 흐른 장면을 멈춰 남기고, 결론에서는 판막이 막아 동맥으로만 나가는 장면을 남긴다(2026-11-15, 그래픽 감사 C082).
 type Where = "atrium" | "ventricle" | "artery" | "back";
-interface Side {
-  key: "R" | "L";
-  /** 심방과 심실의 안쪽 공간(경로), 수축할 때 줄어드는 중심 */
-  atriumD: string;
-  atriumC: [number, number];
-  ventD: string;
-  ventC: [number, number];
-  mx: number; // 심방과 심실 사이 판막의 가운데 x
-  tubeX: number; // 동맥 관 왼쪽
-  veinX: number; // 정맥이 들어오는 x
-  color: string;
-  atrium: string;
-  ventricle: string;
-  artery: string;
-  vein: string;
-  wall: number; // 심실 벽의 두께
-  tagV: [number, number];
-}
-// 앞에서 본 심장: 화면 왼쪽이 몸의 오른쪽이다. 두 심실은 아래로 갈수록 좁아져 심장 끝(화면 오른쪽 아래)에서 만난다.
-const SIDES: Side[] = [
-  {
-    key: "R",
-    atriumD: "M76 96 Q66 62 98 58 L150 58 Q164 60 164 76 L164 96 Z",
-    atriumC: [118, 78],
-    ventD: "M38 108 L164 108 L164 180 Q156 194 138 182 Q62 160 38 108 Z",
-    ventC: [112, 140],
-    mx: 120,
-    tubeX: 38,
-    veinX: 128,
-    color: P.dark,
-    atrium: "우심방",
-    ventricle: "우심실",
-    artery: "폐동맥",
-    vein: "대정맥",
-    wall: 5,
-    tagV: [98, 140],
-  },
-  {
-    key: "L",
-    atriumD: "M182 96 L182 76 Q182 60 196 58 L248 58 Q280 62 270 96 Z",
-    atriumC: [228, 78],
-    ventD: "M182 108 L308 108 Q296 164 222 196 Q196 206 182 188 Z",
-    ventC: [236, 146],
-    mx: 226,
-    tubeX: 286,
-    veinX: 218,
-    color: P.red,
-    atrium: "좌심방",
-    ventricle: "좌심실",
-    artery: "대동맥",
-    vein: "폐정맥",
-    wall: 10,
-    tagV: [246, 142],
-  },
-];
-const MUSCLE = "#D98A94";
-const VALVE = "#FFE9A8";
-const VALVE_LINE = "#B98A2A";
+const HOLD_MS = 3000;
+let heartSeq = 0;
 
 export const g2u6HeartLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
   const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-heart", wait: "심방과 심실을 수축시켜 보세요" });
   const { f, tm } = lab;
-  const stage = g6Svg(lab, "앞에서 본 심장의 모식도. 위쪽에 심방 둘, 아래쪽에 심실 둘이 있다");
+  const stage = g6Svg(lab, "앞에서 본 심장의 단면. 그림의 왼쪽이 우심방과 우심실, 오른쪽이 좌심방과 좌심실이고, 대정맥은 우심방으로, 폐정맥은 좌심방으로 들어오며 폐동맥과 대동맥이 가운데에서 위로 나간다");
+  const ns = `g6h${++heartSeq}`;
   let where: Where = "atrium";
   let valves = true;
-  let squeeze: "" | "atrium" | "ventricle" = "";
   let seenCycle = false;
   let seenBack = false;
-  let busy = false;
+  let judging = false;
+  let hold = 0;
 
-  const leaf = (d: string): string => `<path d="${d}" fill="${VALVE}" stroke="${VALVE_LINE}" stroke-width="1" stroke-linejoin="round"/>`;
-  /** 심방과 심실 사이의 판막: 두 장의 얇은 막. 닫히면 가운데에서 맞닿고, 열리면 심실 쪽으로 늘어진다. 가는 끈이 심실 벽에 이어져 있다. */
-  const avValve = (mx: number, open: boolean): string => {
-    const a = mx - 17;
-    const b = mx + 17;
-    const cord = (x0: number, y0: number, x1: number): string => `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="148" stroke="${VALVE}" stroke-width="1" opacity=".65"/>`;
-    if (open) return cord(a + 5, 122, a - 4) + cord(b - 5, 122, b + 4) + leaf(`M${a} 100 Q${a + 7} 110 ${a + 5} 123 Q${a - 1} 114 ${a} 104 Z`) + leaf(`M${b} 100 Q${b - 7} 110 ${b - 5} 123 Q${b + 1} 114 ${b} 104 Z`);
-    return cord(mx - 2, 110, a - 4) + cord(mx + 2, 110, b + 4) + leaf(`M${a} 100 Q${mx - 8} 100 ${mx} 110 Q${mx - 10} 109 ${a} 104 Z`) + leaf(`M${b} 100 Q${mx + 8} 100 ${mx} 110 Q${mx + 10} 109 ${b} 104 Z`);
-  };
-  /** 심실과 동맥 사이의 판막: 주머니 모양의 막 두 장. 닫히면 가운데에서 맞닿고, 열리면 혈관 벽에 붙는다. */
-  const slValve = (x0: number, open: boolean): string => {
-    const x1 = x0 + 22;
-    const m = x0 + 11;
-    if (open) return leaf(`M${x0 + 1} 106 Q${x0 + 6} 98 ${x0 + 4} 88 L${x0 + 1} 90 Z`) + leaf(`M${x1 - 1} 106 Q${x1 - 6} 98 ${x1 - 4} 88 L${x1 - 1} 90 Z`);
-    return leaf(`M${x0 + 1} 96 Q${x0 + 2} 108 ${m} 104 L${m} 99 Q${x0 + 6} 102 ${x0 + 1} 96 Z`) + leaf(`M${x1 - 1} 96 Q${x1 - 2} 108 ${m} 104 L${m} 99 Q${x1 - 6} 102 ${x1 - 1} 96 Z`);
-  };
-  const shrink = (c: [number, number], k: number): string => `transform="translate(${c[0]} ${c[1]}) scale(${k}) translate(${-c[0]} ${-c[1]})"`;
-  const draw = (): void => {
-    const EMPTY = "#1A2740";
-    let out = "";
-    SIDES.forEach((d) => {
-      const inA = where === "atrium" || where === "back";
-      const inV = where === "ventricle";
-      const inT = where === "artery" || where === "back";
-      const tx = d.tubeX + 11;
-      // 정맥(위에서 심방으로), 동맥(심실에서 위로)
-      out += `<path d="M${d.veinX - 10} 24 L${d.veinX - 10} 62 L${d.veinX + 10} 62 L${d.veinX + 10} 24" fill="${where === "atrium" ? d.color : EMPTY}" stroke="${MUSCLE}" stroke-width="2.4" opacity=".9"/>`;
-      out += `<path d="M${d.tubeX} 24 L${d.tubeX} 112 L${d.tubeX + 22} 112 L${d.tubeX + 22} 24" fill="${inT ? d.color : EMPTY}" stroke="${MUSCLE}" stroke-width="3"/>`;
-      out += txt(d.veinX, 15, d.vein, { size: 12, fill: P.dim }) + txt(tx, 15, d.artery, { size: 12, fill: P.dim });
-      // 심방과 심실을 잇는 목(판막이 놓이는 자리)
-      out += `<rect x="${d.mx - 19}" y="94" width="38" height="16" fill="${inV && squeeze === "atrium" ? d.color : inA ? d.color : EMPTY}" stroke="none"/>`;
-      // 심방(벽이 얇다), 심실(벽이 두껍다)
-      out += `<path${squeeze === "atrium" ? ` class="g2u6x-squeeze" ${shrink(d.atriumC, 0.88)}` : ""} d="${d.atriumD}" fill="${inA ? d.color : EMPTY}" stroke="${MUSCLE}" stroke-width="3.4" stroke-linejoin="round"/>`;
-      out += `<path${squeeze === "ventricle" ? ` class="g2u6x-squeeze" ${shrink(d.ventC, 0.9)}` : ""} d="${d.ventD}" fill="${inV ? d.color : EMPTY}" stroke="${MUSCLE}" stroke-width="${d.wall}" stroke-linejoin="round"/>`;
-      // 목과 동맥 입구를 벽 위에 다시 뚫는다
-      out += `<rect x="${d.mx - 17}" y="92" width="34" height="20" fill="${inV && squeeze === "atrium" ? d.color : inA ? d.color : inV ? d.color : EMPTY}"/>`;
-      out += `<rect x="${d.tubeX + 1.5}" y="100" width="19" height="${10 + d.wall / 2}" fill="${inT ? d.color : inV ? d.color : EMPTY}"/>`;
-      out += tag(d.atriumC[0], d.atriumC[1] + 5, d.atrium, { size: 12 }) + tag(d.tagV[0], d.tagV[1] + 14, d.ventricle, { size: 12 });
-      // 판막
-      if (valves) out += avValve(d.mx, inV && squeeze === "atrium") + slValve(d.tubeX, inT && squeeze === "ventricle");
-      // 흐름 화살표
-      if (inV && squeeze === "atrium") out += arrow(d.mx, 86, d.mx, 132, "#fff", 3, "g2u6x-pop");
-      if (inT && squeeze === "ventricle") out += arrow(tx, 120, tx, 42, "#fff", 3, "g2u6x-pop");
-      if (where === "back" && squeeze === "ventricle") out += arrow(d.mx, 130, d.mx, 76, P.bad, 3.4, "g2u6x-blink");
-    });
-    out += valves ? `<path d="M88 208 Q98 208 104 216 Q94 215 88 212 Z" fill="${VALVE}" stroke="${VALVE_LINE}" stroke-width="1"/>` + txt(182, 217, "연노란 막이 판막이에요", { size: 12, fill: VALVE }) : txt(173, 217, "판막을 빼 둔 상태예요", { size: 12, fill: P.bad });
-    stage.set(out);
+  const scene = (): HeartScene => (where === "atrium" ? "rest" : where === "ventricle" ? "toVent" : where === "artery" ? "toArtery" : "back");
+  const draw = (live = true): void => {
+    stage.set(heartSvg({ scene: scene(), valves, live, ns }));
     host.dataset.g6Where = where;
     host.dataset.g6Valves = valves ? "1" : "0";
-  };
-  const refill = (): void => {
-    tm.later(() => {
-      where = "atrium";
-      squeeze = "";
-      busy = false;
-      draw();
-      check();
-    }, 1700);
   };
   const go = bvBtn("main g2u6x-go", "알아낸 것 정리하기");
   go.disabled = true;
   const check = (): void => {
     f.pips((seenCycle ? 1 : 0) + (seenBack ? 1 : 0));
     go.disabled = !(seenCycle && seenBack);
-    if (seenCycle && !seenBack) f.say("이번에는 <b>판막을 빼고</b> 같은 차례로 수축시켜 봐요.");
-    else if (seenBack && !seenCycle) f.say("이번에는 <b>판막을 끼우고</b> 같은 차례로 수축시켜 봐요.");
+    if (seenCycle && !seenBack) f.say(valves ? "이번에는 <b>판막을 빼고</b> 같은 차례로 수축시켜 봐요." : "판막을 뺐어요. 같은 차례로 <b>심방</b>부터 수축시켜 봐요.");
+    else if (seenBack && !seenCycle) f.say(valves ? "판막을 끼웠어요. 같은 차례로 <b>심방</b>부터 수축시켜 봐요." : "이번에는 <b>판막을 끼우고</b> 같은 차례로 수축시켜 봐요.");
     else if (seenCycle && seenBack) f.say("판막이 있을 때와 없을 때를 모두 봤어요. <b>정리</b>해 봐요.");
+  };
+  /** 수축한 결과를 보이던 중이면 처음 모습(심방에 혈액)으로 되돌린다. */
+  const endHold = (): void => {
+    if (!hold) return;
+    tm.cancel(hold);
+    hold = 0;
+    where = "atrium";
+    draw();
+    check();
   };
 
   const cA = chip("atrium", "심방 수축", "위쪽 방", () => {
-    if (busy) return;
+    if (judging) return;
+    endHold();
     if (where !== "atrium") return;
     tap();
-    squeeze = "atrium";
     where = "ventricle";
     draw();
     f.say("심방이 수축해 혈액이 <b>심실</b>로 내려갔어요. 이제 심실을 수축시켜요.");
   });
   const cV = chip("ventricle", "심실 수축", "아래쪽 방", () => {
-    if (busy) return;
+    if (judging) return;
+    endHold();
     if (where !== "ventricle") {
       bad();
       f.say("심실이 비어 있어요. <b>심방</b>을 먼저 수축시켜 혈액을 내려보내요.");
       return;
     }
-    busy = true;
-    squeeze = "ventricle";
     if (valves) {
       good();
       where = "artery";
@@ -188,25 +93,50 @@ export const g2u6HeartLab: StepRenderer = (host, step, api) => {
       seenBack = true;
       host.dataset.g6Fail = "back";
       draw();
-      toast(lab, "혈액이 심방으로 거꾸로 흘렀어요", true);
+      toast(lab, "혈액이 심방으로 거꾸로 흘렀어요", true, true);
       f.say("판막이 없으니 혈액의 일부가 <b>심방으로 되돌아갔어요</b>. 동맥으로 나간 양이 줄었어요.");
     }
-    refill();
+    f.pips((seenCycle ? 1 : 0) + (seenBack ? 1 : 0));
+    go.disabled = !(seenCycle && seenBack);
+    hold = tm.later(() => {
+      hold = 0;
+      where = "atrium";
+      draw();
+      check();
+    }, HOLD_MS);
   });
   const cValve = chip("valve", "판막", "끼워 둠", () => {
-    if (busy) return;
+    if (judging) return;
+    endHold();
     tap();
     valves = !valves;
     cValve.sub(valves ? "끼워 둠" : "빼 둠");
     cValve.on(!valves);
+    where = "atrium";
     draw();
+    if (!seenCycle || !seenBack) f.say(valves ? "판막을 끼웠어요. 같은 차례로 <b>심방</b>부터 수축시켜 봐요." : "판막을 뺐어요. 같은 차례로 <b>심방</b>부터 수축시켜 봐요.");
   });
   go.addEventListener("click", () => {
-    if (busy) return;
+    if (judging || go.disabled) return;
     tap();
-    lab.judge("판막을 빼자 혈액이 <b>심방으로 거꾸로</b> 흘렀어요. 판막이 하는 일은?", [{ t: "혈액이 거꾸로 흐르지 않게 막는다", ok: true }, { t: "혈액을 더 세게 밀어낸다" }, { t: "혈액에 산소를 넣어 준다" }], "혈액을 밀어내는 것은 판막이 아니라 <b>심실의 근육</b>이에요.", () =>
-      lab.finish("혈액은 <b>심방 → 심실 → 동맥</b> 한 방향으로만 흘러요. 심방과 심실 사이, 심실과 동맥 사이의 <b>판막</b>이 거꾸로 흐르는 것을 막아요."),
-    );
+    if (hold) {
+      tm.cancel(hold);
+      hold = 0;
+    }
+    judging = true;
+    lab.f.stage.querySelector(".g2u6x-toast")?.remove();
+    // 판정의 근거(판막을 뺐을 때 거꾸로 흐른 모습)를 무대에 멈춰 남긴다
+    valves = false;
+    where = "back";
+    draw(false);
+    f.say("판막을 뺐을 때의 모습이에요. 혈액이 <b>심방 쪽으로</b> 거꾸로 올라갔어요.");
+    lab.judge("판막을 빼자 혈액이 <b>심방으로 거꾸로</b> 흘렀어요. 판막이 하는 일은?", [{ t: "혈액이 거꾸로 흐르지 않게 막는다", ok: true }, { t: "혈액을 더 세게 밀어낸다" }, { t: "혈액에 산소를 넣어 준다" }], "혈액을 밀어내는 것은 판막이 아니라 <b>심실의 근육</b>이에요.", () => {
+      // 결론: 판막이 있어 동맥으로만 나가는 모습
+      valves = true;
+      where = "artery";
+      draw(false);
+      lab.finish("혈액은 <b>심방 → 심실 → 동맥</b> 한 방향으로만 흘러요. 심방과 심실 사이, 심실과 동맥 사이의 <b>판막</b>이 거꾸로 흐르는 것을 막아요.");
+    });
   });
   f.slot.setControls(row(cA.el, cV.el), row(cValve.el), go);
   draw();
@@ -221,7 +151,8 @@ const PARTS = [
   { key: "plt", name: "혈소판" },
   { key: "pla", name: "혈장" },
 ];
-const JOBS = [
+let bloodSeq = 0;
+const JOBS: { ask: string; ans: string; short: string; done: string; scene: BloodJob }[] = [
   { ask: "온몸의 세포에 <b>산소</b>를 날라야 해요. 무엇이 맡을까요?", ans: "rbc", short: "세포에 산소 나르기", done: "적혈구가 <b>산소</b>를 싣고 세포로 갔어요.", scene: "o2" },
   { ask: "몸속에 <b>세균</b>이 들어왔어요. 무엇이 맡을까요?", ans: "wbc", short: "몸속의 세균 없애기", done: "백혈구가 세균을 <b>잡아먹었어요</b>.", scene: "germ" },
   { ask: "상처가 나서 <b>피가 나요</b>. 무엇이 맡을까요?", ans: "plt", short: "상처의 피 멎게 하기", done: "혈소판이 모여 혈액을 굳혀 <b>피가 멎었어요</b>.", scene: "cut" },
@@ -238,45 +169,24 @@ export const g2u6BloodLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
   const lab = g6Lab(host, api, s, { steps: 5, cls: "g2u6x-blood", wait: "혈액을 가라앉혀 보세요" });
   const { f, tm } = lab;
-  const stage = g6Svg(lab, "혈액이 든 시험관과 혈구를 확대한 모습");
+  const stage = g6Svg(lab, "혈액이 든 시험관과, 혈액이 맡을 일의 장면");
+  const ns = `g6b${++bloodSeq}`;
   let settled = false;
   let job = -1;
-  let solved = false;
+  let state: "ask" | "miss" | "done" = "ask";
+  let finalView = false;
   let busy = false;
 
-  const rbc = (x: number, y: number, r = 9): string => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * 0.82}" fill="#E8505B" stroke="#8E1E2A" stroke-width="1.3"/><ellipse cx="${x}" cy="${y}" rx="${r * 0.42}" ry="${r * 0.34}" fill="#C7353F"/>`;
-  const wbc = (x: number, y: number): string => `<path d="M${x - 15} ${y - 4} q3 -14 16 -12 q14 0 13 13 q2 12 -11 14 q-14 3 -18 -6 z" fill="#E9EEF7" stroke="#8FA3BC" stroke-width="1.4"/><path d="M${x - 6} ${y - 3} q6 -7 11 0 q3 7 -5 8 q-8 0 -6 -8 z" fill="#8E7CC8"/>`;
-  const plt = (x: number, y: number): string => `<path d="M${x - 4} ${y - 2} l5 -3 l4 4 l-3 4 l-6 -1 z" fill="#F2C879" stroke="#9A6A1C" stroke-width="1"/>`;
+  // 그림은 bloodArt.ts. 일을 맡기는 동안 오른쪽 칸은 그 일의 장면이고, 마지막 판정에서는 혈구를 확대한 모습으로 돌아간다.
   const draw = (): void => {
-    // 왼쪽: 시험관
-    let out = `<path d="M34 28 L34 176 A22 22 0 0 0 78 176 L78 28" fill="rgba(200,225,255,.07)" stroke="${P.glass}" stroke-width="1.8"/>`;
-    if (!settled) out += `<path d="M36 52 L36 176 A20 20 0 0 0 76 176 L76 52 Z" fill="#C7353F"/>` + txt(56, 216, "혈액", { size: 12.5, fill: P.hi });
-    else {
-      out += `<path class="g2u6x-pop" d="M36 52 L36 120 L76 120 L76 52 Z" fill="#F0DC9A"/><path class="g2u6x-pop" d="M36 120 L36 176 A20 20 0 0 0 76 176 L76 120 Z" fill="#B32A36"/>`;
-      out += tag(56, 90, "혈장", { size: 12 }) + tag(56, 160, "혈구", { size: 12 });
-    }
-    // 오른쪽: 확대한 혈구
-    if (settled) {
-      out += `<line x1="78" y1="150" x2="112" y2="36" stroke="#55698A" stroke-dasharray="3 4"/><line x1="78" y1="190" x2="112" y2="196" stroke="#55698A" stroke-dasharray="3 4"/>`;
-      out += `<rect x="112" y="30" width="226" height="170" rx="14" fill="#101D33" stroke="#263B5C"/>`;
-      const R: [number, number][] = [[136, 56], [164, 50], [196, 60], [228, 48], [310, 58], [142, 92], [176, 88], [300, 96], [136, 132], [168, 128], [204, 122], [236, 136], [318, 136], [148, 170], [184, 166], [222, 172], [296, 172]];
-      R.forEach(([x, y]) => (out += rbc(x, y)));
-      out += wbc(266, 74) + wbc(262, 148);
-      [[212, 92], [240, 100], [198, 146], [280, 118], [318, 180]].forEach(([x, y]) => (out += plt(x, y)));
-      const sc = job >= 0 ? JOBS[job].scene : "";
-      if (solved && sc === "germ") out += `<circle class="g2u6x-pop" cx="266" cy="74" r="24" fill="none" stroke="${P.good}" stroke-width="2.5"/>`;
-      if (solved && sc === "o2") out += [[136, 56], [164, 50], [196, 60]].map(([x, y]) => dot(x + 8, y - 8, 4, P.o2, "#2F6FA8", "g2u6x-pop")).join("");
-      if (solved && sc === "cut") out += `<g class="g2u6x-pop">${[[212, 92], [222, 96], [217, 104], [228, 104], [208, 102]].map(([x, y]) => plt(x, y)).join("")}<circle cx="218" cy="99" r="19" fill="none" stroke="${P.good}" stroke-width="2.5"/></g>`;
-      out += txt(225, 216, "혈구를 확대한 모습", { size: 12, fill: P.dim });
-    } else out += txt(214, 110, "가라앉히면 무엇으로", { size: 13, fill: P.dim }) + txt(214, 130, "나뉠까요?", { size: 13, fill: P.dim });
-    stage.set(out);
+    stage.set(bloodSvg({ settled, job: job >= 0 && !finalView ? JOBS[job].scene : null, state, ns }));
     host.dataset.g6Job = String(job);
     host.dataset.g6Settled = settled ? "1" : "0";
   };
 
   const chips = PARTS.map((p) =>
     chip(p.key, p.name, "", () => {
-      if (busy || job < 0 || solved) return;
+      if (busy || job < 0 || state === "done") return;
       const j = JOBS[job];
       if (p.key !== j.ans) {
         bad();
@@ -284,12 +194,14 @@ export const g2u6BloodLab: StepRenderer = (host, step, api) => {
         host.dataset.g6Fail = p.key;
         chips.forEach((c) => c.el.classList.remove("miss"));
         chips[PARTS.indexOf(p)].el.classList.add("miss");
-        toast(lab, "이 일은 해결되지 않았어요", true);
+        // 알림 대신 장면이 그대로(또는 더 나빠진 채) 남고, 장면 왼쪽 위 글이 빨강으로 바뀐다
+        state = "miss";
+        draw();
         f.say(`${MISS[p.key]} 다른 성분을 골라요.`);
         return;
       }
       good();
-      solved = true;
+      state = "done";
       busy = true;
       chips.forEach((c) => c.el.classList.remove("miss"));
       chips[PARTS.indexOf(p)].done();
@@ -299,17 +211,21 @@ export const g2u6BloodLab: StepRenderer = (host, step, api) => {
       tm.later(() => {
         busy = false;
         if (job < JOBS.length - 1) nextJob();
-        else
+        else {
+          // 판정의 근거(확대한 혈구)를 다시 보인다
+          finalView = true;
+          draw();
           lab.judge("확대한 혈구 가운데 수가 <b>가장 많은</b> 것은?", [{ t: "적혈구", ok: true }, { t: "백혈구" }, { t: "혈소판" }], "붉은 원반 모양의 적혈구가 가장 많아 혈액이 <b>붉게</b> 보여요.", () =>
             lab.finish("혈액은 액체인 <b>혈장</b>과 세포인 <b>혈구</b>로 이루어져요. 적혈구는 산소 운반, 백혈구는 세균 제거, 혈소판은 혈액 응고를 맡아요."),
           );
+        }
       }, 1700);
     }),
   );
   const jobNote = noteLine("이제 일이 네 가지 생겨요. 일마다 <b>맡을 성분</b>을 하나씩 골라요.");
   const nextJob = (): void => {
     job += 1;
-    solved = false;
+    state = "ask";
     jobNote.innerHTML = `일 ${job + 1} / 4: <b>${JOBS[job].short}</b><br>이 일을 맡을 성분을 아래에서 골라요.`;
     draw();
     f.say(JOBS[job].ask);

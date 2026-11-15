@@ -26,7 +26,7 @@ export const P = {
   good: "#6FD08C",
   energy: "#FFD43B",
   glucose: "#F5B544",
-  urea: "#B58BE8",
+  urea: "#9FC86A", // 요소와 노폐물: 순환 여행 랩(rideStage RC.waste)과 같은 연두(이산화 탄소의 보라와 헷갈리지 않게, 2026-11-15)
   water: "#5AB0F2",
   protein: "#F08C5A",
   // 검출 반응의 색
@@ -132,10 +132,10 @@ export function onStageTap(stage: G6Svg, fn: (key: string) => void): void {
   });
 }
 
-/** 무대 가운데에 잠깐 뜨는 알림. */
-export function toast(lab: G6Lab, text: string, bad = false): void {
+/** 무대 가운데에 잠깐 뜨는 알림. low면 무대 아래 가장자리에 뜬다(실패 장면 자체가 판정의 근거인 랩: 알림이 그 장면을 덮지 않게). */
+export function toast(lab: G6Lab, text: string, bad = false, low = false): void {
   lab.f.stage.querySelector(".g2u6x-toast")?.remove();
-  const t = el("div", { class: `g2u6x-toast${bad ? " bad" : ""}`, text });
+  const t = el("div", { class: `g2u6x-toast${bad ? " bad" : ""}${low ? " low" : ""}`, text });
   lab.f.stage.appendChild(t);
   lab.tm.later(() => t.remove(), 1900);
 }
