@@ -13,7 +13,7 @@ import { curioCard, type Curio } from "../../../ui/curio";
 import type { StepRenderer } from "../../types";
 import { el } from "../../../core/dom";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
-import { u3Frame, u3Canvas, u3Hold, beaker, water, hotPlate, txt, graphAxes, graphLine, SUB, type Ctx } from "./kit";
+import { u3Frame, u3Canvas, u3Hold, beaker, water, hotPlate, txt, rr, graphAxes, graphLine, SUB, type Ctx } from "./kit";
 
 interface RaceStep {
   title: string;
@@ -58,6 +58,13 @@ export const raceLab: StepRenderer = (host, step, api) => {
     ctx.stroke();
     beaker(ctx, x, 98, 52, 90, { r: 6 });
     hotPlate(ctx, x - 4, 190, 60, on);
+    // 세기 눈금: 두 가열 장치는 같은 세기(넷 가운데 셋)로 맞춰 두었다. 켜면 그 칸이 밝아진다(2026-11-15 그래픽 감사:
+    // 같은 열을 받는다는 것이 그림에 없었다. 식용유만 먼저 끄는 차례가 있어 장치는 둘로 둔다)
+    for (let i = 0; i < 4; i++) {
+      rr(ctx, x + 11 + i * 8, 202, 5, 6, 1.5);
+      ctx.fillStyle = i < 3 ? (on > 0.5 ? "#FFD666" : "rgba(255,255,255,.22)") : "rgba(255,255,255,.07)";
+      ctx.fill();
+    }
     txt(ctx, name, x + 26, 56, { size: 12.5, color: SUB });
     txt(ctx, `${Math.round(T)}℃`, x + 26, 76, { size: 17, weight: 800, color: line });
     if (off) txt(ctx, "불 끔", x + 26, 222, { size: 12, color: SUB, weight: 600 });
@@ -91,6 +98,8 @@ export const raceLab: StepRenderer = (host, step, api) => {
     drawBeaker(ctx, 16, "물", waterT(), "rgba(90,169,255,.42)", C_WATER, glow, phase === "ask" || phase === "done");
     drawBeaker(ctx, 90, "식용유", oilT(), "rgba(255,214,102,.45)", C_OIL, oilOn ? glow : 0, !oilOn, oilMass / 200);
     txt(ctx, oilMass ? `물 200 g · 식용유 ${oilMass} g` : "물 200 g · 식용유 ?", 79, 22, { size: 12.5, color: oilMass === 100 ? "#FF8F8F" : SUB });
+    // 두 장치가 함께 켜지는 동안만 "같은 세기"(식용유를 먼저 끈 뒤에는 그 자리에 "불 끔"이 뜬다)
+    if (phase === "predict" || phase === "setup" || phase === "oil") txt(ctx, "같은 세기", 79, 222, { size: 12, color: SUB, weight: 700 });
     host.dataset.u3Oil = String(oilMass);
     // 그래프
     const g = graphAxes(ctx, { x: 200, y: 44, w: 134, h: 128, tMax: 48, vMin: 0, vMax: 80, ticks: [20, 40, 60], xLabel: "가열 시간", yLabel: "온도(℃)" });

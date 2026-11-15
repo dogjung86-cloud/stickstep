@@ -5,6 +5,7 @@
 // 비밀의 물은 온도 색을 숨긴다(회색). 단서는 입자의 빠르기와 입자 사이의 거리(물 높이)뿐이다.
 // 물 높이의 변화는 입자 사이가 멀어지는 것을 보이려고 실제보다 크게 그렸다(입자 모형).
 
+import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
 import { tempColor, drawGlowParticle, drawFlame, makeParticles, stepFree, motionWord, type Box, type FreeParticle } from "../../../ui/thermo";
@@ -217,7 +218,8 @@ export const tempLab: StepRenderer = (host, step, api) => {
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
-  f.slot.setControls(range.el, check);
+  // 물 높이는 입자 사이가 멀어지는 것을 보이려고 크게 바꿔 그렸다(5℃에서 95℃까지 1.5배). 그 말을 무대 아래에 둔다(2026-11-15 그래픽 감사).
+  f.slot.setControls(range.el, check, el("div", { class: "u3x-cap", text: "물 높이의 변화는 실제보다 크게 그렸어요." }));
   hint();
   api.setCTA("온도를 바꿔 입자를 관찰해 보세요", { enabled: false });
   return () => {
