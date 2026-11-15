@@ -142,7 +142,8 @@ export const palmLab: StepRenderer = (host, step, api) => {
       const q = P(d * 72, y, 0);
       xArrow(ctx, p[0], p[1], q[0], q[1], "rgba(255,123,107,.72)", 2.2, 8);
     }
-    const fl = P(-d * 64, 50 + 13, 0);
+    // 이름표는 화살 꼬리 위(±54: 왼쪽 자석 옆면의 오른쪽 위 모서리 x≈96에 걸치지 않는다)
+    const fl = P(-d * 54, 50 + 13, 0);
     xText(ctx, "자기장", fl[0], fl[1], { px: 12, color: X.field });
     // 도선(앞에서 뒤로 뻗은 곧은 도선). 답하면 힘을 받아 움직인다. 앞 끝이 굵고 밝고, 뒤로 갈수록 가늘고 어둡다
     const lift = a * up * 12;
