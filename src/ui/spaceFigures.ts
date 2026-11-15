@@ -91,25 +91,28 @@ export function uranusTiltFig(): string {
  *  무리 안 상대 위치는 실제 대소 관계를 따른다(질량 수<화<금<지 / 천<해<토<목,
  *  반지름 수<화<금≈지 / 해≈천<토<목). */
 export function planetGroupsFig(): string {
-  const pts: [string, number, number, string][] = [
-    ["수", 46, 116, "#9C9894"], ["화", 56, 111, "#C05B3C"], ["금", 72, 101, "#E2B96B"], ["지", 80, 99, "#5AA2F8"],
-    ["천", 176, 64, "#8FD8DD"], ["해", 186, 66, "#6E8CE8"], ["토", 216, 42, "#E8D9A8"], ["목", 240, 26, "#D3AC7C"],
+  // [이름, 점 x, 점 y, 색, 이름표 x, 이름표 y]: 이름표는 점끼리 붙은 곳에서 서로 비켜 둔다(금과 지가 겹치던 것)
+  const pts: [string, number, number, string, number, number][] = [
+    ["수", 46, 116, "#9C9894", 43, 105], ["화", 56, 111, "#C05B3C", 57, 99], ["금", 72, 101, "#E2B96B", 70, 89], ["지", 80, 99, "#5AA2F8", 92, 103],
+    ["천", 176, 64, "#8FD8DD", 172, 52], ["해", 186, 66, "#6E8CE8", 190, 82], ["토", 216, 42, "#E8D9A8", 216, 30], ["목", 240, 26, "#D3AC7C", 240, 14],
   ];
+  const t = (x: number, y: number, s: string, o = ""): string =>
+    `<text x="${x}" y="${y}" font-size="10.5" font-family="Pretendard, sans-serif" ${o}>${s}</text>`;
   return panel(
     280,
     150,
     `
     <path d="M34 122h224M34 122V16" stroke="#4A5F86" stroke-width="1.6"/>
-    <text x="14" y="24" fill="#8FA6CE" font-size="9" font-family="Pretendard, sans-serif">반지름(지구=1)</text>
-    <text x="218" y="140" fill="#8FA6CE" font-size="9" font-family="Pretendard, sans-serif">질량(지구=1)</text>
-    <ellipse cx="63" cy="108" rx="36" ry="19" stroke="#5AA2F8" stroke-width="1.8" stroke-dasharray="5 4"/>
-    <text x="63" y="142" fill="#9CC2F2" font-size="10" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">작고 오밀조밀</text>
+    ${t(40, 14, "반지름(지구=1)", 'fill="#9FB4D8" font-weight="700"')}
+    ${t(262, 140, "질량(지구=1)", 'fill="#9FB4D8" font-weight="700" text-anchor="end"')}
+    <ellipse cx="63" cy="106" rx="38" ry="22" stroke="#5AA2F8" stroke-width="1.8" stroke-dasharray="5 4"/>
+    ${t(63, 142, "작고 오밀조밀", 'fill="#9CC2F2" font-weight="700" text-anchor="middle"')}
     <ellipse cx="206" cy="46" rx="52" ry="32" stroke="#FFB03A" stroke-width="1.8" stroke-dasharray="5 4"/>
-    <text x="206" y="100" fill="#FFD79E" font-size="10" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">크고 듬직</text>
+    ${t(206, 100, "크고 듬직", 'fill="#FFD79E" font-weight="700" text-anchor="middle"')}
     ${pts
       .map(
-        ([n, x, y, c]) =>
-          `<circle cx="${x}" cy="${y}" r="5.5" fill="${c}"/><text x="${x}" y="${y - 9}" fill="#DCE8FF" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">${n}</text>`,
+        ([n, x, y, c, lx, ly]) =>
+          `<circle cx="${x}" cy="${y}" r="5.5" fill="${c}"/>${t(lx, ly + 3.6, n, 'fill="#E4EDFF" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#0E1A30" stroke-width="2.6" stroke-linejoin="round"')}`,
       )
       .join("")}
   `,
