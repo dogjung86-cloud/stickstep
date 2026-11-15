@@ -47,6 +47,7 @@
 
 /* ── 3D 무대(전기 그네) ────────────────────────────── */
 .g2u7x-cv3d { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+.g2u7x-cv3d.still { cursor: default; touch-action: auto; } /* 끌어 돌리지 않는 입체 무대(전동기) */
 .g2u7x-tag {
   position: absolute; left: 12px; top: 12px; height: 26px; padding: 0 11px; border-radius: 999px; display: flex; align-items: center;
   background: rgba(11, 21, 36, .72); border: 1px solid rgba(255, 255, 255, .16); color: #E8EEF9; font-size: 12.5px; font-weight: 700; pointer-events: none;

@@ -3,6 +3,7 @@
 // 랩의 첫 판정에서는 한 번 틀려 본다(오답 화면도 한 화면 안인지). 그 길에서 모은 글에 금지어가 없는지도 본다.
 // 새로 쓴 문제는 정답을 한 번씩 눌러 정답으로 채점되는지 본다. 끝으로 토글을 끈 첫 레슨이 지금 판으로 열리는지 본다.
 // 실행: PORT=5587 node qa/check-g2u7v5.mjs [레슨 id ...] [--out 폴더] [--lab]   또는   DIST=<폴더> node qa/check-g2u7v5.mjs
+// NOGL=1을 붙이면 WebGL2를 끈 채(전동기 랩은 평면 무대). 전동기 랩은 입체 무대에서 힘 = 전류 × 자기장을 3D 좌표로 검산한다(__motor, 개발 서버).
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { launch, openLesson, fit, holdBtn, waitAsk, answer, next, texts, W, waitFor, ctaState, cta, choose, ds, waitPhase, tapText, tapKey, setRange, tapStage, tapRot, waitPips, click, helper } from "./g2u7v5-lib.mjs";
@@ -16,7 +17,14 @@ mkdirSync(OUT, { recursive: true });
 
 let pass = 0, fail = 0;
 const ok = (c, msg) => { if (c) pass++; else { fail++; console.log("  FAIL " + msg); } };
+const NOGL = !!process.env.NOGL;
 const { page, errors, close } = await launch();
+// NOGL=1: WebGL2를 쓸 수 없는 브라우저를 흉내 낸다(전동기 랩이 평면 무대로 뜨는지 본다). 전기 그네처럼 평면 무대가 없는 3D 랩은
+// three가 "WebGL context" 오류를 콘솔에 남기는데, 이 흉내에서는 예상한 것이라 오류로 세지 않는다.
+if (NOGL) await page.addInitScript(() => {
+  const orig = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function (type, ...a) { return type === "webgl2" ? null : orig.call(this, type, ...a); };
+});
 const seen = [];
 let cur = "";
 const at = async (mark, shot = true) => {
@@ -345,18 +353,54 @@ const LAB = {
     await finishLab("swing", "전동기 속 코일 보기", 1);
   },
   async motor() {
+    // 무대: WebGL2가 되면 입체 무대(3d), 안 되면(NOGL=1) 예전 2D 그림의 평면 무대(flat)
+    await waitFor(page, () => !!document.querySelector(".screen.active .bv-stage")?.dataset.motor, null, 60);
+    const mode = await page.evaluate(() => document.querySelector(".screen.active .bv-stage").dataset.motor);
+    ok(mode === (NOGL ? "flat" : "3d"), `motor: 무대가 ${mode}(${NOGL ? "flat" : "3d"}이어야)`);
+    const m3 = () => page.evaluate(() => document.querySelector(".screen.active canvas.g2u7x-cv3d")?.__motor?.() ?? null);
+    const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+    const same = (a, b) => a.every((x, i) => Math.abs(x - b[i]) < 0.02);
     await at("motor-start");
     await tapText(page, "전류 흐르게"); await W(page, 1200);
     await at("motor-left");
+    if (mode === "3d") {
+      // 3D 좌표에서 검산: 힘 = 전류 × 자기장, 그린 화살표가 그 방향, 처음(N극 왼쪽, 왼쪽 변 전류가 뒤쪽 −z)엔 왼쪽 변이 아래(−y)
+      const m = await m3();
+      ok(!!m && same(m.left.force, cross(m.left.cur, m.field)) && same(m.left.drawn, m.left.force), `motor: 왼쪽 변의 힘이 전류 × 자기장이 아님(${JSON.stringify(m?.left)})`);
+      ok(!!m && same(m.field, [1, 0, 0]) && same(m.left.cur, [0, 0, -1]) && same(m.left.force, [0, -1, 0]), `motor: 처음 왼쪽 변의 힘이 아래가 아님(${JSON.stringify(m?.left)})`);
+      ok(!!m && !m.right.shown && m.left.shown, "motor: 예측 전에 오른쪽 변의 힘이 보이거나 왼쪽 변의 힘이 안 보임");
+      // 축을 가로지르는 앞뒤 변: 힘이 축 방향(z)뿐이고, 코일 면이 자기장과 나란한 지금(θ = 0)은 0
+      ok(!!m && [m.back.force, m.front.force].every((f) => Math.abs(f[0]) < 1e-3 && Math.abs(f[1]) < 1e-3 && Math.abs(f[2]) < 0.02), `motor: 앞뒤 변의 힘이 0이 아님(${JSON.stringify([m?.back, m?.front])})`);
+    }
     ok(await waitAsk(page), "motor: 예측 질문이 뜨지 않음");
     await W(page, 300);
     await at("motor-predict");
     await answer(page, true); await W(page, 1700);
     await at("motor-both");
+    if (mode === "3d") {
+      const m = await m3();
+      ok(!!m && m.right.shown && same(m.right.force, cross(m.right.cur, m.field)) && same(m.right.drawn, [0, 1, 0]), `motor: 예측 뒤 오른쪽 변의 힘이 위가 아님(${JSON.stringify(m?.right)})`);
+    }
     await tapText(page, "코일 놓기"); await W(page, 900);
     await at("motor-on");
+    if (mode === "3d") {
+      // 놓으면 돈다: 앞에서 볼 때 시계 반대 방향(θ가 커진다). 도는 동안에도 힘은 전류 × 자기장, 앞뒤 변은 축 방향뿐
+      const a = await m3();
+      await W(page, 600);
+      const b = await m3();
+      ok(!!a && !!b && b.th > a.th + 0.2, `motor: 놓아도 코일이 시계 반대 방향으로 돌지 않음(${a?.th} → ${b?.th})`);
+      ok(!!b && same(b.left.force, cross(b.left.cur, b.field)) && same(b.right.force, cross(b.right.cur, b.field)) && [b.back.force, b.front.force].every((f) => Math.abs(f[0]) < 1e-3 && Math.abs(f[1]) < 1e-3), `motor: 도는 동안의 힘이 어긋남(${JSON.stringify(b)})`);
+    }
     await tapText(page, "전류 방향"); await W(page, 700);
+    if (mode === "3d") {
+      const m = await m3();
+      ok(!!m && same(m.left.force, [0, 1, 0]), `motor: 전류를 바꿨는데 왼쪽 변의 힘이 위가 아님(${JSON.stringify(m?.left)})`);
+    }
     await tapText(page, "자석의 극"); await W(page, 900);
+    if (mode === "3d") {
+      const m = await m3();
+      ok(!!m && same(m.field, [-1, 0, 0]) && same(m.left.force, [0, -1, 0]), `motor: 극까지 바꿨는데 왼쪽 변의 힘이 아래가 아님(${JSON.stringify(m?.left)})`);
+    }
     await at("motor-flip");
     await finishLab("motor", "이름 붙이기", 1);
   },
@@ -441,7 +485,8 @@ for (const id of lessons) {
 const bad = seen.filter((t) => /[—–]|교과서|\p{Extended_Pictographic}/u.test(t.replace(/[↓→←↑⊙]/g, "")) || / - /.test(t));
 bad.slice(0, 12).forEach((t) => console.log("  금지어: " + t));
 ok(bad.length === 0, `금지어 ${bad.length}건`);
-ok(errors.length === 0, `페이지 오류 ${errors.length}건: ${errors.slice(0, 3).join(" | ")}`);
+const errs = NOGL ? errors.filter((e) => !/WebGL context/.test(e)) : errors;
+ok(errs.length === 0, `페이지 오류 ${errs.length}건: ${errs.slice(0, 3).join(" | ")}`);
 console.log(`\n${fail ? "FAIL" : "PASS"} ${pass}/${pass + fail}`);
 await close();
 process.exit(fail ? 1 : 0);
