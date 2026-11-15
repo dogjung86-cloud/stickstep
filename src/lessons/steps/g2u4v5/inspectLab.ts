@@ -49,7 +49,13 @@ const grid = (sym: string, k: number, gap: number, rows = 4, cols = 4): string =
 // 염화 나트륨 한 층: 나트륨 이온(Na⁺)과 염화 이온(Cl⁻)이 번갈아 놓인다. 원자일 때는 나트륨이 염소보다 크지만 이온이 되면
 // 반대라서, 원자 공의 크기(chemKit)를 그대로 쓰지 않고 이온 반지름(Na⁺ 102 pm, Cl⁻ 181 pm, 염화 이온이 지름 약 1.8배)의 비로 잰다.
 // 이웃한 두 이온의 중심 사이 30 px에 반지름의 합 27 px(거의 맞닿게).
+// 전하 표시는 글자 대신 굵은 선으로 긋는다(글자 '−'는 폰에서 1 px 남짓으로 가늘었다).
 const ION_PM = { Na: 102, Cl: 181 } as const;
+const sign = (x: number, y: number, plus: boolean, h: number): string => {
+  const line = (x1: number, y1: number, x2: number, y2: number): string =>
+    `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`;
+  return line(x - h, y, x + h, y) + (plus ? line(x, y - h, x, y + h) : "");
+};
 const salt = (): string => {
   const gap = 30;
   const px = (gap - 3) / (ION_PM.Na + ION_PM.Cl);
@@ -59,7 +65,7 @@ const salt = (): string => {
       const x = CX + (i - 1.5) * gap;
       const y = CY + (j - 1.5) * gap;
       const sym = (i + j) % 2 ? "Cl" : "Na";
-      out += ball(x, y, sym, { k: (ION_PM[sym] * px) / ELEMS[sym].r, label: false }) + txt(x, y + 4.5, sym === "Cl" ? "−" : "+", { size: 13, fill: "#fff", weight: 800 });
+      out += ball(x, y, sym, { k: (ION_PM[sym] * px) / ELEMS[sym].r, label: false }) + sign(x, y, sym === "Na", sym === "Na" ? 4.2 : 5.6);
     }
   return out;
 };
