@@ -30,14 +30,10 @@ export function magTableFig(): string {
     .join("")}</table>`;
 }
 
-/** 옆에서 본 우리은하(가운데가 볼록한 원반, 태양계의 자리, 원반 둘레의 구상 성단). */
+/** 옆에서 본 우리은하(가운데가 볼록한 원반, 태양계의 자리). 레슨 5의 용어 스텝에 실린다.
+ *  원반 둘레의 구상 성단은 그 말을 배우는 레슨 6(정리 카드 그림 g2u8l6f1, 문제)이 보여 주므로 여기서는 그리지 않는다. */
 export function galaxySideFig8(): string {
-  const dots = [
-    [70, 38], [118, 24], [206, 22], [252, 40], [92, 122], [150, 138], [214, 134], [262, 116], [44, 70], [282, 78],
-  ]
-    .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.2" fill="#FFB36B"/>`)
-    .join("");
-  return `<svg viewBox="0 0 320 160" ${NS} role="img" aria-label="옆에서 본 우리은하. 가운데가 볼록한 납작한 원반이고 태양계는 중심에서 떨어져 있다"><rect width="320" height="160" rx="12" fill="#0B1326"/><ellipse cx="160" cy="80" rx="132" ry="9" fill="#5E78C8" opacity=".85"/><ellipse cx="160" cy="80" rx="34" ry="22" fill="#FFE0B0"/>${dots}<circle cx="234" cy="80" r="4" fill="#FFD23F" stroke="#fff" stroke-width="1.4"/><text x="160" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="#FFE0B0">중심부</text><text x="72" y="100" text-anchor="middle" font-size="12" font-weight="800" fill="#B8C8F2">원반</text><text x="234" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="#FFD23F">태양계</text><text x="252" y="26" text-anchor="middle" font-size="12" font-weight="800" fill="#FFB36B">구상 성단</text></svg>`;
+  return `<svg viewBox="0 0 320 160" ${NS} role="img" aria-label="옆에서 본 우리은하. 가운데가 볼록한 납작한 원반이고 태양계는 중심에서 떨어져 있다"><rect width="320" height="160" rx="12" fill="#0B1326"/><ellipse cx="160" cy="80" rx="132" ry="9" fill="#5E78C8" opacity=".85"/><ellipse cx="160" cy="80" rx="34" ry="22" fill="#FFE0B0"/><circle cx="234" cy="80" r="4" fill="#FFD23F" stroke="#fff" stroke-width="1.4"/><text x="160" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="#FFE0B0">중심부</text><text x="72" y="100" text-anchor="middle" font-size="12" font-weight="800" fill="#B8C8F2">원반</text><text x="234" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="#FFD23F">태양계</text></svg>`;
 }
 
 /** 풍선 모형 그림(딱지 셋). */
