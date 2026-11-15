@@ -21,6 +21,7 @@ const PX = 220 / 24; // 1 mL의 길이
 const Y0 = 42;
 const Y1 = 84;
 const NEED = 3; // 처음 값 말고 더 기록해야 하는 수
+const ROD = 166; // 피스톤 막대의 길이(6 mL에서 손잡이가 통 왼쪽 끝 밖에 오게)
 const fmtP = (v: number): string => (PV / v).toFixed(1);
 
 export const boyleLab: StepRenderer = (host, step, api) => {
@@ -109,7 +110,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
     frame.pips(1);
     const v = Math.min(...recs.keys());
     const k = 24 / v;
-    frame.say(`기록표에서 24 mL일 때와 ${v} mL일 때를 견줘 보세요.`);
+    frame.say(`기록표에서 24 mL일 때와 ${v} mL일 때를 비교해 보세요.`);
     frame.slot.ask(
       `부피가 24 mL에서 ${v} mL로 <b>${k}분의 1</b>이 되자 압력은?`,
       [{ t: `${k}배가 됐어요`, ok: true }, { t: `${k}분의 1이 됐어요` }, { t: "변하지 않았어요" }],
@@ -195,14 +196,21 @@ export const boyleLab: StepRenderer = (host, step, api) => {
     }
     txt(ctx, "mL", X_END - 6, Y1 + 20, { align: "center", color: "#8FA3C4" });
     box.draw(ctx, 205);
-    // 피스톤
+    // 피스톤: 막대는 통보다 길어서 6 mL까지 밀어도 손잡이가 통 왼쪽 끝 밖에 있다(24 mL에서는 손잡이가 무대 왼쪽 밖으로 나간다)
     rr(ctx, b.x0 - 9, Y0 - 3, 9, Y1 - Y0 + 6, 3);
     ctx.fillStyle = "#93A9CC";
     ctx.fill();
     ctx.fillStyle = "#6F86AD";
-    ctx.fillRect(b.x0 - 9 - 26, (Y0 + Y1) / 2 - 4, 26, 8);
-    rr(ctx, b.x0 - 9 - 34, Y0 + 4, 9, Y1 - Y0 - 8, 4);
+    ctx.fillRect(b.x0 - 9 - ROD, (Y0 + Y1) / 2 - 4, ROD, 8);
+    rr(ctx, b.x0 - 9 - ROD - 9, Y0 + 2, 9, Y1 - Y0 - 4, 4);
     ctx.fill();
+    // 통 끝의 손가락 걸이
+    rr(ctx, 50, Y0 - 12, 6, Y1 - Y0 + 24, 3);
+    ctx.fillStyle = "#3C5378";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(190,214,250,.55)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
     // 주사기의 끝과 압력 센서(연결 전에는 떨어져 있다)
     const my = (Y0 + Y1) / 2;
     ctx.fillStyle = "#6F86AD";
