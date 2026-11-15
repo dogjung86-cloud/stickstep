@@ -185,7 +185,7 @@ export function scatter(x0, y0, x1, y1, d, seed = 1, tries = 4000) {
 }
 
 /** 보로노이 칸(경계 상자 안). 점마다 볼록 다각형 [[x,y],...]을 돌려준다(반평면 자르기, 점 수백 개까지). */
-export function voronoi(pts, x0, y0, x1, y1) {
+export function voronoi(pts, x0, y0, x1, y1, maxDist = Infinity) {
   const clip = (poly, a, b, c) => { // a*x + b*y <= c 쪽만 남긴다
     const out = [];
     for (let i = 0; i < poly.length; i++) {
@@ -201,7 +201,7 @@ export function voronoi(pts, x0, y0, x1, y1) {
     for (let j = 0; j < pts.length && poly.length; j++) {
       if (j === i) continue;
       const q = pts[j], a = q[0] - p[0], b = q[1] - p[1];
-      if (a * a + b * b > 9) continue; // 먼 점은 건너뛴다(칸 크기가 1 안팎일 때)
+      if (a * a + b * b > maxDist * maxDist) continue; // 아주 먼 점은 건너뛸 수 있다(속도). 기본은 모두 본다
       poly = clip(poly, a, b, (q[0] * q[0] + q[1] * q[1] - p[0] * p[0] - p[1] * p[1]) / 2);
     }
     return poly;

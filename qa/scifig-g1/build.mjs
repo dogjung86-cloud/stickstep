@@ -73,7 +73,7 @@ for (const key of keys) {
   });
   const pg = await ctx.newPage();
   const logs = [];
-  pg.on("console", (m) => { if (m.type() === "error" || m.type() === "warning" || m.text().startsWith("proj")) logs.push(`${m.type()}: ${m.text()}`); });
+  pg.on("console", (m) => { if (m.type() === "error" || m.type() === "warning" || /^(proj|placed)/.test(m.text())) logs.push(`${m.type()}: ${m.text()}`); });
   pg.on("pageerror", (e) => logs.push("pageerror: " + e.message));
   await pg.goto(`${BASE}/render.html`, { waitUntil: "load" });
   await pg.waitForFunction(() => window.__done, null, { timeout: 120000 });
