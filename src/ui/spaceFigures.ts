@@ -176,30 +176,32 @@ export function zodiacQuizFig(): string {
     ["게", 0], ["쌍둥이", 30], ["황소", 60], ["양", 90], ["물고기", 120], ["물병", 150],
     ["염소", 180], ["궁수", 210], ["전갈", 240], ["천칭", 270], ["처녀", 300], ["사자", 330],
   ];
+  // 글자는 설계 10.5px(폰 약 13px). 고리를 키우고 그림을 168에서 196으로 늘려 이름 사이를 띄웠다(예전 9px, 2026-11-15 그래픽 감사).
   const cx = 140;
-  const cy = 84;
-  const R = 66;
+  const cy = 98;
+  const R = 80;
+  const RY = 62;
   let ring = "";
   for (const [n, deg] of names) {
     const a = (deg * Math.PI) / 180;
     const x = cx + Math.cos(a) * R;
-    const y = cy + Math.sin(a) * R * 0.82;
+    const y = cy + Math.sin(a) * RY;
     // 정답 유추 방지 — 모든 별자리를 같은 스타일로(강조 금지)
-    ring += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2" fill="#9FB6DC"/>
-      <text x="${x.toFixed(1)}" y="${(y - 7).toFixed(1)}" fill="#9FB6DC" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">${n}</text>`;
+    ring += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.3" fill="#9FB6DC"/>
+      <text x="${x.toFixed(1)}" y="${(y - 7).toFixed(1)}" fill="#B4C7E6" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">${n}</text>`;
   }
   return panel(
     280,
-    168,
+    196,
     `
-    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R * 0.82}" stroke="#3D5378" stroke-width="1.3" stroke-dasharray="3 4"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${RY}" stroke="#3D5378" stroke-width="1.3" stroke-dasharray="3 4"/>
     ${ring}
-    <circle cx="${cx}" cy="${cy}" r="9" fill="url(#spf-sunc)"/>
-    <text x="${cx + 18}" y="${cy + 4}" fill="#FFC85E" font-size="9" font-family="Pretendard, sans-serif">태양</text>
-    <circle cx="${cx}" cy="${cy - 25}" r="5.5" fill="url(#spf-ea)"/>
-    <text x="${cx + 12}" y="${cy - 29}" fill="#BFD8FF" font-size="10" font-weight="700" font-family="Pretendard, sans-serif">㉠지구</text>
-    <path d="M${cx} ${cy - 17}L${cx} ${cy + R * 0.82 - 10}" stroke="rgba(255,170,80,.5)" stroke-width="1.3" stroke-dasharray="4 4"/>
-    <path d="M${cx} ${cy - 33}L${cx} ${cy - R * 0.82 + 6}" stroke="rgba(140,190,255,.55)" stroke-width="1.3" stroke-dasharray="4 4"/>
+    <circle cx="${cx}" cy="${cy}" r="10" fill="url(#spf-sunc)"/>
+    <text x="${cx + 16}" y="${cy + 4}" fill="#FFC85E" font-size="10.5" font-weight="700" font-family="Pretendard, sans-serif">태양</text>
+    <circle cx="${cx}" cy="${cy - 30}" r="6" fill="url(#spf-ea)"/>
+    <text x="${cx + 12}" y="${cy - 30}" fill="#BFD8FF" font-size="11" font-weight="700" font-family="Pretendard, sans-serif">㉠지구</text>
+    <path d="M${cx} ${cy - 22}L${cx} ${cy + RY - 21}" stroke="rgba(255,170,80,.5)" stroke-width="1.3" stroke-dasharray="4 4"/>
+    <path d="M${cx} ${cy - 38}L${cx} ${cy - RY + 7}" stroke="rgba(140,190,255,.55)" stroke-width="1.3" stroke-dasharray="4 4"/>
   `,
     `<radialGradient id="spf-sunc" cx=".5" cy=".5" r=".5">
       <stop offset="0" stop-color="#FFEDBE"/><stop offset="1" stop-color="#FFB03A"/>

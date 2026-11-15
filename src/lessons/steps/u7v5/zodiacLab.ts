@@ -34,7 +34,10 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
   const pill = el("div", { class: "bv-pill u7x-pill", text: "1월" });
   const names = ZODIAC.map((n) => el("span", { class: "u7x-zname", text: n }));
   const nameLayer = el("div", { class: "u7x-znames", attrs: { "aria-hidden": "true" } }, ...names);
-  f.stage.append(canvas, nameLayer, pill);
+  // 태양과 지구의 이름표(달 랩과 같은 화면 글자). 예전에는 별자리 이름만 있었다(2026-11-15 그래픽 감사).
+  const sunTag = el("div", { class: "u7x-tag u7x-zt", text: "태양" });
+  const earthTag = el("div", { class: "u7x-tag u7x-zt earth", text: "지구" });
+  f.stage.append(canvas, nameLayer, sunTag, earthTag, pill);
 
   const sunRow = el("b", { text: "궁수자리" });
   const nightRow = el("b", { text: "쌍둥이자리" });
@@ -230,6 +233,13 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
         tag.className = `u7x-zname ${cls}`;
       }
     }
+    // 태양과 지구의 이름표: 그 천체 바로 아래
+    const tagAt = (tag: HTMLElement, x: number, z: number, dy: number): void => {
+      v.set(x, 0, z).project(st!.camera);
+      tag.style.transform = `translate(-50%, -50%) translate(${(((v.x + 1) / 2) * w).toFixed(1)}px, ${(((1 - v.y) / 2) * h + dy).toFixed(1)}px)`;
+    };
+    tagAt(sunTag, 0, 0, 30);
+    tagAt(earthTag, ex, ez, 22);
     const setLine = (line: T.Line, a: number): void => {
       const [x2, , z2] = posOf(a, RING_R - 1.4);
       const pos = line.geometry.attributes.position as T.BufferAttribute;

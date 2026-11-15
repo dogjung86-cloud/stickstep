@@ -79,8 +79,11 @@
   position: absolute; left: 0; top: 0; font-size: 12.5px; font-weight: 700; color: #AEBFDD; white-space: nowrap; will-change: transform;
   text-shadow: 0 1px 3px rgba(0, 0, 0, .85);
 }
-.u7x-zname.sun { color: #FFB877; font-weight: 800; }
+/* 태양 쪽 별자리는 햇빛에 묻혀 안 보이므로 흐린 회갈색, 한밤중 쪽만 밝게(예전에는 둘 다 따뜻한 밝은 색이라 무대만으로 갈리지 않았다) */
+.u7x-zname.sun { color: #9A8B7A; font-weight: 700; }
 .u7x-zname.night { color: #FFE08C; font-weight: 800; }
+.u7x-zt { left: 0; top: 0; will-change: transform; }
+.u7x-zt.earth { color: #CFE0FF; }
 
 /* 행성 그래프 */
 .u7x-val { font: 800 12.5px Pretendard, sans-serif; fill: #E8EEF9; text-anchor: middle; }
