@@ -198,7 +198,8 @@ const reviewA = await page.evaluate(() => {
   const b = row?.querySelector(".xr-body");
   return {
     open: !!row,
-    expl: (b?.querySelector(".xr-expl-body")?.textContent?.length ?? 0) > 150,
+    // v3 풀의 해설은 정답 풀이(.xr-expl-body)와 보기별 이유(.xr-why)로 나뉜다. 둘을 합쳐 잰다.
+    expl: (b?.querySelector(".xr-expl-body")?.textContent?.length ?? 0) + [...(b?.querySelectorAll(".xr-why") ?? [])].reduce((n, w) => n + w.textContent.length, 0) > 150,
     core: !!b?.querySelector(".xr-core"),
     lessonBtn: b?.querySelector(".xr-lesson-btn")?.textContent ?? "",
     marksOrPair: !!b?.querySelector(".opt.ok, .xr-pair-cell.ok"),

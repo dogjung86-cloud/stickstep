@@ -6,7 +6,7 @@ import { el, clear, countUp } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { makeAnswerPad, checkAnswer } from "../ui/mathKit";
-import { examForUnit, drawExamItems } from "../content/exams";
+import { examForUnit, drawExamItems, noteOpts } from "../content/exams";
 import type { ExamDef, ExamItem } from "../content/exams";
 import { CURRICULA_OF, SUBJECT_LABEL, GRADE_LABEL, findLesson, gradeOfUnit } from "../content/curriculum";
 import type { Unit, GradeId, SubjectId } from "../content/curriculum";
@@ -451,7 +451,8 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
 
     if (it.type === "mcq" || it.type === "multi") {
       const opts_ = it.options ?? [];
-      const boxEl = el("div", { class: "opts ex-opts" });
+      if (it.optHead?.length) step.appendChild(el("div", { class: "ex-opt-head" }, ...it.optHead.map((h) => el("span", { html: h }))));
+      const boxEl = el("div", { class: `opts ex-opts${it.optCols && it.optCols > 1 ? ` cols${it.optCols}` : ""}` });
       step.appendChild(boxEl);
       const selected = new Set<number>();
       const cards: HTMLButtonElement[] = [];
@@ -579,7 +580,7 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
         type: it.type,
         q: it.prompt,
         bogi: it.bogi,
-        opts: it.options,
+        opts: noteOpts(it),
         answer: Array.isArray(it.answer) ? it.answer : typeof it.answer === "number" ? [it.answer] : String(it.answer),
         explain: it.explain,
         core: it.core,
@@ -597,6 +598,14 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
       ),
     );
     fb.appendChild(el("div", { class: "xr-expl-body", html: it.explain }));
+    // 고른 보기가 틀렸으면 그 보기의 이유를 덧붙인다
+    if (!q.good && it.optWhy && q.resp != null && typeof q.resp !== "string") {
+      const answers = new Set<number>(Array.isArray(it.answer) ? (it.answer as number[]) : [it.answer as number]);
+      for (const oi of Array.isArray(q.resp) ? q.resp : [q.resp]) {
+        const why = it.optWhy[oi];
+        if (why && !answers.has(oi)) fb.appendChild(el("div", { class: "xr-why", html: `<b>고른 보기</b> ${why}` }));
+      }
+    }
     fb.appendChild(el("div", { class: "xr-core" }, el("span", { html: icon("bulb", 14) }), el("span", { html: it.core })));
     step.appendChild(fb);
     later(() => fb.scrollIntoView({ behavior: "smooth", block: "nearest" }), 120);

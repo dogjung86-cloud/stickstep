@@ -1,125 +1,116 @@
-// g2u7 시험 풀 기계 검사 v2(재출제 2호 규격) — 커밋 전 스캔. node qa/check-exam-g2u7.mjs
-//   정본 쿼터 = qa/g2u7-v2-blueprint.md §4(파일별 유형·diff·그림 정확값) · word 0 · 개수 세기 num 0.
-//   esbuild 실로드(백틱 해설 자연 처리) + 소스 스캔(CRLF 정규화 · em대시 · 금지어 · lazy 금지).
+// g2u7 시험 풀 기계 검사 v3(2026-11 전면 재출제 규격). 커밋 전 스캔: node qa/check-exam-g2u7.mjs
+//   규격의 정본은 src/content/exams/g2u7.ts 머리말과 EXAM_GUIDE.md의 "g2u7 v3" 소단락이다.
+//   보는 것: 문항 수와 id, 레슨별 난이도, 유형과 보기 형식, 고정 순서 문항의 정답 자리, 보기별 이유,
+//   여덟 시험지(forms)의 무중복과 균형, 그림 출력과 폭, 그림 설명글의 답 유출, 글 규칙(대시, '교과서', 말투).
 import { build } from "esbuild";
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync } from "node:fs";
 
 const result = await build({ entryPoints: ["src/content/exams/g2u7.ts"], bundle: true, write: false, format: "esm", platform: "node", logLevel: "silent" });
 const mod = await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString("base64")}`);
-const pool = mod.G2U7_EXAM.pool;
+const { pool, forms, pick } = mod.G2U7_EXAM;
 
 const plain = (v) => String(v ?? "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
 let bad = 0;
 const fail = (m) => { console.log("FAIL", m); bad++; };
+const count = (arr, f) => arr.reduce((a, x) => { const k = f(x); a[k] = (a[k] || 0) + 1; return a; }, {});
 
-// ── 정본 쿼터(설계표 §4) ──
-const SPEC = {
-  g2u7l1: { start: 201, m: 17, M: 2, n: 1, d: [8, 8, 4], fig: 13 },
-  g2u7l2: { start: 221, m: 18, M: 2, n: 0, d: [8, 8, 4], fig: 13 },
-  g2u7l3: { start: 241, m: 16, M: 2, n: 2, d: [8, 8, 4], fig: 8 },
-  g2u7l4: { start: 261, m: 12, M: 2, n: 6, d: [8, 8, 4], fig: 13 },
-  g2u7l5: { start: 281, m: 13, M: 2, n: 5, d: [8, 8, 4], fig: 14 },
-  g2u7l6: { start: 301, m: 12, M: 2, n: 6, d: [8, 8, 4], fig: 10 },
-  g2u7l7: { start: 321, m: 18, M: 2, n: 0, d: [8, 8, 4], fig: 10 },
-  g2u7l8: { start: 341, m: 18, M: 2, n: 0, d: [8, 8, 4], fig: 10 },
-};
-const BAN = ["F=BIL", "플레밍", "오른손 법칙", "왼손 법칙", "솔레노이드", "자기력선", "쿨롱", "전위차", "기전력", "정류자", "브러시", "직류", "교류", "여사건", "⭕", "P=VI", "P = VI"];
+// ── 문항 수, id, 레슨, 난이도 ──
+if (pool.length !== 160) fail(`문항 수 ${pool.length} (160)`);
+pool.forEach((it, i) => {
+  const want = `g2u7e${401 + i}`, lesson = `g2u7l${Math.floor(i / 20) + 1}`;
+  if (it.id !== want) fail(`${it.id}: id는 ${want}이어야 한다(레슨마다 20개씩 이어진다)`);
+  if (it.lessonId !== lesson) fail(`${it.id}: lessonId ${it.lessonId} (${lesson})`);
+});
+for (let l = 1; l <= 8; l++) {
+  const a = pool.filter((it) => it.lessonId === `g2u7l${l}`), d = count(a, (it) => it.diff), t = count(a, (it) => it.type);
+  if (d[1] !== 8 || d[2] !== 8 || d[3] !== 4) fail(`레슨 ${l}: 난이도 ${JSON.stringify(d)} (하 8, 중 8, 상 4)`);
+  if (t.multi !== 2) fail(`레슨 ${l}: 모두 고르기 ${t.multi ?? 0}문항 (2)`);
+}
+const types = count(pool, (it) => it.type);
+if (Object.keys(types).some((k) => !["mcq", "multi", "num"].includes(k))) fail(`유형 ${JSON.stringify(types)} (mcq, multi, num만)`);
+if (types.num !== 16) fail(`숫자 입력 ${types.num}문항 (16)`);
 
 // ── 문항 단위 ──
-const ids = new Set();
+const byId = new Map();
 for (const it of pool) {
-  if (ids.has(it.id)) fail(`${it.id} id 중복`);
-  ids.add(it.id);
-  const slot = Number(it.id.replace("g2u7e", ""));
-  const L = SPEC[it.lessonId];
-  if (!L) { fail(`${it.id} lessonId ${it.lessonId}`); continue; }
-  if (!/^g2u7e\d{3}$/.test(it.id) || slot < L.start || slot > L.start + 19) fail(`${it.id} 슬롯 대역 위반`);
-  if (it.type === "word") fail(`${it.id} word 금지(v2 word 0)`);
-  if (![1, 2, 3].includes(it.diff)) fail(`${it.id} diff 태그 없음/범위 밖`);
-  if (it.type === "mcq" || it.type === "multi") {
-    if (!it.options || it.options.length !== 5) fail(`${it.id} ${it.type} 보기 ${it.options?.length}개(5지 고정)`);
-  }
-  if (it.bogi && it.bogi.length !== 3) fail(`${it.id} bogi ${it.bogi.length}개`);
-  if (it.type === "mcq") {
-    if (typeof it.answer !== "number" || it.answer < 0 || it.answer > 4) fail(`${it.id} answer 범위`);
-    if (it.shuffle === false && it.answer === 0) fail(`${it.id} shuffle:false && 첫 보기 정답`);
-  }
-  if (it.type === "multi") {
-    if (!Array.isArray(it.answer) || it.answer.length < 2 || it.answer.length > 3) fail(`${it.id} multi answer 수`);
-    if (it.shuffle === false) fail(`${it.id} multi shuffle:false 비관행`);
-  }
+  if (byId.has(it.id)) fail(`${it.id}: id 중복`);
+  byId.set(it.id, it);
+  for (const k of ["prompt", "explain", "core"]) if (!plain(it[k])) fail(`${it.id}: ${k} 없음`);
+  if (!String(it.explain).includes("class='xh'>정답 풀이")) fail(`${it.id}: 해설에 정답 풀이 소제목 없음`);
   if (it.type === "num") {
-    const a = String(it.answer);
-    if (it.numKind === "dec") { if (!/^\d+\.\d+$/.test(a)) fail(`${it.id} dec answer "${a}"`); }
-    else if (!/^-?\d+$/.test(a)) fail(`${it.id} int answer "${a}"`);
-    if (!it.unitLabel) fail(`${it.id} num unitLabel 없음`);
-    if (it.figure) {
-      const aria = (String(it.figure).match(/aria-label="([^"]*)"/) ?? [])[1] ?? "";
-      if (aria.includes(a)) fail(`${it.id} 그림 aria에 정답 수치 노출`);
-    }
-    // 인공 개수 세기 금지(감사 §6) = 무그림 목록 나열 + 개수 답. 그림 판독형 세기(모형 전자 수 등)는 정당.
-    if (!it.figure && /모두 몇 (가지|개)/.test(plain(it.prompt))) fail(`${it.id} 개수 세기 num(목록 판정은 multi로)`);
+    if (typeof it.answer !== "string" || !/^\d+(\.\d+)?$/.test(it.answer)) fail(`${it.id}: 숫자 정답 ${it.answer}`);
+    if (!it.unitLabel) fail(`${it.id}: unitLabel 없음`);
+    else if (!plain(it.prompt).includes(it.unitLabel)) fail(`${it.id}: 발문에 단위 ${it.unitLabel}가 없다`);
+    if (it.answer.includes(".") && it.numKind !== "dec") fail(`${it.id}: 소수 정답인데 numKind가 dec가 아니다`);
+    continue;
   }
-  const exp = plain(it.explain);
-  if (exp.length < 250) fail(`${it.id} 해설 ${exp.length}자 < 250`);
-  if (exp.length > 460) console.log("WARN", `${it.id} 해설 ${exp.length}자 > 450`);
-  if (!it.core) fail(`${it.id} core 없음`);
-  const all = plain(it.prompt) + (it.options ?? []).map(plain).join(" ") + (it.bogi ?? []).map(plain).join(" ") + exp + plain(it.core);
-  for (const w of BAN) if (all.includes(w)) fail(`${it.id} 금지어 "${w}"`);
-  if (all.includes("—")) fail(`${it.id} em대시`);
-  if (it.figure && String(it.figure).includes('loading="lazy"')) fail(`${it.id} 발주 이미지 lazy 금지`);
+  const n = it.options?.length ?? 0;
+  if (n !== 5) fail(`${it.id}: 보기 ${n}개 (5)`);
+  if (new Set(it.options).size !== n) fail(`${it.id}: 보기 중복`);
+  if (it.type === "mcq") {
+    if (!(Number.isInteger(it.answer) && it.answer >= 0 && it.answer < n)) fail(`${it.id}: 정답 인덱스 ${it.answer}`);
+    if (it.shuffle === false && it.answer === 0) fail(`${it.id}: 순서를 고정한 문항인데 첫 보기가 정답이다`);
+    if (it.bogi && it.shuffle !== false) fail(`${it.id}: ㄱㄴㄷ 합답은 shuffle: false`);
+    if (it.bogi && !String(it.explain).includes("보기 하나씩")) fail(`${it.id}: 합답 해설에 보기 하나씩 판정이 없다`);
+  } else {
+    const a = it.answer;
+    if (!Array.isArray(a) || a.length < 2 || a.length > 4 || a.some((x) => !(x >= 0 && x < n))) fail(`${it.id}: 모두 고르기 정답 ${JSON.stringify(a)}`);
+  }
+  if (!it.bogi) {
+    if (!Array.isArray(it.optWhy) || it.optWhy.length !== n) fail(`${it.id}: optWhy는 보기 수만큼`);
+    else it.optWhy.forEach((w, i) => {
+      const isAns = Array.isArray(it.answer) ? it.answer.includes(i) : it.answer === i;
+      if (!w && (it.type === "multi" || !isAns)) fail(`${it.id}: ${i + 1}번째 보기의 이유가 없다`);
+    });
+  }
+  const pairs = it.options.filter((o) => o.includes('class="ex-pair"')).length, figs = it.options.filter((o) => o.includes('class="ex-optfig"')).length;
+  if (it.optHead) {
+    if (pairs !== n) fail(`${it.id}: 머리줄이 있는데 짝짓기 보기가 아니다`);
+    for (const o of it.options) if ((o.match(/<span>/g) || []).length !== it.optHead.length) fail(`${it.id}: 짝짓기 칸 수가 머리줄과 다르다`);
+  } else if (pairs) fail(`${it.id}: 짝짓기 보기인데 머리줄이 없다`);
+  if (figs && figs !== n) fail(`${it.id}: 그림 보기와 글 보기가 섞였다`);
+  if (figs && !it.optCols) fail(`${it.id}: 그림 보기인데 optCols가 없다`);
 }
 
-// ── 슬롯 완전 커버리지 ──
-for (let s = 201; s <= 360; s++) if (!ids.has(`g2u7e${s}`)) fail(`슬롯 ${s} 누락`);
-
-// ── 파일(레슨) 단위 쿼터 ──
-const byLesson = new Map();
+// ── 그림 ──
 for (const it of pool) {
-  if (!byLesson.has(it.lessonId)) byLesson.set(it.lessonId, []);
-  byLesson.get(it.lessonId).push(it);
-}
-for (const [lid, L] of Object.entries(SPEC)) {
-  const arr = byLesson.get(lid) ?? [];
-  const m = arr.filter((i) => i.type === "mcq").length;
-  const M = arr.filter((i) => i.type === "multi").length;
-  const n = arr.filter((i) => i.type === "num").length;
-  const d = [1, 2, 3].map((k) => arr.filter((i) => i.diff === k).length);
-  const figN = arr.filter((i) => i.figure).length;
-  if (arr.length !== 20) fail(`${lid} ${arr.length}문항 ≠ 20`);
-  if (m !== L.m || M !== L.M || n !== L.n) fail(`${lid} 유형 ${m}/${M}/${n} ≠ ${L.m}/${L.M}/${L.n}`);
-  if (d.join() !== L.d.join()) fail(`${lid} diff ${d.join("/")} ≠ ${L.d.join("/")}`);
-  if (figN !== L.fig) fail(`${lid} 그림 ${figN} ≠ ${L.fig}`);
-  const nums = arr.filter((i) => i.type === "num").map((i) => String(i.answer));
-  const dup = nums.filter((v, i) => nums.indexOf(v) !== i);
-  if (dup.length) fail(`${lid} num 정답 파일 내 중복: ${dup.join(",")}`);
-  console.log(`${lid}: m${m}/M${M}/n${n} · diff ${d.join("/")} · 그림 ${figN}`);
-}
-const cnt = { mcq: 0, multi: 0, num: 0, word: 0 };
-for (const it of pool) cnt[it.type]++;
-const bogiN = pool.filter((i) => i.bogi).length;
-const figTotal = pool.filter((i) => i.figure).length;
-console.log(`합계: ${pool.length} · ${JSON.stringify(cnt)} · bogi ${bogiN} · 그림 ${figTotal}`);
-if (pool.length !== 160) fail(`총 ${pool.length} ≠ 160`);
-if (cnt.mcq !== 124 || cnt.multi !== 16 || cnt.num !== 20 || cnt.word !== 0) fail(`유형 합계 ${cnt.mcq}/${cnt.multi}/${cnt.num}/${cnt.word} ≠ 124/16/20/0`);
-if (bogiN < 26) fail(`bogi ${bogiN} < 26`);
-if (figTotal !== 91) fail(`그림 합계 ${figTotal} ≠ 91`);
-
-// ── 사진 참조 실재 검증 ──
-const photoDir = "public/exam/g2u7";
-const have = new Set(existsSync(photoDir) ? readdirSync(photoDir) : []);
-for (const it of pool) {
-  for (const mfile of String(it.figure ?? "").matchAll(/exam\/g2u7\/([a-z0-9-]+\.webp)/g)) {
-    if (!have.has(mfile[1])) fail(`${it.id} 사진 없음: ${mfile[1]}`);
+  for (const [where, s] of [["그림", it.figure ?? ""], ...(it.options ?? []).map((o, i) => [`보기 ${i + 1}`, o])]) {
+    if (!s.includes("<svg")) continue;
+    if (/NaN|undefined/.test(s)) fail(`${it.id} ${where}: 그림에 NaN 또는 undefined`);
+    const vb = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(s);
+    if (!vb) fail(`${it.id} ${where}: viewBox 없음`);
+    else if (where === "그림" && +vb[1] > 380) fail(`${it.id}: 그림 폭 ${vb[1]} (380 이하. 폰의 그림 칸에서 글자가 작아진다)`);
+    for (const m of s.matchAll(/aria-label="([^"]*)"/g)) for (const w of ["직렬", "병렬"]) if (m[1].includes(w) && !plain(it.prompt).includes(w)) fail(`${it.id} ${where}: 그림 설명글이 발문에 없는 "${w}"을 말한다`);
+    if (s.includes('loading="lazy"')) fail(`${it.id}: lazy 금지`);
   }
 }
 
-// ── 소스 스캔(주석 포함) ──
-for (const f of [..."12345678"].map((n) => `src/content/exams/g2u7l${n}.ts`).concat(["src/content/exams/g2u7.ts"])) {
-  const src = readFileSync(f, "utf8").replace(/\r\n/g, "\n");
-  if (src.includes("—")) fail(`${f} 소스에 em대시`);
-  for (const w of BAN) if (src.includes(w)) fail(`${f} 소스에 금지어 "${w}"`);
+// ── 여덟 시험지 ──
+if (!Array.isArray(forms) || forms.length !== 8) fail(`forms ${forms?.length} (8)`);
+else {
+  const all = forms.flat();
+  if (new Set(all).size !== 160 || all.length !== 160) fail(`시험지끼리 겹치거나 빠진 문항이 있다(서로 다른 문항 ${new Set(all).size}, 합 ${all.length})`);
+  forms.forEach((f, i) => {
+    const items = f.map((id) => byId.get(id));
+    if (f.length !== pick || items.some((it) => !it)) { fail(`시험지 ${i + 1}: 문항 수 ${f.length} 또는 없는 id`); return; }
+    const ls = count(items, (it) => it.lessonId), d = count(items, (it) => it.diff), t = count(items, (it) => it.type);
+    if (Object.keys(ls).length !== 8 || Object.values(ls).some((c) => c < 2 || c > 3)) fail(`시험지 ${i + 1}: 레슨별 ${JSON.stringify(ls)} (레슨마다 2~3문항)`);
+    if (d[1] !== 8 || d[2] !== 8 || d[3] !== 4) fail(`시험지 ${i + 1}: 난이도 ${JSON.stringify(d)} (하 8, 중 8, 상 4)`);
+    if (t.num !== 2 || t.multi !== 2) fail(`시험지 ${i + 1}: 숫자 입력 ${t.num ?? 0}, 모두 고르기 ${t.multi ?? 0} (2씩)`);
+  });
 }
 
-console.log(bad === 0 ? "ALL PASS" : `${bad} FAIL(S)`);
-process.exit(bad === 0 ? 0 : 1);
+// ── 글 규칙(소스 전체) ──
+for (let l = 1; l <= 8; l++) {
+  const src = readFileSync(`src/content/exams/g2u7l${l}.ts`, "utf8").replace(/\r\n/g, "\n");
+  const body = src.split("\n").filter((ln) => !ln.trim().startsWith("//")).join("\n");
+  if (/[–—]/.test(body)) fail(`g2u7l${l}.ts: 대시 금지`);
+  if (body.includes("교과서")) fail(`g2u7l${l}.ts: '교과서'라는 말을 쓰지 않는다`);
+  // 이 풀은 시험지 말투(~이다)다(2026-11-15 사용자 결정). 해요체가 섞이면 알린다.
+  const hae = body.match(/[가-힣](해요|어요|아요|이에요|예요|세요|네요|죠)[.?!"]/g);
+  if (hae) fail(`g2u7l${l}.ts: 해요체가 섞였다 (${hae.slice(0, 3).join(" ")})`);
+}
+
+console.log(`문항 ${pool.length} · 유형 ${JSON.stringify(types)} · 그림 ${pool.filter((it) => it.figure).length} · 시험지 ${forms?.length ?? 0}`);
+console.log(bad ? `FAIL ${bad}건` : "PASS");
+process.exit(bad ? 1 : 0);

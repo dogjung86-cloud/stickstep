@@ -17,6 +17,7 @@ import type { WrongNote } from "../core/store";
 import { CURRICULA_OF, SUBJECT_LABEL, GRADE_LABEL, findLesson, subjectOfUnit, gradeOfUnit } from "../content/curriculum";
 import type { SubjectId, GradeId } from "../content/curriculum";
 import { examById } from "../content/exams";
+import type { ExamItem } from "../content/exams";
 import { stickAvatar } from "../ui/avatar";
 import type { Screen } from "../core/router";
 
@@ -40,6 +41,15 @@ function sourceLabel(n: WrongNote, withUnit: boolean): string {
 
 /** 그림 원본 역추적 — 시험은 키의 문항 id로 풀에서, 레슨은 같은 프롬프트의 quiz 스텝에서.
  *  콘텐츠가 바뀌어 못 찾으면 null(카드가 안내 문구로 폴백). */
+/** 시험 문항 원본. 오답노트는 그림 보기(SVG)를 저장하지 않으므로 보기와 머리줄을 여기서 다시 얻는다. */
+function examItemOf(n: WrongNote): ExamItem | null {
+  if (n.kind !== "exam") return null;
+  const prefix = `e:${n.srcId}:`;
+  if (!n.key.startsWith(prefix)) return null;
+  const itemId = n.key.slice(prefix.length);
+  return examById(n.srcId)?.pool.find((x) => x.id === itemId) ?? null;
+}
+
 function figureOf(n: WrongNote): { html: string; dark: boolean } | null {
   if (!n.hasFigure) return null;
   if (n.kind === "exam") {
@@ -367,8 +377,12 @@ export function notebookScreen(
       return;
     }
 
-    const opts = n.type === "ox" ? ["O", "X"] : (n.opts ?? []);
+    const src = examItemOf(n);
+    // 저장된 보기에 그림 자리 표시(@opt:)가 있으면 풀의 원본 보기로 바꿔 그린다
+    const saved = n.type === "ox" ? ["O", "X"] : (n.opts ?? []);
+    const opts = saved.map((o, i) => (o.startsWith("@opt:") ? (src?.options?.[i] ?? "그림을 찾을 수 없어요") : o));
     const answerSet = new Set(Array.isArray(n.answer) ? n.answer : []);
+    if (src?.optHead?.length) zone.appendChild(el("div", { class: "ex-opt-head" }, ...src.optHead.map((h) => el("span", { html: h }))));
     const box = el("div", { class: "nb-opts" });
     const btns: HTMLButtonElement[] = [];
     const selected = new Set<number>();
