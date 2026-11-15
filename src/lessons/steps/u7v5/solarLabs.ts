@@ -9,7 +9,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvCapture, bvSvgPoint, bvTimers, bvTween } from "../bio6/b6Lab";
 import { u7Frame, u7Goals, u7Dev } from "./kit";
-import { SOLAR, solarMoonAt, groundAt, solarView, solarZones, shadowPolys, pts, ecDefs, stars, sunInsetSvg, paintSunInset, type SolarView } from "./eclipseKit";
+import { SOLAR, solarMoonAt, groundAt, solarView, solarZones, shadowPolys, pts, ecDefs, moonAt0, stars, sunInsetSvg, paintSunInset, type SolarView } from "./eclipseKit";
 
 interface LabStep {
   title: string;
@@ -42,8 +42,7 @@ function solarScene(stage: HTMLElement, p: string, drag: "moon" | "person", extr
     ${extra}
     <g class="u7x-ec-moon">
       ${drag === "moon" ? '<circle r="24" fill="#9DBBF0" opacity=".2" class="u7x-ecl-halo"/>' : ""}
-      <circle r="${rm}" fill="#2A3448"/>
-      <path d="M0 ${-rm}A${rm} ${rm} 0 0 0 0 ${rm}Z" fill="url(#${p}moon)"/>
+      ${moonAt0(p, rm, "left")}
     </g>
     <g class="u7x-ec-person">
       ${drag === "person" ? '<circle cx="-8" r="14" fill="#fff" opacity=".2" class="u7x-ecl-halo"/>' : ""}

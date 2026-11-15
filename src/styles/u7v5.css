@@ -90,6 +90,7 @@
 .u7x-enter { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px 14px; }
 .u7x-enter-art { flex: none; width: 100%; height: 96px; }
 .u7x-enter-art svg { display: block; width: 100%; height: 100%; }
+.u7x-enter-art.judge { height: 140px; } /* 일식과 월식의 판정과 결론: 기록 두 칸 */
 .u7x-enterbtn {
   height: 56px; padding: 0 24px; border: 0; border-radius: 16px; background: var(--subj-space); color: #fff;
   font-size: 16px; font-weight: 800; box-shadow: 0 6px 18px rgba(74, 84, 225, .45); transition: transform .12s;
@@ -110,6 +111,8 @@
 .u7x-rotdone-btn:active { transform: scale(.965); }
 .sp3-card.show ~ .u7x-rotdone { display: none; }
 .u7x-toast { word-break: keep-all; } /* 천체 카드를 읽는 동안에는 가리지 않는다 */
+/* 일식의 지상 보기: 알림을 아래 두 단추 사이로 내린다(검은 해와 코로나를 덮지 않게) */
+.sp3-toast.u7x-toast.low { bottom: 12px; max-width: min(46%, 360px); }
 
 /* ── 조작 칸 안 ──────────────────────────────────────── */
 .u7x-cap { font-size: 12.5px; line-height: 18px; font-weight: 800; color: var(--n700); padding: 0 2px; }

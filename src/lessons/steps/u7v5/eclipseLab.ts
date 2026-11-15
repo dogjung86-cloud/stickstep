@@ -1,6 +1,7 @@
 // u7EclipseLab: 일식과 월식(u7l6). 교과서 "태양과 달이 가려지는 원리 알아보기"(252쪽: 손전등, 큰 공, 작은 공을 한 줄로 놓고
 // 작은 공을 돌리며 두 공에 생기는 그림자를 본다)를 가로 화면의 3D에서 한다. 그림 Ⅶ-10과 같은 배치다.
-// 3D 무대는 정본 steps/eclipse3d.ts 그대로다(qa/u7v5-port-landscape.py가 옮겨 적는다. 이 파일을 손으로 고치지 않는다).
+// 3D 무대는 정본 steps/eclipse3d.ts에서 옮겨 왔다(qa/u7v5-port-landscape.py). 2026-11-15 그래픽 감사 손질부터는 이 파일을 손으로 고친다
+// (부분일식, 부분월식의 그림자, 지상 보기 알림 자리, 판정 무대, 실사 들어가기 그림). 옮겨 적는 도구를 다시 돌리면 이 손질이 지워진다.
 // 바꾼 것: 세로 화면의 틀(한 화면, 할 일 세 가지는 한 일로 부르고 해낸 뒤에 이름을 붙인다, 판정, 결론은 조작 칸에)
 //          · 가로 화면에서 다 해내면 그 자리에서 알리고 돌아가는 버튼을 준다.
 import { el, clamp } from "../../../core/dom";
@@ -10,6 +11,7 @@ import type { StepRenderer } from "../../types";
 import type { SpaceStage, THREE as T } from "../../../ui/space3d";
 import type { RotateStage } from "../../../ui/rotateStage";
 import { u7Frame, u7Goals, u7Dev } from "./kit";
+import { ecDefs, discImage, moonBrightDef, shadowPolys, pts, type DiscKind } from "./eclipseKit";
 
 interface EclipseStep {
   title: string;
@@ -36,13 +38,81 @@ function wrapRad(r: number): number {
   return ((r + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
 }
 
+interface AxisShadow {
+  /** x: 축의 y, y: 축의 z, z: 그림자 반지름, w: 진하기(0~1) */
+  ax: T.Vector4;
+  /** x: 경계 x, y: 1이면 그보다 큰 x 쪽만, -1이면 작은 x 쪽만 */
+  side: T.Vector2;
+}
+
+/** 햇빛(+x 방향)과 나란한 그림자 기둥을 행성 재질에 얹는다(2026-11-15 그래픽 감사: 부분일식, 부분월식이 알림 글로만 있었다).
+ *  축(y, z)에서 반지름 안쪽의 면을 tint로 어둡게 하고, 경계는 soft만큼 부드럽다. 재질의 실사 질감이 바뀌어도(needsUpdate) 그대로 붙는다. */
+function axisShadow(THREE: typeof T, mat: T.MeshLambertMaterial, tint: [number, number, number], soft: number): AxisShadow {
+  const ax = new THREE.Vector4(0, 0, 0, 0);
+  const side = new THREE.Vector2(0, 1);
+  const f = (v: number): string => v.toFixed(3);
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.uAx = { value: ax };
+    sh.uniforms.uAxSide = { value: side };
+    sh.vertexShader = sh.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vAxW;")
+      .replace("#include <project_vertex>", "#include <project_vertex>\nvAxW = (modelMatrix * vec4(transformed, 1.0)).xyz;");
+    sh.fragmentShader = sh.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vAxW;\nuniform vec4 uAx;\nuniform vec2 uAxSide;")
+      .replace(
+        "#include <dithering_fragment>",
+        `#include <dithering_fragment>
+        float axIn = (1.0 - smoothstep(uAx.z - ${f(soft)}, uAx.z + ${f(soft)}, length(vAxW.yz - uAx.xy))) * uAx.w * step(0.0, (vAxW.x - uAxSide.x) * uAxSide.y);
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, gl_FragColor.rgb * vec3(${f(tint[0])}, ${f(tint[1])}, ${f(tint[2])}), axIn);`,
+      );
+  };
+  mat.needsUpdate = true;
+  return { ax, side };
+}
+
+/** 부분월식의 '한 입 베어 문' 그림자(2026-11-15 그래픽 감사). 무대 카메라가 궤도면 가까이에서 보므로 그림자 기둥을
+ *  실제 입체대로 그리면 경계가 옆으로 누워 달 가운데가 통째로 어두워 보인다. 그래서 카메라에서 본 평면(view 좌표)에 큰 원을 두고
+ *  그 안쪽 면을 어둡게 한다: 원은 달에서 그림자 축 쪽으로 놓여 달이 그림자 쪽으로 다가갈수록 깊이 들어온다(경계는 둥글다). */
+function viewBite(THREE: typeof T, mat: T.MeshLambertMaterial, tint: [number, number, number], soft: number): T.Vector4 {
+  const bite = new THREE.Vector4(0, 0, 0, 0); // x, y: 원의 중심(view 좌표), z: 반지름, w: 진하기
+  const f = (v: number): string => v.toFixed(3);
+  const prev = mat.onBeforeCompile;
+  mat.onBeforeCompile = (sh, r) => {
+    prev.call(mat, sh, r);
+    sh.uniforms.uBite = { value: bite };
+    if (!sh.vertexShader.includes("vAxW")) {
+      sh.vertexShader = sh.vertexShader
+        .replace("#include <common>", "#include <common>\nvarying vec3 vAxW;")
+        .replace("#include <project_vertex>", "#include <project_vertex>\nvAxW = (modelMatrix * vec4(transformed, 1.0)).xyz;");
+      sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec3 vAxW;");
+    }
+    sh.fragmentShader = sh.fragmentShader
+      .replace("#include <common>", "#include <common>\nuniform vec4 uBite;")
+      .replace(
+        "#include <dithering_fragment>",
+        `#include <dithering_fragment>
+        float biteIn = (1.0 - smoothstep(uBite.z - ${f(soft)}, uBite.z + ${f(soft)}, length((viewMatrix * vec4(vAxW, 1.0)).xy - uBite.xy))) * uBite.w;
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, gl_FragColor.rgb * vec3(${f(tint[0])}, ${f(tint[1])}, ${f(tint[2])}), biteIn);`,
+      );
+  };
+  mat.needsUpdate = true;
+  return bite;
+}
+
 export const u7EclipseLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as EclipseStep;
 
   const f = u7Frame(host, { title: s.title, steps: 3, cls: "u7x-enter", api });
   const doneCta = s.cta ?? "개념 정리하기";
   const enterBtn = el("button", { class: "u7x-enterbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 크게 열기" })) as HTMLButtonElement;
-  f.stage.append(el("div", { class: "u7x-enter-art", html: enterArtSvg() }), enterBtn);
+  const art = el("div", { class: "u7x-enter-art", html: enterArtSvg() });
+  f.stage.append(art, enterBtn);
+  /** 판정과 결론 동안의 무대(기록 두 칸). */
+  const setArt = (state: JudgeState): void => {
+    art.classList.add("judge");
+    art.innerHTML = judgeArtSvg(state);
+    host.dataset.u7Art = state;
+  };
   const goalsUi = u7Goals(1, [
     { id: "solar", name: "지구에 달의 그림자 만들기", sub: "달을 어디에 두면 될까요" },
     { id: "ground", name: "그림자 속 땅에서 올려다보기", sub: "태양은 어떤 모습일까요" },
@@ -86,26 +156,32 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     f.pips(2);
     // 교과서의 기록 두 칸: 지구에 그림자가 생길 때와 달에 그림자가 생길 때 세 천체의 자리
     f.say("두 가지를 모두 만들었어요. 그때 세 천체의 자리를 떠올려 적어 봐요.");
+    setArt("q1");
     f.slot.ask(
       "<b>지구에 달의 그림자</b>가 생겼을 때, 가운데에 있던 천체는?",
       [{ t: "달", ok: true }, { t: "지구" }, { t: "태양" }],
-      (ok) => api.recordQuiz(ok),
+      (ok) => {
+        setArt("a1");
+        api.recordQuiz(ok);
+      },
       { why: "태양, 달, 지구의 차례로 한 줄이었어요.", onNext: askLunar },
     );
   }
 
   function askLunar(): void {
     host.dataset.u7Phase = "ask2";
+    setArt("q2");
     f.slot.ask(
       "<b>달이 지구의 그림자</b>에 들어갔을 때, 가운데에 있던 천체는?",
       [{ t: "지구", ok: true }, { t: "달" }, { t: "태양" }],
-      () => undefined,
+      () => setArt("a2"),
       { why: "태양, 지구, 달의 차례로 한 줄이었어요.", onNext: conclude },
     );
   }
 
   function conclude(): void {
     host.dataset.u7Phase = "done";
+    setArt("a2");
     f.pips(3);
     f.say("가로 화면의 <b>왜 매달 일어나지 않을까요?</b> 단추도 눌러 보면 좋아요.");
     f.slot.conclude("<b>태양, 달, 지구</b> 차례로 한 줄이면 달이 태양을 가리는 <b>일식</b>, <b>태양, 지구, 달</b> 차례로 한 줄이면 달이 지구 그림자에 드는 <b>월식</b>이에요.");
@@ -210,6 +286,12 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     const moonMat = moon.material as T.MeshLambertMaterial;
     const moonHalo = S.makeGlow(3.6, "rgba(140,180,255,.4)", 0.3);
     scene.add(moonHalo);
+    // 부분월식: 달의 일부에 지구 그림자(둥근 경계, 붉은 기 도는 어둠). 부분일식: 지구의 낮 쪽에 달의 옅은 그림자.
+    const moonBite = viewBite(THREE, moonMat, [0.3, 0.15, 0.13], 0.05);
+    const BITE_R = 2.1; // 그림자 원의 반지름(달 반지름 0.9의 2.3배쯤, 책 그림처럼 경계가 완만하게 둥글다)
+    const earthShade = axisShadow(THREE, earth.material as T.MeshLambertMaterial, [0.32, 0.34, 0.44], 0.25);
+    earthShade.side.set(EARTH_X, -1);
+    earthShade.ax.z = 1.0;
 
     // 그림자 원뿔(교과서 그림처럼 시각화: 용어는 쓰지 않는다)
     const shadowMat = new THREE.MeshBasicMaterial({ color: 0x0a1020, transparent: true, opacity: 0.34, depthWrite: false, side: THREE.DoubleSide });
@@ -416,6 +498,26 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
         partialSide = "";
       }
 
+      // 부분월식의 그림자: 14°에서 달의 가장자리에 닿기 시작해 7°(개기월식 문턱)에서 달을 다 덮는다(판정 문턱과 같은 값).
+      // 그림자는 달에서 그림자 축(지구 중심을 지나는 햇빛의 선) 쪽에서 들어온다. 개기월식에 들면 걷히고 달 전체가 붉어진다(아래 붉은 달).
+      {
+        const vm = st.camera.matrixWorldInverse;
+        const mv = new THREE.Vector3(mx, my, mz).applyMatrix4(vm);
+        const av = new THREE.Vector3(mx, 0, 0).applyMatrix4(vm);
+        let ux = av.x - mv.x;
+        let uy = av.y - mv.y;
+        const ul = Math.hypot(ux, uy) || 1;
+        ux /= ul;
+        uy /= ul;
+        const fL = clamp((14 - dLunar) / 7, 0, 1);
+        const reach = lunarAligned ? 0 : BITE_R + MOON_R - 2 * MOON_R * fL; // 달 중심에서 그림자 원의 중심까지
+        moonBite.set(mv.x + ux * reach, mv.y + uy * reach, BITE_R, moonBite.w + ((partialLunar ? 1 : 0) - moonBite.w) * Math.min(1, 0.14 * dt));
+        // 부분일식(과 개기일식 둘레)의 옅은 그림자: 달을 지나는 햇빛의 선이 지구에 닿는 곳
+        earthShade.ax.x = my;
+        earthShade.ax.y = mz;
+        earthShade.ax.w += (((partialSolar || solarAligned) && !groundView ? 0.9 : 0) - earthShade.ax.w) * Math.min(1, 0.12 * dt);
+      }
+
       // 상태 필: 매 프레임 현재 상태를 그대로 말한다. 수집 순간에만 쓰면 이미 목표를 모은 뒤
       // 재정렬할 때 접근 중 문구("부분일식")에 갇힌다(2026-07-26 사용자 실기기 리포트).
       if (!groundView) {
@@ -454,6 +556,8 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
                     ? ["p-lunar", "달이 지구 그림자에 일부만 걸쳤어요. 부분월식! 더 깊이 넣으면 개기월식이 돼요"]
                     : null;
       eventToastMs = Math.max(0, eventToastMs - dt * 16.7);
+      // 지상 보기에서는 알림을 아래 단추 줄 사이로 내린다(검은 해와 코로나를 덮지 않게)
+      toast.classList.toggle("low", groundView);
       if (eventToastMs === 0) {
         if (stateToast) {
           if (stateToastKey !== stateToast[0]) {
@@ -569,25 +673,112 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
   };
 };
 
+/** 둥근 실사 원판(원으로 잘라 붙인다). night면 태양 반대쪽(오른쪽) 반을 밤으로 덮는다. */
+function disc(id: string, kind: DiscKind, cx: number, cy: number, r: number, o: { night?: number; filter?: string } = {}): string {
+  const nightHalf = o.night ? `<path d="M${cx} ${cy - r}A${r} ${r} 0 0 1 ${cx} ${cy + r}Z" fill="#06101f" opacity="${o.night}"/>` : "";
+  return `<clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath>
+    <g clip-path="url(#${id})">${discImage(kind, cx, cy, r, o.filter ? ` filter="url(#${o.filter})"` : "")}${nightHalf}</g>`;
+}
+
+/** 들어가기 그림: 태양(왼쪽), 아직 한 줄에서 비켜 선 달, 지구. 천체는 실사 원판이고 햇빛을 받는 왼쪽만 밝다. */
 function enterArtSvg(): string {
   return `<svg viewBox="0 0 280 96" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
     <defs>
-      <radialGradient id="ec-sun" cx=".5" cy=".5" r=".5">
-        <stop offset="0" stop-color="#FFE9A8"/><stop offset=".6" stop-color="#FFC24E"/><stop offset="1" stop-color="#F59E2C"/>
-      </radialGradient>
-      <radialGradient id="ec-earth" cx=".35" cy=".3" r=".8">
-        <stop offset="0" stop-color="#7FB2F0"/><stop offset=".6" stop-color="#2E6FD4"/><stop offset="1" stop-color="#1B4B9E"/>
-      </radialGradient>
-      <radialGradient id="ec-moon" cx=".35" cy=".3" r=".8">
-        <stop offset="0" stop-color="#F0EAD2"/><stop offset="1" stop-color="#B8AB84"/>
-      </radialGradient>
+      <radialGradient id="ec-glow" cx=".5" cy=".5" r=".5"><stop offset=".45" stop-color="#FFB03A" stop-opacity=".45"/><stop offset="1" stop-color="#FFB03A" stop-opacity="0"/></radialGradient>
+      ${moonBrightDef("ec-mbr")}
     </defs>
     <rect x="0" y="0" width="280" height="96" rx="16" fill="#0B1524"/>
     <circle cx="30" cy="30" r="1.2" fill="#DCE8FF"/><circle cx="250" cy="20" r="1.2" fill="#DCE8FF"/>
     <circle cx="212" cy="76" r="1" fill="#DCE8FF"/><circle cx="120" cy="14" r="1" fill="#DCE8FF"/>
-    <circle cx="34" cy="48" r="15" fill="url(#ec-sun)"/>
-    <circle cx="160" cy="20" r="8" fill="url(#ec-moon)"/>
-    <circle cx="200" cy="48" r="16" fill="url(#ec-earth)"/>
+    <circle cx="34" cy="48" r="27" fill="url(#ec-glow)"/>
+    ${disc("ec-sc", "sun", 34, 48, 15)}
+    ${disc("ec-mc", "moon", 160, 20, 8, { night: 0.78, filter: "ec-mbr" })}
+    ${disc("ec-ec", "earth", 200, 48, 16, { night: 0.6 })}
     <path d="M258 40l8 8-8 8" stroke="#8FB3E8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+/** 판정과 결론의 무대: 책 252쪽 해 보기의 기록 두 칸(위: 지구에 달의 그림자, 아래: 달에 지구의 그림자).
+ *  질문하는 동안에는 그 칸에 결과만(지구에 생긴 그림자 자국, 붉은 달) 보이고, 답한 뒤에는 그때의 배치(태양, 달, 지구 / 태양, 지구, 달)를 그린다.
+ *  예전에는 판정 내내 들어가기 그림(달이 가운데 위)이 그대로라 둘째 질문(답: 지구)에서 그림이 틀린 답을 가리켰다(2026-11-15 그래픽 감사).
+ *  그림자는 eclipseKit의 접선 계산(shadowPolys) 그대로다. 크기와 거리는 실제 비율과 다르다. */
+type JudgeState = "q1" | "a1" | "q2" | "a2";
+const JW = 318;
+const JH = 140;
+function judgeArtSvg(state: JudgeState): string {
+  const p = "ecj-";
+  const panel = (y: number, empty: boolean): string =>
+    `<rect x="0.75" y="${y + 0.75}" width="${JW - 1.5}" height="64.5" rx="12" fill="rgba(255,255,255,${empty ? ".015" : ".04"})" stroke="rgba(170,195,235,${empty ? ".22" : ".16"})" stroke-width="1.5"${empty ? ' stroke-dasharray="4 5"' : ""}/>`;
+  const label = (x: number, y: number, t: string, cls = "", anchor = "middle"): string => `<text class="u7x-st ${cls}" x="${x}" y="${y}" text-anchor="${anchor}">${t}</text>`;
+  const Rs = 24;
+  const rm = 8;
+  const Re = 17;
+
+  // 위 칸(일식): 태양, 달, 지구. 지구는 달의 짙은 그림자 끝이 지구 표면에 8만큼 들어가는 자리에 둔다.
+  const rowSolar = (): string => {
+    const cy = 30;
+    const S = { x: 12, y: cy };
+    const M = { x: 132, y: cy };
+    const L = (Math.hypot(M.x - S.x, M.y - S.y) * rm) / (Rs - rm);
+    const E = { x: Math.round(M.x + L + Re - 8), y: cy };
+    const sh = shadowPolys(S, Rs, M, rm, 150);
+    return `<defs><clipPath id="${p}ca"><rect x="0" y="0" width="${JW}" height="66" rx="12"/></clipPath><clipPath id="${p}sa"><rect x="0" y="0" width="${E.x}" height="66"/></clipPath></defs>
+      <g clip-path="url(#${p}ca)">
+        <circle cx="${S.x}" cy="${S.y}" r="${Rs * 1.8}" fill="url(#${p}glow)"/>
+        <circle cx="${S.x}" cy="${S.y}" r="${Rs}" fill="url(#${p}sun)"/>
+        <g clip-path="url(#${p}sa)"><polygon points="${pts(sh.faint)}" fill="#AFC3EA" opacity=".16"/><polygon points="${pts(sh.dark)}" fill="#070B16" opacity=".92"/></g>
+        ${disc(`${p}ea`, "earth", E.x, E.y, Re, { night: 0.6 })}
+        <g clip-path="url(#${p}ea)"><polygon points="${pts(sh.faint)}" fill="#050912" opacity=".3"/><polygon points="${pts(sh.dark)}" fill="#03050B" opacity=".95"/></g>
+        ${disc(`${p}ma`, "moon", M.x, M.y, rm, { night: 0.8, filter: `${p}mbr` })}
+      </g>
+      ${label(4, cy + 30, "태양", "sun", "start")}${label(M.x, cy + 30, "달")}${label(E.x, cy + 30, "지구")}
+      ${label(JW - 12, cy + 5, "일식", "dim", "end")}`;
+  };
+  // 아래 칸(월식): 태양, 지구, 달. 달은 지구의 짙은 그림자 한가운데(붉은 달).
+  const rowLunar = (): string => {
+    const cy = 104;
+    const S = { x: 12, y: cy };
+    const E = { x: 124, y: cy };
+    const M = { x: 236, y: cy };
+    const sh = shadowPolys(S, Rs, E, Re, 260);
+    return `<defs><clipPath id="${p}cb"><rect x="0" y="74" width="${JW}" height="66" rx="12"/></clipPath></defs>
+      <g clip-path="url(#${p}cb)">
+        <circle cx="${S.x}" cy="${S.y}" r="${Rs * 1.8}" fill="url(#${p}glow)"/>
+        <circle cx="${S.x}" cy="${S.y}" r="${Rs}" fill="url(#${p}sun)"/>
+        <polygon points="${pts(sh.faint)}" fill="#AFC3EA" opacity=".12"/>
+        <polygon points="${pts(sh.dark)}" fill="#02040A" opacity=".66"/>
+        ${disc(`${p}eb`, "earth", E.x, E.y, Re, { night: 0.6 })}
+        ${disc(`${p}mb`, "moon", M.x, M.y, rm, { filter: `${p}redf` })}
+      </g>
+      ${label(4, cy + 30, "태양", "sun", "start")}${label(E.x, cy + 30, "지구")}${label(M.x, cy + 30, "달")}
+      ${label(JW - 12, cy + 5, "월식", "dim", "end")}`;
+  };
+  // 질문하는 동안의 결과 장면(배치는 그리지 않는다)
+  const onlySpot = (): string => {
+    const cx = 214;
+    const cy = 33;
+    const r = 26;
+    return `<defs><clipPath id="${p}qs"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath></defs>
+      ${disc(`${p}qe`, "earth", cx, cy, r, { night: 0.6 })}
+      <g clip-path="url(#${p}qs)">
+        <ellipse cx="${cx - r + 7}" cy="${cy}" rx="10" ry="15" fill="#0A1020" opacity=".42"/>
+        <ellipse cx="${cx - r + 4}" cy="${cy}" rx="4.5" ry="6.5" fill="#03050B" opacity=".9"/>
+      </g>
+      ${label(20, cy + 5, "지구에 생긴 달의 그림자", "dim", "start")}`;
+  };
+  const onlyRed = (): string => {
+    const cx = 214;
+    const cy = 107;
+    return `${disc(`${p}qm`, "moon", cx, cy, 20, { filter: `${p}redf` })}
+      ${label(20, cy + 5, "지구의 그림자에 든 달", "dim", "start")}`;
+  };
+
+  const top = state === "q1" ? onlySpot() : rowSolar();
+  const bottom = state === "q2" ? onlyRed() : state === "a2" ? rowLunar() : "";
+  return `<svg viewBox="0 0 ${JW} ${JH}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="기록 두 칸. 위 칸은 지구에 달의 그림자가 생긴 때, 아래 칸은 달이 지구의 그림자에 든 때">
+    ${ecDefs(p)}
+    <defs><filter id="${p}redf" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.6 0.4 0.1 0 0.04  0.17 0.12 0.03 0 0.006  0.07 0.05 0.015 0 0  0 0 0 1 0"/></filter></defs>
+    ${panel(0, false)}${panel(74, state === "q1" || state === "a1")}
+    ${top}${bottom}
   </svg>`;
 }
