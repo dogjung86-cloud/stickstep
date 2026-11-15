@@ -227,7 +227,8 @@ export const swingLab: StepRenderer = (host, step, api) => {
     loop = createLoop((dt) => {
       const w = f.stage.clientWidth || 346;
       const h = f.stage.clientHeight || 230;
-      if (cv.width !== Math.round(w * Math.min(window.devicePixelRatio || 1, 1.75))) stage.resize(w, h);
+      // 크기나 넓은 화면의 무대 배율이 바뀌었을 때만 다시 잡는다(three는 캔버스 크기를 내림으로 잡는다)
+      if (cv.width !== Math.floor(w * S.stagePixelRatio(cv, w, h))) stage.resize(w, h);
       if (held) {
         hot += dt / 60;
         if (hot > 5) {

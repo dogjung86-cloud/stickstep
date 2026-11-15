@@ -1152,7 +1152,12 @@ src/
   - `desktop.css`의 "풀스크린 화면은 가운데 760 한 단" 규칙은 선택자에 `:not(#sc-home)`이 들어 있어 무겁다. `wide.css`에서 그것을
     이겨야 하는 줄은 같은 `:not(#sc-home)`으로 무게를 맞췄다(빼면 다음 버튼이 노트 밖으로 튀어나온다, 실제로 겪었다).
   - 캔버스로 그리는 랩 무대(u3v5, u5v5, u6v5, g2u3v5 킷)는 확대된 만큼 촘촘히 그려야 글자가 번지지 않는다. `stageDpr()`(wide.ts)을 쓴다.
-    새 캔버스 킷도 `Math.min(devicePixelRatio, 2)` 대신 이것을 쓴다. 세포 입체 무대(WebGL)는 아직 올리지 않았다.
+    새 캔버스 킷도 `Math.min(devicePixelRatio, 2)` 대신 이것을 쓴다. **3D(three.js) 무대는 `space3d.ts`의 `stagePixelRatio()`가 같은 일을 한다**
+    (2026-11-15 사용자 결정 "상한 두고 진행": 무대 안이면 `min(dpr, 1.75) × 무대 배율`, 상한 4와 한 장 80만 픽셀. 폰과 가로 화면 3D는 예전 그대로.
+    예전에는 세포 구조 입체 무대, 별자리, 달의 위상, 전기 그네가 1920×1080에서 0.38배로 흐렸다). 새 3D 무대도 `createSpaceStage`를 쓰면 따르고,
+    따로 렌더러를 만들면 같은 규칙을 따른다(SCI_GUIDE 「3D 우주 랩」). 화질 전수 검사는 `PORT=<dev 포트> node qa/audit-pc-quality.mjs [출력 폴더]
+    [설정들, 예: fhd100,fhd125,mac,uhd150] [단원들]`(캔버스와 그림의 그린 픽셀 ÷ 보이는 장치 픽셀, 0.9 아래를 흐림으로 본다) →
+    `node qa/sum-pc-quality.mjs <결과 JSON…>`. 분석과 측정 근거는 `output/pc-quality/README.md`.
   - **무대 안 캔버스와 시뮬레이션의 크기를 `getBoundingClientRect`로 잡지 않는다(2026-11-15 사용자 적발: PC에서 Ⅳ 입자 모형 랩의 입자가
     아래 칩 밑에 깔림).** zoom 아래에서 Chrome의 BCR은 커진 크기(화면 px)를 주는데 무대 안의 글자와 칩은 설계 px라, 그 크기로 판을 잡으면
     그림만 배율만큼 작아지거나(높이를 따로 주면) 한쪽으로 늘어난다. 크기는 `clientWidth`·`clientHeight`(확대 전 px)로 잡고 픽셀 밀도만
