@@ -5,6 +5,9 @@
 // 실패하는 길: 겨눈 쪽과 다르게 떨어지면 겨눈 화살표(점선)와 실제로 떨어진 길이 어긋나 보인다. 다시 겨눠야 한다.
 // 흐름: 위쪽 사과 → 오른쪽 사과 → 아래쪽 사과 → 저울 둘, 곳 둘의 표 네 칸 채우기 → 판정(60 N짜리 가방을 달에서) → 결론.
 // 옛 랩(gravityDrop)은 빈 곳을 눌러 떨어뜨리고 구경했다. 여기서는 먼저 겨누고, 저울을 바꿔 가며 직접 잰다. 수치는 3 kg, 29.4 N, 4.9 N.
+// 중력 화살표(2026-11-15 그래픽 손질): 상자 가운데에서 아래로, 길이는 무게에 비례(1 N에 GPX px, 덧붙이는 길이 없이)라 지구와 달이 6 대 1이다.
+//   달 장면에는 지구에서의 화살표를 옅은 점선으로 곁에 둔다. 양팔저울은 두 접시의 물체마다 같은 길이의 중력 화살표(달에서는 둘 다 6분의 1).
+//   판정과 결론 동안 무대는 지구와 달 두 칸(같은 상자를 단 용수철저울 둘)이다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -12,7 +15,7 @@ import { drawCrate, drawForceArrow, drawSpring } from "../../../ui/forceProps";
 import { curioCard, type Curio } from "../../../ui/curio";
 import type { StepRenderer } from "../../types";
 import { bvCapture, bvTimers } from "../bio6/b6Lab";
-import { U5, u5Canvas, u5Frame, u5Pill, u5Read, u5Text } from "./u5Kit";
+import { U5, u5Arrow, u5Canvas, u5Frame, u5Pill, u5Read, u5Text } from "./u5Kit";
 
 interface S {
   title: string;
@@ -29,6 +32,10 @@ const SPOTS = [
 type Tool = "spring" | "balance";
 type Place = "earth" | "moon";
 const CELL: Record<string, string> = { "spring-earth": "29.4 N", "spring-moon": "4.9 N", "balance-earth": "3 kg", "balance-moon": "3 kg" };
+const W_EARTH = 29.4;
+const W_MOON = 4.9;
+const GPX = 2.2; // 중력 화살표: 1 N에 2.2px(지구 64.7px, 달 10.8px). 지구 화살표 끝이 무대 바닥 6px 안쪽에 든다
+const SPX = 3.2; // 용수철이 늘어난 길이: 1 N에 3.2px
 
 export const gravityLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
@@ -126,6 +133,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
   let tool: Tool = "spring";
   let place: Place = "earth";
   let shown = 29.4;
+  let duo = false; // 판정과 결론: 두 칸 비교판
   const got = new Set<string>();
   let finished = false;
   const seg = (text: string, key: string): HTMLButtonElement => {
@@ -179,6 +187,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
     api.setCTA("표 네 칸을 채워 보세요", { enabled: false });
   }
   function askFinal(): void {
+    duo = true; // 판정과 결론의 무대: 지구와 달의 용수철저울 두 칸
     f.slot.ask(
       "지구에서 무게가 60 N인 가방을 달에 가져가 용수철저울로 재면?",
       [{ t: "10 N", ok: true }, { t: "60 N" }, { t: "360 N" }],
@@ -230,6 +239,37 @@ export const gravityLab: StepRenderer = (host, step, api) => {
       ctx.fill();
     });
     ctx.restore();
+  };
+
+  /** 용수철저울(받침, 용수철, 눈금, 상자, 중력 화살표). val은 무게(N). 상자 바닥의 y를 돌려준다. */
+  const springScale = (ctx: CanvasRenderingContext2D, x: number, h: number, val: number, t: number): number => {
+    const top = 22;
+    const len = 26 + val * SPX;
+    ctx.strokeStyle = "rgba(200,214,238,.8)";
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x - 62, h - 34);
+    ctx.lineTo(x - 62, top);
+    ctx.lineTo(x + 10, top);
+    ctx.stroke();
+    drawSpring(ctx, x, top, x, top + len, { coils: 9, radius: 9, endLen: 8 });
+    ctx.strokeStyle = "rgba(232,238,249,.4)";
+    ctx.lineWidth = 1.5;
+    for (let n = 0; n <= 30; n += 5) {
+      const y = top + 26 + n * SPX;
+      ctx.beginPath();
+      ctx.moveTo(x - 40, y);
+      ctx.lineTo(x - (n % 10 === 0 ? 28 : 33), y);
+      ctx.stroke();
+      if (n % 10 === 0) u5Text(ctx, String(n), x - 50, y, { px: 12, color: U5.dim });
+    }
+    const by = top + len + 34;
+    drawCrate(ctx, x, by, 40, 34, t, 0);
+    // 중력: 상자 가운데(작용점)에서 아래로, 길이는 무게에 비례
+    u5Arrow(ctx, x, by - 17, 0, val * GPX, { color: U5.back, width: 4 });
+    u5Text(ctx, "중력", x + 12, by + 13, { color: "#FFB3B3", px: 12.5, align: "left" });
+    return by;
   };
 
   st.run((ctx, w, h, t, dt) => {
@@ -293,38 +333,52 @@ export const gravityLab: StepRenderer = (host, step, api) => {
         ctx.stroke();
       }
       u5Pill(ctx, doneSpots.length === 3 ? "모두 지구 중심 쪽으로" : dragging ? "손을 떼면 놓아요" : `${SPOTS[spot].name} 사과 겨누기`, U5.back);
+    } else if (duo) {
+      // 판정과 결론: 같은 상자를 단 용수철저울 두 칸(왼쪽 지구, 오른쪽 달). 늘어난 길이와 중력 화살표가 모두 6 대 1
+      const pw = w / 2;
+      [false, true].forEach((moon, i) => {
+        const x0 = i * pw;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x0, 0, pw, h);
+        ctx.clip();
+        drawBody(ctx, x0 + pw / 2, h + 150, 190, moon);
+        const val = moon ? W_MOON : W_EARTH;
+        const x = x0 + 86;
+        springScale(ctx, x, h, val, t);
+        // 곳과 값(칸의 오른쪽 위)
+        u5Text(ctx, moon ? "달에서" : "지구에서", x0 + pw - 10, 24, { px: 13, align: "right", color: moon ? "#DDE3EC" : "#BFE0FF" });
+        ctx.textAlign = "right";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillStyle = U5.dim;
+        ctx.font = U5.font(12.5);
+        const uw = ctx.measureText("N").width;
+        ctx.fillText("N", x0 + pw - 10, 58);
+        ctx.fillStyle = "#fff";
+        ctx.font = U5.font(22, 800);
+        ctx.fillText(val.toFixed(1), x0 + pw - 14 - uw, 58);
+        ctx.restore();
+      });
+      ctx.strokeStyle = "rgba(232,238,249,.22)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(pw, 8);
+      ctx.lineTo(pw, h - 8);
+      ctx.stroke();
     } else {
       const moon = place === "moon";
       drawBody(ctx, w / 2, h + 150, 190, moon);
       const x = w / 2 + 6;
       if (tool === "spring") {
         // 용수철저울: 늘어난 길이가 무게에 비례한다(1 N에 3.2px)
-        const target = moon ? 4.9 : 29.4;
+        const target = moon ? W_MOON : W_EARTH;
         shown += (target - shown) * Math.min(1, 0.12 * dt);
-        const top = 22;
-        const len = 26 + shown * 3.2;
-        ctx.strokeStyle = "rgba(200,214,238,.8)";
-        ctx.lineWidth = 4;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x - 62, h - 34);
-        ctx.lineTo(x - 62, top);
-        ctx.lineTo(x + 10, top);
-        ctx.stroke();
-        drawSpring(ctx, x, top, x, top + len, { coils: 9, radius: 9, endLen: 8 });
-        const by = top + len + 34;
-        drawCrate(ctx, x, by, 40, 34, t, 0);
-        drawForceArrow(ctx, x + 34, by - 17, 0, 10 + shown * 1.6, { color: U5.back, width: 4 });
-        u5Text(ctx, "중력", x + 62, by - 6 + shown * 0.8, { color: "#FFB3B3" });
-        ctx.strokeStyle = "rgba(232,238,249,.4)";
-        ctx.lineWidth = 1.5;
-        for (let n = 0; n <= 30; n += 5) {
-          const y = top + 26 + n * 3.2;
-          ctx.beginPath();
-          ctx.moveTo(x - 40, y);
-          ctx.lineTo(x - (n % 10 === 0 ? 28 : 33), y);
-          ctx.stroke();
-          if (n % 10 === 0) u5Text(ctx, String(n), x - 50, y, { px: 12, color: U5.dim });
+        const by = springScale(ctx, x, h, shown, t);
+        if (moon) {
+          // 견주기: 지구에서의 중력 화살표(29.4 N)를 같은 높이에서 옅은 점선으로 곁에 둔다. 달의 화살표는 그 6분의 1
+          const gx = x + 48;
+          u5Arrow(ctx, gx, by - 17, 0, W_EARTH * GPX, { color: "#FF9D9D", width: 3.5, alpha: 0.6, dash: true });
+          u5Text(ctx, "지구에서 중력", gx, by - 17 + W_EARTH * GPX + 13, { px: 12, color: U5.dim });
         }
         u5Read(ctx, w, shown.toFixed(1), "N", "용수철저울(무게)");
       } else {
@@ -367,8 +421,12 @@ export const gravityLab: StepRenderer = (host, step, api) => {
           ctx.roundRect(wx - 6, py - 40, 12, 18, 2);
           ctx.fill();
         }
-        u5Text(ctx, "상자", x - 84, py - 2, { px: 12, color: U5.dim });
-        u5Text(ctx, "1 kg 추 셋", x + 84, py - 2, { px: 12, color: U5.dim });
+        // 두 접시의 물체마다 중력(무게에 비례, 같은 길이). 달에서는 둘 다 6분의 1로 줄어 여전히 수평이다
+        const val = moon ? W_MOON : W_EARTH;
+        u5Arrow(ctx, x - 84, py - 36, 0, val * GPX, { color: U5.back, width: 4 });
+        u5Arrow(ctx, x + 84, py - 31, 0, val * GPX, { color: U5.back, width: 4 });
+        u5Text(ctx, "상자", x - 84 - 12, py + 6, { px: 12, color: U5.dim, align: "right" });
+        u5Text(ctx, "1 kg 추 셋", x + 84 + 12, py + 6, { px: 12, color: U5.dim, align: "left" });
         u5Text(ctx, "수평", x, 66, { px: 12.5, color: "#9BE8C4" });
         u5Read(ctx, w, "3", "kg", "양팔저울(질량)");
       }
