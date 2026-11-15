@@ -7,11 +7,15 @@
 // 검산: 밤하늘 칸의 별 자리는 시선의 방향(기울기)으로 정한다. 지구 궤도의 반지름 40, 거리 n배 = 32n이라 기울기는 40/(32n),
 //       밤하늘에서 가운데로부터 ±6/n칸(한 칸 22). 두 자리 사이는 12/n칸: 1배 12칸, 2배 6칸, 3배 4칸, 4배 3칸(거리 × 칸 수 = 12로 반비례).
 //       아주 먼 배경 별은 지구가 어디에 있든 같은 방향에 보이므로 밤하늘 칸의 기준이 된다. 각도는 크게 과장했다(무대에 적는다).
+// 밤하늘 칸은 아주 먼 배경이라 '방향'을 보여 주는 칸이다. 시선을 별 S를 지나 이 칸의 별 자리까지 곧게 이어 그리면
+//       유한한 그림에서는 거리 n배와 칸 수 n분의 1이 함께 맞을 수 없다(배경이 그림 안의 가까운 거리에 놓이게 된다). 그래서 두 시선은 별을 지나
+//       조금 더(밤하늘 칸 아래까지만) 옅게 늘여 엇갈리는 모습만 보이고, 어느 자리인지는 색(처음 금색, 6개월 뒤 초록)으로 잇는다.
+// 기록은 무대 왼쪽에 거리마다 한 줄(거리, 칸 수만큼의 막대, 칸 수)로 쌓는다. 판정 때 조작 칸의 기록 줄이 숨어도 1~4배의 칸 수가 무대에 남는다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvRange, bvTimers } from "../bio6/b6Lab";
-import { S, sArrow, sCanvas, sDisk, sFrame, sGlow, sLine, sLog, sText, type LabStep } from "./kit";
+import { S, sArrow, sBox, sCanvas, sDisk, sFrame, sGlow, sLine, sLog, sText, type LabStep } from "./kit";
 import { angleArc, skyPanel, skyStar, skyTicks, span } from "./parallaxKit";
 
 const ROW = 33; // 밤하늘 칸에서 별이 놓이는 줄
@@ -138,8 +142,18 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
     skyStar(ctx, cx + off, ROW, S.gold);
     skyStar(ctx, cx - off, ROW, S.ok);
     sText(ctx, `옮겨 간 칸 수 ${Math.round(cells(nShow) * 10) / 10}칸`, w - 17, 18, { color: "#fff", px: 12.5, w: 800, align: "right" });
-    // 아래: 위에서 내려다본 모습
-    sText(ctx, "위에서 내려다본 모습", 12, 70, { color: S.dim, px: 12, align: "left" });
+    // 아래: 비스듬히 내려다본 모습(궤도를 납작한 타원으로 그렸다)
+    sText(ctx, "비스듬히 내려다본 모습", 12, 70, { color: S.dim, px: 12, align: "left" });
+    // 기록: 거리마다 옮겨 간 칸 수(칸 수만큼의 막대). 판정 때도 남는다.
+    [1, 2, 3, 4].forEach((d, i) => {
+      if (!log.has(i)) return;
+      const y = 128 + i * 15; // 왼쪽 아래(별의 '시차' 이름표와 겹치지 않는 자리)
+      const now = Math.abs(nShow - d) < 0.5;
+      const col = now ? S.gold : "rgba(255,209,102,.62)";
+      sText(ctx, `${d}배`, 14, y, { color: now ? "#fff" : S.dim, px: 12, align: "left", w: now ? 800 : 700 });
+      sBox(ctx, 36, y - 3, cells(d) * 4, 6, 2, col);
+      sText(ctx, `${cells(d)}칸`, 36 + cells(d) * 4 + 5, y, { color: col, px: 12.5, w: 800, align: "left" });
+    });
     sText(ctx, `거리 ${n}배`, w - 12, 70, { color: S.gold, px: 13, w: 800, align: "right" });
     sText(ctx, "각도는 크게 과장한 그림", w - 10, 221, { color: S.dim, px: 12, align: "right" });
     ctx.save();
@@ -150,9 +164,28 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
     ctx.ellipse(cx, SUN_Y, ORB, 9, 0, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
-    // 두 시선(지구에서 별을 지나 조금 더)
+    // 두 시선(지구에서 별을 지나 조금 더). 별을 지난 뒤로는 밤하늘 칸 아래까지 옅은 점선으로 늘인다(엇갈리는 모습).
     const ux = ORB / Math.hypot(ORB, d);
     const uy = d / Math.hypot(ORB, d);
+    const ext = Math.max(0, Math.min(64, (sy - 64) / uy)); // 별에서 밤하늘 칸 아래(높이 64)까지, 길어도 64
+    if (ext > 6) {
+      ctx.save();
+      const fade = (x0: number, y0: number, x1: number, y1: number, rgbs: string): void => {
+        const g = ctx.createLinearGradient(x0, y0, x1, y1);
+        g.addColorStop(0, `rgba(${rgbs},.7)`);
+        g.addColorStop(1, `rgba(${rgbs},0)`);
+        ctx.strokeStyle = g;
+        ctx.lineWidth = 1.6;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.stroke();
+      };
+      fade(cx + ux * 12, sy - uy * 12, cx + ux * ext, sy - uy * ext, "255,209,102");
+      fade(cx - ux * 12, sy - uy * 12, cx - ux * ext, sy - uy * ext, "127,227,196");
+      ctx.restore();
+    }
     sArrow(ctx, e1.x, e1.y, cx + ux * 12, sy - uy * 12, "rgba(255,209,102,.85)", 1.8, 7);
     sArrow(ctx, e2.x, e2.y, cx - ux * 12, sy - uy * 12, "rgba(127,227,196,.85)", 1.8, 7);
     // 별에서 두 시선이 만드는 각(시차)과 그 절반

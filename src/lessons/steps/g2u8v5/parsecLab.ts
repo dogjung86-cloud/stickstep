@@ -6,6 +6,7 @@
 // 학생이 정하는 것: 별까지의 거리, 언제 잴지. 실패하는 길: 1000 pc의 별은 두 자리가 겹쳐 보여 재지 못한다.
 // 검산: 연주 시차(″) = 1 ÷ 거리(pc). 6개월 사이의 시차는 그 2배. 위 사진의 두 자리 사이는 140 ÷ 거리(px)로 시차에 비례한다(1000 pc은 0.14라 겹친다).
 //       아래 그림은 지구 궤도의 반지름 14, 1 pc = 25로 그려 시선의 기울기도 거리에 반비례한다(1000 pc은 그림 밖이라 끊어 그렸다). 각도는 크게 과장했다.
+// 잰 기록(1, 2, 10 pc)은 사진 칸 아래쪽에 한 줄씩 옅은 폭으로 겹쳐 남긴다(판정 때 조작 칸의 기록 줄이 숨어도 무대에서 비교할 수 있다).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
@@ -14,7 +15,8 @@ import { S, sCanvas, sDisk, sFrame, sGlow, sLine, sLog, sText, type LabStep } fr
 import { skyPanel, skyStar, span } from "./parallaxKit";
 
 const PC = [1, 2, 4, 10, 1000];
-const ROW = 66; // 사진에서 별이 놓이는 줄
+const ROW = 62; // 사진에서 별이 놓이는 줄
+const REC_Y = 84; // 사진 칸 아래쪽의 기록 줄(1, 2, 10 pc)
 const GAP1 = 140; // 1 pc일 때 사진에서 두 자리 사이(px)
 const AX = 46; // 태양의 가로 자리
 const AY = 166;
@@ -150,7 +152,25 @@ export const parsecLab: StepRenderer = (host, step, api) => {
     const gap = gShow;
     mT += ((measured ? 1 : 0) - mT) * Math.min(1, dt * 0.1);
     // 위: 6개월 간격으로 찍은 두 사진을 겹친 모습
-    skyPanel(ctx, 8, 6, w - 16, 92, "두 사진을 겹쳐 크게 본 모습", 11);
+    skyPanel(ctx, 8, 6, w - 16, 118, "두 사진을 겹쳐 크게 본 모습", 11);
+    // 잰 기록: 1, 2, 10 pc의 두 자리 사이를 옅은 폭으로 한 줄씩(거리, 폭, 연주 시차)
+    [1, 2, 10].forEach((pc, i) => {
+      if (!log.has(i)) return;
+      const y = REC_Y + i * 14;
+      const now = pc === d;
+      const col = now ? S.gold : "rgba(255,209,102,.6)";
+      const g = GAP1 / pc;
+      if (g < 6) sLine(ctx, cx - 3, y, cx + 3, y, col, 3);
+      else span(ctx, cx - g / 2, cx + g / 2, y, col, now ? 2 : 1.6);
+      sText(ctx, `${pc} pc`, 18, y, { color: now ? "#fff" : S.dim, px: 12, align: "left", w: now ? 800 : 700 });
+      sText(ctx, sec(1 / pc), w - 18, y, { color: col, px: 12.5, w: 800, align: "right" });
+    });
+    if (mT > 0.03 && d !== 1000) {
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, mT * 1.2);
+      span(ctx, cx - gap / 2, cx - gap / 2 + gap * mT, ROW, "rgba(255,255,255,.75)", 1.8);
+      ctx.restore();
+    }
     skyStar(ctx, cx + gap / 2, ROW, S.gold);
     skyStar(ctx, cx - gap / 2, ROW, S.ok);
     sText(ctx, "처음", cx + gap / 2 + 15, ROW, { color: S.gold, px: 12, align: "left" });
@@ -160,11 +180,10 @@ export const parsecLab: StepRenderer = (host, step, api) => {
       ctx.globalAlpha = Math.min(1, mT * 1.2);
       if (d === 1000) sText(ctx, "이 사진으로는 잴 수 없어요", w - 17, 20, { color: "#FF9AA5", px: 12.5, w: 800, align: "right" });
       else {
-        span(ctx, cx - gap / 2, cx - gap / 2 + gap * mT, ROW + 17, "rgba(255,255,255,.75)", 1.8);
         if (gap < 24) sLine(ctx, cx, ROW - 16, cx + (gap / 2) * mT, ROW - 16, S.gold, 4);
         else span(ctx, cx, cx + (gap / 2) * mT, ROW - 16, S.gold, 2.2);
-        sText(ctx, `시차 ${sec(2 / d)}`, w - 17, 20, { color: "#fff", px: 12.5, w: 800, align: "right" });
-        sText(ctx, `연주 시차 ${sec(1 / d)}`, w - 17, 37, { color: S.gold, px: 13, w: 800, align: "right" });
+        sText(ctx, `시차 ${sec(2 / d)}`, w - 17, 18, { color: "#fff", px: 12.5, w: 800, align: "right" });
+        sText(ctx, `연주 시차 ${sec(1 / d)}`, w - 17, 33, { color: S.gold, px: 13, w: 800, align: "right" });
       }
       ctx.restore();
     }
@@ -173,7 +192,7 @@ export const parsecLab: StepRenderer = (host, step, api) => {
     const sx = far ? w - 22 : AX + U * dShow;
     sText(ctx, "태양", AX - 27, AY, { color: S.dim, px: 12 });
     sText(ctx, "지구", AX - 27, AY - ORB - 8, { color: S.dim, px: 12 });
-    sText(ctx, "각도는 크게 과장한 그림", w - 10, 112, { color: S.dim, px: 12, align: "right" });
+    sText(ctx, "각도는 크게 과장한 그림", w - 10, 135, { color: S.dim, px: 12, align: "right" });
     ctx.save();
     ctx.strokeStyle = S.line;
     ctx.lineWidth = 1.2;

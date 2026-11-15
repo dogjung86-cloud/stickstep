@@ -3,6 +3,7 @@
 // 한 통찰: 공(별)이 한 층에 납작하게 모여 있는 모형을 옆에서 찍어야 은하수처럼 띠로 보인다.
 // 학생이 정하는 것: 철사의 길이(같게, 다르게), 찍는 자리(앞, 위). 실패하는 길: 위에서 찍으면 두 모형이 똑같이 흩어져 보여 가릴 수 없다.
 // 사진은 같은 공의 자리에서 계산한다(앞에서는 가로와 높이, 위에서는 가로와 깊이).
+// 판정이 뜨면 찍은 사진 칸을 네 장의 사진첩(줄: 같은 길이, 다른 길이 / 칸: 앞에서, 위에서)으로 바꿔, 띠로 찍힌 사진과 아래의 실제 은하수를 나란히 비교할 수 있게 한다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
@@ -26,6 +27,7 @@ export const modelLab: StepRenderer = (host, step, api) => {
   let shot: { wire: Wire; cam: Cam } | null = null;
   let flash = 0;
   let finished = false;
+  let album = false; // 판정이 뜨면 찍은 사진 칸을 네 장의 사진첩으로 바꾼다
   const done = new Set<string>();
   const log = sLog(["같은 길이, 앞", "같은 길이, 위", "다른 길이, 앞", "다른 길이, 위"], 2, true);
   const idx = (w: Wire, c: Cam): number => (w === "same" ? 0 : 2) + (c === "front" ? 0 : 1);
@@ -59,7 +61,7 @@ export const modelLab: StepRenderer = (host, step, api) => {
       log.set(idx(wire, c), band ? "한 줄 띠" : "흩어짐");
       f.pips(done.size);
       if (c === "top") f.say("위에서 찍으니 공들이 <b>흩어져</b> 보여요. 두 모형이 똑같이 보여 가릴 수 없어요.");
-      else if (band) f.say("공들이 <b>한 줄로 겹쳐</b> 띠처럼 찍혔어요. 아래의 실제 은하수와 견주어 보세요.");
+      else if (band) f.say("공들이 <b>한 줄로 겹쳐</b> 띠처럼 찍혔어요. 아래의 실제 은하수와 비교해 보세요.");
       else f.say("공들이 위아래로 <b>흩어져</b> 찍혔어요. 띠 모양이 아니에요.");
       if (done.size === 4) {
         finished = true;
@@ -75,7 +77,8 @@ export const modelLab: StepRenderer = (host, step, api) => {
   f.slot.setControls(wireSeg.el, camSeg.el, log.el);
 
   function askFinal(): void {
-    f.say("네 장의 사진을 떠올리며 아래 질문에 답해 보세요.");
+    album = true;
+    f.say("찍은 네 장의 사진을 보며 아래 질문에 답해 보세요.");
     f.slot.ask(
       "은하수처럼 띠 모양으로 찍힌 사진은?",
       [{ t: "같은 길이 모형을 앞에서", ok: true }, { t: "다른 길이 모형을 앞에서" }, { t: "같은 길이 모형을 위에서" }],
@@ -129,19 +132,42 @@ export const modelLab: StepRenderer = (host, step, api) => {
       sBox(ctx, c[0] - 13, c[1] - 9, 26, 18, 4, "#3A455C", "#fff", 1.2);
       sDisk(ctx, c[0], c[1], 5, "#8FB4FF");
     }
-    // 찍은 사진
+    // 찍은 사진(판정 때는 네 장의 사진첩: 줄은 철사 길이, 칸은 찍은 자리)
     const fx = w - 128;
     const fy = 26;
-    sText(ctx, "찍은 사진", fx + 58, 13, { color: S.ink, px: 12 });
-    sBox(ctx, fx, fy, 116, 76, 6, "#02040A", flash > 0 ? "#fff" : "rgba(255,255,255,.35)", flash > 0 ? 3 : 1.2);
-    if (shot) {
-      BALLS.forEach((b) => {
-        const hh = shot!.wire === "same" ? 0.6 : b.h;
-        const x = fx + 58 + b.x * 48;
-        const y = shot!.cam === "front" ? fy + 66 - hh * 58 : fy + 38 - b.z * 30;
-        sDisk(ctx, x, y, 3.2, "#fff");
+    if (album) {
+      const cw = 52;
+      const ch = 36;
+      const ax = w - 116;
+      const ys = [18, 62];
+      sText(ctx, "앞에서", ax + cw / 2, 9, { color: S.dim, px: 12 });
+      sText(ctx, "위에서", ax + cw + 6 + cw / 2, 9, { color: S.dim, px: 12 });
+      (["same", "diff"] as Wire[]).forEach((wr, r) => {
+        (["front", "top"] as Cam[]).forEach((cm, c) => {
+          const x0 = ax + c * (cw + 6);
+          const y0 = ys[r];
+          sBox(ctx, x0, y0, cw, ch, 5, "#02040A", "rgba(255,255,255,.4)", 1);
+          BALLS.forEach((b) => {
+            const hh = wr === "same" ? 0.6 : b.h;
+            const x = x0 + cw / 2 + b.x * 21;
+            const y = cm === "front" ? y0 + ch - 5 - hh * 27 : y0 + ch / 2 - b.z * 13;
+            sDisk(ctx, x, y, 1.9, "#fff");
+          });
+        });
+        sText(ctx, wr === "same" ? "같은 길이" : "다른 길이", ax - 6, ys[r] + ch / 2, { color: S.ink, px: 12, align: "right" });
       });
-    } else sText(ctx, "아직 찍지 않았어요", fx + 58, fy + 38, { color: S.dim, px: 12 });
+    } else {
+      sText(ctx, "찍은 사진", fx + 58, 13, { color: S.ink, px: 12 });
+      sBox(ctx, fx, fy, 116, 76, 6, "#02040A", flash > 0 ? "#fff" : "rgba(255,255,255,.35)", flash > 0 ? 3 : 1.2);
+      if (shot) {
+        BALLS.forEach((b) => {
+          const hh = shot!.wire === "same" ? 0.6 : b.h;
+          const x = fx + 58 + b.x * 48;
+          const y = shot!.cam === "front" ? fy + 66 - hh * 58 : fy + 38 - b.z * 30;
+          sDisk(ctx, x, y, 3.2, "#fff");
+        });
+      } else sText(ctx, "아직 찍지 않았어요", fx + 58, fy + 38, { color: S.dim, px: 12 });
+    }
     sText(ctx, "실제 은하수", fx + 58, 121, { color: S.ink, px: 12 });
   });
 

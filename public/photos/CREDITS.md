@@ -273,6 +273,15 @@ HMI 백색광 전면 프레임(2024-04-26, NASA/SDO — Public Domain)에서 하
 | star/coalsack.webp | 석탄자루 암흑 성운(별밭 속 검은 영역) | ESO (eso1539a) | CC BY 4.0 |
 | star/lagoon.webp | 라군 성운(붉게 빛나며 번지는 방출 성운) | ESO/VPHAS+ team (eso1403a) | CC BY 4.0 |
 
+## g2u8 랩과 문제 그림 손질 파생본 (2026-11-15)
+원본은 지우지 않았다. 원본의 출처와 라이선스는 위 표와 같다.
+| 파일 | 내용 | 원본 | 라이선스 |
+|---|---|---|---|
+| star/albireo-pair.webp | 알비레오 이중성. 두 별 둘레를 좁게(400×180) 자르고 압축 자국을 약한 흐림으로 다듬어 2배로 다시 저장(레슨 4 문제 1. 시험 문항은 albireo.webp 그대로) | star/albireo.webp(Brucewaters, Wikimedia "Albireo Killarney Provincial Park Observatory.jpg") | CC BY 4.0(자르기와 흐림 손질을 함) |
+| star/disk-earth.webp | 지구 원판 256px, 원 바깥은 투명(레슨 8 탐사 랩의 거리 띠) | photos/earth_apollo17.jpg(NASA Apollo 17, The Blue Marble) | Public Domain (NASA) |
+| star/disk-moon.webp | 달 원판 256px, 원 바깥은 투명(같은 랩) | photos/moon_lro.jpg(NASA/GSFC/ASU, LRO) | Public Domain (NASA) |
+| star/disk-pluto.webp | 명왕성 원판 256px, 원 바깥은 투명(같은 랩) | star/pluto.webp(NASA/JHUAPL/SwRI, New Horizons) | Public Domain (NASA) |
+
 ## public/scifig/ (과학 개념·정리 그림에 들어간 실사, 2026-11-15)
 코드로 그린 과학 그림(`qa/scifig-g1`, `qa/scifig-g2`)은 아래 실사를 질감으로 입히거나 잘라 넣어 구웠다. 원본의 출처와 라이선스는 위 절과 같다.
 | 그림 | 쓴 실사 | 출처 · 크레딧 | 라이선스 |

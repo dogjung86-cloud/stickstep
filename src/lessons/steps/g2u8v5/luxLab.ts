@@ -4,6 +4,8 @@
 // 학생이 정하는 것: 전등과 교실 불을 켜고 끌지, 기기를 어디에 세울지, 언제 잴지.
 // 실패하는 길: 교실 불을 켠 채 재면 값에 교실 빛(400 lx)이 섞인다. 전등을 켜지 않으면 전등 빛을 잴 수 없다. 잘못 잰 값은 붉게 남는다.
 // 값: 전등 빛은 20 cm에서 900 lx이고 거리의 제곱에 반비례한다(900, 225, 100, 56, 36).
+// 기록은 자리마다 값에 비례한 막대로 남긴다(900이 기준 높이, 225는 그 4분의 1). 20 cm와 40 cm를 다 재면 900 막대를 넷으로 나눈 금과
+// 4분의 1 높이의 점선을 그어 "2배 거리면 4분의 1"이 눈에 보이게 한다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
@@ -13,6 +15,9 @@ import { S, sBox, sCanvas, sFrame, sGlow, sLine, sRow, sSegs, sText, type LabSte
 const POS = [20, 40, 60, 80, 100];
 const ROOM = 400;
 const lampLx = (d: number): number => Math.round(900 * (20 / d) ** 2);
+const BAR_BASE = 104; // 기록 막대의 바닥
+const BAR_H = 64; // 900 lx 막대의 높이
+const BAR_MAX = 74; // 교실 빛이 섞인 큰 값은 여기까지만 그린다
 type P = "20" | "40" | "60" | "80" | "100";
 
 export const luxLab: StepRenderer = (host, step, api) => {
@@ -68,7 +73,7 @@ export const luxLab: StepRenderer = (host, step, api) => {
       finished = true;
       [bLamp, bRoom, bMeas].forEach((b) => (b.disabled = true));
       seg.lock(true);
-      f.say("다섯 자리의 밝기를 모두 쟀어요. 기록을 견주어 볼까요?");
+      f.say("다섯 자리의 밝기를 모두 쟀어요. 기록을 비교해 볼까요?");
       tm.later(askFinal, 1400);
     }
   });
@@ -130,15 +135,23 @@ export const luxLab: StepRenderer = (host, step, api) => {
     }
     sBox(ctx, x0 - 7, ry - 24, 14, 24, 3, "#5A6474");
     sText(ctx, "전등", x0, ry - 62, { color: S.ink, px: 12 });
-    // 지난 기록
+    // 지난 기록: 잰 값에 비례한 밝기 막대(20 cm의 900 lx가 기준 높이). 잘못 잰 값은 붉게 둔다.
+    if (rec.size) {
+      sLine(ctx, x0 + 14, BAR_BASE, x0 + 100 * sc + 18, BAR_BASE, "rgba(232,238,249,.35)", 1);
+      sText(ctx, "lx", 12, BAR_BASE - 8, { color: S.dim, px: 12, align: "left" });
+    }
+    const ref = rec.get(20);
+    const quarter = !!ref?.ok && !!rec.get(40)?.ok;
     rec.forEach((r, d) => {
       const x = x0 + d * sc;
       const col = r.ok ? S.gold : "#FF7A85";
-      sBox(ctx, x - 24, 46, 48, 22, 7, r.ok ? "rgba(255,209,102,.16)" : "rgba(240,68,82,.18)", col, 1.2);
-      sText(ctx, String(r.v), x, 57.5, { color: col, px: 13, w: 800 });
-      sLine(ctx, x, 68, x, 78, col, 1.2, [2, 3]);
+      const bh = Math.max(2, Math.min(BAR_MAX, (r.v / 900) * BAR_H));
+      sBox(ctx, x - 12, BAR_BASE - bh, 24, bh, 3, r.ok ? "rgba(255,209,102,.88)" : "rgba(255,122,133,.85)");
+      // 900 막대를 넷으로 나눈 금: 40 cm(2배 거리)의 막대가 그 한 칸(4분의 1)과 같다
+      if (d === 20 && quarter) for (let q = 1; q < 4; q++) sLine(ctx, x - 12, BAR_BASE - (BAR_H * q) / 4, x + 12, BAR_BASE - (BAR_H * q) / 4, "rgba(11,21,36,.55)", 1.2);
+      sText(ctx, String(r.v), x, BAR_BASE - bh - 9, { color: col, px: 13, w: 800 });
     });
-    if (rec.size) sText(ctx, "lx", 12, 57, { color: S.dim, px: 12, align: "left" });
+    if (quarter) sLine(ctx, x0 + 20 * sc + 13, BAR_BASE - BAR_H / 4, x0 + 40 * sc - 13, BAR_BASE - BAR_H / 4, "rgba(255,209,102,.7)", 1.2, [3, 3]);
     // 스마트 기기(세워 둔 화면이 전등을 향한다)
     sBox(ctx, px - 6, ry - 62, 12, 62, 3, "#DDE5EE", "#fff", 1.5);
     sBox(ctx, px - 4, ry - 56, 3, 46, 1, flash > 0 ? "#7FE3C4" : "#4A5568");

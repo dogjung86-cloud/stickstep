@@ -2,7 +2,7 @@
 // 장면 이름은 "g2u8-"로 시작한다. 내용 파일에서 opener({ title, scene: "g2u8-tree", wait, cta }).
 // 그림: qa/sketch/scenes/intro-g2u8.mjs → node qa/sketch/build-intro.mjs g2u8 → src/ui/introArt.g2u8.generated.ts
 //
-// 일곱 장면이 같은 꼴이다(g2u8l7은 만화로 시작한다): 내기(예측)를 먼저 걸고 → 조작 줄의 버튼으로 손수 해 보고 → 끝에서 예측과 견준다.
+// 일곱 장면이 같은 꼴이다(g2u8l7은 만화로 시작한다): 내기(예측)를 먼저 걸고 → 조작 줄의 버튼으로 손수 해 보고 → 끝에서 예측과 비교한다.
 // 예측의 답은 조작이 보여 주므로 정오를 매기지 않는다(neutral). 까닭(원리)은 말하지 않고 질문으로 남긴다(뒤의 랩이 받는다).
 // 그림의 묶음은 무대의 on1 클래스로 바뀐다(styles/g2u8v5.css의 도입 구간).
 import { el } from "../../../../core/dom";
@@ -25,7 +25,7 @@ interface Cfg {
   choices: [string, string, string];
   start: string;
   acts: Act[];
-  /** 끝의 말. hit: 예측이 결과와 같았나(null이면 견주지 않는 장면) */
+  /** 끝의 말. hit: 예측이 결과와 같았나(null이면 비교하지 않는 장면) */
   end: (hit: boolean) => string;
   compare?: boolean;
 }
