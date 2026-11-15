@@ -202,7 +202,7 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
     stain: bvCard("scp-card col", { name: "검정말잎", sub: "아세트올세인", icon: BV_ICON.leafStain, key: "stain" }),
   };
   const noBtn = bvBtn("scp-no", "핵이 안 보여요");
-  const cmpBtn = bvBtn("main scp-cmp", "두 세포 비교해 보기");
+  const cmpBtn = bvBtn("main scp-cmp", "두 세포 비교하기");
   cmpBtn.hidden = true;
 
   function setBlur(v: number): void {

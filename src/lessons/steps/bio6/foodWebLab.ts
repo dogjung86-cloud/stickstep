@@ -65,7 +65,7 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
   KEYS.forEach((k) => {
     cards[k] = bvCard("fwb-card col", { name: `${NAME[k]} 빼기`, sub: "두 생태계에서", icon: ICON[k], key: k });
   });
-  const cmpBtn = bvBtn("main fwb-cmp", "두 생태계 비교해 보기");
+  const cmpBtn = bvBtn("main fwb-cmp", "두 생태계 비교하기");
   cmpBtn.hidden = true;
 
   const webEl = (w: "A" | "B"): SVGGElement => svg.querySelector(`.fwb-web[data-w="${w}"]`) as SVGGElement;

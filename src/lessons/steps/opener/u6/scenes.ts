@@ -123,7 +123,7 @@ export function iceBear(c: OpenerCtx): void {
         tried.flat = true;
         busy = false;
         if (tried.stand) wrap();
-        else c.say("얼음이 멀쩡해요. 이번에는 <b>서서 걷기</b>도 눌러 견줘 보세요.");
+        else c.say("얼음이 멀쩡해요. 이번에는 <b>서서 걷기</b>도 눌러 비교해 보세요.");
       }, 1500);
     }
   };

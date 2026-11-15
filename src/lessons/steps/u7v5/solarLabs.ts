@@ -174,7 +174,7 @@ export const u7SolarWhereLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("사람을 다시 옮기며 세 곳을 견줘 봐도 좋아요.");
+    f.say("사람을 다시 옮기며 세 곳을 비교해 봐도 좋아요.");
     f.slot.conclude("일식은 <b>달의 그림자가 닿은 곳</b>에서만 보여요. 가장 짙은 가운데에서는 <b>개기일식</b>, 그 둘레의 옅은 곳에서는 <b>부분일식</b>이에요.");
     api.enableCTA(doneCta);
   }

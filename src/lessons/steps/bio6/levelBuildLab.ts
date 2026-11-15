@@ -242,7 +242,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     const last = ROUTES[r].levels[4];
     cards[r] = bvCard("blv-card", { name: ROUTES[r].card, sub: ROUTES[r].sub, icon: `<img src="${bvSrc(last.img)}" alt="" draggable="false" />`, key: r });
   });
-  const cmpBtn = bvBtn("main blv-cmp", "두 계단 비교해 보기");
+  const cmpBtn = bvBtn("main blv-cmp", "두 계단 비교하기");
   cmpBtn.hidden = true;
 
   const mark = (level: number): void => {
