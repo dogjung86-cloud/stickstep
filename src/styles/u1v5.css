@@ -61,6 +61,9 @@
 .u1g-ghost.bad .u1g-ax.lg { fill: #C9D5E8; }
 .u1g-gt { fill: #fff; }
 .u1g-pop { animation: u1gPop .32s var(--ease-out); }
+/* 선 끝 이름표(이름과 값) */
+.u1g-end { font-size: 12.5px; font-weight: 800; stroke: #0B1524; stroke-width: 3px; paint-order: stroke; }
+.u1g-end.v { font-size: 12px; font-weight: 700; }
 @keyframes u1gPop { 0% { opacity: 0; } 100% { opacity: 1; } }
 .u1x-cap { height: 20px; padding: 0 2px; font-size: 12.5px; font-weight: 700; line-height: 20px; color: var(--n700); white-space: nowrap; }
 .u1x-cap.center { text-align: center; color: var(--ter); }
@@ -88,16 +91,23 @@
 .u1t-wave.w3 { animation-delay: .4s; }
 @keyframes u1tWave { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
 .u1x-step .bv-card.u1t-card { height: 54px; padding: 0 12px; }
+/* 결론 무대의 작은 칸 넷: 칸 안의 장면 글자는 숨기고(12px 아래가 된다) 인공지능 화면의 이름만 키워 남긴다 */
+.u1t-mini text { display: none; }
+.u1t-mini .on .u1x-lb.big { display: inline; font-size: 32px; }
 .u1x-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
 /* ── 온실 기체 랩 ── */
 .u1c-gaslb { font-size: 12px; font-weight: 800; fill: #2B1D0A; }
-.u1c-gas { transition: height .6s var(--ease-out); }
+/* 쌓인 띠는 시간 간격(250ms)마다 조금씩 두꺼워진다. 그 사이를 매끄럽게 잇는다 */
+.u1c-band { transition: height .26s linear; }
+.u1c-edge { transition: y .26s linear; }
 .u1c-bar { transition: width .6s var(--ease-out), fill .4s; }
-.u1c-puff { opacity: 0; transform-box: fill-box; transform-origin: center; animation: u1cPuff 2.7s linear infinite; }
-@keyframes u1cPuff { 0% { opacity: 0; translate: 0 0; scale: .5; } 15% { opacity: .75; } 100% { opacity: 0; translate: 6px -46px; scale: 1.5; } }
+/* 하늘로 오르는 알갱이: 나오는 곳에서 하늘의 띠 속까지 */
+.u1c-rise { fill: #D2AE88; opacity: 0; transform-box: fill-box; transform-origin: center; animation: u1cRise 3s linear infinite; }
+@keyframes u1cRise { 0% { opacity: 0; translate: 0 0; scale: .7; } 12% { opacity: .95; } 84% { opacity: .9; } 100% { opacity: 0; translate: 0 var(--rise, -60px); scale: 1.25; } }
 .u1x-step .bv-card.u1c-card.col { height: 84px; gap: 3px; }
 @media (prefers-reduced-motion: reduce) {
-  .u1c-puff { animation: none; opacity: .6; }
+  .u1c-rise { animation: none; opacity: .8; translate: 0 var(--still, 0px); }
+  .u1c-band, .u1c-edge { transition: none; }
   .u1t-wave { animation: none; opacity: 1; }
 }
