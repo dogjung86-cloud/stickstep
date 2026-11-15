@@ -9,7 +9,7 @@
 // 그래픽 손질(2026-11-15): 선풍기는 둥근 망과 날개, 손잡이가 있는 휴대용 선풍기로 그리고, 뒤와 앞의 선풍기는 길과 일직선에 둔다(공 뒤, 길 끝).
 //   굴러가는 공에는 '바람이 미는 힘'(파랑, 늘 같은 길이)과 '운동 방향'(초록, 길이는 빠르기)을 공 가운데에서 그려 둘이 나란한지 보이게 했다.
 //   넷을 다 굴린 뒤(판정과 결론) 무대는 작은 칸 넷(없이, 뒤, 앞, 옆)으로 나뉘어 칸마다 자국, 선풍기, 공의 두 화살표를 다시 보인다.
-//   판정 동안은 '앞에서' 칸만 밝게 앞세운다.
+//   판정 동안은 '앞에서' 칸만 밝게 앞세우고, 판정 질문이 떠 있는 동안은 네 칸 모두 힘 화살표(파랑)를 숨긴다(답한 뒤와 결론에서는 보인다).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
@@ -47,7 +47,8 @@ export const fanLab: StepRenderer = (host, step, api) => {
   let tick = 0;
   let live: Pt[] = [];
   const trails: Partial<Record<Fan, Pt[]>> = {};
-  let grid: "off" | "ask" | "done" = "off"; // 넷을 다 굴린 뒤: 칸 넷 비교판(판정 동안은 '앞에서' 칸을 앞세운다)
+  // 넷을 다 굴린 뒤: 칸 넷 비교판. ask = 판정 질문이 떠 있는 동안('앞에서' 칸을 앞세우고 힘 화살표는 숨긴다), reveal = 답한 뒤, done = 결론
+  let grid: "off" | "ask" | "reveal" | "done" = "off";
 
   const cards: Record<Fan, BvCard> = {
     none: bvCard("u5x-f", { name: "선풍기 없이", sub: "바람 없음", key: "none" }),
@@ -109,7 +110,10 @@ export const fanLab: StepRenderer = (host, step, api) => {
     f.slot.ask(
       "굴러가던 공이 점점 느려지다가 멈췄어요. 공이 받은 힘의 방향은?",
       [{ t: "굴러가는 방향과 반대쪽", ok: true }, { t: "굴러가는 방향과 같은 쪽" }, { t: "힘을 받지 않았어요" }],
-      (ok) => api.recordQuiz(ok),
+      (ok) => {
+        grid = "reveal"; // 답한 뒤에는 칸마다 바람이 미는 힘을 다시 보인다
+        api.recordQuiz(ok);
+      },
       { why: "<b>앞에서</b> 바람이 불 때 공이 느려졌어요. 힘이 없으면 속력은 그대로였어요.", onNext: finish },
     );
   }
@@ -208,7 +212,7 @@ export const fanLab: StepRenderer = (host, step, api) => {
     const sp = Math.hypot(vx, vy);
     const ux = sp > 1e-6 ? vx / sp : 0;
     const uy = sp > 1e-6 ? vy / sp : 0;
-    const windy = wx !== 0 || wy !== 0;
+    const windy = (wx !== 0 || wy !== 0) && fl > 0;
     const same = windy && sp > 1e-6 && wx * ux + wy * uy > 0.9;
     const off = same ? 4.5 : 0;
     if (windy) u5Arrow(ctx, x - uy * off, y + ux * off, wx * fl, wy * fl, { color: U5.push, width: wd });
@@ -224,21 +228,26 @@ export const fanLab: StepRenderer = (host, step, api) => {
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
   };
-  /** 넷을 다 굴린 뒤: 무대를 작은 칸 넷으로(같은 무대를 절반 크기로). 칸마다 처음 가던 길, 선풍기, 자국, 공과 두 화살표. */
+  /** 넷을 다 굴린 뒤: 무대를 작은 칸 넷으로. 칸마다 같은 배율(S)로 출발점을 칸 왼쪽에 맞춰 처음 가던 길, 선풍기, 자국, 출발점의 공을 다시 그린다.
+   *  공의 운동 방향(초록)은 공 위에서 가는 쪽으로(자국을 덮지 않게), 바람이 미는 힘(파랑)은 공 가운데에서. 판정 질문이 떠 있는 동안은 힘을 숨긴다(그림이 답을 알려 주지 않게). */
   const drawGrid = (ctx: CanvasRenderingContext2D, w: number, h: number, t: number): void => {
     const pw = w / 2;
     const ph = h / 2;
-    const s = 0.5;
+    const S = 0.85; // 자국 배율(네 칸 같다)
+    const OX = 30; // 칸 안에서 출발점의 x
+    const OY = 54; // 칸 안에서 처음 가던 길의 y
     const my = h / 2 + 10;
+    const judging = grid === "ask" || grid === "reveal";
     GRID.forEach((k, i) => {
       const x0 = (i % 2) * pw;
       const y0 = Math.floor(i / 2) * ph;
-      const lead = grid === "ask" && k === "front";
+      const lead = judging && k === "front";
+      const P = (q: Pt): [number, number] => [x0 + OX + (q.x - X_START) * S, y0 + OY + (q.y - my) * S];
       ctx.save();
       ctx.beginPath();
       ctx.rect(x0, y0, pw, ph);
       ctx.clip();
-      ctx.globalAlpha = grid === "ask" && !lead ? 0.38 : 1;
+      ctx.globalAlpha = judging && !lead ? 0.38 : 1;
       if (lead) {
         ctx.fillStyle = "rgba(240,164,34,.08)";
         ctx.fillRect(x0, y0, pw, ph);
@@ -247,29 +256,40 @@ export const fanLab: StepRenderer = (host, step, api) => {
       ctx.strokeStyle = "rgba(232,238,249,.28)";
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(x0 + 7, y0 + my * s);
-      ctx.lineTo(x0 + pw - 5, y0 + my * s);
+      ctx.moveTo(x0 + OX, y0 + OY);
+      ctx.lineTo(x0 + pw - 5, y0 + OY);
       ctx.stroke();
       ctx.setLineDash([]);
-      const fp = fanAt(k, w, h);
-      if (fp) drawFan(ctx, x0 + fp.x * s, y0 + fp.y * s, fp.dir, t, false, 0.62);
+      // 선풍기(칸 안 자리): 뒤는 출발점 뒤, 앞은 길 끝, 옆은 길 위에서 아래로
+      if (k === "back") drawFan(ctx, x0 + 14, y0 + OY, [1, 0], t, false, 0.55);
+      if (k === "front") drawFan(ctx, x0 + pw - 14, y0 + OY, [-1, 0], t, false, 0.55);
+      if (k === "side") drawFan(ctx, x0 + 104, y0 + 23, [0, 1], t, false, 0.55);
       const tr = trails[k] ?? [];
+      // 출발점의 공(자국의 첫 점)
+      const p0 = tr[0];
+      if (p0) {
+        const [bx, by] = P(p0);
+        drawBall(ctx, bx, by, 6);
+      }
+      // 자국: 같은 시간 간격의 점(조금 크게, 공과 화살표가 덮지 않는 뒤쪽 층)
       ctx.fillStyle = COLOR[k];
-      tr.forEach((p) => {
+      tr.forEach((q, j) => {
+        if (j === 0) return;
+        const [qx, qy] = P(q);
         ctx.beginPath();
-        ctx.arc(x0 + p.x * s, y0 + p.y * s, 2.3, 0, Math.PI * 2);
+        ctx.arc(qx, qy, 3, 0, Math.PI * 2);
         ctx.fill();
       });
-      // 공과 두 화살표: 자국의 처음 3분의 1쯤 되는 자리에서(방향만 보이게 같은 길이로)
-      const p = tr[Math.min(tr.length - 1, Math.max(1, Math.round(tr.length * 0.3)))];
-      if (p) {
-        const bx = x0 + p.x * s;
-        const by = y0 + p.y * s;
-        drawBall(ctx, bx, by, 7);
-        ballArrows(ctx, k, bx, by, p.vx, p.vy, 22, 22, 3.5);
+      if (p0) {
+        const [bx, by] = P(p0);
+        const sp = Math.hypot(p0.vx, p0.vy) || 1;
+        // 운동 방향: 공 위쪽에서 가는 쪽으로(자국 위를 지나지 않게)
+        u5Arrow(ctx, bx - 3, by - 12, (p0.vx / sp) * 22, (p0.vy / sp) * 22, { color: U5.up, width: 3.5 });
+        // 바람이 미는 힘: 공 가운데에서(판정 질문 동안은 숨김)
+        if (grid !== "ask") ballArrows(ctx, k, bx, by, p0.vx, p0.vy, 20, 0, 3.5);
       }
       u5Text(ctx, NAME[k], x0 + 8, y0 + 13, { px: 12.5, align: "left", color: lead ? "#FFD27A" : U5.ink });
-      u5Text(ctx, SHORT[k], x0 + pw - 8, y0 + ph - 12, { px: 12, align: "right", color: COLOR[k] });
+      u5Text(ctx, SHORT[k], x0 + pw - 8, y0 + 13, { px: 12, align: "right", color: COLOR[k] });
       ctx.restore();
       if (lead) {
         ctx.strokeStyle = "rgba(240,164,34,.9)";
