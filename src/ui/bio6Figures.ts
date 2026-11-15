@@ -432,7 +432,7 @@ export function slideBubbleScopeFig(alt: string): string {
       <path d="M270 92a11 11 0 0 1 9 -7" fill="none" stroke="#C9D4E2" stroke-width="2.4" stroke-linecap="round"/>
     </g>
     <circle cx="292" cy="104" r="46" fill="none" stroke="#9FB3D1" stroke-width="3"/>
-    <text x="292" y="44" text-anchor="middle" font-size="13" font-weight="800" fill="#DCE6F5">현미경으로 보면</text>`;
+    <text x="292" y="44" text-anchor="middle" font-size="14" font-weight="800" fill="#DCE6F5">현미경으로 보면</text>`;
   return slideBox(alt, "0 26 344 132", body, 440);
 }
 

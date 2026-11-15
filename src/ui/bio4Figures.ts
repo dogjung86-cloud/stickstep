@@ -336,7 +336,7 @@ export function cellTypeArt(kind: "nerve" | "rbc" | "epi"): string {
 /** blanks: 가릴 단계 인덱스(0=종 … 6=계) — 퀴즈용. 무인자는 concept·recap 완성본. */
 export function rankLadderFig(blanks?: number[]): string {
   // 2026-11-15 그래픽 손질: 예시 이름이 그림 밖으로 잘려("척삭동물문"이 "척삭동물", "동물계"가 "동물") 보였고 "큰 단위"가 계 알약에 가렸다.
-  // 알약 폭을 줄이고 사다리를 왼쪽으로 붙여 이름 자리를 확보, 예시와 축 글자를 12.5px로, 축 글자는 알약과 겹치지 않는 왼쪽 위아래에.
+  // 알약 폭을 줄여 이름 자리를 확보하고, 예시와 축 글자를 13.5px로(개념 그림 칸에서 0.92배로 줄어 폰 표시 12.5px), 축 글자는 알약과 겹치지 않는 왼쪽 위아래에.
   const RANKS = ["종", "속", "과", "목", "강", "문", "계"];
   const EXAMPLES = ["들고양이종", "고양이속", "고양이과", "식육목", "포유강", "척삭동물문", "동물계"];
   const marks = ["(가)", "(나)", "(다)", "(라)", "(마)", "(바)", "(사)"];
@@ -351,14 +351,14 @@ export function rankLadderFig(blanks?: number[]): string {
     return `
       <rect x="${x}" y="${y}" width="${w}" height="24" rx="12" fill="${blanked ? "#FFF3BF" : "#E6FCF1"}" stroke="${blanked ? "#E8A80C" : "#63C79B"}" stroke-width="2"/>
       <text x="${CX}" y="${y + 16.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#1F4B38">${label}</text>
-      <text x="${x + w + 8}" y="${y + 16.8}" font-size="12.5" font-weight="700" fill="#6B7684">${EXAMPLES[i]}</text>`;
+      <text x="${x + w + 8}" y="${y + 17}" font-size="13.5" font-weight="700" fill="#6B7684">${EXAMPLES[i]}</text>`;
   }).join("");
   return `<svg viewBox="0 0 340 238" fill="none" xmlns="http://www.w3.org/2000/svg" role="img"
     aria-label="종에서 계까지 점점 커지는 분류체계 사다리">
     <path d="M20 24 v184" stroke="#C9D6CE" stroke-width="2.4"/>
     <path d="M20 214 l-5 -9 h10 Z" fill="#C9D6CE"/>
-    <text x="4" y="14" font-size="12.5" font-weight="700" fill="#6B7684">작은 단위</text>
-    <text x="4" y="232" font-size="12.5" font-weight="700" fill="#6B7684">큰 단위</text>
+    <text x="4" y="14" font-size="13.5" font-weight="700" fill="#6B7684">작은 단위</text>
+    <text x="4" y="233" font-size="13.5" font-weight="700" fill="#6B7684">큰 단위</text>
     ${rows}
   </svg>`;
 }
