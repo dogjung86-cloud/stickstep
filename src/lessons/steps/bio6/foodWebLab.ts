@@ -65,7 +65,7 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
   KEYS.forEach((k) => {
     cards[k] = bvCard("fwb-card col", { name: `${NAME[k]} 빼기`, sub: "두 생태계에서", icon: ICON[k], key: k });
   });
-  const cmpBtn = bvBtn("main fwb-cmp", "두 생태계 견주어 보기");
+  const cmpBtn = bvBtn("main fwb-cmp", "두 생태계 비교해 보기");
   cmpBtn.hidden = true;
 
   const webEl = (w: "A" | "B"): SVGGElement => svg.querySelector(`.fwb-web[data-w="${w}"]`) as SVGGElement;
@@ -170,7 +170,7 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     phase = "ask";
     apply("frog", true);
-    f.say("개구리를 뺀 두 생태계예요. 맨 위의 <b>매</b>를 견주어 봐요.");
+    f.say("개구리를 뺀 두 생태계예요. 맨 위의 <b>매</b>를 비교해 봐요.");
     f.slot.ask(
       "(나)의 매는 개구리가 사라져도 버텼어요. 까닭은?",
       [{ t: "대신 먹을 생물이 있어서", ok: true }, { t: "(나)의 매가 힘이 더 세서" }, { t: "(나)에 사는 생물의 마릿수가 많아서" }],

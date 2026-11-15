@@ -328,7 +328,7 @@ export const UNIT2: Unit = {
     lesson({
       id: "u2l3", unitId: "u2",
       title: "현미경으로 직접 보기",
-      subtitle: "표본을 만들고, 초점을 맞추고, 견주기",
+      subtitle: "표본을 만들고, 초점을 맞추고, 비교하기",
       label: "현미경", icon: "microscope", minutes: 10, standard: "책 42~43쪽",
       doneNote: "염색해야 핵이 또렷해요",
       steps: [

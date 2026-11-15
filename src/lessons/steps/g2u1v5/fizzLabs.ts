@@ -91,7 +91,7 @@ export const g2u1FizzLab: StepRenderer = (host, step, api) => {
     f.pips(done.size);
     cur = -1;
     if (done.size < 3) {
-      f.say(`${b.name}에서는 10초에 <b>${b.n}개</b>였어요. 다른 물에도 담가 견주어 보세요.`);
+      f.say(`${b.name}에서는 10초에 <b>${b.n}개</b>였어요. 다른 물에도 담가 비교해 보세요.`);
       api.setCTA(`다른 물에도 담가 보세요 (${done.size}/3)`, { enabled: false });
       controls(false);
       return;

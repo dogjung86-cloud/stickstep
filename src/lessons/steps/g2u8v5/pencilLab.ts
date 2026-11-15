@@ -89,7 +89,7 @@ export const pencilLab: StepRenderer = (host, step, api) => {
       finished = true;
       armSeg.lock(true);
       eyeSeg.lock(true);
-      f.say(`${NAME[arm]}는 <b>${k}칸</b>이에요. 세 기록을 견주어 볼까요?`);
+      f.say(`${NAME[arm]}는 <b>${k}칸</b>이에요. 세 기록을 비교해 볼까요?`);
       tm.later(askFinal, 1400);
     } else f.say(`${NAME[arm]} 연필이 <b>${k}칸</b> 옮겨 갔어요.`);
   };

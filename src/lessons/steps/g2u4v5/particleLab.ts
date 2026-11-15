@@ -228,7 +228,7 @@ export const g2u4IonLab: StepRenderer = (host, step, api) => {
     tap();
     moved -= 1;
     draw();
-    f.say("전자를 되돌렸어요. (+)와 (−)의 개수를 다시 견주어 보세요.");
+    f.say("전자를 되돌렸어요. (+)와 (−)의 개수를 다시 비교해 보세요.");
   });
   label();
   f.slot.setControls(give, back);

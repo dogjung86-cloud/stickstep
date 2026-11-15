@@ -77,7 +77,7 @@ export const g2u5ScopeLab: StepRenderer = (host, step, api) => {
       }
     }),
   );
-  const go = bvBtn("main g2u5x-go", "세 표본 견주기");
+  const go = bvBtn("main g2u5x-go", "세 표본 비교하기");
   go.disabled = true;
   go.addEventListener("click", () => {
     tap();

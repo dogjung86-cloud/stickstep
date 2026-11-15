@@ -59,7 +59,7 @@ export const modelLab: StepRenderer = (host, step, api) => {
       log.set(idx(wire, c), band ? "한 줄 띠" : "흩어짐");
       f.pips(done.size);
       if (c === "top") f.say("위에서 찍으니 공들이 <b>흩어져</b> 보여요. 두 모형이 똑같이 보여 가릴 수 없어요.");
-      else if (band) f.say("공들이 <b>한 줄로 겹쳐</b> 띠처럼 찍혔어요. 아래의 실제 은하수와 견주어 보세요.");
+      else if (band) f.say("공들이 <b>한 줄로 겹쳐</b> 띠처럼 찍혔어요. 아래의 실제 은하수와 비교해 보세요.");
       else f.say("공들이 위아래로 <b>흩어져</b> 찍혔어요. 띠 모양이 아니에요.");
       if (done.size === 4) {
         finished = true;

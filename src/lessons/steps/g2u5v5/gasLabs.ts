@@ -168,7 +168,7 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
       else f.say(kept.bright ? "빛이 없으니 이산화 탄소가 <b>줄지 않았어요</b>. 오히려 조금 늘었어요." : "이산화 탄소가 줄지 않고 조금 늘었어요. <b>전등을 켜고</b> 다시 재요.");
       if (kept.bright && kept.dark) {
         [cPlant, cLid, cLight].forEach((c) => c.lock(true));
-        run.textContent = "두 측정 견주기";
+        run.textContent = "두 측정 비교하기";
         run.classList.add("g2u5x-go");
         busy = true;
         run.onclick = () => {
@@ -278,7 +278,7 @@ export const g2u5DarkLab: StepRenderer = (host, step, api) => {
       }
       if (kept.size === 3) {
         chips.forEach((c) => c.lock(true));
-        run.textContent = "세 측정 견주기";
+        run.textContent = "세 측정 비교하기";
         run.classList.add("g2u5x-go");
         run.onclick = () => {
           tap();

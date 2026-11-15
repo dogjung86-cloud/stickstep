@@ -68,7 +68,7 @@ export const luxLab: StepRenderer = (host, step, api) => {
       finished = true;
       [bLamp, bRoom, bMeas].forEach((b) => (b.disabled = true));
       seg.lock(true);
-      f.say("다섯 자리의 밝기를 모두 쟀어요. 기록을 견주어 볼까요?");
+      f.say("다섯 자리의 밝기를 모두 쟀어요. 기록을 비교해 볼까요?");
       tm.later(askFinal, 1400);
     }
   });

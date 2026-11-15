@@ -94,7 +94,7 @@ export const balloonLab: StepRenderer = (host, step, api) => {
       if (before) {
         finished = true;
         f.pips(2);
-        f.say("풍선이 커진 뒤의 간격을 쟀어요. 처음 간격과 견주어 볼까요?");
+        f.say("풍선이 커진 뒤의 간격을 쟀어요. 처음 간격과 비교해 볼까요?");
         tm.later(askFinal, 1600);
       } else f.say("나중 간격만 쟀어요. <b>처음 간격을 재지 않아</b> 얼마나 늘었는지 알 수 없어요. 바람을 빼고 처음부터 다시 해 보세요.");
     }

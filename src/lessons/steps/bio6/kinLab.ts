@@ -187,7 +187,7 @@ export const kinLab: StepRenderer = (host, step, api) => {
     tally();
     f.pips(KEYS.length + 1);
     f.say("박쥐의 가까운 사이를 찾았어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("생물은 겉모습 하나가 아니라 <b>여러 특징</b>을 견주어 나눠요. 같은 특징이 많을수록 가까운 사이예요.");
+    f.slot.conclude("생물은 겉모습 하나가 아니라 <b>여러 특징</b>을 비교해 나눠요. 같은 특징이 많을수록 가까운 사이예요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }

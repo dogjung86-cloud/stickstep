@@ -154,7 +154,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
       f.pips(4);
       f.say("용수철저울의 값은 달에서 줄었는데 양팔저울의 값은 <b>그대로</b>예요. 달라진 것은 <b>무게</b>뿐이에요.");
       tm.later(askFinal, 2600);
-    } else if (!finished) f.say(tool === "spring" ? "용수철저울은 당기는 힘의 크기, <b>무게</b>를 재요. 다른 칸도 채워 보세요." : "양팔저울은 추와 견주어 <b>질량</b>을 재요. 다른 칸도 채워 보세요.");
+    } else if (!finished) f.say(tool === "spring" ? "용수철저울은 당기는 힘의 크기, <b>무게</b>를 재요. 다른 칸도 채워 보세요." : "양팔저울은 추와 비교해 <b>질량</b>을 재요. 다른 칸도 채워 보세요.");
   };
   const pick = (t: Tool | null, p: Place | null): void => {
     if (finished) return;

@@ -202,7 +202,7 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
     stain: bvCard("scp-card col", { name: "검정말잎", sub: "아세트올세인", icon: BV_ICON.leafStain, key: "stain" }),
   };
   const noBtn = bvBtn("scp-no", "핵이 안 보여요");
-  const cmpBtn = bvBtn("main scp-cmp", "두 세포 견주어 보기");
+  const cmpBtn = bvBtn("main scp-cmp", "두 세포 비교해 보기");
   cmpBtn.hidden = true;
 
   function setBlur(v: number): void {
@@ -289,7 +289,7 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
       // 세 표본을 다 봤다: 견주어 볼 차례(버튼은 학생이 누른다)
       noBtn.hidden = true;
       cmpBtn.hidden = false;
-      api.setCTA("두 세포를 견주어 보세요", { enabled: false });
+      api.setCTA("두 세포를 비교해 보세요", { enabled: false });
     }
     mark();
   }
@@ -350,7 +350,7 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
     phase = "ask";
     mark();
     setDuo("cheek", "stain");
-    f.say("왼쪽은 입안 상피세포, 오른쪽은 검정말잎 세포예요. 나란히 놓고 견주어 봐요.");
+    f.say("왼쪽은 입안 상피세포, 오른쪽은 검정말잎 세포예요. 나란히 놓고 비교해 봐요.");
     f.slot.ask(
       "검정말잎 세포에서만 볼 수 있는 것은?",
       [{ t: "세포벽과 엽록체", ok: true }, { t: "핵과 세포막" }, { t: "핵과 엽록체" }],
