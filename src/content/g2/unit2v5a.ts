@@ -4,6 +4,7 @@ import { mcq, multi, opener, order, ox, recap, cut } from "../dsl";
 import { earthLayersFig, geoMiniArt } from "../../ui/geoFigures";
 import { v5Mini } from "../../ui/g2u2v5Figures";
 import { lab, note, lessonSteps, term, words } from "./unit2v5kit";
+import { sciFig } from "./sciFigG2";
 
 const systemLab = lab("g2u2SystemLab");
 const probeLab = lab("g2u2ProbeLab");
@@ -35,6 +36,7 @@ export const L1: Step[] = lessonSteps(
     { k: "figure", svg: cut("geo", "g2u2l1b", "반으로 자른 복숭아의 얇은 껍질을 스틱맨이 손가락으로 짚고, 자른 면에 두꺼운 과육과 씨의 겉과 속이 보이는 장면"), cap: "껍질은 종이처럼 얇고, 과육이 가장 두꺼워요" },
         term("층상 구조", "지권이 <b>여러 개의 층</b>으로 이루어진 구조예요. 지구 속을 통과하는 지진파를 연구해서 알아냈어요. 바깥부터 지각, 맨틀, 외핵, 내핵의 네 층이에요."),
         term("지각과 맨틀", "<b>지각</b>은 가장 바깥의 얇은 고체 층이에요. 대륙 지각은 평균 약 35 km, 해양 지각은 평균 약 5 km 두께예요. <b>맨틀</b>은 지각 아래부터 깊이 약 2900 km까지의 고체 층으로, 지구 전체 부피의 약 80%를 차지해요."),
+        sciFig("g2u2l1f1", "지구를 부채꼴로 자른 단면에서 지각은 바깥 둘레의 선 하나 굵기예요. 그 지표 한 자리를 키운 단면에서는 산맥이 있는 대륙 아래 지각이 두껍게 내려가고, 바다 밑의 해양 지각은 아주 얇아요. 지각 아래는 고체인 맨틀이에요.", "지구 전체로 보면 지각은 선 하나 굵기예요. 지표를 키워 깊이를 실제 비율로 보면 대륙 아래 지각은 두껍고 바다 밑 지각은 얇아요."),
         term("외핵과 내핵", "맨틀 아래부터 지구 중심까지가 핵이에요. <b>외핵</b>은 액체 상태로, <b>내핵</b>은 고체 상태로 추정해요. 핵은 지각과 맨틀보다 밀도가 큰 물질로 이루어져 있어요."),
         note("그림에서 맨틀을 붉게 칠하다 보니 녹아 흐르는 액체로 생각하기 쉬워요. 맨틀은 <b>고체</b>예요. 네 층 가운데 액체는 외핵 하나뿐이에요."),
       ],
