@@ -26,7 +26,7 @@ function arw(x1: number, y1: number, x2: number, y2: number, color: string, w = 
   );
 }
 
-/** 힘의 3요소 화살표 — ㉠ 시작점 ㉡ 길이 ㉢ 화살촉 (라이트). 나무 도막에 작용하는 가한 힘(파랑) */
+/** 힘의 3요소 화살표: ㉠ 시작점 ㉡ 길이 ㉢ 화살촉 (라이트). 나무 도막에 작용하는 가한 힘(파랑) */
 export function arrow3Fig(): string {
   return `<svg viewBox="0 0 344 170" ${NS} role="img" aria-label="나무 도막에 작용하는 힘을 나타낸 화살표와 세 요소 라벨">
     <defs>
@@ -52,7 +52,7 @@ export function arrow3Fig(): string {
   </svg>`;
 }
 
-/** 합력 계산 — (가) 같은 방향 4N+2N, (나) 반대 방향 4N·2N (라이트, 화살표 길이 2:1).
+/** 합력 계산: (가) 같은 방향 4N+2N, (나) 반대 방향 4N·2N (라이트, 화살표 길이 2:1).
  *  두 힘은 토막에 닿은 면에서 시작한다. (나)의 두 힘은 토막 가운데 높이의 한 직선 위(돌지 않는 배치), (가)는 가운데 줄을 사이에 두고 위아래 대칭. */
 export function netForceFig(): string {
   const block = (bx: number, label: string): string =>
