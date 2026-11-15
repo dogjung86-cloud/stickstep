@@ -4,9 +4,9 @@
 // 정리는 새 랩의 장면과 값으로 다시 썼다. 문제는 새 랩의 판정과 같은 것을 두 번 묻던 문항을 빼고, 랩의 값에서 한 걸음 옮겨 묻는 문항과 형식을 섞었다.
 // 수치는 자체 제작이다(랩의 값: 용수철 1 cm에 0.5 N, 부력 20 N에서 14 N, 지구 29.4 N과 달 4.9 N).
 import type { Step } from "../lessons/types";
-import { concept, recap, mcq, ox, multi, order, binSort, rimg, cut } from "./dsl";
+import { concept, recap, mcq, ox, multi, order, binSort, cut } from "./dsl";
 import { sciFigMore } from "./sciFigG1";
-import { arrow3Fig, netForceFig, gravityDirFig, springGraphFig, bookForcesFig, miniArt } from "../ui/forceFigures";
+import { arrow3Fig, netForceFig, gravityDirFig, springGraphFig, bookForcesFig, miniArt, twoForceItem } from "../ui/forceFigures";
 
 export interface U5Part {
   /** 랩 뒤에 끼우는 개념 스텝(없으면 생략) */
@@ -167,7 +167,13 @@ const L2: U5Part = {
     order({
       title: "알짜힘이 큰 것부터<br>차례로 놓아요",
       lead: "수레 네 대에 저마다 두 힘이 작용해요. <b>가장 큰 것</b>이 맨 위예요.",
-      items: ["오른쪽 4 N과 오른쪽 2 N", "오른쪽 5 N과 왼쪽 2 N", "오른쪽 6 N과 왼쪽 5 N", "오른쪽 3 N과 왼쪽 3 N"],
+      // 항목마다 모눈(한 칸 1 N) 위 수레의 두 힘 화살표와 작은 글(화살표를 읽는 연습)
+      items: [
+        twoForceItem(4, 2, "오른쪽 4 N과 오른쪽 2 N"),
+        twoForceItem(5, -2, "오른쪽 5 N과 왼쪽 2 N"),
+        twoForceItem(6, -5, "오른쪽 6 N과 왼쪽 5 N"),
+        twoForceItem(3, -3, "오른쪽 3 N과 왼쪽 3 N"),
+      ],
       explainGood: "맞아요. 차례로 6 N, 3 N, 1 N, 0 N이에요. 같은 방향만 더하고 반대 방향은 빼요.",
       explainBad: "하나씩 셈해요. 같은 방향인 4 N과 2 N은 더해서 6 N, 반대 방향인 5 N과 2 N은 빼서 3 N, 6 N과 5 N은 1 N, 3 N과 3 N은 0 N이에요. 숫자가 커 보여도 반대 방향이면 서로 지워져요.",
     }),
@@ -210,7 +216,7 @@ const L3: U5Part = {
         name: "무게", color: "#F25757", art: miniArt("weightArt"),
         text: "물체에 작용하는 <b>중력의 크기</b>. 단위는 <b>N</b>이고 <b>용수철저울</b>로 재요. 재는 곳에 따라 달라져요.",
         examples: ["지구에서 29.4 N", "달에서 4.9 N", "달은 지구의 약 6분의 1"],
-        more: "<b class='rm-h'>왜 곳에 따라 다를까요</b>무게는 중력의 크기예요. 당기는 천체가 달라지면 당기는 세기도 달라져요. 달의 중력은 지구의 약 <b>6분의 1</b>이라 같은 물체의 무게도 달에서는 약 6분의 1이에요.<b class='rm-h'>실험에서는</b>질량 3 kg인 상자를 용수철저울에 매달았더니 지구에서는 29.4 N, 달에서는 4.9 N이었어요. 용수철도 달에서는 조금만 늘어났죠. 29.4를 6으로 나누면 4.9예요.<b class='rm-h'>헷갈리기 쉬운 점</b>무게의 단위는 kg이 아니라 힘의 단위인 <b>N</b>이에요. 일상에서 몸무게를 kg으로 말하지만 과학에서 kg은 질량의 단위예요." + rimg("u5-moon-scale.webp", "같은 상자를 매단 용수철저울. 지구에서는 길게, 달에서는 조금만 늘어나요"),
+        more: "<b class='rm-h'>왜 곳에 따라 다를까요</b>무게는 중력의 크기예요. 당기는 천체가 달라지면 당기는 세기도 달라져요. 달의 중력은 지구의 약 <b>6분의 1</b>이라 같은 물체의 무게도 달에서는 약 6분의 1이에요.<b class='rm-h'>실험에서는</b>질량 3 kg인 상자를 용수철저울에 매달았더니 지구에서는 29.4 N, 달에서는 4.9 N이었어요. 용수철도 달에서는 조금만 늘어났죠. 29.4를 6으로 나누면 4.9예요." + sciFigMore("u5l3f1") + "<b class='rm-h'>헷갈리기 쉬운 점</b>무게의 단위는 kg이 아니라 힘의 단위인 <b>N</b>이에요. 일상에서 몸무게를 kg으로 말하지만 과학에서 kg은 질량의 단위예요.",
       },
       {
         name: "질량", color: "#37C08E", art: miniArt("massArt"),
