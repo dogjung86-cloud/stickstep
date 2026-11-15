@@ -204,6 +204,27 @@
 }
 .mgf-find.show { opacity: 1; transform: none; }
 .mgf-find.none { background: #FFD8A8; color: #4A2B00; }
+/* 판정과 결론의 비교판: ×400 창 셋을 나란히(2026-11-15 그래픽 손질). 큰 창과 읽는 값은 걷는다 */
+.mgf-sum { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .35s var(--ease-out); }
+.bv-canvas.mgf-sumon > .mgf-sum { opacity: 1; }
+.bv-canvas.mgf-sumon > :not(.mgf-sum) { opacity: 0; transition: opacity .25s; }
+.mgf-sw { box-shadow: 0 0 0 2.5px #2B3F5C, 0 0 0 5px rgba(120, 150, 200, .14), 0 6px 18px rgba(0, 0, 0, .4); transition: box-shadow .35s, opacity .35s; }
+.mgf-corks { inset: -16px; background-repeat: repeat; transform: rotate(-7deg); }
+.mgf-sn, .mgf-sp { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.mgf-sn { top: 122px; font-size: 13px; line-height: 16px; font-weight: 800; color: #E8EEF9; }
+.mgf-sp {
+  top: 144px; height: 26px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center;
+  font-size: 12.5px; font-weight: 800; color: #06281C; background: #63E6BE;
+}
+.mgf-sp.none { background: #FFD8A8; color: #4A2B00; }
+.mgf-life { position: absolute; top: 180px; display: grid; justify-items: center; gap: 3px; opacity: 0; transition: opacity .35s .1s; }
+.mgf-life i { width: 100%; height: 10px; border: 2px solid #63E6BE; border-top: 0; border-radius: 0 0 7px 7px; }
+.mgf-life b { font-size: 13px; line-height: 16px; font-weight: 800; color: #63E6BE; white-space: nowrap; }
+.mgf-life.non { padding-top: 13px; }
+.mgf-life.non b { color: #9FB3D1; }
+.bv-canvas.mgf-sumdone .mgf-life { opacity: 1; }
+.bv-canvas.mgf-sumdone .mgf-sw.onion, .bv-canvas.mgf-sumdone .mgf-sw.cork { box-shadow: 0 0 0 3px #63E6BE, 0 0 0 6px rgba(99, 230, 190, .2), 0 6px 18px rgba(0, 0, 0, .4); }
+.bv-canvas.mgf-sumdone .mgf-sw.salt { opacity: .6; }
 
 /* ── u2l2 세포 구조 랩(.cwk-) ─────────────────────── */
 .cwk-svg text { font-family: inherit; }
@@ -294,9 +315,9 @@ circle.cwk-hit { pointer-events: all; }
 }
 .off-nuc .cwk-cellg { animation: cwkShiver .36s linear infinite; }
 
-/* 세포벽이 멈춘 세포: 벽이 흐려지고 모양이 무너진다(모양 보간은 랩 코드가 한다) */
+/* 세포벽이 멈춘 세포: 벽은 제자리에 끊어진 띠로 남고, 막과 그 속만 둥글어진다(모양 보간은 무대 코드가 한다. 입체 무대와 같은 규칙) */
 .cwk-wallp, .cwk-wallhi { transition: opacity .4s; }
-.off-wall .cwk-wallp { opacity: .3; stroke-dasharray: 9 9; }
+.off-wall .cwk-wallp { opacity: .5; stroke-dasharray: 9 9; }
 .off-wall .cwk-wallhi { opacity: 0; }
 
 .cwk-legend {

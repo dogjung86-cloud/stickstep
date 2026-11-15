@@ -38,7 +38,7 @@ export const bio = ART_BIO;
 
 // 대표 생물 이름 → 아이콘 키 매핑(없으면 fallback)
 const NAME_ICON: Record<string, string> = {
-  대장균: "bacteria", 포도상구균: "bacteria", 젖산균: "bacteria",
+  대장균: "bacteria", 포도상구균: "coccus", 젖산균: "bacillus",
   아메바: "amoeba", 짚신벌레: "paramecium", 해캄: "algae", 다시마: "algae",
   송이버섯: "mushroom", 버섯: "mushroom", 푸른곰팡이: "mold", 효모: "yeast",
   우산이끼: "fern", 소나무: "pine", 진달래: "flower", 고사리: "fern",
@@ -55,8 +55,52 @@ const BIO_PHOTO = new Set([
   "yeast", "pine", "fern", "flower", "fish", "bee", "bird",
 ]);
 
+// 세균 두 가지는 코드 그림(2026-11-15 그래픽 손질). 발주 그림 bacteria.webp는 편모가 달린 막대균(대장균)이라
+// 젖산균(편모 없는 막대균이 짧게 이어진 것)과 포도상구균(공 모양 세균이 포도송이처럼 모인 것)에 맞지 않았다.
+// 발주 그림과 같은 결(흰 바탕, 왼쪽 위 빛의 둥근 입체, 옅은 바닥 그림자)로 그린다. 그라데이션 id는 부를 때마다 새로 붙인다.
+let codeBioN = 0;
+const CODE_BIO: Record<string, (name: string) => string> = {
+  bacillus: (name) => {
+    const g = `cbB${++codeBioN}`;
+    // 짧게 이어진 막대 사슬 둘(셋, 둘). 막대 길이 16, 굵기 8.5
+    const rod = (x: number, y: number, a: number): string =>
+      `<g transform="translate(${x} ${y}) rotate(${a})"><rect x="-8" y="-4.25" width="16" height="8.5" rx="4.25" fill="url(#${g})" stroke="#1F7A55" stroke-width=".8" stroke-opacity=".55"/>` +
+      `<path d="M-4.6 -1.9H3.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round" opacity=".55"/></g>`;
+    const chain = (x: number, y: number, a: number, n: number): string => {
+      const r = (a * Math.PI) / 180;
+      return Array.from({ length: n }, (_, i) => rod(x + Math.cos(r) * 17.4 * i, y + Math.sin(r) * 17.4 * i, a)).join("");
+    };
+    return `<svg class="bio-ico" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${name}">
+      <defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A6E9C9"/><stop offset=".5" stop-color="#3DBA87"/><stop offset="1" stop-color="#1D8A5D"/></linearGradient></defs>
+      <rect width="64" height="64" rx="12" fill="#fff"/>
+      <ellipse cx="33" cy="57" rx="23" ry="2.6" fill="#2A3A5E" opacity=".08"/>
+      ${chain(13.5, 41, -34, 3)}${chain(31, 46, 17, 2)}
+    </svg>`;
+  },
+  coccus: (name) => {
+    const g = `cbC${++codeBioN}`;
+    // 크기가 조금씩 다른 공 모양 세균이 송이로 모였다(뒤에서 앞으로 그린다)
+    const balls: [number, number, number][] = [
+      [25, 16, 5.4], [36, 14.5, 5.8], [46, 20, 5.2],
+      [18.5, 25.5, 5.8], [29.5, 24.5, 6.2], [40.5, 27, 6], [50.5, 30.5, 5.3],
+      [23.5, 35.5, 6], [34.5, 36, 6.4], [45.5, 39.5, 5.8],
+      [12.5, 44.5, 4.8], [28.5, 46, 5.9], [39.5, 48, 5.6], [51.5, 50.5, 4.4],
+    ];
+    const ball = ([x, y, r]: [number, number, number]): string =>
+      `<circle cx="${x}" cy="${y}" r="${r}" fill="url(#${g})" stroke="#5B3FC4" stroke-width=".7" stroke-opacity=".55"/>` +
+      `<ellipse cx="${(x - r * 0.36).toFixed(1)}" cy="${(y - r * 0.4).toFixed(1)}" rx="${(r * 0.3).toFixed(1)}" ry="${(r * 0.22).toFixed(1)}" fill="#fff" opacity=".7"/>`;
+    return `<svg class="bio-ico" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${name}">
+      <defs><radialGradient id="${g}" cx=".36" cy=".32" r=".74"><stop offset="0" stop-color="#EEE8FF"/><stop offset=".5" stop-color="#9C82F7"/><stop offset="1" stop-color="#6245D3"/></radialGradient></defs>
+      <rect width="64" height="64" rx="12" fill="#fff"/>
+      <ellipse cx="32" cy="58" rx="22" ry="2.6" fill="#2A3A5E" opacity=".08"/>
+      ${balls.map(ball).join("")}
+    </svg>`;
+  },
+};
+
 export function organism(name: string): string {
   const key = NAME_ICON[name];
+  if (key && CODE_BIO[key]) return CODE_BIO[key](name);
   if (key && BIO_PHOTO.has(key)) {
     // 발주 일러스트 우선. 로드 실패 시 부드럽게 숨겨 깨진 이미지 아이콘을 피한다.
     return `<img class="bio-ico" src="${base}bio/${key}.webp" alt="${name}" onerror="this.classList.add('bio-ico-broken')"/>`;

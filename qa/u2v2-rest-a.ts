@@ -5,6 +5,7 @@
 //             L2 mcq 11/multi 1 · diff 5/5/2 · 시각 9 · bogi 1
 import type { ExamItem } from "../src/content/exams/types";
 import { svgTable, dbox, sizeBandFig } from "../src/ui/examFigures";
+import { examPlantCellFig, examAnimalCellFig } from "../src/ui/bio6Figures";
 
 const IMG_BASE = "";
 /** exam/u2 발주 실사. loading=lazy 금지(사고 #14). */
@@ -286,7 +287,7 @@ export const POOL_U2V2_REST_A: ExamItem[] = [
     type: "mcq",
     diff: 1,
     prompt: "그림은 어떤 세포를 나타낸 것이에요. 이 세포에서 <b>볼 수 없는</b> 구조와 그 까닭을 옳게 짝지은 것은?",
-    figure: bimg("figs/animal-cell.webp", "테두리가 둥근 세포 안에 크고 둥근 덩어리 하나와 길쭉한 주황색 알갱이 여러 개가 그려진 그림"),
+    figure: examAnimalCellFig("테두리가 둥근 세포 안에 크고 둥근 덩어리 하나와 길쭉한 주황색 알갱이 여러 개가 그려진 그림"),
     options: [
       "엽록체 · 동물은 빛으로 양분을 만들지 않고 먹이에서 얻기 때문이에요",
       "핵 · 동물세포에는 유전물질이 들어 있지 않기 때문이에요",
@@ -494,8 +495,7 @@ export const POOL_U2V2_REST_A: ExamItem[] = [
     type: "multi",
     diff: 3,
     prompt: "그림은 식물세포를 나타낸 것이에요. 이 세포에 대한 설명으로 옳은 것을 <b>모두</b> 골라 보세요.",
-    figure: bimg(
-      "figs/plant-cell.webp",
+    figure: examPlantCellFig(
       "각진 세포의 바깥에 두꺼운 테두리가 있고 안쪽에 크고 둥근 덩어리 하나, 주황색 알갱이 여러 개, 초록색 알갱이 여러 개가 그려진 그림",
     ),
     options: [

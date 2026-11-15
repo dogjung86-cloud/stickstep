@@ -2,13 +2,14 @@
 // WebGL을 쓸 수 없는 기기에서 입체 무대(cellStage3d.ts) 대신 뜬다. 2026-11-11까지는 이것이 정본 무대였다.
 //   동물: 양분 알갱이가 세포막을 지나 들어온다 → 마이토콘드리아가 에너지 불꽃을 낸다. 핵에서는 조절의 고리가 퍼진다.
 //   식물: 햇빛을 받은 엽록체에서 양분이 나온다 → 마이토콘드리아가 에너지를 낸다. 세포벽이 육각형 모양을 잡고 있다.
-// 구조 색은 v3 도해와 같다(bio6Kit.BV). 움직임은 CSS 키프레임(styles/bio6.css의 .cwk-), 세포벽이 무너지는 모양만 타이머 보간이다.
+// 구조 색은 v3 도해와 같다(bio6Kit.BV). 움직임은 CSS 키프레임(styles/bio6.css의 .cwk-), 세포벽이 멈췄을 때 세포가 둥글어지는 모양만 타이머 보간이다.
+// 세포벽이 멈추면 입체 무대와 같은 규칙으로 그린다: 벽은 육각형 자리에 끊어진 띠로 남고, 막과 그 속만 육각형 안쪽에 꼭 맞는 타원으로 둥글어진다(아래로 처지지 않는다).
 // 과학 가드: 식물세포의 벽은 막 바깥, 핵은 하나, 엽록체가 만드는 것은 양분이고 에너지는 마이토콘드리아가 만든다.
 
 import { el } from "../../../core/dom";
 import { BV } from "../../../ui/bio6Kit";
 import { bvTween } from "./b6Lab";
-import { BOLT, CELL_KEYS, CELL_LEGEND, P_C, P_HEX, P_SAG, type CellKey, type CellStage, type CellStageOpts } from "./cellStage";
+import { BOLT, CELL_KEYS, CELL_LEGEND, P_C, P_HEX, P_OVAL, type CellKey, type CellStage, type CellStageOpts } from "./cellStage";
 
 const px = (v: number): string => `${v.toFixed(1)}px`;
 
@@ -164,7 +165,51 @@ function outline(pts: [number, number][], round: number, inset = 0): string {
   }
   return `${d}Z`;
 }
-const lerpPts = (a: [number, number][], b: [number, number][], t: number): [number, number][] => a.map(([x, y], i) => [x + (b[i][0] - x) * t, y + (b[i][1] - y) * t]);
+
+// 세포의 테두리를 가운데(P_C)에서 잰 반지름 표로 다룬다(각도 RN칸). 0이면 모서리만 살짝 둥글린 육각형, 1이면 그 안쪽에 꼭 맞는 타원.
+const RN = 180;
+/** 가운데에서 각 th 방향으로 쏜 선이 다각형(가운데 기준 좌표)의 테두리와 만나는 거리. */
+function polyRadius(pts: [number, number][], th: number): number {
+  const dx = Math.cos(th);
+  const dy = Math.sin(th);
+  let best = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const [x1, y1] = pts[i];
+    const [x2, y2] = pts[(i + 1) % pts.length];
+    const ex = x2 - x1;
+    const ey = y2 - y1;
+    const den = dx * ey - dy * ex;
+    if (Math.abs(den) < 1e-9) continue;
+    const t = (x1 * ey - y1 * ex) / den;
+    const u = (x1 * dy - y1 * dx) / den;
+    if (t > best && u >= -1e-6 && u <= 1 + 1e-6) best = t;
+  }
+  return best;
+}
+const R_HEX = ((): Float32Array => {
+  const rel = P_HEX.map(([x, y]) => [x - P_C[0], y - P_C[1]] as [number, number]);
+  const raw = Array.from({ length: RN }, (_, i) => polyRadius(rel, (i / RN) * Math.PI * 2));
+  const w = 3; // 모서리를 살짝 둥글린다(입체 무대의 반지름 표와 같은 폭)
+  return Float32Array.from(raw, (_, i) => {
+    let s = 0;
+    for (let j = -w; j <= w; j++) s += raw[(i + j + RN) % RN];
+    return s / (2 * w + 1);
+  });
+})();
+const R_OVAL = Float32Array.from({ length: RN }, (_, i) => {
+  const th = (i / RN) * Math.PI * 2;
+  return 1 / Math.hypot(Math.cos(th) / P_OVAL[0], Math.sin(th) / P_OVAL[1]);
+});
+/** 세포의 테두리 길(sag: 둥글어진 정도 0~1, k: 가운데 쪽으로 줄이는 배율). */
+function cellPath(sag: number, k: number): string {
+  let d = "";
+  for (let i = 0; i < RN; i++) {
+    const th = (i / RN) * Math.PI * 2;
+    const r = (R_HEX[i] + (R_OVAL[i] - R_HEX[i]) * sag) * k;
+    d += `${i ? "L" : "M"}${(P_C[0] + r * Math.cos(th)).toFixed(1)} ${(P_C[1] + r * Math.sin(th)).toFixed(1)}`;
+  }
+  return `${d}Z`;
+}
 
 function plantScene(): string {
   const nutr = P_CHL.map(([x, y], i) => {
@@ -216,24 +261,33 @@ export function flatCellStage(box: HTMLElement, o: CellStageOpts): CellStage {
   box.appendChild(el("div", { class: "cwk-legend", html: CELL_LEGEND }));
   svg.querySelectorAll<SVGElement>(".cwk-hit").forEach((h) => h.addEventListener("click", () => o.onTap(h.dataset.k as CellKey)));
 
-  let sag = 0; // 세포벽이 무너진 정도(0~1)
+  let sag = 0; // 세포가 둥글어진 정도(0~1)
   let wallOff = false;
   let morphNo = 0;
-  /** 세포벽 모양 보간(식물 모드). 벽이 제 일을 못 하면 막과 속이 함께 처진다. */
+  const body0 = outline(P_HEX, 0.08, 0.02);
+  const mem0 = outline(P_HEX, 0.1, 0.085);
+  /** 세포벽이 멈추면(식물 모드) 벽은 제자리에 끊어진 띠로 남고(CSS .off-wall), 막과 그 속만 육각형 안쪽의 타원으로 둥글어진다.
+   *  속 구조는 가운데를 붙잡고 6%만 줄인다(오른쪽 엽록체가 막에 걸치지 않게. 세포 자체는 줄이지 않는다). 다시 켜면 처음 육각형으로 돌아간다. */
   function morphWall(to: number): void {
     const from = sag;
     const no = ++morphNo; // 보간 도중에 다시 불리면 앞선 보간은 손을 뗀다
     bvTween(o.tm, 520, (t) => {
       if (no !== morphNo) return;
       sag = from + (to - from) * t;
-      const pts = lerpPts(P_HEX, P_SAG, sag);
-      const round = 0.08 + 0.4 * sag;
-      svg.querySelector(".cwk-wallp")?.setAttribute("d", outline(pts, round));
-      svg.querySelector(".cwk-wallhi")?.setAttribute("d", outline(pts, round));
-      svg.querySelector(".cwk-memp")?.setAttribute("d", outline(pts, round + 0.02, 0.085));
-      svg.querySelector(".cwk-body")?.setAttribute("d", outline(pts, round, 0.02));
-      // 속 구조는 바닥(y 200)을 붙잡고 위에서 눌린다
-      svg.querySelector(".cwk-inner")?.setAttribute("transform", `translate(0 ${(40 * sag).toFixed(1)}) scale(1 ${(1 - 0.2 * sag).toFixed(3)})`);
+      const body = svg.querySelector(".cwk-body");
+      const mem = svg.querySelector(".cwk-memp");
+      const inner = svg.querySelector(".cwk-inner");
+      if (sag <= 0.001) {
+        body?.setAttribute("d", body0);
+        mem?.setAttribute("d", mem0);
+        inner?.removeAttribute("transform");
+        return;
+      }
+      inner?.setAttribute("transform", `translate(${P_C[0]} ${P_C[1]}) scale(${(1 - 0.06 * sag).toFixed(3)}) translate(${-P_C[0]} ${-P_C[1]})`);
+      // 막은 육각형일 때와 같이 벽 띠의 안쪽 끝 바로 안에 둔다(0.915. 벽은 늘 막 바깥).
+      // 속(세포질)은 처음에 벽 밑까지 깔려 있다가(0.98) 막 안으로 들어온다(0.93. 끊어진 벽 틈으로 속이 비치지 않게).
+      body?.setAttribute("d", cellPath(sag, 0.98 - 0.05 * sag));
+      mem?.setAttribute("d", cellPath(sag, 0.915));
     });
   }
 

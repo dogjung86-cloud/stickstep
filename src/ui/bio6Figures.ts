@@ -75,6 +75,137 @@ export function onionRulerFig(): string {
   </div>`;
 }
 
+// ── 시험 문제의 세포 그림(2026-11-15 그래픽 손질) ─────────────────────────────
+// 시험 풀의 발주 세포 그림(bio3/figs/plant-cell, animal-cell)에는 이 책에서 배우지 않는 구조(큰 물주머니, 막 주름 덩어리)가 함께 그려져 있었다.
+// 레슨 그림(u2l2f2, 문제 도해)과 같은 다섯 구조(세포벽, 세포막, 핵, 마이토콘드리아, 엽록체)만 코드로 그린다.
+// 색은 시험 글과 맞춘다: 핵은 보라색 덩어리, 마이토콘드리아는 주황빛 알갱이, 엽록체는 초록색 알갱이, 세포벽은 두꺼운 갈색 띠.
+// 표시(㉠~㉢)는 그림 좌표로 준다: (bx, by)는 기호 동그라미, (tx, ty)는 가리키는 자리. 이름은 쓰지 않는다(정답이 드러난다).
+
+export interface CellMark {
+  sym: string;
+  bx: number;
+  by: number;
+  tx: number;
+  ty: number;
+}
+
+/** 볼록 다각형의 변을 d만큼 바깥(음수면 안쪽)으로 평행하게 민 다각형. */
+function offsetPoly(pts: [number, number][], d: number): [number, number][] {
+  const n = pts.length;
+  // 시계 방향 여부(화면 좌표, y 아래)
+  let area = 0;
+  for (let i = 0; i < n; i++) area += pts[i][0] * pts[(i + 1) % n][1] - pts[(i + 1) % n][0] * pts[i][1];
+  const s = area > 0 ? 1 : -1;
+  const lines = pts.map((p, i) => {
+    const q = pts[(i + 1) % n];
+    const ex = q[0] - p[0];
+    const ey = q[1] - p[1];
+    const l = Math.hypot(ex, ey);
+    const nx = (s * ey) / l;
+    const ny = (-s * ex) / l;
+    return { x: p[0] + nx * d, y: p[1] + ny * d, ex, ey };
+  });
+  return lines.map((a, i) => {
+    const b = lines[(i - 1 + n) % n];
+    const den = b.ex * a.ey - b.ey * a.ex;
+    const t = ((a.x - b.x) * a.ey - (a.y - b.y) * a.ex) / den;
+    return [b.x + b.ex * t, b.y + b.ey * t] as [number, number];
+  });
+}
+const polyD = (pts: [number, number][]): string => `M${pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join("L")}Z`;
+
+let cellFigN = 0;
+/** 그라데이션 묶음(그림마다 다른 id). */
+function cellDefs(u: string): string {
+  return `<defs>
+    <radialGradient id="${u}cp" cx="42%" cy="36%" r="74%"><stop offset="0" stop-color="#F7FCE9"/><stop offset=".62" stop-color="#E2F2BF"/><stop offset="1" stop-color="#C9E29A"/></radialGradient>
+    <radialGradient id="${u}ca" cx="42%" cy="36%" r="74%"><stop offset="0" stop-color="#FFF4E6"/><stop offset=".62" stop-color="#FFE1C2"/><stop offset="1" stop-color="#F8C79C"/></radialGradient>
+    <linearGradient id="${u}w" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B89A8E"/><stop offset=".5" stop-color="#8D6E63"/><stop offset="1" stop-color="#6D4C41"/></linearGradient>
+    <radialGradient id="${u}n" cx="36%" cy="32%" r="76%"><stop offset="0" stop-color="#C3B1FF"/><stop offset=".55" stop-color="#7C5CF0"/><stop offset="1" stop-color="#5230C2"/></radialGradient>
+    <linearGradient id="${u}m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB49A"/><stop offset=".55" stop-color="#F76A4A"/><stop offset="1" stop-color="#C8452B"/></linearGradient>
+    <linearGradient id="${u}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#95E6A2"/><stop offset=".55" stop-color="#40C057"/><stop offset="1" stop-color="#2B8A3E"/></linearGradient>
+  </defs>`;
+}
+const cNuc = (u: string, x: number, y: number, r: number): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="url(#${u}n)" stroke="#4A2AAE" stroke-width="1.5"/>
+   <circle cx="${x + r * 0.16}" cy="${y + r * 0.18}" r="${r * 0.32}" fill="#3F2499" opacity=".72"/>
+   <ellipse cx="${x - r * 0.36}" cy="${y - r * 0.42}" rx="${r * 0.32}" ry="${r * 0.17}" fill="#fff" opacity=".45" transform="rotate(-28 ${x - r * 0.36} ${y - r * 0.42})"/>`;
+const cMito = (u: string, x: number, y: number, a: number): string =>
+  `<g transform="translate(${x} ${y}) rotate(${a})">
+     <rect x="-14" y="-7.5" width="28" height="15" rx="7.5" fill="url(#${u}m)" stroke="#A33520" stroke-width="1.3"/>
+     <path d="M-9 0.5q2.2-5 4.5 0t4.5 0 4.5 0 4.5 0" fill="none" stroke="#FFE8E0" stroke-width="1.7" stroke-linecap="round"/>
+   </g>`;
+const cChl = (u: string, x: number, y: number, a: number): string =>
+  `<g transform="translate(${x} ${y}) rotate(${a})">
+     <ellipse rx="16" ry="9" fill="url(#${u}c)" stroke="#1F6B30" stroke-width="1.3"/>
+     <path d="M-7.5 -4.5v9M-2.5 -6.6v13.2M2.5 -6.6v13.2M7.5 -4.5v9" stroke="#1F6B30" stroke-width="1.7" stroke-linecap="round" opacity=".55"/>
+     <ellipse cx="-4.5" cy="-4.4" rx="6" ry="2" fill="#fff" opacity=".38"/>
+   </g>`;
+/** 원문자 ㉠~㉤는 동그라미를 직접 그리고 그 안에 자모만 쓴다(원문자 글리프는 글꼴마다 테 크기가 달라 겹테로 보였다). */
+const JAMO: Record<string, string> = { "㉠": "ㄱ", "㉡": "ㄴ", "㉢": "ㄷ", "㉣": "ㄹ", "㉤": "ㅁ" };
+/** 기호 표시(이끎선 + 끝점 + 동그라미 기호). 글자는 15px(폰 표시 12px 이상). */
+const cMarks = (marks: CellMark[]): string =>
+  marks
+    .map(
+      (m) => `<g>
+        <path d="M${m.bx} ${m.by}L${m.tx} ${m.ty}" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".85"/>
+        <path d="M${m.bx} ${m.by}L${m.tx} ${m.ty}" stroke="#20262E" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="${m.tx}" cy="${m.ty}" r="3" fill="#20262E" stroke="#fff" stroke-width="1.2"/>
+        <circle cx="${m.bx}" cy="${m.by}" r="12.5" fill="#fff" stroke="#20262E" stroke-width="1.6"/>
+        <text x="${m.bx}" y="${m.by + 5.2}" text-anchor="middle" font-size="15" font-weight="900" fill="#20262E">${JAMO[m.sym] ?? m.sym}</text>
+      </g>`,
+    )
+    .join("");
+const cellBox = (alt: string, body: string): string =>
+  `<div style="background:#F4F7F6;border-radius:14px;padding:6px 0"><svg viewBox="0 0 340 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${alt}" style="display:block;width:100%;max-width:440px;margin:0 auto">${body}</svg></div>`;
+
+/** 식물세포 그림: 각진 세포(육각형), 두꺼운 세포벽, 그 바로 안쪽의 세포막, 핵 하나, 엽록체 여섯, 마이토콘드리아 셋.
+ *  표시를 붙일 때 쓰는 자리: 핵 (164, 120), 왼쪽 마이토콘드리아 (82, 132), 아래쪽 엽록체 (128, 186). */
+export function examPlantCellFig(alt: string, marks: CellMark[] = []): string {
+  const u = `xpc${++cellFigN}`;
+  const hex: [number, number][] = [[96, 34], [244, 34], [300, 125], [244, 216], [96, 216], [40, 125]];
+  const wallOut = offsetPoly(hex, 7);
+  const wallIn = offsetPoly(hex, -7);
+  const mem = offsetPoly(hex, -10);
+  const body = `${cellDefs(u)}
+    <ellipse cx="170" cy="232" rx="118" ry="7" fill="#2A3A5E" opacity=".1"/>
+    <path d="${polyD(wallIn)}" fill="url(#${u}cp)"/>
+    <path d="${polyD(wallOut)}${polyD(wallIn)}" fill="url(#${u}w)" fill-rule="evenodd" stroke="#5D4037" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="${polyD(offsetPoly(hex, 4.2))}" fill="none" stroke="#D7C2B8" stroke-width="1.6" stroke-linejoin="round" opacity=".55"/>
+    <path d="${polyD(mem)}" fill="none" stroke="#F59F00" stroke-width="2.8" stroke-linejoin="round"/>
+    ${[[106, 78, -22], [212, 64, 8], [266, 122, 84], [234, 174, -14], [128, 186, 14], [78, 146, 70]].map(([x, y, a]) => cChl(u, x, y, a)).join("")}
+    ${[[82, 108, -62], [218, 116, 18], [168, 62, -6]].map(([x, y, a]) => cMito(u, x, y, a)).join("")}
+    ${cNuc(u, 160, 124, 27)}
+    ${cMarks(marks)}`;
+  return cellBox(alt, body);
+}
+
+/** 동물세포 그림: 둥글고 무른 세포(세포막 한 겹), 핵 하나, 마이토콘드리아 넷. 세포벽과 엽록체는 없다.
+ *  표시를 붙일 때 쓰는 자리: 막의 위쪽 (170, 37), 핵 (180, 116), 왼쪽 마이토콘드리아 (92, 132). */
+export function examAnimalCellFig(alt: string, marks: CellMark[] = []): string {
+  const u = `xac${++cellFigN}`;
+  // 살짝 울퉁불퉁한 둥근 테두리(가운데 170, 125)
+  const N = 72;
+  let d = "";
+  for (let i = 0; i < N; i++) {
+    const t = (i / N) * Math.PI * 2;
+    const k = 1 + 0.035 * Math.sin(3 * t + 0.6) + 0.025 * Math.cos(5 * t + 1.1);
+    const x = 170 + 124 * k * Math.cos(t);
+    const y = 125 + 88 * k * Math.sin(t);
+    d += `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  d += "Z";
+  const body = `${cellDefs(u)}
+    <ellipse cx="170" cy="230" rx="112" ry="7" fill="#2A3A5E" opacity=".1"/>
+    <path d="${d}" fill="url(#${u}ca)" stroke="#F59F00" stroke-width="9" stroke-opacity=".18" stroke-linejoin="round"/>
+    <path d="${d}" fill="none" stroke="#F59F00" stroke-width="3.2" stroke-linejoin="round"/>
+    <path d="M104 64C122 50 146 42 170 41" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+    ${[[92, 132, -32], [244, 152, 22], [150, 180, 8], [236, 84, -24]].map(([x, y, a]) => cMito(u, x, y, a)).join("")}
+    ${cNuc(u, 180, 116, 29)}
+    ${cMarks(marks)}`;
+  return cellBox(alt, body);
+}
+
 /** (나) 생태계의 먹이 관계 그림(u2l10 문제). 랩의 무대와 같은 자리, 같은 화살표를 밝은 바탕에 그린다.
  *  화살표는 먹히는 생물에서 먹는 생물 쪽을 가리킨다. 그림 칸에서 폭에 맞춰 늘어나도 비율은 그대로다. */
 export function foodWebFig(): string {

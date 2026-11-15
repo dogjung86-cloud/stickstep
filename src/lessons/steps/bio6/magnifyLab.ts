@@ -157,6 +157,15 @@ const onionTile = (): string =>
     grain: "0 0 0 0 .3  0 0 0 0 .22  0 0 0 0 .1  0 0 0 .4 -.08",
   });
 
+/** 비교판의 작은 창에 쓰는 코르크 타일. 큰 창과 같은 무늬(같은 시드)인데 창이 절반 크기라 벽을 두 배 굵게 그린다(줄여도 벽이 보이게). */
+const corkTileSmall = (): string =>
+  cellTile({
+    seed: 23, W: 240, H: 240, rows: 14, minW: 14, maxW: 26, lean: 2.4,
+    tones: ["#EBD3A6", "#E4C794", "#F0DCB4", "#DDBE89", "#E8CD9C"], base: "#E6CB9A",
+    wallSoft: "#B88C58", wallCore: "#6E4824", softW: 5.4, coreW: 2.4, glow: "#FFF6DF",
+    grain: "0 0 0 0 .32  0 0 0 0 .2  0 0 0 0 .08  0 0 0 .5 -.08",
+  });
+
 /** 소금 알갱이들(단위 mm). 가운데 한 알은 항상 창 한가운데에 있다. */
 function saltWorld(): string {
   const rnd = bvRand(5);
@@ -204,6 +213,66 @@ function macroScene(): string {
       </g>
     </g>
   </svg>`;
+}
+
+// ── 판정과 결론의 비교판 ─────────────────────────────────────────────
+// 판정으로 넘어가면 무대를 ×400 창 셋(양파, 코르크, 소금)을 나란히 놓은 판으로 바꾼다(감사 2026-11-15:
+// 판정과 결론 때 무대에 마지막에 본 소금만 남아 근거인 양파와 코르크의 칸이 사라졌다. u2l4 세포 맡기기 랩이 결과를 모으는 방식).
+// 창마다 큰 창과 같은 시야(×400, 보이는 폭 0.34 mm)를 절반 크기로 담는다. 결론 때는 생물인 둘을 밝히고 묶는다.
+const SD = 100; // 비교판 창 지름(px)
+const SUM_X = [9, 123, 237]; // 창 왼쪽 끝(설계 판 346×230 기준)
+const SUM_Y = 12;
+
+function summaryBoard(names: Record<Key, string>): HTMLElement {
+  const s = SD / D; // 큰 창 대비 크기
+  const k = pxPerMm(MAXM) * s; // 작은 창의 mm당 px
+  const box = el("div", { class: "mgf-sum", attrs: { "aria-hidden": "true" } });
+  (["onion", "cork", "salt"] as Key[]).forEach((key, i) => {
+    const w = bvField({ x: SUM_X[i], y: SUM_Y, d: SD, cls: `mgf-sw ${key}` });
+    if (key === "onion") {
+      const t = el("div", { class: "mgf-layer mgf-onion" });
+      const so = ONION_TILE_MM * 2 * k;
+      t.style.backgroundImage = `url("${bvSrc("bio6/micro/onion-mirror.webp")}")`;
+      t.style.backgroundSize = `${so.toFixed(1)}px ${so.toFixed(1)}px`;
+      t.style.backgroundPosition = `${(SD / 2 + so / 4).toFixed(1)}px ${(SD / 2 + so / 4).toFixed(1)}px`;
+      w.append(t);
+    } else if (key === "cork") {
+      const sc = CORK_TILE_MM * k;
+      const t = el("div", { class: "mgf-layer mgf-corks" });
+      t.style.backgroundImage = corkTileSmall();
+      t.style.backgroundSize = `${sc.toFixed(1)}px ${sc.toFixed(1)}px`;
+      t.style.backgroundPosition = `${(SD / 2 + sc * 0.21).toFixed(1)}px ${(SD / 2 + sc * 0.3).toFixed(1)}px`;
+      w.append(el("div", { class: "mgf-layer mgf-corkbase" }), t);
+    } else {
+      // 큰 창과 같은 그림(viewBox 200 = 창 지름)이라 배율도 같다. 그라데이션 id는 큰 창과 겹치지 않게 따로 둔다.
+      w.append(
+        el("div", {
+          class: "mgf-layer",
+          html: `<svg viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="mgfSaltS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#EEF4FB"/><stop offset="1" stop-color="#D5E1EF"/></linearGradient></defs>
+            <rect x="-100" y="-100" width="200" height="200" fill="#C9D8E8"/>
+            <g transform="scale(${pxPerMm(MAXM).toFixed(3)})">${saltWorld().replace(/url\(#mgfSalt\)/g, "url(#mgfSaltS)")}</g>
+          </svg>`,
+        }),
+      );
+    }
+    w.append(bvFieldShade());
+    const cx = SUM_X[i] + SD / 2;
+    const name = el("div", { class: "mgf-sn", text: names[key] });
+    name.style.left = `${cx}px`;
+    const pill = el("div", { class: `mgf-sp${key === "salt" ? " none" : ""}`, text: key === "salt" ? "칸이 없어요" : "칸이 보여요" });
+    pill.style.left = `${cx}px`;
+    box.append(w, name, pill);
+  });
+  // 결론 때만 보이는 묶음: 생물인 둘(양파 껍질, 코르크)과 생물이 아닌 소금
+  const life = el("div", { class: "mgf-life" }, el("i"), el("b", { text: "생물이에요" }));
+  life.style.left = `${SUM_X[0] + 8}px`;
+  life.style.width = `${SUM_X[1] + SD - SUM_X[0] - 16}px`;
+  const non = el("div", { class: "mgf-life non" }, el("b", { text: "생물이 아니에요" }));
+  non.style.left = `${SUM_X[2]}px`;
+  non.style.width = `${SD}px`;
+  box.append(life, non);
+  return box;
 }
 
 const fmtWidth = (mm: number): string => {
@@ -258,6 +327,7 @@ export const magnifyLab: StepRenderer = (host, step, api) => {
   let predicted = false;
   let asked = false;
   let finished = false;
+  let sumBoard: HTMLElement | null = null;
 
   const cards: Record<Key, BvCard> = {
     onion: bvCard("col mgf-card", { name: "양파 껍질", icon: BV_ICON.onion, key: "onion" }),
@@ -404,7 +474,13 @@ export const magnifyLab: StepRenderer = (host, step, api) => {
   }
 
   function askFinal(): void {
-    f.say("세 가지를 모두 크게 봤어요. 본 것을 떠올리며 골라 봐요.");
+    // 무대를 세 창 비교판으로 바꾼다(판정의 근거인 양파와 코르크의 칸을 다시 보인다)
+    if (!sumBoard) {
+      sumBoard = summaryBoard(NAMES);
+      cv.el.appendChild(sumBoard);
+    }
+    cv.el.classList.add("mgf-sumon");
+    f.say("세 가지를 <b>×400</b>으로 본 모습을 나란히 놓았어요. 비교하며 골라 봐요.");
     f.slot.ask(
       "세 가지를 크게 본 결과로 알 수 있는 것은?",
       [
@@ -419,6 +495,7 @@ export const magnifyLab: StepRenderer = (host, step, api) => {
 
   function finish(): void {
     finished = true;
+    cv.el.classList.add("mgf-sumdone"); // 생물인 둘을 밝히고 묶는다
     f.pips(4);
     f.say("관찰 끝! 아래에서 오늘 눈으로 확인한 것을 읽어 봐요.");
     f.slot.conclude("생물의 몸은 <b>세포</b>로 이루어져 있어요. 세포는 아주 작아서 크게 확대해야 보여요.");
