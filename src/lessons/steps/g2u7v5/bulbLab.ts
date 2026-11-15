@@ -172,7 +172,7 @@ export const bulbLab: StepRenderer = (host, step, api) => {
     xPill(ctx, "전구를 눌러 빼거나 끼워요", X.cur);
   });
 
-  f.say("전구 한 개의 밝기를 잘 봐 두세요. 그다음 <b>직렬</b>과 <b>병렬</b>로 두 개를 연결해 견줘요.");
+  f.say("전구 한 개의 밝기를 잘 봐 두세요. 그다음 <b>직렬</b>과 <b>병렬</b>로 두 개를 연결해 비교해요.");
   api.setCTA("직렬과 병렬에서 전구를 빼 보세요", { enabled: false });
   return () => {
     tm.clear();

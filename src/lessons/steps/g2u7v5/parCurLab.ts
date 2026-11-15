@@ -168,12 +168,28 @@ export const parCurLab: StepRenderer = (host, step, api) => {
     ctx.save();
     ctx.scale(k, k);
     const W = (pts: Pt[], flow: number): void => drawWire(ctx, pts.map(([x, y]) => ({ x, y })), { on: true, flow, dir: 1, width: 3.5 });
-    W([[BAT.out, G.By], [G.R, G.By], [G.R, YB]], pm);
-    W([[G.R, YB], [G.R, YA], [RX + 23, YA]], pa);
-    W([[G.R, YB], [RX + 23, YB]], pb);
-    W([[RX - 23, YA], [G.L, YA], [G.L, YB]], pa);
-    W([[RX - 23, YB], [G.L, YB]], pb);
-    W([[G.L, YB], [G.L, G.By], [BAT.in, G.By]], pm);
+    const paths: [Pt[], number, number][] = [
+      [[[BAT.out, G.By], [G.R, G.By], [G.R, YB]], pm, cs.all],
+      [[[G.R, YB], [G.R, YA], [RX + 23, YA]], pa, 0.2],
+      [[[G.R, YB], [RX + 23, YB]], pb, cs.b],
+      [[[RX - 23, YA], [G.L, YA], [G.L, YB]], pa, 0.2],
+      [[[RX - 23, YB], [G.L, YB]], pb, cs.b],
+      [[[G.L, YB], [G.L, G.By], [BAT.in, G.By]], pm, cs.all],
+    ];
+    paths.forEach(([pts, flow]) => W(pts, flow));
+    // 전류 띠(2026-11-15 그래픽 감사 C097): 굵기를 그 길의 전류에 비례하게(0.1 A에 3.6). 나뉘기 전과 합친 뒤가 가장 굵고,
+    // 저항이 작은 갈래가 더 굵다. 멈춘 화면에서도 어느 갈래에 더 많이 흐르는지 그림이 말한다. 알갱이가 비쳐 보이게 옅게 덮는다
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,212,0,.36)";
+    ctx.lineCap = "butt";
+    ctx.lineJoin = "round";
+    paths.forEach(([pts, , amp]) => {
+      ctx.lineWidth = amp * 36;
+      ctx.beginPath();
+      pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+      ctx.stroke();
+    });
+    ctx.restore();
     drawBattery(ctx, BAT.x, G.By, G.bw, 30, false);
     xText(ctx, "전지 3 V", BAT.x, G.By - 25, { px: 12, color: X.dim });
     cRes(ctx, RX, YA, { name: "A", ohm: "15 Ω" });

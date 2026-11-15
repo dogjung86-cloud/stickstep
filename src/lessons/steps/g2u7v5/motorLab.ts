@@ -84,7 +84,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
     }
     on = !on;
     sw.textContent = on ? "전류 끊기" : "전류 흐르게 하기";
-    if (on) f.say("코일의 왼쪽과 오른쪽이 <b>반대 방향</b>으로 힘을 받아 돌아요. 화살표를 견줘 보세요.");
+    if (on) f.say("코일의 왼쪽과 오른쪽이 <b>반대 방향</b>으로 힘을 받아 돌아요. 화살표를 비교해 보세요.");
     else f.say("전류를 끊자 힘이 사라져 코일이 <b>서서히 멈춰요</b>.");
     after();
   });
