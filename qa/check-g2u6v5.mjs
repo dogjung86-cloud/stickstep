@@ -4,7 +4,7 @@
 //   랩의 첫 판정에서는 한 번 틀려 본다(틀림 표시, 정답 카드, '다음'). 실험 랩에서는 실패하는 길도 한 번 간다.
 //   새로 쓴 선택형 문제는 정답을 눌러 정답으로 채점되는지 본다. 그 길에서 모은 화면 글에 대시, '교과서', 이모지가 없는지도 본다.
 //   끝으로 토글을 끈 채 첫 레슨이 지금 화면(훅)으로 열리는지 본다.
-// 실행: PORT=5586 node qa/check-g2u6v5.mjs [캡처 폴더]     ONLY=g2u6l2 를 붙이면 그 레슨만 돈다.
+// 실행: PORT=5586 node qa/check-g2u6v5.mjs [캡처 폴더]     ONLY=g2u6l2 를 붙이면 그 레슨만 돈다. NOGL=1 이면 WebGL2를 끈 채(평면 무대).
 //       DIST=<개발 모드 번들 폴더> node qa/check-g2u6v5.mjs  (번들 만드는 법은 qa/u4v5-lib.mjs 머리말. 이때 문제 채점 검사는 건너뛴다)
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -17,6 +17,11 @@ const LESSONS = ["g2u6l1", "g2u6l2", "g2u6l3", "g2u6l4", "g2u6l5", "g2u6l6"].fil
 let pass = 0, fail = 0;
 const ok = (cond, msg) => { if (cond) pass++; else { fail++; console.log("  FAIL " + msg); } };
 const { browser, page, errors } = await L.launch();
+// NOGL=1: WebGL2를 쓸 수 없는 브라우저를 흉내 낸다(입체 무대를 쓰는 랩이 평면 무대로 뜨는지 본다)
+if (process.env.NOGL) await page.addInitScript(() => {
+  const orig = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function (type, ...a) { return type === "webgl2" ? null : orig.call(this, type, ...a); };
+});
 await page.addInitScript(() => {
   localStorage.setItem("science-app.v1", JSON.stringify({ version: 1, onboarded: true, grade: "g2", viewGrade: "g2", viewSubject: "sci", premium: true, reviewMode: true, goalMin: 10, streak: 1, totalXp: 800, lessons: {}, minigame: {} }));
 });
@@ -47,9 +52,27 @@ const kind = () =>
     return "read";
   });
 
-async function at(id, mark, shot = true) {
+// o.tall: 세로로 긴 무대(순환 여행 랩, 사용자 요청 "세로로 길게")는 한 화면 예산의 예외다.
+//   대신 무대 안의 결정 단추와, 판정이 떠 있으면 남은 보기와 정답 카드가 스크롤 영역 안에 보이는지 본다.
+async function at(id, mark, shot = true, o = {}) {
   const m = await L.measure(page);
-  ok(m.content <= m.view && m.scrollTop === 0, `${id} ${mark}: 스크롤 ${m.content}/${m.view}, 밀림 ${m.scrollTop}`);
+  if (!o.tall) ok(m.content <= m.view && m.scrollTop === 0, `${id} ${mark}: 스크롤 ${m.content}/${m.view}, 밀림 ${m.scrollTop}`);
+  else {
+    const vis = await page.evaluate(() => {
+      const sc = document.querySelector(".screen.active .scroll").getBoundingClientRect();
+      const inside = (e) => { const r = e.getBoundingClientRect(); return r.top >= sc.top - 1 && r.bottom <= sc.bottom + 1; };
+      const out = [];
+      document.querySelectorAll(".screen.active .g2u6x-rd-pick").forEach((b) => { if (!b.disabled && !inside(b)) out.push("단추 " + b.textContent); });
+      const q = document.querySelector(".screen.active .bv-q.show");
+      if (q) {
+        q.querySelectorAll(".bv-choice:not(.gone)").forEach((b) => { if (!inside(b)) out.push("보기 " + b.textContent.trim().slice(0, 10)); });
+        const a = q.querySelector(".bv-ans");
+        if (a && !inside(a)) out.push("정답 카드");
+      }
+      return out;
+    });
+    ok(vis.length === 0, `${id} ${mark}: 화면 밖 ${vis.join(", ")}`);
+  }
   ok(m.taps.every((t) => t.h >= 47.5), `${id} ${mark}: 낮은 버튼 ${m.taps.filter((t) => t.h < 47.5).map((t) => t.t + ":" + t.h).join(", ")}`);
   ok(m.cut.length === 0, `${id} ${mark}: 잘린 글 ${m.cut.join(" | ")}`);
   ok(m.small.length === 0, `${id} ${mark}: 작은 글자 ${m.small.map((s) => s.t + ":" + s.px).join(", ")}`);
@@ -61,16 +84,16 @@ async function at(id, mark, shot = true) {
   }
   console.log(`  ${id} ${mark}: ${m.content}/${m.view}`);
 }
-async function wrongOnce(id, mark) {
+async function wrongOnce(id, mark, o = {}) {
   ok(await L.waitAsk(page), `${id} ${mark}: 판정이 뜨지 않음`);
   await W(350);
-  await at(id, mark + "-ask");
+  await at(id, mark + "-ask", true, o);
   const t = await L.pickWrong(page);
   ok(!!t, `${id} ${mark}: 틀린 보기를 찾지 못함`);
   await W(450);
   const v = await L.verdict(page);
   ok(v && v.cls === "miss" && v.word === "오답이에요" && v.ans && v.next, `${id} ${mark}: 오답 표시가 다름 ${JSON.stringify(v)}`);
-  await at(id, mark + "-wrong");
+  await at(id, mark + "-wrong", true, o);
   await W(1200);
   ok((await L.verdict(page))?.cls === "miss", `${id} ${mark}: '다음'을 누르기 전에 넘어감`);
   await L.tapNext(page);
@@ -99,10 +122,10 @@ const tap = async (sel, wait = 250) => {
   return r;
 };
 const must = async (id, sel, wait = 250) => ok(await tap(sel, wait), `${id}: 누를 수 없음 ${sel}`);
-async function done(id, mark) {
+async function done(id, mark, o = {}) {
   ok(await L.waitDone(page, 150), `${id} ${mark}: 결론이 뜨지 않음`);
   await W(400);
-  await at(id, mark + "-done");
+  await at(id, mark + "-done", true, o);
   const c = await L.ctaState(page);
   ok(c.enabled, `${id} ${mark}: 끝 버튼이 열리지 않음(${c.text})`);
 }
@@ -143,6 +166,46 @@ const S = async (id, key, wait = 300) => {
   await W(wait);
 };
 const LABS = {
+  // 순환 여행 랩(입체, 세로로 긴 무대): 결정 셋에서 한 번씩 틀려 보고, 끝의 판정에서도 한 번 틀린다
+  async ride(id) {
+    const T = { tall: true };
+    const R = (k) => `.g2u6x-rd-pick[data-k="${k}"]`;
+    const pickReady = (k, tries = 250) => L.waitFor(page, (k) => { const b = document.querySelector(`.screen.active .g2u6x-rd-pick[data-k="${k}"]`); return !!b && !b.disabled; }, k, tries);
+    const go = async (k, wait, tries) => { ok(await pickReady(k, tries), `${id}: 무대 단추가 뜨지 않음 ${k}`); await must(id, R(k), wait); };
+    ok(await L.waitFor(page, () => { const s = document.querySelector(".screen.active .step"); return s.dataset.g6Stage === "flat" || s.dataset.g6Ready === "1"; }, null, 150), `${id}: 순환 무대가 그려지지 않음`);
+    console.log(`  무대: ${await L.ds(page, "g6Stage")}`);
+    await at(id, "ride-start", true, T);
+    await go("pump", 1600);
+    await at(id, "ride-aorta", true, T);
+    ok(await pickReady("cap"), `${id}: 조직세포 곁의 결정이 뜨지 않음`);
+    await at(id, "ride-d1", true, T);
+    await must(id, R("art"), 500);
+    await dsIs(id, "g6Fail", "art", "동맥을 골라도 막지 않음");
+    await at(id, "ride-d1-wrong", true, T);
+    await go("cap", 2400);
+    await at(id, "ride-body", true, T);
+    ok(await pickReady("ra"), `${id}: 심장 앞의 결정이 뜨지 않음`);
+    await at(id, "ride-d2", true, T);
+    await must(id, R("la"), 500);
+    await dsIs(id, "g6Fail", "la", "좌심방을 골라도 막지 않음");
+    await at(id, "ride-d2-wrong", true, T);
+    await go("ra", 600);
+    await go("pump", 2600);
+    await at(id, "ride-pa", true, T);
+    ok(await pickReady("breath"), `${id}: 숨 들이쉬기가 뜨지 않음`);
+    await at(id, "ride-lung", true, T);
+    await must(id, R("breath"), 3200);
+    await at(id, "ride-lung-swap", true, T);
+    ok(await pickReady("vein"), `${id}: 폐정맥의 결정이 뜨지 않음`);
+    await at(id, "ride-d4", true, T);
+    await must(id, R("artery"), 500);
+    await dsIs(id, "g6Fail", "artery", "폐정맥을 동맥이라 해도 막지 않음");
+    await at(id, "ride-d4-wrong", true, T);
+    await go("vein", 1600);
+    await go("pump", 1200);
+    await wrongOnce(id, "ride", T);
+    await done(id, "ride", T);
+  },
   async plate(id) {
     await at(id, "plate-start");
     for (let r = 0; r < 3; r++) {

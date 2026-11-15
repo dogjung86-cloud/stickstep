@@ -1,0 +1,99 @@
+/* 중2 Ⅵ v5 순환 여행 랩(g2u6RideLab, steps/g2u6v5/rideLab.ts와 rideStage*.ts)의 시트. main.ts가 싣는다.
+   접두: 무대 .g2u6x-ride, 스텝 .g2u6x-ride-step, 무대 안의 것 .g2u6x-rd- (단원 시트 g2u6v5.css의 .g2u6x- 아래에 이 랩만의 이름).
+   무대는 세로로 긴 설계 판 346×440(2026-11-15 사용자 요청 "세로로 길게"). 폰 한 화면 예산(554px)보다 길다.
+   폭이 좁은 폰에서는 같은 비율로 줄어든다(무대 안의 이름표와 단추는 % 자리라 그림과 함께 간다).
+   넓은 화면은 뼈대 규칙(346×230을 --lk로 키움)을 이 무대만 덮어 자기 배율 --rdk(rideLab.ts가 셈한다)로 키운다. */
+
+.bv-stage.g2u6x-ride { height: auto; aspect-ratio: 346 / 440; }
+.g2u6x-rd-canvas {
+  position: absolute; inset: 0; display: block; width: 100%; height: 100%;
+  opacity: 0; transition: opacity .35s; touch-action: pan-y;
+}
+.g2u6x-ride.ready .g2u6x-rd-canvas { opacity: 1; }
+/* 뼈대 규칙 .bv-stage > svg 가 무대 크기로 늘리므로 겹쳐 놓기만 한다 */
+.bv-stage > svg.g2u6x-rd-svg { position: absolute; inset: 0; }
+.bv-stage > svg.g2u6x-rd-svg.micro { opacity: 0; visibility: hidden; }
+
+/* ── 무대 위의 글과 단추 ───────────────────────────── */
+.g2u6x-rd-layer { position: absolute; inset: 0; pointer-events: none; }
+.g2u6x-rd-tags, .g2u6x-rd-picks { position: absolute; inset: 0; }
+.g2u6x-rd-tag {
+  position: absolute; transform: translate(-50%, -50%); height: 22px; padding: 0 8px; border-radius: 11px;
+  background: rgba(13, 24, 44, .8); outline: 1px solid rgba(255, 255, 255, .24); outline-offset: -1px;
+  font-size: 12.5px; line-height: 22px; font-weight: 800; color: #EAF0FA; white-space: nowrap;
+  opacity: 0; transition: opacity .3s;
+}
+.g2u6x-rd-tag.on { opacity: 1; }
+.g2u6x-rd-tag.t-bodyLoop, .g2u6x-rd-tag.t-lungLoop { height: 26px; line-height: 26px; padding: 0 10px; border-radius: 13px; font-size: 13px; }
+.g2u6x-rd-tag.t-bodyLoop { color: #FFE0BC; outline-color: rgba(255, 169, 77, .75); background: rgba(60, 34, 10, .82); }
+.g2u6x-rd-tag.t-lungLoop { color: #D6EEFF; outline-color: rgba(116, 192, 252, .75); background: rgba(12, 36, 62, .82); }
+.g2u6x-rd-place {
+  position: absolute; left: 10px; top: 10px; max-width: calc(100% - 20px); padding: 4px 10px; border-radius: 999px;
+  background: rgba(34, 50, 77, .92); border: 1px solid #3A4D6E;
+  color: #E8EEF9; font-size: 12.5px; font-weight: 800; white-space: nowrap;
+}
+.g2u6x-rd-place[hidden] { display: none; }
+.g2u6x-rd-legend {
+  position: absolute; left: 10px; bottom: 8px; display: flex; flex-wrap: wrap; gap: 3px 10px; max-width: calc(100% - 20px);
+  padding: 3px 8px; border-radius: 10px; background: rgba(11, 21, 36, .62);
+  font-size: 12px; line-height: 18px; font-weight: 700; color: #C9D6EA;
+}
+.g2u6x-rd-legend span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.g2u6x-rd-legend i { width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 255, 255, .35) inset; }
+
+/* 무대 안의 결정 단추(48px). 지금 누를 동작(심장 수축, 숨)은 밝게 숨 쉰다. */
+.g2u6x-rd-pick {
+  position: absolute; transform: translate(-50%, -50%); pointer-events: auto;
+  min-width: 66px; height: 48px; padding: 0 14px; border-radius: 15px;
+  border: 1.5px solid rgba(255, 255, 255, .62); background: rgba(16, 28, 50, .88); color: #fff;
+  font-size: 14.5px; font-weight: 800; letter-spacing: -.02em; white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .32); -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  /* 나타날 때만 페이드한다. both로 두면 끝난 뒤에도 불투명도 1이 남아 흐린 단추(.dim, .lock)가 흐려지지 않았다(2026-11-15 눈검수) */
+  animation: g2u6xRdIn .32s var(--ease-out) backwards; transition: opacity .2s, background .2s;
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+}
+.g2u6x-rd-pick:active { transform: translate(-50%, -50%) scale(.96); }
+.g2u6x-rd-pick.room { min-width: 70px; padding: 0 10px; background: rgba(16, 28, 50, .74); }
+.g2u6x-rd-pick.hot {
+  border-color: var(--subj-body); background: var(--subj-body-tint); color: var(--subj-body-press);
+  animation: g2u6xRdIn .32s var(--ease-out) backwards, g2u6xRdHot 1.6s ease-in-out .4s infinite;
+}
+.g2u6x-rd-pick.dim { opacity: .38; }
+.g2u6x-rd-pick.lock { opacity: .72; }
+/* 누른 결과를 단추에 새긴다: 맞음(초록, 체크, "맞아요"), 틀림(빨강, 가위표, "아니에요"). 틀린 단추는 표시가 남은 채 다시 누를 수 없다 */
+.g2u6x-rd-pick.ok { opacity: 1; border-color: var(--green); background: #E9FAF1; color: #0A7C47; }
+.g2u6x-rd-pick.no { opacity: 1; border-color: var(--red); background: #FFF0F1; color: #C9283A; }
+.g2u6x-rd-pick-l { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; line-height: 18px; }
+.g2u6x-rd-pick-ic { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; color: #fff; }
+.g2u6x-rd-pick.ok .g2u6x-rd-pick-ic { background: var(--green); }
+.g2u6x-rd-pick.no .g2u6x-rd-pick-ic { background: var(--red); }
+.g2u6x-rd-pick-ic svg { width: 10px; height: 10px; }
+.g2u6x-rd-pick-s { font-size: 12px; line-height: 14px; font-weight: 800; }
+.g2u6x-rd-pick:disabled { cursor: default; }
+@keyframes g2u6xRdIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes g2u6xRdHot { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .5), 0 6px 16px rgba(0, 0, 0, .32); } 50% { box-shadow: 0 0 0 7px rgba(255, 255, 255, 0), 0 6px 16px rgba(0, 0, 0, .32); } }
+@media (prefers-reduced-motion: reduce) {
+  .g2u6x-rd-pick.hot { animation: g2u6xRdIn .2s linear backwards; }
+}
+
+/* ── 조작 칸: 지나온 길(두 순환을 한 줄씩. 길면 이름표 오른쪽에서 접힌다) ── */
+.g2u6x-rd-log { display: grid; gap: 7px; padding: 10px 12px 11px; border-radius: 16px; background: var(--n50); box-shadow: 0 0 0 1px var(--n200) inset; }
+.g2u6x-rd-log-k { font-size: 12.5px; font-weight: 800; color: var(--n600); }
+.g2u6x-rd-row { display: grid; grid-template-columns: auto 1fr; align-items: start; column-gap: 7px; }
+.g2u6x-rd-row b { padding: 2px 8px; border-radius: 999px; font-size: 12.5px; line-height: 18px; font-weight: 800; white-space: nowrap; }
+.g2u6x-rd-row.b b { background: #FFF0DF; color: #B35F00; }
+.g2u6x-rd-row.l b { background: #E3F2FF; color: #1C6FB5; }
+.g2u6x-rd-items { display: flex; flex-wrap: wrap; gap: 2px 0; min-width: 0; }
+.g2u6x-rd-items span { display: inline-flex; align-items: center; gap: 3px; font-size: 12.5px; line-height: 22px; font-weight: 700; color: var(--n400); white-space: nowrap; }
+.g2u6x-rd-items span + span::before { content: "›"; order: -2; margin: 0 4px 0 3px; color: var(--n300); font-weight: 800; }
+.g2u6x-rd-items span.on { color: var(--ink); }
+.g2u6x-rd-items span.on::after { content: ""; order: -1; width: 7px; height: 7px; border-radius: 50%; background: var(--c, var(--n400)); }
+
+/* ── 넓은 화면: 이 무대만 자기 배율로(세로 440이 왼쪽 칸에 들어가게) ── */
+@media (orientation: landscape) and (min-width: 1024px) and (min-height: 600px) {
+  html.wide .step.g2u6x-ride-step .bv-stage.g2u6x-ride { width: 346px; height: 440px; aspect-ratio: auto; zoom: var(--rdk, 1.2); }
+  html.wide .step.g2u6x-ride-step .wd-main .bv-slot { height: auto; width: calc(346px * var(--rdk, 1.2) / var(--lck, 1.18)); }
+  /* 판정은 오른쪽 노트에 뜬다. 그동안에도 왼쪽 아래의 지나온 길 기록은 남긴다("무대에 칠해진 길을 보고 답해요") */
+  html.wide .step.g2u6x-ride-step .wd-main .bv-slot .bv-ctl[hidden] { display: grid; }
+  html.wide .step.g2u6x-ride-step .wd-main .bv-slot:has(> .bv-ctl[hidden])::after { content: none; display: none; }
+}
