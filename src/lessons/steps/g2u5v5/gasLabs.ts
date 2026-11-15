@@ -11,7 +11,7 @@
 //
 // g2u5DarkLab 「빛이 없을 때 식물은 어떤 기체를 쓸까요?」 (g2u5l4)
 //   같은 장치를 알루미늄박으로 감싼다. 학생이 정하는 것: 용기에 넣을 것(상추 잎, 당근 뿌리, 비워 두기).
-//   잎도 뿌리도 산소가 줄고 이산화 탄소가 는다. 빈 용기는 변화가 없다(견줄 대상).
+//   잎도 뿌리도 산소가 줄고 이산화 탄소가 는다. 빈 용기는 변화가 없다(비교 대상).
 //
 // g2u5DesignLab 「빛이 셀수록 광합성량이 계속 늘까요?」 (g2u5l3)
 //   책의 탐구(실험 설계): 전등의 개수로 빛의 세기를 바꾸고 산소가 늘어난 양으로 광합성량을 잰다.
@@ -168,7 +168,7 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
       else f.say(kept.bright ? "빛이 없으니 이산화 탄소가 <b>줄지 않았어요</b>. 오히려 조금 늘었어요." : "이산화 탄소가 줄지 않고 조금 늘었어요. <b>전등을 켜고</b> 다시 재요.");
       if (kept.bright && kept.dark) {
         [cPlant, cLid, cLight].forEach((c) => c.lock(true));
-        run.textContent = "두 측정 견주기";
+        run.textContent = "두 측정 비교하기";
         run.classList.add("g2u5x-go");
         busy = true;
         run.onclick = () => {
@@ -247,7 +247,7 @@ export const g2u5DarkLab: StepRenderer = (host, step, api) => {
   run.addEventListener("click", () => {
     if (liveT !== -1) return;
     if (kept.has(pick)) {
-      f.say("이미 잰 것이에요. <b>다른 것</b>을 넣어 견줘 보세요.");
+      f.say("이미 잰 것이에요. <b>다른 것</b>을 넣어 비교해 보세요.");
       return;
     }
     tap();
@@ -278,7 +278,7 @@ export const g2u5DarkLab: StepRenderer = (host, step, api) => {
       }
       if (kept.size === 3) {
         chips.forEach((c) => c.lock(true));
-        run.textContent = "세 측정 견주기";
+        run.textContent = "세 측정 비교하기";
         run.classList.add("g2u5x-go");
         run.onclick = () => {
           tap();
@@ -397,7 +397,7 @@ export const g2u5DesignLab: StepRenderer = (host, step, api) => {
         draw();
         bad();
         lab.slip();
-        toast(lab, "온도가 달라 견줄 수 없어요", true);
+        toast(lab, "온도가 달라 비교할 수 없어요", true);
         f.say(`온도까지 바꿨어요. 차이가 빛 때문인지 알 수 없어요. <b>${ref} ℃</b>로 되돌려요.`);
         return;
       }
@@ -415,10 +415,10 @@ export const g2u5DesignLab: StepRenderer = (host, step, api) => {
       run.disabled = true;
       off.clear();
       draw();
-      f.say("네 가지를 모두 쟀어요. 막대의 높이를 <b>견줘</b> 보세요.");
+      f.say("네 가지를 모두 쟀어요. 막대의 높이를 <b>비교해</b> 보세요.");
       tm.later(() => {
         lab.judge("전등을 <b>3개에서 4개</b>로 늘렸을 때 광합성량은?", [{ t: "더 늘지 않았다", ok: true }, { t: "계속 늘었다" }, { t: "오히려 줄었다" }], "3개와 4개의 막대 높이가 <b>같아요</b>.", () =>
-          lab.finish("빛이 셀수록 광합성량이 <b>늘다가</b>, 일정 세기 이상이 되면 <b>더 늘지 않고 일정</b>해져요. 온도 같은 다른 조건은 같게 두어야 견줄 수 있어요."),
+          lab.finish("빛이 셀수록 광합성량이 <b>늘다가</b>, 일정 세기 이상이 되면 <b>더 늘지 않고 일정</b>해져요. 온도 같은 다른 조건은 같게 두어야 비교할 수 있어요."),
         );
       }, 1500);
     });

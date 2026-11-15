@@ -4,7 +4,7 @@
 //   책의 탐구 2: 상추 모종 둘 가운데 하나에만 어둠상자를 씌워 하루 둔다 → 잎 조각을 에탄올에 넣고 뜨거운 물에 담가 탈색한다
 //   → 증류수로 헹군다 → 아이오딘 아이오딘화 칼륨 용액을 떨어뜨린다. 빛을 받은 잎 조각만 청람색이 된다.
 //   학생이 정하는 것: 어둠상자를 씌울지, 에탄올을 데우는 방법, 처리의 차례.
-//   실패하는 길: ① 어둠상자 없이 두면 두 조각이 모두 청람색이라 견줄 수 없다(처음부터 다시)
+//   실패하는 길: ① 어둠상자 없이 두면 두 조각이 모두 청람색이라 비교할 수 없다(처음부터 다시)
 //               ② 탈색하지 않고 용액을 떨어뜨리면 초록색에 가려 색 변화가 보이지 않는다(새 조각으로 다시)
 //               ③ 알코올램프 불로 직접 데우려 하면 위험하다고 막는다 ④ 헹구지 않으면 용액을 떨어뜨릴 수 없다.
 //   그림(2026-11-15 다시 그림): 책의 그림 ③④처럼 뜨거운 물(80~100 ℃)이 든 비커에 에탄올 시험관 둘을 세워 잎 조각을 탈색하고(엽록소가 녹아 나와
@@ -290,7 +290,7 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
       draw("g2u5x-pop");
       host.dataset.g5Fail = "nobox";
       toast(lab, "두 조각 모두 청람색이에요", true);
-      f.say("둘 다 빛을 받아 <b>견줄 수 없어요</b>. 처음으로 돌아가 다시 준비해요.");
+      f.say("둘 다 빛을 받아 <b>비교할 수 없어요</b>. 처음으로 돌아가 다시 준비해요.");
       tm.later(() => {
         cBath.el.classList.remove("done");
         cRinse.el.classList.remove("done");
@@ -453,7 +453,7 @@ export const g2u5StoreLab: StepRenderer = (host, step, api) => {
       }
     }),
   );
-  const go = bvBtn("main g2u5x-go", "다섯 작물 견주기");
+  const go = bvBtn("main g2u5x-go", "다섯 작물 비교하기");
   go.disabled = true;
   go.addEventListener("click", () => {
     tap();
