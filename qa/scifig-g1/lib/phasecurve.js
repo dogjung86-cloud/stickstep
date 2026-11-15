@@ -66,7 +66,7 @@ export function phaseCurve(root, kit, { mode, W, H, arrowColor }) {
   const shift = Math.max(0, centers[4] + R + 4 - W); for (let i = 0; i < 5; i++) centers[i] -= shift;
   const states = heat ? ["s", "sl", "l", "lg", "g"] : ["g", "gl", "l", "ls", "s"];
   const temps = heat ? [0.2, 0.35, 0.55, 0.7, 0.95] : [0.95, 0.7, 0.55, 0.35, 0.2];
-  const names = { s: ["고체"], l: ["액체"], g: ["기체"], sl: ["고체와 액체가", "함께"], ls: ["액체와 고체가", "함께"], lg: ["액체와 기체가", "함께"], gl: ["기체와 액체가", "함께"] };
+  const names = { s: ["고체"], l: ["액체"], g: ["기체"], sl: ["고체와", "액체가 함께"], ls: ["액체와", "고체가 함께"], lg: ["액체와", "기체가 함께"], gl: ["기체와", "액체가 함께"] }; // 두 줄을 비슷한 폭으로(이웃 이름과 붙지 않게)
   const pr = 3.9;
   const ball = (x, y) => {
     const g = kit.rad(svg, 0.35, 0.3, 0.75, [[0, "#FFFFFF", 0.95], [0.35, PC], [1, "#4B3FB8"]]);

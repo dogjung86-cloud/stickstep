@@ -56,6 +56,7 @@ export async function draw(root, kit) {
 
   // 어두운 하늘 위 글자(테두리를 하늘색으로)
   const dtext = (g, x, y, str, { size = 12, weight = 700, color = "#DCE7FB", anchor = "middle", halo = SKY } = {}) => {
+    size = Math.max(kit.MIN_FONT, size);
     const t = kit.s("text", { x, y, "text-anchor": anchor, "dominant-baseline": "central", "font-size": size, "font-weight": weight, fill: color,
       stroke: halo, "stroke-width": 3.4, "stroke-linejoin": "round", "paint-order": "stroke", style: "letter-spacing:-.02em" }, str);
     g.appendChild(t);

@@ -65,6 +65,7 @@ export async function draw(root, kit) {
   // 이름
   kit.label(svg, { at: [A.bx + 14, A.bag[1] + 6], via: [A.bx - 2, A.G + 26], to: [A.bx + 2, A.G + 26], text: "공기 주머니", side: "r", size: 12 });
   kit.label(svg, { at: [A.bx + A.bw - 16, A.midTop + 6], via: [A.bx + A.bw + 2, A.midTop - 22], to: [A.bx + A.bw + 6, A.midTop - 22], text: "밑창", side: "r", size: 12, dot: true });
-  kit.text(svg, B.bag[0], B.G + 26, "부피가 줄고, 기체가 세게 되밀어요", { size: 12, weight: 700, color: "#1C6CC1" });
+  kit.text(svg, B.bag[0], B.G + 24, "부피가 줄고,", { size: 13, weight: 700, color: "#1C6CC1" });
+  kit.text(svg, B.bag[0], B.G + 40, "기체가 세게 되밀어요", { size: 13, weight: 700, color: "#1C6CC1" });
   kit.text(svg, A.bag[0] + 0, A.G + 44, "입자 수는 같아요(10개)", { size: 12, weight: 600, color: "#5B6475" });
 }

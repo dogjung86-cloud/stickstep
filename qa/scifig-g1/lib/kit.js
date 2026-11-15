@@ -80,10 +80,13 @@ export function wobbleFilter(svg, { freq = 0.03, amp = 4, seed = 7 } = {}) {
 // ── 라벨 ───────────────────────────────────────────────────────────────
 export const INK = "#1E2633";
 export const LEAD = "#3D4757";
+/** 그림 속 글자의 가장 작은 설계 크기. 폰(390 폭)에서 그림이 약 313px로 줄어 0.92배가 되므로 13px이어야 12px 이상으로 보인다. */
+export const MIN_FONT = 13;
 
 /** 지시선 라벨. at = 가리키는 점, to = 글자 쪽 끝점, side = 글자가 놓이는 쪽("l"|"r"|"t"|"b").
  *  via = 꺾이는 점(선택). 끝점에는 흰 테 두른 작은 점. 글자는 흰 할로. */
 export function label(svg, { at, to, via, text, side = "r", size = 13.5, weight = 700, color = INK, sub, dot = true, line = LEAD, gap = 3 }) {
+  size = Math.max(MIN_FONT, size);
   const g = s("g", { class: "lbl" });
   const pts = [at, ...(via ? [via] : []), to];
   const d = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(" ");
@@ -104,7 +107,7 @@ export function label(svg, { at, to, via, text, side = "r", size = 13.5, weight 
     stroke: "#fff", "stroke-width": 3.6, "stroke-linejoin": "round", "paint-order": "stroke", style: "letter-spacing:-.02em" }, text);
   g.appendChild(t);
   if (sub) {
-    g.appendChild(s("text", { x, y: y + size * 1.12, "text-anchor": anchor, "dominant-baseline": base, "font-size": Math.max(12, size - 1.5), "font-weight": 500, fill: "#4E5968",
+    g.appendChild(s("text", { x, y: y + size * 1.12, "text-anchor": anchor, "dominant-baseline": base, "font-size": Math.max(MIN_FONT, size - 1.5), "font-weight": 500, fill: "#4E5968",
       stroke: "#fff", "stroke-width": 3.4, "stroke-linejoin": "round", "paint-order": "stroke" }, sub));
   }
   svg.appendChild(g);
@@ -113,6 +116,7 @@ export function label(svg, { at, to, via, text, side = "r", size = 13.5, weight 
 
 /** 지시선 없는 글자(제목, 구역 이름). */
 export function text(svg, x, y, str, { size = 13.5, weight = 700, color = INK, anchor = "middle", halo = true, italic = false, ls = "-.02em" } = {}) {
+  size = Math.max(MIN_FONT, size);
   const t = s("text", { x, y, "text-anchor": anchor, "dominant-baseline": "central", "font-size": size, "font-weight": weight, fill: color,
     stroke: halo ? "#fff" : null, "stroke-width": halo ? 3.6 : null, "stroke-linejoin": "round", "paint-order": "stroke",
     style: `letter-spacing:${ls}${italic ? ";font-style:italic" : ""}` }, str);

@@ -79,6 +79,7 @@ export async function draw(root, kit) {
   // ── 이름 ──
   const SKY = "#0D1830";
   const dtext = (x, y, str, { size = 12.5, weight = 700, color = "#E6EDFF", anchor = "middle" } = {}) => {
+    size = Math.max(kit.MIN_FONT, size);
     svg.appendChild(kit.s("text", { x, y, "text-anchor": anchor, "dominant-baseline": "central", "font-size": size, "font-weight": weight, fill: color,
       stroke: SKY, "stroke-width": 3.2, "stroke-linejoin": "round", "paint-order": "stroke", style: "letter-spacing:-.02em" }, str));
   };

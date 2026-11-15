@@ -79,6 +79,6 @@ export async function draw(root, kit) {
   kit.flowArrow(svg, `M${c0[0]} ${c0[1]} L${c1[0]} ${c1[1]}`, { w: 3, head: 8, hw: 2.2, fill: "#E03131", stroke: "#FFFFFF" });
   kit.label(svg, { at: [c1[0] + 1, c1[1] + 6], via: [c1[0] + 26, c1[1] + 6], to: [c1[0] + 30, c1[1] + 6], text: "탄성력", side: "r", size: 12.5, color: "#C92A2A", dot: false });
   const tp = pj(B.sx, 1.2, 0.6);
-  kit.label(svg, { at: tp, via: [tp[0] + 28, tp[1] + 4], to: [tp[0] + 32, tp[1] + 4], text: "촉이 밖으로", side: "r", size: 12 });
+  kit.label(svg, { at: tp, via: [tp[0] - 28, tp[1] + 4], to: [tp[0] - 32, tp[1] + 4], text: "촉이 밖으로", side: "l", size: 12 });
   console.log("placed " + report.join(" | "));
 }
