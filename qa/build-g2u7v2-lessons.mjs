@@ -1,4 +1,6 @@
 // g2u7 v2 이식 생성기(m1u6 v2판 계승 · 과학 1호): 스테이징 qa/g2u7v2-{pilot,rest-a~d}.ts의 문항
+// [2026-11] g2u7 풀은 v3로 바뀌었다(EXAM_GUIDE "g2u7 v3"). 이 스크립트는 레슨 파일을 옛 v2로 덮어쓰므로 돌리지 않는다.
+if (!process.env.FORCE_G2U7_V2) { console.log("g2u7 풀은 v3다. 이 스크립트는 쓰지 않는다(EXAM_GUIDE의 g2u7 v3 소단락)."); process.exit(1); }
 // 블록을 슬롯 순으로 재조립해 src/content/exams/g2u7l1~l8.ts + g2u7.ts를 재생성하고,
 // 신작 헬퍼 7종(HG·PF·SC·CF·EB·CP·SW)을 ui/examFigures.ts 말미 "g2u7 v2" 섹션으로 승격하며,
 // elecRubExamFig는 확대판(rubFigV2 · 파일럿 검수 반영)으로 본문을 패치한다. 재실행 가능(멱등).

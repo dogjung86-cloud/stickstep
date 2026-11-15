@@ -5,7 +5,7 @@ import { el, clear, countUp } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { makeAnswerPad, checkAnswer } from "../ui/mathKit";
-import { examForUnit, drawFreshExamItems } from "../content/exams";
+import { examForUnit, drawFreshExamItems, noteOpts } from "../content/exams";
 import type { ExamDef, ExamItem } from "../content/exams";
 import { findUnit, unitProgress, findLesson } from "../content/curriculum";
 import type { Unit } from "../content/curriculum";
@@ -235,6 +235,13 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
 
   const GANADA = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"];
 
+  /** 보기 묶음의 클래스(그림 고르기는 여러 칸)와 짝짓기 표의 머리줄. 시험과 리뷰가 함께 쓴다. */
+  const optsClass = (it: ExamItem): string => (it.optCols && it.optCols > 1 ? ` cols${it.optCols}` : "");
+  function optHead(it: ExamItem): HTMLElement | null {
+    if (!it.optHead?.length) return null;
+    return el("div", { class: "ex-opt-head" }, ...it.optHead.map((h) => el("span", { html: h })));
+  }
+
   /** 문항 본문(질문·보기 상자·그림) — 시험과 리뷰가 공유한다. */
   function questionBody(it: ExamItem): HTMLElement {
     const box = el("div", {});
@@ -290,7 +297,9 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
 
     if (it.type === "mcq" || it.type === "multi") {
       const opts_ = it.options ?? [];
-      const boxEl = el("div", { class: "opts ex-opts" });
+      const head = optHead(it);
+      if (head) step.appendChild(head);
+      const boxEl = el("div", { class: `opts ex-opts${optsClass(it)}` });
       step.appendChild(boxEl);
       const selected = new Set<number>();
       const cards: HTMLButtonElement[] = [];
@@ -405,7 +414,7 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
         type: it.type,
         q: it.prompt,
         bogi: it.bogi,
-        opts: it.options,
+        opts: noteOpts(it),
         answer: Array.isArray(it.answer) ? it.answer : typeof it.answer === "number" ? [it.answer] : String(it.answer),
         explain: it.explain,
         core: it.core,
@@ -615,7 +624,9 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
     box.appendChild(questionBody(it));
 
     if (it.type === "mcq" || it.type === "multi") {
-      const optsBox = el("div", { class: "opts ex-opts review" });
+      const head = optHead(it);
+      if (head) box.appendChild(head);
+      const optsBox = el("div", { class: `opts ex-opts review${optsClass(it)}` });
       const answers = new Set<number>(Array.isArray(it.answer) ? (it.answer as number[]) : [it.answer as number]);
       const mine = new Set<number>(q.resp == null ? [] : Array.isArray(q.resp) ? (q.resp as number[]) : [q.resp as number]);
       for (const oi of q.order) {
@@ -627,6 +638,9 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
         }`;
         // 맞은 보기에 내가 골랐다는 표시도 함께(합답형에서 부분 선택 확인용)
         if (isAns && isMine) card.innerHTML = `${it.options![oi]}<span class="xr-tag ok">정답 · 내 답</span>`;
+        // 보기별 이유는 그 보기 카드 안에 붙인다(보기 순서가 섞여도 따라간다)
+        const why = it.optWhy?.[oi];
+        if (why) card.appendChild(el("span", { class: "xr-why", html: why }));
         optsBox.appendChild(card);
       }
       box.appendChild(optsBox);

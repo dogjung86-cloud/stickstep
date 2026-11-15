@@ -38,6 +38,18 @@ export interface ExamItem {
   explain: string;
   /** 핵심 개념 한 줄 요약 — 리뷰 카드 하단, 레슨 바로가기 옆. */
   core: string;
+  /** mcq 전용: 보기 위에 놓는 머리줄(짝짓기 표). 보기는 <span class="ex-pair"> 안에 같은 수의 칸을 넣는다. */
+  optHead?: string[];
+  /** mcq·multi: 보기를 여러 칸으로 놓는다(그림 고르기). 주지 않으면 한 줄에 하나. */
+  optCols?: 1 | 2 | 3;
+  /** 보기별 이유(저작 인덱스 순, 따로 쓸 이유가 없는 보기는 null). 리뷰와 취약 문제 풀이에서 그 보기 아래에 보여 준다.
+   *  보기 순서가 섞여도 따라가므로 해설에서 보기를 번호로 가리킬 필요가 없다. */
+  optWhy?: (string | null)[];
+}
+
+/** 오답노트에 남기는 보기 글. 그림 보기(SVG)는 저장하지 않고 자리 표시만 남긴다(노트는 풀에서 다시 찾아 그린다). */
+export function noteOpts(it: ExamItem): string[] | undefined {
+  return it.options?.map((o, i) => (o.includes("<svg") ? `@opt:${i}` : o));
 }
 
 export interface ExamDef {
@@ -48,6 +60,9 @@ export interface ExamDef {
   /** 응시당 출제 수(20). */
   pick: number;
   pool: ExamItem[];
+  /** 미리 나눈 시험지들(문항 id 묶음, 묶음마다 pick개). 있으면 응시마다 묶음 하나를 통째로 낸다.
+   *  묶음끼리 겹치지 않으므로 묶음 수만큼 응시하는 동안 같은 문항이 다시 나오지 않는다(g2u7 v3: 8묶음 × 20). */
+  forms?: string[][];
 }
 
 /** 응시 1회분 추출 — 레슨 균형(풀 등장 순서 = 교과 진도 순서) 랜덤.
@@ -95,6 +110,7 @@ export function drawExamItems(def: ExamDef): ExamItem[] {
  *  반환 seen = 리셋 정리 + 이번 출제분까지 반영된 새 목록 — 호출자(exam.ts)가 **제출 완료
  *  시점에만** 저장한다(중도 이탈한 시험지는 은행을 소진하지 않는다). */
 export function drawFreshExamItems(def: ExamDef, seen: readonly string[]): { items: ExamItem[]; seen: string[] } {
+  if (def.forms?.length) return drawFormItems(def, def.forms, seen);
   const byId = new Map(def.pool.map((it) => [it.id, it]));
   const eff = seen.filter((id) => byId.has(id));
   const tail = new Set(eff.slice(-def.pick)); // 직전 완주 시험지
@@ -140,6 +156,31 @@ export function drawFreshExamItems(def: ExamDef, seen: readonly string[]): { ite
   // 리셋된 레슨은 옛 이력을 걷어낸다 — 직전 시험지(tail)만 예외로 남긴다(연속 무중복의 근거)
   const kept = eff.filter((id) => !drawn.has(id) && (!reset.has(byId.get(id)!.lessonId) || tail.has(id)));
   return { items, seen: [...kept, ...items.map((it) => it.id)] };
+}
+
+/** 시험지 묶음(forms) 출제. 이력(seen)에 문항이 하나도 없는 묶음 가운데 하나를 고른다.
+ *  묶음을 다 돌았으면 이력을 직전 시험지만 남기고 비운 뒤, 직전 것을 뺀 묶음에서 다시 고른다(연속 응시 무중복 유지).
+ *  시험지 안의 순서는 레슨은 진도 순, 같은 레슨 안은 랜덤이다. seen은 호출자가 제출 완료 때만 저장한다. */
+function drawFormItems(def: ExamDef, forms: string[][], seen: readonly string[]): { items: ExamItem[]; seen: string[] } {
+  const byId = new Map(def.pool.map((it) => [it.id, it]));
+  const eff = seen.filter((id) => byId.has(id));
+  const all = forms.map((_, i) => i);
+  const untouched = (ids: Set<string>): number[] => all.filter((i) => !forms[i].some((id) => ids.has(id)));
+  let kept = eff;
+  let open = untouched(new Set(eff));
+  if (!open.length) {
+    const tail = new Set(eff.slice(-def.pick)); // 직전 완주 시험지
+    kept = eff.filter((id) => tail.has(id));
+    open = untouched(tail);
+    if (!open.length) open = all;
+  }
+  const form = forms[open[Math.floor(Math.random() * open.length)]];
+  const order = new Map<string, number>();
+  for (const it of def.pool) if (!order.has(it.lessonId)) order.set(it.lessonId, order.size);
+  const items = shuffle(form.map((id) => byId.get(id)).filter((it): it is ExamItem => !!it));
+  items.sort((a, b) => order.get(a.lessonId)! - order.get(b.lessonId)!);
+  const drawn = new Set(items.map((it) => it.id));
+  return { items, seen: [...kept.filter((id) => !drawn.has(id)), ...items.map((it) => it.id)] };
 }
 
 function shuffle<T>(arr: T[]): T[] {

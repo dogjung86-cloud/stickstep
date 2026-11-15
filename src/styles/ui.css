@@ -2821,6 +2821,31 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .xr-row.open .xr-body { display: block; }
 .xr-body .h1.sm { font-size: 16.5px; margin-top: 10px; }
 .xr-lesson-chip { display: inline-block; margin-top: 12px; font-size: 11px; font-weight: 800; color: var(--n600); background: var(--n100); border: 1px solid var(--n200); border-radius: 99px; padding: 3px 10px; }
+/* 그림 고르기: 보기를 여러 칸으로 놓는다. 고르는 동그라미는 카드 아래 가운데로 */
+.ex-opts.cols2 { display: grid; grid-template-columns: 1fr 1fr; }
+.ex-opts.cols3 { display: grid; grid-template-columns: repeat(3, 1fr); }
+.ex-opts.cols2 .opt, .ex-opts.cols3 .opt { padding: 12px 8px 40px; }
+.ex-opts.cols2 .opt .radio, .ex-opts.cols3 .opt .radio { top: auto; bottom: 10px; right: 50%; transform: translateX(50%); }
+.ex-optfig { display: block; }
+.ex-optfig svg { display: block; width: 100%; height: auto; max-height: 150px; margin: 0 auto; }
+.nb-opt .ex-optfig svg { max-height: 110px; }
+/* 짝짓기 표: 머리줄과 보기의 칸을 같은 격자로 맞춘다 */
+.ex-opt-head { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; margin-top: 22px; padding: 0 52px 0 18px; font-size: 12.5px; font-weight: 800; color: var(--n500); text-align: center; word-break: keep-all; }
+.ex-opt-head + .opts { margin-top: 8px; }
+.ex-pair { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; text-align: center; }
+/* 문항 그림 칸의 표 */
+.ex-table { border-collapse: collapse; margin: 0 auto; font-size: 14px; line-height: 1.4; color: var(--ink); }
+.ex-table th, .ex-table td { border: 1.5px solid var(--n300); padding: 7px 10px; text-align: center; word-break: keep-all; }
+.ex-table th { background: var(--n50); font-weight: 800; }
+.q-figure-art svg + .ex-table { margin-top: 12px; }
+.q-figure-art:has(> .ex-table) { background: #fff; overflow-x: auto; }
+/* 리뷰와 취약 문제 풀이: 보기별 이유 */
+.xr-why { display: block; clear: both; margin-top: 7px; padding-left: 10px; border-left: 2px solid var(--n300); font-size: 12.5px; font-weight: 500; line-height: 1.55; color: var(--n700); word-break: keep-all; }
+.wd-fb .xr-why { margin-top: 9px; }
+.ex-opts.review.cols2, .ex-opts.review.cols3 { display: flex; }
+.ex-opts.review.cols2 .opt, .ex-opts.review.cols3 .opt { padding: 13px 15px; }
+.ex-opts.review .ex-optfig svg { max-height: 110px; }
+.xr-body .ex-opt-head { padding: 0 15px; margin-top: 16px; }
 .ex-opts.review { margin-top: 16px; gap: 8px; }
 .ex-opts.review .opt { pointer-events: none; padding: 13px 15px; font-size: 14px; }
 .ex-opts.review .opt .radio { display: none; }
