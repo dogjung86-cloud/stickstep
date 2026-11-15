@@ -6,6 +6,9 @@
 // 흐름: 다가가기 → 가림판 → (예측) → 공기 빼기 → 판정 → 결론.
 // 난로는 전기난로다(불꽃은 공기가 없으면 꺼지므로 유리 상자 실험과 어긋난다. 모닥불은 앞의 만화에 이미 나온다).
 // 유리 상자에서 온도계의 눈금은 그대로 둔다(복사로 받는 열이 그대로라는 것만 보인다).
+// 2026-11-15 그래픽 감사 고침(난로 장면): 받는 열이 구석의 작은 다섯 칸이었고, 빛줄기가 사람 몸을 뚫고 무대 끝까지 갔다.
+//   이제 빛줄기는 몸 앞(손, 몸통, 머리, 다리)에서 멈추고 닿은 자리가 빛난다. 난로에서 퍼져 나가므로 멀어질수록 몸에 닿는 줄 수가 준다.
+//   받는 열 칸은 사람 머리 위로 옮겨 키웠다. 사람은 흰 선 막대 인물에서 옷 입은 인물로(난로 쪽으로 손을 내밀었다, 책 그림 Ⅲ-6).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
@@ -55,9 +58,105 @@ export const radLab: StepRenderer = (host, step, api) => {
     ctx.setLineDash([]);
   }
 
+  /** 사람(x는 몸 가운데)의 앞쪽(난로 쪽) 가장자리. 그 높이에 몸이 없으면 null. */
+  function bodyFront(x: number, y: number): number | null {
+    if (y >= 89 && y < 111) return x - Math.sqrt(Math.max(0, 121 - (y - 100) * (y - 100)));
+    if (y >= 111 && y < 114) return x - 4;
+    if (y >= 120 && y < 134) return x - 31; // 앞으로 내민 팔과 손
+    if (y >= 114 && y < 154) return x - 11;
+    if (y >= 154 && y <= 190) return x - 10;
+    return null;
+  }
+
+  /** 옷 입은 사람(난로 쪽으로 손을 내밀었다). 얼굴은 비운다(앱 화풍). */
+  function drawPerson(ctx: Ctx, x: number): void {
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    // 바닥 그림자
+    ctx.fillStyle = "rgba(0,0,0,.28)";
+    ctx.beginPath();
+    ctx.ellipse(x, 192, 20, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // 다리
+    ctx.strokeStyle = "#2B3852";
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(x - 5, 150);
+    ctx.lineTo(x - 7, 186);
+    ctx.moveTo(x + 5, 150);
+    ctx.lineTo(x + 7, 186);
+    ctx.stroke();
+    ctx.fillStyle = "#1B2536";
+    rr(ctx, x - 14, 184, 12, 6, 3);
+    ctx.fill();
+    rr(ctx, x + 1, 184, 12, 6, 3);
+    ctx.fill();
+    // 몸통(옷)
+    const g = ctx.createLinearGradient(x - 12, 0, x + 12, 0);
+    g.addColorStop(0, "#6E97E6");
+    g.addColorStop(1, "#3F69C2");
+    rr(ctx, x - 12, 112, 24, 42, 8);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = "#2A4E96";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // 앞으로 내민 팔과 손
+    ctx.strokeStyle = "#4F7AD0";
+    ctx.lineWidth = 7;
+    ctx.beginPath();
+    ctx.moveTo(x - 5, 121);
+    ctx.lineTo(x - 24, 127);
+    ctx.stroke();
+    ctx.fillStyle = "#F2C9A0";
+    ctx.beginPath();
+    ctx.arc(x - 27, 127.5, 4.6, 0, Math.PI * 2);
+    ctx.fill();
+    // 목과 머리
+    ctx.fillStyle = "#F2C9A0";
+    rr(ctx, x - 3.5, 106, 7, 8, 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x, 100, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#B88660";
+    ctx.lineWidth = 1.3;
+    ctx.stroke();
+    // 머리카락(뒤통수 쪽이 오른쪽)
+    ctx.fillStyle = "#3B2A20";
+    ctx.beginPath();
+    ctx.moveTo(x - 10.5, 97);
+    ctx.quadraticCurveTo(x - 9, 86.5, x + 1, 88.6);
+    ctx.quadraticCurveTo(x + 12.5, 89.5, x + 11.2, 103);
+    ctx.quadraticCurveTo(x + 6, 95, x - 10.5, 97);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
   function drawStove(ctx: Ctx, tMs: number): void {
     const w = warmth();
-    for (const a of RAYS) ray(ctx, 60, 130, a, shield ? 110 : 344, tMs, 0.75);
+    const x = 150 + dist * 1.5;
+    // 빛줄기: 가림판이나 몸 앞에서 멈춘다(몸에 닿은 줄은 닿은 자리를 기억해 둔다)
+    const hits: [number, number][] = [];
+    for (const a of RAYS) {
+      const k = Math.tan(a);
+      let end = 344;
+      if (shield) end = 110;
+      else {
+        for (let xx = 70; xx <= 344; xx += 1.5) {
+          const yy = 130 + (xx - 60) * k;
+          const fr = bodyFront(x, yy);
+          if (fr !== null && xx >= fr) {
+            end = xx;
+            hits.push([xx, yy]);
+            break;
+          }
+        }
+      }
+      ray(ctx, 60, 130, a, end, tMs, 0.75);
+    }
     // 전기난로
     rr(ctx, 16, 84, 44, 96, 8);
     ctx.fillStyle = "#3A475F";
@@ -82,39 +181,46 @@ export const radLab: StepRenderer = (host, step, api) => {
       txt(ctx, "가림판", 112, 208, { size: 12.5, color: SUB });
     }
     // 사람: 열을 받는 만큼 난로 쪽이 달아오른다
-    const x = 150 + dist * 1.5;
-    const g = ctx.createRadialGradient(x - 8, 124, 4, x - 8, 124, 46);
-    g.addColorStop(0, `rgba(255,130,60,${0.55 * w})`);
+    const g = ctx.createRadialGradient(x - 14, 128, 4, x - 14, 128, 44);
+    g.addColorStop(0, `rgba(255,130,60,${0.5 * w})`);
     g.addColorStop(1, "rgba(255,130,60,0)");
     ctx.fillStyle = g;
     ctx.beginPath();
-    ctx.arc(x - 8, 124, 46, 0, Math.PI * 2);
+    ctx.arc(x - 14, 128, 44, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "#E8EEF9";
-    ctx.lineWidth = 3;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.beginPath();
-    ctx.arc(x, 96, 13, 0, Math.PI * 2);
-    ctx.moveTo(x, 109);
-    ctx.lineTo(x, 152);
-    ctx.lineTo(x - 10, 190);
-    ctx.moveTo(x, 152);
-    ctx.lineTo(x + 10, 190);
-    ctx.moveTo(x, 122);
-    ctx.lineTo(x - 20, 134);
-    ctx.moveTo(x, 122);
-    ctx.lineTo(x - 18, 118);
-    ctx.stroke();
-    // 받는 열(칸 다섯)
-    const lv = Math.round(w * 5);
-    txt(ctx, "받는 열", 16, 24, { size: 12.5, color: SUB, align: "left" });
-    for (let i = 0; i < 5; i++) {
-      rr(ctx, 64 + i * 15, 16, 12, 16, 3);
-      ctx.fillStyle = i < lv ? "#FF8A4C" : "rgba(255,255,255,.12)";
+    drawPerson(ctx, x);
+    // 빛줄기가 닿은 자리
+    for (const [hx, hy] of hits) {
+      const hg = ctx.createRadialGradient(hx, hy, 0.5, hx, hy, 7);
+      hg.addColorStop(0, "rgba(255,214,140,.95)");
+      hg.addColorStop(1, "rgba(255,150,70,0)");
+      ctx.fillStyle = hg;
+      ctx.beginPath();
+      ctx.arc(hx, hy, 7, 0, Math.PI * 2);
       ctx.fill();
     }
+    // 받는 열(칸 다섯): 사람 머리 위에 크게
+    const lv = Math.round(w * 5);
+    const mx = Math.max(166, Math.min(290, x));
+    rr(ctx, mx - 53, 44, 106, 46, 10);
+    ctx.fillStyle = "rgba(11,21,36,.88)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,138,76,.35)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    txt(ctx, "받는 열", mx, 56, { size: 12.5, color: "#E8EEF9", weight: 800 });
+    for (let i = 0; i < 5; i++) {
+      rr(ctx, mx - 45 + i * 18.4, 66, 15, 18, 4);
+      ctx.fillStyle = i < lv ? "#FF8A4C" : "rgba(255,255,255,.12)";
+      ctx.fill();
+      if (i < lv) {
+        ctx.strokeStyle = "#FFC9A0";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+    }
     host.dataset.u3Warm = String(lv);
+    host.dataset.u3Hits = String(hits.length);
   }
 
   function drawBox(ctx: Ctx, dt: number, tMs: number): void {

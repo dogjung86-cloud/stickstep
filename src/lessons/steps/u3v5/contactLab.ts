@@ -1,7 +1,13 @@
 // [중1 Ⅲ v5] u3l2 u3ContactLab: 「뜨거운 물과 찬물이 닿으면?」
 // 한 통찰: 온도가 다른 두 물체가 닿으면 열은 온도가 높은 쪽에서 낮은 쪽으로 이동하고, 두 온도가 같아지면 멈춘다(열평형).
 // 책의 탐구(열량계의 뜨거운 물에 찬물이 든 알루미늄 컵을 넣고 온도 센서로 두 온도를 잰다)를 한 무대에 옮겼다.
-//   왼쪽: 열량계와 컵(두 물의 입자, 벽을 건너는 열 화살표)   오른쪽: 시간과 온도 그래프(두 선이 만난다)
+//   왼쪽: 열량계와 컵(두 물의 입자, 컵 벽을 건너는 굵은 '열' 화살 하나)
+//   오른쪽: 시간과 온도 그래프 두 칸(위: 찬 컵을 넣었을 때, 아래: 뜨거운 컵을 넣었을 때)
+// 2026-11-15 그래픽 감사 고침: 판정은 "두 번의 실험에서 열은 언제나 어느 쪽으로?"인데 무대에는 마지막 실험만 남았고, 선 색이 물의 이름이라
+//   뜨거운 컵의 선이 파랑이었다. 이제 두 실험이 위아래 칸에 함께 남고, 칸마다 처음에 뜨거웠던 물의 선은 주황, 차가웠던 물의 선은 파랑이다
+//   (책 그림 Ⅲ-2. 빨강은 오답 색이라 뜨거운 쪽은 주황으로). 선 끝에 '컵 속 물', '바깥 물' 이름, 처음 자리에 뜨거운 선에서 찬 선으로 가는 '열' 화살.
+//   측정 중에는 컵 벽을 건너는 굵은 '열' 화살 하나를 무대에서 가장 크게 그린다(책 그림 Ⅲ-3).
+//   칸에는 그 칸의 마지막 '센' 실험(뚜껑을 닫고 온도 차이가 20℃ 넘는 실험)이 남는다. 세지 않는 실험은 컵을 꺼낼 때까지만 보인다.
 // 학생이 정하는 것: 컵 속 물의 온도, 그리고 실험의 차례(컵 넣기 → 뚜껑 닫기 → 측정 시작).
 //   컵이 바깥 물보다 차가울 때와 뜨거울 때를 한 번씩 넣어 보면 열의 방향이 뒤집힌다.
 // 실패하는 길: 뚜껑을 닫지 않고 측정하면 열이 공기 중으로 빠져나가 두 온도가 만난 뒤에도 계속 내려간다(그 실험은 세지 않는다).
@@ -15,7 +21,7 @@ import { curioCard, type Curio } from "../../../ui/curio";
 import { tempColor, drawGlowParticle, makeParticles, stepFree, type Box, type FreeParticle } from "../../../ui/thermo";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvRange, bvTimers } from "../bio6/b6Lab";
-import { u3Frame, u3Canvas, water, pill, txt, rr, graphAxes, graphLine, SUB, INK, type Ctx } from "./kit";
+import { u3Frame, u3Canvas, water, pill, txt, rr, SUB, HOT, COLD, type Ctx } from "./kit";
 
 interface ContactStep {
   title: string;
@@ -26,11 +32,26 @@ interface ContactStep {
 const OUT0 = 60; // 바깥 물의 처음 온도
 const TAU = 62; // 온도 차가 줄어드는 빠르기(프레임)
 const RUN = 230; // 한 번의 실험 길이(프레임)
-const C_OUT = "#FFA25E";
-const C_CUP = "#6FD3FF";
 const ROOM = 20; // 방 온도
 const LIFT = 74; // 넣기 전 컵이 떠 있는 높이
+const HEAT = "#FFD666"; // '열' 화살의 색
 const speedOf = (T: number): number => 0.16 + Math.pow(T / 100, 1.5) * 2.6;
+
+type PanelKey = "cold" | "hot";
+interface Run {
+  cupHot: boolean; // 컵 속 물이 바깥 물보다 뜨거웠다
+  equal: boolean; // 두 물의 온도가 거의 같았다
+  leaky: boolean;
+  fin: number;
+  cup: [number, number][];
+  out: [number, number][];
+  done: boolean;
+}
+// 그래프 두 칸(설계 좌표). 세로는 0~100℃.
+const PANEL: Record<PanelKey, { title: string; x0: number; x1: number; y0: number; y1: number; ty: number }> = {
+  cold: { title: "찬 컵을 넣었을 때", x0: 224, x1: 334, y0: 26, y1: 104, ty: 13 },
+  hot: { title: "뜨거운 컵을 넣었을 때", x0: 224, x1: 334, y0: 132, y1: 210, ty: 120 },
+};
 
 export const contactLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as ContactStep;
@@ -50,8 +71,10 @@ export const contactLab: StepRenderer = (host, step, api) => {
   let hotDone = false;
   let predicted = false;
   let phase: "play" | "ask" | "done" = "play";
-  let curveOut: [number, number][] = [];
-  let curveCup: [number, number][] = [];
+  // 칸마다 보이는 실험(shown)과 남겨 둔 '센' 실험(kept)
+  const shown: Record<PanelKey, Run | null> = { cold: null, hot: null };
+  const kept: Record<PanelKey, Run | null> = { cold: null, hot: null };
+  let live: Run | null = null;
 
   const finOf = (c: number): number => (2 * OUT0 + c) / 3;
   const tempsAt = (tt: number): { out: number; cup: number } => {
@@ -67,6 +90,35 @@ export const contactLab: StepRenderer = (host, step, api) => {
   const psL = makeParticles(7, boxL);
   const psR = makeParticles(7, boxR);
   const psC: FreeParticle[] = makeParticles(8, { x: 71, y: 126, w: 38, h: 56 });
+
+  /** 굵은 화살(몸통 + 머리). dir +1이면 오른쪽, -1이면 왼쪽. 몸통 가운데에 '열'. */
+  function heatArrow(ctx: Ctx, xFrom: number, xTo: number, y: number, half: number, alpha: number): void {
+    const dir = xTo > xFrom ? 1 : -1;
+    const head = 15;
+    const hx = xTo - dir * head;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.shadowColor = "rgba(255,214,102,.75)";
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.moveTo(xFrom, y - half);
+    ctx.lineTo(hx, y - half);
+    ctx.lineTo(hx, y - half - 7);
+    ctx.lineTo(xTo, y);
+    ctx.lineTo(hx, y + half + 7);
+    ctx.lineTo(hx, y + half);
+    ctx.lineTo(xFrom, y + half);
+    ctx.closePath();
+    ctx.fillStyle = HEAT;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "#8A5A00";
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = "round";
+    ctx.stroke();
+    txt(ctx, "열", (xFrom + hx) / 2, y + 0.5, { size: 13, color: "#3A2600", weight: 800 });
+    ctx.restore();
+  }
 
   function drawScene(ctx: Ctx, dt: number, tMs: number, out: number, cup: number): void {
     const dy = -LIFT * lift;
@@ -110,33 +162,15 @@ export const contactLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(cx + 52, cy + 2);
     ctx.lineTo(cx + 55, cy - 2);
     ctx.stroke();
-    // 열 화살표: 컵 벽을 건넌다(온도가 높은 쪽에서 낮은 쪽으로). 온도 차가 클수록 굵다.
+    // 열 화살 하나: 컵의 오른쪽 벽을 건넌다(온도가 높은 물에서 낮은 물로). 온도 차가 클수록 굵고 진하다. 무대에서 가장 크다.
     const diff = out - cup;
     if (measuring && lift < 0.05 && Math.abs(diff) > 1.5) {
-      const into = diff > 0; // 바깥에서 컵으로
-      const a = Math.min(1, Math.abs(diff) / 25);
-      const sl = ((tMs / 500) % 1) * 8;
-      for (const side of [-1, 1]) {
-        const wallX = side < 0 ? cx : cx + 52;
-        const dir = (into ? 1 : -1) * -side; // +1이면 오른쪽으로
-        const x0 = wallX - dir * 12 + dir * sl;
-        const y0 = cy + 44;
-        ctx.strokeStyle = `rgba(255,214,102,${0.55 + 0.45 * a})`;
-        ctx.fillStyle = ctx.strokeStyle;
-        ctx.lineWidth = 2.5 + 2 * a;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x0 - dir * 6, y0);
-        ctx.lineTo(x0 + dir * 9, y0);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x0 + dir * 16, y0);
-        ctx.lineTo(x0 + dir * 7, y0 - 6);
-        ctx.lineTo(x0 + dir * 7, y0 + 6);
-        ctx.closePath();
-        ctx.fill();
-      }
-      txt(ctx, "열", cx + 26, cy + 96, { size: 12.5, color: "#FFD666", weight: 800 });
+      const into = diff > 0; // 바깥 물에서 컵 속 물로
+      const a = Math.min(1, Math.abs(diff) / 22);
+      const sl = Math.sin(tMs / 260) * 2.5;
+      const y = cy + 42;
+      if (into) heatArrow(ctx, 156 + sl, 88 + sl, y, 6 + 3 * a, 0.55 + 0.45 * a);
+      else heatArrow(ctx, 88 - sl, 156 - sl, y, 6 + 3 * a, 0.55 + 0.45 * a);
     }
     // 뚜껑: 닫으면 덮개가 놓이고, 연 채로 측정하면 열이 위로 빠져나간다
     if (lid) {
@@ -155,8 +189,8 @@ export const contactLab: StepRenderer = (host, step, api) => {
         ctx.stroke();
       }
     }
-    pill(ctx, `컵 ${Math.round(cup)}℃`, 50, 15, { size: 12, dot: C_CUP });
-    pill(ctx, `바깥 ${Math.round(out)}℃`, 128, 15, { size: 12, dot: C_OUT });
+    pill(ctx, `컵 ${Math.round(cup)}℃`, 50, 15, { size: 12, dot: tempColor(cup / 100) });
+    pill(ctx, `바깥 ${Math.round(out)}℃`, 128, 15, { size: 12, dot: tempColor(out / 100) });
   }
   let lastCupY = 110 - LIFT + 16;
   psC.forEach((p) => {
@@ -164,35 +198,106 @@ export const contactLab: StepRenderer = (host, step, api) => {
     p.py -= LIFT;
   });
 
-  function drawGraph(ctx: Ctx): void {
-    const g = graphAxes(ctx, { x: 212, y: 46, w: 122, h: 132, tMax: RUN, vMin: 0, vMax: 100, ticks: [0, 50, 100], xLabel: "시간", yLabel: "온도(℃)" });
-    if (settled && leaky) txt(ctx, "계속 내려가요", 276, 55, { size: 12.5, color: "#FF8F8F", weight: 800 });
-    if (settled && !leaky) {
+  // ── 그래프 두 칸 ──
+  function drawPanel(ctx: Ctx, key: PanelKey): void {
+    const P = PANEL[key];
+    const px = (tt: number): number => P.x0 + (Math.min(tt, RUN) / RUN) * (P.x1 - P.x0);
+    const py = (v: number): number => P.y1 - (v / 100) * (P.y1 - P.y0);
+    txt(ctx, P.title, 204, P.ty, { size: 12, color: "#C9D5E8", align: "left", weight: 700 });
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(P.x0, py(50));
+    ctx.lineTo(P.x1, py(50));
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.5)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(P.x0, P.y0 - 2);
+    ctx.lineTo(P.x0, P.y1);
+    ctx.lineTo(P.x1 + 4, P.y1);
+    ctx.stroke();
+    txt(ctx, "100", P.x0 - 4, py(100), { size: 12, color: SUB, align: "right", weight: 600 });
+    txt(ctx, "0", P.x0 - 4, py(0), { size: 12, color: SUB, align: "right", weight: 600 });
+    const r = shown[key];
+    if (!r) {
+      txt(ctx, "아직 안 했어요", (P.x0 + P.x1) / 2, (P.y0 + P.y1) / 2, { size: 12, color: SUB, weight: 600 });
+      return;
+    }
+    const cupC = r.equal ? SUB : r.cupHot ? HOT : COLD;
+    const outC = r.equal ? SUB : r.cupHot ? COLD : HOT;
+    if (r.done && !r.leaky) {
       ctx.setLineDash([4, 4]);
-      ctx.strokeStyle = "rgba(123,224,176,.8)";
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "rgba(232,238,249,.45)";
+      ctx.lineWidth = 1.4;
       ctx.beginPath();
-      ctx.moveTo(g.px(0), g.py(run0.fin));
-      ctx.lineTo(g.px(RUN), g.py(run0.fin));
+      ctx.moveTo(P.x0, py(r.fin));
+      ctx.lineTo(P.x1, py(r.fin));
       ctx.stroke();
       ctx.setLineDash([]);
-      txt(ctx, `같아졌어요 ${Math.round(run0.fin)}℃`, 276, 55, { size: 12.5, color: "#7BE0B0", weight: 800 });
     }
-    graphLine(ctx, g, curveOut, C_OUT);
-    graphLine(ctx, g, curveCup, C_CUP);
-    if (!curveOut.length) txt(ctx, "측정하면 그려져요", 273, 112, { size: 12, color: SUB, weight: 600 });
-    // 범례
-    ctx.fillStyle = C_OUT;
-    ctx.fillRect(214, 213, 12, 3);
-    txt(ctx, "바깥 물", 230, 215, { size: 12, color: INK, align: "left", weight: 600 });
-    ctx.fillStyle = C_CUP;
-    ctx.fillRect(278, 213, 12, 3);
-    txt(ctx, "컵 속 물", 294, 215, { size: 12, color: INK, align: "left", weight: 600 });
+    const line = (pts: [number, number][], color: string): void => {
+      if (pts.length < 2) return;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.8;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      pts.forEach(([tt, v], i) => (i ? ctx.lineTo(px(tt), py(v)) : ctx.moveTo(px(tt), py(v))));
+      ctx.stroke();
+    };
+    // 찬 선을 먼저, 뜨거운 선을 위에
+    if (r.cupHot) {
+      line(r.out, outC);
+      line(r.cup, cupC);
+    } else {
+      line(r.cup, cupC);
+      line(r.out, outC);
+    }
+    // 처음 자리의 '열' 화살: 뜨거운 선에서 찬 선으로(그래프에서 늘 위에서 아래로)
+    if (!r.equal && r.cup.length > 1) {
+      const hi = Math.max(r.cup[0][1], r.out[0][1]);
+      const lo = Math.min(r.cup[0][1], r.out[0][1]);
+      const x = P.x0 + 9;
+      const y0 = py(hi) + 5;
+      const y1 = py(lo) - 4;
+      if (y1 - y0 > 8) {
+        ctx.strokeStyle = HEAT;
+        ctx.fillStyle = HEAT;
+        ctx.lineWidth = 2.6;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x, y0);
+        ctx.lineTo(x, y1 - 5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y1 + 1);
+        ctx.lineTo(x - 5, y1 - 6);
+        ctx.lineTo(x + 5, y1 - 6);
+        ctx.closePath();
+        ctx.fill();
+        const ly = (y0 + y1) / 2;
+        rr(ctx, x + 5, ly - 9, 17, 18, 6);
+        ctx.fillStyle = "rgba(11,21,36,.9)";
+        ctx.fill();
+        txt(ctx, "열", x + 13.5, ly + 0.5, { size: 12.5, color: HEAT, weight: 800 });
+      }
+    }
+    if (r.done && r.leaky) txt(ctx, "계속 내려가요", (P.x0 + P.x1) / 2 + 8, P.y1 - 10, { size: 12.5, color: "#FF8F8F", weight: 800 });
+    if (r.done && !r.leaky && !r.equal) {
+      // 선 끝의 이름: 위에서 내려온 선(처음에 뜨거웠던 물)은 끝 위에, 아래에서 올라온 선은 끝 아래에
+      const yEnd = py(r.fin);
+      const hotName = r.cupHot ? "컵 속 물" : "바깥 물";
+      const coldName = r.cupHot ? "바깥 물" : "컵 속 물";
+      txt(ctx, hotName, P.x1, yEnd - 11, { size: 12, color: HOT, align: "right", weight: 800 });
+      txt(ctx, coldName, P.x1, yEnd + 12, { size: 12, color: COLD, align: "right", weight: 800 });
+    }
   }
 
   const cv = u3Canvas(f.stage, (ctx, dt, tMs) => {
     host.dataset.u3Phase = phase;
     host.dataset.u3Settled = settled ? (leaky ? "leak" : "1") : "0";
+    host.dataset.u3Panels = `${kept.cold ? 1 : 0}${kept.hot ? 1 : 0}`;
     const target = inserted ? 0 : 1;
     lift += (target - lift) * Math.min(1, 0.16 * dt);
     if (Math.abs(target - lift) < 0.004) lift = target;
@@ -202,8 +307,10 @@ export const contactLab: StepRenderer = (host, step, api) => {
       if (measuring && lift < 0.2 && !settled) {
         t = Math.min(RUN, t + dt);
         const v = tempsAt(t);
-        curveOut.push([t, v.out]);
-        curveCup.push([t, v.cup]);
+        if (live) {
+          live.out.push([t, v.out]);
+          live.cup.push([t, v.cup]);
+        }
         if (t >= RUN) onSettled();
       }
       const v = measuring ? tempsAt(t) : { out: OUT0, cup: cup0 };
@@ -211,7 +318,9 @@ export const contactLab: StepRenderer = (host, step, api) => {
       cup = v.cup;
     }
     drawScene(ctx, dt, tMs, out, cup);
-    drawGraph(ctx);
+    drawPanel(ctx, "cold");
+    drawPanel(ctx, "hot");
+    txt(ctx, "시간", PANEL.hot.x1 + 4, 222, { size: 12, color: SUB, align: "right", weight: 600 });
   });
 
   const range = bvRange({
@@ -249,6 +358,7 @@ export const contactLab: StepRenderer = (host, step, api) => {
 
   function onSettled(): void {
     settled = true;
+    if (live) live.done = true;
     if (leaky) {
       haptic(HAPTIC.wrong);
       f.say("뚜껑이 열려 있어 열이 <b>공기 중으로</b> 빠져나갔어요. 두 온도가 만난 뒤에도 계속 내려가요. 컵을 꺼내 다시 해 봐요.");
@@ -256,17 +366,21 @@ export const contactLab: StepRenderer = (host, step, api) => {
       return;
     }
     t = 1e6; // 두 온도를 같아진 값에 딱 맞춘다
-    curveOut.push([RUN, run0.fin]);
-    curveCup.push([RUN, run0.fin]);
+    if (live) {
+      live.out.push([RUN, run0.fin]);
+      live.cup.push([RUN, run0.fin]);
+    }
     haptic(HAPTIC.ctaUnlock);
     const fin = Math.round(run0.fin);
     const d = run0.cup - OUT0;
     if (Math.abs(d) < 1.5) f.say("두 물의 온도가 같아서 열이 이동하지 않았어요. 컵을 꺼내 온도 차이를 크게 해 봐요.");
     else if (d <= -20) {
       coldDone = true;
+      kept.cold = live;
       f.say(`열이 <b>바깥 물에서 컵으로</b> 이동했어요. 바깥 물은 식고 컵 속 물은 데워져 <b>${fin}℃</b>에서 같아졌어요.`);
     } else if (d >= 20) {
       hotDone = true;
+      kept.hot = live;
       f.say(`열이 <b>컵에서 바깥 물로</b> 이동했어요. 컵 속 물은 식고 바깥 물은 데워져 <b>${fin}℃</b>에서 같아졌어요.`);
     } else f.say(`<b>${fin}℃</b>에서 같아졌어요. 온도 차이가 작아 변화도 작네요. 컵을 꺼내 차이를 크게 해 봐요.`);
     f.pips((coldDone ? 1 : 0) + (hotDone ? 1 : 0));
@@ -283,6 +397,10 @@ export const contactLab: StepRenderer = (host, step, api) => {
     measuring = false;
     lid = false;
     t = 0;
+    live = null;
+    // 세지 않은 실험은 꺼내면 걷고, 그 칸에 남겨 둔 실험을 다시 보인다
+    shown.cold = kept.cold;
+    shown.hot = kept.hot;
     sync();
     if ((coldDone || hotDone) && !predicted) {
       predicted = true;
@@ -336,15 +454,18 @@ export const contactLab: StepRenderer = (host, step, api) => {
     settled = false;
     t = 0;
     run0 = { cup: cup0, fin: finOf(cup0) };
-    curveOut = [[0, OUT0]];
-    curveCup = [[0, cup0]];
+    const d = cup0 - OUT0;
+    live = { cupHot: d > 0, equal: Math.abs(d) < 1.5, leaky, fin: run0.fin, cup: [[0, cup0]], out: [[0, OUT0]], done: false };
+    shown[d > 0 ? "hot" : "cold"] = live;
     sync();
     f.say("측정을 시작했어요. 컵의 벽을 건너는 <b>열 화살표</b>와 두 온도의 그래프를 지켜봐요.");
   });
 
   function askFinal(): void {
     phase = "ask";
-    f.say("찬 컵과 뜨거운 컵을 모두 넣어 봤어요. 두 번의 결과를 떠올리며 골라 봐요.");
+    shown.cold = kept.cold;
+    shown.hot = kept.hot;
+    f.say("찬 컵과 뜨거운 컵을 모두 넣어 봤어요. 두 그래프를 비교해 보고 골라 봐요.");
     f.slot.ask(
       "두 번의 실험에서 열은 언제나 어느 쪽으로 이동했나요?",
       [{ t: "온도가 높은 물에서 낮은 물로", ok: true }, { t: "늘 바깥 물에서 컵 속 물로" }, { t: "늘 컵 속 물에서 바깥 물로" }],
