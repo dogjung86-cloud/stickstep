@@ -6,11 +6,15 @@
 // 흐름: 네 가지로 한 번씩 굴리기(차례는 자유) → 판정(느려지다 멈춘 공이 받은 힘의 방향) → 결론. 굴린 자국은 무대에 남아 서로 견줄 수 있다.
 // 옛 랩(windSoccer)은 끝없이 구르는 공에 바람 버튼을 눌렀다. 여기서는 장치를 차리고 한 번씩 굴려 자국을 견준다.
 // 자국은 같은 시간 간격으로 찍힌다: 간격이 벌어지면 빨라진 것, 좁아지면 느려진 것이다.
+// 그래픽 손질(2026-11-15): 선풍기는 둥근 망과 날개, 손잡이가 있는 휴대용 선풍기로 그리고, 뒤와 앞의 선풍기는 길과 일직선에 둔다(공 뒤, 길 끝).
+//   굴러가는 공에는 '바람이 미는 힘'(파랑, 늘 같은 길이)과 '운동 방향'(초록, 길이는 빠르기)을 공 가운데에서 그려 둘이 나란한지 보이게 했다.
+//   넷을 다 굴린 뒤(판정과 결론) 무대는 작은 칸 넷(없이, 뒤, 앞, 옆)으로 나뉘어 칸마다 자국, 선풍기, 공의 두 화살표를 다시 보인다.
+//   판정 동안은 '앞에서' 칸만 밝게 앞세운다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvCard, bvCards, bvTimers, type BvCard } from "../bio6/b6Lab";
-import { U5, u5Canvas, u5Frame, u5Pill, u5Read, u5Text } from "./u5Kit";
+import { U5, u5Arrow, u5Canvas, u5Frame, u5Pill, u5Read, u5Text } from "./u5Kit";
 
 interface S {
   title: string;
@@ -22,6 +26,13 @@ const A = 0.013; // 바람이 주는 가속(px/프레임²)
 const WIND: Record<Fan, [number, number]> = { none: [0, 0], back: [1, 0], front: [-1, 0], side: [0, 1] };
 const COLOR: Record<Fan, string> = { none: "#C9D1DE", back: "#8FC0FF", front: "#FF9D8A", side: "#9BE8C4" };
 const RESULT: Record<Fan, string> = { none: "속력도 방향도 그대로", back: "점점 빨라짐", front: "느려지다 멈춤", side: "길이 휘어짐" };
+const NAME: Record<Fan, string> = { none: "선풍기 없이", back: "뒤에서", front: "앞에서", side: "옆에서" };
+const SHORT: Record<Fan, string> = { none: "그대로", back: "빨라짐", front: "느려지다 멈춤", side: "휘어짐" };
+const X_START = 56; // 공이 출발하는 자리(그 뒤에 '뒤에서' 선풍기가 길과 일직선으로 선다)
+const FPX = 28; // 바람이 미는 힘 화살표(늘 같은 크기)
+const VPX = 20; // 운동 방향 화살표: 처음 속력일 때 20px, 빠르기에 비례
+const GRID: Fan[] = ["none", "back", "front", "side"]; // 넷을 다 굴린 뒤의 칸 차례(왼쪽 위부터)
+type Pt = { x: number; y: number; vx: number; vy: number };
 
 export const fanLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
@@ -32,10 +43,11 @@ export const fanLab: StepRenderer = (host, step, api) => {
   let fan: Fan = "none";
   let rolling = false;
   let finished = false;
-  const ball = { x: 30, y: 0, vx: 0, vy: 0 };
+  const ball = { x: X_START, y: 0, vx: 0, vy: 0 };
   let tick = 0;
-  let live: { x: number; y: number }[] = [];
-  const trails: Partial<Record<Fan, { x: number; y: number }[]>> = {};
+  let live: Pt[] = [];
+  const trails: Partial<Record<Fan, Pt[]>> = {};
+  let grid: "off" | "ask" | "done" = "off"; // 넷을 다 굴린 뒤: 칸 넷 비교판(판정 동안은 '앞에서' 칸을 앞세운다)
 
   const cards: Record<Fan, BvCard> = {
     none: bvCard("u5x-f", { name: "선풍기 없이", sub: "바람 없음", key: "none" }),
@@ -63,12 +75,12 @@ export const fanLab: StepRenderer = (host, step, api) => {
     if (rolling || finished) return;
     haptic(HAPTIC.tap);
     rolling = true;
-    ball.x = 30;
+    ball.x = X_START;
     ball.y = mid();
     ball.vx = V0;
     ball.vy = 0;
     tick = 0;
-    live = [{ x: ball.x, y: ball.y }];
+    live = [{ x: ball.x, y: ball.y, vx: ball.vx, vy: ball.vy }];
     paint();
   });
   const endRun = (): void => {
@@ -93,6 +105,7 @@ export const fanLab: StepRenderer = (host, step, api) => {
   };
 
   function askFinal(): void {
+    grid = "ask";
     f.slot.ask(
       "굴러가던 공이 점점 느려지다가 멈췄어요. 공이 받은 힘의 방향은?",
       [{ t: "굴러가는 방향과 반대쪽", ok: true }, { t: "굴러가는 방향과 같은 쪽" }, { t: "힘을 받지 않았어요" }],
@@ -101,36 +114,179 @@ export const fanLab: StepRenderer = (host, step, api) => {
     );
   }
   function finish(): void {
+    grid = "done";
     f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
     f.slot.conclude("힘을 받으면 물체의 <b>속력</b>이나 <b>운동 방향</b>이 변해요. 운동 방향과 나란한 힘은 속력을, 나란하지 않은 힘은 운동 방향도 바꿔요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
-  const drawFan = (ctx: CanvasRenderingContext2D, x: number, y: number, dir: [number, number], t: number, on: boolean): void => {
+  /** 휴대용 선풍기(위에서 비스듬히 본 모습): 손잡이, 모터, 둥근 망 안의 날개 셋. 바람은 +x 쪽(dir)으로 나간다. s는 크기 배율. */
+  const drawFan = (ctx: CanvasRenderingContext2D, x: number, y: number, dir: [number, number], t: number, on: boolean, s = 1): void => {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(Math.atan2(dir[1], dir[0]));
-    // 손잡이와 머리(위에서 본 모습: 바람은 +x 쪽으로 나간다)
-    ctx.fillStyle = "#5E7FB8";
+    ctx.scale(s, s);
+    // 손잡이와 모터 통(망 뒤쪽)
+    const hg = ctx.createLinearGradient(0, -5, 0, 5);
+    hg.addColorStop(0, "#86A4D6");
+    hg.addColorStop(0.55, "#5E7FB8");
+    hg.addColorStop(1, "#34507F");
+    ctx.fillStyle = hg;
     ctx.beginPath();
-    ctx.roundRect(-22, -5, 16, 10, 3);
+    ctx.roundRect(-27, -4.5, 17, 9, 4.5);
     ctx.fill();
-    ctx.fillStyle = "#C9D8F2";
+    ctx.fillStyle = "#4A6699";
     ctx.beginPath();
-    ctx.roundRect(-8, -15, 8, 30, 4);
+    ctx.roundRect(-13, -7, 10, 14, 4);
     ctx.fill();
+    // 망과 날개: 바람 쪽을 향한 원판을 비스듬히 보면 바람 방향으로 납작한 타원이다
+    const R = 17;
+    const K = 0.4;
+    const P = (r: number, a: number): [number, number] => [Math.cos(a) * r * K, Math.sin(a) * r];
+    ctx.fillStyle = "rgba(11,21,36,.55)";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, R * K, R, 0, 0, Math.PI * 2);
+    ctx.fill();
+    const spin = on ? t / 60 : 0.5;
+    ctx.fillStyle = "rgba(176,208,255,.85)";
+    for (let b = 0; b < 3; b++) {
+      const a0 = spin + (b * Math.PI * 2) / 3;
+      ctx.beginPath();
+      ctx.moveTo(...P(3, a0 - 0.35));
+      for (let k = 0; k <= 8; k++) ctx.lineTo(...P(R - 3, a0 - 0.55 + (k / 8) * 1.0));
+      ctx.lineTo(...P(3, a0 + 0.35));
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.strokeStyle = "rgba(220,230,245,.5)";
+    ctx.lineWidth = 0.9;
+    for (let k = 0; k < 8; k++) {
+      const a = (k * Math.PI) / 4;
+      ctx.beginPath();
+      ctx.moveTo(...P(4, a));
+      ctx.lineTo(...P(R, a));
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.ellipse(0, 0, R * 0.55 * K, R * 0.55, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = "#DCE6F5";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, R * K, R, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = "#E8EEF9";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 2.2, 3.2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // 바람 줄(켜졌을 때 앞으로 흘러간다)
     ctx.strokeStyle = "rgba(160,205,255,.9)";
     ctx.lineWidth = 2;
     ctx.lineCap = "round";
     for (let i = -1; i <= 1; i++) {
-      const o = on ? ((t / 14 + i * 9) % 18) : 4;
+      const o = on ? (t / 14 + i * 9) % 18 : 4;
       ctx.globalAlpha = on ? 0.9 - o / 24 : 0.35;
       ctx.beginPath();
-      ctx.moveTo(4 + o, i * 9);
-      ctx.lineTo(12 + o, i * 9);
+      ctx.moveTo(R * K + 4 + o, i * 9);
+      ctx.lineTo(R * K + 12 + o, i * 9);
       ctx.stroke();
     }
     ctx.restore();
+  };
+  /** 선풍기 자리(무대 좌표): 뒤와 앞은 길과 일직선(공 뒤, 길 끝), 옆은 길 위쪽에서 길을 향해. */
+  const fanAt = (k: Fan, w: number, h: number): { x: number; y: number; dir: [number, number] } | null => {
+    const my = h / 2 + 10;
+    if (k === "back") return { x: 31, y: my, dir: [1, 0] };
+    if (k === "front") return { x: w - 31, y: my, dir: [-1, 0] };
+    if (k === "side") return { x: w / 2, y: my - 64, dir: [0, 1] };
+    return null;
+  };
+  /** 공의 두 화살표: 바람이 미는 힘(파랑, 바람 쪽으로 늘 같은 길이)과 운동 방향(초록, 가는 쪽). 둘 다 공 가운데에서.
+   *  같은 쪽을 가리키면(나란하면) 두 화살표가 포개지지 않게 공 안에서 조금 비켜 나란히 그린다. vl은 운동 방향 화살표의 길이. */
+  const ballArrows = (ctx: CanvasRenderingContext2D, k: Fan, x: number, y: number, vx: number, vy: number, fl: number, vl: number, wd = 4): void => {
+    const [wx, wy] = WIND[k];
+    const sp = Math.hypot(vx, vy);
+    const ux = sp > 1e-6 ? vx / sp : 0;
+    const uy = sp > 1e-6 ? vy / sp : 0;
+    const windy = wx !== 0 || wy !== 0;
+    const same = windy && sp > 1e-6 && wx * ux + wy * uy > 0.9;
+    const off = same ? 4.5 : 0;
+    if (windy) u5Arrow(ctx, x - uy * off, y + ux * off, wx * fl, wy * fl, { color: U5.push, width: wd });
+    if (vl > 2) u5Arrow(ctx, x + uy * off, y - ux * off, ux * vl, uy * vl, { color: U5.up, width: wd });
+  };
+  const drawBall = (ctx: CanvasRenderingContext2D, x: number, y: number, r: number): void => {
+    const g = ctx.createRadialGradient(x - r * 0.36, y - r * 0.45, 1, x, y, r);
+    g.addColorStop(0, "#FFFFFF");
+    g.addColorStop(0.6, "#FFE9C7");
+    g.addColorStop(1, "#E9A85C");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  };
+  /** 넷을 다 굴린 뒤: 무대를 작은 칸 넷으로(같은 무대를 절반 크기로). 칸마다 처음 가던 길, 선풍기, 자국, 공과 두 화살표. */
+  const drawGrid = (ctx: CanvasRenderingContext2D, w: number, h: number, t: number): void => {
+    const pw = w / 2;
+    const ph = h / 2;
+    const s = 0.5;
+    const my = h / 2 + 10;
+    GRID.forEach((k, i) => {
+      const x0 = (i % 2) * pw;
+      const y0 = Math.floor(i / 2) * ph;
+      const lead = grid === "ask" && k === "front";
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x0, y0, pw, ph);
+      ctx.clip();
+      ctx.globalAlpha = grid === "ask" && !lead ? 0.38 : 1;
+      if (lead) {
+        ctx.fillStyle = "rgba(240,164,34,.08)";
+        ctx.fillRect(x0, y0, pw, ph);
+      }
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = "rgba(232,238,249,.28)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x0 + 7, y0 + my * s);
+      ctx.lineTo(x0 + pw - 5, y0 + my * s);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      const fp = fanAt(k, w, h);
+      if (fp) drawFan(ctx, x0 + fp.x * s, y0 + fp.y * s, fp.dir, t, false, 0.62);
+      const tr = trails[k] ?? [];
+      ctx.fillStyle = COLOR[k];
+      tr.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(x0 + p.x * s, y0 + p.y * s, 2.3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      // 공과 두 화살표: 자국의 처음 3분의 1쯤 되는 자리에서(방향만 보이게 같은 길이로)
+      const p = tr[Math.min(tr.length - 1, Math.max(1, Math.round(tr.length * 0.3)))];
+      if (p) {
+        const bx = x0 + p.x * s;
+        const by = y0 + p.y * s;
+        drawBall(ctx, bx, by, 7);
+        ballArrows(ctx, k, bx, by, p.vx, p.vy, 22, 22, 3.5);
+      }
+      u5Text(ctx, NAME[k], x0 + 8, y0 + 13, { px: 12.5, align: "left", color: lead ? "#FFD27A" : U5.ink });
+      u5Text(ctx, SHORT[k], x0 + pw - 8, y0 + ph - 12, { px: 12, align: "right", color: COLOR[k] });
+      ctx.restore();
+      if (lead) {
+        ctx.strokeStyle = "rgba(240,164,34,.9)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(x0 + 2, y0 + 2, pw - 4, ph - 4, 10);
+        ctx.stroke();
+      }
+    });
+    ctx.strokeStyle = "rgba(232,238,249,.18)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(pw, 6);
+    ctx.lineTo(pw, h - 6);
+    ctx.moveTo(6, ph);
+    ctx.lineTo(w - 6, ph);
+    ctx.stroke();
   };
 
   st.run((ctx, w, h, t, dt) => {
@@ -148,9 +304,13 @@ export const fanLab: StepRenderer = (host, step, api) => {
       tick += dt;
       if (tick >= 9) {
         tick = 0;
-        live.push({ x: ball.x, y: ball.y });
+        live.push({ x: ball.x, y: ball.y, vx: ball.vx, vy: ball.vy });
       }
       if (rolling && (ball.x > w + 10 || ball.y > h + 10)) endRun();
+    }
+    if (grid !== "off") {
+      drawGrid(ctx, w, h, t);
+      return;
     }
     // 홈통 자리(종이테이프: 처음 가던 길)
     ctx.setLineDash([6, 6]);
@@ -161,7 +321,7 @@ export const fanLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(w - 10, my);
     ctx.stroke();
     ctx.setLineDash([]);
-    u5Text(ctx, "처음 가던 길", w - 14, my - 13, { color: U5.dim, px: 12, align: "right" });
+    u5Text(ctx, "처음 가던 길", w / 2 + 40, my - 13, { color: U5.dim, px: 12 });
     // 지난 자국들(견주는 근거)
     (Object.keys(trails) as Fan[]).forEach((k) => {
       if (k === fan && (rolling || live.length)) return;
@@ -174,10 +334,9 @@ export const fanLab: StepRenderer = (host, step, api) => {
       });
       ctx.globalAlpha = 1;
     });
-    // 선풍기
-    if (fan === "back") drawFan(ctx, 20, my - 26, [1, 0.35], t, rolling);
-    if (fan === "front") drawFan(ctx, w - 20, my + 26, [-1, -0.35], t, rolling);
-    if (fan === "side") drawFan(ctx, w / 2, 62, [0, 1], t, rolling);
+    // 선풍기(뒤와 앞은 길과 일직선, 옆은 길 위에서 길을 향해)
+    const fp = fanAt(fan, w, h);
+    if (fp) drawFan(ctx, fp.x, fp.y, fp.dir, t, rolling);
     if (fan !== "none" && rolling) {
       const [wx, wy] = WIND[fan];
       ctx.strokeStyle = "rgba(160,205,255,.4)";
@@ -198,19 +357,21 @@ export const fanLab: StepRenderer = (host, step, api) => {
       ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
       ctx.fill();
     });
-    const bx = rolling || live.length ? ball.x : 30;
+    const bx = rolling || live.length ? ball.x : X_START;
     const by = rolling || live.length ? ball.y : my;
-    const g = ctx.createRadialGradient(bx - 4, by - 5, 1, bx, by, 11);
-    g.addColorStop(0, "#FFFFFF");
-    g.addColorStop(0.6, "#FFE9C7");
-    g.addColorStop(1, "#E9A85C");
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(bx, by, 11, 0, Math.PI * 2);
-    ctx.fill();
+    drawBall(ctx, bx, by, 11);
+    // 굴러가는 동안 공에 두 화살표: 바람이 미는 힘(파랑)과 운동 방향(초록, 길이는 빠르기에 비례)
+    if (rolling) {
+      ballArrows(ctx, fan, bx, by, ball.vx, ball.vy, FPX, (VPX * Math.hypot(ball.vx, ball.vy)) / V0);
+      // 범례(무대 왼쪽 아래)
+      u5Arrow(ctx, 14, h - 30, 18, 0, { color: U5.push, width: 3.5, halo: false });
+      u5Text(ctx, "바람이 미는 힘", 38, h - 30, { color: "#B5D4FF", px: 12, align: "left" });
+      u5Arrow(ctx, 14, h - 13, 18, 0, { color: U5.up, width: 3.5, halo: false });
+      u5Text(ctx, "운동 방향", 38, h - 13, { color: "#9BE8C4", px: 12, align: "left" });
+    }
     const sp = rolling ? Math.hypot(ball.vx, ball.vy) : live.length ? Math.hypot(ball.vx, ball.vy) : 0;
     u5Read(ctx, w, (sp / V0).toFixed(1), "배", "처음 속력의 몇 배");
-    u5Pill(ctx, rolling ? (fan === "none" ? "바람 없이 굴러가요" : "바람을 받으며 굴러가요") : live.length ? RESULT[fan] : fan === "none" ? "선풍기 없음" : fan === "back" ? "선풍기: 공의 뒤" : fan === "front" ? "선풍기: 공의 앞" : "선풍기: 공의 옆", fan === "none" ? U5.up : U5.back);
+    u5Pill(ctx, rolling ? (fan === "none" ? "바람 없이 굴러가요" : "바람을 받으며 굴러가요") : live.length ? RESULT[fan] : fan === "none" ? "선풍기 없음" : fan === "back" ? "선풍기: 공의 뒤" : fan === "front" ? "선풍기: 공의 앞" : "선풍기: 공의 옆", fan === "none" ? U5.gold : U5.push);
   });
 
   paint();
