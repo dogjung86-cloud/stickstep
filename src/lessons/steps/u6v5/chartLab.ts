@@ -6,11 +6,14 @@
 // 판정: 점들을 이은 선의 모양(올라가는 직선) → 온도가 오를 때 입자에게 일어난 일(빨라져 벽을 더 세게 민다).
 // 값은 정본과 같다: 20 ℃ 30.0 mL, 10 ℃마다 1.0 mL(40 ℃ 32.0, 60 ℃ 34.0, 80 ℃ 36.0 mL). 뒤의 문제가 이 값을 묻는다.
 // 옛 판(온도 막대를 밀면 그래프가 저절로 그려진다)과 다른 점: 재고, 읽고, 찍는 일을 학생이 한다.
+// 판정 2(입자) 때는 그래프의 20 ℃ 점과 80 ℃ 점 옆에 같은 수(12개)의 입자 칸 둘이 뜬다. 80 ℃ 칸은 입자의 꼬리가 길고 벽 번쩍임이 크며 칸도 조금 크다.
+// 세로축은 28 mL부터라 아래에 끊김 표시를 둔다. 그래프의 자리(GX0~GY1)는 단원 검사가 누르는 좌표라 바꾸지 않는다.
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { bvBtn, bvCapture } from "../bio6/b6Lab";
 import type { StepRenderer } from "../../types";
+import { GasBox, type GasBounds } from "../../../ui/gasKit";
 import { u6Lab, rr, txt, pill, ease, noteRow } from "./u6Kit";
-import { vSyringe, beaker, volOf } from "./syringe";
+import { vSyringe, beaker, volOf, speedOf, hueOf } from "./syringe";
 
 const TEMPS = [20, 40, 60, 80];
 const ROWS = [28, 30, 32, 34, 36, 38];
@@ -21,6 +24,9 @@ const GY1 = 188;
 const gx = (t: number): number => GX0 + 22 + ((t - 20) / 60) * (GX1 - GX0 - 40);
 const gy = (v: number): number => GY1 - 12 - ((v - 28) / 10) * (GY1 - GY0 - 24);
 const BOT = 190;
+// 판정 2의 입자 칸: 20 ℃(그래프 왼쪽 위, 직선 위쪽)와 80 ℃(오른쪽 아래, 직선 아래쪽). 넓이 비가 부피 비(36 : 30)쯤이다
+const BOX_A: GasBounds = { x0: 182, y0: 58, x1: 234, y1: 100 };
+const BOX_B: GasBounds = { x0: 264, y0: 120, x1: 326, y1: 164 };
 
 export const chartLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as { title: string; cta?: string };
@@ -33,6 +39,12 @@ export const chartLab: StepRenderer = (host, step, api) => {
   let phase: "play" | "ask" | "done" = "play";
   let miss: { x: number; y: number; age: number } | null = null;
   let line = 0;
+  let q2 = false; // 입자 판정이 떴는가
+  let boxes = 0; // 입자 칸이 나타난 정도
+  const boxA = new GasBox(1.5);
+  const boxB = new GasBox(1.5);
+  boxA.setCount(12, BOX_A);
+  boxB.setCount(12, BOX_B);
 
   const heat = bvBtn("main", "물을 20 ℃ 더 데우기");
   const note = noteRow();
@@ -55,6 +67,7 @@ export const chartLab: StepRenderer = (host, step, api) => {
   });
 
   const askParticles = (): void => {
+    q2 = true;
     frame.pips(2);
     frame.say("물을 데울 때 주사기 속 <b>입자</b>의 움직임을 떠올려 보세요.");
     frame.slot.ask(
@@ -128,7 +141,7 @@ export const chartLab: StepRenderer = (host, step, api) => {
     const v = volOf(temp);
     // 가열판, 비커, 주사기
     rr(ctx, 14, BOT + 16, 112, 12, 4);
-    ctx.fillStyle = temp > 21 ? `rgba(255,${Math.round(160 - temp)},70,.9)` : "#3B4A63";
+    ctx.fillStyle = temp > 21 ? `rgba(255,${Math.round(200 - temp * 0.8)},70,.9)` : "#3B4A63"; // 데워진 가열판은 주황(빨강은 오답 색)
     ctx.fill();
     beaker(ctx, 20, 70, 100, BOT + 14, temp, tMs);
     syr.draw(ctx, dt, { cx: 70, bot: BOT, vol: v, temp, capped: true, marks: true });
@@ -146,8 +159,19 @@ export const chartLab: StepRenderer = (host, step, api) => {
     ctx.lineWidth = 1.2;
     ctx.beginPath();
     ctx.moveTo(GX0, GY0 - 8);
+    ctx.lineTo(GX0, GY1 - 10);
+    ctx.moveTo(GX0, GY1 - 4);
     ctx.lineTo(GX0, GY1);
     ctx.lineTo(GX1 + 6, GY1);
+    ctx.stroke();
+    // 세로축 끊김(28 mL 아래를 줄였다는 표시)
+    ctx.strokeStyle = "rgba(255,255,255,.55)";
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(GX0 - 5, GY1 - 8);
+    ctx.lineTo(GX0 + 5, GY1 - 12);
+    ctx.moveTo(GX0 - 5, GY1 - 2);
+    ctx.lineTo(GX0 + 5, GY1 - 6);
     ctx.stroke();
     txt(ctx, "부피(mL)", GX0 - 14, GY0 - 18, { color: "#9FB2D0" });
     txt(ctx, "온도(℃)", GX1 + 8, GY1 + 28, { color: "#9FB2D0", align: "right" });
@@ -186,6 +210,47 @@ export const chartLab: StepRenderer = (host, step, api) => {
       ctx.lineTo(miss.x - 6, miss.y + 6);
       ctx.stroke();
       if (miss.age >= 1) miss = null;
+    }
+    // 판정 2: 20 ℃와 80 ℃의 입자 칸(같은 수, 빠르기와 벽을 미는 세기만 다르다)
+    boxes = ease(boxes, q2 ? 1 : 0, 0.2, dt);
+    if (boxes > 0.01) {
+      ctx.globalAlpha = boxes;
+      const cols: [GasBox, GasBounds, number, number, number, string][] = [
+        [boxA, BOX_A, 20, gx(20), gy(30), "#9FC9FF"],
+        [boxB, BOX_B, 80, gx(80), gy(36), "#FFB37A"],
+      ];
+      for (const [box, b, t, px, py, c] of cols) {
+        const sp = speedOf(t);
+        box.step(dt, b, sp);
+        // 점과 칸을 잇는 점선
+        ctx.strokeStyle = c;
+        ctx.globalAlpha = boxes * 0.7;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        const cx0 = Math.max(b.x0, Math.min(b.x1, px));
+        const cy0 = py > b.y1 ? b.y1 : b.y0;
+        ctx.lineTo(cx0, cy0);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = boxes;
+        rr(ctx, b.x0 - 3, b.y0 - 3, b.x1 - b.x0 + 6, b.y1 - b.y0 + 6, 7);
+        ctx.fillStyle = "#0E1A2D";
+        ctx.fill();
+        ctx.strokeStyle = c;
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(b.x0 - 2, b.y0 - 2, b.x1 - b.x0 + 4, b.y1 - b.y0 + 4);
+        ctx.clip();
+        box.draw(ctx, hueOf(t), sp, 3.2);
+        ctx.restore();
+      }
+      txt(ctx, "20 ℃ · 입자 12개", BOX_A.x0, BOX_A.y0 - 13, { size: 12, weight: 800, color: "#9FC9FF" });
+      txt(ctx, "80 ℃ · 입자 12개", (BOX_B.x0 + BOX_B.x1) / 2, BOX_B.y1 + 13, { size: 12, weight: 800, color: "#FFB37A", align: "center" });
+      ctx.globalAlpha = 1;
     }
   });
 
