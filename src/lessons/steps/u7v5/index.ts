@@ -5,7 +5,8 @@
 //   u7SkyLab(u7l4 하루 동안 별의 움직임) · u7ZodiacLab(u7l4 계절과 별자리, 3D) · u7MoonLab(u7l5 달의 위상, 3D) · u7EclipseLab(u7l6 일식과 월식, 가로 3D)
 //   u7l6은 랩이 다섯이다: u7EclipseLab(한 줄로 세워 그림자 만들기) → u7AlignLab(그때 달의 위상) → u7SolarWhereLab(일식이 보이는 곳)
 //   → u7SolarSideLab(태양이 가려지는 쪽) → u7LunarLab(월식: 그림자에 얼마나, 어느 쪽부터, 어디서 보이나). 뒤의 넷은 2D이고 기하는 ./eclipseKit.
-// tourLab.ts와 eclipseLab.ts는 정본의 3D 무대를 옮겨 적은 생성물이다(qa/u7v5-port-landscape.py).
+// tourLab.ts와 eclipseLab.ts는 처음에 정본의 3D 무대를 옮겨 적었지만(qa/u7v5-port-landscape.py) 2026-11-15 그래픽 손질부터 손으로 고친 정본이다.
+// 그 도구를 다시 돌리면 손질(명왕성과 혜성 질감, 소행성대, 판정 무대, 부분 식 그림자)이 지워지니 돌리지 않는다.
 import type { StepRenderer } from "../../types";
 import { u7TourLab } from "./tourLab";
 import { u7PlanetLab } from "./planetLab";

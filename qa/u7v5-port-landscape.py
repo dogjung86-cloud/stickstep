@@ -1,7 +1,8 @@
 # 중1 Ⅶ v5: 가로 화면 3D 랩 둘(태양계 순항, 일식과 월식)을 정본에서 옮겨 적는 도구.
 # 정본(steps/solarTour.ts, steps/eclipse3d.ts)은 고치지 않는다. 3D 무대 코드는 그대로 두고
 # 세로 화면의 틀(제목, 할 일, 찾을 것 목록, 판정, 결론)과 가로 화면의 안내만 바꿔 끼운 사본을 steps/u7v5/에 쓴다.
-# 정본의 무대가 바뀌면 이 도구를 다시 돌린다: python qa/u7v5-port-landscape.py
+# 2026-11-15 그래픽 손질부터 tourLab.ts와 eclipseLab.ts는 손으로 고친 정본이다. 이 도구를 돌리면 그 손질이 지워지므로 돌리지 않는다.
+# (옛 설명: 정본의 무대가 바뀌면 이 도구를 다시 돌린다: python qa/u7v5-port-landscape.py)
 # 바꿔 끼울 자리를 찾지 못하면 멈춘다(정본이 달라졌다는 뜻이다).
 import io, re, sys
 
