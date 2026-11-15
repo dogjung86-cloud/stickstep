@@ -136,17 +136,18 @@ export function curveFig(mode: "heat" | "cool" = "heat"): string {
   </svg>`;
 }
 
-/** 액체 → 기체 입자 모형(기화) — 대단원 7번 (다크) */
+/** 액체가 기체로 바뀌는 입자 모형(기화, 다크). 상태가 변해도 입자의 수와 크기는 그대로라
+ *  두 상자 모두 같은 크기(반지름 6)의 입자 9개다. 바뀌는 것은 입자 사이의 거리와 배열뿐이다. */
 export function vaporizeFig(): string {
   const liqPts: [number, number][] = [
     [34, 52], [50, 46], [66, 54], [42, 66], [58, 68], [74, 64], [50, 58], [30, 68], [68, 44],
   ];
   const liq = liqPts.map(([x, y]) => dot(x, y, 6)).join("");
   const gasPts: [number, number, number][] = [
-    [222, 30, 0.6], [258, 24, 2.3], [286, 44, 4.0], [232, 62, 1.4], [270, 70, 5.2], [296, 82, 3.1], [240, 88, 2.0],
+    [222, 30, 0.6], [258, 24, 2.3], [286, 44, 4.0], [314, 24, 1.0], [232, 62, 1.4], [270, 70, 5.2], [296, 82, 3.1], [240, 88, 2.0], [272, 102, 3.6],
   ];
-  const gas = gasPts.map(([x, y, a]) => trail(x, y, a, 8) + dot(x, y, 5.4)).join("");
-  return `<svg viewBox="0 0 344 120" ${NS} role="img" aria-label="촘촘히 모여 있는 입자들이 화살표를 지나 넓게 흩어진 입자로 변하는 모형">
+  const gas = gasPts.map(([x, y, a]) => trail(x, y, a, 8) + dot(x, y, 6)).join("");
+  return `<svg viewBox="0 0 344 120" ${NS} role="img" aria-label="촘촘히 모여 있는 입자 9개가 화살표를 지나 넓게 흩어진 입자 9개로 변하는 모형">
     <rect x="12" y="18" width="94" height="84" rx="14" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>
     ${liq}
     <path d="M128 60h64" stroke="#AFC3E3" stroke-width="3.4" stroke-linecap="round"/>
