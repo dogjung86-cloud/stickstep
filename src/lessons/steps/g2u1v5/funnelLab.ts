@@ -14,6 +14,8 @@ const TOP = 46; // 처음 액체의 윗면
 const MID = 100; // 처음 두 층의 경계
 const END = 150; // 깔때기 몸통의 아래 끝
 const WATER = END - MID; // 아래층을 다 받는 데 내려가야 하는 길이
+const RING = 112; // 스탠드 팔 끝의 링이 깔때기를 받치는 높이(몸통 폭 60 px인 곳)
+// 꼭지: 관 위의 둥근 몸통과 손잡이. 손잡이가 관과 나란하면(세로) 열림, 가로면 잠김.
 
 export const g2u1FunnelLab: StepRenderer = (host, step, api) => {
   const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 2, cls: "g2u1x-fn" });
@@ -22,15 +24,18 @@ export const g2u1FunnelLab: StepRenderer = (host, step, api) => {
   f.stage.innerHTML = `${svgOpen}
     <defs><clipPath id="g2u1xFnClip"><path d="${body}"/></clipPath></defs>
     <path d="M30 14 V212 M14 212 h70" stroke="#59657A" stroke-width="5" stroke-linecap="round"/>
-    <path d="M30 78 H${CX - 40}" stroke="#59657A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M30 ${RING} H${CX - 33}" stroke="#59657A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M${CX - 32} ${RING} A32 4.5 0 0 1 ${CX + 32} ${RING}" stroke="#7D8BA0" stroke-width="2.6"/>
     <g clip-path="url(#g2u1xFnClip)">
       <rect class="g2u1x-fn-oil" x="${CX - 50}" y="${TOP}" width="100" height="${MID - TOP}" fill="${P.oil}" opacity=".8"/>
       <rect class="g2u1x-fn-water" x="${CX - 50}" y="${MID}" width="100" height="${END - MID + 4}" fill="${P.water}" opacity=".7"/>
     </g>
     <path d="${body}" stroke="${P.glass}" stroke-width="2.2"/>
+    <path d="M${CX - 32} ${RING} A32 4.5 0 0 0 ${CX + 32} ${RING}" stroke="#7D8BA0" stroke-width="2.6"/>
     <rect class="g2u1x-fn-stop" x="${CX - 11}" y="18" width="22" height="14" rx="4" fill="#8B9BB0" stroke="#C8D2DE" stroke-width="1.2"/>
     <path d="M${CX - 5} ${END} V172 M${CX + 5} ${END} V172" stroke="${P.glass}" stroke-width="2"/>
-    <rect class="g2u1x-fn-tap" x="${CX - 15}" y="${END + 5}" width="30" height="7" rx="3.5" fill="#C8D2DE"/>
+    <rect x="${CX - 8}" y="${END + 2.5}" width="16" height="12" rx="5" fill="#8B9BB0" stroke="#C8D2DE" stroke-width="1.2"/>
+    <g class="g2u1x-fn-tap"><rect x="${CX - 17}" y="${END + 6}" width="34" height="5" rx="2.5" fill="#E3E9F1" stroke="#8B9BB0" stroke-width="1"/><circle cx="${CX}" cy="${END + 8.5}" r="2.4" fill="#59657A"/></g>
     <path class="g2u1x-fn-drip" d="M${CX} 172 V188" stroke="${P.water}" stroke-width="3.4" stroke-linecap="round" opacity="0"/>
     <rect class="g2u1x-fn-a-w" x="${CX - 27}" y="212" width="54" height="0" fill="${P.water}" opacity=".7"/>
     <rect class="g2u1x-fn-a-o" x="${CX - 27}" y="212" width="54" height="0" fill="${P.oil}" opacity=".8"/>
@@ -48,7 +53,7 @@ export const g2u1FunnelLab: StepRenderer = (host, step, api) => {
   const oil = q<SVGRectElement>(".g2u1x-fn-oil");
   const water = q<SVGRectElement>(".g2u1x-fn-water");
   const stop = q<SVGRectElement>(".g2u1x-fn-stop");
-  const tap = q<SVGRectElement>(".g2u1x-fn-tap");
+  const tap = q<SVGGElement>(".g2u1x-fn-tap");
   const drip = q<SVGPathElement>(".g2u1x-fn-drip");
   const aW = q<SVGRectElement>(".g2u1x-fn-a-w");
   const aO = q<SVGRectElement>(".g2u1x-fn-a-o");

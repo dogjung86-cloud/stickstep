@@ -31,7 +31,7 @@ export const g2u1LayerLab: StepRenderer = (host, step, api) => {
   const { f, tm } = lab;
   f.stage.innerHTML = `${svgOpen}
     <g class="g2u1x-ly-liq"></g>
-    <path class="g2u1x-ly-stream" d="M${CX} 4 V${CUP.bottom}" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0"/>
+    <path class="g2u1x-ly-stream" d="M${CUP.x + 16} 4 Q${CUP.x + 6} 14 ${CUP.x + 4} 32 V${CUP.bottom}" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>
     <path d="M${CUP.x - 2} 30 V${CUP.bottom - 6} a8 8 0 0 0 8 8 h${CUP.w - 12} a8 8 0 0 0 8 -8 V30" stroke="${P.glass}" stroke-width="2.4"/>
     <path d="M${CUP.x + 8} 44 v120" stroke="${P.glassHi}" stroke-width="2.6" stroke-linecap="round" opacity=".4"/>
     <g class="g2u1x-ly-tags"></g>
@@ -87,11 +87,19 @@ export const g2u1LayerLab: StepRenderer = (host, step, api) => {
     pourPhase();
   });
 
+  /** 붓는 줄기: 컵 벽을 타고 내려가 지금 맨 위 액체 면에서 끝난다. 아래로 가라앉는 액체면 위층을 지나 자리 잡을 곳까지 이어진다.
+   *  (밀도가 더 큰 층들의 윗면까지. 물과 에탄올이 만나 섞일 때는 맨 위 액체 면까지.) */
+  function streamTo(k: K): number {
+    const willMix = (k === "w" && stack.includes("e")) || (k === "e" && stack[stack.length - 1] === "w");
+    const below = willMix ? stack : stack.filter((x) => LIQ[x].d > LIQ[k].d);
+    return CUP.bottom - below.reduce((h, x) => h + CUP.unit * LIQ[x].vol, 0);
+  }
   function pour(k: K, b: HTMLButtonElement): void {
     if (poured.has(k)) return;
     haptic(HAPTIC.tap);
     poured.add(k);
     b.disabled = true;
+    stream.setAttribute("d", `M${CUP.x + 16} 4 Q${CUP.x + 6} 14 ${CUP.x + 4} 32 V${streamTo(k) - 1}`);
     const top = stack[stack.length - 1];
     let mixed = false;
     if (k === "w" && stack.includes("e")) {
