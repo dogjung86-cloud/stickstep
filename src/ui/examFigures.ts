@@ -2020,31 +2020,71 @@ export function geoPressFig(o: { mode: "candidates" | "pair" }): string {
   </svg>`;
 }
 
-/** 판의 구조 단면 시험판 — plateSectionFig의 라벨(대륙·해양 지각, 맨틀의 윗부분, 판·두께)을
- *  ㉠~㉣로 감춘다(라벨 인쇄판은 이름·두께 문항 정답 유출 — geoCycleQuizFig 계보). */
+/** 판의 구조 단면 시험판. 이름(대륙 지각, 해양 지각, 맨틀의 윗부분, 판)을 ㉠~㉣로 감춘다(라벨 인쇄판은
+ *  이름·두께 문항 정답 유출, geoCycleQuizFig 계보). ㉠ 대륙 지각, ㉡ 해양 지각, ㉢ 판에 든 맨틀의 윗부분,
+ *  ㉣ 판(양쪽 묶음 표시에 같은 기호). 세로는 레슨 그림 g2u2l9f1처럼 실제 비율(깊이 1 km = 1 px, 가로는 줄임):
+ *  바다 4 km, 해양 지각 5 km(바닥 9 km), 대륙 지각 35 km(산 아래 뿌리 55 km). 판의 아랫면(점선)은 대륙 쪽
+ *  140 km, 바다 쪽 100 km이고 대륙 가장자리 아래에서 매끈하게 이어진다(대륙 지각을 포함한 판이 더 두껍다).
+ *  판 아래의 맨틀도 고체라 흐르는 무늬를 넣지 않는다. */
 export function geoPlateQuizFig(): string {
   const tag = (x: number, y: number, t: string): string =>
     `<circle cx="${x}" cy="${y}" r="11" fill="#FFFFFF" stroke="#5AA2F8" stroke-width="1.6"/>
      <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#1B64DA">${t}</text>`;
-  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="땅의 단면 그림. 왼쪽 뭍과 오른쪽 바다 밑의 겉껍질 층, 그 아래 층이 있고, 위쪽 일부 구간을 묶은 표시와 함께 동그라미 기호 네 개가 붙어 있어요">
-    <path d="M188 40 h132 v26 h-132 z" fill="#BFE0F8"/>
-    <path d="M196 46 q10 4 20 0 M250 52 q10 4 20 0" stroke="#8FBBF2" stroke-width="1.6"/>
-    <path d="M24 40 h164 v26 l-14 0 q-6 42 -34 46 q-40 6 -84 0 q-26 -4 -32 -40 z" fill="#C9A26A" stroke="#8E6A34" stroke-width="1.6"/>
-    <path d="M34 48 q30 -6 60 0" stroke="#E8CB9C" stroke-width="3" opacity=".8"/>
-    <path d="M52 40 q4 -8 10 0 M96 40 q4 -8 10 0" stroke="#3F9B4F" stroke-width="1.8"/>
-    <path d="M174 66 h146 v20 h-146 z" fill="#8B7355" stroke="#5E4A30" stroke-width="1.5"/>
-    <path d="M24 72 q6 36 32 40 q44 6 84 0 q28 -4 34 -46 l146 20 v64 h-296 z" fill="#F29A66" stroke="#C4602E" stroke-width="1.4"/>
-    <line x1="24" y1="150" x2="320" y2="150" stroke="#7E3A14" stroke-width="2.2" stroke-dasharray="8 6"/>
-    <rect x="24" y="150" width="296" height="46" fill="#E07038" opacity=".85"/>
-    <path d="M48 172 q14 -8 28 0 M120 178 q14 -8 28 0 M210 170 q14 -8 28 0 M280 180 q12 -7 24 0" stroke="#FFB98C" stroke-width="2" opacity=".8"/>
-    <rect x="24" y="40" width="296" height="156" stroke="#4E4432" stroke-width="1.6"/>
-    ${tag(96, 26, "㉠")}
-    <path d="M96 37 v10" stroke="#4E5968" stroke-width="1.3"/>
-    ${tag(260, 26, "㉡")}
-    <path d="M260 37 v33" stroke="#4E5968" stroke-width="1.3"/>
-    ${tag(150, 128, "㉢")}
-    <path d="M8 40 q-6 2 -6 12 v34 q0 8 -5 10 q5 2 5 10 v34 q0 8 6 10" stroke="#4E5968" stroke-width="1.8" fill="none"/>
-    ${tag(14, 130, "㉣")}
+  const Y = 60; // 해수면의 y
+  const L = 46; // 앞면 왼쪽
+  const R = 292; // 앞면 오른쪽
+  const COAST = 166; // 해안
+  const BOTTOM = Y + 160; // 그림 바닥(깊이 160 km)
+  const ss = (t: number): number => {
+    const u = Math.max(0, Math.min(1, t));
+    return u * u * (3 - 2 * u);
+  };
+  // 깊이와 높이는 모두 km(= px)
+  const land = (x: number): number => (0.8 + 2.8 * Math.exp(-(((x - 92) / 20) ** 2))) * ss((COAST - x) / 18); // 해수면 위 뭍의 높이
+  const sea = (x: number): number => 4 * ss((x - COAST) / 40); // 바다의 깊이
+  const moho = (x: number): number => (x <= 150 ? 35 + 20 * Math.exp(-(((x - 92) / 16) ** 2)) : 35 - 26 * ss((x - 150) / 54)); // 대륙 지각의 아랫면
+  const base = (x: number): number => 140 - 40 * ss((x - 140) / 70); // 판의 아랫면
+  const run = (a: number, b: number, n: number, f: (x: number) => number): string =>
+    Array.from({ length: n + 1 }, (_, i) => {
+      const x = a + ((b - a) * i) / n;
+      return `${x.toFixed(1)} ${f(x).toFixed(1)}`;
+    }).join(" L");
+  const surf = (x: number): number => Y - land(x);
+  /** 묶음 표시. dir −1이면 뾰족한 끝이 왼쪽, +1이면 오른쪽. */
+  const brace = (x: number, y0: number, y1: number, dir: 1 | -1): string => {
+    const m = (y0 + y1) / 2;
+    return `M${x} ${y0.toFixed(1)} q${6 * dir} 2 ${6 * dir} 12 V${(m - 10).toFixed(1)} q0 8 ${5 * dir} 10 q${-5 * dir} 2 ${-5 * dir} 10 V${(y1 - 12).toFixed(1)} q0 10 ${-6 * dir} 12`;
+  };
+  const coast = `C${COAST + 6} ${Y - 4} ${COAST + 2} ${Y - 9} ${COAST + 10} ${Y - 11} S${COAST + 18} ${Y - 13} ${COAST + 20} ${Y - 14}`;
+  const lTop = surf(L);
+  const lMid = Math.round((lTop + Y + 140) / 2);
+  const rMid = Math.round((Y + sea(R) + Y + 100) / 2);
+  return `<svg viewBox="0 0 344 ${BOTTOM + 26}" ${NS} fill="none" role="img" aria-label="땅의 단면 그림. 왼쪽 뭍과 오른쪽 바다 밑의 겉껍질 층, 그 아래 층이 있고, 그 아래 층을 가로지르는 점선과 양쪽에 위쪽 구간을 묶은 표시, 동그라미 기호 네 개가 붙어 있어요. 세로는 실제 비율로 그렸어요">
+    <path d="M${L} ${Y} L${COAST} ${Y} ${coast} L${L + 12} ${Y - 14} Z" fill="#9BCB7A"/>
+    <path d="M${COAST} ${Y} ${coast} L${R + 12} ${Y - 14} L${R} ${Y} Z" fill="#A9D8F5"/>
+    <path d="M74 53 q4 -3 8 0 M112 49 q4 -3 8 0 M138 55 q4 -3 8 0" stroke="#5E9A3E" stroke-width="1.4"/>
+    <path d="M214 53 q6 -2.5 12 0 M246 56 q6 -2.5 12 0 M268 50 q6 -2.5 12 0" stroke="#E3F3FD" stroke-width="1.4"/>
+    <path d="M${L} ${Y} L${L + 12} ${Y - 14} L${R + 12} ${Y - 14} L${R} ${Y}" stroke="#4E4432" stroke-width="1.2"/>
+    <rect x="${L}" y="${Y}" width="${R - L}" height="${BOTTOM - Y}" fill="#EF9A63"/>
+    <path d="M${L} ${Y} L${R} ${Y} L${run(R, L, 60, (x) => Y + base(x))} Z" fill="#E8743B"/>
+    <path d="M${run(L, COAST, 30, surf)} L${run(COAST, 204, 12, (x) => Y + sea(x))} L${run(204, L, 50, (x) => Y + moho(x))} Z" fill="#B38D66"/>
+    <path d="M${run(L, 204, 50, (x) => Y + moho(x))}" stroke="#6E4F33" stroke-width="1.2"/>
+    <path d="M${run(192, R, 25, (x) => Y + sea(x))} L${R} ${Y + 9} L204 ${Y + 9} Z" fill="#5D5049"/>
+    <path d="M204 ${Y + 9} H${R}" stroke="#3A302A" stroke-width="1"/>
+    <path d="M${COAST} ${Y} L${R} ${Y} L${run(R, COAST, 25, (x) => Y + sea(x))} Z" fill="#4FA0DC"/>
+    <path d="M${run(L, COAST, 30, surf)}" stroke="#5E9A3E" stroke-width="1.6"/>
+    <path d="M${run(L, R, 60, (x) => Y + base(x))}" stroke="#3A2416" stroke-width="2" stroke-dasharray="6 4"/>
+    <path d="M${L} ${BOTTOM} L${run(L, COAST, 30, surf)} L${R} ${Y} L${R} ${BOTTOM} Z" stroke="#4E4432" stroke-width="1.4"/>
+    ${tag(108, 80, "㉠")}
+    <path d="M262 33 V${Y + 5}" stroke="#4E5968" stroke-width="1.3"/>
+    <circle cx="262" cy="${Y + 6.5}" r="2.2" fill="#4E5968"/>
+    ${tag(262, 22, "㉡")}
+    ${tag(164, 140, "㉢")}
+    <path d="${brace(38, lTop, Y + 140, -1)}" stroke="#4E5968" stroke-width="1.8"/>
+    ${tag(14, lMid, "㉣")}
+    <path d="${brace(300, Y + sea(R), Y + 100, 1)}" stroke="#4E5968" stroke-width="1.8"/>
+    ${tag(324, rMid, "㉣")}
+    <text x="${(L + R) / 2}" y="${BOTTOM + 18}" text-anchor="middle" font-size="13" font-weight="700" fill="#6B7684">세로만 실제 비율(가로는 줄임)</text>
   </svg>`;
 }
 
