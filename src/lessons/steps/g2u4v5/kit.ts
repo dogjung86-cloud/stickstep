@@ -1,7 +1,7 @@
 // 중2 Ⅳ v5 랩의 공용 도구(2026-11-12). 뼈대는 bvFrame을 그대로 쓰고 이 단원에 필요한 것만 얹는다.
 //   g4Lab     뼈대 + 타이머 + 정리 묶음 + 판정(judge) + 끝맺음(finish)
-//   g4Svg     무대(346×230)에 놓는 SVG 한 장. set(html)로 통째로 다시 그린다(움직임은 CSS와 setTimeout만)
-//   그림 조각  원자 공(ball), 원자핵(nucleus), 전자(electron), 원자 모형(atomModel), 기포(bubbles)
+//   g4Svg     무대(346×230)에 놓는 SVG 한 장. set(html)로 통째로 다시 그린다(움직임은 CSS와 setTimeout만). 움직이는 것만 따로 그릴 때는 g4Layer
+//   그림 조각  원자 공(ball), 원자핵(nucleus), 원자핵 속 묶음(nucleusCluster), 전자(electron), 구름 모형 원자(cloudAtom, cloud, cloudSpots)
 //   조작 부품  줄(row), 수 조절(stepper), 무대 글(cap), 알림(toast)
 // 입자 표현은 ui/chemKit의 관례를 따른다(원자핵 +N, 전자 −, CPK 색, 상대 크기). 좌표는 전부 계산으로 놓는다.
 
@@ -81,16 +81,31 @@ export function g4Lab(host: HTMLElement, api: StepAPI, s: G4Step, o: { steps: nu
 // ── 무대 ────────────────────────────────────────────────────────────
 export interface G4Svg {
   el: SVGSVGElement;
+  /** 이 무대의 id 접두(그라데이션, 자르기). 같은 id가 다른 화면에도 있으면 숨은 쪽이 잡혀 색이 빠지므로 무대마다 다르게 붙인다. */
+  ns: string;
   set: (html: string) => void;
 }
+let svgSeq = 0;
 export function g4Svg(lab: G4Lab, aria: string): G4Svg {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("viewBox", `0 0 ${SW} ${SH}`);
   svg.setAttribute("role", "img");
   svg.setAttribute("aria-label", aria);
   lab.f.stage.appendChild(svg);
-  return { el: svg, set: (html) => (svg.innerHTML = html) };
+  svgSeq += 1;
+  return { el: svg, ns: `g2u4x${svgSeq}`, set: (html) => (svg.innerHTML = html) };
 }
+
+/** 무대 위에 따로 다시 그리는 층(움직이는 것만). 무대를 set으로 다시 그린 뒤에 다시 붙여야 한다. */
+export function g4Layer(stage: G4Svg, cls: string): SVGGElement {
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  g.setAttribute("class", cls);
+  stage.el.appendChild(g);
+  return g;
+}
+
+/** 움직임 줄이기를 켠 기기인가(그때는 움직임을 한 장면으로 멈춰 그린다). */
+export const calm = (): boolean => typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /** 무대 위에 얹는 글 한 줄(왼쪽 위, 12.5px 이상). */
 export function cap(lab: G4Lab, cls = ""): HTMLElement {
@@ -154,40 +169,105 @@ export function nucleus(x: number, y: number, p: number, r = 20): string {
   return `<g class="g2u4x-nuc"><circle cx="${x}" cy="${y}" r="${r}" fill="#E8836B" stroke="#A8442E" stroke-width="1.6"/><circle cx="${x - r * 0.3}" cy="${y - r * 0.32}" r="${r * 0.3}" fill="#FFC0AE" opacity=".8"/><text x="${x}" y="${y + r * 0.26}" text-anchor="middle" font-size="${Math.max(12, r * 0.72)}" font-weight="800" fill="#fff">+${p}</text></g>`;
 }
 
-/** 전자(−). */
+/** 전자(−). 옅은 파란 구름 위에서도 알갱이로 보이게 구름보다 진한 파랑에 밝은 테를 두른다. */
 export function electron(x: number, y: number, r = 6.5, cls = ""): string {
-  return `<g class="g2u4x-e ${cls}"><circle cx="${x}" cy="${y}" r="${r}" fill="#5A9AE0" stroke="#BFDcFF" stroke-width="1.2"/><line x1="${x - r * 0.5}" y1="${y}" x2="${x + r * 0.5}" y2="${y}" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></g>`;
+  return `<g class="g2u4x-e ${cls}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="#3F86E6" stroke="#D2E6FF" stroke-width="1.2"/><line x1="${(x - r * 0.5).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + r * 0.5).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></g>`;
 }
 
-/** 전자의 자리: 안쪽 궤도부터 2, 8, 8개씩 고르게 놓는다. */
-export function electronSpots(cx: number, cy: number, e: number, r0: number, gap: number): { x: number; y: number; shell: number }[] {
-  const caps = [2, 8, 8, 2];
-  const out: { x: number; y: number; shell: number }[] = [];
-  let left = e;
-  caps.forEach((c, s) => {
-    const n = Math.min(c, left);
-    left -= n;
-    const r = r0 + gap * s;
-    for (let i = 0; i < n; i++) {
-      const a = -Math.PI / 2 + (i / n) * Math.PI * 2 + s * 0.4;
-      out.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r, shell: s });
-    }
+// ── 원자 모형(구름 모형) ────────────────────────────────────────────
+// 책의 원자 모형과 같게 그린다: 원자의 크기만 한 옅은 파란 구름, 가운데 원자핵, 전자는 고리 없이 구름 안에 고르게 흩어 둔다(개수는 정확히).
+// 이 교과 과정은 전자 껍질을 다루지 않으므로 궤도선이나 "안쪽 2개, 바깥 8개" 같은 채우는 차례를 보이지 않는다.
+
+/** 구름 그라데이션(무대 한 장에 한 번 넣는다). 가운데가 조금 진하고 가장자리로 갈수록 옅어진다. */
+export const cloudDefs = (ns: string): string =>
+  `<defs><radialGradient id="${ns}-cl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#A8E2FF" stop-opacity=".62"/><stop offset=".45" stop-color="#62BDF8" stop-opacity=".44"/><stop offset=".8" stop-color="#3D9BEA" stop-opacity=".3"/><stop offset="1" stop-color="#3D9BEA" stop-opacity=".1"/></radialGradient></defs>`;
+
+/** 원자의 크기를 나타내는 옅은 파란 구름(가장자리에 아주 옅은 테를 둘러 크기를 비교할 수 있게). */
+export const cloud = (cx: number, cy: number, R: number, ns: string, op = 1): string =>
+  `<g opacity="${op}"><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="url(#${ns}-cl)"/><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(R - 0.6).toFixed(1)}" fill="none" stroke="#A9D4FF" stroke-opacity=".22" stroke-width="1.1"/></g>`;
+
+const GOLD = Math.PI * (3 - Math.sqrt(5)); // 황금각
+
+/** 전자의 자리: 구름 안의 고리 띠(rIn~rOut)를 넓이가 같게 나눠 해바라기처럼 흩는다.
+ *  i번 전자의 방향은 개수와 상관없이 phase + i×황금각이다. 그래서 전자 수나 구름 크기가 바뀌어도 전자는 제 방향을 지킨 채
+ *  반지름만 바뀌고(건네는 동안 서로 엇갈리지 않는다), 마지막 번호가 맨 바깥 전자다. */
+export function cloudSpots(cx: number, cy: number, n: number, rIn: number, rOut: number, phase = 0): { x: number; y: number }[] {
+  return Array.from({ length: n }, (_, i) => {
+    const r = Math.sqrt(rIn * rIn + (rOut * rOut - rIn * rIn) * ((i + 0.5) / n));
+    const a = phase + i * GOLD;
+    return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r };
   });
-  return out;
 }
 
-/** 원자 모형: 가운데 원자핵(+p), 점선 궤도, 전자 e개. */
-export function atomModel(cx: number, cy: number, p: number, e: number, o: { nr?: number; r0?: number; gap?: number; er?: number } = {}): string {
+/** i번 전자의 방향(phase를 정할 때 쓴다). */
+export const spotAngle = (i: number, phase: number): number => phase + i * GOLD;
+
+/** 구름 모형 원자 하나: 구름, 원자핵(core를 주면 그것을), 전자 e개.
+ *  rIn은 전자를 두기 시작하는 반지름(원자핵을 비켜 간다). avoid 상자(원자핵 아래 이름표 같은 것)에 걸린 전자는 같은 방향으로 밀어 낸다.
+ *  전자가 없으면 구름을 옅게 그린다. */
+export function cloudAtom(o: { cx: number; cy: number; R: number; p: number; e: number; ns: string; nr?: number; er?: number; rIn?: number; phase?: number; core?: string; avoid?: { x0: number; y0: number; x1: number; y1: number } }): string {
   const nr = o.nr ?? 17;
-  const r0 = o.r0 ?? nr + 15;
-  const gap = o.gap ?? 17;
-  const spots = electronSpots(cx, cy, e, r0, gap);
-  const shells = Math.max(1, ...spots.map((s) => s.shell + 1));
-  let out = "";
-  for (let s = 0; s < shells; s++) out += `<circle cx="${cx}" cy="${cy}" r="${r0 + gap * s}" fill="none" stroke="#3B5273" stroke-width="1.2" stroke-dasharray="4 5"/>`;
-  out += nucleus(cx, cy, p, nr);
-  out += spots.map((s) => electron(s.x, s.y, o.er ?? 6)).join("");
-  return out;
+  const er = o.er ?? 6;
+  const rIn = o.rIn ?? nr + er + 3;
+  const rOut = Math.max(rIn + 1, o.R - er - 3);
+  const spots = cloudSpots(o.cx, o.cy, o.e, rIn, rOut, o.phase ?? 0).map((s) => {
+    const b = o.avoid;
+    if (!b) return s;
+    const hit = (x: number, y: number): boolean => x > b.x0 - er - 1 && x < b.x1 + er + 1 && y > b.y0 - er - 1 && y < b.y1 + er + 1;
+    if (!hit(s.x, s.y)) return s;
+    const dx = s.x - o.cx;
+    const dy = s.y - o.cy;
+    const r0 = Math.hypot(dx, dy) || 1;
+    for (let r = r0; r <= rOut; r += 1) {
+      const x = o.cx + (dx / r0) * r;
+      const y = o.cy + (dy / r0) * r;
+      if (!hit(x, y)) return { x, y };
+    }
+    return { x: o.cx + (dx / r0) * rOut, y: o.cy + (dy / r0) * rOut };
+  });
+  return cloud(o.cx, o.cy, o.R, o.ns, o.e === 0 ? 0.55 : 1) + (o.core ?? nucleus(o.cx, o.cy, o.p, nr)) + spots.map((s) => electron(s.x, s.y, er)).join("");
+}
+
+// 원자핵 속 알갱이 묶음의 자리: 육각으로 쌓은 격자점을 가운데에서 가까운 차례로(하나를 더하면 바깥에 하나가 붙는다).
+const HEX: [number, number][] = (() => {
+  const pts: [number, number][] = [];
+  for (let j = -4; j <= 4; j++) for (let i = -4; i <= 4; i++) pts.push([i + j / 2, (j * Math.sqrt(3)) / 2]);
+  const key = (p: [number, number]): number => Math.round(Math.hypot(p[0], p[1]) * 1000);
+  const ang = (p: [number, number]): number => (Math.atan2(p[1], p[0]) + Math.PI * 2.5) % (Math.PI * 2);
+  return pts.sort((a, b) => key(a) - key(b) || ang(a) - ang(b));
+})();
+
+/** 원자핵 속 알갱이 묶음: 양성자(빨강, +)와 중성자(회색)를 번갈아 쌓는다(한쪽이 떨어지면 남은 쪽). 바깥 것부터 그려 가운데가 앞으로 솟아 보이게 한다.
+ *  돌려주는 R은 묶음의 바깥 반지름(이름표와 전자를 비켜 놓는 데 쓴다). */
+export function nucleusCluster(cx: number, cy: number, p: number, n: number, br = 5): { svg: string; R: number } {
+  const kinds: boolean[] = [];
+  let lp = p;
+  let ln = n;
+  while (lp + ln > 0) {
+    if (lp > 0 && (kinds.length % 2 === 0 || ln === 0)) {
+      kinds.push(true);
+      lp -= 1;
+    } else {
+      kinds.push(false);
+      ln -= 1;
+    }
+  }
+  const d = br * 1.8; // 알갱이 사이(조금 겹쳐 한 덩이로 보이게)
+  const pts = HEX.slice(0, kinds.length).map(([x, y]) => [x * d, y * d]);
+  const mx = pts.reduce((a, q) => a + q[0], 0) / Math.max(1, pts.length);
+  const my = pts.reduce((a, q) => a + q[1], 0) / Math.max(1, pts.length);
+  let R = br;
+  let svg = "";
+  for (let i = pts.length - 1; i >= 0; i--) {
+    const x = cx + pts[i][0] - mx;
+    const y = cy + pts[i][1] - my;
+    R = Math.max(R, Math.hypot(x - cx, y - cy) + br);
+    const s = br * 0.48;
+    svg += kinds[i]
+      ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${br}" fill="#E8836B" stroke="#A8442E" stroke-width="1.1"/><path d="M${(x - s).toFixed(1)} ${y.toFixed(1)}h${(2 * s).toFixed(1)}M${x.toFixed(1)} ${(y - s).toFixed(1)}v${(2 * s).toFixed(1)}" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>`
+      : `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${br}" fill="#A3AEBF" stroke="#5F6B7E" stroke-width="1.1"/><circle cx="${(x - br * 0.3).toFixed(1)}" cy="${(y - br * 0.32).toFixed(1)}" r="${(br * 0.3).toFixed(1)}" fill="#E4E9F1" opacity=".7"/>`;
+  }
+  return { svg: `<g class="g2u4x-nucs">${svg}</g>`, R };
 }
 
 /** 무대 글자(SVG). 12px 이상만 쓴다. */

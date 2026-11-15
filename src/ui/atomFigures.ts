@@ -10,37 +10,68 @@ const nucleus = (x: number, y: number, p: number, r = 20): string =>
 const electron = (x: number, y: number, r = 7): string =>
   `<circle cx="${x}" cy="${y}" r="${r}" fill="#5A9AE0" stroke="#2A5AA0" stroke-width="1.4"/><line x1="${x - r * 0.45}" y1="${y}" x2="${x + r * 0.45}" y2="${y}" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>`;
 
-/** 원자 모형(+p 핵, e개 전자 — 파라미터형, 전자 최대 8개) — 원자 구조 판독 문제용 */
+/** 옅은 파란 구름(밝은 카드용). 그라데이션 id 없이 반지름이 조금씩 작은 원을 겹쳐 가운데로 갈수록 진하게 한다
+ *  (같은 그림이 화면 여러 곳에 놓여도 id가 겹치지 않게. 겹이 촘촘해 고리 무늬로 보이지 않는다). 가장자리 한 겹은 조금 진하게 해 원자의 크기가 보인다. */
+function cloudLight(cx: number, cy: number, R: number, layers = 24, edge = 0.24, step = 0.05): string {
+  let out = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#9FD5F4" fill-opacity="${edge}"/>`;
+  for (let i = 1; i < layers; i++) out += `<circle cx="${cx}" cy="${cy}" r="${(R * (1 - i / layers)).toFixed(1)}" fill="#9FD5F4" fill-opacity="${step}"/>`;
+  return out;
+}
+/** 구름 안 전자 자리(해바라기 배치: 넓이가 고르게, 고리 없이). 랩의 구름 모형(steps/g2u4v5/kit의 cloudSpots)과 같은 배치. */
+function cloudSpots(cx: number, cy: number, n: number, rIn: number, rOut: number, phase: number): [number, number][] {
+  const gold = Math.PI * (3 - Math.sqrt(5));
+  return Array.from({ length: n }, (_, i) => {
+    const r = Math.sqrt(rIn * rIn + (rOut * rOut - rIn * rIn) * ((i + 0.5) / n));
+    const a = phase + i * gold;
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+  });
+}
+
+/** 원자 모형(+p 핵, e개 전자, 파라미터형): 책과 같은 구름 모형. 옅은 파란 구름 가운데 원자핵, 전자는 궤도선 없이 구름 안에 고르게. 원자 구조 판독 문제용 */
 export function atomModelFig(p: number, e: number): string {
-  const pos = [[-58, -26], [58, -20], [-30, 46], [44, 44], [0, -58], [-62, 22], [62, 22], [0, 58]].slice(0, e);
-  // aria는 중립 — 핵 라벨 값·전자 수가 곧 문항의 판독 과제라 수치를 말하지 않는다(시험 aria 유출 규칙 소급).
-  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="원자 모형, 가운데 원자핵에 전하 라벨이 적혀 있고, 주위 점선 궤도에 전자 알갱이들이 있어요. 라벨 값과 알갱이 수를 살펴보세요">
-    <ellipse cx="172" cy="85" rx="96" ry="66" stroke="#C9D2DC" stroke-width="1.6" stroke-dasharray="5 6"/>
+  // aria는 중립: 핵 라벨 값·전자 수가 곧 문항의 판독 과제라 수치를 말하지 않는다(시험 aria 유출 규칙 소급).
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="원자 모형, 가운데 원자핵에 전하 라벨이 적혀 있고, 둘레의 옅은 파란 구름 속에 전자 알갱이들이 흩어져 있어요. 라벨 값과 알갱이 수를 살펴보세요">
+    ${cloudLight(172, 85, 76)}
     ${nucleus(172, 85, p, 22)}
-    ${pos.map(([dx, dy]) => electron(172 + dx, 85 + dy)).join("")}
+    ${cloudSpots(172, 85, e, 36, 64, -0.6).map(([x, y]) => electron(x, y)).join("")}
   </svg>`;
 }
 
-/** 주기율표 일부 — 1주기(H·He)·2주기(Be·O·Ne)·3주기(Na), 족·주기 성질 판독 문제용 */
+/** 주기율표 일부: 1주기(H·He)·2주기(Be·O·Ne)·3주기(Na), 족·주기 성질 판독 문제용.
+ *  족 머리(파란 띠)와 주기 머리(초록 띠)를 색 띠로, 3~12족이 빠진 자리는 물결 끊김으로. 폰에서 원자 번호와 머리 글자가 12px 넘게 보이게(화면 배율 약 0.94). */
 export function miniTableFig(): string {
-  const cell = (col: number, row: number, z: number | null, sym: string): string => {
-    const x = 34 + col * 34;
-    const y = 30 + row * 40;
-    if (!sym) return "";
-    return `<rect x="${x}" y="${y}" width="30" height="36" rx="5" fill="#F7F9FC" stroke="#B0B8C1" stroke-width="1.4"/>
-      ${z ? `<text x="${x + 4}" y="${y + 11}" font-size="8.5" fill="#8B95A1">${z}</text>` : ""}
-      <text x="${x + 15}" y="${y + 27}" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">${sym}</text>`;
+  const GX = [40, 76.5, 125.5, 162, 198.5, 235, 271.5, 308]; // 1, 2, 13~18족 칸의 왼쪽
+  const W = 34.5;
+  const H = 44;
+  const rowY = (r: number): number => 34 + r * 48;
+  const empty = GX.flatMap((x) => [0, 1, 2].map((r) => `<rect x="${x}" y="${rowY(r)}" width="${W}" height="${H}" rx="5" fill="#F6F8FA" stroke="#E3E7EC" stroke-width="1"/>`)).join("");
+  const cell = (col: number, row: number, z: number, sym: string): string => {
+    const x = GX[col];
+    const y = rowY(row);
+    return `<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="5" fill="#FFFFFF" stroke="#8E9AAB" stroke-width="1.5"/>
+      <text x="${x + 4}" y="${y + 14}" font-size="13" font-weight="700" fill="#4E5968">${z}</text>
+      <text x="${x + W / 2}" y="${y + 36}" text-anchor="middle" font-size="18" font-weight="800" fill="#262F3D">${sym}</text>`;
   };
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="주기율표 일부, 1주기 수소 헬륨, 2주기 베릴륨 산소 네온, 3주기 나트륨">
-    ${["1", "2", "13", "14", "15", "16", "17", "18"].map((g, i) => `<text x="${49 + i * 34}" y="22" text-anchor="middle" font-size="9.5" fill="#8B95A1">${g}족</text>`).join("")}
-    <text x="16" y="52" font-size="9.5" fill="#8B95A1">1</text><text x="16" y="92" font-size="9.5" fill="#8B95A1">2</text><text x="16" y="132" font-size="9.5" fill="#8B95A1">3</text>
+  const wave = Array.from({ length: 15 }, (_, i) => `q${i % 2 ? -4 : 4} 6 0 12`).join(" ");
+  return `<svg viewBox="0 0 344 182" ${NS} fill="none" role="img" aria-label="주기율표 일부, 1주기 수소 헬륨, 2주기 베릴륨 산소 네온, 3주기 나트륨">
+    <rect x="38" y="4" width="304" height="26" rx="6" fill="#DCEAFB"/>
+    <rect x="4" y="32" width="32" height="146" rx="6" fill="#DFF2E5"/>
+    <rect x="4" y="4" width="32" height="26" rx="6" fill="#EEF1F5"/><path d="M6 6 L34 28" stroke="#B9C1CC" stroke-width="1"/>
+    <text x="34" y="16" text-anchor="end" font-size="12.5" font-weight="700" fill="#2E5AA8">족</text>
+    <text x="6" y="28" font-size="12.5" font-weight="700" fill="#2B7A45">주기</text>
+    ${["1", "2", "13", "14", "15", "16", "17", "18"].map((g, i) => `<text x="${GX[i] + W / 2}" y="22" text-anchor="middle" font-size="13.5" font-weight="800" fill="#2E5AA8">${g}</text>`).join("")}
+    ${[1, 2, 3].map((n, r) => `<text x="20" y="${rowY(r) + 27}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#2B7A45">${n}</text>`).join("")}
+    ${empty}
+    <rect x="112" y="2" width="12" height="178" fill="#FFFFFF"/>
+    <path d="M116 2 ${wave}" stroke="#8B95A1" stroke-width="1.4"/><path d="M121 2 ${wave}" stroke="#8B95A1" stroke-width="1.4"/>
     ${cell(0, 0, 1, "H")}${cell(7, 0, 2, "He")}
     ${cell(1, 1, 4, "Be")}${cell(5, 1, 8, "O")}${cell(7, 1, 10, "Ne")}
     ${cell(0, 2, 11, "Na")}
   </svg>`;
 }
 
-/** 4가지 물질의 입자 모형 — 산소 분자·물 분자·철 원자 배열·NaCl 이온 격자(원자/분자/이온 구분 문제용) */
+/** 4가지 물질의 입자 모형: 산소 분자·물 분자(굽은형, 결합 각 104.5°)·철 원자 배열·NaCl 이온 격자(원자/분자/이온 구분 문제용).
+ *  아래 이름표는 알갱이 묶음과 떨어지게 두고 흰 테를 두른다(염화 나트륨 이름표가 맨 아래 줄 염화 이온에 닿아 가리던 것을 고쳤다). */
 export function fourModelFig(): string {
   const ball = (x: number, y: number, r: number, fill: string, line: string, label = ""): string =>
     `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${line}" stroke-width="1.4"/>${label ? `<text x="${x}" y="${y + 3.5}" text-anchor="middle" font-size="${r * 0.9}" font-weight="800" fill="#333D4B">${label}</text>` : ""}`;
@@ -53,13 +84,13 @@ export function fourModelFig(): string {
   return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="산소, 물, 철, 염화 나트륨 네 가지 물질의 입자 모형, 각 모형에서 알갱이들이 어떻게 배열되어 있는지 살펴보세요">
     <g><line x1="66" y1="52" x2="94" y2="52" stroke="#9AA5B4" stroke-width="4"/>${O(60, 52)}${O(100, 52)}
       <text x="80" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">산소</text></g>
-    <g><line x1="252" y1="44" x2="224" y2="66" stroke="#9AA5B4" stroke-width="4"/><line x1="252" y1="44" x2="280" y2="66" stroke="#9AA5B4" stroke-width="4"/>
-      ${H(224, 68, 8)}${H(280, 68, 8)}${O(252, 44, 12)}
+    <g><line x1="252" y1="44" x2="222.8" y2="66.6" stroke="#9AA5B4" stroke-width="4"/><line x1="252" y1="44" x2="281.2" y2="66.6" stroke="#9AA5B4" stroke-width="4"/>
+      ${H(222.8, 66.6, 8)}${H(281.2, 66.6, 8)}${O(252, 44, 12)}
       <text x="252" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">물</text></g>
-    <g>${[0, 1, 2].flatMap((r) => [0, 1, 2, 3].map((c) => fe(44 + c * 24 + (r % 2) * 12, 124 + r * 21))).join("")}
-      <text x="80" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">철</text></g>
-    <g>${[0, 1, 2].flatMap((r) => [0, 1, 2, 3].map((c) => ((r + c) % 2 ? na(216 + c * 26, 126 + r * 24) : cl(216 + c * 26, 126 + r * 24)))).join("")}
-      <text x="255" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">염화 나트륨</text></g>
+    <g>${[0, 1, 2].flatMap((r) => [0, 1, 2, 3].map((c) => fe(44 + c * 24 + (r % 2) * 12, 120 + r * 21))).join("")}
+      <text x="80" y="202" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968" stroke="#fff" stroke-width="3" stroke-linejoin="round" paint-order="stroke">철</text></g>
+    <g>${[0, 1, 2].flatMap((r) => [0, 1, 2, 3].map((c) => ((r + c) % 2 ? na(216 + c * 26, 122 + r * 24) : cl(216 + c * 26, 122 + r * 24)))).join("")}
+      <text x="255" y="202" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968" stroke="#fff" stroke-width="3" stroke-linejoin="round" paint-order="stroke">염화 나트륨</text></g>
   </svg>`;
 }
 
@@ -175,6 +206,39 @@ export function ionNotationFig(): string {
 }
 
 // ── recap 미니 아트(64×64) ──────────────────────────────────
+// 정리 카드의 아트는 32px로 줄어 보인다(배율 0.5). 글자는 쓰지 않고 도상으로, 기호만 크게.
+
+/** 원자핵 알갱이 묶음(미니): 양성자(빨강)와 중성자(회색)를 번갈아 육각으로 쌓는다. */
+function miniCore(cx: number, cy: number, p: number, n: number, br: number): string {
+  const kinds: boolean[] = [];
+  for (let lp = p, ln = n; lp + ln > 0; ) {
+    if (lp > 0 && (kinds.length % 2 === 0 || ln === 0)) {
+      kinds.push(true);
+      lp -= 1;
+    } else {
+      kinds.push(false);
+      ln -= 1;
+    }
+  }
+  const pts: [number, number][] = [];
+  for (let j = -3; j <= 3; j++) for (let i = -3; i <= 3; i++) pts.push([i + j / 2, (j * Math.sqrt(3)) / 2]);
+  pts.sort((a, b) => Math.round(Math.hypot(a[0], a[1]) * 1000) - Math.round(Math.hypot(b[0], b[1]) * 1000) || Math.atan2(a[1], a[0]) - Math.atan2(b[1], b[0]));
+  const d = br * 1.8;
+  const use = pts.slice(0, kinds.length);
+  const mx = use.reduce((s, q) => s + q[0], 0) / use.length;
+  const my = use.reduce((s, q) => s + q[1], 0) / use.length;
+  let out = "";
+  for (let i = use.length - 1; i >= 0; i--) {
+    const x = (cx + (use[i][0] - mx) * d).toFixed(1);
+    const y = (cy + (use[i][1] - my) * d).toFixed(1);
+    out += `<circle cx="${x}" cy="${y}" r="${br}" fill="${kinds[i] ? "#E8735A" : "#A7B1C0"}" stroke="${kinds[i] ? "#A8442E" : "#66728A"}" stroke-width=".9"/>`;
+  }
+  return out;
+}
+const miniCloud = (cx: number, cy: number, R: number): string => cloudLight(cx, cy, R, 10, 0.36, 0.08);
+const miniElectron = (x: number, y: number): string =>
+  `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.6" fill="#3F86E6" stroke="#245FB8" stroke-width="1"/><path d="M${(x - 2.3).toFixed(1)} ${y.toFixed(1)}h4.6" stroke="#fff" stroke-width="1.5"/>`;
+
 const MINI: Record<string, string> = {
   elemPure: `<circle cx="20" cy="24" r="8" fill="#E0A26A"/><circle cx="40" cy="24" r="8" fill="#E0A26A"/><circle cx="30" cy="40" r="8" fill="#E0A26A"/><circle cx="50" cy="40" r="8" fill="#E0A26A"/>
     <path d="M10 56h44" stroke="#8B95A1" stroke-width="2"/>`,
@@ -186,13 +250,14 @@ const MINI: Record<string, string> = {
     <text x="42" y="46" text-anchor="middle" font-size="15" font-weight="800" fill="#C77800">Fe</text>`,
   formulaMini: `<circle cx="24" cy="26" r="10" fill="#E8695A"/><circle cx="13" cy="40" r="7" fill="#F4F7FB" stroke="#9AA5B4" stroke-width="1.4"/><circle cx="36" cy="40" r="7" fill="#F4F7FB" stroke="#9AA5B4" stroke-width="1.4"/>
     <text x="46" y="30" font-size="13" font-weight="800" fill="#333D4B">H</text><text x="54" y="35" font-size="9" font-weight="800" fill="#333D4B">2</text><text x="58" y="30" font-size="13" font-weight="800" fill="#333D4B">O</text>`,
-  atomCore: `<ellipse cx="32" cy="32" rx="24" ry="16" stroke="#B0B8C1" stroke-width="1.6" stroke-dasharray="4 4" fill="none"/>
-    <circle cx="32" cy="32" r="9" fill="#E8836B" stroke="#A8442E" stroke-width="1.4"/>
-    <text x="32" y="36" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">+5</text>
-    <circle cx="10" cy="26" r="5" fill="#5A9AE0"/><circle cx="52" cy="24" r="5" fill="#5A9AE0"/><circle cx="32" cy="13" r="5" fill="#5A9AE0"/><circle cx="16" cy="46" r="5" fill="#5A9AE0"/><circle cx="48" cy="46" r="5" fill="#5A9AE0"/>`,
-  protonKey: `<circle cx="22" cy="32" r="12" fill="#E8836B"/><text x="22" y="36" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">+6</text>
-    <path d="M40 26h12M46 20v12" stroke="#04B45F" stroke-width="2.6"/>
-    <text x="46" y="52" text-anchor="middle" font-size="10" font-weight="800" fill="#4E5968">탄소!</text>`,
+  // 원자핵과 전자: 책의 구름 모형(옅은 파란 구름 가운데 + 원자핵, 구름 안에 (−) 전자). 궤도선과 숫자 글자 없이.
+  atomCore: `${miniCloud(32, 32, 29)}
+    <circle cx="32" cy="32" r="7.5" fill="#E8836B" stroke="#A8442E" stroke-width="1.2"/><path d="M28.4 32h7.2M32 28.4v7.2" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/>
+    ${cloudSpots(32, 32, 4, 15, 22.5, -2.1).map(([x, y]) => miniElectron(x, y)).join("")}`,
+  // 양성자수가 정하는 것: 알갱이 수가 다른 원자핵 둘(위 양성자 6, 아래 8)과 그 옆의 원소 기호 C, O를 크게.
+  protonKey: `${miniCore(16, 16, 6, 6, 3.4)}${miniCore(16, 48, 8, 8, 3.4)}
+    <text x="47" y="26" text-anchor="middle" font-size="28" font-weight="800" fill="#333D4B">C</text>
+    <text x="47" y="58" text-anchor="middle" font-size="28" font-weight="800" fill="#333D4B">O</text>`,
   tableMini: `<rect x="8" y="12" width="48" height="40" rx="6" fill="#F3F9E2" stroke="#7CB024" stroke-width="2"/>
     <path d="M8 25h48M24 12v40M40 12v40" stroke="#FFF" stroke-width="2"/>
     <rect x="40" y="25" width="16" height="27" fill="#7CB024" opacity=".3"/>`,
@@ -206,10 +271,19 @@ const MINI: Record<string, string> = {
     <circle cx="46" cy="38" r="9" fill="#5A9AE0"/><path d="M42 38h8" stroke="#fff" stroke-width="2.2"/>
     <path d="M30 12l6 6M60 16l-5 5" stroke="#F0A422" stroke-width="2"/>`,
   naclMini: `${[0, 1, 2].map((r) => [0, 1, 2].map((c) => `<circle cx="${16 + c * 16}" cy="${16 + r * 16}" r="${(r + c) % 2 ? 5 : 7.5}" fill="${(r + c) % 2 ? "#C0A2E8" : "#8ED0A0"}"/>`).join("")).join("")}`,
-  moveMini: `<rect x="6" y="24" width="52" height="18" rx="5" fill="#F4F7FB" stroke="#B0B8C1" stroke-width="1.6"/>
-    <circle cx="30" cy="33" r="5" fill="#5AA2F8"/><path d="M37 33h11M44 29l4 4-4 4" stroke="#5AA2F8" stroke-width="2" fill="none"/>
-    <text x="58" y="20" text-anchor="end" font-size="11" font-weight="800" fill="#5A88D8">−</text>
-    <text x="8" y="20" font-size="11" font-weight="800" fill="#F0685A">+</text>`,
+  // 이온은 반대 전하의 극으로: 띠 양 끝에 랩과 같은 좌우의 극 칩(왼쪽 (−), 오른쪽 (+)), (+) 표시를 크게 단 양이온이 (−)극 쪽으로.
+  moveMini: `<path d="M10 25v6M54 25v6" stroke="#8B95A1" stroke-width="1.6"/>
+    <rect x="5" y="30" width="54" height="15" rx="4" fill="#EEF2F7" stroke="#B0B8C1" stroke-width="1.4"/>
+    <circle cx="10" cy="17" r="8" fill="#4A7FD6"/><path d="M6.2 17h7.6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="54" cy="17" r="8" fill="#E8604F"/><path d="M50.2 17h7.6M54 13.2v7.6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M31 37.5H15.5M20 33l-4.5 4.5 4.5 4.5" stroke="#4A7FD6" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="42" cy="37.5" r="9" fill="#FFFFFF" stroke="#E8604F" stroke-width="2.2"/><path d="M37.2 37.5h9.6M42 32.7v9.6" stroke="#E8604F" stroke-width="2.6" stroke-linecap="round"/>`,
+  // 색으로 이온을 따라가는 실험: 띠 하나에서 파란 얼룩과 보라 얼룩이 서로 반대쪽으로 번진다(가운데 점선은 떨어뜨린 자리).
+  colorTrack: `<rect x="4" y="25" width="56" height="18" rx="4" fill="#EEF2F7" stroke="#B0B8C1" stroke-width="1.4"/>
+    <circle cx="32" cy="34" r="4" fill="none" stroke="#9AA5B4" stroke-width="1.2" stroke-dasharray="2 2"/>
+    <ellipse cx="17" cy="34" rx="10" ry="6.5" fill="#2F7BE8" opacity=".85"/><ellipse cx="47" cy="34" rx="10" ry="6.5" fill="#8E3FD0" opacity=".85"/>
+    <path d="M24 16H10M14 12l-4 4 4 4" stroke="#2F7BE8" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M40 16h14M50 12l4 4-4 4" stroke="#8E3FD0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
 };
 
 export function atomMiniArt(key: string): string {

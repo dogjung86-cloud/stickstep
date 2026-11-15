@@ -5,6 +5,8 @@
 //     책의 해 보기(원자, 분자, 이온으로 존재하는 물질 알아보기): 알루미늄 캔, 물, 염화 나트륨, 과당을 이루는 입자를 가른다.
 // 학생이 정하는 것: 어느 물질부터 볼지, 그리고 본 것을 어느 쪽으로 가를지. 잘못 가르면 그 자리에서 무엇을 다시 볼지 알려 준다.
 // 판정의 근거(확대한 입자 모형과 성분 목록)는 무대에 남는다. 다 가르면 판정 질문 하나, 결론 한 문장.
+// 판정이 뜨면 무대를 질문이 가리키는 것으로 바꾼다(마지막으로 가른 물질이 남아 질문과 어긋나지 않게):
+//   성분 랩은 다이아몬드 확대와 성분 목록(탄소 하나), 캔 음료 랩은 알루미늄 캔과 염화 나트륨(소금 알갱이)의 확대 원 둘을 나란히.
 
 import { el } from "../../../core/dom";
 import { ELEMS } from "../../../ui/chemKit";
@@ -14,6 +16,8 @@ import { bad, ball, bond, g4Lab, g4Svg, good, row, tap, toast, txt, type G4Step 
 interface Item {
   key: string;
   name: string;
+  /** 확대 원 위의 이름(없으면 name) */
+  title?: string;
   /** 확대한 입자 모형(원 안, 가운데 108,116 반지름 84) */
   art: string;
   /** 오른쪽 목록 */
@@ -30,34 +34,35 @@ interface Config {
   items: Item[];
   askBin: string; // 물질을 고른 뒤의 도움말
   judge: { q: string; choices: { t: string; ok?: boolean }[]; why: string };
+  /** 판정이 뜰 때 무대: 질문이 가리키는 물질 하나(item) 또는 직접 그린 장면(art, 무대의 id 접두를 받는다) */
+  judgeShow: { item: string } | { art: (ns: string) => string };
   done: string;
 }
 
 // ── 입자 그림(좌표는 원의 가운데 108,116 기준으로 계산한다) ──
 const CX = 108;
 const CY = 116;
-const grid = (sym: string, k: number, gap: number, rows = 4, cols = 4): string => {
+const grid = (sym: string, k: number, gap: number, rows = 4, cols = 4, cx = CX, cy = CY): string => {
   let out = "";
   for (let j = 0; j < rows; j++)
     for (let i = 0; i < cols; i++) {
-      const x = CX + (i - (cols - 1) / 2) * gap;
-      const y = CY + (j - (rows - 1) / 2) * gap;
+      const x = cx + (i - (cols - 1) / 2) * gap;
+      const y = cy + (j - (rows - 1) / 2) * gap;
       out += ball(x, y, sym, { k, label: false });
     }
   return out;
 };
 // 염화 나트륨 한 층: 나트륨 이온(Na⁺)과 염화 이온(Cl⁻)이 번갈아 놓인다. 원자일 때는 나트륨이 염소보다 크지만 이온이 되면
 // 반대라서, 원자 공의 크기(chemKit)를 그대로 쓰지 않고 이온 반지름(Na⁺ 102 pm, Cl⁻ 181 pm, 염화 이온이 지름 약 1.8배)의 비로 잰다.
-// 이웃한 두 이온의 중심 사이 30 px에 반지름의 합 27 px(거의 맞닿게).
+// 이웃한 두 이온의 중심 사이 gap(확대 원에서 30 px)에 반지름의 합 gap − 3 px(거의 맞닿게).
 const ION_PM = { Na: 102, Cl: 181 } as const;
-const salt = (): string => {
-  const gap = 30;
+const salt = (cx = CX, cy = CY, gap = 30): string => {
   const px = (gap - 3) / (ION_PM.Na + ION_PM.Cl);
   let out = "";
   for (let j = 0; j < 4; j++)
     for (let i = 0; i < 4; i++) {
-      const x = CX + (i - 1.5) * gap;
-      const y = CY + (j - 1.5) * gap;
+      const x = cx + (i - 1.5) * gap;
+      const y = cy + (j - 1.5) * gap;
       const sym = (i + j) % 2 ? "Cl" : "Na";
       out += ball(x, y, sym, { k: (ION_PM[sym] * px) / ELEMS[sym].r, label: false }) + txt(x, y + 4.5, sym === "Cl" ? "−" : "+", { size: 13, fill: "#fff", weight: 800 });
     }
@@ -133,20 +138,50 @@ const soda = (x: number, y: number): string => {
     ball(x - 30, y - 2, "Na", { k: 0.62, label: false })
   );
 };
-// 과당 분자: 탄소 여섯에 산소와 수소가 붙은 큰 분자 한 덩이(자세한 구조가 아니라 "여러 원자가 결합한 독립된 덩이"를 보인다)
-const fructose = (x: number, y: number, rot: number): string => {
-  let out = "";
-  const pts: [number, number][] = Array.from({ length: 6 }, (_, i) => [x + Math.cos(rot + (i / 6) * Math.PI * 2) * 17, y + Math.sin(rot + (i / 6) * Math.PI * 2) * 17]);
-  pts.forEach(([px, py], i) => {
-    const [nx, ny] = pts[(i + 1) % 6];
-    out += bond(px, py, nx, ny);
-  });
-  pts.forEach(([px, py], i) => {
-    const ox = x + (px - x) * 1.75;
-    const oy = y + (py - y) * 1.75;
-    out += bond(px, py, ox, oy) + ball(ox, oy, i % 2 ? "H" : "O", { k: 0.55, label: false });
-  });
-  pts.forEach(([px, py]) => (out += ball(px, py, "C", { k: 0.6, label: false })));
+// 과당 분자 C₆H₁₂O₆(원자 24개): 물에 녹은 과당의 한 모양(β-프룩토푸라노스)을 평면에 편다.
+// 산소 하나가 낀 오각 고리(O, C2, C3, C4, C5)에 C2는 OH와 CH₂OH(C1), C3은 OH와 H, C4는 H와 OH, C5는 H와 CH₂OH(C6)가 붙는다.
+// 좌표는 고리 결합 길이를 1로 둔 계산 좌표다(고리는 정오각형, 곁가지는 바깥 방향에서 몇 도씩 벌린다. 탄소와 산소, 탄소끼리 1, 탄소와 수소 0.8, 산소와 수소 0.75).
+// 검산: 탄소 6, 산소 6, 수소 12, 결합 24. 결합하지 않은 원자끼리는 12.5 px 배율에서 2 px 넘게 떨어진다. 덩이 하나가 물 분자의 두 배쯤이다.
+const FRU = (() => {
+  const D = Math.PI / 180;
+  const at: { el: "C" | "O" | "H"; x: number; y: number }[] = [];
+  const bonds: [number, number][] = [];
+  const add = (el: "C" | "O" | "H", from: number | null, x: number, y: number): number => {
+    at.push({ el, x, y });
+    if (from !== null) bonds.push([from, at.length - 1]);
+    return at.length - 1;
+  };
+  const sub = (from: number, el: "C" | "O" | "H", deg: number, len: number): number => add(el, from, at[from].x + Math.cos(deg * D) * len, at[from].y + Math.sin(deg * D) * len);
+  const rr = 1 / (2 * Math.sin(36 * D)); // 변이 1인 정오각형의 외접원 반지름
+  const ring = [-90, -18, 54, 126, 198].map((a) => [Math.cos(a * D) * rr, Math.sin(a * D) * rr]);
+  const O5 = add("O", null, ring[0][0], ring[0][1]);
+  const C2 = add("C", O5, ring[1][0], ring[1][1]);
+  const C3 = add("C", C2, ring[2][0], ring[2][1]);
+  const C4 = add("C", C3, ring[3][0], ring[3][1]);
+  const C5 = add("C", C4, ring[4][0], ring[4][1]);
+  bonds.push([C5, O5]);
+  const C1 = sub(C2, "C", -50, 1);
+  sub(C1, "H", -115, 0.8);
+  sub(sub(C1, "O", -50, 1), "H", 5, 0.75);
+  sub(C1, "H", 15, 0.8);
+  sub(sub(C2, "O", 14, 1), "H", 40, 0.75);
+  sub(sub(C3, "O", 22, 1), "H", 72, 0.75);
+  sub(C3, "H", 86, 0.8);
+  sub(C4, "H", 94, 0.8);
+  sub(sub(C4, "O", 158, 1), "H", 108, 0.75);
+  sub(C5, "H", 166, 0.8);
+  const C6 = sub(C5, "C", 230, 1);
+  sub(C6, "H", 165, 0.8);
+  sub(sub(C6, "O", 230, 1), "H", 175, 0.75);
+  sub(C6, "H", 295, 0.8);
+  return { at, bonds };
+})();
+const fructose = (x: number, y: number, rot: number, s = 12.5): string => {
+  const c = Math.cos(rot);
+  const sn = Math.sin(rot);
+  const p = FRU.at.map((a) => ({ el: a.el, x: x + s * (a.x * c - a.y * sn), y: y + s * (a.x * sn + a.y * c) }));
+  let out = FRU.bonds.map(([a, b]) => `<line x1="${p[a].x.toFixed(1)}" y1="${p[a].y.toFixed(1)}" x2="${p[b].x.toFixed(1)}" y2="${p[b].y.toFixed(1)}" stroke="#9AA8BC" stroke-width="3" stroke-linecap="round"/>`).join("");
+  for (const el of ["H", "O", "C"] as const) for (const a of p) if (a.el === el) out += ball(a.x, a.y, el, { k: 0.44, label: false });
   return out;
 };
 
@@ -172,7 +207,26 @@ const SORT: Config = {
     choices: [{ t: "분해할 수 없다", ok: true }, { t: "탄소와 산소로 분해된다" }, { t: "가열하면 여러 성분이 된다" }],
     why: "성분이 <b>하나뿐</b>이라 갈라낼 다른 성분이 없어요.",
   },
+  judgeShow: { item: "dia" },
   done: "성분이 <b>한 가지</b>인 물질과 <b>두 가지 이상</b>인 물질로 가를 수 있어요. 앞의 것은 더 분해되지 않아요.",
+};
+
+// 캔 음료 랩의 판정 장면: 왼쪽 알루미늄 캔, 오른쪽 염화 나트륨(소금 알갱이)의 확대 원을 나란히, 원 아래에 다른 점을 한 줄씩.
+// 확대 원은 반지름 72(가운데 84,106과 262,106). 알갱이 사이를 25 px로 줄여 4×4가 원 안에 다 든다
+// (모서리 알갱이 바깥 끝이 가운데에서 53 + 14 = 67 px, 자르는 원 70 px. 소금은 같은 이온 반지름 비 102 : 181).
+const canPair = (ns: string): string => {
+  const L = { x: 84, y: 106 };
+  const R = { x: 262, y: 106 };
+  const loupe = (c: { x: number; y: number }, id: string, art: string): string =>
+    `<clipPath id="${ns}-${id}"><circle cx="${c.x}" cy="${c.y}" r="70"/></clipPath><circle cx="${c.x}" cy="${c.y}" r="72" fill="rgba(10,17,28,.6)" stroke="#2B3F5C" stroke-width="3"/><g clip-path="url(#${ns}-${id})" class="g2u4x-pop">${art}</g>`;
+  return (
+    loupe(L, "lpa", grid("Al", 11.5 / 14, 25, 4, 4, L.x, L.y)) +
+    loupe(R, "lpb", salt(R.x, R.y, 25)) +
+    txt(L.x, 24, "알루미늄 캔", { size: 13.5, fill: "#fff", weight: 800 }) +
+    txt(R.x, 24, "염화 나트륨(소금 알갱이)", { size: 13.5, fill: "#fff", weight: 800 }) +
+    txt(L.x, 197, "전하 없음", { size: 13.5, fill: "#C6D3E6", weight: 800 }) +
+    txt(R.x, 197, "+, − 번갈아", { size: 13.5, fill: "#FFE58A", weight: 800 })
+  );
 };
 
 const CAN: Config = {
@@ -191,12 +245,13 @@ const CAN: Config = {
     {
       key: "salt",
       name: "염화 나트륨",
+      title: "염화 나트륨(소금 알갱이)",
       art: salt(),
       comps: [["Na", "나트륨"], ["Cl", "염소"]],
       bin: "ion",
       hint: "입자마다 (+)와 (−) 전하를 띠고 있어요",
     },
-    { key: "fru", name: "과당", art: fructose(84, 92, 0.2) + fructose(132, 146, 0.7), comps: [["C", "탄소"], ["H", "수소"], ["O", "산소"]], bin: "mol", hint: "여러 원자가 결합한 덩이가 따로 떨어져 있어요" },
+    { key: "fru", name: "과당", art: fructose(82, 84, -0.3) + fructose(136, 150, 0.25), comps: [["C", "탄소"], ["H", "수소"], ["O", "산소"]], bin: "mol", hint: "여러 원자가 결합한 덩이가 따로 떨어져 있어요" },
   ],
   askBin: "이 물질을 이루는 입자는 무엇인가요? 아래에서 골라 보세요.",
   judge: {
@@ -204,6 +259,7 @@ const CAN: Config = {
     choices: [{ t: "염화 나트륨의 입자는 전하를 띤다", ok: true }, { t: "염화 나트륨의 입자는 한 종류다" }, { t: "알루미늄의 입자는 전하를 띤다" }],
     why: "염화 나트륨은 <b>양이온과 음이온</b>이 번갈아 놓여 있어요.",
   },
+  judgeShow: { art: canPair },
   done: "물질을 이루는 입자는 <b>원자</b>, <b>분자</b>, <b>이온</b>으로 존재해요.",
 };
 
@@ -224,12 +280,22 @@ const make =
       }
       const list = cur.comps.map(([sym, name], i) => ball(232, 84 + i * 30, sym, { k: 0.72, label: false }) + txt(250, 89 + i * 30, name, { anchor: "start", size: 14, fill: "#E8EEF9" })).join("");
       stage.set(`
-        <defs><clipPath id="g2u4x-loupe-${cfg.cls}"><circle cx="${CX}" cy="${CY}" r="86"/></clipPath></defs>
+        <defs><clipPath id="${stage.ns}-loupe"><circle cx="${CX}" cy="${CY}" r="86"/></clipPath></defs>
         <circle cx="${CX}" cy="${CY}" r="88" fill="rgba(10,17,28,.6)" stroke="#2B3F5C" stroke-width="3"/>
-        <g clip-path="url(#g2u4x-loupe-${cfg.cls})" class="g2u4x-pop">${cur.art}</g>
-        ${txt(108, 20, cur.name, { size: 14, fill: "#fff", weight: 800 })}
+        <g clip-path="url(#${stage.ns}-loupe)" class="g2u4x-pop">${cur.art}</g>
+        ${txt(108, 20, cur.title ?? cur.name, { size: 14, fill: "#fff", weight: 800 })}
         ${txt(222, 58, cfg.listTitle, { anchor: "start", size: 12.5, fill: "#8CA2C0" })}${list}
       `);
+    };
+    /** 판정이 뜰 때 무대를 질문이 가리키는 것으로 바꾼다. */
+    const showJudge = (): void => {
+      lab.f.stage.querySelector(".g2u4x-toast")?.remove(); // 마지막으로 가른 물질의 알림이 판정 장면을 가리지 않게
+      const js = cfg.judgeShow;
+      if ("item" in js) {
+        cur = cfg.items.find((it) => it.key === js.item) ?? null;
+        draw();
+      } else stage.set(js.art(stage.ns));
+      host.dataset.g4View = "judge";
     };
 
     const chips = cfg.items.map((it) => {
@@ -277,7 +343,10 @@ const make =
           cur = null;
           return;
         }
-        lab.tm.later(() => lab.judge(cfg.judge.q, cfg.judge.choices, cfg.judge.why, () => lab.finish(cfg.done)), 900);
+        lab.tm.later(() => {
+          showJudge();
+          lab.judge(cfg.judge.q, cfg.judge.choices, cfg.judge.why, () => lab.finish(cfg.done));
+        }, 900);
       });
       return b;
     });

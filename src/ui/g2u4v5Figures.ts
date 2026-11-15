@@ -4,17 +4,18 @@ const NS = `xmlns="http://www.w3.org/2000/svg"`;
 const t = (x: number, y: number, s: string, size = 12.5, fill = "#4E5968", weight = 700): string =>
   `<text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="${weight}" fill="${fill}">${s}</text>`;
 
-/** 물 분해 장치: 물이 든 컵에 세워 넣은 건전지. 한쪽 극에서는 기포가 많이, 다른 쪽에서는 적게 올라온다. (가)는 기포가 많은 쪽, (나)는 적은 쪽. */
+/** 물 분해 장치: 물이 든 컵에 세워 넣은 9 V 건전지. 단자에 (+), (−)를 적는다(물 분해 랩의 무대와 같다: 작은 단자가 (+), 큰 단자가 (−)).
+ *  (−)극 쪽(수소) 기포가 (+)극 쪽(산소)보다 많이 올라온다. 문제와 보기가 쓰지 않는 (가), (나) 이름표는 두지 않는다. */
 export function electrolysisFig(): string {
   const bub = (x: number, n: number): string => Array.from({ length: n }, (_, i) => `<circle cx="${x + ((i * 7) % 13) - 6}" cy="${104 - i * (62 / n)}" r="${2.6 + (i % 3) * 0.6}" fill="none" stroke="#5A9AE0" stroke-width="1.3"/>`).join("");
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="황산 나트륨을 녹인 물에 건전지를 세워 넣은 그림. 건전지의 두 극에서 기포가 올라오는데 한쪽이 다른 쪽보다 많다. 기포가 많은 쪽에 (가), 적은 쪽에 (나)라고 적혀 있다">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="황산 나트륨을 녹인 물에 9 V 건전지를 세워 넣은 그림. 건전지 위쪽의 두 단자에 (+)와 (−)가 적혀 있고, 두 단자에서 기포가 올라오는데 한쪽이 다른 쪽보다 많다">
     <path d="M112 22 L118 170 Q118 176 126 176 L218 176 Q226 176 226 170 L232 22" fill="#F4F9FF" stroke="#8B99AC" stroke-width="2"/>
     <path d="M113.6 42 L118.6 169 Q119 174 126 174 L218 174 Q225 174 225.4 169 L230.4 42 Z" fill="#CFE6FB"/>
-    <rect x="146" y="118" width="52" height="56" rx="5" fill="#3A4860" stroke="#1E2838" stroke-width="1.5"/><rect x="146" y="118" width="52" height="16" rx="5" fill="#D9A441"/>
+    <rect x="146" y="118" width="52" height="56" rx="5" fill="#3A4860" stroke="#1E2838" stroke-width="1.5"/><rect x="146" y="118" width="52" height="17" rx="5" fill="#D9A441"/>
     <rect x="154" y="109" width="9" height="10" rx="2" fill="#9AA5B4"/><rect x="178" y="107" width="13" height="12" rx="3" fill="#9AA5B4"/>
+    ${t(158.5, 131, "(+)", 13, "#5A2A00", 800)}${t(184.5, 131, "(−)", 13, "#5A2A00", 800)}
+    ${t(172, 160, "9 V", 13, "#DCE5F2", 700)}
     ${bub(158, 4)}${bub(185, 9)}
-    ${t(78, 70, "(나)", 14, "#333D4B", 800)}<path d="M94 66 L146 80" stroke="#8B95A1" stroke-width="1.4"/>
-    ${t(268, 70, "(가)", 14, "#333D4B", 800)}<path d="M252 66 L198 80" stroke="#8B95A1" stroke-width="1.4"/>
   </svg>`;
 }
 
