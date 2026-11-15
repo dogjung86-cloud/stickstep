@@ -12,7 +12,7 @@
 //       발전소가 석탄인 채 전기 자동차로 바꾸면 발전소 흐름이 조금 굵어진다(충전할 전기를 석탄으로 만든다). 틀린 차례도 해 볼 수 있다.
 // 흐름: 셋을 모두 바꾼다 → 판정 → 결론.
 // 배출량(숫자는 화면에 쓰지 않는다): 발전소 45, 자동차 25, 공장 30. 전기 자동차 + 석탄 발전이면 발전소 +10. 포집 뒤 공장 5.
-// 쌓이는 빠르기: 배출 100이면 1초에 2px쯤. 화면을 오래 두어도 무대를 덮지 않게 더 쌓일 수 있는 두께에 한도(SPAN)를 두고 그 가까이에서 아주 조금씩 덜 쌓이게 그린다.
+// 쌓이는 빠르기: 배출 100이면 1초에 4px쯤. 화면을 오래 두어도 무대를 덮지 않게 더 쌓일 수 있는 두께에 한도(SPAN)를 두고 그 가까이에서 아주 조금씩 덜 쌓이게 그린다.
 // 움직임은 CSS와 setTimeout만 쓴다(Ⅱ단원 뼈대의 약속. 캔버스와 rAF 없음).
 
 import { el } from "../../../core/dom";
@@ -34,8 +34,8 @@ const INFO: Record<Key, { name: string; old: string; neo: string }> = {
 };
 
 const H0 = 26; // 처음에 이미 쌓여 있던 두께(원래 있던 온실 기체를 포함한다)
-const SPAN = 56; // 더 쌓여 보일 수 있는 두께의 한도(무대 가림 방지)
-const RATE = 0.02; // 배출 1이 1초에 더하는 두께(px). 카드를 빨리 눌러도 처음보다 두꺼워진 것이 보이게
+const SPAN = 48; // 더 쌓여 보일 수 있는 두께의 한도(무대와 흐름의 꺾쇠를 가리지 않게)
+const RATE = 0.04; // 배출 1이 1초에 더하는 두께(px). 카드를 빨리 눌러도 처음보다 두꺼워진 것이 보이게
 const TICK = 250; // 시간이 흐르는 간격(ms). 1초가 1년이다
 
 interface Outlet {
@@ -50,7 +50,7 @@ function flowSvg(o: Outlet, ns: string): string {
   const top = 4;
   const rise = o.y - 22; // 알갱이가 오르는 거리(하늘의 띠 속으로 사라진다)
   const ribbon = `<path d="M${(o.x - w / 2).toFixed(1)} ${o.y} L${(o.x - w * 0.95).toFixed(1)} ${top} L${(o.x + w * 0.95).toFixed(1)} ${top} L${(o.x + w / 2).toFixed(1)} ${o.y} Z" fill="url(#${ns}Flow)"/>`;
-  const cy = o.y - 24;
+  const cy = o.y - 15;
   const k = Math.max(5, w * 0.42);
   const chev = `<path d="M${(o.x - k).toFixed(1)} ${(cy + k * 0.62).toFixed(1)} L${o.x} ${cy.toFixed(1)} L${(o.x + k).toFixed(1)} ${(cy + k * 0.62).toFixed(1)}" fill="none" stroke="#F6E6D2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>`;
   const n = Math.max(1, Math.round(o.e / 7));
@@ -158,8 +158,10 @@ export const cleanLab: StepRenderer = (host, step, api) => {
   const total = (): number => plantE() + carE() + facE();
 
   // ── 시간과 쌓인 양 ──
+  // 처음 2초는 시간을 2.5배로 빨리 돌린다(도움말을 읽는 동안 "그대로 두면 해마다 쌓인다"가 먼저 보이게. 카드를 아주 빨리 눌러도 처음보다 두꺼워진 것이 남는다).
   let acc = 0; // 처음 뒤로 더 쌓인 양(px로 센다)
   let secs = 0;
+  let ticks = 0;
   const thick = (): number => H0 + SPAN * (1 - Math.exp(-acc / SPAN));
   function showLayer(): void {
     const h = thick();
@@ -169,8 +171,10 @@ export const cleanLab: StepRenderer = (host, step, api) => {
     host.dataset.u1Layer = h.toFixed(1);
   }
   function tick(): void {
-    secs += TICK / 1000;
-    acc += total() * RATE * (TICK / 1000);
+    ticks += 1;
+    const k = ticks <= 8 ? 2.5 : 1;
+    secs += (TICK / 1000) * k;
+    acc += total() * RATE * (TICK / 1000) * k;
     showLayer();
     tm.later(tick, TICK);
   }
