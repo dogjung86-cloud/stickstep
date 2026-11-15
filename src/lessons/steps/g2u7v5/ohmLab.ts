@@ -178,41 +178,73 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     ctx.scale(k, k);
     if (warn > 0) warn = Math.max(0, warn - dt / 50);
     const shake = warn > 0 ? Math.sin(t / 22) * 3 * warn : 0;
-    // 전원 장치
-    xBox(ctx, 12, 14, 124, 58, 12, "rgba(255,255,255,.07)", X.line);
-    xText(ctx, "전원 장치", 74, 28, { px: 12, color: X.dim });
-    xText(ctx, `${(vi * OHM.step).toFixed(1)} V`, 74, 52, { px: 20, w: 800, color: vi ? X.cur : X.ink });
-    // 니크롬선(길이가 다르다)
+    // 그림(2026-11-15 그래픽 감사 C095): 책의 탐구 그림처럼 계기를 회로에 잇는다. 전류 센서는 전원 장치의 (+)단자와 니크롬선 사이 한 줄(직렬)에,
+    //   전압 센서는 집게 둘을 니크롬선 양 끝에 물려 나란히(병렬) 단다. 숫자 상자는 그대로 두고 잇는 선만 더했다.
+    const lead = "rgba(143,164,194,.85)";
+    const line = (pts: [number, number][], color: string, lw: number): void => {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lw;
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+      ctx.stroke();
+    };
+    const clip = (x: number, y: number, color: string): void => {
+      // 집게: 작은 사다리꼴 머리
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x - 4, y + 2);
+      ctx.lineTo(x + 4, y + 2);
+      ctx.lineTo(x + 3, y + 10);
+      ctx.lineTo(x - 3, y + 10);
+      ctx.closePath();
+      ctx.fill();
+    };
+    // 전원 장치(아래 두 단자: 왼쪽 (−), 오른쪽 (+))
+    xBox(ctx, 12, 10, 112, 48, 12, "rgba(255,255,255,.07)", X.line);
+    xText(ctx, "전원 장치", 68, 23, { px: 12, color: X.dim });
+    xText(ctx, `${(vi * OHM.step).toFixed(1)} V`, 68, 43, { px: 18, w: 800, color: vi ? X.cur : X.ink });
+    for (const [x, s] of [[16, "−"], [114, "+"]] as [number, string][]) {
+      ctx.fillStyle = "#8FA4C2";
+      ctx.beginPath();
+      ctx.arc(x, 58, 4, 0, Math.PI * 2);
+      ctx.fill();
+      xText(ctx, s, x + (s === "+" ? -10 : 10), 64, { px: 12, color: X.dim, w: 800 });
+    }
+    // 니크롬선(길이가 다르다): 가운데 x 68, 높이 128
     const len = wire === "long" ? 104 : 52;
-    const wx = 74 - len / 2 + shake;
-    ctx.strokeStyle = "rgba(143,164,194,.8)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(22, 72);
-    ctx.lineTo(22, 104);
-    ctx.lineTo(wx, 104);
-    ctx.moveTo(126, 72);
-    ctx.lineTo(126, 104);
-    ctx.lineTo(wx + len, 104);
-    ctx.stroke();
+    const wx = 68 - len / 2 + shake;
+    const WY = 128;
+    // 전류 센서: (+)단자 → 센서 → 니크롬선 오른쪽 끝(한 줄로)
+    xBox(ctx, 100, 70, 68, 40, 10, "rgba(255,255,255,.07)", X.line);
+    xText(ctx, "전류 센서", 134, 81, { px: 12, color: X.dim, w: 600 });
+    xText(ctx, `${mA(wire, vi)} mA`, 134, 99, { px: 14, w: 800, color: COLOR[wire] });
+    line([[114, 58], [114, 70]], lead, 2);
+    line([[154, 110], [154, WY], [wx + len, WY]], lead, 2);
+    // (−)단자 → 니크롬선 왼쪽 끝
+    line([[16, 58], [16, WY], [wx, WY]], lead, 2);
+    // 니크롬선
     ctx.strokeStyle = vi ? `rgba(255,${190 - vi * 22},${120 - vi * 22},1)` : "#C9D1DE";
     ctx.lineWidth = 3;
     ctx.beginPath();
     for (let i = 0; i <= len; i += 4) {
-      const y = 104 + (i % 8 ? 5 : -5);
-      if (i === 0) ctx.moveTo(wx, 104);
-      ctx.lineTo(wx + i, i === len ? 104 : y);
+      const y = WY + (i % 8 ? 5 : -5);
+      if (i === 0) ctx.moveTo(wx, WY);
+      ctx.lineTo(wx + i, i === len ? WY : y);
     }
     ctx.stroke();
-    xText(ctx, NAME[wire], 74, 124, { px: 12, color: COLOR[wire] });
-    // 센서의 값
-    xBox(ctx, 12, 140, 58, 50, 10, "rgba(255,255,255,.07)", X.line);
-    xBox(ctx, 78, 140, 58, 50, 10, "rgba(255,255,255,.07)", X.line);
-    xText(ctx, "전압 센서", 41, 153, { px: 12, color: X.dim, w: 600 });
-    xText(ctx, "전류 센서", 107, 153, { px: 12, color: X.dim, w: 600 });
-    xText(ctx, `${(vi * OHM.step).toFixed(1)} V`, 41, 174, { px: 14, w: 800 });
-    xText(ctx, `${mA(wire, vi)} mA`, 107, 174, { px: 14, w: 800, color: COLOR[wire] });
-    xText(ctx, "1 mA는 1 A의 천분의 일", 74, 208, { px: 12, color: X.dim, w: 600 });
+    xText(ctx, NAME[wire], 60, WY - 16, { px: 12, color: COLOR[wire] });
+    // 전압 센서: 집게 둘을 니크롬선 양 끝에(나란히)
+    const volt = "#9BE8C4";
+    xBox(ctx, 22, 160, 92, 40, 10, "rgba(255,255,255,.07)", X.line);
+    xText(ctx, "전압 센서", 68, 171, { px: 12, color: X.dim, w: 600 });
+    xText(ctx, `${(vi * OHM.step).toFixed(1)} V`, 68, 189, { px: 14, w: 800 });
+    for (const x of [wx, wx + len]) {
+      const bx = Math.min(104, Math.max(32, x));
+      line([[bx, 160], [bx, WY + 18], [x, WY + 10]], volt, 1.5);
+      clip(x, WY, volt);
+    }
+    xText(ctx, "1 mA는 1 A의 천분의 일", 68, 216, { px: 12, color: X.dim, w: 600 });
     viGraph(ctx, 200, 190, 128, 140, pts, { live: { wire, i: vi }, lines: { long: lineOk("long"), short: lineOk("short") } });
     ctx.restore();
   });

@@ -28,6 +28,23 @@ const disk = (sk, x, y, rx, ry, fill, sd, o = {}) => {
   sk.ink(p, { w: o.w ?? 9, wob: 0.7, seed: sd + 1, color: o.color });
 };
 const line = (sk, pts, w, color, sd, o = {}) => sk.ink(pts.length > 2 ? curve(pts) : dense(pts), { w, color, wob: o.wob ?? 0.6, seed: sd, dash: o.dash });
+/** 꺾은선의 모서리를 반지름 r로 둥글린 촘촘한 점 배열(곡선 보간이 모서리에서 삐져나오지 않게, 전선처럼 곧은 길에 쓴다). */
+const rounded = (pts, r) => {
+  const out = [pts[0]];
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [p0, p1, p2] = [pts[i - 1], pts[i], pts[i + 1]];
+    const l0 = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]), l1 = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
+    const k = Math.min(r, l0 / 2, l1 / 2);
+    const a = [p1[0] + ((p0[0] - p1[0]) * k) / l0, p1[1] + ((p0[1] - p1[1]) * k) / l0];
+    const b = [p1[0] + ((p2[0] - p1[0]) * k) / l1, p1[1] + ((p2[1] - p1[1]) * k) / l1];
+    out.push(a);
+    for (let t = 0.2; t < 1; t += 0.2) out.push([(1 - t) ** 2 * a[0] + 2 * (1 - t) * t * p1[0] + t * t * b[0], (1 - t) ** 2 * a[1] + 2 * (1 - t) * t * p1[1] + t * t * b[1]]);
+    out.push(b);
+  }
+  out.push(pts[pts.length - 1]);
+  return dense(out);
+};
+const wire = (sk, pts, r, w, color, sd) => sk.ink(rounded(pts, r), { w, color, wob: 0.6, seed: sd });
 /** 전지(가로). (+)극 쪽에 꼭지가 있다. 글자 대신 색으로 두 극을 가른다(주황이 (+)극 쪽). */
 const cell = (sk, x, y, w, h, sd, flip = false) => {
   box(sk, x, y, w, h, 8, "#DDE5EE", sd);
@@ -218,6 +235,11 @@ export function meterBase() {
 }
 
 /* ══════════ 7. 전선과 나침반 (g2u7l7) ══════════ */
+// 방향 검산(2026-11-15 그래픽 감사 C100): 화면 위쪽이 북쪽인 위에서 내려다본 그림이다. 전류는 전지의 (+)극(꼭지가 있는 오른쪽 끝)에서 나와
+//   스위치를 지나 나침반 위의 전선을 북쪽에서 남쪽(화면 아래)으로 흐르고, 아래를 돌아 전지의 (−)극(왼쪽 끝)으로 들어간다.
+//   전선은 나침반 위에 있으니 바늘 자리는 전선의 아래다. 동쪽 x, 북쪽 y, 위쪽 z로 두면 전류 I = −y, 전선에서 바늘로 가는 쪽 r = −z이고
+//   자기장은 I × r = (−y) × (−z) = y × z = +x, 동쪽이다. 그래서 N극(빨간 끝)은 동쪽(화면 오른쪽)으로 돌아간다(CSS의 rotate(68deg), 시계 방향).
+//   전류 화살표(노랑)도 남쪽(화면 아래)을 가리킨다. 고치기 전에는 화살표가 북쪽을 가리켜 바늘과 거꾸로였다.
 export const WR = { cx: 480, cy: 330 };
 export function wireBase() {
   const sk = new Sk(W, H, { id: "wr" });
@@ -238,15 +260,22 @@ export function wireBase() {
     sk.ink(s, { w: 6, wob: 0.3, seed: 24 });
   });
   disk(sk, cx, cy, 9, 9, C.ink, 27, { w: 4 });
-  // 나침반 위를 남북으로 지나는 전선, 전지와 스위치
-  line(sk, [[cx, 474], [cx, 120], [300, 70], [200, 70]], 11, C.orange, 31);
-  line(sk, [[cx, 474], [cx, 506], [140, 506], [140, 170]], 11, C.orange, 32);
+  // 전지(꼭지가 있는 오른쪽 끝이 (+)극). 전선은 몸통의 위아래 면이 아니라 두 끝에 잇는다
   cell(sk, 100, 96, 80, 74, 41);
-  g(sk, S0, () => line(sk, [[200, 70], [164, 40]], 11, C.ink, 45));
+  // (+)극 → 스위치 → 나침반 위를 북쪽에서 남쪽으로 → 아래를 돌아 (−)극
+  line(sk, [[190, 133], [214, 133]], 11, C.orange, 30);
+  wire(sk, [[262, 133], [cx, 133], [cx, 474]], 44, 11, C.orange, 31);
+  wire(sk, [[cx, 474], [cx, 506], [60, 506], [60, 133], [100, 133]], 30, 11, C.orange, 32);
+  // 스위치: 손잡이가 (+)극 쪽 받침에 매여 있고, 누르면 오른쪽 받침에 닿는다
+  disk(sk, 214, 133, 9, 9, C.ink, 43, { w: 4 });
+  disk(sk, 262, 133, 9, 9, C.ink, 44, { w: 4 });
+  g(sk, S0, () => line(sk, [[214, 133], [252, 98]], 11, C.ink, 45));
   g(sk, S1, () => {
-    line(sk, [[200, 70], [150, 96]], 11, C.ink, 47);
-    [200, 300].forEach((y, i) => {
-      const a = poly([[cx + 34, y], [cx + 22, y + 26], [cx + 46, y + 26]], 3);
+    line(sk, [[214, 133], [262, 133]], 11, C.ink, 47);
+    // 전류 화살표: 나침반 위의 전선을 따라 남쪽(아래)으로. 바늘이 오른쪽으로 돌아도(S극 쪽 끝은 왼쪽 아래로 온다) 겹치지 않게
+    // 전선의 왼쪽, 바늘이 지나지 않는 높이(222, 404)에 둔다
+    [222, 404].forEach((y, i) => {
+      const a = poly([[cx - 34, y + 26], [cx - 46, y], [cx - 22, y]], 3);
       sk.fill(a, C.yellow, { dx: 0, dy: 0, wob: 0.3, seed: 51 + i });
       sk.ink(a, { w: 5, wob: 0.3, seed: 53 + i });
     });

@@ -12,16 +12,32 @@ import type { StepRenderer } from "../../types";
 import { bvRange, bvTimers } from "../bio6/b6Lab";
 import { X, clamp, xCanvas, xFrame, xPill, xSegs, xSign, xText, type LabStep } from "./kit";
 
-const R = 46; // 깡통 반지름
+// 그림(2026-11-15 그래픽 감사 C092): 깡통을 지름 132로 키워 무대 위쪽 빈자리를 쓰고, (+)와 전자를 겹치지 않는 고른 바둑판(간격 14)에 번갈아 둔다.
+//   막대를 가까이 하면 전자 16개가 먼 쪽 안쪽 테두리(반지름 56, 깡통 테두리보다 안쪽)를 따라 겹치지 않게 줄을 선다. 깡통 밖으로 나가지 않는다.
+//   무대 오른쪽 위에 '전자 16개, 원자핵 16개'를 늘 써서 막대를 움직여도 개수가 그대로임을 보인다(둘째 판정의 답). 막대가 닿으면 전자 3개가 건너와 19개가 된다.
+const R = 66; // 깡통 반지름
+const ROW = 56; // 몰린 전자가 서는 안쪽 테두리의 반지름
+const N_E = 16;
+const PLUS: [number, number][] = [];
 const HOME: [number, number][] = [];
-for (let i = 0; i < 12; i++) {
-  const a = (i / 12) * Math.PI * 2 + 0.26;
-  HOME.push([Math.cos(a) * R * 0.74, Math.sin(a) * R * 0.74]);
+{
+  // 칸의 가운데(±7, ±21, ±35)에서 반지름 41 안의 32자리. 90도씩 돌려도 같은 꼴이고, 바둑판처럼 칠하면 16과 16으로 나뉜다
+  const d = 14;
+  for (let i = -3; i < 3; i++)
+    for (let j = -3; j < 3; j++) {
+      const x = (i + 0.5) * d;
+      const y = (j + 0.5) * d;
+      if (Math.hypot(x, y) > 41) continue;
+      ((i + j) % 2 === 0 ? PLUS : HOME).push([x, y]);
+    }
+  HOME.sort((a, b) => a[1] - b[1] || a[0] - b[0]); // 위에서 아래 차례(먼 쪽 줄의 자리와 차례대로 짝짓는다)
 }
-for (let i = 0; i < 4; i++) {
-  const a = (i / 4) * Math.PI * 2 + 0.6;
-  HOME.push([Math.cos(a) * R * 0.3, Math.sin(a) * R * 0.3]);
-}
+/** 먼 쪽 안쪽 테두리를 따라 선 자리(away = 먼 쪽 x 방향). 위에서 아래 차례. */
+const farRow = (away: number): [number, number][] =>
+  Array.from({ length: N_E }, (_, i) => {
+    const a = ((-95 + (190 * i) / (N_E - 1)) * Math.PI) / 180;
+    return [away * Math.cos(a) * ROW, Math.sin(a) * ROW] as [number, number];
+  });
 
 export const canLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
@@ -122,7 +138,7 @@ export const canLab: StepRenderer = (host, step, api) => {
       where.lock(true);
       dist.input.disabled = true;
       tm.later(ask1, 2400);
-    } else if (seen.near && seen.other && !seen.plain) f.say("<b>문지르지 않은 막대</b>도 가까이 가져가서 견줘 보세요.");
+    } else if (seen.near && seen.other && !seen.plain) f.say("<b>문지르지 않은 막대</b>도 가까이 가져가서 비교해 보세요.");
   }
 
   function ask1(): void {
@@ -148,13 +164,15 @@ export const canLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
+  let gone = 0; // 닿았을 때 건너온 전자가 들어온 정도(0~1)
   st.run((ctx, w, h, _t, dt) => {
-    const floor = h - 34;
+    const floor = h - 28;
     const eff = charged ? clamp((closeness - 0.15) / 0.75, 0, 1) : 0;
     shift += (eff - shift) * Math.min(1, dt * 0.12);
+    gone += ((touched && charged ? 1 : 0) - gone) * Math.min(1, dt * 0.1);
     // 굴러오기: 충분히 가까우면 막대 쪽으로(닿았으면 반대로)
     const pull = touched && charged ? -1 : charged && closeness > 0.6 ? 1 : 0;
-    const goal = pull * side * 22;
+    const goal = pull * side * 20;
     const prev = canX;
     canX += (goal - canX) * Math.min(1, dt * 0.03);
     roll += (canX - prev) / R;
@@ -169,52 +187,80 @@ export const canLab: StepRenderer = (host, step, api) => {
     ctx.stroke();
     xText(ctx, "책상", 24, floor + 14, { color: X.dim, px: 12 });
     // 깡통(둥근 바닥 쪽에서 본 모습)
-    const g = ctx.createRadialGradient(cx - 14, cy - 16, 4, cx, cy, R);
+    const g = ctx.createRadialGradient(cx - 20, cy - 22, 6, cx, cy, R);
     g.addColorStop(0, "#F2F5FA");
-    g.addColorStop(0.7, "#B9C4D4");
+    g.addColorStop(0.72, "#B9C4D4");
     g.addColorStop(1, "#7F8CA3");
     ctx.fillStyle = g;
     ctx.beginPath();
     ctx.arc(cx, cy, R, 0, Math.PI * 2);
     ctx.fill();
     ctx.strokeStyle = "#5C6A82";
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1.6;
     ctx.stroke();
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(roll);
-    ctx.strokeStyle = "rgba(92,106,130,.5)";
+    ctx.strokeStyle = "rgba(92,106,130,.45)";
+    ctx.lineWidth = 1.4;
     ctx.beginPath();
-    ctx.arc(0, 0, R - 7, 0, Math.PI * 2);
+    ctx.arc(0, 0, R - 3, 0, Math.PI * 2);
+    ctx.stroke();
+    // 돌아가는 것이 보이게 테두리에 작은 이음매 하나
+    ctx.beginPath();
+    ctx.moveTo(R - 7, 0);
+    ctx.lineTo(R - 1, 0);
     ctx.stroke();
     ctx.restore();
     // (+): 제자리(원자핵은 움직이지 않는다)
-    HOME.forEach(([x, y]) => xSign(ctx, cx + x, cy + y, true, 5.5, 0.9));
-    // 전자: 막대에서 먼 쪽으로 밀려난다
-    HOME.forEach(([x, y]) => {
-      const away = -side; // 막대 반대쪽
-      const room = (R * 0.86 - x * away) / (R * 1.6); // 그쪽으로 남은 자리(0~1)
-      const ex = x + 7 + away * shift * R * 0.95 * clamp(room, 0, 1);
-      drawElectron(ctx, cx + ex, cy + y + 6, 5.5);
+    PLUS.forEach(([x, y]) => xSign(ctx, cx + x, cy + y, true, 5.5, 0.92));
+    // 전자: 막대에서 먼 쪽의 안쪽 테두리로 줄을 선다(깡통 안에서 자리만 옮긴다)
+    const far = farRow(-side);
+    const e = shift * shift * (3 - 2 * shift);
+    HOME.forEach(([x, y], i) => {
+      const [fx, fy] = far[i];
+      drawElectron(ctx, cx + x + (fx - x) * e, cy + y + (fy - y) * e, 5.5);
     });
+    // 닿았을 때: 막대의 전자 셋이 건너와 가까운 쪽 테두리 안에 선다
+    if (gone > 0.02) {
+      [-14, 0, 14].forEach((deg, i) => {
+        const a = (deg * Math.PI) / 180;
+        const tx = cx + side * Math.cos(a) * ROW;
+        const ty = cy + Math.sin(a) * ROW;
+        const sx = cx + side * (R + 22 + i * 14);
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, gone * 1.4);
+        drawElectron(ctx, sx + (tx - sx) * gone, cy + (ty - cy) * gone, 5.5);
+        ctx.restore();
+      });
+    }
     // 막대
-    const tip = cx + side * (R + 8 + (1 - closeness) * 34);
-    const rx = side < 0 ? tip - 80 : tip;
+    const tip = cx + side * (R + 1 + (1 - closeness) * 35); // 닿음(1)이면 깡통 테두리에 붙는다
+    const rl = 70;
+    const rx = side < 0 ? tip - rl : tip;
     ctx.fillStyle = charged ? "#3D8FE8" : "#9AA7BD";
     ctx.strokeStyle = charged ? "#1F5FB0" : "#66738A";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.roundRect(rx, cy - 8, 80, 16, 8);
+    ctx.roundRect(rx, cy - 8, rl, 16, 8);
     ctx.fill();
     ctx.stroke();
-    if (charged) for (let i = 0; i < 4; i++) xSign(ctx, rx + 12 + i * 19, cy, false, 5.5);
-    xText(ctx, "막대", rx + 40, cy - 22, { px: 12, color: X.dim });
+    const signs = !charged ? 0 : touched ? 1 : 4;
+    for (let i = 0; i < signs; i++) xSign(ctx, side < 0 ? rx + 12 + i * 15 : rx + rl - 12 - i * 15, cy, false, 5.5);
+    xText(ctx, "막대", rx + rl / 2, cy - 21, { px: 12, color: X.dim });
     // 띠는 전기
     if (touched && charged) xText(ctx, "전자가 건너와 (−)전기", cx, cy - R - 12, { px: 13, color: X.minus, w: 800 });
     else if (shift > 0.45) {
-      xText(ctx, "(+)전기", cx + side * (R - 6), cy - R - 12, { px: 13, color: X.plus, w: 800 });
-      xText(ctx, "(−)전기", cx - side * (R - 6), cy - R - 12, { px: 13, color: X.minus, w: 800 });
+      xText(ctx, "(+)전기", cx + side * (R - 10), cy - R - 12, { px: 13, color: X.plus, w: 800 });
+      xText(ctx, "(−)전기", cx - side * (R - 10), cy - R - 12, { px: 13, color: X.minus, w: 800 });
     }
+    // 개수: 막대를 가까이 해도 그대로, 닿으면 건너온 만큼 늘어난다
+    const ne = N_E + (touched && charged ? 3 : 0);
+    const lx = w - 96;
+    drawElectron(ctx, lx, 22, 5.5);
+    xText(ctx, `전자 ${ne}개`, lx + 11, 22, { px: 12.5, align: "left", color: ne > N_E ? X.minus : X.ink, w: 800 });
+    xSign(ctx, lx, 41, true, 5.5);
+    xText(ctx, `원자핵 ${PLUS.length}개`, lx + 11, 41, { px: 12.5, align: "left", color: X.ink, w: 800 });
     xPill(ctx, touched ? "막대가 닿았어요" : shift > 0.45 ? "전자가 먼 쪽으로 몰림" : "전자가 고르게 퍼져 있음", touched ? X.plus : X.minus);
   });
 

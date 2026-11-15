@@ -17,7 +17,22 @@ import { drawBattery, drawBulb, drawSwitch, drawWire } from "../../../ui/elecKit
 import type { RotateStage } from "../../../ui/rotateStage";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
+import { C } from "./circuitKit";
 import { X, xArrow, xBox, xCanvas, xFrame, xSegs, xText, type LabStep } from "./kit";
+
+/** 넓은 화면(PC, 태블릿 가로)의 가로 화면: 폰 가로 화면 크기의 설계 판에 그려 창에 맞춰 통째로 키운다(2026-11-15 그래픽 감사 C093).
+ *  예전에는 판을 창 크기 그대로 써서 부품은 폰 크기인데 물길과 전선만 길게 늘어났다(1920×1080에서 펌프 26px 남짓).
+ *  그림이 차지하는 높이는 설계 판의 y0~y1(위 상태 줄 아래, 아래 버튼 줄 위)이고, 이 띠를 창의 같은 띠 가운데에 놓는다. 배율 상한 KMAX. */
+const DESIGN = { w: 700, h: 390, y0: 84, y1: 326 };
+const KMAX = 2;
+/** 창(w×h)에서 쓸 배율과 자리. k가 1이면 예전처럼 창 크기 그대로 그린다(폰). */
+function fitDesign(w: number, h: number): { k: number; ox: number; oy: number; lw: number; lh: number } {
+  const top = 92; // 상태 줄(.g2u7x-wsay, 50~82px) 아래
+  const bottom = h - 66; // 버튼 줄(.g2u7x-wbar) 위
+  const k = Math.min((w - 32) / DESIGN.w, (bottom - top) / (DESIGN.y1 - DESIGN.y0), KMAX);
+  if (k <= 1) return { k: 1, ox: 0, oy: 0, lw: w, lh: h };
+  return { k, ox: (w - DESIGN.w * k) / 2, oy: (top + bottom) / 2 - ((DESIGN.y0 + DESIGN.y1) / 2) * k, lw: DESIGN.w, lh: DESIGN.h };
+}
 
 type PairKey = "pump" | "gap" | "flow" | "tap" | "wheel";
 const PAIRS: { k: PairKey; a: string; b: string }[] = [
@@ -129,14 +144,59 @@ function drawGlow(ctx: CanvasRenderingContext2D, r: Rect, v: View, nudged: boole
   ctx.restore();
 }
 
+/** 계단 블록(물길과 회로가 같은 모양, 같은 자리에 놓인다): 높은 곳을 이루는 블록과 낮은 바닥. 은은하게(주인공이 아니다). */
+function drawBlock(ctx: CanvasRenderingContext2D, x0: number, x1: number, top: number, base: number, floorL: number, floorR: number): void {
+  ctx.save();
+  // 낮은 바닥(아래 물길, 아래 전선이 놓인다)
+  ctx.fillStyle = "rgba(150,170,200,.10)";
+  ctx.fillRect(floorL, base + 13, floorR - floorL, 7);
+  // 높은 블록(위 물길, 위 전선이 놓인다)
+  const g = ctx.createLinearGradient(0, top, 0, base);
+  g.addColorStop(0, "rgba(160,180,210,.17)");
+  g.addColorStop(1, "rgba(160,180,210,.07)");
+  ctx.fillStyle = g;
+  ctx.fillRect(x0, top, x1 - x0, base - top);
+  ctx.beginPath();
+  ctx.rect(x0, top, x1 - x0, base - top);
+  ctx.clip();
+  // 벽돌 줄눈(아주 옅게)
+  ctx.strokeStyle = "rgba(170,190,220,.09)";
+  ctx.lineWidth = 1;
+  const row = 15;
+  for (let y = top + row, i = 0; y < base; y += row, i++) {
+    ctx.beginPath();
+    ctx.moveTo(x0, y);
+    ctx.lineTo(x1, y);
+    ctx.stroke();
+    for (let x = x0 + (i % 2 ? 14 : 30); x < x1; x += 32) {
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, Math.min(base, y + row));
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+  ctx.save();
+  ctx.strokeStyle = "rgba(170,190,220,.32)";
+  ctx.lineWidth = 1.2;
+  ctx.strokeRect(x0, top, x1 - x0, base - top);
+  ctx.restore();
+}
+
 /** 두 그림을 w×h 판에 그린다. 눌러 찾을 자리(왼쪽 그림과 오른쪽 그림 각각)를 돌려준다.
- *  live(가로 화면)이면 찾을 자리의 힌트와 찾은 자리의 이름표를 함께 그린다. 세로 화면의 작은 그림에는 힌트를 두지 않는다(눌러도 반응이 없어서). */
+ *  live(가로 화면)이면 찾을 자리의 힌트와 찾은 자리의 이름표를 함께 그린다. 세로 화면의 작은 그림에는 힌트를 두지 않는다(눌러도 반응이 없어서).
+ *  그림(2026-11-15 그래픽 감사 C094): 물길과 회로를 같은 모양의 계단 블록 위 같은 자리에 놓는다(참고 그림 '전압 전류 비유'의 구도).
+ *    펌프 ↔ 전지(왼쪽 면), 수도꼭지 ↔ 스위치(윗면 가운데), 물이 떨어지는 곳 ↔ 전구(오른쪽 면), 높이 차 ↔ 전압(같은 자리의 위아래 화살표).
+ *    회로의 전선은 높이 색으로 칠한다(병렬 전압 랩과 같은 약속): 전지 (+)극에서 전구 앞까지 높은 색(빨강), 전구 뒤에서 (−)극까지 낮은 색(파랑).
+ *    스위치를 열면 스위치 뒤부터 전구까지도 낮은 색이다(전구를 지나 (−)극과 이어져 있다. 수도꼭지를 잠그면 꼭지 뒤 물길이 비는 것과 같다).
+ *    전압 화살표에는 값(전지 하나 1.5 V, 둘 3 V)을 쓴다. 높이 차는 낮음, 높음으로만 보이고 수치는 전압에만 쓴다(옛 3D판의 약속). */
 function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, live: boolean): Record<PairKey, Rect[]> {
   const big = w > 500;
   const fs = big ? 13.5 : 12;
   const pw = w / 2;
   const base = h * (big ? 0.68 : 0.84);
-  const rise = h * (big ? 0.18 : 0.22) + (v.level === 2 ? h * (big ? 0.12 : 0.16) : 0);
+  // 세로 화면의 작은 그림(346×230)은 블록을 높게 세워 무대 위쪽 빈자리를 쓴다
+  const rise = h * (big ? 0.18 : 0.3) + (v.level === 2 ? h * (big ? 0.12 : 0.17) : 0);
   const top = base - rise;
   const on = v.level > 0 && v.open;
   const hits = {} as Record<PairKey, Rect[]>;
@@ -168,13 +228,29 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
       else xText(ctx, name, r[0] + r[2] / 2, Math.max(r[1] - (side === "right" ? 2 : 9), SAFE_TOP), { px: fs, color: "#FFE08A", w: 800 });
     }
   };
-  // ── 왼쪽: 물길 ──
+  // 두 그림이 함께 쓰는 자리(그림 반쪽 안의 x): 펌프·전지, 높이 차·전압, 수도꼭지·스위치, 물이 떨어지는 곳·전구
   const px = pw * 0.2;
   const fx = pw * 0.78;
+  const tx = (px + fx) / 2;
+  const gx = pw * 0.4;
+  const ox = pw; // 오른쪽 그림(회로)의 시작
+  // 같은 모양의 계단 블록 둘
+  for (const o of [0, ox]) drawBlock(ctx, o + px, o + fx, top, base, o + pw * 0.08, o + pw * 0.92);
+  // ── 왼쪽: 물길 ──
   const wat = "#4FA8F2";
-  // 아래 물길과 위 물길
-  xBox(ctx, pw * 0.1, base, pw * 0.8, 12, 4, "rgba(79,168,242,.85)", "#2B6FB8");
-  xBox(ctx, px - 6, top - 10, fx - px + 12, 10, 3, v.level > 0 ? "rgba(79,168,242,.85)" : "rgba(143,164,194,.18)", "#8FA4C2");
+  const full = "rgba(79,168,242,.85)";
+  const empty = "rgba(143,164,194,.18)";
+  // 아래 물길과 위 물길(수도꼭지를 잠그면 꼭지 뒤의 위 물길이 빈다)
+  xBox(ctx, pw * 0.1, base, pw * 0.8, 12, 4, full, "#2B6FB8");
+  xBox(ctx, px - 6, top - 10, fx - px + 12, 10, 3, empty, "#8FA4C2");
+  if (v.level > 0) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(px - 6, top - 10, (v.open ? fx + 6 : tx) - (px - 6), 10, 3);
+    ctx.fillStyle = full;
+    ctx.fill();
+    ctx.restore();
+  }
   // 펌프 관
   xBox(ctx, px - 7, top - 10, 14, base - top + 16, 4, "rgba(143,164,194,.35)", "#8FA4C2");
   if (v.level > 0) {
@@ -186,7 +262,6 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
   }
   xBox(ctx, px - 13, top - 30 - v.level * 5, 26, 22 + v.level * 5, 6, v.level > 0 ? "#E0503A" : "rgba(224,80,58,.3)", "#8E2A1C");
   // 수도꼭지
-  const tx = (px + fx) / 2;
   xBox(ctx, tx - 4, top - 24, 8, 16, 2, "#B9C4D4", "#66738A");
   xBox(ctx, tx - 13, top - 30, 26, 7, 3, v.open ? "#37C08E" : "#F25757", "#3A465C");
   if (!v.open) xBox(ctx, tx - 2, top - 10, 4, 10, 1, "#3A465C");
@@ -214,41 +289,61 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
   }
   ctx.restore();
   // 높이 차 표시
-  const gx = pw * 0.4;
   if (v.level > 0) {
-    xArrow(ctx, gx, top + 6, gx, base - 3, "rgba(232,238,249,.7)", 1.6, 6);
-    xArrow(ctx, gx, base - 6, gx, top + 3, "rgba(232,238,249,.7)", 1.6, 6);
+    xArrow(ctx, gx, top + 6, gx, base - 3, "rgba(232,238,249,.75)", 1.8, 6);
+    xArrow(ctx, gx, base - 6, gx, top + 3, "rgba(232,238,249,.75)", 1.8, 6);
   }
   if (on) {
     xArrow(ctx, tx + 46, top - 18, tx + 74, top - 18, wat, 2.2, 7);
     xArrow(ctx, pw * 0.6, base + 24, pw * 0.44, base + 24, wat, 2.2, 7);
   }
-  // ── 오른쪽: 전기 회로 ──
-  const ox = pw;
-  const L = ox + pw * 0.2;
-  const Rr = ox + pw * 0.78;
-  const T = base - h * (big ? 0.36 : 0.38);
-  const B = base + 6;
+  // ── 오른쪽: 전기 회로(물길과 같은 자리) ──
+  const L = ox + px;
+  const Rr = ox + fx;
+  const tc = ox + tx;
+  const T = top - 5; // 위 물길의 가운데 높이
+  const B = base + 6; // 아래 물길의 가운데 높이
   const mid = (T + B) / 2;
   const flow = v.ph * 0.5;
-  const wire = (pts: [number, number][]): void => drawWire(ctx, pts.map(([x, y]) => ({ x, y })), { on, flow, dir: 1, width: big ? 4 : 3 });
-  wire([[L, mid - 30], [L, T], [(L + Rr) / 2 - 24, T]]);
-  wire([[(L + Rr) / 2 + 24, T], [Rr, T], [Rr, mid - 16]]);
-  wire([[Rr, mid + 16], [Rr, B], [L, B], [L, mid + 30]]);
-  drawSwitch(ctx, (L + Rr) / 2, T, v.open, 48);
-  drawBulb(ctx, Rr, mid, big ? 22 : 16, on ? v.level / 2 : 0);
+  const ww = big ? 4 : 3;
+  const hi = v.level > 0 ? C.hi : undefined; // 높은 쪽(전지 (+)극 쪽)
+  const lo = v.level > 0 ? C.lo : undefined; // 낮은 쪽(전지 (−)극 쪽)
+  const br = big ? 22 : 16; // 전구 반지름
+  const bulbTop = mid - br - 2;
+  const bulbBot = mid + br * 1.33;
+  // 전지: 왼쪽 면에 세워 둔다((+)극이 위). 하나면 1.5 V, 둘을 이으면 3 V
+  const span = B - T;
+  const cellL = v.level === 2 ? Math.min(46, (span - 22) / 2) : Math.min(58, span - 26);
+  const cellW = big ? 24 : 20;
+  const batTop = mid - (v.level === 2 ? cellL + 5 : cellL / 2 + 5);
+  const batBot = mid + (v.level === 2 ? cellL : cellL / 2);
+  const wire = (pts: [number, number][], color: string | undefined): void => drawWire(ctx, pts.map(([x, y]) => ({ x, y })), { on, flow, dir: 1, width: ww, color });
+  wire([[L, v.level > 0 ? batTop : mid - 30], [L, T], [tc - 24, T]], hi);
+  wire([[tc + 24, T], [Rr, T], [Rr, bulbTop]], v.open ? hi : lo);
+  wire([[Rr, bulbBot], [Rr, B], [L, B], [L, v.level > 0 ? batBot : mid + 30]], lo);
+  drawSwitch(ctx, tc, T, v.open, 48);
+  drawBulb(ctx, Rr, mid, br, on ? v.level / 2 : 0);
   if (v.level === 0) {
     ctx.save();
     ctx.setLineDash([4, 4]);
     ctx.strokeStyle = "#8FA4C2";
     ctx.strokeRect(L - 12, mid - 28, 24, 56);
     ctx.restore();
-  } else if (v.level === 1) drawBattery(ctx, L, mid, 56, 24, false, true);
+  } else if (v.level === 1) drawBattery(ctx, L, mid, cellL, cellW, false, true);
   else {
-    drawBattery(ctx, L, mid - 15, 30, 22, false, true);
-    drawBattery(ctx, L, mid + 15, 30, 22, false, true);
+    drawBattery(ctx, L, mid - cellL / 2 - 2, cellL, cellW, false, true);
+    drawBattery(ctx, L, mid + cellL / 2 + 2, cellL, cellW, false, true);
   }
-  if (on) xArrow(ctx, (L + Rr) / 2 + 30, T - 16, (L + Rr) / 2 + 56, T - 16, X.cur, 2.2, 7);
+  // 전압: 위 전선(높음)과 아래 전선(낮음) 사이의 화살표와 값. 물길의 높이 차와 같은 자리
+  const vx = ox + gx;
+  if (v.level > 0) {
+    xArrow(ctx, vx, T + 8, vx, B - 5, C.volt, 1.8, 6);
+    xArrow(ctx, vx, B - 8, vx, T + 5, C.volt, 1.8, 6);
+    const tw = big ? 50 : 42;
+    xBox(ctx, vx - tw / 2, mid - 11, tw, 22, 11, "rgba(11,21,36,.94)", C.volt, 1.4);
+    xText(ctx, v.level === 2 ? "3 V" : "1.5 V", vx, mid + 0.5, { px: big ? 13 : 12, color: C.volt, w: 800 });
+  }
+  if (on) xArrow(ctx, tc + 46, T - 13, tc + 74, T - 13, X.cur, 2.2, 7);
   // 가운데 금
   ctx.strokeStyle = "rgba(143,164,194,.25)";
   ctx.lineWidth = 1;
@@ -258,19 +353,26 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
   ctx.stroke();
   xText(ctx, "물길", pw * 0.5, big ? base + 44 : 16, { px: fs + 1, w: 800 });
   xText(ctx, "전기 회로", ox + pw * 0.5, big ? base + 44 : 16, { px: fs + 1, w: 800 });
-  // 눌러 찾을 자리(왼쪽, 오른쪽). 높이 차 상자는 위아래 화살표를 다 감싸고, 수도꼭지 상자는 꼭지 가운데에 둔다.
-  // 이름표를 상자 오른쪽에 쓰는 셋: 높이 차(위에 쓰면 물길 관에 걸린다. 물레방아 상자까지 자리가 모자라면 상자 위 가장자리),
-  // 물의 흐름(수도꼭지 이름표와 붙어 한 말로 읽힌다), 전류(위에 쓰면 폰에서 상태 줄에 가린다).
+  // 높이 색의 뜻(회로 쪽 바닥 아래, 큰 그림에서만)
+  if (big && v.level > 0) {
+    xText(ctx, "높음", L + 44, T - 13, { px: 12, color: C.hi, w: 800 });
+    xText(ctx, "낮음", ox + pw * 0.62, B + 18, { px: 12, color: C.lo, w: 800 });
+  }
+  // 눌러 찾을 자리(왼쪽, 오른쪽). 두 그림이 같은 자리다. 높이 차와 전압 상자는 위아래 화살표를 다 감싸고, 수도꼭지 상자는 꼭지 가운데에 둔다.
+  // 스위치 상자는 들린 손잡이까지만(아래로 길면 전압 상자 오른쪽 빈 곳을 눌렀을 때 스위치가 더 가까워진다).
+  // 이름표를 상자 오른쪽에 쓰는 넷: 높이 차와 전압(위에 쓰면 관과 전선에 걸린다. 물레방아, 전구 상자까지 자리가 모자라면 상자 위 가장자리),
+  // 물의 흐름과 전류(수도꼭지, 스위치 이름표와 붙어 한 말로 읽힌다. 위에 쓰면 폰에서 상태 줄에 가린다).
   mark("pump", [px - 22, top - 40, 44, 44], "펌프");
-  mark("pump", [L - 22, mid - 34, 44, 68], "전지");
+  mark("pump", [L - 22, T + 4, 44, B - T - 8], "전지");
   mark("gap", [gx - 22, top + 12, 44, base - top - 14], "높이 차", "right", fx - wr * 0.55 - wr - 4);
-  mark("gap", [L + 26, mid - 22, 50, 44], "전압");
+  mark("gap", [vx - 25, T + 12, 50, B - T - 18], "전압", "right", Rr - 26);
   mark("flow", [tx + 38, top - 34, 46, 30], "물의 흐름", "right");
-  mark("flow", [(L + Rr) / 2 + 26, T - 31, 46, 30], "전류", "right");
+  mark("flow", [tc + 38, T - 29, 46, 30], "전류", "right");
   mark("tap", [tx - 22, top - 40, 44, 44], "수도꼭지");
-  mark("tap", [(L + Rr) / 2 - 24, T - 20, 48, 40], "스위치");
-  mark("wheel", [fx - wr * 0.55 - wr - 4, wy - wr - 4, wr * 2 + 8, wr * 2 + 8], "물레방아");
-  mark("wheel", [Rr - 24, mid - 26, 48, 52], "전구");
+  mark("tap", [tc - 24, T - 30, 48, 36], "스위치");
+  // 물레방아와 전구의 이름표는 상자 오른쪽(위에 쓰면 물의 흐름, 전류 이름표와 포개졌다). 자리가 모자라면(좁은 폰) 상자 위 가장자리
+  mark("wheel", [fx - wr * 0.55 - wr - 4, wy - wr - 4, wr * 2 + 8, wr * 2 + 8], "물레방아", "right", pw - 4);
+  mark("wheel", [Rr - 24, mid - br - 4, 48, br * 2.4 + 8], "전구", "right", w - 6);
   return hits;
 }
 
@@ -397,7 +499,13 @@ export const waterLab: StepRenderer = (host, step, api) => {
       tick(dt);
       v.now = t;
       if (v.nudge && t - v.nudge.t0 > NUDGE_MS) v.nudge = null;
-      hits = drawPair(ctx, w, h, v, true);
+      // 넓은 화면이면 설계 판에 그려 통째로 키운다. 누르는 자리도 같은 배율로 화면 좌표로 옮긴다
+      const fit = fitDesign(w, h);
+      ctx.setTransform(d * fit.k, 0, 0, d * fit.k, d * fit.ox, d * fit.oy);
+      const drawn = drawPair(ctx, fit.lw, fit.lh, v, true);
+      hits = {} as Record<PairKey, Rect[]>;
+      for (const { k } of PAIRS) hits[k] = (drawn[k] ?? []).map((r) => [fit.ox + r[0] * fit.k, fit.oy + r[1] * fit.k, r[2] * fit.k, r[3] * fit.k] as Rect);
+      cv.dataset.k = fit.k.toFixed(2);
     }).start();
   }
   function leave(): void {
@@ -421,7 +529,7 @@ export const waterLab: StepRenderer = (host, step, api) => {
     }
   }
   function ask1(): void {
-    f.say("두 그림을 견줘 봤어요. 아래 질문에 답해 보세요.");
+    f.say("두 그림을 비교해 봤어요. 아래 질문에 답해 보세요.");
     f.slot.ask(
       "물길의 펌프와 같은 일을 하는 것은?",
       [{ t: "전지", ok: true }, { t: "전구" }, { t: "스위치" }],

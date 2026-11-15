@@ -57,6 +57,42 @@ const MINI: Record<string, string> = {
   effMini: `<rect x="8" y="22" width="48" height="20" rx="6" fill="#FFD9D2" stroke="#D9735F" stroke-width="2"/><rect x="8" y="22" width="19" height="20" rx="6" fill="#FFE08A" stroke="#C79400" stroke-width="2"/><path d="M17 12v6m-5-4l3 4m7-4l-3 4" stroke="#C79400" stroke-width="2.2"/>`,
   standbyMini: `<rect x="18" y="12" width="28" height="26" rx="6" fill="#EEF4FF" stroke="#5E7FB8" stroke-width="2.4"/><path d="M27 20v8M37 20v8" stroke="#5E7FB8" stroke-width="3"/><path d="M32 38v8c0 6-10 6-10 12" stroke="#5E7FB8" stroke-width="2.6"/><circle cx="46" cy="48" r="4" fill="#F04452"/>`,
   handMini: `<path d="M12 40h26" stroke="#FF7B6B" stroke-width="3"/><path d="M38 40l-7-5m7 5l-7 5" stroke="#FF7B6B" stroke-width="3"/><path d="M24 52V20" stroke="#EFB800" stroke-width="3"/><path d="M24 20l-5 7m5-7l5 7" stroke="#EFB800" stroke-width="3"/><path d="M44 22l10-8" stroke="#12B886" stroke-width="3"/><path d="M54 14l-9 1m9-1l-2 9" stroke="#12B886" stroke-width="3"/>`,
+  // 2026-11-15 그래픽 감사 C104: 카드의 한 문장 핵심을 도상 하나로(예전 그림은 눈, 한쪽 화살표, 무늬 없는 막대, 번개라 읽히지 않거나 다르게 읽혔다)
+  // 전류가 만드는 자기장: 짧은 코일, 둘레를 도는 자기장 고리 둘(오른쪽 끝에서 나와 왼쪽 끝으로), 오른쪽 끝의 나침반(N극이 바깥을 가리킨다)
+  coilFieldMini:
+    `<path d="M44 29C46 9 15 9 16 29" stroke="#E0452E" stroke-width="1.8"/><path d="M30 11.2L26 14l4 2.8" stroke="#E0452E" stroke-width="1.8"/>` +
+    `<path d="M44 35C46 55 15 55 16 35" stroke="#E0452E" stroke-width="1.8"/><path d="M30 47.2L26 50l4 2.8" stroke="#E0452E" stroke-width="1.8"/>` +
+    `<path d="M18 32h24" stroke="#5E3A18" stroke-width="1.4"/>` +
+    [19, 25, 31, 37].map((x) => `<ellipse cx="${x + 2}" cy="32" rx="2.6" ry="9" stroke="#C97F3A" stroke-width="2.4"/>`).join("") +
+    `<circle cx="54.5" cy="32" r="7" fill="#F7F9FC" stroke="#8B95A1" stroke-width="1.6"/><path d="M61 32l-6.5-2.6v5.2z" fill="#E0452E"/><path d="M48 32l6.5-2.6v5.2z" fill="#3D8FE8"/>`,
+  // 전기력: 다른 종류(+, −)는 서로를 향한 화살표 둘(끌어당김), 같은 종류(−, −)는 서로 멀어지는 화살표 둘(밀어냄)
+  forcePairMini:
+    `<circle cx="12" cy="19" r="7" fill="#E8836B"/><path d="M8.5 19h7M12 15.5v7" stroke="#FFF" stroke-width="2"/>` +
+    `<circle cx="52" cy="19" r="7" fill="#5A9AE0"/><path d="M48.5 19h7" stroke="#FFF" stroke-width="2"/>` +
+    `<path d="M21 19h8m-3-3 3 3-3 3M43 19h-8m3-3-3 3 3 3" stroke="#4E5968" stroke-width="2"/>` +
+    `<circle cx="24" cy="45" r="7" fill="#5A9AE0"/><path d="M20.5 45h7" stroke="#FFF" stroke-width="2"/>` +
+    `<circle cx="40" cy="45" r="7" fill="#5A9AE0"/><path d="M36.5 45h7" stroke="#FFF" stroke-width="2"/>` +
+    `<path d="M15 45H6m3-3-3 3 3 3M49 45h9m-3-3 3 3-3 3" stroke="#4E5968" stroke-width="2"/>`,
+  // 정전기 유도: (−)전기를 띤 막대 곁에서 깡통의 가까운 쪽은 (+), 먼 쪽은 (−). 깡통 속 화살표는 전자가 먼 쪽으로 밀려나는 것
+  inductNegMini:
+    `<rect x="3" y="26" width="19" height="12" rx="6" fill="#5A9AE0"/><path d="M7 32h4M14 32h4" stroke="#FFF" stroke-width="1.8"/>` +
+    `<circle cx="44" cy="32" r="16" fill="#D8E2EE" stroke="#8B99AC" stroke-width="1.6"/>` +
+    `<circle cx="33" cy="26" r="3.6" fill="#E8836B"/><circle cx="33" cy="38" r="3.6" fill="#E8836B"/><path d="M31.4 26h3.2M33 24.4v3.2M31.4 38h3.2M33 36.4v3.2" stroke="#FFF" stroke-width="1.2"/>` +
+    `<circle cx="55" cy="26" r="3.6" fill="#4C9AF0"/><circle cx="55" cy="38" r="3.6" fill="#4C9AF0"/><path d="M53.4 26h3.2M53.4 38h3.2" stroke="#FFF" stroke-width="1.2"/>` +
+    `<path d="M39 32h9m-3-2.6 3 2.6-3 2.6" stroke="#2E5AA8" stroke-width="1.8"/>`,
+  // 끌려오는 까닭: 가까운 쪽 (+)와 막대의 (−)가 끌어당겨 깡통이 막대 쪽으로 굴러온다(아래 청록 화살표)
+  pullMini:
+    `<rect x="3" y="20" width="19" height="12" rx="6" fill="#5A9AE0"/><path d="M7 26h4M14 26h4" stroke="#FFF" stroke-width="1.8"/>` +
+    `<circle cx="44" cy="26" r="15" fill="#D8E2EE" stroke="#8B99AC" stroke-width="1.6"/>` +
+    `<circle cx="33.5" cy="26" r="3.6" fill="#E8836B"/><path d="M31.9 26h3.2M33.5 24.4v3.2" stroke="#FFF" stroke-width="1.2"/>` +
+    `<circle cx="54.5" cy="26" r="3.6" fill="#4C9AF0"/><path d="M52.9 26h3.2" stroke="#FFF" stroke-width="1.2"/>` +
+    `<path d="M54 51H32m4.5-4L32 51l4.5 4" stroke="#0B9E96" stroke-width="2.6"/>`,
+  // 전류의 방향: 전선 위 노란 화살표(전류)와 그 반대로 가는 파란 전자 알갱이
+  currentDirMini:
+    `<path d="M14 17h34m-5-4.5 5 4.5-5 4.5" stroke="#E0A800" stroke-width="2.8"/>` +
+    `<path d="M5 33h54" stroke="#8FA4C2" stroke-width="5"/>` +
+    [16, 32, 48].map((x) => `<circle cx="${x}" cy="33" r="4.4" fill="#4C9AF0" stroke="#1F5FB0" stroke-width="1"/><path d="M${x - 2} 33h4" stroke="#FFF" stroke-width="1.4"/>`).join("") +
+    `<path d="M48 48H16m5-4.5L16 48l5 4.5" stroke="#3D8FE8" stroke-width="2.4"/>`,
 };
 
 /** 정리 카드의 작은 그림(64×64). */

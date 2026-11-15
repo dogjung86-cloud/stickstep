@@ -15,8 +15,10 @@ import { bvBtn, bvTimers } from "../bio6/b6Lab";
 import { BAT, C, G, cPaint, cProbe, cRes, cSpotBox, cTag, hit, pathLen, type Pt } from "./circuitKit";
 import { X, xCanvas, xFrame, xLog, xPill, xRow, xText, type LabStep } from "./kit";
 
-const YA = 60;
-const YB = 130;
+// 병렬의 두 갈래 높이. 위 갈래를 60에서 68로 내렸다(2026-11-15 그래픽 감사 C096: 'A 10 Ω' 이름표가 왼쪽 위 상태 필의 귀퉁이에 걸쳤다).
+// 아래 갈래도 함께 내려 위 갈래의 3 V 값표와 'B 20 Ω' 이름표가 닿지 않게 한다.
+const YA = 68;
+const YB = 136;
 const RX = 173;
 const TOP = 96; // 직렬로 바꿨을 때의 윗줄
 const SAX = 114;
@@ -50,7 +52,7 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
   const bHi = bvBtn("", "(+)극 쪽 도선 칠하기");
   const bLo = bvBtn("", "(−)극 쪽 도선 칠하기");
   const log = xLog(["병렬일 때 A와 B", "직렬일 때 A와 B"], 1, true);
-  const toSer = bvBtn("main", "같은 저항을 직렬로 바꿔 견주기");
+  const toSer = bvBtn("main", "같은 저항을 직렬로 바꿔 비교하기");
   toSer.disabled = true;
   f.slot.setControls(xRow(bHi, bLo), log.el, toSer);
 
@@ -107,7 +109,7 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
       f.pips(2);
       f.say(`${guess ? "예측대로" : "저항이 달라도"} 둘 다 <b>3 V</b>예요. 같은 저항을 직렬로 바꾸면 어떨까요?`);
       toSer.disabled = false;
-      api.setCTA("직렬로 바꿔 견줘 보세요", { enabled: false });
+      api.setCTA("직렬로 바꿔 비교해 보세요", { enabled: false });
     } else if (phase === "ms") {
       phase = "end";
       log.set(1, "1 V와 2 V");
