@@ -5,7 +5,7 @@
 // 수치는 자체 제작이다(랩의 값: 용수철 1 cm에 0.5 N, 부력 20 N에서 14 N, 지구 29.4 N과 달 4.9 N).
 import type { Step } from "../lessons/types";
 import { concept, recap, mcq, ox, multi, order, binSort, rimg, cut } from "./dsl";
-import { sciFig, sciFigMore } from "./sciFigG1";
+import { sciFigMore } from "./sciFigG1";
 import { arrow3Fig, netForceFig, gravityDirFig, springGraphFig, bookForcesFig, miniArt } from "../ui/forceFigures";
 
 export interface U5Part {
