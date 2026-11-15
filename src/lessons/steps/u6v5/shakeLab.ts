@@ -4,7 +4,9 @@
 // 실패하는 길: 가만히 두면 쇠구슬이 바닥에 가라앉고 손바닥이 받는 힘은 0이다(움직여 부딪혀야 힘이 생긴다).
 // 차례: 1 페트병을 흔들며 손바닥이 받는 힘을 본다 → 판정(힘이 가장 컸을 때) → 2 쇠구슬을 기체 입자로 바꾼 풍선: 흔들지 않아도 입자가 스스로 움직이며
 //       사방의 벽에 부딪힌다. 공기를 더 불어 넣어 본다 → 판정(어느 쪽을 미는가) → 결론.
-// 손바닥이 받는 힘은 손바닥 쪽 벽에 부딪힌 횟수와 빠르기로 셈한다(꾸민 값이 아니다).
+// 손바닥이 받는 힘은 입구를 막은 손바닥에 부딪힌 횟수와 빠르기로 셈한다(꾸민 값이 아니다).
+// 병은 눕힌 페트병이다(왼쪽 바닥, 몸통, 어깨, 목, 오른쪽 입구). 쇠구슬은 몸통과 어깨에서 튕기고 목을 지나 손바닥에 부딪힌다.
+//   부딪힌 자리에는 번쩍임과 손바닥을 미는 짧은 화살이 잠깐 남는다(풍선 단계의 벽 번쩍임과 같은 문법).
 // 옛 판(타이어 단면에 펌프 버튼)과 다른 점: 비유의 출발점이 교과서의 쇠구슬 활동이고, 학생이 개수와 세기를 정한다.
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { GasBox, type GasBounds } from "../../../ui/gasKit";
@@ -12,7 +14,17 @@ import { bvBtn, bvCard, bvCards, bvRange } from "../bio6/b6Lab";
 import type { StepRenderer } from "../../types";
 import { u6Lab, rr, txt, pill, vbar, clamp01, ease, noteRow, HitRate, dots, drawDots, type Dot } from "./u6Kit";
 
-const BOT: GasBounds = { x0: 44, y0: 78, x1: 236, y1: 152 };
+// 눕힌 페트병: 몸통(X0~XB), 어깨(XB~XS), 목(XS~XM), 입구(XM). MY는 병의 가운데 높이, HB와 HN은 몸통과 목의 안쪽 반높이.
+const G = { X0: 40, XB: 196, XS: 220, XM: 240, MY: 116, HB: 36, HN: 16, R: 5.5 };
+const BOT: GasBounds = { x0: G.X0, y0: G.MY - G.HB, x1: G.XB, y1: G.MY + G.HB };
+const halfAt = (x: number): number => (x <= G.XB ? G.HB : x <= G.XS ? G.HB + (G.HN - G.HB) * ((x - G.XB) / (G.XS - G.XB)) : G.HN);
+// 어깨(비스듬한 벽)의 바깥쪽 법선(위쪽 벽 기준, 아래쪽은 y 부호를 바꾼다)
+const SH_N = ((): [number, number] => {
+  const dx = G.XS - G.XB;
+  const dy = G.HB - G.HN;
+  const L = Math.hypot(dx, dy);
+  return [dy / L, -dx / L];
+})();
 const LV = ["가만히", "살살", "빠르게", "세게"];
 
 export const shakeLab: StepRenderer = (host, step, api) => {
@@ -27,7 +39,6 @@ export const shakeLab: StepRenderer = (host, step, api) => {
   let wasStill = true;
   let force = 0;
   const hr = new HitRate();
-  let lastR = 0;
   let strong = 0; // 20개를 세게 흔든 시간(프레임)
   let shaken = false;
   let noteKey = "";
@@ -141,16 +152,56 @@ export const shakeLab: StepRenderer = (host, step, api) => {
   frame.say("쇠구슬을 넣은 페트병의 입구를 <b>손바닥</b>으로 막았어요. 막대를 밀어 흔들어 보세요.");
   sync();
 
+  const palmHits: { y: number; age: number }[] = [];
+  /** 흔드는 동안 쇠구슬을 병 모양 안에서 움직인다. 손바닥(입구)에 부딪힌 횟수를 돌려준다. */
+  const moveBeads = (dt: number, sp: number): number => {
+    let hits = 0;
+    for (const p of box.parts) {
+      p.x += p.vx * sp * dt;
+      p.y += p.vy * sp * dt;
+      if (p.x < G.X0 + G.R) {
+        p.x = G.X0 + G.R;
+        p.vx = Math.abs(p.vx);
+      }
+      if (p.x > G.XM - G.R) {
+        p.x = G.XM - G.R;
+        if (p.vx > 0) {
+          p.vx = -p.vx;
+          hits++;
+          palmHits.push({ y: p.y, age: 0 });
+        }
+      }
+      const h = halfAt(p.x) - G.R;
+      const dy = p.y - G.MY;
+      if (Math.abs(dy) > h) {
+        const sg = Math.sign(dy);
+        if (p.x > G.XB && p.x < G.XS) {
+          // 어깨: 비스듬한 벽에서 튕긴다
+          const nx = SH_N[0];
+          const ny = -SH_N[1] * sg;
+          const vn = p.vx * nx + p.vy * ny;
+          if (vn > 0) {
+            p.vx -= 2 * vn * nx;
+            p.vy -= 2 * vn * ny;
+          }
+        } else if (p.vy * sg > 0) p.vy = -p.vy;
+        p.y = G.MY + sg * h;
+      }
+    }
+    return hits;
+  };
+
   const drawBeads = (ctx: CanvasRenderingContext2D, dt: number, tMs: number): void => {
     if (lv === 0) {
-      // 가만히: 쇠구슬이 바닥에 가라앉는다
+      // 가만히: 쇠구슬이 몸통 바닥에 가라앉는다(목과 어깨에 있던 구슬은 몸통 쪽으로 미끄러진다)
       for (const p of box.parts) {
         p.vy += 0.3 * dt;
         p.vx *= 0.94;
-        p.x = Math.max(BOT.x0 + 6, Math.min(BOT.x1 - 6, p.x + p.vx * dt));
+        p.x = Math.max(G.X0 + G.R, Math.min(G.XM - G.R, p.x + p.vx * dt - (p.x > G.XB - G.R ? 0.8 * dt : 0)));
         p.y += p.vy * dt;
-        if (p.y > BOT.y1 - 6) {
-          p.y = BOT.y1 - 6;
+        const floor = G.MY + halfAt(p.x) - G.R;
+        if (p.y > floor) {
+          p.y = floor;
           p.vy = 0;
         }
       }
@@ -166,8 +217,7 @@ export const shakeLab: StepRenderer = (host, step, api) => {
         wasStill = false;
       }
       const sp = 0.5 + lv * 0.7;
-      box.step(dt, BOT, sp);
-      hr.push((box.hits.R - lastR) * sp, dt);
+      hr.push(moveBeads(dt, sp) * sp, dt);
       if (n === 20 && lv >= 3 && phase === "beads") {
         strong += dt;
         if (strong > 100) {
@@ -178,9 +228,9 @@ export const shakeLab: StepRenderer = (host, step, api) => {
         }
       }
     }
-    lastR = box.hits.R;
     box.flashes.length = 0;
-    force = ease(force, clamp01(hr.value() / 0.25), 0.1, dt);
+    // 손바닥에 부딪히는 잦기와 빠르기. 입구가 몸통보다 좁아 옛 네모 병보다 덜 부딪히므로, 같은 조작에서 막대 높이가 비슷하게 0.085로 나눈다
+    force = ease(force, clamp01(hr.value() / 0.085), 0.1, dt);
     host.dataset.u6Force = force.toFixed(2);
     if (noteKey !== `${n}|${lv}`) {
       noteKey = `${n}|${lv}`;
@@ -190,12 +240,58 @@ export const shakeLab: StepRenderer = (host, step, api) => {
     const sx = lv ? Math.sin(tMs / (140 - lv * 28)) * (1.5 + lv * 1.6) : 0;
     ctx.save();
     ctx.translate(sx, 0);
-    // 페트병(눕힌 모습): 몸통과 왼쪽의 둥근 바닥
-    rr(ctx, BOT.x0 - 6, BOT.y0 - 6, BOT.x1 - BOT.x0 + 12, BOT.y1 - BOT.y0 + 12, 20);
-    ctx.fillStyle = "rgba(170,205,245,.10)";
+    const { X0, XB, XS, XM, MY, HB, HN } = G;
+    const wB = HB + 5; // 바깥 반높이(몸통)
+    const wN = HN + 4; // 바깥 반높이(목)
+    // 바닥 그림자
+    ctx.fillStyle = "rgba(0,0,0,.22)";
+    ctx.beginPath();
+    ctx.ellipse((X0 + XM) / 2, MY + wB + 9, 104, 5, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "rgba(200,222,252,.6)";
+    // 페트병(눕힌 모습): 둥근 바닥(왼쪽), 몸통, 어깨, 목, 입구(오른쪽)
+    const bottle = new Path2D();
+    bottle.moveTo(XM + 2, MY - wN);
+    bottle.lineTo(XS, MY - wN);
+    bottle.lineTo(XB, MY - wB);
+    bottle.lineTo(X0 + 16, MY - wB);
+    bottle.quadraticCurveTo(X0 - 6, MY - wB, X0 - 6, MY);
+    bottle.quadraticCurveTo(X0 - 6, MY + wB, X0 + 16, MY + wB);
+    bottle.lineTo(XB, MY + wB);
+    bottle.lineTo(XS, MY + wN);
+    bottle.lineTo(XM + 2, MY + wN);
+    bottle.closePath();
+    const glass = ctx.createLinearGradient(0, MY - wB, 0, MY + wB);
+    glass.addColorStop(0, "rgba(190,220,250,.20)");
+    glass.addColorStop(0.5, "rgba(170,205,245,.07)");
+    glass.addColorStop(1, "rgba(150,190,240,.14)");
+    ctx.fillStyle = glass;
+    ctx.fill(bottle);
+    // 몸통의 골(페트병 줄무늬)과 목의 나사산
+    ctx.strokeStyle = "rgba(200,222,252,.18)";
+    ctx.lineWidth = 1.2;
+    for (const x of [78, 118, 158]) {
+      ctx.beginPath();
+      ctx.moveTo(x, MY - wB + 3);
+      ctx.lineTo(x, MY + wB - 3);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(200,222,252,.45)";
+    for (const x of [226, 231]) {
+      ctx.beginPath();
+      ctx.moveTo(x, MY - wN - 1);
+      ctx.lineTo(x, MY + wN + 1);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(205,226,252,.7)";
     ctx.lineWidth = 1.8;
+    ctx.lineJoin = "round";
+    ctx.stroke(bottle);
+    // 윗면의 빛
+    ctx.strokeStyle = "rgba(255,255,255,.22)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(X0 + 22, MY - wB + 6);
+    ctx.lineTo(XB - 10, MY - wB + 6);
     ctx.stroke();
     for (const p of box.parts) {
       const g = ctx.createRadialGradient(p.x - 1.5, p.y - 1.8, 0.5, p.x, p.y, 5.5);
@@ -207,16 +303,49 @@ export const shakeLab: StepRenderer = (host, step, api) => {
       ctx.arc(p.x, p.y, 5.5, 0, Math.PI * 2);
       ctx.fill();
     }
-    // 손바닥(입구를 막은 오른쪽): 받는 힘만큼 밀려난다
+    // 입구를 막은 손: 손바닥이 입구를 덮고, 손가락과 엄지가 목을 감싼다. 받는 힘만큼 밀려난다
     const push = force * 6;
-    rr(ctx, BOT.x1 + 7 + push, BOT.y0 - 20, 26, BOT.y1 - BOT.y0 + 40, 12);
+    const hx = XM + 2 + push;
     ctx.fillStyle = "#F6D6BE";
-    ctx.fill();
     ctx.strokeStyle = "#C99A7C";
     ctx.lineWidth = 1.5;
-    ctx.stroke();
+    const part = (x: number, y: number, w: number, h: number, r: number): void => {
+      rr(ctx, x, y, w, h, r);
+      ctx.fill();
+      ctx.stroke();
+    };
+    part(XS - 1 + push, MY - wN - 10, hx - XS + 10, 11, 5.5); // 손가락(목 위)
+    part(XS + 3 + push, MY + wN - 1, hx - XS + 6, 11, 5.5); // 엄지(목 아래)
+    part(hx + 8, MY - 20, 30, 40, 12); // 손목 쪽
+    part(hx, MY - 30, 17, 60, 8); // 손바닥
+    // 손바닥에 부딪힌 자리: 번쩍임과 손바닥을 미는 짧은 화살
+    for (const h of palmHits) {
+      h.age += 0.035 * dt;
+      const a = Math.max(0, 1 - h.age);
+      // 번쩍임은 입구 안쪽(어두운 자리)에, 미는 화살은 손바닥 위에 진한 주황으로
+      ctx.strokeStyle = `rgba(255,224,138,${a.toFixed(3)})`;
+      ctx.lineWidth = 3.4;
+      ctx.beginPath();
+      ctx.moveTo(hx - 2.5, h.y - 7);
+      ctx.lineTo(hx - 2.5, h.y + 7);
+      ctx.stroke();
+      ctx.fillStyle = `rgba(232,118,30,${a.toFixed(3)})`;
+      ctx.strokeStyle = `rgba(232,118,30,${a.toFixed(3)})`;
+      ctx.lineWidth = 2.8;
+      ctx.beginPath();
+      ctx.moveTo(hx + 3, h.y);
+      ctx.lineTo(hx + 11, h.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(hx + 15, h.y);
+      ctx.lineTo(hx + 10, h.y - 3.6);
+      ctx.lineTo(hx + 10, h.y + 3.6);
+      ctx.closePath();
+      ctx.fill();
+    }
+    for (let i = palmHits.length - 1; i >= 0; i--) if (palmHits[i].age >= 1) palmHits.splice(i, 1);
     ctx.restore();
-    txt(ctx, "손바닥", BOT.x1 + 20, BOT.y1 + 36, { align: "center", color: "#C9D6EC" });
+    txt(ctx, "손바닥", XM + 12, MY + 50, { align: "center", color: "#C9D6EC" });
     pill(ctx, "쇠구슬을 넣은 페트병", 12, 7, { dot: "#B8C4D6" });
     txt(ctx, "손바닥이", 308, 40, { align: "center", color: "#9FB2D0" });
     txt(ctx, "받는 힘", 308, 56, { align: "center", color: "#9FB2D0" });
