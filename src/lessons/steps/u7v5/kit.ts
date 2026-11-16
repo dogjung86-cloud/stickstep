@@ -6,9 +6,10 @@ import { el } from "../../../core/dom";
 import { bvFrame, type BvFrame } from "../bio6/b6Lab";
 import type { StepAPI } from "../../types";
 
-export function u7Frame(host: HTMLElement, o: { title: string; steps: number; cls: string; api: Pick<StepAPI, "setCTA"> }): BvFrame {
+/** tall: 도움말에 세 줄 글이 있는 랩. 처음부터 세 줄 상자를 잡아 랩 도중에 무대가 밀리지 않게 한다(bvFrame 「글 맞춤」). */
+export function u7Frame(host: HTMLElement, o: { title: string; steps: number; cls: string; api: Pick<StepAPI, "setCTA">; tall?: boolean }): BvFrame {
   host.classList.add("u7x-step");
-  return bvFrame(host, { title: o.title, steps: o.steps, cls: `u7x-stage ${o.cls}`, qCls: "u7x-q", api: o.api });
+  return bvFrame(host, { title: o.title, steps: o.steps, cls: `u7x-stage ${o.cls}`, qCls: "u7x-q", api: o.api, tall: o.tall });
 }
 
 export interface U7Goals {
@@ -23,7 +24,7 @@ export interface U7Goals {
 export function u7Goals(cols: number, items: { id: string; name: string; sub: string }[]): U7Goals {
   const found = new Set<string>();
   const chips = new Map<string, { chip: HTMLElement; sub: HTMLElement }>();
-  const row = el("div", { class: "u7x-goals" });
+  const row = el("div", { class: "u7x-goals", dataset: { cols: String(cols) } });
   row.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   for (const it of items) {
     const sub = el("i", { text: it.sub });

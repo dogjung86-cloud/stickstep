@@ -7,7 +7,7 @@ import { haptic, HAPTIC } from "../../../../core/haptics";
 import type { OpenerCtx } from "../opener";
 import { makeHold, verdict } from "./hold";
 
-const PICKS = ["11개쯤", "3개쯤", "6개쯤"];
+const PICKS = ["약 11개", "약 3개", "약 6개"];
 const N = 11;
 
 export function jupiterRow(c: OpenerCtx): void {
@@ -17,8 +17,8 @@ export function jupiterRow(c: OpenerCtx): void {
   let shown = 0;
   const hold = makeHold(c, {
     cls: "opn-u7-btn hold",
-    label: "지구 세우기",
-    sub: "꾹 누르고 있어요",
+    label: "지구 나란히 세우기",
+    sub: "끝까지 꾹 누르세요",
     aria: "꾹 눌러 지구를 한 줄로 세우기",
     need: 2600,
     onProgress: (p) => {
@@ -30,10 +30,10 @@ export function jupiterRow(c: OpenerCtx): void {
         c.step.dataset.opnCount = String(n);
       }
     },
-    onLetGo: () => c.say("아직 자리가 남았어요. 끝까지 <b>꾹</b> 눌러 주세요."),
+    onLetGo: () => c.say("아직 빈자리가 남았어요! 끝까지 <b>꾹</b> 눌러 지구를 마저 세워 보세요."),
     onDone: () => {
       c.face("surprised");
-      c.say(`${verdict(hit)} 지구가 <b>열한 개</b>쯤 들어가요. 이렇게 큰 행성이 또 있을까요? 여덟 행성을 비교해 봐요.`);
+      c.say(`${verdict(hit)} 목성의 지름에는 지구가 <b>약 11개</b>나 들어가요! 다른 행성들의 크기는 어떨지 여덟 행성을 함께 비교해 봐요.`);
       c.finish();
     },
   });
@@ -41,10 +41,10 @@ export function jupiterRow(c: OpenerCtx): void {
   c.controls.append(hold.el);
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
-  c.ask("가장 큰 행성인 목성이에요. 목성의 지름에 지구를 한 줄로 세우면 몇 개쯤 들어갈까요?", {
+  c.ask("태양계에서 가장 큰 행성인 목성이에요. 목성을 가로질러 지구를 한 줄로 나란히 세우면 몇 개쯤 들어갈까요?", {
     choices: PICKS,
     neutral: true,
-    good: "예측 완료! <b>지구 세우기</b>를 꾹 눌러 직접 세워 보세요.",
+    good: "아래 <b>지구 나란히 세우기</b> 버튼을 끝까지 꾹 눌러 직접 확인해 보세요.",
     onDone: (picked) => {
       hit = picked === PICKS[0];
       c.step.dataset.opnPhase = "play";

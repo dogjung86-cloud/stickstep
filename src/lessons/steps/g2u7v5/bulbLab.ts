@@ -21,7 +21,7 @@ const BULBS: Record<Mode, [number, number][]> = {
 
 export const bulbLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 4, api });
+  const f = xFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
 
@@ -30,14 +30,14 @@ export const bulbLab: StepRenderer = (host, step, api) => {
   let finished = false;
   let ph = 0;
   const seen = { series: false, parallel: false, sOut: false, pOut: false };
-  const log = xLog(["한 개", "직렬 두 개", "병렬 두 개"], 1, true);
+  const log = xLog(["전구 1개", "직렬 2개", "병렬 2개"], 1, true);
   log.set(0, "0.2 A, 기준 밝기");
 
   const pick = xSegs<Mode>(
     [
-      { k: "one", t: "한 개" },
-      { k: "series", t: "직렬 두 개" },
-      { k: "parallel", t: "병렬 두 개" },
+      { k: "one", t: "전구 1개" },
+      { k: "series", t: "직렬 2개" },
+      { k: "parallel", t: "병렬 2개" },
     ],
     "one",
     (k) => {
@@ -46,12 +46,12 @@ export const bulbLab: StepRenderer = (host, step, api) => {
       if (k === "series") {
         seen.series = true;
         if (!seen.sOut) log.set(1, "0.1 A, 더 어두움");
-        f.say("한 줄로 이었더니 두 전구 모두 <b>어두워졌어요</b>. 전구 하나를 눌러 빼 보세요.");
+        f.say("전구 두 개를 한 줄(직렬)로 연결했더니 두 전구 모두 <b>어두워졌어요</b>. 무대에서 전구 하나를 눌러 소켓에서 빼 보세요.");
       } else if (k === "parallel") {
         seen.parallel = true;
         if (!seen.pOut) log.set(2, "0.4 A, 한 개일 때와 같음");
-        f.say("갈래를 나눠 이었더니 밝기가 <b>한 개일 때와 같아요</b>. 전구 하나를 눌러 빼 보세요.");
-      } else f.say("전구 한 개의 밝기를 잘 봐 두세요. 이 밝기가 <b>기준</b>이에요.");
+        f.say("전구 두 개를 두 갈래(병렬)로 나누어 연결했더니 밝기가 <b>전구 1개일 때와 똑같아요</b>. 무대에서 전구 하나를 눌러 빼 보세요.");
+      } else f.say("전구 1개만 연결했을 때의 밝기와 전류(0.2 A)를 잘 기억해 두세요. 이 상태가 <b>비교 기준</b>이에요.");
       after();
     },
   );
@@ -84,35 +84,35 @@ export const bulbLab: StepRenderer = (host, step, api) => {
     if (mode === "series" && out) {
       seen.sOut = true;
       log.set(1, "0.1 A, 하나 빼면 모두 꺼짐");
-      f.say("하나를 뺐더니 남은 전구도 <b>꺼졌어요</b>. 전류가 지나갈 길이 끊겼거든요.");
+      f.say("직렬 회로에서 전구 하나를 빼자 나머지 전구도 <b>함께 꺼졌어요</b>! 전류가 흐르는 외길이 끊어졌기 때문이에요.");
     } else if (mode === "parallel" && out) {
       seen.pOut = true;
       log.set(2, "0.4 A, 빼도 밝기 그대로");
-      f.say("하나를 빼도 남은 전구는 <b>그대로 밝아요</b>. 다른 갈래로 전류가 흘러요.");
-    } else if (mode === "one") f.say(out ? "전구를 빼자 회로가 끊겼어요. 다시 눌러 끼워요." : "다시 켜졌어요. 이번에는 전구를 <b>두 개</b> 연결해 보세요.");
-    else f.say("전구를 다시 끼웠어요.");
+      f.say("병렬 회로에서는 전구 하나를 빼도 남은 전구가 <b>꺼지지 않고 그대로 밝아요</b>! 다른 갈래의 길로 전류가 계속 흐르기 때문이에요.");
+    } else if (mode === "one") f.say(out ? "전구를 빼자 회로가 끊겨 불이 꺼졌어요. 전구를 다시 눌러 끼워 보세요." : "전구가 다시 켜졌어요. 이제 <b>직렬 2개</b>와 <b>병렬 2개</b> 탭을 눌러 비교해 보세요.");
+    else f.say("전구를 다시 소켓에 끼웠어요.");
     after();
   });
 
   function ask1(): void {
     f.slot.ask(
-      "전구 하나를 뺐을 때 남은 전구가 그대로 켜져 있던 연결은?",
-      [{ t: "병렬연결", ok: true }, { t: "직렬연결" }, { t: "두 연결 모두" }],
+      "전구 두 개 중 하나를 빼도 나머지 전구가 꺼지지 않고 그대로 켜져 있는 연결 방식은?",
+      [{ t: "병렬연결", ok: true }, { t: "직렬연결" }, { t: "직렬연결과 병렬연결 모두" }],
       (ok) => api.recordQuiz(ok),
-      { why: "병렬은 갈래가 따로라 <b>다른 갈래</b>로 전류가 흘렀어요.", onNext: ask2 },
+      { why: "병렬연결은 전류가 흐르는 길이 나뉘어 있어서 한쪽이 끊겨도 <b>다른 갈래</b>로 전류가 계속 흘러요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.slot.ask(
-      "전구 두 개를 직렬로 연결하면 회로 전체의 전류는?",
-      [{ t: "한 개일 때보다 약해져요", ok: true }, { t: "한 개일 때보다 세져요" }, { t: "한 개일 때와 같아요" }],
+      "전구 두 개를 직렬로 연결하면 회로 전체에 흐르는 전류의 세기는 어떻게 되나요?",
+      [{ t: "전구 1개일 때보다 약해져요", ok: true }, { t: "전구 1개일 때보다 세져요" }, { t: "전구 1개일 때와 같아요" }],
       () => undefined,
-      { why: "한 개일 때 0.2 A, 직렬 두 개일 때 <b>0.1 A</b>였어요.", onNext: finish },
+      { why: "전구 1개일 때는 0.2 A였지만, 직렬로 2개를 연결하면 전체 저항이 커져 <b>0.1 A</b>로 줄어들었어요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("전구를 <b>직렬</b>로 늘리면 어두워지고, 하나를 빼면 모두 꺼져요. <b>병렬</b>로 늘리면 밝기가 그대로이고, 하나를 빼도 나머지는 켜져 있어요.");
+    f.say("직렬연결과 병렬연결에서 전구의 밝기와 전류가 어떻게 달라지는지 모두 비교했어요!");
+    f.slot.conclude("전구를 <b>직렬</b>로 연결하면 한 개일 때보다 어두워지고, 하나를 빼면 회로가 끊겨 모두 꺼져요. 반면 <b>병렬</b>로 연결하면 각 전구의 밝기가 한 개일 때와 같고, 하나를 빼도 나머지 전구는 그대로 켜져 있어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -172,8 +172,8 @@ export const bulbLab: StepRenderer = (host, step, api) => {
     xPill(ctx, "전구를 눌러 빼거나 끼워요", X.cur);
   });
 
-  f.say("전구 한 개의 밝기를 잘 봐 두세요. 그다음 <b>직렬</b>과 <b>병렬</b>로 두 개를 연결해 비교해요.");
-  api.setCTA("직렬과 병렬에서 전구를 빼 보세요", { enabled: false });
+  f.say("먼저 전구 1개일 때의 기준 밝기를 확인한 뒤, <b>직렬 2개</b>와 <b>병렬 2개</b>로 연결해 밝기를 비교해 보세요.");
+  api.setCTA("직렬과 병렬 회로에서 전구를 하나씩 빼 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

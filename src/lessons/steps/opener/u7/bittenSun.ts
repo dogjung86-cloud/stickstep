@@ -1,4 +1,4 @@
-// [Ⅶ단원 도입] u7l6 u7-bittensun: 「한낮의 해가 왜 이지러질까요?」
+// [Ⅶ단원 도입] u7l6 u7-bittensun: 「한낮의 해가 왜 가려질까요?」
 // 형식: 내기를 걸고, 버튼을 꾹 눌러 시간을 보내며 관측 안경 속의 해가 가려지는 것을 본다.
 // 이 장면은 끝에서 예측의 정오를 밝히지 않는다. 가린 것이 둥글다는 것만 보여 주고,
 // 무엇인지는 바로 뒤의 랩(세 천체를 한 줄로)이 답한다.
@@ -29,15 +29,15 @@ export function bittenSun(c: OpenerCtx): void {
   const hold = makeHold(c, {
     cls: "opn-u7-btn hold",
     label: "시간 보내기",
-    sub: "꾹 누르고 있어요",
+    sub: "끝까지 꾹 누르세요",
     aria: "꾹 눌러 시간 보내기",
     need: 2600,
     onProgress: place,
-    onLetGo: () => c.say("해가 더 가려질 것 같아요. 끝까지 <b>꾹</b> 눌러 주세요."),
+    onLetGo: () => c.say("해가 점점 더 가려지고 있어요! 끝까지 <b>꾹</b> 눌러 확인해 보세요."),
     onDone: () => {
       c.stage.classList.add("done");
       c.face("surprised");
-      c.say(`해를 가린 것은 <b>둥근 모양</b>이에요. 정말 ${pick.again} 가렸을까요? 세 천체를 한 줄로 세워 확인해요.`);
+      c.say(`해를 가린 물체의 윤곽이 <b>커다랗고 둥근 모양</b>이에요! 과연 ${pick.again} 해를 가린 걸까요? 우주에서 세 천체를 한 줄로 세워 확인해 봐요.`);
       c.finish();
     },
   });
@@ -46,10 +46,10 @@ export function bittenSun(c: OpenerCtx): void {
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
   place(0);
-  c.ask("한낮인데 관측 안경으로 본 해의 한쪽이 파였어요. 무엇이 해를 가리고 있을까요?", {
+  c.ask("맑은 한낮인데 태양 관측 안경으로 본 해의 한쪽이 둥글게 가려졌어요. 무엇이 해 앞을 지나가며 가리고 있을까요?", {
     choices: PICKS.map((p) => p.t),
     neutral: true,
-    good: "예측 완료! 해는 꼭 관측 안경으로 봐요. <b>시간 보내기</b>를 꾹 눌러 보세요.",
+    good: "해를 맨눈으로 보면 위험해서 꼭 관측 안경을 써야 해요. 이제 <b>시간 보내기</b>를 끝까지 꾹 눌러 보세요.",
     onDone: (picked) => {
       pick = PICKS.find((p) => p.t === picked) ?? PICKS[0];
       c.step.dataset.opnPhase = "play";

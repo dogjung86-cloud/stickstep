@@ -1,4 +1,4 @@
-// [중2 Ⅰ v5] g2u1l1 크기 랩: 「조각을 자르면 밀도가 달라질까요?」
+// [중2 Ⅰ v5] g2u1l1 크기 랩: 「조각의 크기가 달라지면 질량 ÷ 부피는요?」
 // 앞의 측정 랩에서 얻은 생각(질량 ÷ 부피)을 손으로 굳힌다: 조각의 크기를 밀면 질량과 부피는 함께 변하지만 나눈 값은 그대로다.
 // 학생이 정하는 것: 금속의 종류, 조각의 크기. 크기를 바꿀 때마다 질량과 부피 그래프에 점이 찍힌다(같은 물질의 점은 원점을 지나는 한 직선 위).
 // 통찰 하나: 밀도(질량 ÷ 부피)는 물질의 양에 관계없이 일정하고 물질마다 다르다.
@@ -6,7 +6,7 @@
 
 import type { StepRenderer } from "../../types";
 import { bvRange } from "../bio6/b6Lab";
-import { P, fx, g1Lab, g1Log, g1Predict, g1Seg, plot, scale, svgOpen, type G1Step } from "./g2u1Kit";
+import { P, fx, g1Lab, g1Log, g1Predict, g1Seg, josa, plot, scale, svgOpen, type G1Step } from "./g2u1Kit";
 
 const MAT = [
   { name: "철", d: 7.87, color: P.rose },
@@ -73,18 +73,21 @@ export const g2u1SizeLab: StepRenderer = (host, step, api) => {
       phase = "end";
       range.input.disabled = true;
       seg.lock(true);
-      f.say("같은 금속의 점은 <b>원점을 지나는 한 직선</b> 위에 놓였어요. 표의 값도 다시 보세요.");
+      f.say("같은 금속의 점들은 <b>원점을 지나는 한 직선</b> 위에 놓였어요. 왼쪽의 계산값도 확인해 보세요.");
       lab.tm.later(ask, 900);
       return;
     }
     if (seen[mat].size >= NEED) {
       const o = 1 - mat;
-      f.say(`${MAT[mat].name}은 크기를 바꿔도 <b>${fx(MAT[mat].d, 2)}</b> 그대로예요. 이번에는 <b>${MAT[o].name}</b>으로 바꿔 보세요.`);
-      api.setCTA(`${MAT[o].name}으로 바꿔 크기를 밀어 보세요`, { enabled: false });
+      // 조사는 받침으로 고른다: 7.87로, 2.70으로, 철로, 알루미늄으로
+      const d = fx(MAT[mat].d, 2);
+      const ro = josa(MAT[o].name, "으로", "로");
+      f.say(`${MAT[mat].name}${josa(MAT[mat].name, "은", "는")} 크기를 바꿔도 질량 ÷ 부피가 <b>${d}</b>${josa(d, "으로", "로")} 일정해요. 이번에는 <b>${MAT[o].name}</b>${ro} 바꿔 보세요.`);
+      api.setCTA(`${MAT[o].name}${ro} 바꿔 크기를 조절해 보세요`, { enabled: false });
       lab.todo(`.g2u1x-sz-seg [data-k='${o}']`);
     } else {
       const left = NEED - seen[mat].size;
-      api.setCTA(`크기를 ${left}번 더 바꿔 보세요`, { enabled: false });
+      api.setCTA(`조각의 크기를 ${left}번 더 바꿔 보세요`, { enabled: false });
       const next = [6, 14, 18, 4].find((v) => !seen[mat].has(v)) ?? 12;
       lab.todo(".g2u1x-sz-range", next);
     }
@@ -112,20 +115,20 @@ export const g2u1SizeLab: StepRenderer = (host, step, api) => {
 
   function ask(): void {
     lab.judge(
-      "조각의 크기를 바꿔도 <b>변하지 않은 값</b>은?",
+      "같은 금속 조각의 크기를 바꿔도 <b>변하지 않는 값</b>은 무엇인가요?",
       [{ t: "질량 ÷ 부피", ok: true }, { t: "질량" }, { t: "부피" }],
-      "질량과 부피는 함께 커지고 작아져서 <b>나눈 값</b>은 그대로였어요.",
-      () => lab.finish("단위 부피당 질량, 곧 <b>밀도</b>는 물질의 양에 관계없이 일정하고 물질마다 달라요. 철 7.87, 알루미늄 2.70 g/cm³."),
+      "부피가 커지면 질량도 같은 비율로 커져서 <b>질량 ÷ 부피</b> 값은 일정해요.",
+      () => lab.finish("단위 부피당 질량인 <b>밀도</b>는 물질의 양에 관계없이 일정하며 물질마다 고유해요(철 7.87, 알루미늄 2.70 g/cm³)."),
     );
   }
 
   paint();
-  f.say("저울 위에 <b>철 조각</b>이 있어요. 먼저 예측해 보세요.");
-  g1Predict(lab, "철 조각을 <b>반으로 자르면</b> 질량 ÷ 부피 값은?", ["그대로다", "반으로 줄어든다", "두 배가 된다"], () => {
+  f.say("저울 위에 <b>철 조각</b>이 놓여 있어요. 조각을 자르면 어떻게 될지 예측해 보세요.");
+  g1Predict(lab, "철 조각을 <b>절반으로 자르면</b> 질량 ÷ 부피 값은 어떻게 될까요?", ["변하지 않고 그대로다", "절반으로 줄어든다", "두 배로 커진다"], () => {
     phase = "play";
     seg.set(0);
     f.slot.setControls(seg.el, range.el);
-    f.say("막대를 밀어 <b>조각의 크기</b>를 바꿔 보세요. 바꿀 때마다 그래프에 점이 찍혀요.");
+    f.say("막대를 움직여 <b>조각의 크기</b>를 바꿔 보세요. 크기를 바꿀 때마다 그래프에 점이 찍혀요.");
     mark();
   });
   return lab.cleanup;

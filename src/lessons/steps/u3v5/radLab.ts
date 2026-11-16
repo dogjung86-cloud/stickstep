@@ -28,7 +28,7 @@ const RAYS = [-0.5, -0.33, -0.16, 0, 0.16, 0.33, 0.5];
 export const radLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as RadStep;
   const tm = bvTimers();
-  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-rad", api });
+  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-rad", api, tall: true });
 
   let scene: "stove" | "box" = "stove";
   let dist = 70; // 0(가까이)~100(멀리)
@@ -275,7 +275,7 @@ export const radLab: StepRenderer = (host, step, api) => {
     ctx.beginPath();
     ctx.arc(253, 162, 10, 0, Math.PI * 2);
     ctx.fill();
-    pill(ctx, "온도계 따뜻함", 258, 56, { size: 12, dot: "#FF8A4C" });
+    pill(ctx, "온도계: 따뜻함", 258, 56, { size: 12, dot: "#FF8A4C" });
     pill(ctx, `상자 속 공기 ${Math.round(air * 100)}%`, 112, 20, { size: 12, dot: "rgba(170,200,235,1)" });
   }
 
@@ -314,19 +314,19 @@ export const radLab: StepRenderer = (host, step, api) => {
   });
   const shieldBtn = bvBtn("", "가림판 세우기");
   shieldBtn.disabled = true;
-  const nextBtn = bvBtn("main", "다음 실험: 유리 상자");
+  const nextBtn = bvBtn("main", "공기 없는 상자 실험하기");
   nextBtn.hidden = true;
-  const pump = u3Hold("공기 빼기 (꾹 누르고 있기)", (down) => {
+  const pump = u3Hold("꾹 눌러 공기 빼기", (down) => {
     if (scene !== "box" || air <= 0) return;
     pumping = down;
-    if (!down && air > 0) f.say("손을 떼니 멈췄어요. 공기가 다 빠질 때까지 <b>꾹</b> 눌러 주세요.");
+    if (!down && air > 0) f.say("손을 떼면 펌프가 멈춰요. 상자 속 공기가 모두 빠질 때까지 끝까지 <b>꾹</b> 눌러 주세요.");
   });
 
   function hint(): void {
     if (scene !== "stove") return;
-    if (!nearDone) f.say("전기난로 앞이에요. <b>거리 막대</b>를 왼쪽으로 밀어 난로에 다가가 봐요. 받는 열이 어떻게 되나요?");
-    else if (!shieldDone) f.say("가까울수록 열을 많이 받아요. 이번엔 난로와 사람 사이에 <b>가림판</b>을 세워 봐요.");
-    else f.say(shield ? "가림판이 열을 막았어요. 열은 난로에서 <b>곧게</b> 나아가다가 가림판에 막혀요." : "가림판을 치우니 다시 따뜻해요. 이제 다음 실험으로 가 봐요.");
+    if (!nearDone) f.say("전기난로가 켜져 있어요. <b>난로와의 거리</b> 막대를 왼쪽으로 밀어 난로 가까이로 다가가 보세요. 전달되는 열의 양이 어떻게 달라지나요?");
+    else if (!shieldDone) f.say("난로에 가까워질수록 열을 더 많이 받아요! 이번에는 난로와 사람 사이에 <b>가림판</b>을 세워 보세요.");
+    else f.say(shield ? "가림판을 세우니 열이 가로막혀 전달되지 않아요! 이제 가림판을 다시 치우거나 다음 실험으로 넘어가 보세요." : "가림판을 치우니 다시 열이 곧장 전달돼요. 이제 공기가 없는 상자에서도 열이 이동하는지 알아볼까요?");
   }
 
   shieldBtn.addEventListener("click", () => {
@@ -346,16 +346,16 @@ export const radLab: StepRenderer = (host, step, api) => {
   nextBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     scene = "box";
-    f.say("유리 상자에 전등과 온도계를 넣었어요. 상자 속 공기를 빼기 전에 <b>예측</b>부터 해 봐요.");
+    f.say("유리 상자 안에 켜진 전등과 온도계를 넣었어요. 상자 속 공기를 모두 빼기 전에 결과를 <b>예측</b>해 볼까요?");
     f.slot.ask(
-      "상자 속 <b>공기를 모두 빼면</b> 온도계는 어떻게 될까요?",
-      [{ t: "차갑게 식는다" }, { t: "여전히 따뜻하다" }],
+      "상자 속 <b>공기를 모두 빼내면</b> 온도계의 온도는 어떻게 될까요?",
+      [{ t: "열이 전달되지 않아 차갑게 식는다" }, { t: "공기가 없어도 여전히 따뜻하다" }],
       () => undefined,
       {
         predict: true,
         onNext: () => {
           f.slot.setControls(pump);
-          f.say("<b>공기 빼기</b>를 꾹 눌러 상자 속 공기 입자를 모두 빼 봐요. 온도계는 어떻게 되나요?");
+          f.say("<b>꾹 눌러 공기 빼기</b> 버튼을 눌러 상자 속 공기 입자를 모두 빼내 보세요. 온도계는 어떻게 될까요?");
           api.setCTA("상자 속 공기를 모두 빼 보세요", { enabled: false });
         },
       },
@@ -368,26 +368,26 @@ export const radLab: StepRenderer = (host, step, api) => {
     pump.classList.remove("down");
     haptic(HAPTIC.correct);
     f.pips(3);
-    f.say("공기 입자가 하나도 없는데 온도계는 <b>여전히 따뜻해요</b>. 열이 빈 곳을 건너 곧장 온 거예요.");
+    f.say("상자 속에 공기 입자가 하나도 없는데도 온도계는 <b>여전히 따뜻해요</b>! 열이 아무 물질도 없는 빈 공간을 지나 곧장 전달된 거예요.");
     tm.later(askFinal, 2600);
   }
 
   function askFinal(): void {
     phase = "ask";
-    f.say("공기를 다 뺀 상자예요. 무대를 보고 골라 봐요.");
+    f.say("공기를 모두 빼낸 유리 상자 안의 모습을 보고 답해 보세요.");
     f.slot.ask(
-      "공기가 없는데도 온도계가 따뜻한 까닭은?",
-      [{ t: "열이 물질 없이도 직접 이동해서", ok: true }, { t: "남은 공기 입자가 열을 날라서" }, { t: "입자의 떨림이 차례로 전달돼서" }],
+      "상자 속에 공기가 없는데도 전등의 열이 온도계에 전달된 까닭은 무엇인가요?",
+      [{ t: "열이 물질을 거치지 않고 직접 이동해서", ok: true }, { t: "남아 있는 공기 입자가 직접 이동하며 열을 날라서" }, { t: "공기 입자의 떨림이 이웃한 입자로 전달돼서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "상자 속에는 열을 나르거나 떨림을 전할 <b>입자가 없어요</b>.", onNext: finish },
+      { why: "공기를 모두 뺀 상자 속에는 대류나 전도를 일으킬 <b>공기 입자가 없어요</b>.", onNext: finish },
     );
   }
 
   function finish(): void {
     phase = "done";
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("열이 물질을 통하지 않고 <b>직접 이동</b>하는 것이 <b>복사</b>예요. 가로막으면 닿지 않아요. 태양의 열도 이렇게 텅 빈 우주를 건너와요.");
+    f.say("공기가 없는 빈 공간에서도 열이 직접 이동한다는 것을 확인했어요!");
+    f.slot.conclude("열이 물질의 도움 없이 <b>직접 이동</b>하는 현상을 <b>복사</b>라고 해요. 태양이 텅 빈 우주 공간을 지나 지구까지 열을 보내는 것도 복사 때문이에요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }

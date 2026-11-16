@@ -62,7 +62,7 @@ export const u7AlignLab: StepRenderer = (host, step, api) => {
   const svg = f.stage.querySelector("svg") as SVGSVGElement;
   const moonG = svg.querySelector(".u7x-ecl-moon") as SVGGElement;
   const line = svg.querySelector(".u7x-ecl-line") as SVGLineElement;
-  const pill = el("div", { class: "bv-pill u7x-pill", text: "달을 끌어 보세요" });
+  const pill = el("div", { class: "bv-pill u7x-pill", text: "달을 끌어 한 줄로 맞춰 보세요" });
   const inset = el("div", { class: "u7x-inset u7x-ec-inset", attrs: { "aria-hidden": "true" } });
   // 창의 달: 실사 원판을 밝은 부분의 모양(litPath)으로 잘라 보인다. 어두운 부분은 짙은 원판 그대로.
   inset.innerHTML = `<svg viewBox="0 0 88 88"><defs><clipPath id="al-litc"><path class="u7x-ecl-lit"/></clipPath>${moonBrightDef("al-ibr")}</defs><rect width="88" height="88" fill="#070d1a"/><circle cx="44" cy="34" r="24" fill="#1B2436"/><g clip-path="url(#al-litc)">${discImage("moon", 44, 34, 24, ' filter="url(#al-ibr)"')}</g></svg><span>지구에서 본 달</span>`;
@@ -70,16 +70,16 @@ export const u7AlignLab: StepRenderer = (host, step, api) => {
   f.stage.append(pill, inset);
 
   const goalsUi = u7Goals(1, [
-    { id: "new", name: "태양, 달, 지구 차례로 한 줄", sub: "이때 지구에서 본 달은 어떤 모양일까요" },
-    { id: "full", name: "태양, 지구, 달 차례로 한 줄", sub: "이때 지구에서 본 달은 어떤 모양일까요" },
+    { id: "new", name: "태양, 달, 지구 순서로 한 줄", sub: "지구에서 본 달은 어떤 모습일까요?" },
+    { id: "full", name: "태양, 지구, 달 순서로 한 줄", sub: "지구에서 본 달은 어떤 모습일까요?" },
   ]);
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "한 줄이 되는 자리 두 곳을 찾아요" }), goalsUi.el);
-  const FIRST_SAY = "<b>달</b>을 끌어 태양, 지구와 <b>한 줄</b>이 되는 자리 두 곳을 찾아요.";
-  const SAY_NEW = "달이 태양 쪽에 있어요. 밝은 면이 반대편을 향해 <b>안 보이는 삭</b>이에요.";
-  const SAY_FULL = "달이 태양 반대쪽에 있어요. 밝은 면이 다 보이는 <b>망</b>(보름달)이에요.";
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "세 천체가 한 줄로 늘어서는 두 자리를 찾아보세요" }), goalsUi.el);
+  const FIRST_SAY = "<b>달</b>을 끌어 태양, 지구와 <b>한 줄</b>을 이루는 두 자리를 찾아보세요.";
+  const SAY_NEW = "달이 태양과 지구 사이에 놓였어요! 지구에서는 달이 보이지 않는 <b>삭</b>의 위치예요.";
+  const SAY_FULL = "달이 지구의 뒤쪽(태양 반대쪽)에 놓였어요! 둥근 달이 보이는 <b>망(보름달)</b>의 위치예요.";
   f.say(FIRST_SAY);
   f.pips(1);
-  api.setCTA("한 줄이 되는 자리를 찾아요", { enabled: false });
+  api.setCTA("한 줄이 되는 두 자리를 모두 찾아보세요", { enabled: false });
   host.dataset.u7Phase = "play";
   host.dataset.u7Found = "0";
 
@@ -97,14 +97,14 @@ export const u7AlignLab: StepRenderer = (host, step, api) => {
     const nearNew = Math.abs(wrap(e)) < 5;
     const nearFull = Math.abs(wrap(e - 180)) < 5;
     line.setAttribute("opacity", nearNew || nearFull ? ".9" : "0");
-    pill.textContent = nearNew ? "한 줄! 달이 안 보여요" : nearFull ? "한 줄! 둥근 달이에요" : "달을 끌어 보세요";
+    pill.textContent = nearNew ? "태양, 달, 지구! 달이 안 보여요(삭)" : nearFull ? "태양, 지구, 달! 둥근 보름달이에요(망)" : "달을 끌어 한 줄로 맞춰 보세요";
     host.dataset.u7Elong = String(Math.round(e));
     if (phase !== "play") return;
-    if (nearNew && goalsUi.done("new", "달이 안 보여요. 삭이에요")) found("new");
-    if (nearFull && goalsUi.done("full", "둥근 달이 보여요. 망이에요")) found("full");
+    if (nearNew && goalsUi.done("new", "달이 보이지 않는 '삭'이에요")) found("new");
+    if (nearFull && goalsUi.done("full", "둥글게 보이는 '망(보름달)'이에요")) found("full");
     // 한 줄에서 벗어나면 그 자리의 설명을 걷고 할 일로 돌아간다(그림과 글이 어긋나지 않게)
     if (!nearNew && !nearFull && goalsUi.count() < 2) {
-      f.say(goalsUi.count() ? "한 곳을 찾았어요. 달을 더 끌어 한 줄이 되는 <b>다른 자리</b>도 찾아요." : FIRST_SAY);
+      f.say(goalsUi.count() ? "한 곳을 찾았어요! 달을 반대쪽으로 더 끌어 한 줄이 되는 <b>나머지 한 자리</b>도 찾아보세요." : FIRST_SAY);
     } else if (goalsUi.count() < 2) f.say(nearNew ? SAY_NEW : SAY_FULL);
   }
 
@@ -119,13 +119,13 @@ export const u7AlignLab: StepRenderer = (host, step, api) => {
     phase = "ask";
     host.dataset.u7Phase = "ask";
     f.pips(2);
-    f.say("한 줄이 되는 자리는 <b>삭</b>과 <b>망</b> 두 곳이었어요. 일식, 월식과 짝지어 봐요.");
+    f.say("세 천체가 한 줄이 되는 <b>삭</b>과 <b>망</b> 위치를 일식, 월식과 짝지어 봐요.");
     glide(0); // 묻는 자리(달이 태양과 지구 사이)를 무대에 보여 준다
     f.slot.ask(
-      "달이 태양을 가리는 <b>일식</b>은 달이 어떤 위상일 때 일어날까요?",
+      "달이 태양을 가리는 <b>일식</b>은 달의 위상이 무엇일 때 일어날까요?",
       [{ t: "삭", ok: true }, { t: "망(보름달)" }, { t: "상현달" }],
       (ok) => api.recordQuiz(ok),
-      { why: "달이 태양과 지구 사이에 있어야 태양을 가려요.", onNext: askLunar },
+      { why: "달이 태양과 지구 사이에 놓이는 '삭'일 때 달이 태양을 가려 일식이 일어나요.", onNext: askLunar },
     );
   }
 
@@ -133,10 +133,10 @@ export const u7AlignLab: StepRenderer = (host, step, api) => {
     host.dataset.u7Phase = "ask2";
     glide(180);
     f.slot.ask(
-      "달이 지구의 그림자에 드는 <b>월식</b>은 어떤 위상일 때 일어날까요?",
+      "달이 지구의 그림자 속에 들어가는 <b>월식</b>은 달의 위상이 무엇일 때 일어날까요?",
       [{ t: "망(보름달)", ok: true }, { t: "삭" }, { t: "하현달" }],
       () => undefined,
-      { why: "달이 지구 뒤쪽, 태양의 반대편에 있어야 해요.", onNext: conclude },
+      { why: "달이 태양의 반대쪽(지구 뒤쪽)에 놓이는 '망(보름달)'일 때 지구 그림자에 가려져 월식이 일어나요.", onNext: conclude },
     );
   }
 
@@ -144,8 +144,8 @@ export const u7AlignLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("달을 다시 끌어 두 자리를 확인해도 좋아요.");
-    f.slot.conclude("<b>일식</b>은 태양, 달, 지구 차례로 한 줄인 <b>삭</b>일 때, <b>월식</b>은 태양, 지구, 달 차례로 한 줄인 <b>망</b>일 때 일어나요.");
+    f.say("달을 다시 움직여 보며 일식(삭)과 월식(망)의 위치를 비교해 보세요.");
+    f.slot.conclude("달이 태양을 가리는 <b>일식</b>은 태양, 달, 지구 순서로 늘어선 <b>삭</b>일 때 일어나고, 달이 지구 그림자에 가려지는 <b>월식</b>은 태양, 지구, 달 순서로 늘어선 <b>망(보름달)</b>일 때 일어나요.");
     api.enableCTA(doneCta);
   }
 

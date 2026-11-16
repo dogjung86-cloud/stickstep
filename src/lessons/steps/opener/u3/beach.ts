@@ -12,7 +12,7 @@ import { hitBtn, holdFill, metaOf } from "./util";
 
 const START = 0.2;
 const END = { sand: 0.94, sea: 0.36 };
-const PICKS = ["모래", "바닷물", "둘이 비슷하다"];
+const PICKS = ["모래사장", "바닷물", "두 곳의 온도가 비슷하다"];
 
 export function beach(c: OpenerCtx): void {
   const M = metaOf(c).beach;
@@ -29,7 +29,7 @@ export function beach(c: OpenerCtx): void {
     onDown: () => c.stage.classList.add("lit", "touched"),
     onUp: (finished) => {
       c.stage.classList.remove("lit");
-      if (!finished) c.say("손을 떼니 햇볕이 멈췄어요. 끝까지 <b>꾹</b> 눌러 주세요.");
+      if (!finished) c.say("손을 떼면 햇볕이 멈춰요. 온도가 충분히 오를 때까지 <b>해</b>를 끝까지 <b>꾹</b> 눌러 주세요.");
     },
     paint: (p) => {
       if (colSand) colSand.style.transform = `scaleY(${START + (END.sand - START) * p})`;
@@ -42,16 +42,16 @@ export function beach(c: OpenerCtx): void {
       c.face("surprised");
       haptic(HAPTIC.correct);
       const head = pred === PICKS[0] ? "예측대로" : "예측과 달리";
-      c.say(`${head} <b>모래</b>만 훨씬 뜨거워졌어요. 햇볕은 똑같이 받았는데, 물은 왜 천천히 데워질까요?`);
+      c.say(`${head} <b>모래</b>가 바닷물보다 훨씬 더 뜨거워졌어요! 같은 햇볕을 받았는데도 왜 바닷물은 천천히 데워질까요?`);
       c.finish();
     },
   });
 
   c.step.dataset.opnPhase = "ask";
-  c.ask("한낮의 해변이에요. 같은 햇볕을 받은 모래와 바닷물, 어느 쪽이 더 뜨거울까요?", {
+  c.ask("햇볕이 쨍쨍 내리쬐는 한낮의 해변이에요. 똑같이 햇볕을 받은 모래사장과 바닷물 중 어느 쪽이 더 뜨거울까요?", {
     choices: PICKS,
     neutral: true,
-    good: "예측 완료! <b>해</b>를 꾹 눌러 햇볕을 비춰 보세요.",
+    good: "좋아요! 이제 하늘의 <b>해</b>를 꾹 눌러 해변에 햇볕을 비춰 보세요.",
     onDone: (picked) => {
       pred = picked;
       phase = "play";

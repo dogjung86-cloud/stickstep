@@ -17,7 +17,7 @@ const RS = [15, 30, 60];
 
 export const formulaLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 4, api });
+  const f = xFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
 
@@ -27,8 +27,8 @@ export const formulaLab: StepRenderer = (host, step, api) => {
   const rGot = new Set<number>();
   let rPick = 0;
 
-  const log = xLog(["긴 니크롬선: 전압 ÷ 전류", "짧은 니크롬선: 전압 ÷ 전류"]);
-  const next = bvBtn("main", "저항을 바꿔 보기");
+  const log = xLog(["긴 니크롬선 (전압 ÷ 전류)", "짧은 니크롬선 (전압 ÷ 전류)"]);
+  const next = bvBtn("main", "저항 크기 바꿔 보기");
   next.disabled = true;
   f.slot.setControls(log.el, next);
 
@@ -53,7 +53,7 @@ export const formulaLab: StepRenderer = (host, step, api) => {
     const ready = got.long.size >= 2 && got.short.size >= 2;
     f.pips((got.long.size >= 2 ? 1 : 0) + (got.short.size >= 2 ? 1 : 0));
     next.disabled = !ready;
-    f.say(ready ? "어느 점에서나 긴 선은 <b>30</b>, 짧은 선은 <b>15</b>예요. 이 값이 그 니크롬선의 <b>저항</b>이에요." : "같은 선의 <b>다른 점</b>도 눌러 나눠 보세요. 두 선 모두 두 점 이상 해 봐요.");
+    f.say(ready ? "어느 점을 골라도 전압 ÷ 전류 값은 긴 선이 <b>30 Ω</b>, 짧은 선이 <b>15 Ω</b>으로 일정해요! 이 일정한 값이 바로 각 니크롬선의 <b>저항</b>이에요." : "같은 직선 위의 <b>다른 점</b>도 눌러 전압 ÷ 전류 값이 같은지 확인해 보세요. 두 직선 모두 두 점 이상 눌러 보세요.");
   });
   next.addEventListener("click", () => {
     if (phase !== "A") return;
@@ -73,30 +73,30 @@ export const formulaLab: StepRenderer = (host, step, api) => {
           haptic(HAPTIC.correct);
           f.pips(3);
           seg.lock(true);
-          f.say("저항을 2배로 키우면 전류는 <b>절반</b>으로 줄어요. 전류는 저항에 반비례해요.");
+          f.say("전압이 같을 때 저항이 2배로 커지면 전류는 <b>절반(1/2)</b>으로 줄어들어요. 즉, 전류의 세기는 저항에 반비례해요!");
           tm.later(ask, 2600);
-        } else f.say(`${rPick} Ω에 6 V를 걸자 <b>${Math.round(6000 / rPick)} mA</b>가 흘러요. 다른 저항도 연결해 보세요.`);
+        } else f.say(`저항 ${rPick} Ω에 6 V를 걸자 전류가 <b>${Math.round(6000 / rPick)} mA</b> 흘러요. 다른 크기의 저항도 연결해 보세요.`);
       },
     );
     seg.btn("0").hidden = true;
     seg.el.style.gridTemplateColumns = "repeat(3, 1fr)";
     f.slot.setControls(seg.el);
-    f.say("이번에는 전압을 <b>6 V</b>로 두고 저항만 바꿔요. 세 저항을 모두 연결해 보세요.");
+    f.say("이번에는 전압을 <b>6 V</b>로 일정하게 유지하고 저항 크기만 바꿔 볼게요. 15 Ω, 30 Ω, 60 Ω을 차례로 연결해 보세요.");
   });
 
   function ask(): void {
     phase = "end";
     f.slot.ask(
-      "30 Ω인 니크롬선에 3 V를 걸면 흐르는 전류는?",
+      "저항이 30 Ω인 니크롬선에 3 V의 전압을 걸어 주면 몇 A의 전류가 흐를까요?",
       [{ t: "0.1 A", ok: true }, { t: "10 A" }, { t: "90 A" }],
       (ok) => api.recordQuiz(ok),
-      { why: "전류 = 전압 ÷ 저항 = 3 ÷ 30 = <b>0.1 A</b>예요.", onNext: finish },
+      { why: "전류 = 전압 ÷ 저항이므로, 3 V ÷ 30 Ω = <b>0.1 A</b>(100 mA)의 전류가 흘러요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("전류는 전압에 비례하고 저항에 반비례해요. 그래서 <b>전류 = 전압 ÷ 저항</b>이에요. 전류를 I, 전압을 V, 저항을 R라고 하면 <b>V = IR</b>로 쓸 수 있어요.");
+    f.say("전류는 전압에 비례하고 저항에 반비례한다는 관계를 발견했어요!");
+    f.slot.conclude("도선에 흐르는 전류의 세기는 전압에 비례하고 저항에 반비례해요(<b>전류 = 전압 ÷ 저항</b>). 전류를 I, 전압을 V, 저항을 R라 하면 <b>I = V/R</b> 또는 <b>V = IR</b>로 나타낼 수 있어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -167,8 +167,8 @@ export const formulaLab: StepRenderer = (host, step, api) => {
     ctx.restore();
   });
 
-  f.say("앞 실험에서 그린 그래프예요. <b>점을 눌러</b> 그 점의 전압을 전류로 나눠 보세요.");
-  api.setCTA("그래프의 점을 눌러 보세요", { enabled: false });
+  f.say("앞 실험에서 얻은 전압과 전류 그래프예요. 그래프 위의 <b>점들을 직접 눌러</b> 각 점의 (전압 ÷ 전류) 값을 구해 보세요.");
+  api.setCTA("그래프의 점들을 눌러 규칙을 찾아보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

@@ -17,7 +17,7 @@ export function rings(c: OpenerCtx): void {
     const g = els[i];
     if (g) g.style.transform = `translate(${M.pan[i][0] - M.ring[i][0]}px, ${M.pan[i][1] - M.ring[i][1] + dy}px)`;
   };
-  bet(c, "크기도 색도 똑같은 반지 둘이에요. 하나는 백금, 하나는 은이에요. 저울에 올리면?", ["한쪽으로 기운다", "수평을 이룬다"], "<b>반지</b>를 눌러 접시에 하나씩 올려 보세요.", (picked) => {
+  bet(c, "크기와 색이 똑같은 백금 반지와 은 반지예요. 양쪽 접시에 올리면 어떻게 될까요?", ["한쪽으로 기운다", "수평을 이룬다"], "<b>두 반지</b>를 차례로 눌러 저울 접시에 올려 보세요.", (picked) => {
     M.ring.forEach(([x, y], i) =>
       hit(c, `반지 ${i + 1} 접시에 올리기`, x - 60, y - 60, 120, 120, (b) => {
         b.disabled = true;
@@ -29,19 +29,19 @@ export function rings(c: OpenerCtx): void {
           if (beam) beam.style.transform = "rotate(-9.6deg)";
           put(0, M.drop);
           put(1, -M.drop);
-          c.later(() => wrap(c, `${head(picked, "한쪽으로")} 저울이 <b>한쪽으로 기울었어요</b>. 크기도 색도 같은데 무엇이 다를까요?`), 700);
+          c.later(() => wrap(c, `${head(picked, "한쪽으로")} 저울이 <b>한쪽으로 기울었어요</b>. 크기와 색이 같은데 왜 무게가 다를까요?`), 700);
         }, 600);
       }),
     );
   });
 }
 
-/** g2u1l2 「가만히 누우면 뜰까요?」 수영장과 소금 호수에 눕힌다. */
+/** g2u1l2 「물 위에 가만히 누우면 몸이 뜰까요?」 수영장과 소금 호수에 눕힌다. */
 export function sea(c: OpenerCtx): void {
   const M = metaOf(c).sea;
   layer(c, "seaBase");
   let n = 0;
-  bet(c, "왼쪽은 수영장, 오른쪽은 소금이 아주 많이 녹은 호수예요. 가만히 누우면?", ["호수에서만 둥둥 뜬다", "둘 다 똑같이 뜬다", "둘 다 가라앉는다"], "<b>두 물</b>을 차례로 눌러 눕혀 보세요.", (picked) => {
+  bet(c, "왼쪽은 일반 수영장, 오른쪽은 소금이 아주 많이 녹은 호수예요. 물에 가만히 누우면 어떻게 될까요?", ["호수에서만 둥둥 뜬다", "둘 다 똑같이 뜬다", "둘 다 가라앉는다"], "<b>수영장과 소금 호수</b>를 차례로 눌러 확인해 보세요.", (picked) => {
     M.hit.forEach(([x, y, w, h], i) =>
       hit(c, i ? "소금 호수에 눕기" : "수영장에 눕기", x, y, w, h, (b) => {
         b.disabled = true;
@@ -50,20 +50,21 @@ export function sea(c: OpenerCtx): void {
         man?.classList.add("in");
         n += 1;
         c.step.dataset.opnN = String(n);
-        if (n === 2) c.later(() => wrap(c, `${head(picked, "호수에서만")} 수영장에서는 몸이 잠기는데 호수에서는 <b>둥둥</b> 떠요. 두 물은 무엇이 다를까요?`), 1100);
+        if (n === 2) c.later(() => wrap(c, `${head(picked, "호수에서만")} 수영장에서는 몸이 가라앉는데 소금 호수에서는 <b>둥둥</b> 떠요. 두 물은 무엇이 다를까요?`), 1100);
       }),
     );
   });
 }
 
-/** g2u1l3 「소금은 넣는 대로 다 녹을까요?」 물 한 컵에 큰 숟갈로 한 숟갈씩 넣는다(물 200 g에 소금은 약 72 g, 큰 숟갈로 네 숟갈 남짓까지 녹는다). */
+/** g2u1l3 「소금은 넣는 대로 다 녹을까요?」 물 한 컵에 큰 숟가락으로 한 숟가락씩 넣는다(물 200 g에 소금은 약 72 g, 큰 숟가락으로 네 숟가락 남짓까지 녹는다).
+ *  질문에서 '큰 숟가락'을 빼지 않는다(보통 숟가락이면 다섯째에도 다 녹을 수 있다). */
 export function cocoa(c: OpenerCtx): void {
   const M = metaOf(c).cocoa;
   layer(c, "cocoaBase");
   const fall = part(c, ".opn-g2u1-cc-fall");
   let n = 0;
-  bet(c, "물 한 컵에 소금을 큰 숟갈로 한 숟갈씩 계속 넣으며 저을 거예요. 어떻게 될까요?", ["어느 순간부터 바닥에 쌓인다", "넣는 대로 다 녹는다"], "버튼을 눌러 <b>소금</b>을 넣어 보세요.", (picked) => {
-    const b = ctlBtn(c, "소금 한 숟갈 넣기");
+  bet(c, "물 한 컵에 소금을 큰 숟가락으로 한 숟가락씩 계속 넣으며 저으면 어떻게 될까요?", ["어느 순간부터 바닥에 쌓인다", "넣는 대로 끝까지 다 녹는다"], "버튼을 눌러 <b>소금</b>을 한 숟가락씩 넣어 보세요.", (picked) => {
+    const b = ctlBtn(c, "소금 한 숟가락 넣기");
     b.addEventListener("click", () => {
       if (n >= M.spoons) return;
       n += 1;
@@ -72,19 +73,19 @@ export function cocoa(c: OpenerCtx): void {
       fall?.classList.remove("go");
       void fall?.getBoundingClientRect();
       fall?.classList.add("go");
-      b.textContent = n < M.spoons ? `소금 한 숟갈 넣기 (${n}숟갈 넣음)` : "소금 여섯 숟갈을 넣었어요";
+      b.textContent = n < M.spoons ? `소금 한 숟가락 넣기 (${n}번 넣음)` : "소금 여섯 숟가락을 모두 넣었어요";
       if (n > M.limit) c.later(() => c.stage.classList.add(`pile${n - M.limit}`), 500);
-      if (n === M.limit) c.say("네 숟갈째도 저으니 <b>다 녹았어요</b>. 더 넣어 보세요.");
-      if (n === M.limit + 1) c.later(() => c.say("어, 바닥에 <b>녹지 않은 소금</b>이 보여요. 한 번 더!"), 500);
+      if (n === M.limit) c.say("네 숟가락째까지는 저으니 <b>모두 녹았어요</b>. 계속 넣어 보세요.");
+      if (n === M.limit + 1) c.later(() => c.say("어! 바닥에 <b>녹지 않은 소금</b>이 남기 시작했어요. 한 번 더 넣어 보세요!"), 500);
       if (n === M.spoons) {
         b.disabled = true;
-        c.later(() => wrap(c, `${head(picked, "어느 순간")} 다섯째 숟갈부터는 저어도 <b>바닥에 쌓였어요</b>. 녹는 양에 끝이 있는 걸까요?`), 1000);
+        c.later(() => wrap(c, `${head(picked, "어느 순간")} 다섯 숟가락째부터는 아무리 저어도 <b>바닥에 쌓였어요</b>. 물에 녹는 양에는 한계가 있는 걸까요?`), 1000);
       }
     });
   });
 }
 
-/** g2u1l4 「한여름의 물고기는 어디에?」 꾹 눌러 시원한 봄에서 더운 한여름으로 보낸다. */
+/** g2u1l4 「한여름의 물고기는 어디로 모일까요?」 꾹 눌러 시원한 봄에서 더운 한여름으로 바꾼다. */
 export function fish(c: OpenerCtx): void {
   const M = metaOf(c).fish;
   layer(c, "fishBase");
@@ -98,12 +99,12 @@ export function fish(c: OpenerCtx): void {
     c.stage.classList.toggle("gulp", p > 0.85);
   };
   paint(0);
-  bet(c, "시원한 봄날의 연못이에요. 더운 한여름이 되어 물이 따뜻해지면 물고기는?", ["수면 가까이 올라온다", "바닥 가까이 내려간다", "제자리에 그대로 있다"], "버튼을 <b>꾹 눌러</b> 한여름으로 보내 보세요.", (picked) => {
-    hold(c, ctlBtn(c, "꾹 눌러 한여름으로"), 3000, paint, () => wrap(c, `${head(picked, "수면")} 물고기가 <b>수면</b>에서 입을 뻐끔거려요. 따뜻해진 물속에서 무엇이 모자라졌을까요?`));
+  bet(c, "시원한 봄날의 연못이에요. 더운 한여름이 되어 물이 따뜻해지면 물고기는?", ["수면 가까이 올라온다", "바닥 가까이 내려간다", "제자리에 그대로 있다"], "버튼을 <b>꾹 눌러</b> 더운 한여름으로 바꿔 보세요.", (picked) => {
+    hold(c, ctlBtn(c, "꾹 눌러 한여름으로 바꾸기"), 3000, paint, () => wrap(c, `${head(picked, "수면")} 물고기가 <b>수면</b> 가까이 올라와 입을 뻐끔거려요. 따뜻해진 물속에 무엇이 부족해졌을까요?`));
   });
 }
 
-/** g2u1l5 「손 위의 금속 동전은?」 꾹 눌러 손에 올려 둔다. */
+/** g2u1l5 「손바닥 위의 금속 동전은?」 꾹 눌러 체온으로 데운다(동전 둘은 처음부터 손바닥 위에 있다. 왼쪽이 갈륨). */
 export function gallium(c: OpenerCtx): void {
   layer(c, "galliumBase");
   const coin = part(c, ".opn-g2u1-ga-coin");
@@ -120,8 +121,8 @@ export function gallium(c: OpenerCtx): void {
     }
   };
   paint(0);
-  bet(c, "손바닥에 금속 동전 둘을 올렸어요. 왼쪽은 갈륨, 오른쪽은 철로 만들었어요. 그대로 두면?", ["갈륨 동전만 녹는다", "둘 다 따뜻해지기만 한다", "둘 다 녹는다"], "버튼을 <b>꾹 눌러</b> 손에 올려 두세요.", (picked) => {
-    hold(c, ctlBtn(c, "꾹 눌러 손에 올려 두기"), 3200, paint, () => wrap(c, `${head(picked, "갈륨 동전만")} 갈륨 동전만 <b>녹아 흘렀어요</b>. 같은 손 위인데 철 동전은 왜 그대로일까요?`));
+  bet(c, "손바닥 위에 갈륨 동전과 철 동전을 나란히 올렸어요. 잠시 그대로 두면 어떻게 될까요?", ["갈륨 동전만 녹는다", "둘 다 따뜻해지기만 한다", "둘 다 녹는다"], "버튼을 <b>꾹 눌러</b> 체온으로 데워 보세요.", (picked) => {
+    hold(c, ctlBtn(c, "꾹 눌러 체온으로 데우기"), 3200, paint, () => wrap(c, `${head(picked, "갈륨 동전만")} 갈륨 동전만 체온에 <b>녹아내렸어요</b>. 같은 손바닥 위인데 왜 철 동전은 그대로일까요?`));
   });
 }
 
@@ -129,13 +130,13 @@ export function gallium(c: OpenerCtx): void {
 export function milk(c: OpenerCtx): void {
   layer(c, "milkBase");
   bet(c, "컵에 담긴 우유는 어디를 봐도 하얘요. 아주 크게 확대해 보면?", ["여러 가지 알갱이가 보인다", "어디나 똑같이 하얗다"], "버튼을 눌러 <b>확대</b>해 보세요.", (picked) => {
-    const b = ctlBtn(c, "우유를 확대해 보기");
+    const b = ctlBtn(c, "우유 크게 확대하기");
     b.addEventListener("click", () => {
       b.disabled = true;
       haptic(HAPTIC.tap);
       c.stage.classList.add("zoom");
       c.step.dataset.opnN = "1";
-      c.later(() => wrap(c, `${head(picked, "여러 가지")} 물속에 <b>기름방울</b>과 작은 알갱이가 떠 있어요. 우유는 물질 하나가 아니었네요.`), 900);
+      c.later(() => wrap(c, `${head(picked, "여러 가지")} 물속에 <b>지방 알갱이</b>와 단백질 입자가 섞여 떠 있어요. 우유는 한 가지 물질이 아니었네요.`), 900);
     });
   });
 }
@@ -167,7 +168,7 @@ export function syrup(c: OpenerCtx): void {
   };
   paint(0);
   bet(c, "뜨거운 물에 설탕을 듬뿍 녹여 만든 투명한 시럽이에요. 냉장고에 오래 두면?", ["바닥에 흰 알갱이가 생긴다", "투명한 그대로다", "전체가 하얗게 흐려진다"], "버튼을 <b>꾹 눌러</b> 냉장고에 넣어 두세요.", (picked) => {
-    hold(c, ctlBtn(c, "꾹 눌러 냉장고에 두기"), 3000, paint, () => wrap(c, `${head(picked, "바닥에")} 아무것도 넣지 않았는데 <b>흰 알갱이</b>가 생겼어요. 이 알갱이는 어디에서 왔을까요?`));
+    hold(c, ctlBtn(c, "꾹 눌러 차갑게 식히기"), 3000, paint, () => wrap(c, `${head(picked, "바닥에")} 아무것도 더 넣지 않았는데 바닥에 <b>하얀 설탕 알갱이</b>가 생겼어요. 이 알갱이는 어디에서 나왔을까요?`));
   });
 }
 
@@ -179,7 +180,7 @@ export function pot(c: OpenerCtx): void {
     c.stage.classList.toggle("s2", p > 0.45);
     c.stage.classList.toggle("s3", p > 0.75);
   };
-  bet(c, "짠 바닷물을 끓이면서 기울인 뚜껑에 맺힌 물방울을 컵에 모을 거예요. 컵의 물맛은?", ["짜지 않다", "바닷물만큼 짜다", "바닷물보다 더 짜다"], "버튼을 <b>꾹 눌러</b> 바닷물을 끓여 보세요.", (picked) => {
+  bet(c, "짭짤한 바닷물을 끓여서 냄비 뚜껑에 맺힌 물방울을 컵에 모았어요. 이 물은 어떤 맛이 날까요?", ["짜지 않다", "바닷물만큼 짜다", "바닷물보다 더 짜다"], "버튼을 <b>꾹 눌러</b> 바닷물을 끓여 보세요.", (picked) => {
     c.stage.classList.add("fire");
     hold(c, ctlBtn(c, "꾹 눌러 끓이기"), 3400, paint, () => wrap(c, `${head(picked, "짜지 않다")} 컵에 모인 물은 <b>짜지 않아요</b>. 소금은 어디에 남았고, 물만 어떻게 건너왔을까요?`));
   });

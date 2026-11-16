@@ -35,8 +35,8 @@ const starTempLab = lab("g2u8StarTempLab");
 
 // ══ 1. 별까지의 거리 ══
 export const L1: Step[] = numbered([
-  opener({ title: "걸어가며 보면 나무는 어디로 옮겨 갈까요?", scene: "g2u8-tree", wait: "오른쪽으로 걸어가 보세요", cta: "실험실 열기" }),
-  pencilLab({ title: "팔을 펴면 연필은 몇 칸 옮겨 갈까요?", cta: "이름 붙이기" }),
+  opener({ title: "오른쪽으로 걸어가며 보면 나무는 어느 쪽으로 옮겨 보일까요?", scene: "g2u8-tree", wait: "오른쪽으로 걸어가며 나무의 위치를 보세요", cta: "실험실 열기" }),
+  pencilLab({ title: "팔을 펴면 연필 끝은 칠판에서 몇 칸 옮겨 보일까요?", cta: "용어 알아보기" }),
   words({
     title: "시차,<br>보는 자리가 바뀌면 옮겨 보여요",
     lead: "왼쪽 눈과 오른쪽 눈으로 번갈아 보자 연필이 칠판 앞에서 옮겨 갔어요. 이 옮겨 간 정도에 이름을 붙여요.",
@@ -48,8 +48,8 @@ export const L1: Step[] = numbered([
     ],
     cta: "별에 써 보기",
   }),
-  orbitLab({ title: "지구가 돌면 별은 어디에 보일까요?", cta: "별을 멀리 보내기" }),
-  parallaxLab({ title: "별이 멀어지면 시차는 어떻게 될까요?", cta: "이름 붙이기" }),
+  orbitLab({ title: "지구가 공전하면 가까운 별은 밤하늘 어디에 보일까요?", cta: "별의 거리를 바꿔 실험하기" }),
+  parallaxLab({ title: "별까지의 거리가 멀어지면 시차는 어떻게 변할까요?", cta: "용어 알아보기" }),
   words({
     title: "연주 시차,<br>별까지의 거리를 알려 줘요",
     lead: "지구가 6개월 동안 태양의 반대쪽으로 옮겨 가자 가까운 별 S가 배경 별들 사이에서 옮겨 보였고, 별이 멀수록 덜 옮겨 보였어요. 이 관측에 쓰는 말을 정리해요.",
@@ -62,7 +62,7 @@ export const L1: Step[] = numbered([
     ],
     cta: "연주 시차 재 보기",
   }),
-  parsecLab({ title: "연주 시차로 거리를 알 수 있을까요?", cta: "정리하기" }),
+  parsecLab({ title: "연주 시차를 재면 별까지의 거리를 어떻게 알 수 있을까요?", cta: "핵심 정리하기" }),
   recap({
     title: "별까지의 거리,<br>카드 석 장으로 정리",
     narrator: "두 눈으로 본 연필에서 시작해 6개월 간격으로 본 별까지 왔어요. <b>옮겨 보이는 정도로 거리를 아는 법</b>을 정리해요.",
@@ -133,9 +133,9 @@ export const L1: Step[] = numbered([
 
 // ══ 2. 별의 밝기와 거리 ══
 export const L2: Step[] = numbered([
-  opener({ title: "먼 가로등은 어떻게 보일까요?", scene: "g2u8-lamps", wait: "가로등을 켜 보세요", cta: "실험실 열기" }),
-  luxLab({ title: "멀어지면 밝기는 얼마나 줄까요?", cta: "빛이 퍼지는 모습 보기" }),
-  spreadLab({ title: "멀어지면 빛은 몇 칸에 퍼질까요?", cta: "이름 붙이기" }),
+  opener({ title: "멀리 있는 가로등의 밝기는 어떻게 보일까요?", scene: "g2u8-lamps", wait: "밤길의 가로등을 켜 보세요", cta: "실험실 열기" }),
+  luxLab({ title: "전등에서 멀어지면 밝기는 어떻게 변할까요?", cta: "빛이 퍼지는 까닭 알아보기" }),
+  spreadLab({ title: "거리가 멀어지면 별빛은 몇 칸으로 퍼질까요?", cta: "용어 알아보기" }),
   words({
     title: "별의 밝기,<br>거리의 제곱에 반비례해요",
     lead: "전등에서 2배 멀어지자 밝기가 4분의 1이 됐고, 빛은 4칸에 나뉘어 퍼졌어요. 이 규칙을 말로 정리해요.",
@@ -202,8 +202,8 @@ export const L2: Step[] = numbered([
 
 // ══ 3. 별의 등급 ══
 export const L3: Step[] = numbered([
-  opener({ title: "가장 밝은 별은 몇 등성일까요?", scene: "g2u8-rank", wait: "별을 줄 세워 보세요", cta: "관측소 열기" }),
-  magLab({ title: "밝은 별의 등급은 클까요, 작을까요?", cta: "이름 붙이기" }),
+  opener({ title: "밤하늘에서 가장 밝게 보이는 별은 몇 등성일까요?", scene: "g2u8-rank", wait: "밝은 별부터 차례로 줄 세워 보세요", cta: "관측소 열기" }),
+  magLab({ title: "별이 밝을수록 등급 숫자는 클까요, 작을까요?", cta: "용어 알아보기" }),
   words({
     title: "겉보기 등급,<br>눈에 보이는 밝기의 숫자",
     lead: "가장 밝은 별부터 1등성, 2등성 하고 이름을 붙였고, 등급 하나마다 밝기가 약 2.5배씩 달랐어요. 이 숫자의 이름을 정리해요.",
@@ -215,7 +215,7 @@ export const L3: Step[] = numbered([
     ],
     cta: "실제 밝기 비교하기",
   }),
-  absLab({ title: "같은 거리에서는 어느 별이 밝을까요?", cta: "이름 붙이기" }),
+  absLab({ title: "세 별을 같은 거리(10 pc)에 놓으면 어느 별이 가장 밝을까요?", cta: "용어 알아보기" }),
   words({
     title: "절대 등급,<br>같은 거리에 놓고 견줘요",
     lead: "세 별을 모두 10 pc 자리로 옮기자 밝기의 차례가 뒤집혔어요. 같은 거리에 놓고 매긴 등급에 이름을 붙여요.",
@@ -302,8 +302,8 @@ export const L3: Step[] = numbered([
 // ══ 4. 별의 색과 표면 온도 ══
 export const L4: Step[] = numbered([
   opener({ title: "막 나온 용암과 멀리 간 용암, 색이 같을까요?", scene: "g2u8-lava", wait: "용암을 흘려보내 보세요", cta: "실험실 열기" }),
-  heaterLab({ title: "뜨거워지면 니크롬선의 색은?", cta: "별의 색 맞추기" }),
-  starTempLab({ title: "별의 색은 무엇이 정할까요?", cta: "이름 붙이기" }),
+  heaterLab({ title: "온도가 높아지면 니크롬선의 색은 어떻게 변할까요?", cta: "별의 색과 온도 비교하기" }),
+  starTempLab({ title: "별의 색깔은 무엇에 따라 달라질까요?", cta: "용어 알아보기" }),
   words({
     title: "별의 색,<br>표면 온도가 정해요",
     lead: "니크롬선은 뜨거워질수록 검붉은색에서 노란색으로 변했고, 별은 온도를 올릴수록 붉은색에서 흰색으로 변했어요. 정리해 볼까요?",

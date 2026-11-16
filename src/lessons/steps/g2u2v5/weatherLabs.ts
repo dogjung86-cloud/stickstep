@@ -153,7 +153,7 @@ export const g2u2FrostLab: StepRenderer = (host, step, api) => {
   gPredict(lab, "틈에 스며든 물이 <b>얼면</b> 틈은 어떻게 될까요?", ["넓어진다", "좁아진다", "달라지지 않는다"], (picked) => {
     pred = picked;
     f.slot.setControls(rain, gRow(freeze, melt));
-    f.say("<b>비</b>를 내리고, 밤에는 <b>얼리고</b>, 낮에는 <b>녹여</b> 보세요. 차례는 직접 정해요.");
+    f.say("<b>비</b>를 내려 틈에 물을 채운 뒤, 밤에 <b>얼리고</b> 낮에 <b>녹이는</b> 과정을 반복해 보세요.");
     api.setCTA("바위가 쪼개질 때까지 해 보세요", { enabled: false });
     hintNow();
   });
@@ -223,7 +223,7 @@ export const g2u2SoilLab: StepRenderer = (host, step, api) => {
     f.stage.classList.toggle("green", S.a > 20);
     const row = (key: string, y0: number, h: number, name: string): string => (h < 14 ? "" : `<path d="M${X + W + 4} ${(y0 + h / 2).toFixed(1)} h10" stroke="${G.line}" stroke-width="1.4"/>${label(X + W + 18, y0 + h / 2 + 4, name, { anchor: "start", size: 12.5 })}${born[key] !== undefined ? `<circle cx="${X + W + 176}" cy="${(y0 + h / 2).toFixed(1)}" r="9" fill="${G.gold}"/>${label(X + W + 176, y0 + h / 2 + 4.5, String(born[key] + 1), { size: 12.5, fill: "#3A2A00" })}` : ""}`);
     tags.innerHTML = row("a", ya, S.a, "식물이 자랄 수 있는 층") + row("b", yb, S.b, "진흙 등이 쌓인 층") + row("c", yc, S.c, "암석 조각과 모래 층") + row("d", yd, BOT - yd, "풍화를 받지 않은 암석")
-      + label(340, 22, "생긴 차례", { anchor: "end", size: 12, fill: G.dim, weight: 600 });
+      + label(340, 22, "생성 순서", { anchor: "end", size: 12, fill: G.dim, weight: 600 });
     host.dataset.g2Soil = String(stage);
   };
   const fail = (t: string): void => {
@@ -231,7 +231,7 @@ export const g2u2SoilLab: StepRenderer = (host, step, api) => {
     host.dataset.g2Miss = String(Number(host.dataset.g2Miss ?? 0) + 1);
     f.say(t);
   };
-  const weather = gPick("weather", "풍화가 계속되게 두기", "오랜 시간이 흐른다"), rainP = gPick("rain", "비 내리기", "빗물이 땅속으로 스며든다");
+  const weather = gPick("weather", "오랫동안 풍화시키기", "오랜 시간이 흐른다"), rainP = gPick("rain", "비 내리기", "빗물이 땅속으로 스며든다");
   const hintNow = (): void => lab.hint(stage < 2 ? "weather" : "rain");
   weather.el.addEventListener("click", () => {
     if (busy || lab.finished() || stage >= 3) return;
@@ -270,7 +270,7 @@ export const g2u2SoilLab: StepRenderer = (host, step, api) => {
       stage = 3; busy = false; f.pips(2);
       haptic(HAPTIC.correct);
       f.say("빗물에 녹은 물질과 진흙이 물과 함께 밑으로 옮겨져 겉흙 아래에 <b>새 층</b>으로 쌓였어요. 번호를 보고 답해 보세요.");
-      tm.later(() => lab.ask("네 층 가운데 <b>가장 나중에</b> 만들어진 층은?", ["위에서 둘째 층", "맨 위의 층", "맨 아래의 암석"], "빗물에 녹은 물질과 진흙이 <b>겉흙 아래</b>로 내려가 쌓였어요.", () =>
+      tm.later(() => lab.ask("토양의 층 가운데 <b>가장 마지막에</b> 만들어진 층은 어디인가요?", ["위에서 두 번째 층(진흙 등이 쌓인 층)", "맨 위층(식물이 자랄 수 있는 층)", "맨 아래층(풍화를 받지 않은 암석)"], "빗물에 녹은 물질과 진흙이 <b>겉흙 아래</b>로 내려가 쌓였어요.", () =>
         lab.finish("토양은 암석이 오랫동안 풍화되어 만들어져요. 암석 조각과 모래 층, 식물이 자랄 수 있는 층이 차례로 생기고, 마지막에 그 사이에 진흙 등이 쌓인 층이 생겨요. <b>생긴 차례와 쌓여 있는 차례는 달라요</b>."),
       ), 1100);
     });

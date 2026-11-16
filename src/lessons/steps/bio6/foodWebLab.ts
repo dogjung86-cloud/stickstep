@@ -1,4 +1,4 @@
-// [중1 Ⅱ v5] u2l10 foodWebLab: 「생물 하나를 빼면 어떻게 될까?」
+// [중1 Ⅱ v5] u2l10 foodWebLab: 「생태계에서 생물 한 종류가 사라지면 어떻게 될까?」
 // 한 통찰: 생물다양성이 높은 생태계는 한 생물이 사라져도 대신할 생물이 있어 안정적으로 유지된다.
 // 무대: 먹이 관계 두 그림을 나란히 놓는다. 화살표는 먹히는 생물에서 먹는 생물 쪽을 가리킨다.
 //   (가) 생물 4종류: 벼 → 메뚜기 → 개구리 → 매 (외길)
@@ -37,9 +37,14 @@ function stageSvg(): string {
 type Key = "frog" | "hopper" | "rice";
 const KEYS: Key[] = ["frog", "hopper", "rice"];
 const SAY_ON: Record<Key, string> = {
-  frog: "(가)의 매는 먹이가 개구리뿐이라 <b>위험해요</b>. (나)의 매는 참새와 뱀을 먹으며 버텨요.",
-  hopper: "(가)는 개구리와 매까지 <b>잇달아 위험해요</b>. (나)의 개구리는 배추흰나비를 먹으며 버텨요.",
-  rice: "(가)는 벼가 사라지자 <b>모두 위험해요</b>. (나)에는 배추와 옥수수가 남아 있어요.",
+  frog: "(가) 생태계의 매는 먹이인 개구리가 사라지자 먹을 것이 없어 <b>위험해졌어요</b>. 반면 (나)의 매는 참새와 뱀을 먹으며 살아남아요.",
+  hopper: "(가) 생태계는 메뚜기가 사라지자 개구리와 매까지 <b>연달아 위험해졌어요</b>. 반면 (나)의 개구리는 배추흰나비를 먹으며 살아남아요.",
+  rice: "(가) 생태계는 벼가 사라지자 모든 생물이 <b>위험해졌어요</b>. 반면 (나)에는 배추와 옥수수가 남아 있어 생태계가 유지돼요.",
+};
+/** 낱말 뒤의 주격 조사(받침이 있으면 "이", 없으면 "가"). */
+const iga = (w: string): string => {
+  const c = w.charCodeAt(w.length - 1) - 0xac00;
+  return c >= 0 && c < 11172 && c % 28 !== 0 ? "이" : "가";
 };
 const ic = (bg: string, body: string): string => `<svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="34" height="34" rx="10" fill="${bg}"/>${body}</svg>`;
 const ICON: Record<Key, string> = {
@@ -51,7 +56,8 @@ const ICON: Record<Key, string> = {
 export const foodWebLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as FwbStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 4, cls: "fwb-stage", qCls: "fwb-q", api });
+  // 세 줄 도움말을 처음부터 잡아 둔다(생물을 뺐을 때의 글이 세 줄이다. 랩 도중에 무대가 밀리지 않게)
+  const f = bvFrame(host, { title: s.title, steps: 4, cls: "fwb-stage", qCls: "fwb-q", api, tall: true });
   f.stage.innerHTML = stageSvg();
   const svg = f.stage.querySelector("svg") as SVGSVGElement;
 
@@ -63,9 +69,9 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
 
   const cards = {} as Record<Key, BvCard>;
   KEYS.forEach((k) => {
-    cards[k] = bvCard("fwb-card col", { name: `${NAME[k]} 빼기`, sub: "두 생태계에서", icon: ICON[k], key: k });
+    cards[k] = bvCard("fwb-card col", { name: `${NAME[k]} 빼 보기`, sub: "두 생태계에서 제거", icon: ICON[k], key: k });
   });
-  const cmpBtn = bvBtn("main fwb-cmp", "두 생태계 비교하기");
+  const cmpBtn = bvBtn("main fwb-cmp", "두 생태계 비교해 정리하기");
   cmpBtn.hidden = true;
 
   const webEl = (w: "A" | "B"): SVGGElement => svg.querySelector(`.fwb-web[data-w="${w}"]`) as SVGGElement;
@@ -104,7 +110,7 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
       host.dataset[w === "A" ? "fwbRiskA" : "fwbRiskB"] = String(n);
       const show = (): void => {
         if (mine !== run) return;
-        (res.querySelector("text") as SVGTextElement).textContent = n ? `위험 ${n}` : w === "B" ? "모두 버텨요" : "위험 0";
+        (res.querySelector("text") as SVGTextElement).textContent = n ? `위험 ${n}` : w === "B" ? "모두 안전해요" : "위험 0";
         res.classList.add("show", n ? "bad" : "good");
       };
       if (instant) show();
@@ -112,7 +118,7 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
     });
     KEYS.forEach((x) => {
       cards[x].on(x === k);
-      cards[x].sub(x === k ? "누르면 되돌리기" : "두 생태계에서");
+      cards[x].sub(x === k ? "다시 누르면 복원" : "두 생태계에서 제거");
     });
     host.dataset.fwbOff = k ?? "";
     host.dataset.fwbTried = KEYS.filter((x) => tried.has(x)).join(",");
@@ -122,7 +128,7 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
   function toggle(k: Key): void {
     if (off === k) {
       apply(null);
-      f.say(`${NAME[k]}가 돌아왔어요. 이번에는 <b>다른 생물</b>을 빼 보세요.`);
+      f.say(`${NAME[k]}${iga(NAME[k])} 생태계로 돌아왔어요. 이번에는 아래에서 <b>다른 생물</b>도 빼 보세요.`);
       return;
     }
     apply(k);
@@ -146,10 +152,10 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     if (!predicted) {
       predicted = true;
-      f.say("빼기 전에 먼저 짐작해 봐요. 결과는 바로 그림에서 확인할 수 있어요.");
+      f.say("생물을 빼기 전에 먼저 결과를 예측해 볼까요?");
       f.slot.ask(
-        `${NAME[k]}가 사라지면 어느 생태계가 더 크게 흔들릴까요?`,
-        [{ t: "(가) 생태계", ok: true }, { t: "(나) 생태계" }, { t: "둘 다 똑같이" }],
+        `만약 두 생태계에서 <b>${NAME[k]}</b>${iga(NAME[k])} 갑자기 사라지면 어느 생태계가 더 큰 타격을 입을까요?`,
+        [{ t: "생물 종류가 적은 (가) 생태계", ok: true }, { t: "생물 종류가 많은 (나) 생태계" }, { t: "두 생태계 모두 비슷하게 흔들린다" }],
         () => undefined,
         {
           predict: true,
@@ -170,12 +176,12 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     phase = "ask";
     apply("frog", true);
-    f.say("개구리를 뺀 두 생태계예요. 맨 위의 <b>매</b>를 비교해 봐요.");
+    f.say("개구리가 사라진 두 생태계의 모습이에요. 맨 위에 있는 <b>매</b>의 상태를 비교해 보세요.");
     f.slot.ask(
-      "(나)의 매는 개구리가 사라져도 버텼어요. 까닭은?",
-      [{ t: "대신 먹을 생물이 있어서", ok: true }, { t: "(나)의 매가 힘이 더 세서" }, { t: "(나)에 사는 생물의 마릿수가 많아서" }],
+      "(가)의 매는 위험해졌지만, (나)의 매는 개구리가 사라져도 무사히 살아남았어요. 그 까닭은 무엇인가요?",
+      [{ t: "개구리 대신 먹을 수 있는 다른 먹이 생물이 있어서", ok: true }, { t: "(나) 생태계에 사는 매의 힘이 더 세서" }, { t: "(나) 생태계에 사는 개구리의 마릿수가 더 많아서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "(나)의 매는 <b>참새와 뱀</b>도 먹어요. 한 갈래가 끊겨도 다른 갈래가 남아요.", onNext: finish },
+      { why: "생물다양성이 높은 (나)의 매는 개구리 말고도 <b>참새와 뱀</b>을 먹을 수 있어요. 먹이 그물의 한 갈래가 끊어져도 다른 갈래가 남아 생태계가 유지돼요.", onNext: finish },
     );
   });
 
@@ -183,15 +189,15 @@ export const foodWebLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.fwbPhase = phase;
     f.pips(4);
-    f.say("두 생태계가 버티는 힘이 달랐어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("생물다양성이 높은 생태계는 한 생물이 사라져도 <b>대신할 생물</b>이 있어 안정적으로 유지돼요.");
+    f.say("생물의 종류가 다양해 먹이 그물이 복잡할수록 생물 한 종류가 사라져도 생태계가 쉽게 무너지지 않아요!");
+    f.slot.conclude("생물다양성이 낮은 생태계는 한 생물이 사라지면 연쇄적으로 흔들리지만, <b>생물다양성이 높은 생태계</b>는 먹이 그물이 복잡하여 어느 한 생물이 사라져도 <b>대신할 다른 생물</b>이 있기 때문에 안정적으로 유지돼요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
   f.slot.setControls(bvCards(3, ...KEYS.map((k) => cards[k])), cmpBtn);
   apply(null);
-  f.say("화살표는 먹이에서 먹는 생물 쪽을 가리켜요. 아래에서 <b>생물 하나를 빼</b> 보세요.");
-  api.setCTA("세 생물을 하나씩 빼 보세요", { enabled: false });
+  f.say("화살표는 먹히는 생물(먹이)에서 먹는 생물 쪽을 가리켜요. 아래 카드를 눌러 두 생태계에서 <b>생물을 한 종류씩 빼</b> 보세요.");
+  api.setCTA("세 종류의 생물을 모두 하나씩 빼 보세요", { enabled: false });
   return () => tm.clear();
 };

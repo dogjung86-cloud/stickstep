@@ -92,13 +92,13 @@ export const u7LunarLab: StepRenderer = (host, step, api) => {
   f.stage.append(pill, inset);
 
   const goalsUi = u7Goals(1, [
-    { id: "in", name: "달의 일부를 그림자 속으로", sub: "어느 쪽부터 가려질까요" },
-    { id: "total", name: "달 전체를 그림자 속으로", sub: "달을 더 움직여 봐요" },
-    { id: "out", name: "달이 그림자에서 나올 때", sub: "어느 쪽부터 밝아질까요" },
+    { id: "in", name: "달의 일부가 그림자에 들어갈 때", sub: "어느 쪽부터 가려질까요?" },
+    { id: "total", name: "달 전체가 그림자에 들어갈 때", sub: "달을 화살표 쪽으로 더 끌어 보세요" },
+    { id: "out", name: "달이 그림자에서 빠져나올 때", sub: "어느 쪽부터 밝아질까요?" },
   ]);
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "달을 화살표 방향으로 끝까지 움직여요" }), goalsUi.el);
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "달을 화살표 방향으로 아래에서 위까지 천천히 끌어 보세요" }), goalsUi.el);
   f.pips(1);
-  api.setCTA("먼저 예상해 봐요", { enabled: false });
+  api.setCTA("먼저 가려지는 방향을 예상해 보세요", { enabled: false });
   host.dataset.u7Found = "0";
 
   let moon = MOON_MAX; // 양수면 아직 그림자에 들기 전(무대의 아래쪽)
@@ -118,20 +118,21 @@ export const u7LunarLab: StepRenderer = (host, step, api) => {
     ish.setAttribute("r", (st.w * K).toFixed(2));
     red.setAttribute("opacity", st.kind === "total" ? "1" : "0");
     const side = st.h > 0 ? "왼쪽" : "오른쪽";
-    pill.textContent = st.kind === "total" ? "개기월식, 붉은 달" : st.kind === "partial" ? `부분월식, ${side}이 가려졌어요` : "가려지지 않았어요";
+    // 가려지지 않은 때는 그림자에 들기 전과 빠져나온 뒤 둘 다라 "아직"을 붙이지 않는다
+    pill.textContent = st.kind === "total" ? "개기월식 (검붉게 보이는 달)" : st.kind === "partial" ? `부분월식 (달의 ${side}이 가려짐)` : "가려지지 않았어요";
     host.dataset.u7Kind = st.kind;
     if (phase !== "play") return;
-    if (st.kind === "partial" && moon > 0 && goalsUi.done("in", "왼쪽부터 가려져요. 부분월식")) {
+    if (st.kind === "partial" && moon > 0 && goalsUi.done("in", "왼쪽부터 가려지는 부분월식")) {
       mark();
-      f.say(`${guess === "왼쪽부터" ? "예상대로" : "예상과 달리"} 달의 <b>왼쪽</b>부터 가려져요. <b>부분월식</b>이에요.`);
+      f.say(`${guess === "왼쪽부터" ? "예상대로" : "예상과 달리"} 달의 <b>왼쪽</b>부터 지구 그림자에 가려지는 <b>부분월식</b>이에요! 달을 더 끌어 보세요.`);
     }
-    if (st.kind === "total" && goalsUi.done("total", "붉게 보여요. 개기월식")) {
+    if (st.kind === "total" && goalsUi.done("total", "달이 검붉게 보이는 개기월식")) {
       mark();
-      f.say("달 <b>전체</b>가 그림자에 들어가 붉게 보여요. <b>개기월식</b>이에요.");
+      f.say("달 <b>전체</b>가 지구 그림자 속에 들어가 검붉게 보이는 <b>개기월식</b>이에요! 화살표 끝까지 더 끌어 보세요.");
     }
     if (st.kind === "partial" && moon < 0 && goalsUi.has("total") && goalsUi.done("out", "왼쪽부터 다시 밝아져요")) {
       mark();
-      f.say("달이 그림자를 빠져나오며 <b>왼쪽</b>부터 다시 밝아져요.");
+      f.say("달이 그림자 밖으로 빠져나오면서 먼저 가려졌던 <b>왼쪽</b>부터 다시 밝아져요!");
     }
   }
 
@@ -145,8 +146,8 @@ export const u7LunarLab: StepRenderer = (host, step, api) => {
     phase = "play";
     host.dataset.u7Phase = "play";
     f.slot.showControls();
-    api.setCTA("달을 끝까지 움직여요", { enabled: false });
-    f.say("<b>달</b>을 화살표 방향으로 천천히 끌어요. 오른쪽 위 창이 지구에서 본 달이에요.");
+    api.setCTA("달을 화살표 끝까지 움직여 보세요", { enabled: false });
+    f.say("<b>달</b>을 화살표 방향으로 천천히 끌어 올려 보세요. 오른쪽 위 창에서 지구에서 본 달 모습을 확인할 수 있어요.");
   }
 
   function askWhere(): void {
@@ -161,12 +162,12 @@ export const u7LunarLab: StepRenderer = (host, step, api) => {
     });
     people.setAttribute("opacity", "1");
     svg.querySelector(".u7x-lu-shname")?.setAttribute("opacity", "0"); // 두 사람의 눈길과 겹치지 않게 이름표를 걷는다
-    f.say("밤인 곳에 선 <b>가</b>와 <b>나</b>가 같은 달을 올려다보고 있어요.");
+    f.say("지구의 밤 지역에 서 있는 <b>가</b>와 <b>나</b>가 그림자 속에 들어간 달을 올려다보고 있어요.");
     f.slot.ask(
-      "<b>개기월식</b>이 일어나는 동안 이 달을 볼 수 있는 곳은 어디일까요?",
-      [{ t: "달이 뜬 밤인 곳 어디서나", ok: true }, { t: "그림자가 닿은 좁은 곳만" }, { t: "낮인 곳 어디서나" }],
+      "<b>개기월식</b>이 일어날 때 지구에서 이 모습을 관측할 수 있는 지역은 어디일까요?",
+      [{ t: "달이 떠 있는 밤 지역 어디서나", ok: true }, { t: "달의 그림자가 닿는 좁은 지역만" }, { t: "태양이 떠 있는 낮 지역 어디서나" }],
       (ok) => api.recordQuiz(ok),
-      { why: "달 자체가 어두워져서 달이 보이는 곳 어디서나 똑같이 보여요.", onNext: conclude },
+      { why: "월식은 달 자체가 지구 그림자 속에 들어가 어두워지는 현상이므로, 밤이 되어 달이 보이는 지역 어디서나 관측할 수 있어요.", onNext: conclude },
     );
   }
 
@@ -174,8 +175,8 @@ export const u7LunarLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("달을 다시 움직이며 확인해도 좋아요. 왼쪽, 오른쪽은 우리나라(북반구)에서 볼 때예요.");
-    f.slot.conclude("달이 <b>지구의 그림자</b>에 일부만 들면 <b>부분월식</b>, 전부 들면 <b>개기월식</b>이에요. 달은 왼쪽부터 가려지고, 밤인 곳 어디서나 볼 수 있어요.");
+    f.say("달을 다시 움직이며 확인해 보세요. 왼쪽과 오른쪽은 우리나라(북반구)에서 밤하늘의 달을 바라볼 때의 방향이에요.");
+    f.slot.conclude("달이 <b>지구의 그림자</b> 속에 일부만 들어가면 <b>부분월식</b>, 전체가 들어가면 <b>개기월식</b>이 일어나요. 우리나라에서는 달의 <b>왼쪽부터</b> 가려지며, 밤이 된 지역 어디서나 관측할 수 있어요.");
     api.enableCTA(doneCta);
   }
 
@@ -210,9 +211,9 @@ export const u7LunarLab: StepRenderer = (host, step, api) => {
 
   paint();
   host.dataset.u7Phase = "predict";
-  f.say("달이 <b>화살표 방향</b>으로 돌아 지구의 그림자로 들어가요. 먼저 예상해 봐요.");
+  f.say("보름달이 <b>화살표 방향</b>으로 공전하며 지구의 그림자 속으로 들어가요. 먼저 결과를 예상해 볼까요?");
   f.slot.ask(
-    "지구에서 볼 때 달은 <b>어느 쪽부터</b> 가려질까요?",
+    "지구(우리나라)에서 밤하늘의 달을 바라볼 때, 달은 <b>어느 쪽부터</b> 가려지기 시작할까요?",
     [{ t: "왼쪽부터" }, { t: "오른쪽부터" }, { t: "위쪽부터" }],
     () => undefined,
     { predict: true, onNext: play },

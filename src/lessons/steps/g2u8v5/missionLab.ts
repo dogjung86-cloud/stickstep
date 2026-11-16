@@ -14,11 +14,11 @@ import { bvCard, bvCards, bvTimers } from "../bio6/b6Lab";
 import { S, sBox, sCanvas, sDisk, sFrame, sLine, starPhoto, sText, type LabStep } from "./kit";
 
 const M = [
-  { k: "sp", name: "스푸트니크 1호", year: 1957, zone: 0, file: "sputnik.webp", what: "최초의 인공위성이 지구 둘레를 돌았어요.", alt: "공 모양 몸통에 안테나가 달린 인공위성" },
-  { k: "ap", name: "아폴로 11호", year: 1969, zone: 1, file: "apollo11.webp", what: "사람이 처음으로 달에 내렸어요.", alt: "달 표면에 선 우주 비행사" },
-  { k: "hb", name: "허블 우주 망원경", year: 1990, zone: 0, file: "hubble-telescope.webp", what: "지구 둘레를 돌며 먼 우주를 찍어요.", alt: "지구 위에 떠 있는 원통 모양 망원경" },
-  { k: "is", name: "국제 우주 정거장", year: 1998, zone: 0, file: "iss.webp", what: "사람이 머물며 실험하는 곳을 짓기 시작했어요.", alt: "태양 전지판을 펼친 우주 정거장" },
-  { k: "nh", name: "뉴호라이즌스호", year: 2015, zone: 2, file: "pluto.webp", what: "태양계 바깥쪽의 명왕성 곁을 지나며 사진을 찍었어요.", alt: "탐사선이 찍은 명왕성" },
+  { k: "sp", name: "스푸트니크 1호", year: 1957, zone: 0, file: "sputnik.webp", what: "인류 최초의 인공위성으로 지구 궤도를 돌며 전파를 보냈어요.", alt: "공 모양 몸통에 안테나가 달린 인공위성" },
+  { k: "ap", name: "아폴로 11호", year: 1969, zone: 1, file: "apollo11.webp", what: "인류 최초로 우주 비행사가 달 표면에 착륙했어요.", alt: "달 표면에 선 우주 비행사" },
+  { k: "hb", name: "허블 우주 망원경", year: 1990, zone: 0, file: "hubble-telescope.webp", what: "지구 둘레를 돌며 대기의 방해 없이 선명한 우주 사진을 찍어요.", alt: "지구 위에 떠 있는 원통 모양 망원경" },
+  { k: "is", name: "국제 우주 정거장", year: 1998, zone: 0, file: "iss.webp", what: "우주 비행사가 오래 머물며 과학 실험을 하는 우주 정거장이에요.", alt: "태양 전지판을 펼친 우주 정거장" },
+  { k: "nh", name: "뉴호라이즌스호", year: 2015, zone: 2, file: "pluto.webp", what: "무인 탐사선이 태양계 바깥쪽의 명왕성 가까이 날아가 표면 사진을 찍었어요.", alt: "탐사선이 찍은 명왕성" },
 ];
 const ZONES = ["지구 둘레", "달", "명왕성"];
 const DIST = ["약 400 km", "약 38만 km", "약 50억 km"];
@@ -68,7 +68,7 @@ export const missionLab: StepRenderer = (host, step, api) => {
   let cur = -1;
   let fly = 1; // 날아간 정도 0~1
   let finished = false;
-  const cards = M.map((m) => bvCard("g2u8x-c", { name: m.name, sub: "아직 보내지 않았어요", key: m.k }));
+  const cards = M.map((m) => bvCard("g2u8x-c", { name: m.name, sub: "눌러서 탐사 기록 보기", key: m.k }));
   f.slot.setControls(bvCards(2, ...cards));
 
   cards.forEach((c, i) =>
@@ -95,16 +95,16 @@ export const missionLab: StepRenderer = (host, step, api) => {
   );
 
   function askFinal(): void {
-    f.say("연표와 거리를 보고 아래 질문에 답해 보세요.");
+    f.say("1957년 스푸트니크 1호부터 2015년 뉴호라이즌스호까지 다섯 탐사 기록을 모두 살펴보았어요!");
     f.slot.ask(
-      "다섯 탐사 가운데 지구에서 가장 멀리 간 것은?",
+      "살펴본 다섯 가지 우주 탐사 중 지구에서 가장 먼 곳까지 날아간 것은 무엇인가요?",
       [{ t: "뉴호라이즌스호", ok: true }, { t: "아폴로 11호" }, { t: "허블 우주 망원경" }],
       (ok) => api.recordQuiz(ok),
-      { why: "지구 둘레, 달을 지나 <b>명왕성</b>까지 갔어요.", onNext: finish },
+      { why: "허블 우주 망원경은 지구 둘레, 아폴로 11호는 달(약 38만 km), <b>뉴호라이즌스호</b>는 약 50억 km 떨어진 <b>명왕성</b>까지 날아갔어요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("조사 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("인류의 우주 탐사가 지구 궤도에서 시작해 달과 태양계 바깥쪽까지 점점 넓어졌다는 것을 확인했어요!");
     f.slot.conclude("우주 탐사는 1957년 첫 인공위성에서 시작해 <b>달 착륙</b>, 우주 망원경과 우주 정거장을 거쳐 <b>태양계의 바깥쪽</b>까지 넓어졌어요.");
     api.enableCTA(s.cta ?? "다음");
   }

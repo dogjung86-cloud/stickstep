@@ -35,7 +35,8 @@ export const absLab: StepRenderer = (host, step, api) => {
   let busy = false;
   let started = false;
   const log = sLog(stars.map((x) => x.name), 1, true);
-  const btns = stars.map((x) => bvBtn("", `${x.name} 옮기기`));
+  // 세 칸 버튼이라 두 줄이 될 수 있다. '10 pc'는 붙여 둔다(줄 버튼은 낱말 단위로 끊는다: g2u8v5.css .g2u8x-row .bv-btn)
+  const btns = stars.map((x) => bvBtn("", `${x.name} 10\u00a0pc으로`));
   const paint = (): void => btns.forEach((b, i) => (b.disabled = busy || stars[i].moved));
 
   btns.forEach((b, i) =>
@@ -46,7 +47,7 @@ export const absLab: StepRenderer = (host, step, api) => {
       busy = true;
       paint();
       const near = distOf(x) < 10;
-      f.say(`${josa(x.name, "을", "를")} ${distText(distOf(x))} 자리에서 <b>10 pc</b> 자리로 ${near ? "물려" : "당겨"} 놓고 있어요.`);
+      f.say(`원래 ${distText(distOf(x))} 거리에 있던 ${josa(x.name, "을", "를")} 기준 거리인 <b>10 pc</b> 위치로 ${near ? "멀리 옮기고" : "가까이 당겨 오고"} 있어요.`);
       bvTween(tm, 1400, (t) => (x.t = t), () => {
         x.moved = true;
         busy = false;
@@ -55,23 +56,24 @@ export const absLab: StepRenderer = (host, step, api) => {
         const n = stars.filter((v) => v.moved).length;
         f.pips(n);
         paint();
-        f.say(`${josa(x.name, "은", "는")} ${near ? "멀어져서 <b>어두워졌어요</b>" : "가까워져서 <b>밝아졌어요</b>"}. ${mag(x.m)}등급에서 ${mag(x.M)}등급이 됐어요.`);
+        f.say(`${josa(x.name, "은", "는")} 10 pc 위치로 ${near ? "멀어지면서 <b>더 어두워졌어요</b>" : "가까워지면서 <b>훨씬 밝아졌어요</b>"}! 등급이 ${mag(x.m)}등급에서 <b>${mag(x.M)}등급</b>으로 바뀌었어요.`);
         if (n === 3) tm.later(askFinal, 1700);
       });
     }),
   );
 
   function askFinal(): void {
-    f.say("세 별이 모두 10 pc에 섰어요. 이제 <b>데네브</b>가 가장 밝아요. 아래 질문에 답해 보세요.");
+    // 음수 등급은 무대와 같은 마이너스 기호(−)로 적는다
+    f.say("세 별을 모두 10 pc 거리에 나란히 놓자 실제 밝기는 <b>데네브(−8.7등급)</b>가 가장 밝다는 것이 드러났어요!");
     f.slot.ask(
-      "10 pc으로 옮기자 어두워진 시리우스는 원래 어디에 있었나요?",
-      [{ t: "10 pc보다 가까이", ok: true }, { t: "10 pc보다 멀리" }, { t: "딱 10 pc 자리에" }],
+      "10 pc 위치로 옮겼을 때 처음보다 어두워진 시리우스는 원래 어디에 있던 별인가요?",
+      [{ t: "10 pc보다 가까운 곳", ok: true }, { t: "10 pc보다 먼 곳" }, { t: "정확히 10 pc 거리" }],
       (ok) => api.recordQuiz(ok),
-      { why: "약 2.6 pc에서 10 pc으로 <b>멀어져서</b> 어두워졌어요.", onNext: finish },
+      { why: "시리우스는 약 2.6 pc에 있던 가까운 별이라, 10 pc으로 <b>멀어지면서</b> 겉보기 등급(−1.5)보다 절대 등급(1.4)이 커졌어요(어두워졌어요).", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("관측 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("별들을 모두 같은 거리(10 pc)에 놓아야 실제 밝기(절대 등급)를 비교할 수 있다는 것을 확인했어요!");
     f.slot.conclude("별을 모두 <b>같은 거리(10 pc)</b>에 놓고 비교해야 실제 밝기를 알 수 있어요. 가까워서 밝게 보이던 시리우스보다 북극성과 데네브가 실제로는 더 밝아요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -112,8 +114,8 @@ export const absLab: StepRenderer = (host, step, api) => {
   f.say("지구에서 본 세 별이에요. 지금은 가까이 있는 <b>시리우스</b>가 가장 밝게 보여요. 먼저 예측해 보세요.");
   api.setCTA("세 별을 10 pc 자리로 옮겨 보세요", { enabled: false });
   f.slot.ask(
-    "세 별을 모두 같은 거리에 놓아도 시리우스가 가장 밝을까요?",
-    [{ t: "그대로 가장 밝다" }, { t: "다른 별이 더 밝아진다" }, { t: "셋이 똑같아진다" }],
+    "세 별을 모두 같은 거리(10 pc)에 나란히 놓아도 여전히 시리우스가 가장 밝을까요?",
+    [{ t: "시리우스가 그대로 가장 밝다" }, { t: "멀리 있던 다른 별이 더 밝게 보인다" }, { t: "세 별의 밝기가 똑같아진다" }],
     () => undefined,
     {
       predict: true,

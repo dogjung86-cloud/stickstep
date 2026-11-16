@@ -38,7 +38,7 @@ export const magLab: StepRenderer = (host, step, api) => {
   const log = sLog(["5등급 별", "1등급 별"], 2, true);
 
   if (import.meta.env.DEV) f.stage.dataset.stars = JSON.stringify(STARS);
-  f.slot.setControls(sCap("무대의 별을 직접 눌러요. 가장 밝은 별부터 <b>차례로</b> 고르면 1등성, 2등성… 이름이 붙어요."));
+  f.slot.setControls(sCap("밤하늘의 별을 직접 눌러 보세요. 가장 밝은 별부터 <b>차례대로</b> 누르면 1등성부터 6등성까지 이름이 붙어요."));
 
   st.cv.addEventListener("pointerdown", (e) => {
     if (phase !== "name") return;
@@ -51,7 +51,7 @@ export const magLab: StepRenderer = (host, step, api) => {
     if (hit === named) {
       named += 1;
       haptic(HAPTIC.correct);
-      f.say(named < 6 ? `<b>${named}등성</b>이라고 이름 붙였어요. 남은 별 가운데 가장 밝은 별을 눌러요.` : "가장 어두운 별이 <b>6등성</b>이 됐어요. 숫자가 작을수록 밝은 별이에요.");
+      f.say(named < 6 ? `<b>${named}등성</b>을 찾았어요! 이제 남은 별들 중에서 가장 밝은 별을 눌러 보세요.` : "가장 어두운 별까지 <b>6등성</b>으로 모두 분류했어요! 등성(등급)은 숫자가 작을수록 더 밝은 별이에요.");
       if (named === 6) {
         f.pips(1);
         tm.later(toBars, 1500);
@@ -60,7 +60,7 @@ export const magLab: StepRenderer = (host, step, api) => {
       miss = hit;
       missT = 1;
       haptic(HAPTIC.wrong);
-      f.say("그 별보다 <b>더 밝은 별</b>이 아직 남아 있어요. 가장 밝은 별부터 골라요.");
+      f.say("아직 그 별보다 <b>더 밝게 빛나는 별</b>이 남아 있어요. 가장 밝은 별부터 차례로 골라 보세요.");
     }
   });
 
@@ -75,7 +75,7 @@ export const magLab: StepRenderer = (host, step, api) => {
       sel = v;
       if (v === 1) log.set(0, "약 2.5배");
       if (v === 5) log.set(1, "100배");
-      f.say(v === 0 ? "6등급 별을 기준으로 비교해요. 막대를 밀어 등급을 바꿔 보세요." : `<b>${6 - v}등급</b> 별은 6등급 별보다 <b>${RATIO[v]}배</b> 밝아요.`);
+      f.say(v === 0 ? "6등급 별의 밝기(1)를 기준으로 비교해 볼게요. 슬라이더를 밀어 등급을 바꿔 보세요." : `<b>${6 - v}등급</b> 별은 6등급 별보다 <b>${RATIO[v]}배</b> 밝아요(한 등급마다 약 2.5배씩 밝아져요).`);
       if (log.has(0) && log.has(1) && phase === "bars") {
         phase = "end";
         f.pips(2);
@@ -89,20 +89,20 @@ export const magLab: StepRenderer = (host, step, api) => {
   function toBars(): void {
     phase = "bars";
     f.slot.setControls(range.el, log.el);
-    f.say("이번에는 밝기를 비교해요. <b>막대를 밀어</b> 6등급에서 1등급까지 등급을 바꿔 보세요.");
+    f.say("이번에는 등급별 밝기 차이를 비교해 볼까요? <b>슬라이더를 밀어</b> 6등급부터 1등급까지 밝기가 몇 배가 되는지 확인해 보세요.");
   }
   function askFinal(): void {
-    f.say("기록을 보고 아래 질문에 답해 보세요.");
+    f.say("6등급부터 1등급까지 별의 밝기 배수를 모두 확인했어요!");
     f.slot.ask(
-      "등급의 숫자가 1 작아질 때마다 별의 밝기는?",
-      [{ t: "약 2.5배 밝아져요", ok: true }, { t: "약 2.5배 어두워져요" }, { t: "1배씩 더해져요" }],
+      "별의 등급 숫자가 1등급 작아질 때마다 별은 몇 배씩 밝아지나요?",
+      [{ t: "약 2.5배씩 밝아져요", ok: true }, { t: "약 2.5배씩 어두워져요" }, { t: "2.5만큼씩 더해져요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "6등급이 1, 5등급이 <b>약 2.5</b>, 1등급이 <b>100</b>이었어요.", onNext: finish },
+      { why: "1등급 작아질 때마다 밝기가 <b>약 2.5배</b>씩 커져서, 5등급 차이인 1등급 별은 6등급 별보다 <b>100배</b> 밝아요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(3);
-    f.say("관측 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("등급 숫자가 작을수록 밝은 별이며, 1등급 차이는 약 2.5배, 5등급 차이는 100배의 밝기 차이라는 것을 확인했어요!");
     f.slot.conclude("등급의 <b>숫자가 작을수록 밝은</b> 별이에요. 1등급 작아질 때마다 약 2.5배 밝아져서, 1등급 별은 6등급 별보다 <b>100배</b> 밝아요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -167,7 +167,7 @@ export const magLab: StepRenderer = (host, step, api) => {
     const kh = 98;
     sBox(ctx, kx, ky, kw, kh, 10, "rgba(20,32,60,.92)", "rgba(143,180,255,.45)", 1.2);
     if (sel === 0) {
-      sText(ctx, "막대를 밀어", kx + kw / 2, ky + kh / 2 - 9, { color: S.dim, px: 12 });
+      sText(ctx, "슬라이더를 밀어", kx + kw / 2, ky + kh / 2 - 9, { color: S.dim, px: 12 });
       sText(ctx, "등급을 골라 보세요", kx + kw / 2, ky + kh / 2 + 9, { color: S.dim, px: 12 });
     } else {
       sText(ctx, "한 등급 차이", kx + kw / 2, ky + 13, { color: S.dim, px: 12 });

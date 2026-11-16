@@ -1,4 +1,4 @@
-// [도입] u2l5 blockbloom: 「블록으로 꽃 만들기, 몇 번 모을까?」
+// [도입] u2l5 blockbloom: 「블록으로 꽃 한 송이, 몇 단계로 모을까?」
 // 형식: 내기를 걸고(한 번, 두 번, 세 번), 버튼을 꾹 눌러 블록을 모은다. 일찍 떼면 다시 흩어진다.
 //   1 바닥에 흩어진 블록 열 개. 처음 화면에서 바로 예측한다.
 //   2 한 번 꾹: 블록이 모여 부품 셋(꽃송이, 줄기, 잎)이 된다. 또 한 번 꾹: 부품이 모여 꽃이 된다.
@@ -16,7 +16,7 @@ const PICKS = ["두 번", "한 번", "세 번"];
 export function blockBloom(c: OpenerCtx): void {
   const count = el("div", { class: "opn-tag opn-bb-count", text: "모은 횟수 0번" });
   c.stage.append(el("div", { class: "opn-layer", html: c.art.blockbloomBase }), count);
-  const label = el("span", { text: "꾹 눌러 모으기" });
+  const label = el("span", { text: "꾹 눌러 블록 모으기" });
   const btn = el("button", { class: "opn-hold", attrs: { type: "button" } }, el("i", {}), label) as HTMLButtonElement;
   c.controls.appendChild(btn);
 
@@ -36,14 +36,14 @@ export function blockBloom(c: OpenerCtx): void {
     c.step.dataset.opnLevel = String(level);
     haptic(HAPTIC.correct);
     if (level === 1) {
-      label.textContent = "한 번 더 꾹 누르기";
-      c.say("블록이 모여 <b>꽃송이, 줄기, 잎</b>이 됐어요. 한 번 더 모아 볼까요?");
+      label.textContent = "한 번 더 꾹 눌러 꽃 완성하기";
+      c.say("작은 블록들이 먼저 모여 <b>꽃송이, 줄기, 잎</b> 부품이 됐어요! 이제 한 번 더 모아 볼까요?");
       return;
     }
     phase = "done";
     c.controls.hidden = true;
     c.face("smile");
-    c.say(`${pick === PICKS[0] ? "예측대로 두 번!" : "두 번이면 돼요!"} 블록이 부품으로, 부품이 꽃으로. <b>세포</b>도 이렇게 모일까요?`);
+    c.say(`${pick === PICKS[0] ? "예측대로 두 번 모으니 완성됐어요!" : "두 번 모으니 꽃 한 송이가 완성됐어요!"} 블록이 모여 부품이 되고, 부품이 모여 하나의 꽃이 됐죠. 우리 몸을 이루는 <b>세포</b>도 이렇게 단계를 거쳐 모일까요?`);
     c.finish();
   }
   function press(): void {
@@ -60,7 +60,7 @@ export function blockBloom(c: OpenerCtx): void {
     c.cancel(timer);
     c.stage.classList.remove("hold", "to1", "to2");
     btn.classList.remove("on");
-    c.say("일찍 떼면 다시 흩어져요. 다 모일 때까지 <b>꾹</b> 눌러 주세요.");
+    c.say("손을 일찍 떼면 블록이 다시 흩어져요. 끝까지 다 모일 때까지 버튼을 <b>꾹</b> 눌러 주세요.");
   }
   btn.addEventListener("pointerdown", press);
   btn.addEventListener("pointerup", release);
@@ -75,10 +75,10 @@ export function blockBloom(c: OpenerCtx): void {
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
   c.step.dataset.opnLevel = "0";
-  c.ask("흩어진 블록을 모아 <b>꽃</b>을 만들어요. 몇 번 모으면 완성될까요?", {
+  c.ask("흩어진 작은 블록들을 모아 먼저 부품을 만들고, 그 부품을 합쳐 <b>꽃 한 송이</b>를 완성하려고 해요. 블록을 모두 몇 번 모으면 될까요?", {
     choices: PICKS,
     neutral: true,
-    good: "예측 완료! 아래 버튼을 <b>꾹 눌러</b> 블록을 모아 보세요.",
+    good: "예측 완료! 아래 버튼을 <b>꾹 눌러</b> 블록을 단계별로 모아 보세요.",
     onDone: (picked) => {
       pick = PICKS.find((p) => p === picked) ?? PICKS[0];
       phase = "play";

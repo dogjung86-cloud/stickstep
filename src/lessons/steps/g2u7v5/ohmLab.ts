@@ -100,13 +100,13 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     "long",
     (k) => {
       wire = k;
-      f.say(`<b>${NAME[k]}</b>을 연결했어요. 전압을 올리며 전류를 보고, 그래프에 찍어 보세요.`);
+      f.say(`회로에 <b>${NAME[k]}</b>을 연결했어요. 전압을 바꾸며 전류의 세기를 확인하고 그래프에 점을 찍어 보세요.`);
     },
     () => {
       if (vi === 0) return true;
       haptic(HAPTIC.wrong);
       warn = 1;
-      f.say("니크롬선은 전압을 <b>0으로 낮춘 뒤</b>에 바꿔요. 전류가 흐르는 채로 바꾸면 위험해요.");
+      f.say("니크롬선을 교체할 때는 먼저 전압을 <b>0 V로 낮춰야</b> 해요. 전류가 흐르는 상태에서 바꾸면 뜨겁고 위험해요!");
       return false;
     },
   );
@@ -115,20 +115,20 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: 4,
     value: 0,
-    label: "전원 장치의 전압",
-    ticks: ["0 V", "1.5", "3", "4.5", "6 V"],
+    label: "전원 장치의 전압 (V)",
+    ticks: ["0 V", "1.5 V", "3.0 V", "4.5 V", "6.0 V"],
     onInput: (v) => {
       vi = v;
       rec.disabled = finished;
     },
   });
-  const rec = bvBtn("main", "지금 값을 그래프에 찍기");
+  const rec = bvBtn("main", "측정한 값 그래프에 찍기");
   f.slot.setControls(pick.el, volt.el, rec);
 
   rec.addEventListener("click", () => {
     if (finished) return;
     if (pts[wire].has(vi)) {
-      f.say("이미 찍은 값이에요. <b>전압을 바꿔서</b> 다른 값을 찍어 보세요.");
+      f.say("이미 그래프에 기록한 전압이에요. 슬라이더로 <b>전압을 바꿔서</b> 다른 점을 찍어 보세요.");
       return;
     }
     haptic(HAPTIC.tap);
@@ -142,33 +142,33 @@ export const ohmLab: StepRenderer = (host, step, api) => {
         rec.disabled = true;
         volt.input.disabled = true;
         pick.lock(true);
-        f.say("두 니크롬선 모두 점들이 <b>원점을 지나는 직선</b> 위에 놓였어요.");
+        f.say("두 니크롬선 모두 측정한 점들이 <b>원점을 지나는 곧은 직선</b>으로 이어졌어요!");
         tm.later(ask1, 2600);
-      } else f.say(`점들이 <b>직선</b>으로 이어졌어요. 전압을 0으로 낮추고 ${wire === "long" ? "짧은" : "긴"} 니크롬선으로 바꿔 보세요.`);
-    } else f.say(`${vi * OHM.step} V일 때 <b>${mA(wire, vi)} mA</b>를 찍었어요. 전압을 바꿔 가며 더 찍어 보세요.`);
+      } else f.say(`점들이 <b>원점을 지나는 직선</b>으로 이어졌어요! 이제 전압을 0 V로 낮추고 <b>${wire === "long" ? "짧은" : "긴"} 니크롬선</b>으로 바꿔 실험해 보세요.`);
+    } else f.say(`전압이 ${vi * OHM.step} V일 때 전류 <b>${mA(wire, vi)} mA</b>에 점을 찍었어요. 다른 전압에서도 측정해 보세요.`);
   });
 
   function ask1(): void {
     f.slot.ask(
-      "한 니크롬선에서 전압을 2배로 올리면 전류의 세기는?",
-      [{ t: "2배가 돼요", ok: true }, { t: "그대로예요" }, { t: "절반이 돼요" }],
+      "같은 니크롬선에서 전압을 2배로 높이면 전류의 세기는 어떻게 되나요?",
+      [{ t: "2배로 세져요", ok: true }, { t: "그대로예요" }, { t: "절반으로 줄어요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "긴 선은 3 V에 100 mA, 6 V에 <b>200 mA</b>가 흘렀어요.", onNext: ask2 },
+      { why: "긴 니크롬선에 3 V를 걸었을 때 100 mA, 6 V를 걸었을 때 <b>200 mA</b>가 흘러 전압에 비례했어요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.pips(3);
     f.slot.ask(
-      "같은 전압에서 더 센 전류가 흐른 쪽은?",
-      [{ t: "짧은 니크롬선", ok: true }, { t: "긴 니크롬선" }, { t: "둘이 같았어요" }],
+      "같은 전압을 걸었을 때 전류가 더 세게 흐른 것은 어느 쪽인가요?",
+      [{ t: "짧은 니크롬선", ok: true }, { t: "긴 니크롬선" }, { t: "두 니크롬선이 같았어요" }],
       () => undefined,
-      { why: "3 V에서 긴 선은 100 mA, 짧은 선은 <b>200 mA</b>였어요.", onNext: finish },
+      { why: "예를 들어 3 V일 때 긴 니크롬선에는 100 mA, 짧은 니크롬선에는 <b>200 mA</b>가 흘렀어요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("전류의 세기는 <b>전압에 비례</b>해요. 전압이 2배, 3배가 되면 전류도 2배, 3배가 돼요. 같은 전압이면 짧은 니크롬선에 더 센 전류가 흘러요.");
+    f.say("전류의 세기는 전압에 비례하며, 니크롬선에 따라 기울기가 다르다는 것을 확인했어요!");
+    f.slot.conclude("전류의 세기는 <b>전압에 비례</b>해요. 전압이 2배, 3배로 높아지면 전류의 세기도 2배, 3배로 세져요. 또한 같은 전압일 때는 긴 니크롬선보다 짧은 니크롬선에 더 센 전류가 흘러요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -249,8 +249,8 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     ctx.restore();
   });
 
-  f.say("전원 장치에 <b>긴 니크롬선</b>을 연결했어요. 전압을 올리며 전류를 보고, 그래프에 점을 찍어 보세요.");
-  api.setCTA("두 니크롬선의 그래프를 그려 보세요", { enabled: false });
+  f.say("전원 장치에 <b>긴 니크롬선</b>을 연결했어요. 슬라이더로 전압을 바꾸며 전류의 세기를 확인하고 그래프에 점을 찍어 보세요.");
+  api.setCTA("두 니크롬선의 그래프를 완성해 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

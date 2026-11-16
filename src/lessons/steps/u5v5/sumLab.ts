@@ -29,9 +29,9 @@ const NAMES = ["가", "나"];
 const side = (d: number): string => (d > 0 ? "오른쪽" : "왼쪽");
 
 const ORDERS = [
-  { text: "두 힘을 합쳐 <b>오른쪽으로 500 N</b>을 만들어요", ok: (a: Force, b: Force) => a.dir === 1 && b.dir === 1 && a.n + b.n === 5 },
-  { text: "서로 <b>반대로</b> 밀어서 <b>왼쪽으로 100 N</b>을 만들어요", ok: (a: Force, b: Force) => a.n > 0 && b.n > 0 && a.dir !== b.dir && a.dir * a.n + b.dir * b.n === -1 },
-  { text: "둘 다 미는데 수레가 <b>꼼짝 않게</b> 만들어요", ok: (a: Force, b: Force) => a.n > 0 && b.n > 0 && a.dir * a.n + b.dir * b.n === 0 },
+  { text: "두 힘을 합쳐 <b>오른쪽으로 500 N</b> 만들기", ok: (a: Force, b: Force) => a.dir === 1 && b.dir === 1 && a.n + b.n === 5 },
+  { text: "서로 <b>반대로</b> 밀어 <b>왼쪽으로 100 N</b> 만들기", ok: (a: Force, b: Force) => a.n > 0 && b.n > 0 && a.dir !== b.dir && a.dir * a.n + b.dir * b.n === -1 },
+  { text: "둘 다 힘을 주는데도 수레가 <b>정지(합친 힘 0 N)</b>하게 만들기", ok: (a: Force, b: Force) => a.n > 0 && b.n > 0 && a.dir * a.n + b.dir * b.n === 0 },
 ];
 
 export const sumLab: StepRenderer = (host, step, api) => {
@@ -103,7 +103,10 @@ export const sumLab: StepRenderer = (host, step, api) => {
     });
     const n = net();
     const parts = F.map((x) => (x.n ? `${side(x.dir)} ${x.n * 100} N` : "0 N"));
-    sum.innerHTML = `${order < 3 ? `주문: ${ORDERS[order].text}` : "세 주문을 모두 채웠어요."}<br>지금: ${parts[0]}, ${parts[1]} → 합친 힘 <b>${n === 0 ? "0 N" : `${side(n)} ${Math.abs(n) * 100} N`}</b>`;
+    sum.innerHTML = `${order < 3 ? `목표: ${ORDERS[order].text}` : "세 가지 목표를 모두 성공했어요!"}<br>지금: ${parts[0]}, ${parts[1]} → 합친 힘 <b>${n === 0 ? "0 N" : `${side(n)} ${Math.abs(n) * 100} N`}</b>`;
+    // 글 맞춤: 셋째 목표는 한 줄이 길어 두 힘이 클 때 세 줄 상자를 넘친다. 넘칠 때만 글씨를 조금 줄인다(u5v5.css .u5x-sum.tall.dense)
+    sum.classList.remove("dense");
+    if (sum.isConnected && sum.scrollHeight > sum.clientHeight + 1) sum.classList.add("dense");
   };
   function set(i: number, patch: Partial<Force>): void {
     if (lock) return;
@@ -115,9 +118,9 @@ export const sumLab: StepRenderer = (host, step, api) => {
   }
 
   const says = [
-    "두 사람 <b>가</b>, <b>나</b>가 수레를 밀어요. 방향과 세기를 정해 아래 <b>주문</b>대로 합친 힘을 만들어 보세요.",
-    "같은 방향이면 두 힘이 <b>더해졌어요</b>. 이번에는 한 사람을 반대쪽으로 돌려 주문을 채워 보세요.",
-    "반대 방향이면 큰 힘에서 작은 힘을 <b>뺐어요</b>. 마지막 주문이에요. 둘 다 힘을 주는데 수레가 멈추게 해 보세요.",
+    "<b>가</b>와 <b>나</b>의 방향·세기를 조절해 아래 <b>목표</b>대로 합친 힘을 만들어 보세요.",
+    "같은 방향이면 두 힘이 <b>더해져요</b>! 이번엔 서로 <b>반대 방향</b>으로 밀어 목표를 맞춰 보세요.",
+    "반대 방향이면 큰 힘에서 작은 힘을 <b>빼요</b>! 이제 둘 다 미는데도 합친 힘이 <b>0 N</b>이 되게 해 보세요.",
   ];
   const setOrder = (n: number): void => {
     order = n;
@@ -129,7 +132,7 @@ export const sumLab: StepRenderer = (host, step, api) => {
     if (n === 3) {
       lock = true;
       paint();
-      f.say("크기가 같고 방향이 반대인 두 힘은 서로 지워져요. 힘이 <b>없는 것이 아니에요</b>.");
+      f.say("크기가 같고 방향이 반대인 두 힘은 서로 상쇄돼 합친 힘이 <b>0 N</b>이 돼요!");
       tm.later(askFinal, 1800);
     }
   };
@@ -138,8 +141,9 @@ export const sumLab: StepRenderer = (host, step, api) => {
     scene = "ask";
     rewind();
     f.slot.ask(
-      "마찰이 없는 바닥에 수레가 멈춰 있어요. 한 사람이 오른쪽으로 200 N으로 밀면 다른 사람은?",
-      [{ t: "왼쪽으로 200 N으로 밀어요", ok: true }, { t: "오른쪽으로 200 N으로 밀어요" }, { t: "밀지 않고 있어요" }],
+      // 수정안은 '마찰이 없는 바닥'을 뺐으나, 마찰이 있으면 '아무 힘도 주지 않아요'도 답이 될 수 있어 조건을 남긴다(13.5px 두 줄에 들게 뒤의 '수레가'만 뺐다)
+      "마찰이 없는 바닥에서 한 사람이 수레를 오른쪽으로 <b>200 N</b>으로 미는데도 멈춰 있어요. 다른 사람은 어떻게 밀고 있을까요?",
+      [{ t: "왼쪽으로 200 N의 힘으로 밀어요", ok: true }, { t: "오른쪽으로 200 N의 힘으로 밀어요" }, { t: "아무 힘도 주지 않아요" }],
       (ok) => {
         scene = "reveal";
         api.recordQuiz(ok);
@@ -148,7 +152,7 @@ export const sumLab: StepRenderer = (host, step, api) => {
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("두 힘의 방향에 따라 힘을 더하거나 빼서 합친 힘을 구해 보았어요!");
     f.slot.conclude("같은 방향의 두 힘은 <b>더하고</b>, 반대 방향의 두 힘은 큰 힘에서 작은 힘을 <b>빼요</b>. 크기가 같고 방향이 반대면 합친 힘이 0이라 멈춰 있던 물체는 그대로 멈춰 있어요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -288,14 +292,14 @@ export const sumLab: StepRenderer = (host, step, api) => {
         ? "수레가 멈춰 있어요"
         : n === 0
           ? FF[0].n + FF[1].n
-            ? "힘이 서로 지워져 멈춰 있어요"
+            ? "두 힘이 비겨 멈춰 있어요 (합친 힘 0 N)"
             : "아무도 밀지 않아요"
           : `수레가 ${side(n)}으로 점점 빨라져요`;
     u5Pill(ctx, pill, n === 0 ? U5.up : U5.gold);
   });
 
   setOrder(0);
-  api.setCTA("주문대로 두 힘을 정해 보세요", { enabled: false });
+  api.setCTA("목표대로 두 힘을 조절해 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

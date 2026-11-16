@@ -1,4 +1,4 @@
-// u6SeaSkyLab (u6l3): 「누르는 압력이 달라지면 풍선은?」
+// u6SeaSkyLab (u6l3): 「바깥 압력이 달라지면 풍선 크기는 어떻게 될까?」
 // 나온 곳: 생활 속 기체의 압력과 부피 관계(높은 곳에서 부푸는 과자 봉지와 대기압, 깊은 물속과 수압, 단원 도입의 잠수부 공기 방울).
 //          이 소단원에는 실험이 없다. 원인(누르는 압력)을 손으로 바꾸면 결과(부피)가 그 자리에서 보이는 조작으로 만들었다.
 // 학생이 정하는 것: 공기를 넣고 묶은 풍선을 어디로 옮길지. 바닷속 30 m에서 산 위 5500 m까지 여섯 자리.
@@ -67,7 +67,7 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
         phase = "ask";
         frame.say("산 위에서는 <b>부풀고</b> 바닷속에서는 <b>쪼그라들었어요</b>. 입자는 여덟 개 그대로예요.");
         range.input.disabled = true;
-        api.setCTA("풍선을 살펴보고 있어요", { enabled: false });
+        api.setCTA("높이에 따른 변화를 비교해 볼까요?", { enabled: false });
         tm.later(askWhy, 1700);
       } else if (v === 0) frame.say("누르는 압력이 4배가 되자 풍선이 <b>쪼그라들었어요</b>. 이번에는 <b>산 위</b>로 옮겨 보세요.");
       else if (v === 5) frame.say("누르는 압력이 절반이 되자 풍선이 <b>부풀었어요</b>. 이번에는 <b>바닷속</b>으로 옮겨 보세요.");
@@ -88,7 +88,7 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
       [{ t: "4분의 1로 줄었어요", ok: true }, { t: "4배로 늘었어요" }, { t: "절반으로 줄었어요" }],
       (ok) => lab.grade(ok),
       {
-        why: "압력이 4배면 부피는 4분의 1. <b>반비례</b>해요.",
+        why: "압력이 4배가 되면 부피는 <b>4분의 1</b>로 줄어들어요. 압력과 부피는 <b>반비례</b>해요.",
         onNext: () => {
           phase = "done";
           lab.phase("done");
@@ -113,7 +113,7 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
   }
 
   lab.phase("play");
-  frame.say("공기를 넣고 묶은 풍선이에요. 막대를 밀어 <b>바닷속</b>과 <b>산 위</b>로 옮겨 보세요.");
+  frame.say("공기를 넣고 묶은 풍선이에요. 슬라이더를 움직여 <b>바닷속 30 m</b>와 <b>산 5500 m</b>까지 옮겨 보세요.");
   sync();
 
   lab.run((ctx, dt, tMs) => {

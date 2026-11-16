@@ -79,5 +79,5 @@ export function makeHold(c: OpenerCtx, o: { cls: string; label?: string; sub?: s
   };
 }
 
-/** 예측과 결과를 견주는 말머리. */
-export const verdict = (hit: boolean): string => (hit ? "예측대로" : "예측과 달리");
+/** 예측과 결과를 비교하는 말머리. */
+export const verdict = (hit: boolean): string => (hit ? "예상대로" : "예상과 달리");

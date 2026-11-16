@@ -129,11 +129,19 @@
 .u7x-tlabel.sun { color: #FFE2A6; }
 .u7x-tlabel.dim { color: #C9D4E8; }
 .u7x-ratio {
-  position: absolute; left: 12px; top: 50px; z-index: 3; pointer-events: none; white-space: nowrap;
+  position: absolute; left: 12px; top: 92px; z-index: 3; pointer-events: none; white-space: nowrap;
   font-size: 12px; font-weight: 700; color: #A9BBDA; text-shadow: 0 1px 3px rgba(0, 0, 0, .85); transition: opacity .3s;
 }
 .u7x-ratio.hide { opacity: 0; }
+/* 가로 화면의 상태 알약(태양계 순항, 일식과 월식)은 둘째 줄에 둔다(2026-11-16 글 다듬기).
+   글이 길어져 첫 줄에 두면 가운데 제목과 겹친다(폰 가로 폭 660~850px). 비율 알림은 그 아래 셋째 줄(위 .u7x-ratio).
+   끝 알림(.u7x-rotdone)이 뜨면 알약은 걷는다(.hide, 알림과 같은 자리이고 알림이 이어서 말한다).
+   천체 카드는 알약 줄 아래에서 멈춘다(예전 max-height는 위 68px만 비워 알약을 덮었다). */
+.sp3-pill.u7x-rpill { top: 50px; transition: opacity .3s; }
+.u7x-rpill.hide { opacity: 0; }
+.sp3-card.u7x-tcard { max-height: calc(100% - 100px); }
 .u7x-toast { word-break: keep-all; } /* 천체 카드를 읽는 동안에는 가리지 않는다 */
+.u7x-toast b { font-weight: 800; color: #FFE1A6; } /* 알림의 굵은 글(일식!, 버튼 이름): 천체 카드의 굵은 글과 같은 색 */
 /* 일식의 지상 보기: 알림을 아래 두 단추 사이로 내린다(검은 해와 코로나를 덮지 않게) */
 .sp3-toast.u7x-toast.low { bottom: 12px; max-width: min(46%, 360px); }
 
@@ -148,6 +156,8 @@
 }
 .u7x-goal b { font-size: 14px; line-height: 19px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .u7x-goal i { font-style: normal; font-size: 12px; line-height: 17px; font-weight: 600; color: var(--ter); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 세 칸 목록(태양계의 여섯 갈래): 찾은 뒤의 글("태양 주위를 돌아요", 12px 87px)이 칸에 들게 안쪽 여백을 줄인다 */
+.u7x-goals[data-cols="3"] .u7x-goal { padding: 0 7px; }
 .u7x-goal.done { border-style: solid; border-color: var(--subj-space); background: var(--subj-space-tint); }
 .u7x-goal.done i { color: var(--subj-space-press); font-weight: 800; }
 .u7x-goal.done::after, .u7x-segbtn.done::after {

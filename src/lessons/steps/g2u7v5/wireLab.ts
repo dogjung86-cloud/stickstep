@@ -31,7 +31,7 @@ const at = (u: number): [number, number, number] => {
 
 export const wireLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 4, api });
+  const f = xFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
 
@@ -43,8 +43,8 @@ export const wireLab: StepRenderer = (host, step, api) => {
   const es = Array.from({ length: 24 }, (_, i) => ({ u: (i / 24) * TOTAL, jx: 0, jy: 0 }));
 
   const sw = bvBtn("main", "스위치 닫기");
-  const turn = bvBtn("", "전지 돌려 끼우기");
-  const log = xLog(["스위치를 열었을 때", "스위치를 닫았을 때", "전지를 돌려 끼우면"], 1, true);
+  const turn = bvBtn("", "전지 방향 반대로 끼우기");
+  const log = xLog(["스위치를 열었을 때", "스위치를 닫았을 때", "전지 방향을 바꿨을 때"], 1, true);
   f.slot.setControls(xRow(sw, turn), log.el);
 
   const after = (): void => {
@@ -62,11 +62,11 @@ export const wireLab: StepRenderer = (host, step, api) => {
     closed = !closed;
     sw.textContent = closed ? "스위치 열기" : "스위치 닫기";
     if (closed) {
-      if (!seen.closed) log.set(0, "제멋대로 움직임, 전구 꺼짐");
+      if (!seen.closed) log.set(0, "불규칙하게 운동, 전구 꺼짐");
       seen.closed = true;
-      log.set(1, "한 방향으로 이동, 전구 켜짐");
-      f.say("전구가 켜졌어요. 전자가 전지의 <b>(−)극에서 (+)극 쪽으로</b> 줄지어 이동해요.");
-    } else f.say("전구가 꺼졌어요. 전자는 멈추지 않고 <b>제멋대로</b> 움직여요.");
+      log.set(1, "(−)극→(+)극 이동, 전구 켜짐");
+      f.say("전구가 환하게 켜졌어요! 전선 속 전자가 전지의 <b>(−)극에서 (+)극 쪽으로</b> 일제히 이동해요.");
+    } else f.say("스위치를 열자 전구가 꺼졌어요. 전자는 멈추지 않고 <b>여러 방향으로 제멋대로</b> 움직여요.");
     after();
   });
   turn.addEventListener("click", () => {
@@ -75,33 +75,33 @@ export const wireLab: StepRenderer = (host, step, api) => {
     flip = !flip;
     if (closed) {
       seen.flipped = true;
-      log.set(2, "전자가 반대쪽으로 이동");
-      f.say("전지의 두 극이 바뀌자 전자가 <b>반대쪽으로</b> 이동해요. 이번에도 (−)극에서 (+)극 쪽이에요.");
-    } else f.say("스위치가 열려 있어 전구는 꺼진 그대로예요. <b>스위치를 닫고</b> 전자의 이동을 봐요.");
+      log.set(2, "반대 방향으로 이동");
+      f.say("전지의 (+)극과 (−)극 방향을 바꾸자 전자도 <b>반대 방향으로</b> 이동해요. 이번에도 전지의 (−)극에서 (+)극 쪽으로 향해요.");
+    } else f.say("스위치가 열려 있어서 아직 전류가 흐르지 않아요. <b>스위치를 닫아</b> 전자가 어느 쪽으로 이동하는지 확인해 보세요.");
     after();
   });
 
   function ask1(): void {
     f.slot.ask(
-      "스위치가 열려 있을 때 전선 속 전자는 어땠나요?",
-      [{ t: "제멋대로 움직였어요", ok: true }, { t: "모두 멈춰 있었어요" }, { t: "한 방향으로 이동했어요" }],
+      "스위치가 열려 있을 때 전선 속 전자들은 어떻게 움직였나요?",
+      [{ t: "여러 방향으로 제멋대로 움직였어요", ok: true }, { t: "모두 제자리에 멈춰 있었어요" }, { t: "한 방향으로 줄지어 이동했어요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "전자는 늘 움직여요. 닫았을 때만 <b>한 방향</b>으로 이동했어요.", onNext: ask2 },
+      { why: "전자는 스위치가 열려 있어도 멈추지 않고 움직여요. 스위치를 닫았을 때만 <b>일정한 한 방향</b>으로 이동했어요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.pips(3);
     f.slot.ask(
-      "전류의 방향과 전자가 이동하는 방향은?",
-      [{ t: "서로 반대예요", ok: true }, { t: "서로 같아요" }, { t: "전자는 이동하지 않아요" }],
+      "전류의 방향과 전자의 이동 방향은 어떤 관계인가요?",
+      [{ t: "서로 반대 방향이에요", ok: true }, { t: "서로 같은 방향이에요" }, { t: "전자는 이동하지 않아요" }],
       () => undefined,
-      { why: "전류는 <b>(+)극에서 (−)극 쪽</b>, 전자는 그 반대로 이동했어요.", onNext: finish },
+      { why: "전류는 <b>(+)극에서 (−)극</b>으로 흐르고, 전자는 반대로 <b>(−)극에서 (+)극</b>으로 이동해요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("스위치를 닫으면 전자가 전지의 <b>(−)극에서 (+)극 쪽으로</b> 한 방향으로 이동해요. 전류의 방향은 전자가 이동하는 방향과 <b>반대</b>예요.");
+    f.say("스위치를 닫으면 전자가 (−)극에서 (+)극으로 이동하며 전류가 흐른다는 것을 확인했어요!");
+    f.slot.conclude("스위치를 닫으면 전선 속 전자가 전지의 <b>(−)극에서 (+)극 쪽으로</b> 일정한 방향을 따라 이동해요. 전류의 방향은 (+)극에서 (−)극으로, 전자의 이동 방향과 <b>반대</b>예요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -161,8 +161,8 @@ export const wireLab: StepRenderer = (host, step, api) => {
     xPill(ctx, closed ? "스위치 닫힘" : "스위치 열림", closed ? X.cur : "#9AA7BD");
   });
 
-  f.say("전선 속을 크게 본 회로예요. 파란 알갱이가 <b>전자</b>예요. 스위치를 닫고, 전지도 돌려 끼워 보세요.");
-  api.setCTA("스위치와 전지를 바꿔 보세요", { enabled: false });
+  f.say("전선 내부를 확대한 전기 회로예요. 파란 입자는 <b>전자(−)</b>를 나타내요. 스위치를 닫아 보고, 전지 방향도 반대로 바꿔 보세요.");
+  api.setCTA("스위치와 전지 방향을 조작해 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

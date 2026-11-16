@@ -29,9 +29,9 @@ export const spreadLab: StepRenderer = (host, step, api) => {
   const visit = (n: number): void => {
     k = n;
     seen.add(n);
-    log.set(n - 1, `${n * n}칸, 한 칸에 ${36 / (n * n)}알`);
+    log.set(n - 1, `넓이 ${n * n}칸 · 한 칸당 빛알 ${36 / (n * n)}개`);
     f.pips(seen.size);
-    f.say(n === 1 ? "거리 1배: 빛알 36개가 <b>1칸</b>에 모두 들어와요." : `거리 ${n}배: 같은 빛알 36개가 <b>${n * n}칸</b>에 나뉘어, 한 칸에는 <b>${36 / (n * n)}알</b>만 들어와요.`);
+    f.say(n === 1 ? "거리가 1배일 때는 빛알 36개가 <b>1칸</b> 안에 모두 모여 들어와요." : `거리가 <b>${n}배</b>로 멀어지자 같은 빛알 36개가 가로·세로 ${n}배씩 총 <b>${n * n}칸</b>으로 넓게 퍼져서, 한 칸에는 <b>${36 / (n * n)}개</b>만 들어와요!`);
     if (seen.size === 3 && !finished) {
       finished = true;
       tm.later(() => {
@@ -51,17 +51,17 @@ export const spreadLab: StepRenderer = (host, step, api) => {
   );
 
   function askFinal(): void {
-    f.say("기록을 보고 아래 질문에 답해 보세요.");
+    f.say("거리 1배, 2배, 3배에서 빛이 퍼지는 넓이와 한 칸당 빛알 수를 모두 확인했어요!");
     f.slot.ask(
-      "거리가 3배인 판에서 한 칸이 받는 빛은 1배일 때의?",
-      [{ t: "9분의 1", ok: true }, { t: "3분의 1" }, { t: "6분의 1" }],
+      "거리가 3배인 곳에서 단위 면적(한 칸)이 받는 빛의 양은 거리가 1배일 때의 몇 배인가요?",
+      [{ t: "1/9배 (9분의 1)", ok: true }, { t: "1/3배 (3분의 1)" }, { t: "1/6배 (6분의 1)" }],
       (ok) => api.recordQuiz(ok),
-      { why: "36알이 <b>9칸</b>에 나뉘어 한 칸에 <b>4알</b>이 들어왔어요.", onNext: finish },
+      { why: "빛알 36개가 3 × 3 = <b>9칸</b>에 골고루 나뉘어 한 칸에 <b>4개(36의 9분의 1)</b>만 들어왔어요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("거리가 2배, 3배가 되면 빛을 받는 넓이는 <b>4배, 9배</b>가 되고, 한 칸이 받는 빛은 <b>4분의 1, 9분의 1</b>이 돼요. 밝기는 거리의 제곱에 반비례해요.");
+    f.say("빛이 거리의 제곱에 비례하는 넓이로 퍼지기 때문에 밝기는 거리의 제곱에 반비례한다는 것을 확인했어요!");
+    f.slot.conclude("별에서 거리가 2배, 3배로 멀어지면 별빛이 퍼지는 넓이는 <b>4배, 9배</b>로 넓어지고, 단위 면적(한 칸)에 도달하는 빛의 양은 <b>1/4, 1/9</b>로 줄어들어요. 따라서 밝기는 <b>거리의 제곱에 반비례</b>해요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -136,15 +136,15 @@ export const spreadLab: StepRenderer = (host, step, api) => {
     sGlow(ctx, sx, sy, 15, S.star, 0.4);
     sText(ctx, "별", sx, sy + 26, { color: S.ink, px: 12.5 });
     // 읽을 값
-    sText(ctx, `빛을 받는 칸 ${k * k}칸`, w - 12, 20, { color: S.ink, px: 13, align: "right", w: 800 });
-    sText(ctx, `흰 테두리 한 칸에 ${36 / (k * k)}알`, w - 12, 39, { color: S.gold, px: 13, align: "right", w: 800 });
-    sText(ctx, "빛알은 모두 36개", 12, 20, { color: S.dim, px: 12, align: "left" });
+    sText(ctx, `빛이 퍼진 넓이: ${k * k}칸`, w - 12, 20, { color: S.ink, px: 13, align: "right", w: 800 });
+    sText(ctx, `한 칸에 닿는 빛알: ${36 / (k * k)}개`, w - 12, 39, { color: S.gold, px: 13, align: "right", w: 800 });
+    sText(ctx, "전체 빛알 수: 36개 (일정)", 12, 20, { color: S.dim, px: 12, align: "left" });
   });
 
   f.say("별에서 나온 <b>빛알 36개</b>가 판에 닿아요. 먼저 예측해 보세요.");
   api.setCTA("판을 세 거리에 세워 보세요", { enabled: false });
   f.slot.ask(
-    "판을 2배 거리로 옮기면 빛이 닿는 칸은 몇 칸이 될까요?",
+    "거리가 1배일 때 1칸에 모이던 별빛은, 판을 2배 거리로 옮기면 모두 몇 칸에 퍼질까요?",
     [{ t: "2칸" }, { t: "4칸" }, { t: "1칸 그대로" }],
     () => undefined,
     {

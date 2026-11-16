@@ -49,7 +49,8 @@ export const observeLab: StepRenderer = (host, step, api) => {
     (k) => {
       cur = OBJ.findIndex((o) => o.k === k);
       unzoom();
-      f.say(`고른 천체: <b>${cur === 4 ? "말머리성운" : OBJ[cur].t}</b>. 지금은 뿌연 점으로만 보여요. <b>확대</b>해 보세요.`);
+      // M78과 말머리성운은 맨눈으로는 보이지 않으므로 '지금은'(망원경으로 확대하기 전)으로 쓴다
+      f.say(`선택한 천체: <b>${cur === 4 ? "말머리성운" : OBJ[cur].t}</b>. 지금은 희미한 점으로만 보여요. <b>망원경으로 확대하기</b>를 눌러 보세요.`);
     },
     true,
   );
@@ -71,7 +72,7 @@ export const observeLab: StepRenderer = (host, step, api) => {
     tag.classList.add("on");
     chips.forEach((c) => c.classList.remove("miss"));
     layout();
-    f.say(done.has(o.k) ? "이미 기록한 천체예요. <b>다른 천체</b>를 골라 보세요." : "확대한 사진이에요. 관측 기록에 적을 <b>특징</b>을 아래에서 골라 보세요.");
+    f.say(done.has(o.k) ? "이미 기록한 천체예요. <b>다른 천체</b>를 골라 보세요." : "망원경으로 확대한 모습이에요! 사진 속 천체의 <b>생김새와 색깔 특징</b>을 아래 보기에서 골라 기록해 보세요.");
   });
   function record(i: number, b: HTMLButtonElement): void {
     const o = OBJ[cur];
@@ -79,17 +80,17 @@ export const observeLab: StepRenderer = (host, step, api) => {
     if (i !== o.feat) {
       haptic(HAPTIC.wrong);
       b.classList.add("miss");
-      f.say("사진과 맞지 않는 특징이에요. 별이 보이는지, 구름처럼 보이는지, <b>색</b>은 어떤지 다시 살펴보세요.");
+      f.say("관측 사진과 맞지 않는 설명이에요. 별들이 모여 있는지, 구름 모양인지, 그리고 <b>어떤 색</b>을 띠는지 다시 살펴보세요.");
       return;
     }
     haptic(HAPTIC.correct);
     done.add(o.k);
     seg.btn(o.k).classList.add("done");
     f.pips(done.size);
-    if (done.size < 5) f.say(`관측 기록에 적었어요. <b>${FEATS[i]}</b>. 남은 천체도 확대해 기록해 보세요.`);
+    if (done.size < 5) f.say(`<b>${FEATS[i]}</b> 특징을 관측 일지에 기록했어요! 위 탭에서 남은 천체도 골라 확대해 보세요.`);
     else {
       finished = true;
-      f.say("다섯 천체를 모두 기록했어요. 관측 기록을 한눈에 볼까요?");
+      f.say("다섯 천체의 특징을 모두 기록했어요! 관측 사진첩으로 한눈에 비교해 볼까요?");
       tm.later(() => {
         unzoom();
         // 사진첩: 윗줄에 별의 무리 둘, 아랫줄에 구름 셋(사진을 크게, 이름은 사진 위 꼬리표, 특징은 사진 아래 한 줄)
@@ -109,16 +110,16 @@ export const observeLab: StepRenderer = (host, step, api) => {
   }
 
   function askFinal(): void {
-    f.say("관측 기록을 보고 아래 질문에 답해 보세요.");
+    f.say("별들이 모인 천체 두 가지(윗줄)와 구름 모양 천체 세 가지(아랫줄)를 사진첩에 정리했어요!");
     f.slot.ask(
-      "수많은 별이 공 모양으로 빽빽하게 모인 천체는?",
+      "관측한 천체 중 수많은 별이 공 모양으로 빽빽하게 모여 있는 천체는 어느 것인가요?",
       [{ t: "M13", ok: true }, { t: "M45" }, { t: "M78" }],
       (ok) => api.recordQuiz(ok),
-      { why: "M45는 별이 듬성듬성하고, M78은 파란 구름이에요.", onNext: finish },
+      { why: "<b>M13</b>은 별이 공 모양으로 빽빽하게 모인 천체(구상 성단)이고, M45는 듬성듬성한 천체(산개 성단), M78은 파란 구름(성운)이에요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("관측 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("우리은하에는 별들이 모인 집단(성단)과 가스와 티끌이 모인 구름(성운)이 있다는 것을 확인했어요!");
     f.slot.conclude("우리은하에는 <b>별이 모인 무리</b>와 <b>구름처럼 보이는 천체</b>가 있어요. 별 무리는 듬성듬성한 것과 공 모양으로 빽빽한 것, 구름은 붉은 것, 파란 것, 검은 것이 있어요.");
     api.enableCTA(s.cta ?? "다음");
   }

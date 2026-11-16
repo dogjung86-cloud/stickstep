@@ -31,7 +31,7 @@ const COL = { crust: "#9C7B58", mantle: "#E8743B", outer: "#FFB454", inner: "#FF
 /* ══════════ 랩 2: 조사 방법 ══════════ */
 const WAYS = [
   { k: "drill", name: "시추", sub: "땅을 직접 뚫기", reach: 1.5, read: "약 12 km" },
-  { k: "volc", name: "화산 분출물", sub: "나온 물질 조사", reach: 5, read: "지표 부근" },
+  { k: "volc", name: "화산 분출물", sub: "분출된 물질 조사", reach: 5, read: "지표 부근" },
   { k: "wave", name: "지진파", sub: "지구 속을 지난 진동", reach: 100, read: "중심까지" },
 ] as const;
 
@@ -43,7 +43,7 @@ export const g2u2ProbeLab: StepRenderer = (host, step, api) => {
     return `${label(200, y, w.name, { anchor: "start", size: 13 })}
       <rect x="200" y="${y + 8}" width="100" height="9" rx="4.5" fill="rgba(255,255,255,.12)"/>
       <rect class="g2u2x-pb-bar b-${w.k}" x="200" y="${y + 8}" width="0" height="9" rx="4.5" fill="${G.gold}"/>
-      ${label(200, y + 32, "아직 안 해 봄", { anchor: "start", size: 12, fill: G.dim, weight: 600, cls: `g2u2x-pb-read r-${w.k}` })}`;
+      ${label(200, y + 32, "조사 전", { anchor: "start", size: 12, fill: G.dim, weight: 600, cls: `g2u2x-pb-read r-${w.k}` })}`;
   }).join("");
   const ray = (a: number, bend: number): string => {
     // 지표의 한 점에서 지구 속을 지나 반대쪽 지표로 가는 길(층의 경계에서 꺾인다)
@@ -113,13 +113,13 @@ export const g2u2ProbeLab: StepRenderer = (host, step, api) => {
       f.pips(tried.size >= 2 ? 1 : 0);
       if (tried.size < WAYS.length) {
         nextHint();
-        if (k !== "wave") f.say(`${k === "drill" ? "중심까지는 6400 km인데 500분의 1쯤만 내려갔어요." : "지구 속 깊은 곳은 여전히 물음표예요."} <b>다른 방법</b>도 써 보세요.`);
-        else f.say("지진파가 지나간 길이 깊이에 따라 달라져서 <b>층의 경계</b>가 드러났어요. 남은 방법도 써 보세요.");
+        if (k !== "wave") f.say(`${k === "drill" ? "중심까지는 6400 km인데 500분의 1쯤만 내려갔어요." : "지구 속 깊은 곳은 여전히 물음표예요."} <b>다른 방법</b>도 확인해 보세요.`);
+        else f.say("지진파가 지나간 길이 깊이에 따라 달라져서 <b>층의 경계</b>가 드러났어요. 남은 방법도 확인해 보세요.");
         return;
       }
       f.pips(2);
       const head = pred.startsWith("지진파") ? "예측대로" : "예측과 달리";
-      f.say(`${head} 중심까지 알려 준 방법은 하나뿐이었어요. 세 막대를 비교해 보세요.`);
+      f.say(`${head} 지구 중심까지 알아낸 방법은 <b>지진파 연구</b>뿐이었어요. 세 막대를 비교해 보세요.`);
       tm.later(judge, 1000);
     }, k === "wave" ? 1700 : 1300);
   }
@@ -138,7 +138,7 @@ export const g2u2ProbeLab: StepRenderer = (host, step, api) => {
     pred = picked;
     f.slot.setControls(gGrid(3, ...picks));
     f.say("방법을 하나씩 눌러 <b>얼마나 깊이</b>까지 알아내는지 비교해 보세요. 차례는 마음대로예요.");
-    api.setCTA("세 방법을 모두 써 보세요", { enabled: false });
+    api.setCTA("세 가지 조사 방법을 모두 확인해 보세요", { enabled: false });
     nextHint();
   });
   return lab.cleanup;
@@ -207,8 +207,8 @@ export const g2u2LayerLab: StepRenderer = (host, step, api) => {
       void line.getBoundingClientRect();
       line.classList.add("g2u2x-blink");
       const which = badA ? "맨틀과 외핵의 경계" : "외핵과 내핵의 경계";
-      const dir = (badA ? da : db) < 0 ? "얕아요. 더 깊이" : "깊어요. 더 얕게";
-      f.say(`자료와 달라요. <b>${which}</b>가 자료보다 ${dir} 옮겨 보세요.`);
+      const dir = (badA ? da : db) < 0 ? "얕아요. 경계를 더 깊은 곳으로" : "깊어요. 경계를 더 얕은 곳으로";
+      f.say(`조사 자료와 맞지 않아요. <b>${which}</b>가 자료보다 ${dir} 옮겨 보세요.`);
       return;
     }
     haptic(HAPTIC.correct);
@@ -225,7 +225,7 @@ export const g2u2LayerLab: StepRenderer = (host, step, api) => {
   });
 
   function judge1(): void {
-    lab.ask("네 층 가운데 <b>액체</b> 상태인 층은?", ["외핵", "맨틀", "내핵"], "지각, 맨틀, 내핵은 고체이고 <b>외핵만 액체</b> 상태로 짐작해요.", () => {
+    lab.ask("네 층 가운데 <b>액체</b> 상태인 층은?", ["외핵", "맨틀", "내핵"], "지각, 맨틀, 내핵은 고체 상태이고 <b>외핵만 액체</b> 상태로 추정해요.", () => {
       f.pips(2);
       lab.ask("모형에서 <b>부피가 가장 큰</b> 층은?", ["맨틀", "외핵", "지각"], "맨틀은 지구 전체 부피의 <b>약 80%</b>를 차지해요.", () =>
         lab.finish("지권은 바깥부터 <b>지각, 맨틀, 외핵, 내핵</b>의 네 층이에요. 지각은 선 하나로 보일 만큼 얇고, 맨틀이 가장 큰 부피를 차지하며, 외핵만 액체 상태예요."),

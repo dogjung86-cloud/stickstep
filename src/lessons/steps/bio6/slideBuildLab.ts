@@ -1,4 +1,4 @@
-// [중1 Ⅱ v5] u2l3 slideBuildLab: 「입안 세포 표본, 어떻게 만들까?」
+// [중1 Ⅱ v5] u2l3 slideBuildLab: 「입안 상피세포 표본, 어떻게 만들까?」
 // 탐구 1(입안 상피세포 표본 만들기)을 손으로 해 본다. 순서는 학생이 정한다.
 //   ① 면봉으로 볼 안쪽을 문질러 받침 유리에 묻힌다  ② 메틸렌 블루 용액 한 방울, 1분 기다린다
 //   ③ 덮개 유리를 비스듬히 기울여 천천히 덮는다      ④ 거름종이로 감싸 가볍게 눌러 넘친 용액을 닦는다
@@ -125,7 +125,8 @@ const BUBBLES = `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="ht
 export const slideBuildLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as SbdStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 5, cls: "sbd-stage", qCls: "sbd-q", api });
+  // 세 줄 도움말을 처음부터 잡아 둔다(360 폭에서 세 줄이 되는 글이 있다. 랩 도중에 무대가 밀리지 않게)
+  const f = bvFrame(host, { title: s.title, steps: 5, cls: "sbd-stage", qCls: "sbd-q", api, tall: true });
 
   // ── 무대 ─────────────────────────────────────────────────────────
   const canvas = bvCanvas(f.stage);
@@ -219,14 +220,14 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
   function doSwab(): void {
     lock(true);
     play("do-swab", 1750);
-    f.say("면봉으로 볼 안쪽을 문지른 다음, 받침 유리 위에 문질러요.");
+    f.say("면봉으로 볼 안쪽을 가볍게 문지른 뒤, 받침 유리 가운데에 넓게 펴 발라요.");
     tm.later(() => {
       svg.classList.add("has-smear");
       setView("faint");
     }, 800);
     tm.later(() => {
       stepDone("swab");
-      f.say("볼 안쪽 세포를 받침 유리에 묻혔어요. 아직은 <b>투명</b>해서 흐릿해요.");
+      f.say("입안 상피세포를 받침 유리에 펴 발랐어요. 아직은 세포가 <b>투명</b>해서 흐릿하게만 보여요. 다음에는 어떤 도구를 쓸까요?");
     }, 1750);
   }
 
@@ -242,7 +243,7 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
 
   function doStain(): void {
     lock(true);
-    f.say("메틸렌 블루 용액을 한 방울 떨어뜨렸어요. <b>1분</b> 동안 기다려요.");
+    f.say("세포 위에 메틸렌 블루 용액을 한 방울 떨어뜨렸어요. 염색이 되도록 <b>1분</b> 동안 기다려 볼게요.");
     dropStain(() => {
       wait.classList.add("on");
       setView("blue", false, "물드는 중이에요");
@@ -251,7 +252,7 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
       wait.classList.remove("on");
       setView("blue");
       stepDone("stain");
-      f.say("1분이 지나자 <b>핵</b>이 푸르게 물들었어요. 다음에는 무엇을 쓸까요?");
+      f.say("1분이 지나자 세포 속 <b>핵</b>이 푸르게 물들었어요! 다음에는 어떤 도구를 쓸까요?");
     }, 850 + 1900);
   }
 
@@ -265,7 +266,7 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
     setAngle(TILT, true);
     svg.classList.add("has-cover");
     f.slot.setControls(range.el, retry);
-    f.say("덮개 유리의 한쪽 끝을 대고 비스듬히 세웠어요. 막대를 밀어 <b>덮어</b> 보세요.");
+    f.say("덮개 유리의 한쪽 끝을 받침 유리에 대고 비스듬히 세웠어요. 아래 막대를 천천히 밀어 <b>덮어</b> 보세요.");
     mark();
   }
 
@@ -286,17 +287,17 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.wrong);
       svg.classList.add("bubbled");
       setView("blue", true);
-      f.say("너무 빨리 덮어서 <b>공기 방울(기포)</b>이 갇혔어요. 다시 들어서 덮어 봐요.");
+      f.say("너무 빨리 덮었더니 <b>공기 방울(기포)</b>이 들어가 세포를 가렸어요! 버튼을 눌러 덮개 유리를 다시 들어 보세요.");
       retry.hidden = false;
       host.dataset.sbdBubble = "1";
     } else {
       haptic(HAPTIC.correct);
       host.dataset.sbdBubble = "0";
-      f.say("천천히 덮으니 공기가 빠져나가 <b>공기 방울</b>이 생기지 않았어요.");
+      f.say("천천히 덮으니 공기가 빠져나가 <b>공기 방울</b>이 생기지 않았어요! 이제 유리 밖으로 <b>넘친 용액</b>을 어떻게 할까요?");
       tm.later(() => {
         f.slot.setControls(tools);
         stepDone("cover");
-        f.say("덮개 유리를 잘 덮었어요. 그런데 유리 밖으로 <b>넘친 용액</b>이 보여요.");
+        f.say("덮개 유리를 기포 없이 잘 덮었어요! 그런데 가장자리에 <b>넘친 염색액</b>이 보이네요. 마지막으로 어떤 도구를 쓸까요?");
       }, 1300);
     }
   }
@@ -311,13 +312,13 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
     range.set(0);
     range.input.disabled = false;
     setAngle(TILT, true);
-    f.say("이번에는 막대를 <b>천천히</b> 밀어서 덮어 보세요.");
+    f.say("좋아요! 이번에는 공기가 빠져나갈 수 있도록 막대를 <b>천천히</b> 밀어서 덮어 보세요.");
   });
 
   function doPaper(): void {
     lock(true);
     play("do-paper", 2350);
-    f.say("거름종이로 감싸고 손가락으로 가볍게 눌러요.");
+    f.say("거름종이를 덮개 유리 가장자리에 대고 가볍게 눌러 물기를 빨아들여요.");
     tm.later(() => {
       svg.classList.add("wiped");
       liq.setAttribute("d", `M${HX + 1} ${HY}H${HX + COVER_W - 1}V${SLIDE_Y}H${HX + 1}Z`);
@@ -325,7 +326,7 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
     tm.later(() => {
       stepDone("paper");
       setView("blue", false, "깨끗한 표본 완성!");
-      f.say("넘친 용액이 거름종이에 스며들었어요. 입안 세포 <b>표본</b>이 완성됐어요.");
+      f.say("넘친 용액이 거름종이에 깔끔하게 흡수됐어요. 관찰하기 좋은 입안 상피세포 <b>표본</b>이 완성됐어요!");
       api.setCTA("마지막 질문에 답해 보세요", { enabled: false });
       tm.later(askFinal, 1500);
     }, 2350);
@@ -362,18 +363,18 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
     }
     // 차례가 아닌 도구: 까닭을 알려 주고(볼 수 있는 것은 직접 보여 주고) 되돌린다
     if (cards[t].isDone()) {
-      nope(t, t === "stain" ? "염색액은 한 방울이면 충분해요. 다른 도구를 골라요." : t === "cover" ? "덮개 유리는 이미 덮었어요. 다른 도구를 골라요." : "세포는 이미 묻혔어요. 다른 도구를 골라요.");
+      nope(t, t === "stain" ? "염색액은 한 방울이면 충분해요. 다른 도구를 골라 보세요." : t === "cover" ? "덮개 유리는 이미 덮었어요. 다른 도구를 골라 보세요." : "세포는 이미 묻혔어요. 다른 도구를 골라 보세요.");
       return;
     }
     if (t === "paper") {
-      nope(t, done === 2 ? "거름종이는 덮개 유리를 덮은 뒤에, <b>넘친 용액</b>을 닦을 때 써요." : "아직 닦아 낼 용액이 없어요. 다른 도구를 먼저 써요.");
+      nope(t, done === 2 ? "거름종이는 덮개 유리를 덮은 뒤에, <b>넘친 용액</b>을 닦을 때 써요." : "아직 닦아 낼 용액이 없어요. 다른 도구를 먼저 골라 보세요.");
       return;
     }
     if (t === "stain") {
       // 세포를 묻히기 전에 염색액부터
       lock(true);
       haptic(HAPTIC.wrong);
-      f.say("염색액부터 떨어뜨렸어요. 그런데 물들일 <b>세포</b>가 아직 없어요.");
+      f.say("염색액부터 떨어뜨렸어요. 하지만 아직 받침 유리에 염색할 <b>세포</b>가 없어요! 먼저 세포를 묻혀 주세요.");
       dropStain(() => setView("tint"));
       tm.later(() => {
         svg.classList.remove("has-drop");
@@ -383,8 +384,8 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
       return;
     }
     // t === "cover"
-    if (done === 0) coverTooEarly("덮개 유리부터 덮었어요. 그런데 그 아래에 볼 <b>세포</b>가 없어요.", "세포가 없어요");
-    else coverTooEarly("염색하지 않고 덮었어요. 세포가 투명해서 <b>핵</b>이 잘 보이지 않아요.", "핵이 잘 안 보여요");
+    if (done === 0) coverTooEarly("덮개 유리부터 덮었어요. 하지만 아직 관찰할 <b>세포</b>를 묻히지 않았어요!", "세포가 없어요");
+    else coverTooEarly("염색을 하지 않고 덮었어요. 세포가 투명해서 <b>핵</b>이 뚜렷하게 보이지 않아요. 먼저 염색액을 떨어뜨려 보세요.", "핵이 잘 안 보여요");
   }
 
   ORDER.forEach((t) => cards[t].el.addEventListener("click", () => use(t)));
@@ -393,19 +394,19 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
   function askFinal(): void {
     if (asked) return;
     asked = true;
-    f.say("하나만 더 생각해 봐요. 답을 고르면 위 그림에서 결과를 보여 줘요.");
+    f.say("표본이 완성됐어요! 마지막으로 덮개 유리를 덮을 때 주의할 점을 확인해 볼까요?");
     f.slot.ask(
-      "덮개 유리를 한 번에 빨리 덮으면 어떻게 될까요?",
-      [{ t: "공기 방울(기포)이 갇힌다", ok: true }, { t: "염색이 더 진해진다" }, { t: "세포가 더 크게 보인다" }],
+      "덮개 유리를 비스듬히 천천히 덮지 않고 한 번에 빨리 덮으면 어떻게 될까요?",
+      [{ t: "공기 방울(기포)이 생긴다", ok: true }, { t: "염색이 더 진하게 된다" }, { t: "세포가 더 크게 확대된다" }],
       (ok) => {
         api.recordQuiz(ok);
         // 답한 뒤에 결과를 보여 준다: 빨리 덮은 표본
         ifPill.classList.add("on");
         svg.classList.add("bubbled");
         setView("blue", true);
-        f.say("한 번에 덮으면 공기가 빠져나가지 못해 <b>공기 방울(기포)</b>이 갇혀요.");
+        f.say("한 번에 빨리 덮으면 공기가 미처 빠져나가지 못해 <b>공기 방울(기포)</b>이 생겨요.");
       },
-      { why: "공기가 빠져나갈 틈이 없어 <b>공기 방울</b>이 갇혀요.", onNext: finish, nextDelay: 2600 },
+      { why: "공기가 빠져나갈 틈이 없어 유리에 <b>공기 방울(기포)</b>이 갇히면 세포를 가려서 관찰하기 어려워요.", onNext: finish, nextDelay: 2600 },
     );
   }
 
@@ -414,8 +415,8 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
     svg.classList.remove("bubbled");
     setView("blue", false, "깨끗한 표본 완성!");
     f.pips(5);
-    f.say("그래서 덮개 유리는 비스듬히 기울여 <b>천천히</b> 덮어요.");
-    f.slot.conclude("표본은 세포를 <b>묻히고</b>, <b>물들이고</b>, 덮개 유리를 <b>비스듬히 천천히</b> 덮은 뒤, 넘친 용액을 닦아서 만들어요.");
+    f.say("그래서 공기 방울이 생기지 않도록 덮개 유리를 비스듬히 기울여 <b>천천히</b> 덮어야 해요!");
+    f.slot.conclude("세포 표본은 받침 유리에 세포를 <b>펴 바르고</b>, 염색액으로 <b>핵을 물들인 뒤</b>, 기포가 생기지 않게 덮개 유리를 <b>비스듬히 천천히</b> 덮고 넘친 용액을 거름종이로 닦아 완성해요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
@@ -424,8 +425,8 @@ export const slideBuildLab: StepRenderer = (host, step, api) => {
   setView("none");
   mark();
   f.slot.setControls(tools);
-  f.say("입안 세포 표본을 만들어요. 아래 도구 가운데 <b>가장 먼저</b> 쓸 것을 골라요.");
-  api.setCTA("표본을 완성해 보세요", { enabled: false });
+  f.say("입안 상피세포 표본을 만들어 볼까요? 아래 네 가지 도구 가운데 <b>가장 먼저</b> 써야 할 것을 골라 보세요.");
+  api.setCTA("순서에 맞게 표본을 완성해 보세요", { enabled: false });
   return () => {
     tm.clear();
     canvas.off();

@@ -126,7 +126,7 @@ export const g2u2CoolLab: StepRenderer = (host, step, api) => {
       lab.hint(SPOT[other].k);
       return false;
     }
-    f.say(`${pred.startsWith("커") ? "예측대로" : "예측과 달리"} 두 돋보기 속 알갱이의 크기가 달라요. 비교해 보고 답해 보세요.`);
+    f.say(`${pred.startsWith("크게") ? "예측대로" : "예측과 달리"} 두 돋보기 속 알갱이의 크기가 달라요. 비교해 보고 답해 보세요.`);
     tm.later(judge, 1000);
     return false;
   });
@@ -134,7 +134,7 @@ export const g2u2CoolLab: StepRenderer = (host, step, api) => {
 
   function judge(): void {
     lab.ask(
-      "지하 깊은 곳에서 <b>천천히</b> 식은 쪽의 알갱이는?",
+      "지하 깊은 곳에서 마그마가 <b>천천히</b> 식으면 광물 알갱이의 크기는?",
       ["더 크다", "더 작다", "크기가 같다"],
       "천천히 식으면 알갱이가 <b>자랄 시간</b>이 길어서 크게 자라요.",
       () => lab.finish("마그마가 지표에서 <b>빨리</b> 식으면 광물 알갱이(결정)가 <b>작고</b>, 지하 깊은 곳에서 <b>천천히</b> 식으면 <b>크게</b> 자라요. 식는 빠르기가 결정의 크기를 정해요."),
@@ -142,7 +142,7 @@ export const g2u2CoolLab: StepRenderer = (host, step, api) => {
   }
 
   f.say("암석이 녹은 뜨거운 물질인 <b>마그마</b>가 식으면 알갱이가 생기며 굳어요. 먼저 예측해 보세요.");
-  gPredict(lab, "마그마가 <b>천천히</b> 식으면 알갱이는 어떻게 될까요?", ["커진다", "작아진다", "달라지지 않는다"], (picked) => {
+  gPredict(lab, "마그마가 <b>천천히</b> 식으면 알갱이는 어떻게 될까요?", ["크게 자란다", "작게 자란다", "빠르게 식을 때와 같다"], (picked) => {
     pred = picked;
     f.slot.setControls(gGrid(1, ...picks), hold);
     f.say("마그마를 <b>식힐 곳</b>을 고르고 버튼을 꾹 눌러 식혀 보세요. 두 곳 모두 해 봐요.");
@@ -246,7 +246,7 @@ export const g2u2IgneousLab: StepRenderer = (host, step, api) => {
     f.pips(2);
     f.say("네 암석이 모두 제 칸을 찾았어요. 완성한 표를 보고 답해 보세요.");
     tm.later(() => lab.ask("둘 다 어두운 <b>현무암과 반려암</b>은 무엇이 다른가요?", ["광물 결정의 크기", "암석의 색", "다른 점이 없다"], "색은 비슷하지만 현무암은 결정이 <b>작고</b> 반려암은 <b>커요</b>.", () =>
-      lab.finish("화성암은 <b>광물 결정의 크기</b>와 <b>암석의 색</b>으로 나눠요. 결정이 작은 현무암과 유문암, 결정이 큰 반려암과 화강암으로 나뉘고, 그 가운데 현무암과 반려암은 어둡고 유문암과 화강암은 밝아요."),
+      lab.finish("화성암은 <b>광물 결정의 크기</b>와 <b>암석의 색</b>에 따라 분류해요. 결정이 작으면 현무암(어두움)·유문암(밝음), 결정이 크면 반려암(어두움)·화강암(밝음)이에요."),
     ), 900);
   }
   f.slot.setControls(gGrid(2, ...picks));

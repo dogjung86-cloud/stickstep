@@ -65,7 +65,7 @@ for (const v of VIEWS) {
     if (await st.count()) await st.screenshot({ path: join(OUT, `${TAG}-${v.name}-${label}-stage.png`) }).catch(() => {});
   };
   await shot("0-start");
-  await btn("전류 흐르게");
+  await btn("전류 흘려주기");
   await page.waitForTimeout(1300);
   await shot("1-left");
   await page.waitForFunction(() => !!document.querySelector(".screen.active .bv-q.show .bv-choice:not(:disabled)"), null, { timeout: 15000 }).catch(() => {});

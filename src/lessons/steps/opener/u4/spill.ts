@@ -1,4 +1,4 @@
-// [Ⅳ단원 도입] u4l2 spill: 「얼음은 줍는데 주스는요?」
+// [Ⅳ단원 도입] u4l2 spill: 「쏟아진 얼음은 손으로 줍는데, 주스도 주울 수 있을까요?」
 // 내기: 쏟아진 얼음과 주스를 둘 다 손으로 주워 담을 수 있을까(정오를 매기지 않는다).
 // 손으로 하는 일: 얼음 세 조각을 눌러 접시에 담고, 주스를 눌러 집어 본다(집었다가 흘러내린다).
 // 도입은 까닭(입자의 배열)을 말하지 않는다. 바로 뒤의 온도 랩과 그릇 랩이 받는다.
@@ -36,7 +36,7 @@ export function spill(c: OpenerCtx): void {
         phase = "juice";
         c.step.dataset.opnPhase = "juice";
         c.stage.classList.add("juice");
-        c.say("얼음은 <b>모양 그대로</b> 담겼어요. 이번에는 <b>주스</b>를 눌러 집어 보세요.");
+        c.say("단단한 얼음은 <b>모양이 변하지 않고 그대로</b> 접시에 담겼어요! 이번에는 쏟아진 <b>주스</b>를 눌러 집어 보세요.");
       }
     });
     c.stage.append(b);
@@ -57,17 +57,18 @@ export function spill(c: OpenerCtx): void {
       c.face("surprised");
       c.stage.classList.add("done");
       const head = pred.startsWith("얼음만") ? "예측대로" : "예측과 달리";
-      c.say(`${head} 주스는 손가락 사이로 <b>흘러내려요</b>. 얼음과 주스는 무엇이 다를까요?`);
+      c.say(`${head} 주스는 손가락 사이로 <b>흘러내려서</b> 손으로 집어 담을 수 없어요! 얼음과 주스는 어떤 성질이 다른 걸까요?`);
       c.finish();
     }, 1500);
   });
   c.stage.append(juice);
 
   c.step.dataset.opnPhase = "ask";
-  c.ask("얼음과 주스를 쏟았어요. 둘 다 손으로 주워 담을 수 있을까요?", {
-    choices: ["얼음만 주울 수 있다", "둘 다 주울 수 있다", "둘 다 못 줍는다"],
+  // choices[0]이 옳은 예측이고 "얼음만"으로 시작해야 한다(끝의 말머리가 pred.startsWith("얼음만")으로 가른다)
+  c.ask("얼음이 든 주스 컵이 넘어졌어요! 쏟아진 얼음과 주스를 손으로 집어서 접시에 담을 수 있을까요?", {
+    choices: ["얼음만 손으로 집어 담을 수 있다", "얼음과 주스 둘 다 집어 담을 수 있다", "둘 다 손으로 집어 담을 수 없다"],
     neutral: true,
-    good: "예측 완료! <b>얼음</b>을 하나씩 눌러 접시에 담아 보세요.",
+    good: "좋아요! 먼저 쏟아진 <b>얼음</b>을 하나씩 눌러 접시에 담아 보세요.",
     onDone: (picked) => {
       pred = picked;
       phase = "ice";

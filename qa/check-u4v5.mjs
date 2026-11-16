@@ -124,7 +124,7 @@ const PLAYS = {
     await W(200);
     await at(id, "intro-mid");
     await L.hold(page, ".opn-u4-btn", 2000);
-    await endOpener(id, "실험실 열기");
+    await endOpener(id, "실험으로 알아보기");
     // 확산 랩
     await predict(id, "ink", "바닥에만");
     await L.click(page, ".u4x-ink-add");
@@ -155,7 +155,7 @@ const PLAYS = {
     await at(id, "ink-dish-mid");
     await L.sweep(page, ".u4x-ink-tb", 50, 100, 5);
     await wrongOnce(id, "ink");
-    await endLab(id, "ink", "다음 실험, 증발");
+    await endLab(id, "ink", "다음 실험: 증발");
     // 증발 랩
     await predict(id, "evap", "그대로");
     await L.click(page, '.u4x-evap-card[data-k="lump"]');
@@ -170,13 +170,13 @@ const PLAYS = {
     await W(300);
     await L.hold(page, ".u4x-hold", 3600);
     await wrongOnce(id, "evap");
-    await endLab(id, "evap", "이름 붙이기");
+    await endLab(id, "evap", "개념 정리하기");
     await tail(id);
   },
   u4l2: async (id) => {
     ok((await L.stepKind(page)) === "opener:u4-spill", `${id}: 새 도입이 아님(${await L.stepKind(page)})`);
     await at(id, "intro-ask");
-    await L.choose(page, "둘 다 주울");
+    await L.choose(page, "둘 다 집어"); // "얼음과 주스 둘 다 집어 담을 수 있다"
     await W(500);
     await at(id, "intro-picked");
     for (let i = 0; i < 3; i++) {
@@ -187,7 +187,7 @@ const PLAYS = {
     await W(500);
     await at(id, "intro-mid");
     await L.click(page, ".opn-u4-hit.juice");
-    await endOpener(id, "실험실 열기");
+    await endOpener(id, "실험으로 알아보기");
     // 옮겨 담기 랩: 두 그릇에 담아 보고 기록한다. 물에서 한 번 틀리게 기록해 본다
     await W(700);
     await at(id, "move-start");
@@ -225,7 +225,7 @@ const PLAYS = {
     await at(id, "move-gas-dish");
     await record("diff", "diff");
     await L.click(page, ".u4x-move-ok");
-    await endLab(id, "move", "다음, 입자 모형 만들기");
+    await endLab(id, "move", "다음 실험: 입자 모형 만들기");
     // 입자 모형 만들기 랩: 먼저 일부러 고체인 채로 낸다
     await W(900);
     await at(id, "build-start");
@@ -249,7 +249,7 @@ const PLAYS = {
     await W(2500);
     await at(id, "build-sol");
     await L.click(page, ".u4x-build-fix");
-    await endLab(id, "build", "이름 붙이기");
+    await endLab(id, "build", "개념 정리하기");
     await tail(id);
   },
   u4l3: async (id) => {
@@ -282,7 +282,7 @@ const PLAYS = {
     await L.click(page, ".u4x-watch-paper.sb");
     await W(900);
     await at(id, "watch-red");
-    await endLab(id, "watch", "다음 실험, 두 컵");
+    await endLab(id, "watch", "다음 실험: 드라이아이스");
     // 두 컵(얼음과 드라이아이스) 랩
     await W(500);
     await at(id, "dry-first");
@@ -292,7 +292,7 @@ const PLAYS = {
     await at(id, "dry-mid");
     await L.hold(page, ".u4x-hold", 2200);
     await wrongOnce(id, "dry");
-    await endLab(id, "dry", "이름 붙이기");
+    await endLab(id, "dry", "개념 정리하기");
     // 용어 스텝을 지나 이름 랩으로
     await W(500);
     await page.screenshot({ path: join(OUT, `${id}-words.png`) });
@@ -331,7 +331,7 @@ const PLAYS = {
     await W(300);
     await at(id, "intro-bulge");
     await L.hold(page, ".opn-u4-btn", 3000);
-    await endOpener(id, "실험실 열기");
+    await endOpener(id, "실험으로 알아보기");
     // 올리브유 랩
     await W(500);
     await at(id, "olive-start");
@@ -347,7 +347,7 @@ const PLAYS = {
     await at(id, "olive-wet");
     await L.click(page, ".u4x-olive-again");
     await wrongOnce(id, "olive");
-    await endLab(id, "olive", "다음 실험, 풍선");
+    await endLab(id, "olive", "다음 실험: 아세톤과 풍선");
     // 풍선 랩
     await predict(id, "balloon", "그대로다");
     await L.hold(page, ".u4x-hold", 1500);
@@ -371,7 +371,7 @@ const PLAYS = {
     await L.click(page, ".opn-u4-btn");
     await W(400);
     await L.click(page, ".opn-u4-btn");
-    await endOpener(id, "실험실 열기");
+    await endOpener(id, "실험으로 알아보기");
     // 녹이기
     await predict(id, "melt", "계속 올라간다");
     await L.hold(page, ".u4x-hold", 900);
@@ -380,7 +380,7 @@ const PLAYS = {
     await at(id, "melt-flat");
     await runTo(id, "melt", 10);
     await wrongOnce(id, "melt");
-    await endLab(id, "melt", "다음 실험, 물 끓이기");
+    await endLab(id, "melt", "다음 실험: 물 끓이기");
     // 끓이기: 센 불 먼저, 그다음 약한 불
     await W(600);
     await at(id, "boil-start");
@@ -395,7 +395,7 @@ const PLAYS = {
     await at(id, "boil-second");
     await runTo(id, "boil", 10);
     await wrongOnce(id, "boil");
-    await endLab(id, "boil", "이름 붙이기");
+    await endLab(id, "boil", "개념 정리하기");
     await tail(id);
   },
   u4l6: async (id) => {
@@ -417,7 +417,7 @@ const PLAYS = {
     await at(id, "freeze-flat");
     await runTo(id, "freeze", 10);
     await wrongOnce(id, "freeze");
-    await endLab(id, "freeze", "다음, 주변의 온도");
+    await endLab(id, "freeze", "다음 실험: 주변의 온도 변화");
     // 주변 온도 랩: 먼저 일부러 방출하는 변화(응고)를 고른다
     await W(500);
     await at(id, "around-start");
@@ -435,7 +435,7 @@ const PLAYS = {
     await at(id, "around-found");
     await press("cond");
     await press("depo");
-    await endLab(id, "around", "이름 붙이기");
+    await endLab(id, "around", "개념 정리하기");
     await tail(id);
   },
 };

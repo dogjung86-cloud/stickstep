@@ -109,7 +109,7 @@ function pairUp(from: Pt[], to: Pt[]): Pt[] {
 
 export const u4OliveLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
-  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-olive" });
+  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-olive", tall: true });
   const { f, tm } = lab;
   const rnd = seeded(77);
   const ns = `u4o${Math.random().toString(36).slice(2, 7)}`; // 그라데이션 id(같은 id가 다른 화면에 남아 있으면 색이 빠진다)
@@ -183,7 +183,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     </g>
     <g class="u4x-olive-win">
       ${winRect(WC.x, WC.w)}
-      <text class="u4x-olive-ttl" x="${cC}" y="${WIN_Y + 21}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9BEFF">입자의 눈</text>
+      <text class="u4x-olive-ttl" x="${cC}" y="${WIN_Y + 21}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9BEFF">입자 모형</text>
       <text class="u4x-olive-cnt" x="${cC}" y="${WIN_Y + 40}" text-anchor="middle" font-size="12" font-weight="700" fill="#9C90DA" opacity="0">입자 12개</text>
       <path class="u4x-olive-ghost" d="M${cC - SEC} ${lvl0.toFixed(1)} h${SEC * 2}" stroke="#F0705E" stroke-width="1.6" stroke-dasharray="4 3" opacity="0"/>
       ${section(cC, lvl0, "u4x-olive-c", "rgba(255,255,255,.6)")}
@@ -252,8 +252,8 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     tm.later(jitter, 240);
   };
 
-  const weigh = bvBtn("main u4x-olive-weigh", "높이를 표시하고 질량 재기");
-  const hold = u4Hold(lab, "꾹 눌러 얼음과 소금으로 얼리기", (ms) => {
+  const weigh = bvBtn("main u4x-olive-weigh", "처음 높이와 질량 기록하기");
+  const hold = u4Hold(lab, "꾹 눌러 올리브유 얼리기", (ms) => {
     inBath(true);
     t = Math.min(1, t + ms / NEED);
     paint();
@@ -265,21 +265,21 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     cLine.setAttribute("stroke", "#6C8CFF");
     ghost.setAttribute("opacity", "0.85");
     f.pips(1);
-    f.say("하얗게 굳었어요. 높이가 <b>내려가</b> 파란 테이프를 붙였어요. 이제 질량을 다시 재요.");
+    f.say("올리브유가 하얗게 굳으면서 높이가 <b>낮아졌어요</b>! 낮아진 높이에 파란색 테이프를 붙였으니, 이제 얼린 뒤의 질량을 재 볼까요?");
     f.slot.setControls(el("div", { class: "u4x-row" }, rush, again));
     api.setCTA("다시 재 보세요", { enabled: false });
     return false;
   });
   // 얼린 병을 어떻게 잴지는 학생이 정한다. 닦지 않고 바로 재면 겉에 맺힌 물방울 때문에 숫자가 커진다(책의 주의).
-  const again = bvBtn("u4x-olive-again", "물기를 닦고 재기");
-  const rush = bvBtn("u4x-olive-rush", "꺼내서 바로 재기");
+  const again = bvBtn("u4x-olive-again", "병 겉면의 물기를 닦고 재기");
+  const rush = bvBtn("u4x-olive-rush", "꺼내서 그대로 바로 재기");
   rush.addEventListener("click", () => {
     rush.disabled = true;
     haptic(HAPTIC.wrong);
     inBath(false);
     f.stage.classList.add("dew");
     read.textContent = WET;
-    f.say(`숫자가 <b>${WET}</b>으로 커졌어요. 차가운 병 겉에 <b>물방울</b>이 맺혀서예요. 닦고 다시 재요.`);
+    f.say(`질량이 <b>${WET}</b>으로 늘어났네요! 차가운 유리병 겉면에 공기 중의 수증기가 액화하여 <b>물방울</b>이 맺혔기 때문이에요. 물기를 깨끗이 닦고 다시 재 보세요.`);
   });
 
   weigh.addEventListener("click", () => {
@@ -287,12 +287,14 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     tape1.setAttribute("opacity", "1");
     read.textContent = MASS;
-    f.say(`높이에 <b>빨간 테이프</b>를 붙였어요. 질량은 <b>${MASS}</b>이에요. 이제 얼릴 거예요.`);
+    f.say(`얼리기 전 높이에 <b>빨간색 테이프</b>를 붙이고 질량(<b>${MASS}</b>)을 기록했어요. 이제 올리브유를 얼려 볼까요?`);
     tm.later(
       () =>
-        u4Predict(lab, "올리브유를 얼리면 <b>질량</b>은 어떻게 될까요?", ["그대로다", "늘어난다", "줄어든다"], (picked) => {
+        // 첫 보기는 "그대로"로 시작해야 한다(다시 잰 뒤의 말머리가 pred.startsWith("그대로")로 가른다)
+        u4Predict(lab, "액체 올리브유가 얼어서 고체가 되면 <b>질량</b>은 어떻게 될까요?", ["그대로 일정하다", "얼기 전보다 늘어난다", "얼기 전보다 줄어든다"], (picked) => {
           pred = picked;
-          f.say("병을 <b>얼음과 소금</b>에 넣어 얼려요. 버튼을 꾹 눌러 높이와 입자를 보세요.");
+          // 병은 버튼을 누른 순간 비커로 옮겨 간다(inBath). 그래서 아직 '넣었어요'가 아니라 '넣어 얼려요'다
+          f.say("유리병을 <b>얼음과 소금</b>이 든 비커에 넣어 얼려요. 버튼을 꾹 눌러 올리브유가 얼 때 높이와 입자 배열이 어떻게 달라지는지 관찰해 보세요.");
           f.slot.setControls(hold);
           api.setCTA("꾹 눌러 얼려 보세요", { enabled: false });
         }),
@@ -315,18 +317,19 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     wmark.setAttribute("opacity", "1");
     host.dataset.u4OliveCmp = "1";
     const head = pred.startsWith("그대로") ? "예측대로" : "예측과 달리";
-    f.say(`${head} 질량은 <b>그대로 ${MASS}</b>이에요. 그런데 높이(부피)는 줄었어요.`);
+    f.say(`${head} 물기를 닦고 재니 질량은 얼기 전과 똑같이 <b>${MASS}</b>이에요! 반면 올리브유의 높이(부피)는 줄어들었네요.`);
     tm.later(judge, 1100);
   });
 
   function judge(): void {
     f.slot.ask(
-      "얼린 올리브유의 <b>부피가 줄어든</b> 까닭은?",
-      [{ t: "입자 사이의 거리가 가까워져서", ok: true }, { t: "입자의 개수가 줄어서" }, { t: "입자 하나하나가 작아져서" }],
+      "액체 올리브유가 얼었을 때 <b>부피가 줄어든</b> 까닭은 무엇인가요?",
+      // 정답 보기는 오답 카드의 정답 줄에 한 줄로 들게 둔다(두 줄이면 틀렸을 때 조작 칸 208px를 넘는다)
+      [{ t: "규칙적으로 배열되며 입자 사이가 가까워져서", ok: true }, { t: "올리브유를 이루는 입자의 개수가 줄어들어서" }, { t: "올리브유 입자 하나하나의 크기가 작아져서" }],
       (ok) => api.recordQuiz(ok),
       {
-        why: "입자의 수와 크기는 그대로예요. <b>입자 사이</b>가 가까워졌어요.",
-        onNext: () => lab.finish("응고해도 입자의 종류와 개수는 그대로라 <b>질량은 변하지 않아요</b>. 입자 사이가 가까워져 <b>부피는 줄어요</b>."),
+        why: "상태가 변해도 입자의 크기와 개수는 변하지 않아요. 액체가 고체로 응고할 때 <b>입자 사이의 거리</b>가 가까워지기 때문에 부피가 줄어들어요.",
+        onNext: () => lab.finish("액체가 고체로 응고할 때 입자의 종류와 개수는 변하지 않으므로 <b>질량은 일정해요</b>. 하지만 입자 사이의 거리가 가까워지면서 <b>부피는 줄어들어요</b>(물 제외)."),
       },
     );
   }

@@ -21,26 +21,26 @@ const TECH: Record<Key, { card: string; name: string; off: string; on: string }>
   ar: {
     card: "빈 방에 가구 놓기",
     name: "증강 현실",
-    off: "폰으로 빈 방을 비추고 있어요. 화면도 빈 방 그대로예요. <b>기술 켜기</b>를 눌러 봐요.",
-    on: "실제 방 모습에 <b>가상 소파</b>가 겹쳐 보여요. 이런 기술이 <b>증강 현실</b>이에요.",
+    off: "스마트폰으로 빈 방을 비추고 있어요. 아직은 화면도 빈 방 그대로예요. <b>기술 켜기</b>를 눌러 보세요.",
+    on: "실제 방 모습 위에 <b>가상 소파</b>가 겹쳐 보여요! 이런 기술이 바로 <b>증강 현실</b>이에요.",
   },
   iot: {
     card: "집 밖에서 불 켜기",
     name: "사물 인터넷",
-    off: "집 밖에서 폰을 눌러도 전등은 그대로예요. <b>기술 켜기</b>를 눌러 봐요.",
-    on: "폰과 전등이 <b>무선 통신</b>으로 이어져 불이 켜졌어요. <b>사물 인터넷</b>이에요.",
+    off: "집 밖에서 스마트폰을 눌러도 집 안 전등은 켜지지 않아요. <b>기술 켜기</b>를 눌러 보세요.",
+    on: "스마트폰과 전등이 <b>무선 통신</b>으로 연결되어 불이 켜졌어요! 이 기술이 <b>사물 인터넷</b>이에요.",
   },
   ai: {
-    card: "사진 속 동물 알기",
+    card: "사진 속 동물 맞히기",
     name: "인공지능",
-    off: "컴퓨터가 사진 속 동물을 알아보지 못해요. <b>기술 켜기</b>를 눌러 봐요.",
-    on: "수많은 사진으로 <b>학습</b>한 컴퓨터가 동물을 알아봐요. <b>인공지능</b>이에요.",
+    off: "학습하기 전이라 컴퓨터가 사진 속 동물을 알아보지 못해요. <b>기술 켜기</b>를 눌러 보세요.",
+    on: "수많은 사진을 <b>학습</b>한 컴퓨터가 어떤 동물인지 정확히 알아봐요! 이 기술이 <b>인공지능</b>이에요.",
   },
   bio: {
     card: "내 몸에 맞는 약",
     name: "첨단 바이오",
-    off: "두 사람이 똑같은 약을 받았어요. <b>기술 켜기</b>를 눌러 봐요.",
-    on: "<b>유전정보</b>를 읽어 사람마다 맞는 약을 만들어요. <b>첨단 바이오</b>예요.",
+    off: "체질이 다른 두 사람이 똑같은 약을 처방받았어요. <b>기술 켜기</b>를 눌러 보세요.",
+    on: "개인의 <b>유전정보</b>를 분석해 사람마다 몸에 맞는 약을 만들어요! 이 기술이 <b>첨단 바이오</b>예요.",
   },
 };
 
@@ -69,7 +69,7 @@ const SCENE: Record<Key, string> = {
     <path d="M160 112 h24 m-7 -6 l7 6 l-7 6" fill="none" stroke="#8FA3C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <rect x="196" y="20" width="128" height="192" rx="16" fill="#0A1220" stroke="#C9D5E8" stroke-width="2"/>
     ${room(204, 40, 112, 150, 0.87)}
-    <text x="260" y="34" text-anchor="middle" class="u1x-lb sm">폰 화면</text>
+    <text x="260" y="34" text-anchor="middle" class="u1x-lb sm">스마트폰 화면</text>
     <g class="on" transform="translate(-6 0)">
       <rect x="222" y="112" width="66" height="26" rx="7" fill="#FF8FA3"/>
       <rect x="216" y="124" width="78" height="24" rx="8" fill="#FF6F8B"/>
@@ -103,7 +103,7 @@ const SCENE: Record<Key, string> = {
       <circle cx="262" cy="122" r="11" fill="#33425C" stroke="#55678A" stroke-width="1.4"/>
       <line x1="104" y1="116" x2="190" y2="116" stroke="#55678A" stroke-width="2" stroke-dasharray="4 6"/>
       <path d="M140 108 l16 16 m0 -16 l-16 16" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round"/>
-      <text x="148" y="94" text-anchor="middle" class="u1x-lb dim">이어지지 않음</text>
+      <text x="148" y="94" text-anchor="middle" class="u1x-lb dim">연결 안 됨</text>
     </g>`,
   ai: `
     <rect x="18" y="26" width="88" height="80" rx="8" fill="#F1F4F8"/>
@@ -233,7 +233,7 @@ export const techLab: StepRenderer = (host, step, api) => {
   let cur: Key = "ar";
   let locked = false;
   let asked = false;
-  const cards = Object.fromEntries(KEYS.map((k) => [k, bvCard("u1t-card", { name: TECH[k].card, sub: "아직 켜 보지 않았어요", key: k })])) as Record<Key, BvCard>;
+  const cards = Object.fromEntries(KEYS.map((k) => [k, bvCard("u1t-card", { name: TECH[k].card, sub: "눌러서 살펴보기", key: k })])) as Record<Key, BvCard>;
   const offBtn = bvBtn("u1t-off", "기술 끄기");
   const onBtn = bvBtn("u1t-on", "기술 켜기");
   const seg = el("div", { class: "u1x-seg" }, offBtn, onBtn);
@@ -289,12 +289,12 @@ export const techLab: StepRenderer = (host, step, api) => {
     cur = "bio";
     on.bio = true;
     paint(true);
-    f.say("네 기술을 모두 켜 봤어요. 무대의 장면을 보고 골라 봐요.");
+    f.say("네 가지 기술을 모두 켜 봤어요! 화면의 장면을 보고 알맞은 기술을 골라 보세요.");
     f.slot.ask(
-      "<b>유전정보</b>를 읽어 사람마다 맞는 약을 만든 기술은?",
+      "개인의 <b>유전정보</b>를 분석해 사람마다 몸에 맞는 약을 만드는 기술은 무엇인가요?",
       [{ t: "첨단 바이오", ok: true }, { t: "증강 현실" }, { t: "사물 인터넷" }],
       (ok) => api.recordQuiz(ok),
-      { why: "생물의 유전정보를 이용하는 기술이 <b>첨단 바이오</b>예요.", onNext: finish },
+      { why: "생물의 유전정보나 생명 현상을 활용하는 기술이 <b>첨단 바이오</b>예요.", onNext: finish },
     );
   }
 
@@ -306,13 +306,13 @@ export const techLab: StepRenderer = (host, step, api) => {
     nameEl.style.display = "none";
     sum.innerHTML = summarySvg(); // 결론에서야 만든다(숨긴 칸의 글자가 무대 글자 검사에 잡히지 않게)
     f.stage.querySelector("svg")?.setAttribute("aria-label", "네 기술을 켠 모습: 증강 현실, 사물 인터넷, 인공지능, 첨단 바이오");
-    f.say("체험 끝! 아래에서 네 기술의 이름을 다시 읽어 봐요.");
-    f.slot.conclude("<b>증강 현실</b>은 가상 이미지를 겹치고, <b>사물 인터넷</b>은 사물을 잇고, <b>인공지능</b>은 학습하고, <b>첨단 바이오</b>는 유전정보를 써요.");
+    f.say("네 가지 첨단 기술이 우리 생활을 어떻게 바꾸는지 모두 확인했어요!");
+    f.slot.conclude("<b>증강 현실</b>은 실제 모습에 가상 이미지를 겹쳐 보여 주고, <b>사물 인터넷</b>은 사물을 통신으로 연결해요. <b>인공지능</b>은 데이터를 스스로 학습하고, <b>첨단 바이오</b>는 생물의 유전정보를 활용해요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
   f.slot.setControls(bvCards(2, cards.ar, cards.iot, cards.ai, cards.bio), seg);
   paint();
-  api.setCTA("네 장면에서 기술을 켜 보세요", { enabled: false });
+  api.setCTA("네 가지 장면에서 기술을 모두 켜 보세요", { enabled: false });
   return () => tm.clear();
 };

@@ -26,10 +26,19 @@ export interface LabStep {
   cta?: string;
 }
 
-/** 랩 틀. 전기 단원의 색을 입힌다. */
-export function xFrame(host: HTMLElement, o: { title: string; steps: number; api: Pick<StepAPI, "setCTA"> }): BvFrame {
+/** 랩 틀. 전기 단원의 색을 입힌다. tall: 도움말에 세 줄 글이 나오는 랩은 처음부터 세 줄 상자로 잡는다(랩 도중에 무대가 밀리지 않게). */
+export function xFrame(host: HTMLElement, o: { title: string; steps: number; api: Pick<StepAPI, "setCTA">; tall?: boolean }): BvFrame {
   host.classList.add("g2u7x-step");
-  return bvFrame(host, { title: o.title, steps: o.steps, cls: "g2u7x-stage", qCls: "g2u7x-q", api: o.api });
+  return bvFrame(host, { title: o.title, steps: o.steps, cls: "g2u7x-stage", qCls: "g2u7x-q", api: o.api, tall: o.tall });
+}
+
+/** 받침에 맞는 조사(을/를, 은/는, 이에요/예요, 으로/로). 마지막 글자가 한글이 아니면 받침 없음으로 본다. ㄹ 받침 뒤의 '으로'는 '로'. */
+export function xJosa(word: string, withFinal: string, without: string): string {
+  const c = word.charCodeAt(word.length - 1) - 0xac00;
+  if (c < 0 || c > 11171) return without;
+  const fin = c % 28;
+  if (!fin || (withFinal === "으로" && fin === 8)) return without;
+  return withFinal;
 }
 
 /** 고르기 버튼 한 줄(48px). 하나만 켜진다. guard가 false를 돌려주면 바뀌지 않는다. */
@@ -119,7 +128,7 @@ export interface XLog {
 }
 export function xLog(rows: string[], cols = 1, tight = false): XLog {
   const items = rows.map((name) => {
-    const v = el("b", { class: "g2u7x-log-v", text: "아직" });
+    const v = el("b", { class: "g2u7x-log-v", text: "측정 전" });
     return { row: el("div", { class: "g2u7x-log-row" }, el("span", { class: "g2u7x-log-n", text: name }), v), v, on: false };
   });
   const box = el("div", { class: `g2u7x-log${tight ? " tight" : ""}` }, ...items.map((i) => i.row));
@@ -132,7 +141,7 @@ export function xLog(rows: string[], cols = 1, tight = false): XLog {
       items[i].on = true;
     },
     clear(i) {
-      items[i].v.textContent = "아직";
+      items[i].v.textContent = "측정 전";
       items[i].row.classList.remove("on");
       items[i].on = false;
     },

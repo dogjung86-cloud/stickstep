@@ -14,7 +14,7 @@
 //   bv-card-i   조건 카드 보조: 11.5px 600 한 줄(nowrap), 폭 --width 필요
 //   bv-pill     무대 알약: 12.5px 700 한 줄, 폭은 결과로 알려 줌(무대 346 안)
 //   opn-title   도입 제목: 21px 800 /30, 폭 346, 줄 수
-//   opn-bubble  도입 쌤의 말: 14px /20, 폭 278, 줄 수(두 줄 안쪽이 규칙)
+//   opn-bubble  도입 쌤의 말: 14px /20, 폭 278, 줄 수(세 줄 안쪽이 규칙, 2026-11-16. 두 줄을 넘으면 앱이 13px로 줄인다)
 //   hook-q      도입 예측 질문: 14.5px 700 /21, 폭 346
 //   hook-choice 도입 예측 보기: 14.5px /1.35, 폭 318
 //   custom      --font 14 --weight 700 --lh 20 --width 200 --nowrap
@@ -66,16 +66,25 @@ await page.setContent(`<!doctype html><html><head><meta charset="utf-8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.min.css" />
 <style>body{margin:0;font-family:'Pretendard Variable',Pretendard,sans-serif;letter-spacing:-.012em;-webkit-font-smoothing:antialiased} .box{position:absolute;left:0;top:0;word-break:keep-all} b{font-weight:700}</style></head><body><div id="root"></div></body></html>`);
 await page.waitForFunction(() => document.fonts && document.fonts.status === "loaded").catch(() => {});
-// 글꼴이 실제로 내려오도록 한글을 한 번 그려 둔다
-await page.evaluate(async () => {
-  const d = document.createElement("div");
-  d.textContent = "가나다라마바사 아자차카타파하 0123 ABC 가열하기 예측 완료";
-  d.style.fontWeight = "800";
-  document.body.appendChild(d);
-  await document.fonts.ready;
-  await new Promise((r) => setTimeout(r, 400));
-  await document.fonts.ready;
-});
+// 잴 글을 먼저 화면 밖에 한 번 다 그려, 그 글자들이 든 글꼴 조각(unicode-range)을 모두 받은 뒤에 잰다.
+// (조각을 받기 전에 재면 대체 글꼴로 재서 1~3% 넓게 나온다. 2026-11-16 g2u2 작업에서 찾음)
+await page.evaluate(async (items) => {
+  const pre = document.createElement("div");
+  pre.style.cssText = "position:absolute;left:-99999px;top:0;width:3000px";
+  for (const it of items)
+    for (const w of [400, 700, 800]) {
+      const d = document.createElement("div");
+      d.style.fontWeight = String(w);
+      d.innerHTML = it.html;
+      pre.appendChild(d);
+    }
+  document.body.appendChild(pre);
+  for (let i = 0; i < 3; i++) {
+    await document.fonts.ready;
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  pre.remove();
+}, items);
 const out = await page.evaluate(
   ({ items, KINDS }) => {
     const root = document.getElementById("root");

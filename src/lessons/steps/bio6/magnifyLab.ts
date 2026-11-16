@@ -339,7 +339,7 @@ export const magnifyLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: 1000,
     value: 0,
-    label: "확대 막대",
+    label: "확대 배율 조절",
     // 로그 눈금: 배율 M의 자리 = log(M)/log(400)
     ticks: [
       { t: "맨눈", p: 0 },
@@ -355,20 +355,20 @@ export const magnifyLab: StepRenderer = (host, step, api) => {
 
   function hint(): string {
     if (cur === "onion") {
-      if (mag < 6) return "양파 껍질 한 겹을 받침 유리에 올렸어요. <b>확대 막대</b>를 오른쪽으로 밀어 크게 봐요.";
-      if (mag < 80) return "얇은 껍질에 가는 줄이 보이기 시작해요. <b>더 크게</b> 밀어 봐요.";
-      if (mag < SEEN) return "작은 칸이 벽돌처럼 빼곡해요. 막대를 <b>끝까지</b> 밀어 봐요.";
-      return cards.cork.isDone() ? "칸 하나하나가 <b>세포</b>예요. 칸마다 둥근 점도 하나씩 보여요." : "칸 하나하나가 <b>세포</b>예요. 이제 <b>코르크</b>를 골라 크게 봐요.";
+      if (mag < 6) return "양파 껍질 한 겹을 받침 유리에 올렸어요. 아래 <b>막대</b>를 오른쪽으로 밀어 크게 확대해 보세요.";
+      if (mag < 80) return "얇은 껍질에 가는 줄무늬가 보이기 시작해요. 막대를 오른쪽으로 <b>더 밀어</b> 보세요.";
+      if (mag < SEEN) return "작은 칸들이 벽돌처럼 빼곡히 모여 있어요. 막대를 <b>끝까지</b> 밀어 보세요.";
+      return cards.cork.isDone() ? "이 작은 칸 하나하나가 바로 <b>세포</b>예요. 칸마다 둥근 점(핵)도 하나씩 보여요." : "이 작은 칸 하나하나가 바로 <b>세포</b>예요. 이제 아래에서 <b>코르크</b>를 골라 크게 확대해 보세요.";
     }
     if (cur === "cork") {
-      if (mag < 6) return "훅이 들여다본 <b>코르크</b>(나무껍질) 조각이에요. 막대를 밀어 크게 봐요.";
-      if (mag < 110) return "아직은 매끈해 보여요. 코르크의 칸은 훨씬 작아요. <b>더 크게!</b>";
-      if (mag < SEEN) return "촘촘한 그물 무늬가 보여요. 막대를 <b>끝까지</b> 밀어 봐요.";
-      return cards.salt.isDone() ? "빈 칸이 벌집처럼 빼곡해요. 훅이 '작은 방'이라 부른 <b>세포</b>예요." : "훅이 본 '작은 방', <b>세포</b>예요. 이제 <b>소금</b>도 골라 봐요.";
+      if (mag < 6) return "과학자 훅이 현미경으로 관찰했던 <b>코르크</b>(나무껍질) 조각이에요. 막대를 밀어 크게 확대해 보세요.";
+      if (mag < 110) return "아직은 표면이 매끈해 보여요. 코르크의 칸은 양파보다 훨씬 작으니 <b>더 크게 확대해</b> 보세요!";
+      if (mag < SEEN) return "촘촘한 그물 무늬가 나타나기 시작했어요. 막대를 <b>끝까지</b> 밀어 보세요.";
+      return cards.salt.isDone() ? "빈 칸들이 벌집처럼 빼곡히 모여 있어요. 과학자 훅이 '작은 방'이라고 부른 <b>세포</b>예요." : "벌집처럼 빼곡한 작은 칸들이 바로 훅이 발견한 <b>세포</b>예요. 이제 <b>소금</b>도 골라 확인해 보세요.";
     }
-    if (mag < 6) return "소금 알갱이를 뿌렸어요. 막대를 밀어 예측이 맞는지 확인해 봐요.";
-    if (mag < SEEN) return "네모난 알갱이들이 보여요. 한 알 속까지 <b>더 크게</b> 봐요.";
-    return "아무리 크게 봐도 매끈한 면뿐이에요. 소금에는 <b>칸이 없어요</b>.";
+    if (mag < 6) return "받침 유리에 소금 알갱이를 올렸어요. 막대를 밀어 예측이 맞는지 확인해 보세요.";
+    if (mag < SEEN) return "네모난 소금 결정들이 보여요. 알갱이 한 개를 <b>끝까지 확대해</b> 보세요.";
+    return "아무리 크게 확대해도 매끈한 표면만 보일 뿐, 소금에는 <b>세포(칸)가 없어요</b>.";
   }
 
   function paint(): void {
@@ -453,12 +453,12 @@ export const magnifyLab: StepRenderer = (host, step, api) => {
 
   function askPredict(): void {
     select("salt"); // 무엇을 두고 예측하는지 보이게 소금을 먼저 올린다(맨눈 상태)
-    f.say("잠깐, 확대하기 전에 <b>예측</b>부터 해 봐요. 답은 곧 눈으로 확인해요.");
+    f.say("잠깐, 소금을 확대하기 전에 먼저 <b>예측</b>해 볼까요? 정답은 바로 눈으로 확인할 수 있어요.");
     f.slot.ask(
-      "소금 알갱이도 크게 보면 <b>칸</b>이 보일까요?",
+      "소금 알갱이도 크게 확대하면 양파처럼 <b>작은 칸(세포)</b>이 보일까요?",
       [
-        { t: "양파처럼 칸이 보일 것이다" },
-        { t: "칸이 보이지 않을 것이다", ok: true },
+        { t: "양파처럼 작은 칸이 보일 것이다" },
+        { t: "작은 칸이 보이지 않을 것이다", ok: true },
       ],
       () => {
         predicted = true;
@@ -480,16 +480,16 @@ export const magnifyLab: StepRenderer = (host, step, api) => {
       cv.el.appendChild(sumBoard);
     }
     cv.el.classList.add("mgf-sumon");
-    f.say("세 가지를 <b>×400</b>으로 본 모습을 나란히 놓았어요. 비교하며 골라 봐요.");
+    f.say("세 가지를 <b>400배(×400)</b>로 확대한 모습을 나란히 놓았어요. 서로 비교하며 답을 골라 보세요.");
     f.slot.ask(
-      "세 가지를 크게 본 결과로 알 수 있는 것은?",
+      "세 가지를 크게 확대한 결과로 알 수 있는 사실은 무엇인가요?",
       [
         { t: "생물의 몸은 세포로 이루어져 있다", ok: true },
-        { t: "무엇이든 크게 보면 세포가 있다" },
-        { t: "세포는 양파에만 있다" },
+        { t: "모든 물질은 크게 확대하면 세포가 보인다" },
+        { t: "세포는 소금과 양파에만 있다" },
       ],
       (ok) => api.recordQuiz(ok),
-      { why: "양파와 코르크에는 칸이 있었지만 <b>소금</b>에는 없었어요.", onNext: finish },
+      { why: "생물인 양파와 코르크는 세포(작은 칸)로 이루어져 있지만, 생물이 아닌 <b>소금</b>에는 세포가 없어요.", onNext: finish },
     );
   }
 
@@ -497,8 +497,8 @@ export const magnifyLab: StepRenderer = (host, step, api) => {
     finished = true;
     cv.el.classList.add("mgf-sumdone"); // 생물인 둘을 밝히고 묶는다
     f.pips(4);
-    f.say("관찰 끝! 아래에서 오늘 눈으로 확인한 것을 읽어 봐요.");
-    f.slot.conclude("생물의 몸은 <b>세포</b>로 이루어져 있어요. 세포는 아주 작아서 크게 확대해야 보여요.");
+    f.say("생물인 양파와 코르크는 모두 작은 방 모양의 세포로 이루어져 있다는 것을 확인했어요!");
+    f.slot.conclude("모든 생물의 몸은 생명의 기본 단위인 <b>세포</b>로 이루어져 있어요. 대다수 세포는 매우 작아서 현미경으로 크게 확대해야 볼 수 있어요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
@@ -517,7 +517,7 @@ export const magnifyLab: StepRenderer = (host, step, api) => {
 
   f.slot.setControls(bvCards(3, cards.onion, cards.cork, cards.salt), range.el);
   select("onion");
-  api.setCTA("세 가지를 크게 확대해 보세요", { enabled: false });
+  api.setCTA("세 가지를 모두 끝까지 확대해 보세요", { enabled: false });
   return () => {
     tm.clear();
     cv.off();

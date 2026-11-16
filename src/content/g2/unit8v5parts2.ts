@@ -20,8 +20,8 @@ const planLab = lab("g2u8PlanLab");
 // ══ 5. 우리은하 ══
 export const L5: Step[] = numbered([
   opener({ title: "밤하늘의 뿌연 띠는 무엇일까요?", scene: "g2u8-band", wait: "망원경으로 들여다보세요", cta: "실험실 열기" }),
-  modelLab({ title: "어떤 모형이 은하수처럼 찍힐까요?", cta: "위에서 내려다보기" }),
-  galaxyLab({ title: "태양계는 우리은하의 어디에 있을까요?", cta: "이름 붙이기" }),
+  modelLab({ title: "별들이 어떻게 모여 있어야 은하수처럼 띠 모양으로 보일까요?", cta: "우리은하에서 태양계 위치 찾기" }),
+  galaxyLab({ title: "태양계는 우리은하의 어디에 자리 잡고 있을까요?", cta: "용어 알아보기" }),
   words({
     title: "우리은하,<br>태양계가 속한 별의 집단",
     lead: "별들이 납작하게 모여 있어야 띠로 찍혔고, 태양계는 그 원반의 나선팔에 있었어요. 여기에 쓰인 말을 정리해요.",
@@ -99,8 +99,8 @@ export const L5: Step[] = numbered([
 
 // ══ 6. 성단과 성운 ══
 export const L6: Step[] = numbered([
-  opener({ title: "검은 얼룩에는 정말 별이 없을까요?", scene: "g2u8-dark", wait: "얼룩을 걷어 보세요", cta: "관측소 열기" }),
-  observeLab({ title: "확대하면 무엇이 보일까요?", cta: "이름 붙이기" }),
+  opener({ title: "밤하늘의 검은 부분에는 정말 별이 없을까요?", scene: "g2u8-dark", wait: "검은 부분을 걷어 뒤쪽을 확인해 보세요", cta: "관측소 열기" }),
+  observeLab({ title: "밤하늘의 뿌연 천체들을 망원경으로 확대하면 어떤 모습일까요?", cta: "성단의 종류 알아보기" }),
   words({
     title: "성단,<br>별들이 모인 집단",
     lead: "확대해 보니 별이 듬성듬성 모인 천체도, 공 모양으로 빽빽하게 모인 천체도 있었어요. 별의 무리에 이름을 붙여요.",
@@ -113,7 +113,7 @@ export const L6: Step[] = numbered([
     ],
     cta: "구름 모양 천체 살펴보기",
   }),
-  nebulaLab({ title: "같은 구름이 왜 다르게 보일까요?", cta: "이름 붙이기" }),
+  nebulaLab({ title: "우주의 가스와 티끌 구름은 왜 서로 다른 색으로 보일까요?", cta: "성운의 종류 알아보기" }),
   words({
     title: "성운,<br>가스와 티끌의 구름",
     lead: "같은 구름이라도 곁에 아주 뜨거운 별이 있으면 붉게, 덜 뜨거운 별이 있으면 파랗게, 별 없이 뒤에 밝은 빛만 있으면 검게 보였어요. 구름 모양 천체에 이름을 붙여요.",
@@ -216,8 +216,8 @@ export const L6: Step[] = numbered([
 
 // ══ 7. 팽창하는 우주(맨 앞의 만화는 정본 그대로) ══
 export const L7: Step[] = numbered([
-  balloonLab({ title: "풍선이 커지면 딱지 사이는?", cta: "공간을 늘려 보기" }),
-  centerLab({ title: "어느 은하에서 봐도 멀어질까요?", cta: "이름 붙이기" }),
+  balloonLab({ title: "풍선이 부풀어 오르면 붙임딱지 사이의 간격은 어떻게 될까요?", cta: "은하 사이의 공간 늘려 보기" }),
+  centerLab({ title: "우주가 팽창할 때 다른 은하에서 보면 어떻게 보일까요?", cta: "용어 알아보기" }),
   words({
     title: "우주 팽창,<br>공간이 늘어나요",
     lead: "풍선이 커지자 딱지 사이가 모두 벌어졌고, 모눈이 늘어나자 어느 은하에서 봐도 다른 은하가 멀어졌어요. 정리해 볼까요?",
@@ -294,9 +294,9 @@ export const L7: Step[] = numbered([
 
 // ══ 8. 우주 탐사 ══
 export const L8: Step[] = numbered([
-  opener({ title: "닿지 않는 온도계는 어디서 왔을까요?", scene: "g2u8-thermo", wait: "기술의 고향을 찾아가 보세요", cta: "탐사 기록 열기" }),
-  missionLab({ title: "우주 탐사는 얼마나 멀리 갔을까요?", cta: "탐사 계획 세우기" }),
-  planLab({ title: "화성 탐사에 무엇을 실어 갈까요?", cta: "이름 붙이기" }),
+  opener({ title: "피부에 닿지 않고 재는 체온계 기술은 어디서 왔을까요?", scene: "g2u8-thermo", wait: "이 기술이 처음 쓰인 곳을 확인해 보세요", cta: "탐사 기록 열기" }),
+  missionLab({ title: "인류의 우주 탐사는 어디까지 나아갔을까요?", cta: "화성 탐사 계획 세우러 가기" }),
+  planLab({ title: "화성 기지 답사 탐사선에 어떤 장비를 실어야 할까요?", cta: "용어 알아보기" }),
   words({
     title: "우주 탐사,<br>우주를 알아 가는 일",
     lead: "다섯 탐사를 보내 보고, 화성 탐사 계획도 세워 봤어요. 탐사에 쓰는 것들의 이름을 정리해요.",

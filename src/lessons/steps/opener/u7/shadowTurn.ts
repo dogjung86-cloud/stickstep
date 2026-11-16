@@ -9,11 +9,11 @@ import { haptic, HAPTIC } from "../../../../core/haptics";
 import type { OpenerCtx } from "../opener";
 import { verdict } from "./hold";
 
-const PICKS = ["왼쪽으로 누워요", "오른쪽 그대로예요", "사라져요"];
+const PICKS = ["왼쪽으로 생겨요", "오른쪽 그대로예요", "그림자가 사라져요"];
 const TIMES = [
-  { n: 1, name: "아침", sub: "해가 왼쪽에" },
-  { n: 2, name: "한낮", sub: "해가 높이" },
-  { n: 3, name: "저녁", sub: "해가 오른쪽에" },
+  { n: 1, name: "아침", sub: "동쪽(왼쪽) 해" },
+  { n: 2, name: "한낮", sub: "남쪽 높은 해" },
+  { n: 3, name: "저녁", sub: "서쪽(오른쪽) 해" },
 ];
 
 export function shadowTurn(c: OpenerCtx): void {
@@ -46,20 +46,20 @@ export function shadowTurn(c: OpenerCtx): void {
       paint();
       c.face("surprised");
       haptic(HAPTIC.correct);
-      c.say(`${verdict(hit)} 그림자는 해의 반대쪽으로 옮겨 가요. 정말 <b>해</b>가 움직인 걸까요? 밤하늘에서 알아봐요.`);
+      c.say(`${verdict(hit)} 해의 위치가 바뀌자 그림자도 반대쪽으로 자리를 옮겼어요. 정말 <b>해가 직접</b> 움직인 걸까요? 밤하늘의 별을 보며 알아봐요.`);
       c.finish();
       return;
     }
     paint();
-    c.say(n === 2 ? "한낮에는 해가 높아서 그림자가 짧아요. 이제 <b>저녁</b>도 눌러 보세요." : n === 3 ? "저녁의 그림자를 봤어요. <b>한낮</b>도 눌러 보세요." : "아침이에요. <b>한낮</b>과 <b>저녁</b>을 눌러 보세요.");
+    c.say(n === 2 ? "한낮에는 해가 높이 떠서 그림자가 짧아졌어요. 이제 <b>저녁</b>도 눌러 보세요." : n === 3 ? "해가 오른쪽으로 지자 그림자가 왼쪽으로 길어졌어요! <b>한낮</b>도 눌러 보세요." : "아침에는 그림자가 오른쪽으로 길게 생겨요. <b>한낮</b>과 <b>저녁</b>도 눌러 보세요.");
   }
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
   paint();
-  c.ask("아침에는 해가 왼쪽에 있어 나무 그림자가 오른쪽으로 누워요. 저녁에는 어디로 누울까요?", {
+  c.ask("아침에는 해가 왼쪽에 떠서 나무 그림자가 오른쪽으로 길게 생겨요. 해가 오른쪽으로 지는 저녁에는 그림자가 어느 쪽으로 생길까요?", {
     choices: PICKS,
     neutral: true,
-    good: "예측 완료! <b>한낮</b>과 <b>저녁</b>을 눌러 해를 옮겨 보세요.",
+    good: "아래에서 <b>한낮</b>과 <b>저녁</b> 버튼을 차례로 눌러 그림자가 어떻게 변하는지 확인해 보세요.",
     onDone: (picked) => {
       hit = picked === PICKS[0];
       phase = "play";

@@ -1,7 +1,7 @@
 // [중2 Ⅰ v5] 가열하며 온도를 재는 랩 셋. 무대와 진행은 같고 무엇을 비교하는지가 다르다.
 //   g2u1MeltLab (g2u1l5) 「양이 달라지면 녹는 온도도 달라질까요?」 책의 해 보기: 로르산과 팔미트산 1 g, 2 g의 가열 곡선.
 //   g2u1BoilLab (g2u1l5) 「끓는 온도는 무엇에 따라 달라질까요?」 책의 디지털 해 보기(종류, 양)와 본문의 압력솥.
-//   g2u1SaltLab (g2u1l6) 「소금물도 100 ℃에서 멈출까요?」 책의 그림: 물과 소금물의 가열 곡선.
+//   g2u1SaltLab (g2u1l6) 「소금물도 100 ℃에서 온도가 일정할까요?」 책의 그림: 물과 소금물의 가열 곡선.
 // 학생이 정하는 것: 무엇을 어떤 차례로 가열할지. 가열은 꾹 누르는 동안만 진행되고 곡선이 그 자리에서 그려져 앞의 곡선과 겹쳐 보인다.
 // 통찰: 상태가 변하는 동안의 온도는 양과 관계없이 같고 물질마다 다르다 / 끓는점은 압력에 따라 달라진다 / 혼합물은 끓는 동안 온도가 일정하지 않다.
 // 수치: 녹는점(로르산 43.8, 팔미트산 62.5 ℃), 끓는점(물 100, 에탄올 78 ℃, 압력솥 속의 물 약 120 ℃), 소금물의 끓는 온도(소금 10 g에 약 102 ℃, 30 g에 약 105 ℃에서 시작)는 자연값이고
@@ -12,7 +12,7 @@
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvCard, bvCards } from "../bio6/b6Lab";
-import { P, bubbles, clamp, fx, g1Curve, g1Lab, g1Predict, heater, plot, seeded, svgOpen, type G1Step } from "./g2u1Kit";
+import { P, bubbles, clamp, fx, g1Curve, g1Lab, g1Predict, heater, josa, plot, seeded, svgOpen, type G1Step } from "./g2u1Kit";
 
 /** 곡선 이름표. (t, v) 자리에서 (dx, dy)만큼 옮긴 곳에 쓴다. */
 interface Tag {
@@ -86,6 +86,8 @@ interface Cfg {
   markDash?: string;
   /** 멈춘 온도가 세로축 눈금과 같으면 값을 다시 쓰지 않는다(곡선 이름표 옆에 같은 숫자가 겹쳐 읽히지 않게). */
   markSkipTicks?: boolean;
+  /** 도움말에 세 줄이 되는 글이 있다(가열 결과 + 남은 것 안내). 처음부터 세 줄 상자를 잡는다. */
+  tall?: boolean;
 }
 
 // 냄비 무대의 좌표(가운데 x=86, 바깥 바닥 y=193). 액체는 class="g2u1x-cv-liq"로 높이를 바꾼다.
@@ -133,7 +135,7 @@ function potStage(): string {
 
 function curveLab(cfg: Cfg): StepRenderer {
   return (host, step, api) => {
-    const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 3, cls: `g2u1x-cv ${cfg.cls}` });
+    const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 3, cls: `g2u1x-cv ${cfg.cls}`, tall: cfg.tall });
     const { f, tm } = lab;
     const rnd = seeded(17);
     const X = cfg.plotX ?? 206;
@@ -390,11 +392,11 @@ export const g2u1MeltLab = curveLab({
     const [nm, mp] = la ? ["로르산", MP.la] : ["팔미트산", MP.pa];
     return {
       q: `${nm} 1 g과 2 g의 그래프에서 <b>같은 것</b>은?`,
-      choices: [{ t: "온도가 멈춘 구간의 온도", ok: true }, { t: "온도가 멈춘 구간의 길이" }, { t: "다 녹을 때까지 걸린 시간" }],
+      choices: [{ t: "온도가 일정하게 유지된 온도", ok: true }, { t: "온도가 일정하게 유지된 시간" }, { t: "모두 녹을 때까지 걸린 시간" }],
       why: `둘 다 <b>${fx(mp)} ℃</b>에서 멈췄어요. 2 g은 녹는 데 시간이 더 걸렸을 뿐이에요.`,
     };
   },
-  finish: "고체가 녹는 동안에는 온도가 일정해요. 그 온도는 양이 달라도 같고 <b>물질마다 달라요</b>. 로르산 43.8 ℃, 팔미트산 62.5 ℃.",
+  finish: "고체가 녹는 동안에는 온도가 일정하게 유지돼요. 이 온도는 양이 달라도 같고 <b>물질마다 고유해요</b>(로르산 43.8 ℃, 팔미트산 62.5 ℃).",
 });
 
 // 2. 끓는점: 물과 에탄올, 양, 압력솥. 왼쪽 무대는 뚜껑 없는 냄비(물 100 mL, 물 200 mL, 에탄올)와 압력솥(잠금 뚜껑, 추, 압력계)을 따로 그린다.
@@ -419,7 +421,8 @@ const boilRun = (key: string, name: string, sub: string, color: string, rate: nu
     lid: o.lid,
     tag: { ...o.tag, t: tA, v: bp },
     done: `${bp} ℃에서 끓음`,
-    say: `${name}${o.lid ? "은" : "는"} <b>${bp} ℃</b>에서 끓기 시작해 온도가 더 오르지 않았어요.`,
+    // 조사는 이름의 끝소리로 고른다(물 100 mL는: mL는 '밀리리터'로 읽는다, 압력솥의 물은)
+    say: `${name}${josa(name, "은", "는")} <b>${bp} ℃</b>에서 끓기 시작해 온도가 더 오르지 않았어요.`,
     state: (t) => (t < tA ? "액체" : "끓는 중 (액체 + 기체)"),
     // 압력솥은 100 ℃를 넘어도 잠잠하다(약 112 ℃부터 잔 기포)
     bub: o.lid ? (_t, v) => (v < 112 ? 0 : v < bp ? 3 : 14) : (t) => (t < tA * 0.8 ? 0 : t < tA ? 3 : 14),
@@ -448,9 +451,10 @@ export const g2u1BoilLab = curveLab({
   ],
   need: (d) => d.size === 4,
   path: ["w1", "w2", "et", "pc"],
-  intro: "액체를 가열하며 <b>끓는 온도</b>를 재요. 종류, 양, 압력 가운데 하나씩만 달라요. 골라 보세요.",
-  picked: (r) => `<b>${r.name}</b>${r.lid ? "은 뚜껑을 잠가 수증기가 못 나가요" : "를 올렸어요"}. 버튼을 <b>꾹 눌러</b> 가열해 보세요.`,
-  more: (d) => `남은 것 ${4 - d.size}가지도 가열해 비교해 보세요.`,
+  intro: "조건이 조금씩 다른 네 가지 액체를 가열하며 <b>끓는 온도</b>를 비교해 보세요.",
+  picked: (r) =>
+    `${r.lid ? `<b>${r.name}</b>${josa(r.name, "은", "는")} 뚜껑을 잠가 수증기가 빠져나가지 못해요` : `냄비에 <b>${r.name}</b>${josa(r.name, "을", "를")} 담았어요`}. 버튼을 <b>꾹 눌러</b> 가열해 보세요.`,
+  more: (d) => `남은 ${4 - d.size}가지 조건도 가열해 비교해 보세요.`,
   judge: {
     q: "<b>압력솥</b>의 물이 100 ℃가 되어도 끓지 않은 까닭은?",
     choices: [{ t: "솥 안의 압력이 높아 더 높은 온도에서 끓어서", ok: true }, { t: "솥 안의 물이 더 많아서" }, { t: "뚜껑이 열을 막아 덜 뜨거워져서" }],
@@ -475,6 +479,7 @@ const saltRun = (key: string, name: string, sub: string, color: string, bp: numb
 });
 export const g2u1SaltLab = curveLab({
   cls: "g2u1x-cv-salt",
+  tall: true, // 소금물의 가열 결과와 남은 액체 안내가 이어지면 세 줄(약 690px)
   y0: 90,
   y1: 110,
   yt: [90, 95, 100, 105, 110],
@@ -484,13 +489,13 @@ export const g2u1SaltLab = curveLab({
   runs: [saltRun("w", "물", "물 100 g", "#74C0FC", 100, 0, P.water), saltRun("s1", "묽은 소금물", "소금 10 g", "#FFD43B", 101.8, 0.16, "#8FC4F2"), saltRun("s2", "진한 소금물", "소금 30 g", "#FFA94D", 105.3, 0.42, "#B5D3EE")],
   need: (d) => d.size === 3,
   path: ["w", "s1", "s2"],
-  intro: "물, 그리고 같은 양의 물에 소금을 녹인 <b>소금물</b> 두 가지예요. 90 ℃부터 가열해요. 골라 보세요.",
+  intro: "순수한 <b>물</b>과 농도가 다른 <b>소금물</b> 두 가지를 90 ℃부터 가열해 비교해 보세요.",
   predict: { q: "물은 끓는 동안 100 ℃에 머물러요. <b>소금물</b>이 끓는 동안의 온도는?", choices: ["계속 조금씩 오른다", "100 ℃에 머문다", "100 ℃보다 낮은 온도에 머문다"] },
   picked: (r) => `<b>${r.name}</b>(${r.sub})을 올렸어요. 버튼을 <b>꾹 눌러</b> 가열해 보세요.`,
-  more: (d) => `남은 것 ${3 - d.size}가지도 가열해 비교해 보세요.`,
+  more: (d) => `남은 ${3 - d.size}가지 액체도 가열해 비교해 보세요.`,
   judge: {
     q: "<b>소금물</b>이 끓는 동안 온도는 어떻게 됐나요?",
-    choices: [{ t: "멈추지 않고 조금씩 계속 올랐다", ok: true }, { t: "물처럼 한 온도에서 멈췄다" }, { t: "끓기 시작하자 내려갔다" }],
+    choices: [{ t: "일정하지 않고 조금씩 계속 올랐다", ok: true }, { t: "물처럼 일정한 온도에서 유지됐다" }, { t: "끓기 시작하자 온도가 내려갔다" }],
     why: "물의 곡선만 평평했어요. 소금물은 진할수록 높은 온도에서 끓고 계속 올랐어요.",
   },
   finish: "한 가지 물질인 <b>물</b>은 끓는 온도가 일정해요. 물에 소금이 섞인 <b>소금물</b>은 끓는 동안 온도가 일정하지 않고 계속 올라가요.",

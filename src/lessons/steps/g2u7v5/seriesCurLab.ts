@@ -32,9 +32,9 @@ interface Spot {
   ty: number;
 }
 const SPOTS: Spot[] = [
-  { id: "a", name: "가", where: "첫 전구 앞", x: G.R, y: 132, d: G.R - BAT.out + (G.By - 132), tx: G.R - 42, ty: 132 },
-  { id: "b", name: "나", where: "둘 사이", x: 173, y: TOP, d: G.R - BAT.out + (G.By - TOP) + (G.R - 173), tx: 173, ty: TOP + 28 },
-  { id: "c", name: "다", where: "둘을 지난 뒤", x: G.L, y: 132, d: G.R - BAT.out + (G.By - TOP) + (G.R - G.L) + (132 - TOP), tx: G.L + 42, ty: 132 },
+  { id: "a", name: "가", where: "첫째 전구 앞", x: G.R, y: 132, d: G.R - BAT.out + (G.By - 132), tx: G.R - 42, ty: 132 },
+  { id: "b", name: "나", where: "두 전구 사이", x: 173, y: TOP, d: G.R - BAT.out + (G.By - TOP) + (G.R - 173), tx: 173, ty: TOP + 28 },
+  { id: "c", name: "다", where: "둘째 전구 뒤", x: G.L, y: 132, d: G.R - BAT.out + (G.By - TOP) + (G.R - G.L) + (132 - TOP), tx: G.L + 42, ty: 132 },
 ];
 
 export const seriesCurLab: StepRenderer = (host, step, api) => {
@@ -54,7 +54,7 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
   const ampText = (): string => (big ? "0.05 A" : "0.1 A");
 
   const log = xLog(SPOTS.map((q) => `${q.name} (${q.where})`), 1, true);
-  const swap = bvBtn("main", "왼쪽 전구를 45 Ω 저항으로 바꾸기");
+  const swap = bvBtn("main", "왼쪽 전구를 큰 저항(45 Ω)으로 바꾸기");
   swap.disabled = true;
   f.slot.setControls(log.el, swap);
 
@@ -63,17 +63,17 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
     f.pips(1 + (phase === "m2" ? 1 : 0) + (done() ? 1 : 0));
     if (!done()) {
       const left = SPOTS.filter((q) => !got.has(q.id)).map((q) => q.name).join(", ");
-      f.say(`${ampText()}예요. 다른 자리(<b>${left}</b>)에서도 똑같이 세어 보세요.`);
+      f.say(`이 지점의 전류는 ${ampText()}예요. 남은 지점(<b>${left}</b>)도 눌러 전류계를 대 보세요.`);
       return;
     }
     if (phase === "m1") {
-      f.say(`${guess ? "예측대로" : "줄어들지 않고"} 세 곳 모두 <b>0.1 A</b>예요. 이번에는 왼쪽 전구를 큰 저항으로 바꿔 봐요.`);
+      f.say(`${guess ? "예측대로" : "전구를 지나도 줄어들지 않고"} 가, 나, 다 세 곳 모두 <b>0.1 A</b>로 똑같아요! 이제 왼쪽 전구를 큰 저항(45 Ω)으로 바꿔 볼까요?`);
       swap.disabled = false;
-      api.setCTA("왼쪽 전구를 바꿔 다시 재 보세요", { enabled: false });
+      api.setCTA("큰 저항으로 바꾼 뒤 세 곳을 다시 재 보세요", { enabled: false });
     } else {
       phase = "end";
-      f.say("이번에도 세 곳 모두 <b>0.05 A</b>예요. 어느 한 곳만 약해지지 않았어요.");
-      api.setCTA("세 곳을 모두 쟀어요", { enabled: false });
+      f.say("저항이 커지자 가, 나, 다 세 곳 모두 <b>0.05 A</b>로 똑같이 약해졌어요! 어느 한 곳만 따로 줄어들지 않아요.");
+      api.setCTA("모든 측정 완료", { enabled: false });
       tm.later(ask1, 2800);
     }
   }
@@ -85,10 +85,10 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
     got.clear();
     SPOTS.forEach((_, i) => log.clear(i));
     swap.disabled = true;
-    swap.textContent = "왼쪽을 45 Ω 저항으로 바꿨어요";
+    swap.textContent = "큰 저항(45 Ω)으로 교체 완료";
     f.pips(2);
-    f.say("알갱이가 <b>모든 곳에서 함께</b> 느려졌어요. 가, 나, 다를 다시 재 보세요.");
-    api.setCTA("가, 나, 다를 다시 재 보세요", { enabled: false });
+    f.say("회로 전체에서 전류의 흐름이 <b>동시에</b> 느려졌어요! 점선 <b>가, 나, 다</b>를 다시 눌러 전류를 재 보세요.");
+    api.setCTA("가, 나, 다 세 곳을 다시 재 보세요", { enabled: false });
   });
   st.cv.addEventListener("pointerdown", (e) => {
     if ((phase !== "m1" && phase !== "m2") || counting) return;
@@ -98,13 +98,13 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
     if (!sp) return;
     haptic(HAPTIC.tap);
     counting = { sp, from: off, n: 0 };
-    f.say(`<b>${sp.name}</b>에 전류계를 댔어요. 2초 동안 지나가는 알갱이를 세요.`);
+    f.say(`<b>${sp.name}</b> 지점에 전류계를 연결했어요. 2초 동안 지나가는 전류 알갱이 수를 세어 전류를 측정해요.`);
   });
 
   function predict(): void {
     f.slot.ask(
-      "전류의 세기를 가, 나, 다에서 재면 어떨까요?",
-      [{ t: "세 곳 모두 같아요", ok: true }, { t: "전구를 지날수록 줄어요" }, { t: "두 전구 사이가 가장 세요" }],
+      "직렬 회로의 가, 나, 다 세 지점에서 전류의 세기를 재면 어떨까요?",
+      [{ t: "세 지점 모두 같아요", ok: true }, { t: "전구를 지날 때마다 점점 줄어들어요" }, { t: "두 전구 사이(나)에서 가장 세요" }],
       (ok) => {
         guess = ok;
       },
@@ -114,7 +114,7 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
           phase = "m1";
           f.slot.showControls();
           f.pips(1);
-          f.say("노란 알갱이가 전류예요. 점선 <b>가, 나, 다</b>를 하나씩 눌러 전류계를 대 보세요.");
+          f.say("예측 완료! 점선으로 표시된 <b>가, 나, 다</b>를 하나씩 눌러 전류계를 연결해 보세요.");
           api.setCTA("가, 나, 다에서 전류를 재 보세요", { enabled: false });
         },
       },
@@ -122,24 +122,24 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
   }
   function ask1(): void {
     f.slot.ask(
-      "왼쪽 전구를 큰 저항으로 바꾸자 전류는?",
-      [{ t: "세 곳 모두 똑같이 약해졌어요", ok: true }, { t: "바꾼 곳 뒤(다)만 약해졌어요" }, { t: "세 곳 모두 그대로였어요" }],
+      "왼쪽 전구를 큰 저항(45 Ω)으로 바꾸자 각 지점의 전류는 어떻게 변했나요?",
+      [{ t: "가, 나, 다 세 곳 모두 똑같이 약해졌어요", ok: true }, { t: "저항 뒤쪽인 다에서만 약해졌어요" }, { t: "세 곳 모두 0.1 A 그대로였어요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "가, 나, 다 모두 <b>0.05 A</b>로 함께 약해졌어요.", onNext: ask2 },
+      { why: "직렬 회로에서는 전체 저항이 커지면 회로 모든 지점의 전류가 <b>0.05 A</b>로 똑같이 약해져요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.slot.ask(
-      "직렬연결에서 전류가 어디서나 같은 까닭은?",
-      [{ t: "길이 하나라 새거나 쌓일 곳이 없어서", ok: true }, { t: "두 전구의 저항이 같아서" }, { t: "전구가 전류를 조금씩 써 버려서" }],
+      "직렬연결에서 위치에 관계없이 전류의 세기가 어디서나 같은 까닭은 무엇인가요?",
+      [{ t: "길이 하나뿐이라 중간에 나뉘지 않아서", ok: true }, { t: "연결된 두 저항의 크기가 항상 같아서" }, { t: "전구가 전류를 조금씩 소모하기 때문에" }],
       () => undefined,
-      { why: "<b>길이 하나</b>뿐이라 들어간 만큼 그대로 나와요.", onNext: finish },
+      { why: "직렬 회로는 <b>전류가 흐르는 길이 외길 하나</b>뿐이므로, 들어간 전하량만큼 모든 지점을 똑같이 지나가요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("직렬연결은 전류가 지나는 <b>길이 하나</b>예요. 중간에 새거나 쌓일 곳이 없어서, 전구를 지나도 전류의 세기는 <b>어디서나 같아요</b>.");
+    f.say("직렬연결에서는 저항을 지나도 전류의 세기가 회로 어디서나 같다는 것을 확인했어요!");
+    f.slot.conclude("저항을 직렬로 연결하면 전류가 흐르는 <b>길이 하나뿐</b>이에요. 중간에 나뉘거나 사라지지 않으므로, 저항의 크기가 달라도 각 저항에 흐르는 전류의 세기는 <b>회로 어디서나 같아요</b>.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -218,7 +218,7 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
     xPill(ctx, "직렬: 한 줄로 이음", X.cur);
   });
 
-  f.say("전류는 (+)극에서 나와 전구 둘을 차례로 지나요. 먼저 <b>예측</b>해 보세요.");
+  f.say("전류는 전지의 (+)극에서 나와 두 전구를 차례대로 지나가요. 가, 나, 다 지점의 전류가 어떨지 먼저 <b>예측</b>해 보세요.");
   api.setCTA("먼저 예측해 보세요", { enabled: false });
   predict();
   return () => {

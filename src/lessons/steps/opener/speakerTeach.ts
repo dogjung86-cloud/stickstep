@@ -13,8 +13,8 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import type { OpenerCtx } from "./opener";
 
 const TRIES = [
-  { btn: "한 번", ms: 1000, say: "한 번 들어서는 못 알아들어요." },
-  { btn: "열 번", ms: 1500, say: "열 번을 들어도 아직이에요." },
+  { btn: "한 번", ms: 1000, say: "한 번만 들어서는 무슨 말인지 못 알아들어요." },
+  { btn: "열 번", ms: 1500, say: "열 번을 들어도 아직 말뜻을 알지 못해요." },
   { btn: "수천 번", ms: 2300, say: "" },
 ];
 const PICKS: Array<{ t: string; verdict: string }> = [
@@ -66,7 +66,7 @@ export function speakerTeach(c: OpenerCtx): void {
       cl.add("ok");
       haptic(HAPTIC.correct);
       c.face("smile");
-      c.say(`${pred.verdict} 알아들어요. 이렇게 컴퓨터가 배우는 기술이 <b>인공지능</b>이에요.`);
+      c.say(`${pred.verdict} 드디어 말을 알아들어요! 이렇게 컴퓨터가 많은 데이터를 스스로 학습하는 기술이 <b>인공지능</b>이에요.`);
       c.finish();
     }, TRIES[i].ms);
   }
@@ -74,10 +74,11 @@ export function speakerTeach(c: OpenerCtx): void {
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
   mark();
-  c.ask("새 스피커에게 “음악 틀어 줘”를 가르쳐요. 몇 번 들려줘야 알아들을까요?", {
+  c.ask("새 스피커에게 “음악 틀어 줘”라는 말을 가르치려고 해요. 몇 번쯤 들려줘야 알아들을까요?", {
     choices: PICKS.map((p) => p.t),
     neutral: true,
-    good: "예측 완료! 아래 버튼으로 말을 <b>들려주며</b> 확인해요.",
+    // 들려주기 버튼 줄은 아래 칸의 맨 위(무대 바로 아래)에 있어 이 말풍선보다 위다. 말풍선 아래에는 잠긴 큰 버튼만 있다.
+    good: "예측 완료! 위 버튼을 차례대로 눌러 말을 <b>들려주며</b> 확인해 보세요.",
     onDone: (picked) => {
       pred = PICKS.find((p) => p.t === picked) ?? PICKS[0];
       phase = "play";

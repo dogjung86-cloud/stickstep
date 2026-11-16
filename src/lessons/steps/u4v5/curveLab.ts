@@ -147,7 +147,8 @@ interface CurveStep extends U4Step {
 export const u4CurveLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as CurveStep;
   const mode: Mode = s.mode ?? "melt";
-  const lab = u4Lab(host, api, s, { steps: 3, cls: `u4x-curve is-${mode}` });
+  // 끓이기와 얼리기에는 세 줄이 되는 도움말이 있어(센 불의 결과, 얼음만으로 얼지 않음) 처음부터 세 줄 상자를 잡는다
+  const lab = u4Lab(host, api, s, { steps: 3, cls: `u4x-curve is-${mode}`, tall: mode !== "melt" });
   const { f, tm } = lab;
   const cool = mode === "freeze";
   const two = mode !== "boil"; // 녹이기와 얼리기: 고체 무리와 액체 무리를 따로 둔다
@@ -155,7 +156,7 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
 
   const simEl = el("div", { class: "u4x-heat-sim" });
   const graph = el("canvas", { class: "u4x-heat-graph" });
-  const tag = el("div", { class: "u4x-heat-tag", text: cool ? "열에너지를 내놓는 중" : "열에너지를 받는 중" });
+  const tag = el("div", { class: "u4x-heat-tag", text: cool ? "열에너지를 방출하는 중" : "열에너지를 흡수하는 중" });
   const temp = el("div", { class: "u4x-heat-temp", text: "" });
   f.stage.append(simEl, graph, tag, temp);
 
@@ -639,7 +640,7 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
   }
 
   // ── 시간 보내기 ──
-  const HOLD: Record<Mode, string> = { melt: "꾹 눌러 시간 보내기", boil: "꾹 눌러 가열하기", freeze: "꾹 눌러 식히기" };
+  const HOLD: Record<Mode, string> = { melt: "꾹 눌러 얼음 녹이기", boil: "꾹 눌러 물 가열하기", freeze: "꾹 눌러 물 냉각하기" };
   const hold = u4Hold(
     lab,
     HOLD[mode],
@@ -673,19 +674,26 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
     },
   );
 
+  // 녹이기의 바깥 물은 무대 그림의 이름표(MODELS.melt.bath)와 처음 도움말처럼 '찬물'이다(0℃보다 따뜻하면 −5℃ 얼음을 녹인다)
   const SAY: Record<Kind, { go: string; flat: string; after?: string }> = {
     melt: {
-      go: "얼음이 든 플라스크를 <b>찬물</b>에 담갔어요. 꾹 눌러 시간을 보내면 1분마다 온도가 찍혀요.",
-      flat: "얼음이 녹기 시작했어요. 그런데 온도가 <b>0℃에서 멈췄어요</b>. 계속 지켜봐요.",
-      after: "얼음이 다 녹자 온도가 <b>다시 올라가요</b>.",
+      go: "−5℃ 얼음이 든 플라스크를 <b>찬물</b>에 담갔어요. 버튼을 꾹 누르고 있으면 1분마다 온도가 그래프에 기록돼요.",
+      flat: "얼음이 녹기 시작했어요! 열에너지를 계속 받고 있는데도 온도가 <b>0℃에서 일정하게 유지돼요</b>. 끝까지 눌러 보세요.",
+      after: "얼음이 모두 녹아 물이 되자 온도가 <b>다시 올라가기 시작해요</b>!",
     },
-    weak: { go: "<b>약한 불</b>로 물을 가열해요. 꾹 누르면 1분마다 온도가 찍혀요.", flat: "물이 끓기 시작했어요. 온도가 <b>100℃에서 멈췄어요</b>. 계속 가열해 봐요." },
-    strong: { go: "<b>센 불</b>로 물을 가열해요. 꾹 누르면 1분마다 온도가 찍혀요.", flat: "물이 끓기 시작했어요. 온도가 <b>100℃에서 멈췄어요</b>. 계속 가열해 봐요." },
-    ice: { go: "시험관을 <b>얼음</b>만 채운 비커에 넣었어요. 꾹 눌러 식히며 온도를 봐요.", flat: "" },
+    weak: {
+      go: "<b>약한 불</b>로 물을 가열해요. 버튼을 꾹 누르고 있으면 1분마다 온도가 그래프에 기록돼요.",
+      flat: "물이 끓기 시작했어요! 계속 가열하는데도 온도가 <b>100℃에서 일정하게 유지돼요</b>. 끝까지 가열해 보세요.",
+    },
+    strong: {
+      go: "<b>센 불</b>로 물을 가열해요. 버튼을 꾹 누르고 있으면 1분마다 온도가 그래프에 기록돼요.",
+      flat: "물이 끓기 시작했어요! 계속 가열하는데도 온도가 <b>100℃에서 일정하게 유지돼요</b>. 끝까지 가열해 보세요.",
+    },
+    ice: { go: "물이 든 시험관을 <b>얼음만</b> 채운 비커에 넣었어요. 버튼을 꾹 눌러 냉각하면서 온도 변화를 살펴보세요.", flat: "" },
     salt: {
-      go: "시험관을 <b>얼음과 소금</b>을 채운 비커에 넣었어요. 꾹 눌러 식히며 온도를 봐요.",
-      flat: "물이 얼기 시작했어요. 그런데 온도가 <b>0℃에서 멈췄어요</b>. 계속 식혀 봐요.",
-      after: "물이 다 얼자 온도가 <b>다시 내려가요</b>.",
+      go: "시험관을 <b>얼음과 소금</b>을 섞어 채운 비커에 넣었어요. 버튼을 꾹 눌러 냉각하면서 온도 변화를 살펴보세요.",
+      flat: "물이 얼기 시작했어요! 계속 차갑게 식히고 있는데도 온도가 <b>0℃에서 일정하게 유지돼요</b>. 끝까지 눌러 보세요.",
+      after: "물이 모두 얼어 얼음이 되자 온도가 <b>다시 내려가기 시작해요</b>!",
     },
   };
 
@@ -719,8 +727,8 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.wrong);
       past.push({ kind, pts });
       pts = [];
-      f.say("온도가 0℃ 가까이에서 더 내려가지 않아요. 물이 <b>얼지 않았어요</b>. 얼음만으로는 모자라요.");
-      const redo = bvBtn("main u4x-curve-redo", "얼음에 소금을 섞어 다시 하기");
+      f.say("온도가 0℃ 근처까지만 내려가고 더 이상 낮아지지 않아 물이 <b>얼지 않았어요</b>! 물이 얼게 하려면 주변을 0℃보다 더 차갑게 만들어야 해요.");
+      const redo = bvBtn("main u4x-curve-redo", "얼음에 소금을 섞어 더 차갑게 냉각하기");
       redo.addEventListener("click", () => {
         haptic(HAPTIC.tap);
         begin("salt");
@@ -735,7 +743,8 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
     if (past.length < 2) {
       const other: Kind = kind === "weak" ? "strong" : "weak";
       f.say(`끓는 동안 온도는 <b>100℃ 그대로</b>였어요. 이번에는 <b>${MODELS[other].bath}</b>로 바꿔 다시 끓여 봐요.`);
-      const redo = bvBtn("main u4x-curve-redo", `${MODELS[other].bath}로 다시 끓이기`);
+      // 조사: bath는 "약한 불", "센 불"(둘 다 ㄹ 받침)이라 '로'
+      const redo = bvBtn("main u4x-curve-redo", `${MODELS[other].bath}로 바꿔 다시 끓이기`);
       redo.addEventListener("click", () => {
         haptic(HAPTIC.tap);
         begin(other);
@@ -745,7 +754,7 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
     }
     marks = true;
     host.dataset.u4Marks = "1";
-    f.say("센 불에서는 더 빨리 끓었어요. 그런데 멈춘 온도는 두 번 다 <b>100℃</b>예요.");
+    f.say("센 불로 가열하니 100℃에 더 빨리 도달했어요! 하지만 끓는 동안 일정하게 유지된 온도는 약한 불일 때와 똑같이 <b>100℃</b>예요.");
     tm.later(judge, 1100);
   }
 
@@ -753,26 +762,30 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
     const done = (html: string) => () => lab.finish(html);
     if (mode === "boil") {
       f.slot.ask(
-        "불을 세게 했을 때 <b>달라진 것</b>은?",
-        [{ t: "100℃에 닿기까지 걸린 시간", ok: true }, { t: "물이 끓는 동안의 온도" }, { t: "물이 끓기 시작하는 온도" }],
+        "약한 불에서 센 불로 바꿨을 때 <b>달라진 것</b>은 무엇인가요?",
+        [{ t: "끓는 온도(100℃)에 도달하기까지 걸린 시간", ok: true }, { t: "물이 끓는 동안 유지되는 온도" }, { t: "물이 끓기 시작하는 온도" }],
         (ok) => api.recordQuiz(ok),
         {
-          why: "센 불은 <b>더 빨리</b> 끓게 할 뿐이에요. 끓는 동안의 온도는 똑같이 100℃였어요.",
-          onNext: done("물이 끓는 동안에는 계속 가열해도 온도가 <b>일정</b>해요. 센 불은 온도를 높이지 못하고 물을 더 빨리 끓게 할 뿐이에요."),
+          // 이 단원은 '끓는점, 녹는점' 용어를 쓰지 않는다(unit4.ts 머리말). 수정안의 "(끓는점)"을 뺐다
+          why: "불을 세게 하면 열을 빠르게 받아 100℃에 <b>더 빨리 도달할 뿐</b>, 끓는 동안의 온도는 100℃로 같았어요.",
+          onNext: done("액체가 끓는 동안에는 가열을 계속해도 열에너지가 모두 상태 변화(기화)에 쓰이므로 온도가 <b>일정하게 유지</b>돼요."),
         },
       );
       return;
     }
     const melt = mode === "melt";
     f.slot.ask(
-      melt ? "얼음이 <b>녹고 있던</b> 때는 그래프의 어느 구간일까요?" : "물이 <b>얼고 있던</b> 때는 그래프의 어느 구간일까요?",
-      [{ t: "(나) 구간", ok: true }, { t: "(가) 구간" }, { t: "(다) 구간" }],
+      melt ? "고체인 얼음이 녹아 물로 변하는 <b>융해가 일어나는 구간</b>은 어디일까요?" : "물이 <b>얼고 있던</b> 때는 그래프의 어느 구간일까요?",
+      // 보기를 풀어 쓴 글은 녹이기의 그래프에만 맞는다(얼리기의 (가)(다)는 온도가 내려가는 구간이다). 얼리기는 예전 보기 그대로
+      melt
+        ? [{ t: "온도가 일정한 (나) 구간", ok: true }, { t: "온도가 올라가는 (가) 구간" }, { t: "다 녹은 뒤 온도가 올라가는 (다) 구간" }]
+        : [{ t: "(나) 구간", ok: true }, { t: "(가) 구간" }, { t: "(다) 구간" }],
       (ok) => api.recordQuiz(ok),
       {
         why: melt ? "얼음이 녹는 동안에는 온도가 <b>0℃에서 멈춰</b> 있었어요. 평평한 (나) 구간이에요." : "물이 어는 동안에는 온도가 <b>0℃에서 멈춰</b> 있었어요. 평평한 (나) 구간이에요.",
         onNext: done(
           melt
-            ? "얼음이 녹는 동안에는 열을 받아도 온도가 <b>일정</b>해요. 받은 열에너지가 모두 <b>상태 변화</b>에 쓰이기 때문이에요."
+            ? "고체가 액체로 녹는(융해) 동안에는 열에너지를 흡수해도 온도가 <b>일정하게 유지</b>돼요. 흡수한 열에너지가 모두 <b>상태 변화</b>에 쓰이기 때문이에요."
             : "물이 어는 동안에는 식혀도 온도가 <b>일정</b>해요. 얼면서 열에너지를 <b>내놓기</b> 때문이에요.",
         ),
       },
@@ -780,18 +793,19 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
   }
 
   // ── 처음 ──
+  // 예측의 첫 보기는 "그대로"로 시작해야 한다(실험 끝의 말머리가 pred.startsWith("그대로")로 가른다)
   if (mode === "melt") {
     f.say("<b>−5℃ 얼음</b>이 든 플라스크예요. 찬물에 담가 천천히 녹일 거예요. 먼저 예측해 보세요.");
-    u4Predict(lab, "얼음이 <b>녹는 동안</b> 온도는 어떻게 될까요?", ["그대로 멈춰 있다", "계속 올라간다", "조금씩 내려간다"], (picked) => {
+    u4Predict(lab, "얼음이 <b>녹는 동안</b> 온도계의 온도는 어떻게 변할까요?", ["그대로 일정하게 유지된다", "계속 올라간다", "조금씩 내려간다"], (picked) => {
       pred = picked;
       begin("melt");
     });
   } else if (mode === "freeze") {
     f.say("<b>물</b>이 든 시험관에 온도 센서를 꽂았어요. 이 물을 얼릴 거예요. 먼저 예측해 보세요.");
-    u4Predict(lab, "물이 <b>어는 동안</b> 온도는 어떻게 될까요?", ["그대로 멈춰 있다", "계속 내려간다", "조금씩 올라간다"], (picked) => {
+    u4Predict(lab, "물이 <b>어는 동안</b> 온도계의 온도는 어떻게 변할까요?", ["그대로 일정하게 유지된다", "계속 내려간다", "조금씩 올라간다"], (picked) => {
       pred = picked;
-      const cIce = bvCard("u4x-curve-pick", { name: "얼음만", sub: "비커에 얼음을 채운다", key: "ice" });
-      const cSalt = bvCard("u4x-curve-pick", { name: "얼음과 소금", sub: "얼음에 소금을 섞는다", key: "salt" });
+      const cIce = bvCard("u4x-curve-pick", { name: "얼음만 넣기", sub: "0℃ 정도의 냉각제", key: "ice" });
+      const cSalt = bvCard("u4x-curve-pick", { name: "얼음 + 소금 넣기", sub: "영하로 내려가는 냉각제", key: "salt" });
       cIce.el.addEventListener("click", () => begin("ice"));
       cSalt.el.addEventListener("click", () => begin("salt"));
       f.say("시험관을 넣을 비커에 <b>무엇을 채울지</b> 골라 보세요.");
@@ -799,8 +813,8 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
       api.setCTA("비커에 채울 것을 골라 보세요", { enabled: false });
     });
   } else {
-    const cWeak = bvCard("u4x-curve-pick", { name: "약한 불", sub: "천천히 가열한다", key: "weak" });
-    const cStrong = bvCard("u4x-curve-pick", { name: "센 불", sub: "빠르게 가열한다", key: "strong" });
+    const cWeak = bvCard("u4x-curve-pick", { name: "약한 불", sub: "열을 천천히 공급", key: "weak" });
+    const cStrong = bvCard("u4x-curve-pick", { name: "센 불", sub: "열을 빠르게 공급", key: "strong" });
     cWeak.el.addEventListener("click", () => begin("weak"));
     cStrong.el.addEventListener("click", () => begin("strong"));
     f.say("<b>20℃ 물</b>을 끓일 거예요. 먼저 <b>불의 세기</b>를 골라 보세요. 두 가지 다 해 볼 거예요.");

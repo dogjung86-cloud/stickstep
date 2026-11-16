@@ -1,4 +1,4 @@
-// u6TempFixLab (u6l5): 「온도로 문제를 풀 수 있을까?」
+// u6TempFixLab (u6l5): 「온도에 따른 부피 변화로 생활 속 문제를 풀어 볼까?」
 // 나온 곳: 해 보기 "기체의 온도와 부피 관계를 이용하여 생활 속 문제 해결하기", 스스로 확인하기의 달걀 삶기(껍데기 안쪽의 공기),
 //          그림 "열기구의 원리"(가열하면 풍선이 부풀고, 기체 일부가 밖으로 밀려 나가 가벼워져 떠오른다).
 // 학생이 정하는 것: 문제 1 달걀을 어떻게 삶을지(끓는 물에 바로 넣기, 찬물부터 천천히 데우기). 문제 2 풍선 속 공기의 온도(막대).
@@ -306,8 +306,8 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
   let cracked = false;
   let solved = false;
   let triedFast = false;
-  const fast = bvCard("u6x-end", { name: "끓는 물에 바로 넣기", key: "fast" });
-  const slow = bvCard("u6x-end", { name: "찬물부터 천천히 데우기", key: "slow" });
+  const fast = bvCard("u6x-end", { name: "끓는 물에 바로 넣기", sub: "100 ℃ 물에 풍덩", key: "fast" });
+  const slow = bvCard("u6x-end", { name: "찬물부터 천천히 데우기", sub: "20 ℃부터 서서히", key: "slow" });
   const next = bvBtn("main", "다음 문제로");
   next.disabled = true;
   const eggNote = noteRow();
@@ -337,7 +337,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
       frame.pips(1);
       next.disabled = false;
       api.setCTA("'다음 문제로'를 눌러 이어 가요", { enabled: false });
-      frame.say(triedFast ? "무사히 삶았어요. 속 공기가 <b>천천히</b> 부풀며 조금씩 빠져나갔어요." : "무사히 삶았어요. <b>끓는 물에 바로</b> 넣으면 어떨지도 해 볼 수 있어요.");
+      frame.say(triedFast ? "무사히 삶았어요. 속 공기가 <b>천천히</b> 부풀며 조금씩 빠져나갔어요." : "무사히 삶았어요! 비교를 위해 <b>끓는 물에 바로 넣기</b>도 눌러 보거나 <b>다음 문제로</b> 넘어가 보세요.");
     }
   };
   next.addEventListener("click", () => {
@@ -349,7 +349,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
       "끓는 물에 <b>바로 넣은</b> 달걀이 터지기 쉬운 까닭은?",
       [{ t: "속 공기가 갑자기 데워져 빠르게 부풀어서", ok: true }, { t: "속 공기가 식어 부피가 줄어들어서" }, { t: "끓는 물이 껍데기를 녹여서" }],
       (ok) => lab.grade(ok),
-      { why: "기체는 데워지면 부피가 늘어요. 갑자기 데우면 갑자기 늘어요.", onNext: toBalloon },
+      { why: "갑자기 데우면 공기 방 속 기체의 부피가 <b>급격히 늘어나</b> 껍데기를 세게 밀어내요.", onNext: toBalloon },
     );
   });
 
@@ -382,7 +382,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
     phase = "up";
     lab.phase("up");
     api.setCTA("열기구를 띄워 보세요", { enabled: false });
-    frame.say("이번에는 열기구예요. 막대를 밀어 풍선 속 공기를 데워 <b>구름 높이</b>까지 띄워 보세요.");
+    frame.say("이번에는 열기구예요. 온도 슬라이더를 오른쪽으로 밀어 공기를 데우고 <b>구름 높이</b>까지 띄워 보세요.");
     frame.slot.setControls(range.el, eggNote.el, chips);
   }
   const askCount = (): void => {
@@ -409,7 +409,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
   };
 
   lab.phase("egg");
-  frame.say("냉장고에서 꺼낸 달걀을 삶으려고 해요. 터지지 않게 삶을 <b>방법</b>을 골라 보세요.");
+  frame.say("냉장고에서 갓 꺼낸 차가운 달걀이에요. 껍데기가 깨지지 않게 삶을 <b>방법</b>을 골라 보세요.");
 
   // 공기 방 속 입자(확대 그림): 놀이용 하나, 비교판용 둘
   const airZ: Dot[] = dots(6, 30, 1);
@@ -578,7 +578,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
       upChip.done();
       haptic(HAPTIC.select);
       api.setCTA("열기구를 다시 내려 보세요", { enabled: false });
-      frame.say("구름 높이예요. 이번에는 막대를 되돌려 공기를 <b>식혀</b> 땅에 내려앉아 보세요.");
+      frame.say("구름 높이에 도착했어요! 이번엔 슬라이더를 왼쪽으로 되돌려 공기를 <b>식혀</b> 땅에 착륙해 보세요.");
     } else if (phase === "down" && alt === 0 && target <= T_LIFT) {
       phase = "ask";
       downChip.done();

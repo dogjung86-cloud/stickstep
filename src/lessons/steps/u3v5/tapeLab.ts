@@ -51,7 +51,7 @@ function mix(a: string, b: string, t: number): string {
 export const tapeLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as TapeStep;
   const tm = bvTimers();
-  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-tape", api });
+  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-tape", api, tall: true });
 
   let stage: "predict" | "alTop" | "paperTop" | "iron" | "ask" | "done" = "predict";
   let heat = 0; // 0~1
@@ -251,11 +251,11 @@ export const tapeLab: StepRenderer = (host, step, api) => {
     }
   });
 
-  const hold = u3Hold("가열하기 (꾹 누르고 있기)", (down) => {
+  const hold = u3Hold("꾹 눌러 가열하기", (down) => {
     if (stage !== "alTop" && stage !== "paperTop") return;
     heating = down;
-    if (down) f.say("가열 중! 띠가 어느 쪽으로 휘는지 봐요. 끝까지 누르고 있어요.");
-    else if (!reached) f.say("손을 떼니 띠가 식으며 다시 펴져요. 끝까지 <b>꾹</b> 눌러 주세요.");
+    if (down) f.say("가열하는 중이에요! 두 겹으로 붙인 띠가 어느 쪽으로 휘는지 끝까지 누르며 관찰해 보세요.");
+    else if (!reached) f.say("손을 떼면 띠가 식으면서 다시 펴져요. 완전히 휠 때까지 끝까지 <b>꾹</b> 눌러 주세요.");
   });
   const act = bvBtn("", "띠 뒤집기");
   act.hidden = true;
@@ -266,12 +266,12 @@ export const tapeLab: StepRenderer = (host, step, api) => {
     if (stage === "alTop") {
       f.pips(1);
       const head = pred.includes("종이") ? "예측대로" : "예측과 달리";
-      f.say(`${head} 띠가 <b>종이 쪽</b>(아래)으로 휘었어요. 손을 떼면 식으며 펴져요. 이번엔 띠를 뒤집어 봐요.`);
-      act.textContent = "띠 뒤집기 (종이를 위로)";
+      f.say(`${head} 가열하자 띠가 아래에 있는 <b>종이 쪽</b>으로 휘었어요! 이번에는 띠의 위아래를 뒤집어서 다시 가열해 볼까요?`);
+      act.textContent = "띠 뒤집기 (종이가 위로 오게)";
     } else {
       f.pips(2);
-      f.say("뒤집으니 위로 휘어요. 이번에도 <b>종이 쪽</b>이에요. 알루미늄박이 종이보다 더 많이 늘어나기 때문이에요.");
-      act.textContent = "다리미 속 장치 보기";
+      f.say("띠를 뒤집어 가열하니 이번에는 위쪽에 있는 <b>종이 쪽</b>으로 휘었어요! 알루미늄박이 종이보다 열팽창을 더 많이 해서 덜 늘어나는 종이 쪽으로 밀어내기 때문이에요.");
+      act.textContent = "전기다리미 속 바이메탈 보기";
     }
     act.hidden = false;
   }
@@ -280,7 +280,7 @@ export const tapeLab: StepRenderer = (host, step, api) => {
     if (cuts === 1) {
       haptic(HAPTIC.correct);
       f.pips(3);
-      f.say("뜨거워진 띠가 <b>열팽창 정도가 작은 금속</b> 쪽으로 휘어 접점에서 떨어졌어요. 전기가 끊겨 더 뜨거워지지 않아요.");
+      f.say("금속 띠가 뜨거워지자 <b>열팽창 정도가 작은 금속</b>(위쪽)으로 휘면서 접점에서 떨어졌어요! 덕분에 전기가 자동으로 끊겨 과열을 막아 줘요.");
     } else if (cuts === 2 && stage === "iron") {
       stage = "ask";
       tm.later(askFinal, 500);
@@ -303,41 +303,41 @@ export const tapeLab: StepRenderer = (host, step, api) => {
       hold.hidden = true;
       act.textContent = "전원 켜기";
       act.classList.add("main");
-      f.say("전기다리미 속 장치예요. 두 금속을 붙인 띠가 전기의 길을 잇고 있어요. <b>전원</b>을 켜 봐요.");
+      f.say("전기다리미의 온도를 일정하게 유지해 주는 장치예요. 열팽창 정도가 다른 두 금속을 붙인 띠가 회로를 연결하고 있어요. <b>전원 켜기</b>를 눌러 보세요.");
       api.setCTA("전원을 켜고 띠를 지켜보세요", { enabled: false });
     } else if (stage === "iron" && !power) {
       power = true;
       act.disabled = true;
-      act.textContent = "전원 켜짐";
-      f.say("전기가 흘러 전열선이 뜨거워져요. 띠도 함께 뜨거워지는데, 어떻게 되는지 지켜봐요.");
+      act.textContent = "작동 중";
+      f.say("전기가 흐르면서 전열선이 뜨거워지고 있어요. 함께 뜨거워진 금속 띠가 어떻게 움직이는지 살펴보세요.");
     }
   });
 
   function askFinal(): void {
-    f.say("식으면 다시 붙어 전기가 흐르고, 뜨거워지면 또 끊겨요. 그래서 다리미가 너무 뜨거워지지 않아요.");
+    f.say("온도가 내려가면 금속 띠가 다시 펴져 전기가 흐르고, 너무 뜨거워지면 다시 휘어 전기를 끊어요. 아래 질문에 답해 볼까요?");
     f.slot.ask(
-      "두 물질을 붙인 띠를 가열하면 어느 쪽으로 휘나요?",
-      [{ t: "덜 늘어나는 물질 쪽으로", ok: true }, { t: "더 늘어나는 물질 쪽으로" }, { t: "늘 위쪽으로" }],
+      "열팽창 정도가 다른 두 물질을 붙인 띠를 가열하면 어느 쪽으로 휘나요?",
+      [{ t: "열팽창 정도가 작아 덜 늘어나는 쪽으로", ok: true }, { t: "열팽창 정도가 커서 더 많이 늘어나는 쪽으로" }, { t: "위아래 위치와 상관없이 항상 위쪽으로" }],
       (ok) => api.recordQuiz(ok),
-      { why: "더 늘어나는 쪽이 <b>바깥</b>, 덜 늘어나는 쪽이 <b>안쪽</b>이 돼요.", onNext: finish },
+      { why: "더 많이 늘어나는 쪽이 바깥쪽을 감싸듯 밀어내므로, <b>덜 늘어나는 쪽(안쪽)</b>으로 휘어져요.", onNext: finish },
     );
   }
 
   function finish(): void {
     stage = "done";
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("같은 열을 받아도 <b>열팽창하는 정도는 물질마다 달라요</b>. 그래서 두 물질을 붙여 가열하면 덜 늘어나는 쪽으로 휘어요. 이것을 쓴 장치가 <b>바이메탈</b>이에요.");
+    f.say("물질마다 열팽창하는 정도가 달라서 생기는 현상과 바이메탈의 원리를 모두 확인했어요!");
+    f.slot.conclude("같은 열을 받아도 <b>열팽창하는 정도는 물질의 종류마다 달라요</b>. 열팽창 정도가 다른 두 금속을 붙여 놓으면 가열할 때 덜 늘어나는 쪽으로 휘는데, 이를 이용한 온도 조절 장치를 <b>바이메탈</b>이라고 해요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
   f.slot.setControls(hold, act);
   api.setCTA("띠를 가열해 보세요", { enabled: false });
-  f.say("알루미늄박 아래에 종이를 붙여 만든 띠예요. 한쪽 끝을 고정하고 가열할 거예요. 먼저 <b>예측</b>부터 해 봐요.");
+  f.say("위쪽에는 알루미늄박, 아래쪽에는 종이를 붙여서 만든 띠예요. 이 띠를 가열하면 어떻게 될지 먼저 <b>예측</b>해 볼까요?");
   f.slot.ask(
-    "가열하면 띠는 어떻게 될까요?",
-    [{ t: "종이 쪽(아래)으로 휜다" }, { t: "알루미늄박 쪽(위)으로 휜다" }, { t: "곧은 채로 길어지기만 한다" }],
+    "알루미늄박과 종이를 붙인 띠를 가열하면 어떻게 될까요?",
+    [{ t: "종이 쪽(아래)으로 휜다" }, { t: "알루미늄박 쪽(위)으로 휜다" }, { t: "휘지 않고 반듯하게 길어진다" }],
     () => undefined,
     {
       predict: true,
@@ -345,7 +345,8 @@ export const tapeLab: StepRenderer = (host, step, api) => {
         pred = f.slot.qBox.querySelector(".bv-choice.sel")?.textContent ?? "";
         stage = "alTop";
         f.slot.showControls();
-        f.say("<b>가열하기</b>를 꾹 눌러 봐요. 띠가 어느 쪽으로 휘는지 끝까지 지켜봐요.");
+        // 버튼 이름이 "꾹 눌러 가열하기"로 바뀌어 부르는 글도 맞췄다(raceLab의 수정안과 같은 꼴)
+        f.say("<b>꾹 눌러 가열하기</b> 버튼을 누른 채로 띠가 어느 쪽으로 휘는지 끝까지 지켜봐요.");
         api.setCTA("띠를 가열해 보세요", { enabled: false });
       },
     },

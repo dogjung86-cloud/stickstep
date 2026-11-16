@@ -25,7 +25,7 @@ const V0 = 1.6; // 손으로 밀어 보낸 처음 속력(px/프레임). 화면�
 const A = 0.013; // 바람이 주는 가속(px/프레임²)
 const WIND: Record<Fan, [number, number]> = { none: [0, 0], back: [1, 0], front: [-1, 0], side: [0, 1] };
 const COLOR: Record<Fan, string> = { none: "#C9D1DE", back: "#8FC0FF", front: "#FF9D8A", side: "#9BE8C4" };
-const RESULT: Record<Fan, string> = { none: "속력도 방향도 그대로", back: "점점 빨라짐", front: "느려지다 멈춤", side: "길이 휘어짐" };
+const RESULT: Record<Fan, string> = { none: "속력도 방향도 그대로", back: "점점 빨라짐", front: "느려지다 멈춤", side: "운동 방향이 휘어짐" };
 const NAME: Record<Fan, string> = { none: "선풍기 없이", back: "뒤에서", front: "앞에서", side: "옆에서" };
 const SHORT: Record<Fan, string> = { none: "그대로", back: "빨라짐", front: "느려지다 멈춤", side: "휘어짐" };
 const X_START = 56; // 공이 출발하는 자리(그 뒤에 '뒤에서' 선풍기가 길과 일직선으로 선다)
@@ -97,12 +97,12 @@ export const fanLab: StepRenderer = (host, step, api) => {
     if (n === 4 && first) {
       finished = true;
       paint();
-      f.say("바람이 운동 방향과 <b>나란하면</b> 속력이, <b>나란하지 않으면</b> 가는 방향도 변했어요. 바람이 없으면 그대로였고요.");
+      f.say("운동 방향과 <b>나란한 바람</b>은 속력을 바꾸고, <b>옆에서 부는 바람</b>은 운동 방향을 휘게 했어요!");
       tm.later(askFinal, 2600);
       return;
     }
     const left = (Object.keys(cards) as Fan[]).filter((k) => !cards[k].isDone()).map((k) => (k === "none" ? "선풍기 없이" : k === "back" ? "뒤에서" : k === "front" ? "앞에서" : "옆에서"));
-    f.say(fan === "none" ? `바람이 없으면 공은 <b>같은 속력</b>으로 곧게 갔어요. 이제 선풍기를 놓아 보세요(${left.join(", ")}).` : `자국의 <b>간격</b>과 <b>길</b>을 봐요. 남은 것: ${left.join(", ") || "없음"}.`);
+    f.say(fan === "none" ? `바람(힘)이 없으면 공은 <b>일정한 속력</b>으로 곧게 나아가요! 이제 선풍기 위치(<b>${left.join(", ")}</b>)도 해 보세요.` : `일정한 시간마다 찍힌 점의 <b>간격(속력)</b>과 <b>나아간 방향</b>을 보세요! 남은 조건: <b>${left.join(", ") || "없음"}</b>`);
   };
 
   function askFinal(): void {
@@ -119,7 +119,7 @@ export const fanLab: StepRenderer = (host, step, api) => {
   }
   function finish(): void {
     grid = "done";
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("네 칸의 자국을 비교해 힘의 방향이 운동을 어떻게 바꾸는지 한눈에 정리했어요!");
     f.slot.conclude("힘을 받으면 물체의 <b>속력</b>이나 <b>운동 방향</b>이 변해요. 운동 방향과 나란한 힘은 속력을, 나란하지 않은 힘은 운동 방향도 바꿔요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -395,7 +395,7 @@ export const fanLab: StepRenderer = (host, step, api) => {
   });
 
   paint();
-  f.say("마찰이 거의 없는 매끈한 바닥을 위에서 본 모습이에요. 먼저 <b>선풍기 없이</b> 굴려 보고, 자리를 바꿔 가며 비교해 보세요.");
+  f.say("매끈한 바닥에서 굴러가는 공에 바람을 불어 볼까요? <b>네 가지 조건</b>을 골라 모두 <b>공 굴리기</b>를 눌러 보세요.");
   api.setCTA("네 가지로 공을 굴려 보세요", { enabled: false });
   return () => {
     tm.clear();

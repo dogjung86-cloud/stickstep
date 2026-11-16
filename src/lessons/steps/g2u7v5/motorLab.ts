@@ -25,7 +25,7 @@ const B = 46; // 코일의 반 깊이
 
 export const motorLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 4, api });
+  const f = xFrame(host, { title: s.title, steps: 4, api, tall: true });
   const tm = bvTimers();
 
   let on = false;
@@ -37,10 +37,10 @@ export const motorLab: StepRenderer = (host, step, api) => {
   let speed = 0;
   const seen = { on: false, cur: false, pole: false };
 
-  const sw = bvBtn("main", "전류 흐르게 하기");
+  const sw = bvBtn("main", "전류 흘려주기");
   const bCur = bvBtn("", "전류 방향 바꾸기");
   const bPole = bvBtn("", "자석의 극 바꾸기");
-  const log = xLog(["도는 방향(앞에서 볼 때)"], 1, true);
+  const log = xLog(["코일이 회전하는 방향 (앞에서 볼 때)"], 1, true);
   f.slot.setControls(sw, xRow(bCur, bPole), log.el);
 
   /** 왼쪽에 온 변이 받는 힘의 방향(+1 위). cur = 1이면 왼쪽 변의 전류가 뒤쪽(먼 쪽)으로 흐른다: (−z) × (+x) = −y */
@@ -48,7 +48,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
   const dirName = (v: number): string => (v > 0 ? "위" : "아래");
   const turnName = (): string => (up() > 0 ? "시계 방향" : "시계 반대 방향");
   const after = (): void => {
-    log.set(0, hold !== "free" ? "붙잡고 있음" : on ? turnName() : "멈춤");
+    log.set(0, hold !== "free" ? "회전 전 (고정됨)" : on ? turnName() : "정지");
     f.pips((seen.on ? 1 : 0) + (seen.cur ? 1 : 0) + (seen.pole ? 1 : 0));
     if (seen.on && seen.cur && seen.pole && !finished) {
       finished = true;
@@ -67,7 +67,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
       hold = "left";
       on = true;
       sw.disabled = true;
-      f.say(`코일을 붙잡은 채 전류를 흘렸어요. 왼쪽 변은 <b>${dirName(up())}</b>로 힘을 받아요.`);
+      f.say(`코일을 붙잡아 고정한 채 전류를 흘려주었어요. 코일의 왼쪽 변은 <b>${dirName(up())}</b>로 힘을 받아요.`);
       tm.later(predict, 2400);
       return;
     }
@@ -77,22 +77,22 @@ export const motorLab: StepRenderer = (host, step, api) => {
       sw.textContent = "전류 끊기";
       bCur.disabled = false;
       bPole.disabled = false;
-      f.say("양쪽이 반대로 힘을 받아 코일이 <b>돌아요</b>. 전류의 방향과 자석의 극도 바꿔 보세요.");
+      f.say("왼쪽 변과 오른쪽 변이 서로 반대 방향으로 힘을 받아 코일이 <b>회전해요</b>! 전류의 방향과 자석의 극도 바꿔 보세요.");
       api.setCTA("전류와 자석을 바꿔 보세요", { enabled: false });
       after();
       return;
     }
     on = !on;
-    sw.textContent = on ? "전류 끊기" : "전류 흐르게 하기";
-    if (on) f.say("코일의 왼쪽과 오른쪽이 <b>반대 방향</b>으로 힘을 받아 돌아요. 화살표를 비교해 보세요.");
-    else f.say("전류를 끊자 힘이 사라져 코일이 <b>서서히 멈춰요</b>.");
+    sw.textContent = on ? "전류 끊기" : "전류 흘려주기";
+    if (on) f.say("코일의 왼쪽 변과 오른쪽 변이 <b>서로 반대 방향</b>으로 힘을 받아 회전해요. 양쪽 힘 화살표를 비교해 보세요.");
+    else f.say("전류를 끊자 코일이 받는 힘이 사라져 <b>서서히 멈춰요</b>.");
     after();
   });
   function predict(): void {
     const l = up();
     f.slot.ask(
-      "오른쪽 변에는 전류가 반대 방향으로 흘러요. 오른쪽 변이 받는 힘은?",
-      [{ t: `왼쪽과 반대로 ${dirName(-l)}쪽`, ok: true }, { t: `왼쪽과 같이 ${dirName(l)}쪽` }, { t: "힘을 받지 않아요" }],
+      "코일의 오른쪽 변에는 왼쪽 변과 반대 방향으로 전류가 흘러요. 오른쪽 변은 어느 쪽으로 힘을 받을까요?",
+      [{ t: `왼쪽 변과 반대로 ${dirName(-l)}쪽`, ok: true }, { t: `왼쪽 변과 같게 ${dirName(l)}쪽` }, { t: "힘을 받지 않아요" }],
       () => undefined,
       {
         predict: true,
@@ -100,9 +100,9 @@ export const motorLab: StepRenderer = (host, step, api) => {
           hold = "both";
           f.slot.showControls();
           sw.disabled = false;
-          sw.textContent = "코일 놓기";
-          f.say(`오른쪽 변은 전류가 반대라 힘도 반대(<b>${dirName(-l)}</b>)예요. 이제 코일을 놓아 봐요.`);
-          api.setCTA("코일을 놓아 보세요", { enabled: false });
+          sw.textContent = "붙잡은 코일 놓기";
+          f.say(`오른쪽 변은 전류의 방향이 반대이므로 힘도 반대 방향(<b>${dirName(-l)}</b>)으로 받아요! 이제 <b>붙잡은 코일 놓기</b>를 눌러 보세요.`);
+          api.setCTA("붙잡은 코일을 놓아 보세요", { enabled: false });
         },
       },
     );
@@ -114,7 +114,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
     if (on) {
       seen.cur = true;
       f.say("전류의 방향을 바꾸자 양쪽의 힘이 모두 뒤집혀 코일이 <b>반대로</b> 돌아요.");
-    } else f.say("전류의 방향을 바꿨어요. <b>전류를 흐르게 해서</b> 코일이 어느 쪽으로 도는지 봐요.");
+    } else f.say("전류의 방향을 바꿨어요. <b>전류 흘려주기</b>를 눌러 코일이 어느 쪽으로 회전하는지 확인해 보세요.");
     after();
   });
   bPole.addEventListener("click", () => {
@@ -124,22 +124,22 @@ export const motorLab: StepRenderer = (host, step, api) => {
     if (on) {
       seen.pole = true;
       f.say("자석의 극을 바꾸자 자기장의 방향이 바뀌어 코일이 <b>반대로</b> 돌아요.");
-    } else f.say("자석의 극을 바꿨어요. <b>전류를 흐르게 해서</b> 코일이 어느 쪽으로 도는지 봐요.");
+    } else f.say("자석의 극을 바꿨어요. <b>전류 흘려주기</b>를 눌러 코일이 어느 쪽으로 회전하는지 확인해 보세요.");
     after();
   });
 
   function ask(): void {
     f.slot.ask(
-      "전동기 속 코일이 한쪽으로 밀려나지 않고 도는 까닭은?",
-      [{ t: "양쪽 변이 서로 반대로 힘을 받아서", ok: true }, { t: "양쪽 변이 같은 쪽으로 힘을 받아서" }, { t: "한쪽 변만 힘을 받아서" }],
+      "전동기 속 코일이 한쪽으로 그냥 밀려나지 않고 제자리에서 회전하는 까닭은 무엇인가요?",
+      [{ t: "양쪽 변이 서로 반대 방향으로 힘을 받아서", ok: true }, { t: "양쪽 변이 같은 방향으로 힘을 받아서" }, { t: "한쪽 변만 힘을 받고 다른 쪽은 받지 않아서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "두 변은 <b>전류의 방향이 반대</b>라 힘의 방향도 반대예요.", onNext: finish },
+      { why: "코일의 왼쪽 변과 오른쪽 변은 <b>전류가 흐르는 방향이 서로 반대</b>이므로, 한쪽은 위쪽, 다른 쪽은 아래쪽으로 힘을 받아 회전해요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("코일의 왼쪽 부분과 오른쪽 부분은 전류의 방향이 반대라 <b>힘도 반대 방향</b>으로 받아요. 그래서 코일이 돌아요. 이것이 <b>전동기</b>의 원리예요.");
+    f.say("코일의 양쪽 변이 서로 반대 방향으로 힘을 받아 회전하는 전동기의 원리를 확인했어요!");
+    f.slot.conclude("자석 사이에 놓인 코일의 왼쪽 변과 오른쪽 변에는 전류가 서로 반대 방향으로 흘러요. 따라서 양쪽 변이 <b>서로 반대 방향의 힘</b>(위쪽과 아래쪽)을 받아 코일이 회전하며, 이것이 <b>전동기</b>의 원리예요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -249,8 +249,8 @@ export const motorLab: StepRenderer = (host, step, api) => {
       });
   } else startFlat();
 
-  log.set(0, "붙잡고 있음");
-  f.say("두 자석 사이의 코일을 손으로 붙잡고 있어요. <b>전류를 흐르게 해서</b> 왼쪽 변이 받는 힘부터 봐요.");
+  log.set(0, "회전 전 (고정됨)");
+  f.say("자석 사이에 놓인 코일을 잠시 고정해 두었어요. 먼저 <b>전류 흘려주기</b>를 눌러 코일의 왼쪽 변이 어느 쪽으로 힘을 받는지 확인해 보세요.");
   api.setCTA("전류와 자석을 바꿔 보세요", { enabled: false });
   return () => {
     tm.clear();

@@ -1,4 +1,4 @@
-// u6ChartLab (u6l4 둘째 랩): 「온도와 부피, 점을 이으면?」
+// u6ChartLab (u6l4 둘째 랩): 「온도에 따른 기체의 부피, 점을 이으면 어떤 모양일까?」
 // 나온 곳: 탐구 2 "온도에 따른 기체의 부피 변화 자료 해석하기"(물의 온도를 높이며 주사기 속 기체의 부피를 재고 그래프로 나타낸다)와
 //          해 보기의 입자 운동 시뮬레이션(온도를 바꾸며 입자의 운동과 부피를 본다).
 // 학생이 하는 일: 물을 20 ℃씩 데우고, 그때의 부피를 읽어 그래프의 제자리를 눌러 점을 찍는다(20, 40, 60, 80 ℃ 네 점).
@@ -30,7 +30,8 @@ const BOX_B: GasBounds = { x0: 264, y0: 120, x1: 326, y1: 164 };
 
 export const chartLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as { title: string; cta?: string };
-  const lab = u6Lab(host, api, { title: s.title, steps: 3, cls: "u6x-chart", label: "물중탕 주사기와 온도, 부피 그래프", wait: "부피를 재서 점을 찍어 보세요" });
+  // 첫 도움말이 세 줄이라(폰 14px) 세 줄 상자를 처음부터 잡는다(랩 도중에 무대가 밀리지 않게)
+  const lab = u6Lab(host, api, { title: s.title, steps: 3, cls: "u6x-chart", label: "물중탕 주사기와 온도, 부피 그래프", wait: "부피를 재서 점을 찍어 보세요", tall: true });
   const { frame, tm } = lab;
   const syr = vSyringe(12, 2.5, 16);
   let ti = 0; // 지금 물의 온도(TEMPS의 자리)
@@ -53,7 +54,7 @@ export const chartLab: StepRenderer = (host, step, api) => {
   const sync = (): void => {
     const t = TEMPS[ti];
     heat.disabled = phase !== "play" || !plotted.has(t) || ti >= TEMPS.length - 1;
-    heat.textContent = !plotted.has(t) ? "먼저 그래프에 점을 찍어요" : ti >= TEMPS.length - 1 ? "다 쟀어요" : "물을 20 ℃ 더 데우기";
+    heat.textContent = !plotted.has(t) ? "오른쪽 그래프에 점을 먼저 찍어 주세요" : ti >= TEMPS.length - 1 ? "측정 완료" : "물을 20 ℃ 더 데우기";
     note.set(`물 <b>${t} ℃</b>`, `기체의 부피 <b>${volOf(t).toFixed(1)} mL</b>`);
     host.dataset.u6T = String(t);
     host.dataset.u6Plots = String(plotted.size);
@@ -62,7 +63,7 @@ export const chartLab: StepRenderer = (host, step, api) => {
     if (phase !== "play" || !plotted.has(TEMPS[ti]) || ti >= TEMPS.length - 1) return;
     ti += 1;
     haptic(HAPTIC.tap);
-    frame.say(`물이 ${TEMPS[ti]} ℃가 됐어요. 부피를 읽고 그래프의 <b>${TEMPS[ti]} ℃ 줄</b>에서 제자리를 눌러요.`);
+    frame.say(`물이 <b>${TEMPS[ti]} ℃</b>로 데워졌어요! 늘어난 부피를 읽고 그래프의 <b>${TEMPS[ti]} ℃ 줄</b>에 점을 찍어 보세요.`);
     sync();
   });
 
@@ -109,7 +110,7 @@ export const chartLab: StepRenderer = (host, step, api) => {
     const t = TEMPS[ti];
     if (plotted.has(t)) return;
     if (!settled()) {
-      frame.say("물이 아직 데워지는 중이에요. 부피가 멈추면 눌러요.");
+      frame.say("물이 아직 데워지는 중이에요. 피스톤이 멈추면 점을 찍어 보세요.");
       return;
     }
     const col = TEMPS.reduce((a, c) => (Math.abs(gx(c) - p.x) < Math.abs(gx(a) - p.x) ? c : a));
@@ -119,20 +120,24 @@ export const chartLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
       sync();
       if (plotted.size === TEMPS.length) {
-        api.setCTA("그래프를 살펴보고 있어요", { enabled: false });
+        api.setCTA("그래프 모양을 확인해 볼까요?", { enabled: false });
         frame.say("네 점을 다 찍었어요. 점을 이으면 어떤 선이 될까요?");
         phase = "ask";
         tm.later(askLine, 1700);
-      } else frame.say("점을 찍었어요. 이제 <b>물을 더 데워</b> 다음 값을 재요.");
+      } else frame.say("점을 잘 찍었어요! 이제 <b>물을 20 ℃ 더 데우기</b>를 눌러 다음 부피를 재 보세요.");
     } else {
       miss = { x: gx(col), y: gy(row), age: 0 };
       haptic(HAPTIC.wrong);
-      frame.say(col !== t ? `지금 물은 <b>${t} ℃</b>예요. ${t} ℃ 줄에서 눌러요.` : `부피를 다시 읽어요. 지금은 <b>${volOf(t).toFixed(1)} mL</b>예요.`);
+      frame.say(
+        col !== t
+          ? `지금 물의 온도는 <b>${t} ℃</b>예요. 가로축 <b>${t}</b> 위의 줄을 눌러 보세요.`
+          : `지금 기체의 부피는 <b>${volOf(t).toFixed(1)} mL</b>예요. 세로축 <b>${Math.round(volOf(t))}</b> 높이를 눌러 보세요.`,
+      );
     }
   });
 
   lab.phase("play");
-  frame.say("끝을 막은 주사기를 물에 담갔어요. 지금 부피를 읽고 그래프의 <b>20 ℃ 줄</b>에서 제자리를 눌러요.");
+  frame.say("물 <b>20 ℃</b>일 때의 부피(<b>30.0 mL</b>)를 확인하고, 오른쪽 그래프의 <b>20 ℃ 세로줄</b>에서 알맞은 칸을 눌러 점을 찍어 보세요.");
   sync();
 
   lab.run((ctx, dt, tMs) => {

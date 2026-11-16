@@ -24,12 +24,12 @@ const motorLab = lab("g2u7MotorLab");
 
 // ══ 5. 저항의 연결 ══
 export const L5: Step[] = numbered([
-  opener({ title: "스탠드 플러그를 뽑으면 충전은?", scene: "g2u7-tap", wait: "스탠드의 플러그를 뽑아 보세요", cta: "실험실 열기" }),
-  bulbLab({ title: "전구를 더 달면 밝기는?", cta: "직렬의 전류부터 재기" }),
-  seriesCurLab({ title: "전구를 지나면 전류는?", cta: "직렬의 전압 재기" }),
-  seriesVoltLab({ title: "전압은 어떻게 나뉠까요?", cta: "병렬로 넘어가기" }),
-  parVoltLab({ title: "병렬의 전압은 왜 같을까요?", cta: "갈림길의 전류 재기" }),
-  parCurLab({ title: "갈림길에서 전류는?", cta: "이름 붙이기" }),
+  opener({ title: "스탠드 플러그를 뽑으면 휴대 전화 충전은 어떻게 될까요?", scene: "g2u7-tap", wait: "멀티탭에서 스탠드 플러그를 뽑아 보세요", cta: "실험실 열기" }),
+  bulbLab({ title: "전구를 직렬과 병렬로 연결하면 밝기는 어떻게 달라질까요?", cta: "직렬 회로의 전류 재러 가기" }),
+  seriesCurLab({ title: "직렬 회로에서 전구를 지나면 전류는 줄어들까요?", cta: "직렬 회로의 전압 재러 가기" }),
+  seriesVoltLab({ title: "직렬 회로에서 전압은 두 저항에 어떻게 나뉠까요?", cta: "병렬 회로의 전압 알아보러 가기" }),
+  parVoltLab({ title: "병렬 회로에서는 왜 두 저항에 같은 전압이 걸릴까요?", cta: "병렬 회로의 전류 재러 가기" }),
+  parCurLab({ title: "병렬 회로의 갈림길에서 전류는 어떻게 나뉠까요?", cta: "용어 알아보기" }),
   words({
     title: "직렬연결과 병렬연결,<br>한 줄과 여러 갈래",
     lead: "전구 두 개를 한 줄로 이을 때와 갈래를 나눠 이을 때, 밝기도 전압도 전류도 달랐어요. 두 방법의 이름이에요.",
@@ -117,8 +117,8 @@ export const L5: Step[] = numbered([
 
 // ══ 6. 전기 에너지의 전환 ══
 export const L6: Step[] = numbered([
-  opener({ title: "계량기를 더 빨리 돌리는 것은?", scene: "g2u7-meter", wait: "두 기구를 켜 보세요", cta: "실험실 열기" }),
-  powerLab({ title: "어느 기구가 가장 많이 쓸까요?", cta: "이름 붙이기" }),
+  opener({ title: "전기 계량기를 더 빨리 돌아가게 하는 기구는 무엇일까요?", scene: "g2u7-meter", wait: "선풍기와 헤어드라이어를 차례로 켜 보세요", cta: "실험실 열기" }),
+  powerLab({ title: "어느 전기 기구가 전기 에너지를 가장 많이 쓸까요?", cta: "용어 알아보기" }),
   words({
     title: "전기 에너지와 소비 전력,<br>1초에 얼마나 쓰나",
     lead: "전기 기구를 켜자 전기 에너지가 빛, 열, 운동 에너지로 바뀌었고, 기구마다 1초에 쓰는 양이 달랐어요.",
@@ -130,7 +130,7 @@ export const L6: Step[] = numbered([
     ],
     cta: "같은 밝기, 다른 전기 에너지",
   }),
-  effLab({ title: "같은 밝기에 얼마나 들까요?", cta: "이름 붙이기" }),
+  effLab({ title: "같은 밝기를 내는 데 전기 에너지는 얼마나 들까요?", cta: "용어 알아보기" }),
   words({
     title: "에너지 효율,<br>필요한 에너지로 바뀌는 비율",
     lead: "같은 밝기를 내는 데 백열전구는 400 J, LED 전구는 50 J이 들었어요. 이 차이에 이름을 붙여요.",
@@ -224,7 +224,7 @@ export const L6: Step[] = numbered([
 
 // ══ 7. 전류가 만드는 자기장 ══
 export const L7: Step[] = numbered([
-  opener({ title: "전류가 흐르면 나침반 바늘은?", scene: "g2u7-wire", wait: "스위치를 눌러 보세요", cta: "용어부터 알아보기" }),
+  opener({ title: "전선에 전류가 흐르면 나침반 바늘은 어떻게 될까요?", scene: "g2u7-wire", wait: "스위치를 꾹 눌러 전류를 흘려 보세요", cta: "용어부터 알아보기" }),
   words({
     title: "자기장,<br>자석의 힘이 미치는 공간",
     lead: "코일은 전선을 여러 번 감은 것이에요. 나침반으로 실험하기 전에, 나침반 바늘이 무엇을 알려 주는지부터 알아봐요.",
@@ -237,7 +237,7 @@ export const L7: Step[] = numbered([
     ],
     cta: "실험실 열기",
   }),
-  coilLab({ title: "전류가 흐르면 나침반은?", cta: "쉽게 기억하는 법" }),
+  coilLab({ title: "코일에 전류가 흐르면 주위의 나침반은 어느 쪽을 가리킬까요?", cta: "오른손으로 극 찾는 법 알아보기" }),
   concept({
     kicker: "쉽게 기억하는 법",
     kickerTone: "elec",
@@ -268,7 +268,7 @@ export const L7: Step[] = numbered([
     ],
     cta: "오른손으로 맞혀 보기",
   }),
-  gripLab({ title: "오른손으로 N극을 찾아요", cta: "정리하기" }),
+  gripLab({ title: "오른손으로 코일의 N극 방향을 어떻게 찾을까요?", cta: "핵심 정리하기" }),
   recap({
     title: "전류와 자기장,<br>카드 두 장으로 정리",
     narrator: "자석이 없는데도 나침반 바늘이 돌아갔어요. <b>전류가 만든 자기장</b>을 카드 두 장으로 정리해요.",
@@ -324,9 +324,9 @@ export const L7: Step[] = numbered([
 
 // ══ 8. 전류가 흐르는 코일이 받는 힘 ══
 export const L8: Step[] = numbered([
-  opener({ title: "전동기 속에는 무엇이 들어 있을까요?", scene: "g2u7-bike", wait: "전동기를 열어 보세요", cta: "실험실 열기" }),
-  swingLab({ title: "전기 그네는 어느 쪽으로 갈까요?", cta: "전동기 속 코일 보기" }),
-  motorLab({ title: "전동기 속 코일은 왜 돌까요?", cta: "이름 붙이기" }),
+  opener({ title: "전동기 속에는 무엇이 들어 있을까요?", scene: "g2u7-bike", wait: "전동기 덮개를 열어 내부를 살펴보세요", cta: "실험실 열기" }),
+  swingLab({ title: "자석 사이의 코일에 전류가 흐르면 어느 쪽으로 움직일까요?", cta: "전동기 속 코일 회전 원리 보기" }),
+  motorLab({ title: "전동기 속 코일은 왜 한 방향으로 계속 회전할까요?", cta: "용어 알아보기" }),
   words({
     title: "코일이 받는 힘,<br>방향은 오른손으로",
     lead: "자석 사이의 코일은 전류가 흐를 때만 움직였고, 전류나 자석을 바꾸면 반대로 움직였어요. 힘의 방향을 찾는 법과 이 힘을 쓰는 장치의 이름이에요.",
@@ -353,7 +353,7 @@ export const L8: Step[] = numbered([
     ],
     cta: "손바닥으로 맞혀 보기",
   }),
-  palmLab({ title: "손바닥으로 힘의 방향 찾기", cta: "정리하기" }),
+  palmLab({ title: "오른손 손바닥으로 힘의 방향을 어떻게 찾을까요?", cta: "핵심 정리하기" }),
   recap({
     title: "코일이 받는 힘,<br>카드 석 장으로 정리",
     narrator: "스위치를 누를 때만 그네가 움직였어요. <b>전류와 자기장이 만나 생기는 힘</b>을 카드 석 장으로 정리해요.",

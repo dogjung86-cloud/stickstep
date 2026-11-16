@@ -180,7 +180,7 @@ export const g2u2QuakeLab: StepRenderer = (host, step, api) => {
     pinsG.innerHTML = pins.map(([x, y], i) => `<g><path d="M${x} ${y} v-15" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M${x} ${y - 15} l11 4 l-11 4 Z" fill="${hits ? (hits[i] ? G.ok : G.bad) : "#fff"}"/><circle cx="${x}" cy="${y}" r="2.4" fill="#fff"/>${hits ? `<circle cx="${x}" cy="${y}" r="13" stroke="${hits[i] ? G.ok : G.bad}" stroke-width="1.6" fill="none" stroke-dasharray="${hits[i] ? "0" : "4 3"}"/>` : ""}</g>`).join("");
     lab.q<SVGTextElement>(".g2u2x-qk-cnt").textContent = `깃발 ${pins.length} / 3`;
   };
-  const play = gBtn("play", "지진이 난 곳 재생하기");
+  const play = gBtn("play", "지진 발생 지역 표시하기");
   const volc = gBtn("volc", "화산 활동도 겹쳐 보기");
   play.disabled = true;
   tap.addEventListener("click", (e) => {
@@ -202,7 +202,7 @@ export const g2u2QuakeLab: StepRenderer = (host, step, api) => {
     tap.disabled = true;
     play.disabled = false;
     f.pips(1);
-    f.say("깃발 세 개를 다 꽂았어요. 이제 실제로 <b>지진이 난 곳</b>을 재생해서 비교해 보세요.");
+    f.say("깃발 세 개를 다 꽂았어요. 이제 실제로 <b>지진이 난 곳</b>을 표시해서 비교해 보세요.");
     lab.hint("play");
   });
   play.addEventListener("click", () => {
@@ -217,7 +217,7 @@ export const g2u2QuakeLab: StepRenderer = (host, step, api) => {
       lab.q<SVGTextElement>(".g2u2x-qk-res").textContent = `깃발 3개 가운데 ${n}개가 지진이 난 곳 가까이에 있어요`;
       haptic(n ? HAPTIC.correct : HAPTIC.wrong);
       f.say(n === 3 ? "깃발이 모두 맞았어요. 점들이 놓인 <b>모양</b>을 보고 답해 보세요." : "빗나간 깃발이 있어요. 지진은 아무 데서나 나지 않네요. 점들이 놓인 <b>모양</b>을 보세요.");
-      tm.later(() => lab.ask("지진이 난 곳들은 지도에서 <b>어떤 모양</b>으로 놓여 있나요?", ["좁은 띠 모양으로 이어진다", "지도 전체에 고르게 퍼져 있다", "대륙 한가운데에 몰려 있다"], "지진은 <b>특정한 곳</b>에서 긴 띠를 이루며 일어나요.", () => {
+      tm.later(() => lab.ask("지진이 자주 일어난 지역은 지도에서 <b>어떤 모양</b>으로 분포하나요?", ["좁은 띠 모양으로 이어진다", "지도 전체에 고르게 퍼져 있다", "대륙 한가운데에 몰려 있다"], "지진은 <b>특정한 곳</b>에서 긴 띠를 이루며 일어나요.", () => {
         f.pips(2);
         f.slot.setControls(volc);
         f.say("이번에는 <b>화산 활동</b>이 활발한 곳을 같은 지도에 겹쳐 보세요.");
@@ -252,7 +252,7 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
   f.stage.innerHTML = `${svgOpen}${mapSkeleton(uid)}
     <g class="g2u2x-pl-kj"></g>
     ${legend([["#FFE066", "지진"], ["#FF5A3C", "화산 활동"], ["#7CF2E0", "판의 경계"]])}
-    ${label(173, 222, "비교한 것: 아직 없음", { size: 12.5, fill: G.dim, weight: 700, cls: "g2u2x-pl-log" })}
+    ${label(173, 222, "비교 완료: 없음", { size: 12.5, fill: G.dim, weight: 700, cls: "g2u2x-pl-log" })}
   </svg>`;
   const map = mapCtl(f.stage);
   map.draw(FULL);
@@ -273,7 +273,7 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
     });
     return p;
   });
-  const play = gBtn("play", "재생");
+  const play = gBtn("play", "지도에 겹쳐 보기");
   function hintNow(): void {
     const want: Layer = !seen.v ? "v" : "q", other: Layer = want === "v" ? "q" : "v";
     if (on[other]) lab.hint(other);
@@ -317,7 +317,7 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
       if (!on.b) {
         haptic(HAPTIC.wrong);
         host.dataset.g2Miss = String(Number(host.dataset.g2Miss ?? 0) + 1);
-        f.say("띠 모양은 보이지만 <b>비교할 것</b>이 없어요. 판의 경계도 함께 켜서 다시 재생해 보세요.");
+        f.say("분포 띠는 보이지만 <b>판의 경계</b>가 꺼져 있어요. 판의 경계도 함께 켜서 비교해 보세요.");
         hintNow();
         return;
       }
@@ -331,11 +331,11 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.correct);
       const log = [seen.v ? "화산 활동과 판의 경계" : "", seen.q ? "지진과 판의 경계" : ""].filter(Boolean).join(", ");
       const t = lab.q<SVGTextElement>(".g2u2x-pl-log");
-      t.textContent = `비교한 것: ${log}`;
+      t.textContent = `비교 완료: ${log}`;
       t.setAttribute("fill", G.gold);
       f.pips(seen.v && seen.q ? 2 : 1);
       if (!(seen.v && seen.q)) {
-        f.say(`${on.v ? "붉은 세모" : "노란 점"}가 청록색 선을 따라 놓여 있어요. 이번에는 <b>${seen.v ? "지진" : "화산 활동"}</b>과 판의 경계를 비교해 보세요.`);
+        f.say(`${on.v ? "붉은 세모가" : "노란 점이"} 청록색 선을 따라 놓여 있어요. 이번에는 <b>${seen.v ? "지진" : "화산 활동"}</b>과 판의 경계를 비교해 보세요.`);
         hintNow();
         return;
       }
@@ -343,7 +343,7 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
       f.say("화산 활동과 지진을 모두 판의 경계와 비교했어요. 세 자료를 함께 켠 지도를 보고 답해 보세요.");
       tm.later(() => lab.ask("화산대와 지진대는 <b>판의 경계</b>와 어떤 관계인가요?", ["대체로 일치한다", "서로 엇갈려 있다", "아무 관계가 없다"], "세모와 점이 대부분 <b>청록색 선</b>을 따라 놓여 있어요.", () => {
         busy = true;
-        f.say("지도를 <b>우리나라와 일본</b> 둘레로 옮겨 크게 볼게요.");
+        f.say("지도를 <b>우리나라와 일본</b> 주변으로 확대해 볼게요.");
         zoomToKoreaJapan(() => {
           f.say("<b>우리나라와 일본</b>을 표시했어요. 판의 경계와 얼마나 가까운지 비교해 보세요.");
           lab.ask("우리나라보다 <b>일본</b>에서 지진과 화산 활동이 잦은 까닭은?", ["판의 경계에 더 가까워서", "섬으로 이루어진 나라라서", "우리나라보다 더 따뜻해서"], "일본은 <b>판의 경계</b> 바로 위에 있고 우리나라는 조금 떨어져 있어요.", () =>
@@ -354,7 +354,7 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
     }, 2400);
   });
   f.slot.setControls(gGrid(3, ...picks), play);
-  f.say("지도에 올릴 <b>자료</b>를 고르고 재생해 보세요. 먼저 화산 활동과 판의 경계를 비교해 볼까요?");
+  f.say("지도에 올릴 <b>자료</b>를 고르고 겹쳐 보세요. 먼저 화산 활동과 판의 경계를 비교해 볼까요?");
   api.setCTA("자료를 골라 비교해 보세요", { enabled: false });
   hintNow();
   return lab.cleanup;

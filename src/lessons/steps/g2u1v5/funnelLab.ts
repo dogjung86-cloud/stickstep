@@ -1,4 +1,4 @@
-// [중2 Ⅰ v5] g2u1l7 분별 깔때기 랩: 「두 층을 어떻게 따로 받을까요?」
+// [중2 Ⅰ v5] g2u1l7 분별 깔때기 랩: 「두 층으로 나뉜 액체를 어떻게 분리할까요?」
 // 책의 해 보기(물과 식용유 혼합물 분리하기)를 손으로 한다: 분별 깔때기에서 두 층으로 나뉜 혼합물의 아래층은 꼭지로, 위층은 입구로 받는다.
 // 학생이 정하는 것: 마개와 꼭지를 여는 차례, 꼭지를 잠그는 때, 남은 위층을 받는 길.
 // 실패하는 길: 마개를 닫은 채 꼭지를 열면 액체가 내려오지 않는다 / 경계를 지나쳐 계속 받으면 비커 (가)에 식용유가 섞인다 / 위층을 꼭지로 받으면 꼭지에 남은 물과 섞인다.
@@ -101,7 +101,7 @@ export const g2u1FunnelLab: StepRenderer = (host, step, api) => {
     bStop.textContent = open ? "마개 닫기" : "마개 열기";
     paint();
     if (phase === "drain") {
-      f.say(open ? "마개를 열었어요. 이제 <b>꼭지를 꾹 눌러</b> 아래층을 비커 (가)에 받아요. 경계에서 손을 떼요." : "마개를 닫았어요.");
+      f.say(open ? "마개를 열었어요. 이제 <b>꼭지를 꾹 눌러</b> 아래층을 비커 (가)에 받고, 경계선에서 손을 떼세요." : "마개를 닫았어요.");
       lab.todo(open ? ".g2u1x-hold" : "[data-k='stop']");
     }
   });
@@ -141,7 +141,7 @@ export const g2u1FunnelLab: StepRenderer = (host, step, api) => {
     flowing = false;
     paint();
     if (!open) return;
-    if (s < WATER - 4) f.say("아직 아래층의 <b>물이 남아</b> 있어요. 경계가 꼭지에 닿을 때까지 더 받아요.");
+    if (s < WATER - 4) f.say("아직 아래층의 <b>물이 남아</b> 있어요. 경계선이 꼭지에 가까워질 때까지 더 받아 보세요.");
     else {
       phase = "upper";
       haptic(HAPTIC.correct);
@@ -158,9 +158,9 @@ export const g2u1FunnelLab: StepRenderer = (host, step, api) => {
   hold.addEventListener("pointercancel", release);
   hold.addEventListener("keyup", release);
 
-  const bTap = bvBtn("", "꼭지로 받기");
+  const bTap = bvBtn("", "아래쪽 꼭지로 받기");
   bTap.dataset.k = "tap";
-  const bPour = bvBtn("", "입구로 따르기");
+  const bPour = bvBtn("", "위쪽 입구로 따르기");
   bPour.dataset.k = "pour";
   bTap.disabled = bPour.disabled = true;
   bTap.addEventListener("click", () => {
@@ -190,7 +190,7 @@ export const g2u1FunnelLab: StepRenderer = (host, step, api) => {
     };
     tick();
   });
-  const bReset = bvBtn("main", "깔때기를 다시 채우기");
+  const bReset = bvBtn("main", "깔때기에 다시 채우기");
   bReset.dataset.k = "reset";
   bReset.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -204,14 +204,15 @@ export const g2u1FunnelLab: StepRenderer = (host, step, api) => {
     paint();
     hold.disabled = false;
     f.slot.setControls(g1Row(bStop), hold, g1Row(bTap, bPour));
-    f.say("물과 식용유가 두 층으로 나뉘었어요. <b>마개</b>와 <b>꼭지</b>를 다뤄 아래층만 비커 (가)에 받아 보세요.");
+    // 마개와 꼭지를 여는 차례는 학생이 정한다(마개를 닫은 채 꼭지를 여는 실패 길). 수정안의 "먼저 마개를 열고"는 그 차례를 알려 주어 뺐다.
+    f.say("물과 식용유가 두 층으로 나뉘었어요. <b>마개</b>와 <b>꼭지</b>를 조절해 아래층만 받아 보세요.");
     api.setCTA("아래층을 비커 (가)에 받아 보세요", { enabled: false });
     lab.todo("[data-k='stop']");
   }
   function ask(): void {
     lab.judge(
       "꼭지로 <b>먼저</b> 받은 액체와 그 까닭은?",
-      [{ t: "물, 밀도가 더 커서 아래층에 있어서", ok: true }, { t: "식용유, 밀도가 더 커서 아래층에 있어서" }, { t: "물, 식용유보다 양이 많아서" }],
+      [{ t: "물 (밀도가 더 커서 아래층에 위치)", ok: true }, { t: "식용유 (밀도가 더 커서 아래층에 위치)" }, { t: "물 (식용유보다 양이 더 많음)" }],
       "물(1.00)이 식용유(약 0.91)보다 밀도가 커서 <b>아래층</b>에 놓였어요.",
       () => lab.finish("섞이지 않는 두 액체는 밀도가 <b>큰</b> 쪽이 아래층에 놓여요. 아래층은 꼭지로, 위층은 입구로 받아 나눠요. 이 기구가 <b>분별 깔때기</b>예요."),
     );

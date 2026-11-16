@@ -55,7 +55,7 @@ export function sunCups(c: OpenerCtx): void {
     c.face("surprised");
     haptic(HAPTIC.correct);
     const head = pred === "blue" ? "예측대로" : "예측과 달리";
-    c.say(`${head} <b>파란 컵</b>이 가장 뜨거워요. 그런데 검은 컵만 <b>그늘</b>에 있었네요. 공정하게 다시 해 봐요.`);
+    c.say(`${head} <b>파란 컵</b>의 물이 가장 뜨거워졌어요! 그런데 검은 컵만 <b>그늘</b>에 놓여 있었네요. 조건을 공평하게 맞춰 다시 실험해 볼까요?`);
     c.finish();
   }
 
@@ -64,7 +64,7 @@ export function sunCups(c: OpenerCtx): void {
     holding = false;
     cancelAnimationFrame(raf);
     c.stage.classList.remove("lit");
-    if (!end && phase === "play" && heat < 1) c.say("손을 떼니 햇빛이 멈췄어요. 끝까지 <b>꾹</b> 눌러 주세요.");
+    if (!end && phase === "play" && heat < 1) c.say("손을 떼면 햇빛이 사라져요. 온도가 다 오를 때까지 해를 <b>꾹</b> 눌러 주세요.");
   }
   function add(d: number): void {
     heat = Math.min(1, heat + d);
@@ -111,10 +111,11 @@ export function sunCups(c: OpenerCtx): void {
 
   c.step.dataset.opnPhase = "ask";
   paint();
-  c.ask("검은, 파란, 흰 색종이로 감싼 물컵이에요. 햇빛을 받으면 어느 컵이 가장 뜨거워질까요?", {
+  c.ask("검은색, 파란색, 흰색 색종이로 감싼 물컵이에요. 햇빛을 비추면 어느 컵이 가장 뜨거워질까요?", {
     choices: CUPS.map((k) => NAME[k]),
     neutral: true,
-    good: "예측 완료! <b>해</b>를 꾹 눌러 햇빛을 비춰 보세요.",
+    // 해는 무대 그림 속에 있다. 폰에서는 말풍선 위, 넓은 화면에서는 왼쪽이라 "위 그림"이라 하지 않고 "그림 속"이라 부른다.
+    good: "예측 완료! 그림 속 <b>해</b>를 꾹 눌러 햇빛을 비춰 보세요.",
     onDone: (picked) => {
       pred = CUPS.find((k) => NAME[k] === picked) ?? "black";
       phase = "play";

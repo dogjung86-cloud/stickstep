@@ -92,6 +92,10 @@
 .opn-sh-why span { padding: 2px 9px; border-radius: 10px; font-size: 12.5px; line-height: 18px; font-weight: 800; white-space: nowrap; }
 .opn-sh-why.me span { background: var(--blue); color: #fff; }
 .opn-sh-why.pal span { background: #fff; color: var(--ink); box-shadow: 0 0 0 1.5px var(--ink); }
+/* 까닭 이름표는 상자 바깥쪽 끝에 맞춘다(2026-11-16 글 다듬기): 가운데 맞춤이면 채소 칸의 긴 까닭("친구: 한해살이풀이니까 채소!")이
+   360 폭 무대 오른쪽 밖으로 잘린다. 바깥쪽에 붙이면 두 이름표 사이가 넓어져 390, 360 모두 한 줄로 든다 */
+.opn-sh-why[data-side="fruit"] { justify-content: flex-start; }
+.opn-sh-why[data-side="veg"] { justify-content: flex-end; }
 
 /* ══════════ 꿀벌 스위치 (bs) ══════════ */
 .opn-bs-bee { transition: opacity .35s; animation: opnBsHover 1.6s ease-in-out infinite alternate; }

@@ -60,13 +60,13 @@ export const starTempLab: StepRenderer = (host, step, api) => {
   let cur = 0; // 맞출 별의 차례
   let finished = false;
   const log = sLog(TARGETS.map((t) => t.name), 3, true);
-  const bSet = bvBtn("main", "이 색으로 정하기");
+  const bSet = bvBtn("main", "이 온도로 색 맞추기");
   const range = bvRange({
     cls: "g2u8x-r",
     min: 0,
     max: 90,
     value: 30,
-    label: "별의 표면 온도",
+    label: "별의 표면 온도 (℃)",
     ticks: ["3000 ℃", "6000 ℃", "9000 ℃", "12000 ℃"],
     onInput: (v) => {
       k = KELVIN(v);
@@ -74,14 +74,14 @@ export const starTempLab: StepRenderer = (host, step, api) => {
   });
   f.slot.setControls(range.el, bSet, log.el);
 
-  const brief = (): void => f.say(`<b>${TARGETS[cur].name}</b>${josa(TARGETS[cur].name, "과", "와").slice(TARGETS[cur].name.length)} 같은 색이 되게 <b>표면 온도</b>를 맞추고 '이 색으로 정하기'를 눌러요.`);
+  const brief = (): void => f.say(`<b>${josa(TARGETS[cur].name, "과", "와")}</b> 같은 색(${TARGETS[cur].color})이 되도록 슬라이더로 <b>표면 온도</b>를 조절한 뒤 아래 버튼을 눌러 보세요.`);
   bSet.addEventListener("click", () => {
     if (finished) return;
     const t = TARGETS[cur];
     const mine = colorName(k);
     if (mine !== t.color) {
       haptic(HAPTIC.wrong);
-      f.say(`지금은 <b>${mine}</b>이에요. ${josa(t.name, "은", "는")} ${t.color} 별이에요. 온도를 <b>${k > t.k ? "낮춰" : "높여"}</b> 보세요.`);
+      f.say(`현재 별의 색은 <b>${mine}</b>이에요. ${josa(t.name, "은", "는")} <b>${t.color}</b> 별이므로 표면 온도를 더 <b>${k > t.k ? "낮춰" : "높여"}</b> 보세요.`);
       return;
     }
     haptic(HAPTIC.correct);
@@ -89,29 +89,30 @@ export const starTempLab: StepRenderer = (host, step, api) => {
     cur += 1;
     f.pips(cur);
     if (cur < 3) {
-      f.say(`맞았어요! ${t.name}의 표면 온도는 <b>약 ${celsius(t.k)} ℃</b>예요. 다음은 <b>${TARGETS[cur].name}</b>예요.`);
+      f.say(`정확해요! ${t.color} 별인 ${t.name}의 표면 온도는 <b>약 ${celsius(t.k)} ℃</b>예요. 다음은 <b>${TARGETS[cur].name}(${TARGETS[cur].color})</b>의 온도를 맞춰 보세요.`);
     } else {
       finished = true;
       cur = 2;
       bSet.disabled = true;
       range.input.disabled = true;
-      f.say(`맞았어요! ${t.name}의 표면 온도는 <b>약 ${celsius(t.k)} ℃</b>예요. 세 별을 비교해 볼까요?`);
+      f.say(`정확해요! ${t.color} 별인 ${t.name}의 표면 온도는 <b>약 ${celsius(t.k)} ℃</b>예요. 이제 세 별의 색과 온도를 비교해 볼까요?`);
       tm.later(askFinal, 1700);
     }
   });
 
   function askFinal(): void {
-    f.say("세 별의 색과 온도를 떠올리며 아래 질문에 답해 보세요.");
+    f.say("안타레스(적색), 알데바란(주황색), 시리우스(백색)의 표면 온도를 모두 찾았어요!");
     f.slot.ask(
-      "세 별 가운데 표면 온도가 가장 높은 별은?",
+      "관측한 세 별 가운데 표면 온도가 가장 높은 별은 어느 것인가요?",
       [{ t: "백색 별 시리우스", ok: true }, { t: "적색 별 안타레스" }, { t: "주황색 별 알데바란" }],
       (ok) => api.recordQuiz(ok),
-      { why: "적색은 약 3200 ℃, 주황색은 약 3600 ℃, 백색은 <b>약 9600 ℃</b>였어요.", onNext: finish },
+      // 이유 글은 HTML로 들어가므로 부등호는 &lt;로 적는다
+      { why: "표면 온도는 적색(안타레스, 약 3200 ℃) &lt; 주황색(알데바란, 약 3600 ℃) &lt; 백색(시리우스, <b>약 9600 ℃</b>) 순으로 높았어요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("관측 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("별의 색을 정하는 것은 <b>표면 온도</b>예요. 온도가 낮을수록 붉은색 빛을 많이 내 <b>붉게</b>, 높을수록 파란색 빛을 많이 내 <b>하얗고 파랗게</b> 보여요.");
+    f.say("별은 표면 온도가 낮을수록 붉은색, 높을수록 흰색과 파란색을 띤다는 것을 확인했어요!");
+    f.slot.conclude("별의 색깔은 별의 <b>표면 온도</b>에 따라 결정돼요. 표면 온도가 낮을수록 붉은색 빛을 많이 내어 <b>붉게</b> 보이고, 표면 온도가 높을수록 파란색 빛을 많이 내어 <b>희거나 파랗게</b> 보여요.");
     api.enableCTA(s.cta ?? "다음");
   }
 

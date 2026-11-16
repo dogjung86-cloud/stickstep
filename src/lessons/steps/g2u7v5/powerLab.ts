@@ -10,7 +10,7 @@
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvCard, bvCards, bvTimers, bvTween } from "../bio6/b6Lab";
-import { X, xBox, xCanvas, xFrame, xSegs, xText, type LabStep } from "./kit";
+import { X, xBox, xCanvas, xFrame, xJosa, xSegs, xText, type LabStep } from "./kit";
 
 // 그림(2026-11-15 그래픽 감사 C098): 켠 기구를 코드 그림으로 그리고, 바뀐 에너지를 장면 속 표시로 보인다(전등과 화면의 빛, 선풍기와 세탁기의 도는 것,
 //   다리미의 열기, 충전 막대, 소리 물결). 켜 둔 동안 움직이고, 다 재면 멈춘 채 옅게 남는다. 기록 표는 W 막대로 바꿔 다리미 막대가 압도적으로 긴 것이 보인다
@@ -282,7 +282,7 @@ function drawApp(ctx: CanvasRenderingContext2D, k: string, x: number, y: number,
 
 export const powerLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 4, api });
+  const f = xFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
 
@@ -294,7 +294,7 @@ export const powerLab: StepRenderer = (host, step, api) => {
   let ten = false;
   const tried = new Set<number>();
 
-  const cards = APPS.map((a) => bvCard("col g2u7x-c", { name: a.short, sub: "눌러서 켜기", key: a.k }));
+  const cards = APPS.map((a) => bvCard("col g2u7x-c", { name: a.short, sub: "눌러서 측정하기", key: a.k }));
   const time = xSegs(
     [
       { k: "1", t: "1초 동안 켜기" },
@@ -327,35 +327,35 @@ export const powerLab: StepRenderer = (host, step, api) => {
         if (tried.size === APPS.length && ten) {
           finished = true;
           time.lock(true);
-          f.say("여섯 개를 모두 켜 봤어요. 막대에서 <b>소비 전력</b>이 큰 기구와 작은 기구를 비교해 보세요.");
+          f.say("여섯 기구와 사용 시간 조건을 모두 확인했어요! 막대그래프에서 각 기구의 <b>소비 전력(W)</b>을 비교해 보세요.");
           tm.later(ask1, 2800);
-        } else if (tried.size === APPS.length) f.say("이번에는 <b>10초 동안</b> 켜서 쓴 전기 에너지가 몇 배가 되는지 봐요.");
-        else if (secs === 1) f.say(`1초 동안 <b>${a.w} J</b>을 썼어요. 1초에 쓰는 양이 소비 전력이라 <b>${a.w} W</b>예요.`);
-        else f.say(`10초 동안 <b>${a.w * 10} J</b>을 썼어요. 1초에 ${a.w} J씩 10번이에요.`);
+        } else if (tried.size === APPS.length) f.say("여섯 기구를 모두 켜 보았어요! 이번에는 <b>10초 동안 켜기</b>를 눌러 사용한 전기 에너지가 몇 배가 되는지 확인해 보세요.");
+        else if (secs === 1) f.say(`${a.name}${xJosa(a.name, "은", "는")} 1초 동안 <b>${a.w} J</b>의 전기 에너지를 썼어요. 1초 동안 쓰는 전기 에너지가 소비 전력이므로 소비 전력은 <b>${a.w} W</b>예요.`);
+        else f.say(`${a.name}${xJosa(a.name, "을", "를")} 10초 동안 켜자 1초일 때의 10배인 <b>${a.w * 10} J</b>의 전기 에너지를 썼어요.`);
       });
     }),
   );
 
   function ask1(): void {
     f.slot.ask(
-      "1초 동안 40 J의 전기 에너지를 쓰는 선풍기의 소비 전력은?",
+      "1초 동안 40 J의 전기 에너지를 사용하는 선풍기의 소비 전력은 몇 W인가요?",
       [{ t: "40 W", ok: true }, { t: "4 W" }, { t: "400 W" }],
       (ok) => api.recordQuiz(ok),
-      { why: "소비 전력은 <b>1초 동안</b> 쓰는 전기 에너지의 양이에요.", onNext: ask2 },
+      { why: "소비 전력(W)은 전기 기구가 <b>1초 동안</b> 사용하는 전기 에너지의 양(J)과 같으므로 40 W예요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.slot.ask(
-      "소비 전력이 가장 컸던 기구는 전기 에너지를 주로 무엇으로 바꾸나요?",
+      "여섯 기구 중 소비 전력이 가장 큰 전기다리미(1200 W)는 전기 에너지를 주로 어떤 에너지로 전환하나요?",
       [{ t: "열에너지", ok: true }, { t: "빛에너지" }, { t: "소리 에너지" }],
       () => undefined,
-      { why: "1200 W인 <b>전기다리미</b>는 열을 내는 기구였어요.", onNext: finish },
+      { why: "소비 전력이 1200 W로 가장 큰 <b>전기다리미</b>는 전기 에너지를 주로 <b>열에너지</b>로 바꾸는 전열기예요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("전기 기구가 <b>1초 동안</b> 쓰는 전기 에너지의 양이 <b>소비 전력</b>이에요(단위 W). 전기다리미처럼 열을 내는 기구는 소비 전력이 커요.");
+    f.say("기구마다 1초 동안 쓰는 전기 에너지(소비 전력)가 다르며, 열을 내는 기구의 소비 전력이 특히 크다는 것을 확인했어요!");
+    f.slot.conclude("전기 기구가 <b>1초 동안</b> 사용하는 전기 에너지의 양을 <b>소비 전력</b>이라고 하며, 단위는 <b>W(와트)</b>를 써요. 전기다리미처럼 열을 내는 기구는 소비 전력이 특히 커요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -409,7 +409,7 @@ export const powerLab: StepRenderer = (host, step, api) => {
     ctx.restore();
   });
 
-  f.say("전기 기구를 하나씩 켜서 <b>쓴 전기 에너지</b>를 재요. 여섯 개 모두, 10초 동안도 켜 봐요.");
+  f.say("여섯 가지 전기 기구 카드를 하나씩 눌러 <b>사용한 전기 에너지</b>를 측정해 보세요. <b>10초 동안 켜기</b>로도 바꿔 비교해 보세요.");
   api.setCTA("여섯 기구를 모두 켜 보세요", { enabled: false });
   return () => {
     tm.clear();

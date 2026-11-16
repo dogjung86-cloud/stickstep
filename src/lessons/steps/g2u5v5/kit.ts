@@ -50,9 +50,10 @@ export interface G5Lab {
   finished: () => boolean;
 }
 
-export function g5Lab(host: HTMLElement, api: StepAPI, s: G5Step, o: { steps: number; cls: string; wait: string }): G5Lab {
+/** tall: 도움말에 세 줄 글이 있는 랩은 처음부터 세 줄 상자를 잡는다(bvFrame의 tall, 랩 도중에 무대가 밀리지 않게). */
+export function g5Lab(host: HTMLElement, api: StepAPI, s: G5Step, o: { steps: number; cls: string; wait: string; tall?: boolean }): G5Lab {
   host.classList.add("g2u5x-step");
-  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `g2u5x-stage ${o.cls}`, qCls: "g2u5x-q", api });
+  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `g2u5x-stage ${o.cls}`, qCls: "g2u5x-q", api, tall: o.tall });
   const tm = bvTimers();
   const fns: Array<() => void> = [];
   let done = false;
@@ -88,7 +89,7 @@ export function g5Lab(host: HTMLElement, api: StepAPI, s: G5Step, o: { steps: nu
       done = true;
       host.dataset.g5Phase = "done";
       f.pips(o.steps);
-      f.say("잘했어요. <b>알게 된 것</b>을 읽고 다음으로 넘어가요.");
+      f.say("결과를 모두 확인했어요! 아래 핵심 정리를 읽고 다음으로 넘어가 볼까요?");
       f.slot.conclude(html);
       haptic(HAPTIC.ctaUnlock);
       api.recordQuiz(wrong === 0);
@@ -133,7 +134,7 @@ export function timeGraph(x: number, y: number, w: number, h: number, title: str
   let out = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="9" fill="#0E1A2E" stroke="#2A4266"/>`;
   out += `<rect x="${x + 1}" y="${y + 1}" width="${w - 2}" height="20" rx="8" fill="#14233C"/>`;
   out += txt(x + 8, y + 15, title, { anchor: "start", size: 12, fill: titleColor });
-  out += txt(x + w - 6, y + 15, "10분", { anchor: "end", size: 12, fill: P.dim });
+  out += txt(x + w - 6, y + 15, "10분 동안", { anchor: "end", size: 12, fill: P.dim });
   for (let k = 1; k < 5; k++) {
     const gx = x + 8 + ((w - 14) * k) / 5;
     out += `<line x1="${gx.toFixed(1)}" y1="${y + 24}" x2="${gx.toFixed(1)}" y2="${y + h - 8}" stroke="#1E3150" stroke-width="1"/>`;

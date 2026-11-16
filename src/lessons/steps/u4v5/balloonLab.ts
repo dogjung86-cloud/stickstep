@@ -21,7 +21,7 @@ const BIG = { rx: SMALL.rx + 28, ry: SMALL.ry + 31 }; // 가장 크게 부푼 �
 
 export const u4BalloonLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
-  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-balloon" });
+  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-balloon", tall: true });
   const { f, tm } = lab;
   const rnd = seeded(91);
 
@@ -73,7 +73,8 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
 
   const warm = u4Hold(
     lab,
-    "꾹 눌러 따뜻한 바람 보내기",
+    // '바람 불어넣기'는 풍선에 바람을 넣어 부풀리는 것으로 읽혀(기화가 아니라 공기를 넣은 것처럼) 대안 '드라이어로 데우기'를 쓴다
+    "꾹 눌러 드라이어로 데우기",
     (ms) => {
       e = Math.min(1, e + ms / NEED);
       paint();
@@ -82,7 +83,7 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
       warm.disabled = true;
       f.pips(1);
       const head = pred.startsWith("부풀어") ? "예측대로" : "예측과 달리";
-      f.say(`${head} 풍선이 <b>부풀었어요</b>. 저울의 숫자는 <b>그대로 ${MASS}</b>이에요.`);
+      f.say(`${head} 액체 아세톤이 기체로 변하면서 풍선이 크게 <b>부풀어 올랐어요</b>! 반면 전자저울의 질량은 <b>${MASS} 그대로</b>예요.`);
       tm.later(judge, 1100);
       return false;
     },
@@ -90,7 +91,7 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
   );
   const cool = u4Hold(
     lab,
-    "꾹 눌러 식히기",
+    "꾹 눌러 플라스크 식히기",
     (ms) => {
       e = Math.max(0, e - ms / NEED);
       paint();
@@ -99,8 +100,8 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
       cool.disabled = true;
       ghost.setAttribute("opacity", "1"); // 데웠을 때의 크기를 점선으로 남긴다
       host.dataset.u4BalloonGhost = "1";
-      tm.later(() => lab.finish("기화하면 입자 사이가 멀어져 <b>부피가 크게 늘어요</b>. 입자의 수는 그대로라 <b>질량은 변하지 않아요</b>."), 700);
-      f.say("풍선이 다시 <b>쪼그라들었어요</b>. 저울의 숫자는 이번에도 그대로예요.");
+      tm.later(() => lab.finish("액체가 기체로 기화하면 입자 사이의 거리가 매우 멀어져 <b>부피가 크게 늘어나요</b>. 하지만 입자의 개수는 그대로이므로 <b>질량은 변하지 않아요</b>."), 700);
+      f.say("플라스크를 식히니 기체 아세톤이 다시 액체로 변하면서 풍선이 <b>줄어들었어요</b>! 이때도 질량은 변함없이 그대로예요.");
       return false;
     },
     (on) => f.stage.classList.toggle("cool", on),
@@ -108,11 +109,12 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
 
   function judge(): void {
     f.slot.ask(
-      "이 플라스크를 <b>다시 식히면</b> 풍선은 어떻게 될까요?",
-      [{ t: "다시 쪼그라든다", ok: true }, { t: "부푼 채로 그대로 있다" }, { t: "더 크게 부푼다" }],
+      // 부푸는 것은 플라스크가 아니라 풍선이다("부풀어 오른 플라스크를" → 꾸밈말을 풍선 앞으로)
+      "이 플라스크를 <b>다시 차갑게 식히면</b> 부풀어 오른 고무풍선은 어떻게 될까요?",
+      [{ t: "다시 작게 줄어든다", ok: true }, { t: "부풀어 오른 채로 그대로 있다" }, { t: "지금보다 더 크게 부풀어 오른다" }],
       (ok) => api.recordQuiz(ok),
       {
-        why: "식으면 기체가 다시 액체가 되어 <b>입자 사이</b>가 가까워져요. 확인해 봐요.",
+        why: "플라스크를 식히면 기체 아세톤이 다시 액체로 액화하면서 <b>입자 사이의 거리</b>가 가까워져 부피가 줄어들어요.",
         onNext: () => {
           f.pips(2);
           f.say("정말 그런지 확인해요. 버튼을 <b>꾹 눌러</b> 플라스크를 식혀 보세요.");
@@ -132,6 +134,6 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
     f.slot.setControls(warm);
     api.setCTA("꾹 눌러 따뜻하게 해 보세요", { enabled: false });
   });
-  api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
+  api.setCTA("먼저 결과를 예측해 보세요", { enabled: false });
   return lab.cleanup;
 };

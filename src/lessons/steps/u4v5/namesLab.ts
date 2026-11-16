@@ -99,7 +99,8 @@ export const u4NamesLab: StepRenderer = (host, step, api) => {
     host.dataset.u4T = String(Math.round(T));
     host.dataset.u4Mission = String(idx);
   }
-  const prompt = (): string => `<b>${MISSIONS[idx].name}</b>를 일으켜 보세요. 온도 막대를 밀어 ${WORD[MISSIONS[idx].from]}를 ${WORD[MISSIONS[idx].to]}로 바꿔요.`;
+  // 조사: 변화 이름(기화, 액화, 응고, 융해)과 상태(고체, 액체, 기체)가 모두 받침 없이 끝나 '예요, 가, 를, 로'로 고정해 둔다
+  const prompt = (): string => `이번 미션은 <b>${MISSIONS[idx].name}</b>예요! 온도 막대를 움직여 ${WORD[MISSIONS[idx].from]}를 ${WORD[MISSIONS[idx].to]}로 변화시켜 보세요.`;
 
   function change(a: Ph, b: Ph): void {
     if (idx >= MISSIONS.length) return;
@@ -115,15 +116,15 @@ export const u4NamesLab: StepRenderer = (host, step, api) => {
         range.input.disabled = true;
         lab.tm.later(() => {
           showSummary();
-          lab.finish("<b>융해와 응고</b>, <b>기화와 액화</b>는 서로 반대 방향이에요. 이렇게 물질의 상태가 바뀌는 것이 <b>상태 변화</b>예요.");
+          lab.finish("<b>융해와 응고</b>, <b>기화와 액화</b>는 서로 반대 방향의 상태 변화예요. 이처럼 온도에 따라 물질의 상태가 바뀌는 현상을 <b>상태 변화</b>라고 해요.");
         }, 1200);
-        f.say(`<b>${did}</b> 성공! ${WORD[a]}가 ${WORD[b]}로 변했어요. 이름 넷을 모두 일으켰어요.`);
-      } else f.say(`<b>${did}</b> 성공! 다음은 <b>${MISSIONS[idx].name}</b>예요. ${WORD[MISSIONS[idx].from]}를 ${WORD[MISSIONS[idx].to]}로 바꿔 보세요.`);
+        f.say(`<b>${did}</b> 성공! ${WORD[a]}가 ${WORD[b]}로 변했어요. 네 가지 상태 변화를 모두 완성했어요!`);
+      } else f.say(`<b>${did}</b> 성공! 다음 미션은 <b>${MISSIONS[idx].name}</b>예요. ${WORD[MISSIONS[idx].from]}를 ${WORD[MISSIONS[idx].to]}로 변화시켜 보세요.`);
     } else if (a === ms.from) {
       slips += 1;
       haptic(HAPTIC.wrong);
       m.ms.toast(`방금은 ${did}(${WORD[a]} → ${WORD[b]})`);
-      f.say(`방금 일으킨 변화는 <b>${did}</b>예요. <b>${ms.name}</b>는 ${WORD[ms.from]}가 <b>${WORD[ms.to]}</b>로 변하는 거예요.`);
+      f.say(`방금 일어난 변화는 <b>${did}</b>예요. <b>${ms.name}</b>가 일어나려면 ${WORD[ms.from]}가 <b>${WORD[ms.to]}</b>로 변해야 해요.`);
     }
   }
 
@@ -132,7 +133,7 @@ export const u4NamesLab: StepRenderer = (host, step, api) => {
     min: -20,
     max: 120,
     value: T0,
-    label: "온도: 막대를 밀어 바꿔요",
+    label: "온도 조절 (막대를 좌우로 움직여 보세요)",
     ticks: [{ t: "−20℃", p: 0 }, { t: "0℃", p: 14.3 }, { t: "100℃", p: 85.7 }, { t: "120℃", p: 100 }],
     onInput: (v) => {
       const order: Ph[] = ["sol", "liq", "gas"];
@@ -150,6 +151,6 @@ export const u4NamesLab: StepRenderer = (host, step, api) => {
   f.slot.setControls(range.el, u4ViewBtn(m));
 
   f.say(prompt());
-  api.setCTA("이름 넷을 차례로 일으켜 보세요", { enabled: false });
+  api.setCTA("네 가지 상태 변화를 차례로 완성해 보세요", { enabled: false });
   return lab.cleanup;
 };

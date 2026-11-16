@@ -15,20 +15,25 @@ import { A, grid, loose, seeded, svgOpen, u4Lab, type Pt, type U4Step } from "./
 type Ph = "sol" | "liq" | "gas";
 interface Change {
   k: string;
+  /** 변화의 이름. 도움말이 `${name}(${고체}→${기체})가 …`로 방향을 붙여 쓰므로 방향 없이 둔다(받침 없는 이름이라 조사는 '가', '는') */
   name: string;
+  /** 카드에 쓰는 이름(승화 둘은 방향을 붙여 가른다). 없으면 name */
+  card?: string;
   from: Ph;
   to: Ph;
   absorb: boolean;
   ex: string;
 }
 // 카드의 차례는 흡수와 방출이 섞이게 놓았다(줄만 보고 가려낼 수 없게)
+// 예시는 무대 왼쪽 아래 한 줄(u4v5.css .u4x-around-ex, 390 폭에서 236px 안). 좁은 폰에서는 띄어쓰기에서 두 줄로 접힌다
 const CHANGES: Change[] = [
-  { k: "melt", name: "융해", from: "sol", to: "liq", absorb: true, ex: "아이스박스 속의 얼음이 녹는다" },
-  { k: "cond", name: "액화", from: "gas", to: "liq", absorb: false, ex: "찬 컵 겉에 물방울이 맺힌다" },
-  { k: "subl", name: "승화", from: "sol", to: "gas", absorb: true, ex: "상자 속의 드라이아이스가 작아진다" },
-  { k: "frz", name: "응고", from: "liq", to: "sol", absorb: false, ex: "손에 묻은 액체 파라핀이 굳는다" },
-  { k: "vap", name: "기화", from: "liq", to: "gas", absorb: true, ex: "더운 날 도로에 뿌린 물이 마른다" },
-  { k: "depo", name: "승화", from: "gas", to: "sol", absorb: false, ex: "수증기가 바로 얼음이 되어 눈으로 내린다" },
+  { k: "melt", name: "융해", from: "sol", to: "liq", absorb: true, ex: "예: 아이스박스 속 얼음이 녹을 때" },
+  { k: "cond", name: "액화", from: "gas", to: "liq", absorb: false, ex: "예: 차가운 컵 표면에 물방울이 맺힐 때" },
+  { k: "subl", name: "승화", card: "승화(고체→기체)", from: "sol", to: "gas", absorb: true, ex: "예: 아이스크림 상자 속 드라이아이스가 날아갈 때" },
+  { k: "frz", name: "응고", from: "liq", to: "sol", absorb: false, ex: "예: 손에 바른 액체 파라핀이 굳을 때" },
+  { k: "vap", name: "기화", from: "liq", to: "gas", absorb: true, ex: "예: 더운 날 마당에 뿌린 물이 증발할 때" },
+  // 수증기가 액체를 거치지 않고 얼음이 되는 것이 요점이다('얼어'는 물이 어는 것으로 읽혀 '바로'를 살렸다)
+  { k: "depo", name: "승화", card: "승화(기체→고체)", from: "gas", to: "sol", absorb: false, ex: "예: 공기 중 수증기가 바로 서리나 눈이 될 때" },
 ];
 const WORD: Record<Ph, string> = { sol: "고체", liq: "액체", gas: "기체" };
 const BOX = { x: 14, y: 46, w: 168, h: 132 }; // 물질의 입자 창
@@ -38,7 +43,7 @@ const TH = { x: 290, y0: 56, y1: 176 }; // 주변의 온도계(기둥의 위와 
 
 export const u4AroundLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
-  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-around" });
+  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-around", tall: true });
   const { f, tm } = lab;
   const rnd = seeded(113);
   const cx = BOX.x + BOX.w / 2;
@@ -82,7 +87,7 @@ export const u4AroundLab: StepRenderer = (host, step, api) => {
   let busy = false;
 
   const cards = CHANGES.map((c) => {
-    const card = bvCard("col u4x-around-card", { name: c.name, sub: `${WORD[c.from]} → ${WORD[c.to]}`, key: c.k });
+    const card = bvCard("col u4x-around-card", { name: c.card ?? c.name, sub: `${WORD[c.from]} → ${WORD[c.to]}`, key: c.k });
     card.el.addEventListener("click", () => run(c, card));
     return card;
   });
@@ -123,23 +128,24 @@ export const u4AroundLab: StepRenderer = (host, step, api) => {
       const first = !tried.has(c.k);
       tried.add(c.k);
       card.el.classList.add(c.absorb ? "cool" : "warm");
-      card.sub(c.absorb ? "주변이 시원해짐" : "주변이 따뜻해짐");
+      card.sub(c.absorb ? "열 흡수 · 주변이 시원해짐" : "열 방출 · 주변이 따뜻해짐");
       host.dataset.u4Around = String(tried.size);
+      const dir = `${c.name}(${WORD[c.from]}→${WORD[c.to]})`; // 승화 둘을 가르는 방향 표시
       if (phase === "find") {
         if (c.absorb) {
           haptic(HAPTIC.correct);
           if (first) cools += 1;
-          f.say(`<b>${c.name}</b>는 열에너지를 <b>흡수</b>해요. 주변이 시원해졌어요. ${cools < 3 ? `${3 - cools}가지를 더 찾아보세요.` : ""}`);
+          f.say(`<b>${dir}</b>가 일어날 때는 열에너지를 <b>흡수</b>해서 주변 온도가 낮아져요! ${cools < 3 ? `주변을 시원하게 하는 변화를 ${3 - cools}가지 더 찾아보세요.` : ""}`);
           if (cools === 3) {
             phase = "rest";
             f.pips(1);
             api.recordQuiz(slips === 0);
-            tm.later(() => f.say("시원하게 하는 변화 셋을 다 찾았어요. <b>남은 변화</b>도 눌러 주변이 어떻게 되는지 보세요."), 1400);
+            tm.later(() => f.say("주변을 시원하게 만드는 세 가지 상태 변화를 모두 찾았어요! 이제 <b>나머지 카드</b>도 모두 눌러 주변 온도가 어떻게 변하는지 확인해 보세요."), 1400);
           }
         } else {
           if (first) slips += 1;
           haptic(HAPTIC.wrong);
-          f.say(`<b>${c.name}</b>는 열에너지를 <b>방출</b>해요. 주변이 오히려 따뜻해졌어요. 다른 변화를 골라 보세요.`);
+          f.say(`<b>${dir}</b>가 일어날 때는 열에너지를 <b>방출</b>해서 주변이 오히려 따뜻해져요. 다른 카드를 골라 보세요.`);
         }
       } else {
         haptic(c.absorb ? HAPTIC.tap : HAPTIC.correct);
@@ -147,7 +153,7 @@ export const u4AroundLab: StepRenderer = (host, step, api) => {
       }
       if (tried.size === CHANGES.length && !lab.finished()) {
         f.pips(2);
-        tm.later(() => lab.finish("<b>융해, 기화, 승화(고체→기체)</b>는 열에너지를 흡수해 주변이 시원해져요. <b>응고, 액화, 승화(기체→고체)</b>는 방출해 주변이 따뜻해져요."), 1500);
+        tm.later(() => lab.finish("<b>융해, 기화, 승화(고체→기체)</b>가 일어날 때는 주변에서 열에너지를 흡수하므로 주변이 시원해져요. 반대로 <b>응고, 액화, 승화(기체→고체)</b>가 일어날 때는 열에너지를 방출하므로 주변이 따뜻해져요."), 1500);
       }
     }, 1500);
   }
@@ -155,7 +161,7 @@ export const u4AroundLab: StepRenderer = (host, step, api) => {
   place("sol");
   cap.textContent = "물질: 고체";
   f.slot.setControls(bvCards(3, ...cards));
-  f.say("상태 변화를 하나 골라 일으켜 보세요. <b>주변을 시원하게</b> 만드는 변화 셋을 찾아요.");
+  f.say("아래 여섯 가지 상태 변화 카드를 눌러 보세요. 먼저 열에너지를 흡수하여 <b>주변을 시원하게 만드는 상태 변화 세 가지</b>를 찾아볼까요?");
   api.setCTA("주변을 시원하게 하는 변화를 찾으세요", { enabled: false });
   return lab.cleanup;
 };

@@ -35,20 +35,21 @@ const INSET_MOON = 0.36 / MOON_R;
 const GHOST = 0.3 / MOON_R;
 
 // 자리마다: 찍힌 모습을 부르는 말, 사진 아래 이름표(네 자리만), 찍은 뒤 도움말
+// say는 한 문장이다(took()이 뒤에 " 다른 빈 자리도 찍어 보세요."를 붙인다). 사진 칸 이름(name)은 칸 폭(약 39px)에 맞춰 "보름달"로 둔다.
 const SPOTS: { look: string; name: string; say: string }[] = [
-  { look: "안 보여요", name: "삭", say: "달이 <b>태양 쪽</b>에 있으면 밝은 면이 반대편이라 안 보여요." },
-  { look: "오른쪽이 가늘게 밝아요", name: "", say: "오른쪽이 가늘게 밝아요. <b>초승달</b>이에요." },
-  { look: "오른쪽 반달", name: "상현달", say: "태양과 <b>직각</b>인 자리에서는 오른쪽 절반이 보여요." },
-  { look: "오른쪽이 볼록해요", name: "", say: "밝은 부분이 더 차올랐어요. 둥근 달에 가까워요." },
-  { look: "둥근 달", name: "보름달", say: "달이 <b>태양 반대쪽</b>에 있으면 밝은 면이 다 보여요." },
-  { look: "왼쪽이 볼록해요", name: "", say: "이번에는 오른쪽부터 줄어들어요. 왼쪽이 볼록해요." },
-  { look: "왼쪽 반달", name: "하현달", say: "반대편 <b>직각</b> 자리에서는 왼쪽 절반이 보여요." },
-  { look: "왼쪽이 가늘게 밝아요", name: "", say: "왼쪽이 가늘게 밝아요. <b>그믐달</b>이에요." },
+  { look: "보이지 않아요", name: "삭", say: "달이 <b>태양 쪽</b>에 있으면 어두운 면만 지구를 향해 보이지 않아요." },
+  { look: "오른쪽 눈썹 모양", name: "", say: "오른쪽이 가늘게 밝은 <b>초승달</b>이에요." },
+  { look: "오른쪽 반달", name: "상현달", say: "태양과 <b>직각</b>을 이루는 자리에서는 오른쪽 반원만 밝게 보여요." },
+  { look: "오른쪽이 볼록한 달", name: "", say: "오른쪽이 둥글게 부풀어 보름달에 가까워졌어요." },
+  { look: "둥근 달", name: "보름달", say: "달이 <b>태양 반대쪽</b>에 있으면 밝은 면 전체가 보여요." },
+  { look: "왼쪽이 볼록한 달", name: "", say: "오른쪽부터 어두워져 왼쪽이 볼록하게 남았어요." },
+  { look: "왼쪽 반달", name: "하현달", say: "반대쪽 <b>직각</b> 자리에서는 왼쪽 반원만 밝게 보여요." },
+  { look: "왼쪽 눈썹 모양", name: "", say: "왼쪽만 가늘게 밝은 <b>그믐달</b>이에요." },
 ];
 
 export const u7MoonLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as MoonStep;
-  const f = u7Frame(host, { title: s.title, steps: 3, cls: "u7x-moon", api });
+  const f = u7Frame(host, { title: s.title, steps: 3, cls: "u7x-moon", api, tall: true }); // 여덟 장이 모였을 때의 도움말이 세 줄이다
   const doneCta = s.cta ?? "개념 정리하기";
 
   const canvas = el("canvas", { class: "u7x-cv" }) as HTMLCanvasElement;
@@ -72,10 +73,10 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
   const strip = el("div", { class: "u7x-films" }, ...films.map((x) => x.cell));
   const shutter = bvBtn("main", "이 자리에서 사진 찍기");
   shutter.classList.add("u7x-shutter");
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "찍은 사진(자리 차례대로 놓여요)" }), strip, shutter);
-  f.say("달을 끌어 자리에 놓고 <b>사진 찍기</b>를 눌러요. 여덟 자리를 모두 찍어 비교해 봐요.");
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "지구에서 본 달 사진 (공전 순서대로 놓여요)" }), strip, shutter);
+  f.say("달을 끌어 빈 자리에 놓고 <b>이 자리에서 사진 찍기</b>를 눌러 보세요. 여덟 자리를 모두 찍어 비교해 봐요.");
   f.pips(1);
-  api.setCTA("여덟 자리의 달을 찍어요", { enabled: false });
+  api.setCTA("여덟 자리의 달 모습을 모두 찍어 보세요", { enabled: false });
   host.dataset.u7Phase = "play";
   host.dataset.u7Found = "0";
 
@@ -93,8 +94,8 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("달을 다시 옮겨 보며 확인해도 좋아요. 달의 <b>절반</b>은 늘 밝아요.");
-    f.slot.conclude("달은 <b>햇빛을 받는 절반</b>만 밝아요. 달이 지구 둘레를 돌면 그 절반을 <b>보는 방향</b>이 달라져서, 달의 모양이 날마다 달라 보여요.");
+    f.say("달을 다시 움직여 비교해 보세요. 달은 언제나 <b>태양을 향한 절반</b>만 밝게 빛나요.");
+    f.slot.conclude("달은 스스로 빛을 내지 못하고 <b>햇빛을 받는 절반</b>만 밝아요. 달이 지구 주위를 공전하면서 지구에서 <b>밝은 면을 바라보는 방향</b>이 달라지기 때문에 달의 위상이 변해요.");
     api.enableCTA(doneCta);
   }
 
@@ -102,12 +103,12 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     phase = "ask";
     host.dataset.u7Phase = "ask";
     f.pips(2);
-    f.say("여덟 장을 모두 찍었어요. 무대의 달을 보면서 답해 보세요.");
+    f.say("궤도 위의 작은 달 여덟 개는 모두 어느 쪽이 밝은지 살펴보며 답해 보세요.");
     f.slot.ask(
-      "달의 <b>모양이 달라 보인</b> 까닭은 무엇일까요?",
-      [{ t: "밝은 쪽을 보는 방향이 달라져서", ok: true }, { t: "지구 그림자가 가려서" }, { t: "달이 내는 빛이 변해서" }],
+      "지구에서 볼 때 달의 <b>모양(위상)이 날마다 달라 보이는</b> 까닭은 무엇일까요?",
+      [{ t: "달이 공전하며 밝은 면을 보는 방향이 달라져서", ok: true }, { t: "지구의 그림자가 달을 가리는 정도가 달라져서" }, { t: "달이 스스로 내는 빛의 양이 변해서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "달의 절반은 어느 자리에서나 햇빛을 받아 밝았어요.", onNext: conclude },
+      { why: "어느 자리에서나 달은 태양을 향한 절반만 밝고, 달의 위치에 따라 지구에서 보이는 밝은 면의 모습이 달라져요.", onNext: conclude },
     );
   }
 
@@ -118,7 +119,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     target = null;
     if (films[k].taken) {
       haptic(HAPTIC.tap);
-      f.say("이 자리는 이미 찍었어요. 달을 <b>빈 자리</b>로 옮겨 보세요.");
+      f.say("이 자리는 이미 사진을 찍었어요! 달을 끌어서 아직 찍지 않은 <b>빈 고리 자리</b>로 옮겨 보세요.");
       return;
     }
     wantShot = true;
@@ -131,7 +132,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.ctaUnlock);
     host.dataset.u7Found = String(count());
     if (count() < N) {
-      f.say(`${SPOTS[k].say} 달을 다음 자리로 옮겨요.`);
+      f.say(`${SPOTS[k].say} 다른 빈 자리도 찍어 보세요.`);
       return;
     }
     // 여덟 장이 모였다: 네 자리에 이름을 붙이고 까닭을 묻는다
@@ -139,7 +140,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     host.dataset.u7Phase = "wait";
     shutter.disabled = true;
     films.forEach((x, i) => (x.nm.textContent = SPOTS[i].name));
-    f.say("여덟 장이 모였어요. 밝은 부분이 <b>오른쪽부터 차올랐다가 오른쪽부터 줄어요</b>.");
+    f.say("여덟 자리의 사진이 모두 모였어요! 달의 밝은 부분이 <b>오른쪽부터 차올랐다가 오른쪽부터 줄어드는 것</b>을 확인해 보세요.");
     window.setTimeout(() => !disposed && askWhy(), 2200);
   }
 
@@ -164,7 +165,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
       f.stage.classList.add("u7x-fallback");
       api.recordQuiz(true);
       conclude();
-      f.say("이 기기에서는 입체 무대를 켤 수 없어요. 아래 글로 알아 두세요.");
+      f.say("이 기기에서는 3D 화면을 열 수 없어 핵심 내용으로 바로 정리할게요.");
       return;
     }
     const { scene, camera } = st;

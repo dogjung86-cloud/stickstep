@@ -1,6 +1,6 @@
 // [중2 Ⅲ v5] g2u3l1 빛의 반사: 랩 두 판.
 //
-// 1) g2u3ReflectLab 「반사한 빛은 어느 쪽으로 갈까요?」
+// 1) g2u3ReflectLab 「평면거울에 부딪힌 빛은 어느 방향으로 나아갈까요?」
 //    책의 어디에서: 해 보기 '빛의 반사 관찰하기'(각도기가 달린 거울에 슬릿 레이저를 비추고, 비춘 빛과 반사한 빛이 거울 면에 수직인 선과 이루는 각을 잰다. 각도를 바꿔 가며 되풀이한다).
 //    학생이 정하는 것: 레이저를 얼마나 기울일지와 기록할 때(서로 다른 각 셋). 이어서 반사한 빛을 가린 채 과녁을 맞히게 레이저를 놓는다.
 //    실패하는 길: 같은 각을 또 기록하면 칸이 늘지 않는다. 과녁 맞히기에서 각이 틀리면 반사한 빛이 과녁을 빗나가는 것이 그대로 보인다.
@@ -45,19 +45,19 @@ export const reflectLab5: StepRenderer = (host, step, api) => {
   host.dataset.lx = "measure";
   host.dataset.lxLab = "reflect";
 
-  const log = lxLog(["첫째", "둘째", "셋째"]);
+  const log = lxLog(["1회", "2회", "3회"]);
   const range = bvRange({
     cls: "g2u3x-r",
     min: 2,
     max: 16,
     value: 6,
-    label: "레이저 기울이기",
+    label: "레이저 각도 조절하기",
     onInput: (v) => {
       th = v * 5;
       if (phase === "shot") phase = "aim";
     },
   });
-  const rec = bvBtn("main g2u3x-rec", "두 각 기록하기");
+  const rec = bvBtn("main g2u3x-rec", "두 각도 기록하기");
   rec.dataset.k = "rec";
   f.slot.setControls(range.el, log.el, rec);
 
@@ -94,7 +94,7 @@ export const reflectLab5: StepRenderer = (host, step, api) => {
     if (phase === "measure") {
       if (got.includes(th)) {
         haptic(HAPTIC.wrong);
-        f.say("이미 기록한 각이에요. 레이저를 <b>다른 각</b>으로 기울여 다시 재 보세요.");
+        f.say("이미 기록한 각도예요. 레이저를 <b>다른 각도</b>로 기울여서 측정해 보세요.");
         return;
       }
       got.push(th);
@@ -102,7 +102,7 @@ export const reflectLab5: StepRenderer = (host, step, api) => {
       log.set(got.length - 1, `${th}° → ${th}°`, "비춘 각 → 반사한 각");
       f.pips(got.length);
       if (got.length < 3) {
-        f.say(`비춘 각 ${th}°에 반사한 각도 <b>${th}°</b>. 각을 바꿔 ${3 - got.length}번 더 재 보세요.`);
+        f.say(`비춘 각이 <b>${th}°</b>일 때 반사한 각도 <b>${th}°</b>로 같네요! 각도를 바꾸어 ${3 - got.length}번 더 측정해 보세요.`);
         return;
       }
       // 과녁 맞히기: 기록하지 않은 각을 과녁으로
@@ -110,9 +110,9 @@ export const reflectLab5: StepRenderer = (host, step, api) => {
       phase = "aim";
       host.dataset.lx = "aim";
       host.dataset.lxTarget = String(target);
-      rec.textContent = "빛 쏘기";
-      f.say(`이번에는 반사한 빛을 가렸어요. 수직선에서 <b>${target}°</b>에 놓인 과녁을 맞히게 레이저를 놓고 쏴 보세요.`);
-      api.setCTA("과녁을 맞혀 보세요", { enabled: false });
+      rec.textContent = "레이저 쏘기";
+      f.say(`이번에는 반사한 빛을 가렸어요. 수직선에서 <b>${target}°</b> 위치의 과녁을 맞히도록 각도를 조절해 쏴 보세요.`);
+      api.setCTA("각도를 맞추어 과녁에 레이저를 쏴 보세요", { enabled: false });
       return;
     }
     // 쏘기
@@ -123,27 +123,27 @@ export const reflectLab5: StepRenderer = (host, step, api) => {
       phase = "end";
       host.dataset.lx = "hit";
       f.pips(4);
-      f.say(`명중! 비춘 각을 <b>${target}°</b>로 맞추니 반사한 빛도 ${target}°로 나아갔어요.`);
+      f.say(`명중이에요! 비춘 각을 <b>${target}°</b>로 맞추니 반사한 빛도 똑같이 <b>${target}°</b>로 나아갔어요.`);
       tm.later(askFinal, 1800);
     } else {
       haptic(HAPTIC.wrong);
-      f.say(`빗나갔어요. 비춘 각이 ${th}°라 반사한 빛도 <b>${th}°</b>로 나아갔어요. 과녁은 ${target}°에 있어요.`);
+      f.say(`빗나갔어요! 비춘 각이 ${th}°라서 반사한 빛도 <b>${th}°</b>로 나아갔어요. 과녁 위치인 <b>${target}°</b>를 겨냥해 보세요.`);
     }
   });
 
   function askFinal(): void {
     host.dataset.lx = "ask";
     f.slot.ask(
-      "비춘 빛의 각을 20°에서 40°로 키우면 반사한 빛의 각은 어떻게 될까요?",
-      [{ t: "똑같이 40°로 커져요", ok: true }, { t: "20° 그대로예요" }, { t: "10°로 작아져요" }],
+      "거울에 비추는 빛의 각도를 20°에서 40°로 크게 하면 반사한 빛의 각도는 어떻게 변할까요?",
+      [{ t: "비춘 각도와 똑같이 40°로 커져요", ok: true }, { t: "변하지 않고 20° 그대로예요" }, { t: "반대로 10°로 작아져요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "세 번 모두 두 각이 같았어요. 한쪽이 커지면 다른 쪽도 <b>똑같이</b> 커져요.", onNext: finish },
+      { why: "세 번의 측정 모두 비춘 각과 반사한 각이 같았어요. 따라서 비춘 각이 커지면 반사한 각도 <b>똑같이</b> 커져요.", onNext: finish },
     );
   }
   function finish(): void {
     host.dataset.lx = "done";
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("거울에 비춘 빛과 반사한 빛이 <b>거울 면에 수직인 선</b>과 이루는 각은 <b>항상 같아요</b>. 한쪽이 커지면 다른 쪽도 똑같이 커져요.");
+    f.say("빛이 거울에서 반사될 때의 각도 규칙을 찾았어요! 아래 핵심 정리를 읽어 보세요.");
+    f.slot.conclude("평면거울에 비춘 빛과 반사한 빛이 <b>거울 면에 수직인 선</b>과 이루는 각의 크기는 <b>항상 같아요</b>. 비춘 각이 커지면 반사한 각도 똑같이 커져요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -193,11 +193,11 @@ export const reflectLab5: StepRenderer = (host, step, api) => {
     }
     lxAngle(ctx, OX, OY, 44, -Math.PI / 2, -Math.PI / 2 - a, LX.amber, `${th}°`, 64);
     laserBody(ctx, lx, ly, Math.atan2(OY - ly, OX - lx), { len: 44 });
-    lxPill(ctx, phase === "aim" ? "반사한 빛은 가렸어요" : "비춘 각(노랑), 반사한 각(파랑)", phase === "aim" ? LX.red : LX.gold);
+    lxPill(ctx, phase === "aim" ? "반사한 빛을 가렸어요" : "비춘 각(노랑), 반사한 각(파랑)", phase === "aim" ? LX.red : LX.gold);
   });
 
-  f.say("<b>슬릿 레이저</b>를 기울여 거울에 비추고 <b>두 각 기록하기</b>를 눌러요. 각을 바꿔 세 번 재 보세요.");
-  api.setCTA("각을 바꿔 세 번 재 보세요", { enabled: false });
+  f.say("평면거울에 레이저 빛을 비추어 볼 거예요. 레이저의 각도를 조절하며 <b>비춘 각</b>과 <b>반사한 각</b>을 세 번 기록해 보세요.");
+  api.setCTA("각도를 바꾸어 세 번 측정해 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();
@@ -242,7 +242,8 @@ const IN = { x: Math.sin(rad(30)), y: Math.cos(rad(30)) }; // 빛이 나아가�
 
 export const roughLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 3, api });
+  // 도움말에 세 줄 글이 있어(처음 안내, 360px 폰의 다섯 줄기 안내) 처음부터 세 줄 칸으로 잡는다(랩 도중에 무대가 밀리지 않게, 2026-11-16)
+  const f = lxFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
 
@@ -257,8 +258,8 @@ export const roughLab: StepRenderer = (host, step, api) => {
 
   const seg = lxSeg<Face>(
     [
-      { k: "flat", t: "매끈한 면", sub: "거울" },
-      { k: "rough", t: "거친 면", sub: "종이를 크게 본 모습" },
+      { k: "flat", t: "매끈한 면", sub: "거울처럼 평평한 면" },
+      { k: "rough", t: "거친 면", sub: "종이 표면을 확대한 모습" },
     ],
     "flat",
     (k) => {
@@ -276,7 +277,7 @@ export const roughLab: StepRenderer = (host, step, api) => {
     min: 50,
     max: 290,
     value: hx,
-    label: "빛이 닿는 자리 옮기기",
+    label: "빛이 닿는 위치 옮기기",
     onInput: (v) => {
       if (asked) return;
       hx = v;
@@ -299,9 +300,10 @@ export const roughLab: StepRenderer = (host, step, api) => {
     fiveBtn.disabled = !ready;
     f.pips(ready ? 1 + fiveSeen.size : 0);
     if (five) return;
-    if (face === "flat") f.say(roughN >= 3 ? "매끈한 면은 어디에 닿아도 법선의 방향이 같아요. 이제 <b>다섯 줄기</b>를 비춰 보세요." : "매끈한 면에서는 두 각이 같아요. 이제 <b>거친 면</b>을 골라 닿는 자리를 옮겨 보세요.");
-    else if (roughN < 3) f.say(`닿는 자리마다 법선이 기울어요. 두 각을 비교하며 <b>${3 - roughN}곳</b> 더 옮겨 보세요.`);
-    else f.say("거친 면에서도 닿는 자리마다 <b>두 각은 같았어요</b>. 이제 <b>다섯 줄기</b>를 비춰 보세요.");
+    // 면 고르기 칸은 무대 아래 조작 칸에 있어 수정안의 "위에서 거친 면을 골라"에서 "위에서"는 뺐다(2026-11-16)
+    if (face === "flat") f.say(roughN >= 3 ? "매끈한 면은 어느 곳에 닿아도 법선 방향이 똑같아요. 이제 아래 버튼으로 <b>다섯 줄기</b>를 비춰 보세요." : "매끈한 면에서는 입사각과 반사각이 같아요. 이제 <b>거친 면</b>을 골라 빛이 닿는 위치를 옮겨 보세요.");
+    else if (roughN < 3) f.say(`닿는 위치마다 법선의 기울기가 달라져요. 두 각의 크기를 비교하며 <b>${3 - roughN}곳</b> 더 옮겨 보세요.`);
+    else f.say("거친 면에서도 빛이 닿는 곳마다 <b>입사각과 반사각은 항상 같았어요</b>! 이제 <b>다섯 줄기</b>를 비춰 보세요.");
   }
 
   fiveBtn.addEventListener("click", () => {
@@ -311,10 +313,10 @@ export const roughLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     f.pips(1 + fiveSeen.size);
     if (fiveSeen.size < 2) {
-      f.say(face === "flat" ? "나란히 들어간 빛이 <b>나란히</b> 반사했어요. <b>거친 면</b>에도 다섯 줄기를 비춰 보세요." : "나란히 들어간 빛이 <b>여러 방향</b>으로 흩어졌어요. <b>매끈한 면</b>에도 비춰 보세요.");
+      f.say(face === "flat" ? "매끈한 면에서는 나란히 들어온 빛이 <b>일정한 방향으로 나란히</b> 반사했어요. 이제 <b>거친 면</b>에도 비춰 보세요." : "거친 면에서는 나란히 들어온 빛이 <b>여러 방향</b>으로 흩어져 반사했어요. 이제 <b>매끈한 면</b>에도 비춰 보세요.");
       return;
     }
-    f.say("매끈한 면은 나란히, 거친 면은 여러 방향으로 반사했어요. 까닭을 생각해 봐요.");
+    f.say("매끈한 면에서는 나란히, 거친 면에서는 여러 방향으로 빛이 반사되었어요. 왜 이런 차이가 생겼을까요?");
     asked = true;
     host.dataset.lx = "ask";
     tm.later(() => {
@@ -322,20 +324,20 @@ export const roughLab: StepRenderer = (host, step, api) => {
       face = "rough";
       five = true;
       seg.set("rough");
-      f.say("거친 면의 다섯 줄기예요. 닿는 자리마다 <b>법선</b>(점선)을 보며 생각해 봐요.");
+      f.say("거친 면에 비춘 다섯 줄기 빛이에요. 빛이 닿는 곳마다 세워진 <b>법선(점선)</b>의 방향을 살펴보며 답해 보세요.");
       f.slot.ask(
         "거친 면에서 반사한 빛이 여러 방향으로 흩어지는 까닭은 무엇일까요?",
-        [{ t: "닿는 곳마다 면의 기울기가 달라서", ok: true }, { t: "거친 면에서는 두 각이 달라져서" }, { t: "거친 면이 빛을 모두 흡수해서" }],
+        [{ t: "빛이 닿는 곳마다 면의 기울기가 달라서", ok: true }, { t: "거친 면에서는 입사각과 반사각이 달라져서" }, { t: "거친 면이 들어온 빛을 모두 흡수해서" }],
         (ok) => api.recordQuiz(ok),
-        { why: "어느 자리에서나 두 각은 같았어요. 달랐던 것은 <b>법선의 방향</b>이에요.", onNext: finish },
+        { why: "빛이 닿는 어느 지점에서나 입사각과 반사각은 같았어요. 달라진 것은 면의 기울기에 따른 <b>법선의 방향</b>뿐이에요.", onNext: finish },
       );
     }, 1700);
   });
 
   function finish(): void {
     host.dataset.lx = "done";
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("거친 면에서도 빛줄기 하나하나는 <b>두 각이 같아요</b>. 닿는 곳마다 면의 기울기가 달라 여러 방향으로 흩어질 뿐이에요.");
+    f.say("매끈한 면과 거친 면의 반사를 모두 비교해 보았어요! 아래 핵심 정리를 확인해 보세요.");
+    f.slot.conclude("울퉁불퉁한 거친 면에서도 빛줄기 하나하나는 <b>입사각과 반사각이 같아요</b>. 다만 빛이 닿는 곳마다 면의 기울기가 달라 여러 방향으로 흩어져 반사될 뿐이에요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -402,8 +404,8 @@ export const roughLab: StepRenderer = (host, step, api) => {
   });
 
   touch();
-  f.say("빛 한 줄기가 면에 닿아요. <b>닿는 자리</b>를 옮기며 그 자리의 법선과 두 각을 비교해 보세요.");
-  api.setCTA("두 면에서 두 각을 비교해 보세요", { enabled: false });
+  f.say("면에 레이저 빛 한 줄기를 비추었어요. 슬라이더로 <b>빛이 닿는 위치</b>를 옮기며 법선과 두 각이 어떻게 변하는지 살펴보세요.");
+  api.setCTA("매끈한 면과 거친 면을 모두 살펴보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

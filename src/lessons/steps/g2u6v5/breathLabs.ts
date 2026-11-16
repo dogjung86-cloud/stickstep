@@ -34,7 +34,7 @@ const halton = (i: number, b: number): number => {
 // ── 호흡운동 모형 ──────────────────────────────────────────────────
 export const g2u6ChestLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-chest", wait: "모형을 움직여 풍선을 부풀려 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-chest", wait: "모형을 완성하고 고무 막을 당기거나 밀어 보세요", tall: true });
   const { f } = lab;
   const stage = g6Svg(lab, "플라스틱 컵 속에 작은 고무풍선 두 개가 빨대에 달려 있고 컵 아래에 고무 막을 씌운 호흡운동 모형");
   let sealed = false;
@@ -126,7 +126,7 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
     host.dataset.g6Vol = String(vol());
     host.dataset.g6Sealed = sealed ? "1" : "0";
   };
-  const go = bvBtn("main g2u6x-go", "알아낸 것 정리하기");
+  const go = bvBtn("main g2u6x-go", "풍선이 부푸는 원리 정리하기");
   go.disabled = true;
   const moved = (before: number): void => {
     const now = vol();
@@ -136,28 +136,30 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
     if (!sealed) {
       bad();
       host.dataset.g6Fail = "leak";
-      toast(lab, "풍선이 그대로예요", true, true);
-      f.say("빨대 옆 <b>틈</b>으로 공기가 드나들어 풍선은 변하지 않아요. 틈을 막아요.");
+      toast(lab, "공기가 새어 풍선 크기가 변하지 않아요", true, true);
+      // 막을 당기면 틈으로 공기가 들어오고 밀면 나간다. 수정안의 "새어 나갔기"는 한쪽 방향뿐이라 "드나들었기"로 썼다.
+      f.say("빨대 주변의 틈으로 공기가 드나들었기 때문에 컵 속 압력이 변하지 않았어요. 먼저 <b>빨대 주변 틈 막기</b>를 눌러 고무찰흙으로 밀봉해 보세요.");
       return;
     }
     host.dataset.g6Fail = "";
     good();
+    // 부피는 컵을 올려도, 고무 막을 당겨도 커진다. 그래서 수정안 첫머리의 "고무 막을 아래로 당기자"는 빼고 결과부터 말한다.
     if (lastMove === "up") {
       seenIn = true;
-      f.say("컵 속 부피가 커져 압력이 <b>낮아졌어요</b>. 바깥 공기가 풍선으로 <b>들어와요</b>.");
+      f.say(`컵 속 부피가 <b>커지고</b> 압력이 바깥보다 <b>낮아져서</b>, 빨대를 통해 공기가 들어와 풍선이 <b>부풀어 올랐어요</b>!${seenOut ? "" : " 이어서 <b>고무 막 밀어 올리기</b>도 해 보세요."}`);
     } else {
       seenOut = true;
-      f.say("컵 속 부피가 작아져 압력이 <b>높아졌어요</b>. 풍선 속 공기가 밖으로 <b>나가요</b>.");
+      f.say(`컵 속 부피가 <b>작아지고</b> 압력이 바깥보다 <b>높아져서</b>, 공기가 밖으로 빠져나가 풍선이 <b>오므라들었어요</b>!${seenIn ? "" : " 이어서 <b>고무 막 당기기</b>도 해 보세요."}`);
     }
     f.pips((seenIn ? 1 : 0) + (seenOut ? 1 : 0));
     go.disabled = !(seenIn && seenOut);
   };
 
-  const cSeal = chip("seal", "틈 막기", "막지 않음", () => {
+  const cSeal = chip("seal", "빨대 주변 틈 막기", "열려 있음", () => {
     tap();
     lab.f.stage.querySelector(".g2u6x-toast")?.remove();
     sealed = !sealed;
-    cSeal.sub(sealed ? "고무찰흙으로 막음" : "막지 않음");
+    cSeal.sub(sealed ? "고무찰흙으로 밀봉" : "열려 있음");
     cSeal.on(sealed);
     lastMove = "";
     lift = 0;
@@ -167,7 +169,7 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
     cPull.on(false);
     cPush.on(false);
     draw();
-    f.say(sealed ? "틈을 막았어요. 이제 컵과 고무 막을 움직여 봐요." : "틈을 다시 열었어요.");
+    f.say(sealed ? "고무찰흙으로 빨대 주변의 틈을 빈틈없이 막았어요! 이제 <b>고무 막 당기기</b>를 눌러 보세요." : "고무찰흙을 떼어 내어 빨대 주변의 틈이 열렸어요.");
   });
   const cCup = chip("cup", "컵 올리기", "", () => {
     tap();
@@ -185,8 +187,8 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
     cPush.on(pull === -1);
     moved(b);
   };
-  const cPull = chip("pull", "막 당기기", "아래로", () => setPull(1));
-  const cPush = chip("push", "막 올리기", "위로", () => setPull(-1));
+  const cPull = chip("pull", "고무 막 당기기", "아래로 잡아당기기", () => setPull(1));
+  const cPush = chip("push", "고무 막 밀어 올리기", "위로 밀어 올리기", () => setPull(-1));
   go.addEventListener("click", () => {
     tap();
     // 판정의 근거가 무대에 남도록 고무 막을 당긴 모습으로 되돌린다.
@@ -195,7 +197,8 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
     lastMove = "up";
     draw();
     f.say("고무 막을 아래로 당긴 모습이에요. 풍선이 <b>부풀어</b> 있어요.");
-    lab.judge("고무 막을 아래로 당기면 풍선이 <b>부푸는</b> 까닭은?", [{ t: "컵 속 압력이 낮아져서", ok: true }, { t: "고무 막이 공기를 밀어 넣어서" }, { t: "풍선이 스스로 늘어나서" }], "컵 속 부피가 커지면 압력이 낮아져 <b>바깥 공기</b>가 들어와요.", () =>
+    // 이유 글의 "대기압보다"는 무대 글("바깥과 같음")과 같은 말인 "바깥보다"로 썼다
+    lab.judge("고무 막을 아래로 당겼을 때 컵 속의 고무풍선이 <b>부풀어 오른</b> 까닭은 무엇인가요?", [{ t: "컵 속 부피가 커지면서 압력이 낮아져서", ok: true }, { t: "고무 막이 바깥 공기를 직접 밀어 넣어서" }, { t: "고무풍선에 근육이 있어 스스로 늘어나서" }], "고무 막을 당기면 컵 속 부피가 커지면서 <b>압력이 바깥보다 낮아지고</b>, 그 결과 바깥 공기가 빨대를 통해 풍선 속으로 들어와요.", () =>
       lab.finish("컵 속 <b>부피가 커지면</b> 압력이 낮아져 공기가 풍선으로 들어오고, <b>부피가 작아지면</b> 압력이 높아져 공기가 나가요. 풍선은 스스로 움직이지 않았어요."),
     );
   });
@@ -208,7 +211,7 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
 // ── 기체 교환 ──────────────────────────────────────────────────────
 export const g2u6GasLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-gas", wait: "두 곳에서 기체를 교환해 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-gas", wait: "허파꽈리와 조직세포에서 기체가 이동하는 방향을 골라 보세요", tall: true });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "두 칸으로 나눈 무대. 왼쪽은 모세혈관이 감싼 허파꽈리, 오른쪽은 조직세포 곁을 지나는 모세혈관이고, 두 칸 사이는 심장을 거쳐 가는 길로 이어진다");
   const ns = `g6g${++gasSeq}`;
@@ -227,7 +230,7 @@ export const g2u6GasLab: StepRenderer = (host, step, api) => {
     host.dataset.g6Blood = blood;
   };
 
-  const move = bvBtn("main g2u6x-move", "혈액을 조직세포로 보내기");
+  const move = bvBtn("main g2u6x-move", "산소를 실은 혈액을 조직세포로 보내기");
   const pick = (right: boolean): void => {
     if (busy) return;
     const here = site;
@@ -238,8 +241,9 @@ export const g2u6GasLab: StepRenderer = (host, step, api) => {
       missAt = here;
       host.dataset.g6Fail = here;
       draw();
-      toast(lab, "기체가 이동하지 않았어요", true, true);
-      f.say(here === "lung" ? "허파에 막 도착한 혈액에는 건넬 <b>산소</b>가 적어요. 산소는 허파꽈리 쪽에 많아요." : "조직세포는 산소를 써 버려서 건넬 <b>산소</b>가 없어요. 세포에는 이산화 탄소가 많아요.");
+      toast(lab, "농도가 낮은 곳에서 높은 곳으로는 이동하지 않아요", true, true);
+      // 조직세포 쪽: 수정안의 "호흡을 한 조직세포"는 세포호흡(레슨 6)을 아직 배우지 않은 때라 옛 글의 "산소를 써 버린"으로 썼다
+      f.say(here === "lung" ? "기체는 농도가 <b>높은(많은) 곳에서 낮은(적은) 곳</b>으로 이동해요. 숨을 들이쉰 허파꽈리에는 <b>산소</b>가 더 많고, 온몸을 돌고 온 혈액에는 <b>이산화 탄소</b>가 더 많아요." : "허파를 지나온 혈액에는 <b>산소</b>가 많고, 산소를 써 버린 조직세포에는 <b>이산화 탄소</b>가 많이 쌓여 있어요. 많은 곳에서 적은 곳으로 가는 방향을 골라 보세요.");
       tm.later(() => {
         missAt = "";
         draw();
@@ -253,21 +257,22 @@ export const g2u6GasLab: StepRenderer = (host, step, api) => {
       blood = "o2";
       f.pips(1);
       draw();
-      f.say("산소가 혈액으로 들어오고 이산화 탄소가 허파꽈리로 나갔어요. 혈액이 <b>선홍색</b>이 됐어요.");
+      f.say("허파꽈리에 많던 <b>산소</b>가 모세혈관의 혈액으로 들어오고, 혈액에 많던 <b>이산화 탄소</b>는 허파꽈리로 빠져나갔어요! 이제 산소를 실은 혈액을 조직세포로 보내 볼까요?");
       f.slot.setControls(move);
     } else {
       cellDone = true;
       blood = "co2";
       f.pips(2);
       draw();
-      f.say("산소가 세포로 가고 이산화 탄소가 혈액으로 들어왔어요. 혈액이 다시 <b>어두워졌어요</b>.");
+      f.say("혈액 속의 <b>산소</b>가 조직세포로 전달되고, 조직세포에서 생긴 <b>이산화 탄소</b>가 혈액으로 넘어왔어요!");
       busy = true;
       tm.later(() => {
         // 판정의 근거: 두 칸을 다 밝힌다(허파꽈리 쪽 관은 산소가 적은 색에서 많은 색으로 바뀌어 있다)
         final = true;
         draw();
-        lab.judge("<b>허파꽈리</b>를 지나는 동안 혈액 속에서 늘어난 기체는?", [{ t: "산소", ok: true }, { t: "이산화 탄소" }, { t: "두 기체 모두" }], "허파꽈리에서 산소는 <b>혈액으로</b>, 이산화 탄소는 <b>허파꽈리로</b> 이동해요.", () =>
-          lab.finish("허파꽈리에서는 <b>산소</b>가 혈액으로, 이산화 탄소가 허파꽈리로 이동해요. 조직세포에서는 산소가 세포로, <b>이산화 탄소</b>가 혈액으로 이동해요."),
+        // 결론의 "(분압)"은 뺐다(중학교에서 배우지 않는 말). 확산은 중1에서 배운 말이다.
+        lab.judge("혈액이 <b>허파꽈리</b>를 감싼 모세혈관을 지나는 동안 혈액 속에서 농도가 높아진(늘어난) 기체는 무엇인가요?", [{ t: "산소", ok: true }, { t: "이산화 탄소" }, { t: "산소와 이산화 탄소 모두" }], "허파꽈리에서 모세혈관의 혈액으로 <b>산소</b>가 들어오고, 혈액 속의 이산화 탄소는 허파꽈리로 빠져나가요.", () =>
+          lab.finish("기체는 농도 차이에 따라 높은 곳에서 낮은 곳으로 퍼지는 <b>확산</b>에 의해 이동해요. 따라서 <b>허파꽈리</b>에서는 산소가 혈액으로 들어오고 이산화 탄소가 나가며, <b>조직세포</b>에서는 산소가 세포로 전달되고 이산화 탄소가 혈액으로 나와요."),
         );
       }, 1800);
     }
@@ -283,10 +288,11 @@ export const g2u6GasLab: StepRenderer = (host, step, api) => {
     site = "cell";
     draw();
     f.slot.setControls(row(cCellBad.el), row(cCellGood.el));
-    f.say("혈액이 조직세포 곁에 왔어요. 여기서는 두 기체가 <b>어느 쪽으로</b> 이동할까요?");
+    f.say("산소를 가득 실은 혈액이 심장을 거쳐 온몸의 <b>조직세포</b>에 도착했어요. 여기서는 두 기체가 어느 쪽으로 이동할까요?");
   });
   f.slot.setControls(row(cGood.el), row(cBadc.el));
   draw();
-  f.say("온몸을 돌고 온 혈액이 허파꽈리 곁에 왔어요. 두 기체가 <b>어느 쪽으로</b> 이동할까요?");
+  // 수정안의 "농도(분압)"에서 '분압'은 중학교에서 배우지 않는 말이라 뺐다. 확산은 중1에서 배운 말이고, 무대에 두 기체의 알갱이가 그려져 있다.
+  f.say("기체는 농도가 <b>높은 곳에서 낮은 곳</b>으로 스스로 퍼져 나가요(확산). 알갱이 개수를 비교해 보고, <b>허파꽈리</b>에서 산소와 이산화 탄소가 이동할 방향을 골라 보세요.");
   return lab.cleanup;
 };

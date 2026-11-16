@@ -26,15 +26,15 @@ const R = 92;
 const BOX: [number, number, number, number] = [CX - R, CY - R, CX + R, CY + R];
 
 const SPEC = {
-  elodea: { name: "검정말 잎", color: "초록색", grains: "가득", say: "검정말 잎의 세포예요. 세포마다 <b>초록 알갱이</b>가 가득해요." },
-  lettuce: { name: "상추 잎", color: "초록색", grains: "가득", say: "상추 잎의 세포에도 <b>초록 알갱이</b>가 들어 있어요." },
-  onion: { name: "양파 속껍질", color: "흰색", grains: "없음", say: "양파 속껍질의 세포에는 초록 알갱이가 <b>보이지 않아요</b>." },
+  elodea: { name: "검정말 잎", color: "초록색", grains: "많음", say: "검정말 잎의 세포예요. 세포마다 <b>초록색 알갱이</b>가 가득 들어 있어요." },
+  lettuce: { name: "상추 잎", color: "초록색", grains: "많음", say: "상추 잎의 세포 안에도 <b>초록색 알갱이</b>가 많이 들어 있어요." },
+  onion: { name: "양파 속껍질", color: "흰색", grains: "없음", say: "하얀 양파 속껍질 세포에는 초록색 알갱이가 <b>보이지 않아요</b>." },
 } as const;
 type SpecKey = keyof typeof SPEC;
 
 export const g2u5ScopeLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 2, cls: "g2u5x-scope", wait: "세 표본을 관찰해 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 2, cls: "g2u5x-scope", wait: "세 가지 표본을 모두 관찰해 보세요" });
   const { f } = lab;
   const A = newNs("sc");
   const st = g5Layers(lab, "현미경으로 본 표본의 세포", ["defs", "view", "frame", "info"]);
@@ -55,22 +55,24 @@ export const g2u5ScopeLab: StepRenderer = (host, step, api) => {
       const k = now;
       const field = fields(k, () => (k === "elodea" ? elodeaField(A, BOX) : k === "lettuce" ? lettuceField(A, BOX) : onionField(A, BOX)));
       st.set("view", `<g clip-path="url(#${A}clip)"><g class="g2u5x-focus">${field}</g>${scopeOverlay(A, CX, CY, R, { px: 40, text: "40 μm" })}</g>`);
-    } else st.set("view", `<circle cx="${CX}" cy="${CY}" r="${R}" fill="url(#${A}dark)"/>${txt(CX, CY - 4, "표본을 골라", { size: 13 })}${txt(CX, CY + 14, "현미경에 올려요", { size: 13 })}`);
+    } else st.set("view", `<circle cx="${CX}" cy="${CY}" r="${R}" fill="url(#${A}dark)"/>${txt(CX, CY - 4, "아래에서 표본을 골라", { size: 13 })}${txt(CX, CY + 14, "현미경에 올려 보세요", { size: 13 })}`);
     const row3 = (y: number, k: string, v: string, hot = false): string => txt(232, y, k, { anchor: "start", size: 12, fill: P.dim }) + txt(232, y + 18, v, { anchor: "start", size: 14, fill: hot ? P.leafHi : "#E8EEF9", weight: 800 });
-    st.set("info", sp ? row3(58, "올린 표본", sp.name) + row3(108, "표본의 색", sp.color) + row3(158, "초록 알갱이", sp.grains, sp.grains === "가득") : microscope(288, 214, 1.1) + label(288, 50, "광학 현미경", { fill: P.dim, size: 12 }));
+    st.set("info", sp ? row3(58, "관찰 표본", sp.name) + row3(108, "표본의 색", sp.color) + row3(158, "초록 알갱이", sp.grains, sp.grains === "많음") : microscope(288, 214, 1.1) + label(288, 50, "광학 현미경", { fill: P.dim, size: 12 }));
     host.dataset.g5Spec = now ?? "";
     host.dataset.g5Seen = String(seen.size);
   };
 
   const chips = (Object.keys(SPEC) as SpecKey[]).map((k) =>
-    chip(k, SPEC[k].name, "", () => {
+    chip(k, SPEC[k].name, "눌러서 관찰", () => {
       tap();
       now = k;
       seen.add(k);
       chips.forEach((c) => c.on(c.el.dataset.k === k));
-      chips.find((c) => c.el.dataset.k === k)?.done();
+      const mine = chips.find((c) => c.el.dataset.k === k);
+      mine?.done();
+      mine?.sub(`${SPEC[k].color} · 관찰 완료`);
       draw();
-      f.say(seen.size < 3 ? `${SPEC[k].say} 다른 표본도 봐요.` : `${SPEC[k].say} 이제 셋을 비교해 봐요.`);
+      f.say(seen.size < 3 ? `${SPEC[k].say} 남은 표본도 관찰해 보세요.` : `${SPEC[k].say} 이제 세 표본을 비교해 볼까요?`);
       if (seen.size === 3) {
         f.pips(1);
         go.disabled = false;
@@ -81,13 +83,13 @@ export const g2u5ScopeLab: StepRenderer = (host, step, api) => {
   go.disabled = true;
   go.addEventListener("click", () => {
     tap();
-    lab.judge("<b>초록 알갱이</b>가 보인 표본은?", [{ t: "초록색인 검정말 잎과 상추 잎", ok: true }, { t: "흰색인 양파 속껍질" }, { t: "세 표본 모두" }], "초록 알갱이는 <b>초록색 부분</b>의 세포에만 있어요.", () =>
-      lab.finish("식물의 초록색 부분 세포에는 초록 알갱이 <b>엽록체</b>가 들어 있어요. 광합성은 이 엽록체에서 일어나요."),
+    lab.judge("세포 안에서 <b>초록색 알갱이</b>가 관찰된 표본은 무엇인가요?", [{ t: "초록색을 띠는 검정말 잎과 상추 잎", ok: true }, { t: "흰색을 띠는 양파 속껍질" }, { t: "세 가지 표본 모두" }], "초록색 알갱이는 식물의 <b>초록색 부분</b> 세포에만 들어 있어요.", () =>
+      lab.finish("식물의 초록색 부분 세포에는 초록색 알갱이인 <b>엽록체</b>가 들어 있어요. 광합성은 바로 이 엽록체에서 일어나요."),
     );
   });
   f.slot.setControls(row(...chips.map((c) => c.el)), go);
   draw();
-  f.say("표본 셋을 차례로 <b>현미경</b>에 올려 세포 속을 들여다봐요.");
+  f.say("세 가지 식물 표본을 차례로 <b>현미경</b>에 올려 세포 안을 관찰해 봐요.");
   return lab.cleanup;
 };
 
@@ -154,7 +156,7 @@ function plant(ns: string, water: boolean): string {
 
 export const g2u5SupplyLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-supply", wait: "세 가지를 주고 끊어 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-supply", wait: "세 가지 조건을 켜고 끄며 확인해 보세요" });
   const { f, tm } = lab;
   const A = newNs("sp");
   const st = g5Layers(lab, "빛, 이산화 탄소, 물을 받는 식물과 잎세포 속의 엽록체", ["defs", "scene", "cell", "fx", "tag"]);
@@ -236,30 +238,30 @@ export const g2u5SupplyLab: StepRenderer = (host, step, api) => {
       fx += label(CHL[0] + 2, CHL[1] + 30, "포도당", { fill: P.sugar, size: 12.5 });
     } else fx += label(CHL[0] + 2, CHL[1] + 30, "엽록체", { fill: "#CFF5D6", size: 12.5 });
     st.set("fx", `<g clip-path="url(#${A}in)">${inner}</g>${fx}`);
-    st.set("tag", run ? tag(158, 22, "양분을 만드는 중", { fill: P.leafHi }) : tag(158, 22, lk.length === 3 ? "아무것도 주지 않았어요" : `멈춤: ${FEED[lk[0]].lack}`, { fill: P.bad }));
+    st.set("tag", run ? tag(158, 22, "광합성으로 양분 만드는 중", { fill: P.leafHi }) : tag(158, 22, lk.length === 3 ? "공급된 재료가 없어요" : `멈춤: ${FEED[lk[0]].lack}`, { fill: P.bad }));
     host.dataset.g5Run = run ? "1" : "0";
   };
 
   let timer = 0;
   const chips = (Object.keys(FEED) as Feed[]).map((k) =>
-    chip(k, FEED[k].name, "끊음", () => {
+    chip(k, FEED[k].name, "공급 안 함", () => {
       on[k] = !on[k];
       const c = chips.find((x) => x.el.dataset.k === k);
       c?.on(on[k]);
-      c?.sub(on[k] ? "주는 중" : "끊음");
+      c?.sub(on[k] ? "공급 중" : "공급 안 함");
       tm.cancel(timer);
       draw();
       if (running()) {
         good();
         if (cut) {
-          f.say("다시 <b>포도당과 산소</b>가 만들어져요. 무엇이 만들어지는지 확인해요.");
+          f.say("세 가지를 모두 주니 다시 <b>포도당과 산소</b>가 만들어져요. 아래 버튼을 눌러 정리해 봐요.");
           go.disabled = false;
         } else {
-          f.say("셋이 모이자 엽록체에서 <b>포도당</b>과 <b>산소</b>가 생겨요.");
+          f.say("세 가지가 모두 모이자 엽록체에서 <b>포도당</b>과 <b>산소</b>가 만들어져요!");
           timer = tm.later(() => {
             ran = true;
             f.pips(1);
-            f.say("이번에는 셋 가운데 <b>하나를 끊어</b> 보세요. 어떻게 될까요?");
+            f.say("이번에는 세 가지 중 <b>하나를 꺼</b> 보세요. 하나라도 빠지면 어떻게 될까요?");
           }, 1500);
         }
         return;
@@ -270,23 +272,23 @@ export const g2u5SupplyLab: StepRenderer = (host, step, api) => {
         bad();
         cut = true;
         f.pips(2);
-        f.say(`${FEED[k].name}${k === "light" ? "을" : "를"} 끊자 <b>바로 멈췄어요</b>. 다시 주고 이어 가요.`);
+        f.say(`${FEED[k].name} 공급을 멈추자 양분 만들기가 <b>바로 멈췄어요</b>. 다시 켜고 결과를 정리해 볼까요?`);
         return;
       }
       tap();
-      f.say(lk.length === 3 ? "아무것도 없으면 양분을 만들지 못해요. 하나씩 줘 보세요." : `아직 만들어지지 않아요. <b>${lk.map((x) => FEED[x].name).join(", ")}</b>도 줘 보세요.`);
+      f.say(lk.length === 3 ? "아무것도 공급하지 않으면 양분을 만들지 못해요. 버튼을 하나씩 눌러 보세요." : `아직 양분이 만들어지지 않아요. <b>${lk.map((x) => FEED[x].name).join(", ")}</b>도 함께 공급해 보세요.`);
     }),
   );
-  const go = bvBtn("main g2u5x-go", "만들어진 것 확인하기");
+  const go = bvBtn("main g2u5x-go", "만들어진 물질 확인하기");
   go.disabled = true;
   go.addEventListener("click", () => {
     tap();
-    lab.judge("엽록체에서 <b>만들어진</b> 것은?", [{ t: "포도당과 산소", ok: true }, { t: "이산화 탄소와 물" }, { t: "빛과 이산화 탄소" }], "이산화 탄소와 물은 <b>재료</b>, 포도당과 산소는 <b>만들어진 것</b>이에요.", () =>
-      lab.finish("식물은 <b>빛에너지</b>로 <b>이산화 탄소와 물</b>을 써서 <b>포도당과 산소</b>를 만들어요. 하나라도 없으면 만들지 못해요."),
+    lab.judge("광합성 결과 엽록체에서 <b>새로 만들어진 물질</b>은 무엇인가요?", [{ t: "포도당과 산소", ok: true }, { t: "이산화 탄소와 물" }, { t: "빛과 이산화 탄소" }], "이산화 탄소와 물은 광합성에 쓰이는 <b>재료</b>이고, 포도당과 산소가 <b>새로 만들어진 물질</b>이에요.", () =>
+      lab.finish("식물은 <b>빛에너지</b>를 이용해 <b>이산화 탄소와 물</b>을 재료로 <b>포도당과 산소</b>를 만들어요. 세 가지 중 하나라도 없으면 광합성이 일어나지 않아요."),
     );
   });
   f.slot.setControls(row(...chips.map((c) => c.el)), go);
   draw();
-  f.say("잎에 <b>빛, 이산화 탄소, 물</b>을 줄 수 있어요. 무엇을 줘야 양분이 생길까요?");
+  f.say("아래 버튼을 눌러 잎에 <b>빛, 이산화 탄소, 물</b>을 공급해 보세요. 무엇이 있어야 양분이 만들어질까요?");
   return lab.cleanup;
 };

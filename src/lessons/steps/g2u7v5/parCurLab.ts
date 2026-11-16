@@ -41,7 +41,7 @@ const fmt = (a: number): string => `${a.toFixed(1)} A`;
 
 export const parCurLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 4, api });
+  const f = xFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
 
@@ -59,13 +59,13 @@ export const parCurLab: StepRenderer = (host, step, api) => {
   const need = (): Spot["id"][] => (doneCase.size === 0 ? ["in", "A", "B", "out"] : ["in", "A", "B"]);
 
   const seg = xSegs<RB>(
-    ORDER.map((k) => ({ k, t: `B를 ${k} Ω으로` })),
+    ORDER.map((k) => ({ k, t: `저항 B: ${k} Ω` })),
     "15",
     (k) => apply(k),
     (k) => {
       if (asking || finished) return false;
       if (!doneCase.has("15")) {
-        f.say("먼저 지금 회로에서 <b>점선 네 곳</b>의 전류를 모두 재 보세요.");
+        f.say("먼저 현재 회로에서 <b>점선 네 곳</b>을 모두 눌러 각 지점의 전류를 측정해 보세요.");
         return false;
       }
       if (asked) return true;
@@ -88,8 +88,8 @@ export const parCurLab: StepRenderer = (host, step, api) => {
     api.setCTA("먼저 예측해 보세요", { enabled: false });
     const up = k === "30";
     f.slot.ask(
-      `갈래 B의 저항을 ${k} Ω으로 ${up ? "키우면" : "줄이면"} 두 갈래의 전류는?`,
-      [{ t: `B로 흐르는 전류가 ${up ? "줄어요" : "늘어요"}`, ok: true }, { t: `A로 흐르는 전류가 ${up ? "줄어요" : "늘어요"}` }, { t: "여전히 반씩 나뉘어요" }],
+      `아래쪽 갈래 B의 저항을 15 Ω에서 ${k} Ω으로 ${up ? "크게 하면" : "작게 하면"} 두 갈래의 전류는 어떻게 될까요?`,
+      [{ t: `B에 흐르는 전류만 ${up ? "줄어들어요" : "늘어나요"}`, ok: true }, { t: `A에 흐르는 전류가 ${up ? "줄어들어요" : "늘어나요"}` }, { t: "두 갈래에 여전히 똑같이 나뉘어 흘러요" }],
       () => undefined,
       {
         predict: true,
@@ -114,9 +114,9 @@ export const parCurLab: StepRenderer = (host, step, api) => {
     doneCase.add(rb);
     log.set(ORDER.indexOf(rb), CASES[rb].row);
     f.pips(doneCase.size);
-    if (rb === "15") f.say("0.4 A가 갈림길에서 <b>0.2 A씩</b> 나뉘었다가 다시 0.4 A로 합쳐져요. B를 바꿔 봐요.");
-    else if (rb === "30") f.say("A는 그대로 0.2 A, B만 <b>0.1 A</b>로 줄었어요. 더하면 나뉘기 전의 0.3 A예요.");
-    else f.say("이번에는 저항이 작은 B로 <b>0.3 A</b>가 흘러요. 더하면 나뉘기 전의 0.5 A예요.");
+    if (rb === "15") f.say("전체 전류 0.4 A가 갈림길에서 <b>0.2 A씩</b> 똑같이 나뉘어 흐른 뒤, 다시 만나 0.4 A로 합쳐져요. 이제 아래에서 저항 B의 크기를 바꿔 보세요.");
+    else if (rb === "30") f.say("위쪽 A는 0.2 A 그대로인데, 저항이 커진 B의 전류만 <b>0.1 A</b>로 줄었어요! 두 갈래를 더하면 전체 전류인 0.3 A와 같아요.");
+    else f.say("이번에는 저항이 작아진 B로 더 센 전류(<b>0.3 A</b>)가 흘러요! A(0.2 A)와 B(0.3 A)를 더하면 전체 전류인 0.5 A가 돼요.");
     if (doneCase.size === ORDER.length && !finished) {
       finished = true;
       seg.lock(true);
@@ -137,24 +137,24 @@ export const parCurLab: StepRenderer = (host, step, api) => {
 
   function ask1(): void {
     f.slot.ask(
-      "저항이 작은 갈래에 전류가 더 많이 흐른 까닭은?",
-      [{ t: "같은 전압이면 저항이 작을수록 세서", ok: true }, { t: "작은 저항에 전압이 더 많이 걸려서" }, { t: "작은 저항이 전지에 더 가까워서" }],
+      "병렬연결에서 저항이 작은 갈래로 전류가 더 많이 흐르는 까닭은 무엇인가요?",
+      [{ t: "전압이 같을 때 저항이 작을수록 전류가 세서", ok: true }, { t: "저항이 작은 갈래에 전압이 더 크게 걸려서" }, { t: "저항이 작은 갈래가 전지에 더 가까이 있어서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "두 갈래 모두 3 V예요. 전류 = 전압 ÷ 저항이라 <b>저항이 작을수록</b> 세요.", onNext: ask2 },
+      { why: "병렬 회로의 두 갈래에는 똑같이 3 V가 걸려요. 전류 = 전압 ÷ 저항이므로 <b>저항이 작을수록</b> 더 센 전류가 흘러요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.slot.ask(
-      "두 갈래의 전류가 0.3 A와 0.1 A이면 합친 뒤의 전류는?",
+      "병렬 회로의 두 갈래에 흐르는 전류가 각각 0.3 A와 0.1 A라면, 두 갈래가 합쳐진 뒤 흐르는 전체 전류는 몇 A일까요?",
       [{ t: "0.4 A", ok: true }, { t: "0.2 A" }, { t: "0.3 A" }],
       () => undefined,
-      { why: "갈래의 전류를 더하면 돼요. 0.3 + 0.1 = <b>0.4 A</b>.", onNext: finish },
+      { why: "각 갈래에 흐르는 전류를 모두 더하면 전체 전류와 같아요(0.3 A + 0.1 A = <b>0.4 A</b>).", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("병렬연결에서는 전류가 갈림길에서 <b>나뉘어 흘러요</b>. 갈래마다 전압이 같으니 <b>저항이 작은 길</b>로 더 많이 흐르고, 갈래의 전류를 더하면 <b>전체 전류</b>예요.");
+    f.say("병렬 회로에서 전류는 저항에 반비례하여 나뉘어 흐르고, 합치면 전체 전류와 같다는 것을 확인했어요!");
+    f.slot.conclude("병렬연결에서는 전체 전류가 갈림길에서 각 갈래로 <b>나뉘어 흘러요</b>. 각 갈래에 걸리는 전압이 같으므로 <b>저항이 작은 갈래</b>에 더 센 전류가 흐르며, 각 갈래의 전류를 모두 더하면 <b>회로 전체의 전류</b>와 같아요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -202,7 +202,7 @@ export const parCurLab: StepRenderer = (host, step, api) => {
     xPill(ctx, "병렬: 길이 두 갈래", X.cur);
   });
 
-  f.say("전류가 갈림길에서 두 갈래로 나뉘어요. <b>점선 네 곳</b>을 눌러 전류를 재 보세요.");
+  f.say("전류가 갈림길에서 위아래 두 갈래로 나뉘어 흘러요. <b>점선 네 곳</b>을 차례로 눌러 전류의 세기를 비교해 보세요.");
   api.setCTA("네 곳의 전류를 재 보세요", { enabled: false });
   return () => {
     tm.clear();

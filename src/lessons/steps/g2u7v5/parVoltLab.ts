@@ -49,10 +49,10 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
   let lastT = 0;
   const got = new Set<string>();
 
-  const bHi = bvBtn("", "(+)극 쪽 도선 칠하기");
-  const bLo = bvBtn("", "(−)극 쪽 도선 칠하기");
+  const bHi = bvBtn("", "(+)극에 연결된 도선 색칠하기");
+  const bLo = bvBtn("", "(−)극에 연결된 도선 색칠하기");
   const log = xLog(["병렬일 때 A와 B", "직렬일 때 A와 B"], 1, true);
-  const toSer = bvBtn("main", "같은 저항을 직렬로 바꿔 비교하기");
+  const toSer = bvBtn("main", "같은 저항을 직렬로 연결해 비교하기");
   toSer.disabled = true;
   f.slot.setControls(xRow(bHi, bLo), log.el, toSer);
 
@@ -63,12 +63,12 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
       if (hi >= 0) return;
       hi = 0;
       bHi.disabled = true;
-      f.say("(+)극에서 저항을 만나기 전까지의 도선이에요. 모두 <b>같은 높이</b>(빨강)예요.");
+      f.say("전지의 (+)극에서 두 저항 앞까지 곧바로 이어진 도선이에요. 물길로 치면 모두 <b>같은 높은 위치</b>(빨강)에 있어요.");
     } else {
       if (lo >= 0) return;
       lo = 0;
       bLo.disabled = true;
-      f.say("(−)극에 곧바로 이어진 도선이에요. 모두 <b>같은 낮은 높이</b>(파랑)예요.");
+      f.say("전지의 (−)극에서 두 저항 뒤까지 곧바로 이어진 도선이에요. 모두 <b>같은 낮은 위치</b>(파랑)에 있어요.");
     }
     if (hi >= 0 && lo >= 0) {
       phase = "ask";
@@ -80,11 +80,11 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
   bLo.addEventListener("click", () => paint("lo"));
 
   function predict(): void {
-    f.say("두 저항 모두 빨간 도선과 파란 도선 <b>사이</b>에 놓여 있어요.");
+    f.say("저항 A와 B 모두 양 끝이 빨간 도선(+)과 파란 도선(−) <b>사이</b>에 나란히 연결되어 있어요!");
     api.setCTA("먼저 예측해 보세요", { enabled: false });
     f.slot.ask(
-      "A는 10 Ω, B는 20 Ω이에요. 걸리는 전압은?",
-      [{ t: "둘 다 3 V로 같아요", ok: true }, { t: "저항이 큰 B에 더 많이 걸려요" }, { t: "저항이 작은 A에 더 많이 걸려요" }],
+      "병렬로 연결된 A(10 Ω)와 B(20 Ω)에 걸리는 전압은 각각 어떨까요?",
+      [{ t: "두 저항 모두 3 V로 같아요", ok: true }, { t: "저항이 큰 B에 더 큰 전압이 걸려요" }, { t: "저항이 작은 A에 더 큰 전압이 걸려요" }],
       (ok) => {
         guess = ok;
       },
@@ -93,7 +93,7 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
         onNext: () => {
           phase = "mp";
           f.slot.showControls();
-          f.say("<b>점선</b>을 눌러 A와 B에 전압계를 대 보세요.");
+          f.say("예측 완료! <b>점선 상자</b>를 눌러 저항 A와 B의 전압을 각각 측정해 보세요.");
           api.setCTA("A와 B의 전압을 재 보세요", { enabled: false });
         },
       },
@@ -107,14 +107,14 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
     if (phase === "mp") {
       log.set(0, "3 V와 3 V");
       f.pips(2);
-      f.say(`${guess ? "예측대로" : "저항이 달라도"} 둘 다 <b>3 V</b>예요. 같은 저항을 직렬로 바꾸면 어떨까요?`);
+      f.say(`${guess ? "예측대로" : "저항 크기가 달라도"} A와 B 모두 전지 전압과 같은 <b>3.0 V</b>가 걸려요! 이제 같은 두 저항을 직렬로 바꿔 비교해 볼까요?`);
       toSer.disabled = false;
       api.setCTA("직렬로 바꿔 비교해 보세요", { enabled: false });
     } else if (phase === "ms") {
       phase = "end";
       log.set(1, "1 V와 2 V");
       f.pips(3);
-      f.say("직렬은 높이 차 3 V를 <b>나눠</b> 쓰고, 병렬은 저마다 <b>3 V를 다</b> 써요.");
+      f.say("직렬연결은 전체 전압 3.0 V가 1.0 V와 2.0 V로 <b>나뉘어</b> 걸리지만, 병렬연결은 각 갈래마다 <b>3.0 V가 온전히</b> 걸려요!");
       api.setCTA("두 연결을 모두 쟀어요", { enabled: false });
       tm.later(() => {
         // 판정은 병렬 회로를 앞에 두고 묻는다
@@ -132,8 +132,8 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
     mode = "ser";
     got.clear();
     toSer.disabled = true;
-    toSer.textContent = "직렬로 바꿨어요";
-    f.say("직렬은 두 저항 사이의 도선이 <b>중간 높이</b>(보라)예요. 전압을 재 보세요.");
+    toSer.textContent = "직렬 회로로 전환 완료";
+    f.say("직렬 회로에서는 두 저항 사이의 도선이 <b>중간 위치</b>(보라)가 돼요. 점선을 눌러 A와 B의 전압을 재 보세요.");
     api.setCTA("직렬에서도 A와 B를 재 보세요", { enabled: false });
   });
   st.cv.addEventListener("pointerdown", (e) => {
@@ -159,24 +159,24 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
 
   function ask1(): void {
     f.slot.ask(
-      "병렬연결에서 두 저항의 전압이 같은 까닭은?",
-      [{ t: "양 끝이 같은 두 도선에 이어져서", ok: true }, { t: "두 저항의 크기가 같아서" }, { t: "전류가 똑같이 나뉘어 흘러서" }],
+      "병렬연결에서 저항 크기가 달라도 두 저항에 걸리는 전압이 같은 까닭은 무엇인가요?",
+      [{ t: "두 저항의 양 끝이 같은 두 도선에 이어져 있어서", ok: true }, { t: "연결된 두 저항의 크기가 서로 같아서" }, { t: "두 갈래로 전류가 똑같이 나뉘어 흐르기 때문에" }],
       (ok) => api.recordQuiz(ok),
-      { why: "둘 다 <b>(+)극 쪽 도선과 (−)극 쪽 도선</b> 사이에 있어요.", onNext: ask2 },
+      { why: "두 저항 모두 양 끝이 <b>(+)극 쪽 도선과 (−)극 쪽 도선</b> 사이에 직접 연결되어 있어 높이 차(전압)가 같아요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.slot.ask(
-      "병렬로 이은 B를 50 Ω으로 바꾸면 B의 전압은?",
+      "병렬 회로에서 저항 B를 50 Ω으로 바꾸면 B에 걸리는 전압은 몇 V가 될까요?",
       [{ t: "3 V 그대로예요", ok: true }, { t: "3 V보다 커져요" }, { t: "3 V보다 작아져요" }],
       () => undefined,
-      { why: "양 끝이 닿은 곳이 그대로라 전압도 <b>3 V 그대로</b>예요.", onNext: finish },
+      { why: "병렬연결에서는 저항 크기를 바꿔도 양 끝에 걸리는 전압이 전지의 전압(<b>3 V</b>)과 항상 같아요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("병렬연결에서는 저항마다 양 끝이 <b>같은 두 곳</b>에 이어져 있어요. 그래서 저항의 크기가 달라도 걸리는 전압은 모두 <b>전지의 전압과 같아요</b>.");
+    f.say("병렬연결에서는 각 갈래의 저항에 전지의 전압과 같은 전압이 걸린다는 것을 확인했어요!");
+    f.slot.conclude("저항을 병렬로 연결하면 각 저항의 양 끝이 전지의 두 극에 나란히 연결돼요. 따라서 저항의 크기가 서로 달라도 각 저항에 걸리는 전압은 모두 <b>전체 전압(전지의 전압)과 같아요</b>.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -240,7 +240,7 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
     xPill(ctx, mode === "par" ? "병렬: 갈래를 나눠 이음" : "직렬: 한 줄로 이음", X.cur);
   });
 
-  f.say("전압은 물길의 <b>높이 차</b>와 같았죠. 전지의 두 극에 이어진 도선을 칠해 봐요.");
+  f.say("전압은 물길의 <b>높이 차</b>에 비유할 수 있어요. 먼저 전지의 (+)극과 (−)극에 이어진 도선을 각각 색칠해 볼까요?");
   api.setCTA("두 극에 이어진 도선을 칠해 보세요", { enabled: false });
   return () => {
     tm.clear();

@@ -13,8 +13,8 @@ const layerLab = lab("g2u2LayerLab");
 // ══ 1. 지구계와 지구 내부: 지구의 물을 다 모으면(도입) → 풍경을 다섯 영역으로 → 용어 → 조사 방법 비교하기 → 비율 모형 → 용어 → 정리 → 문제 ══
 export const L1: Step[] = lessonSteps(
   [
-    opener({ title: "지구의 물을 다 모으면?", scene: "g2u2-sea", wait: "먼저 예측하고 물을 모아 보세요", cta: "지구를 이루는 것 찾기" }),
-    systemLab({ title: "이것은 지구의 어느 영역일까요?", cta: "이름 붙이기" }),
+    opener({ title: "지구의 물을 모두 모으면 얼마나 클까요?", scene: "g2u2-sea", wait: "먼저 예측하고 지구의 물을 모아 보세요", cta: "지구를 이루는 요소 찾기" }),
+    systemLab({ title: "이 요소는 지구의 어느 영역에 속할까요?", cta: "지구계 다섯 영역 정리하기" }),
     words({
       title: "지구계,<br>다섯 영역이 이루는 하나",
       lead: "풍경 속 여섯 가지가 다섯 영역으로 나뉘었어요. 다섯 영역의 뜻을 정리하고 그 전체에 이름을 붙여요.",
@@ -27,8 +27,8 @@ export const L1: Step[] = lessonSteps(
       ],
       cta: "지구 속 알아보기",
     }),
-    probeLab({ title: "지구 속을 끝까지 알려 준 방법은?", cta: "다음, 모형 만들기" }),
-    layerLab({ title: "지구 속 모형을 비율에 맞게 만들면?", cta: "이름 붙이기" }),
+    probeLab({ title: "지구 내부를 중심까지 알아낸 방법은?", cta: "지구 내부 모형 만들기" }),
+    layerLab({ title: "지구 내부 모형을 실제 비율에 맞게 만들면?", cta: "지권의 층상 구조 정리하기" }),
     words({
       title: "지권의 층상 구조,<br>네 층의 이름",
       lead: "지진파가 알려 준 지구 속을 비율에 맞는 모형으로 만들었어요. 모형의 네 층을 정리해요.",

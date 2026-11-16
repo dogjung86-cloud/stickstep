@@ -75,7 +75,7 @@ export const g2u2RockIdLab: StepRenderer = (host, step, api) => {
     const s = SPEC[sel];
     const L = looked.has(s.k), D = dropped.has(s.k);
     lab.q(".g2u2x-ri-lens").innerHTML = lensView(L ? s : null);
-    tx("obs").textContent = L ? s.look : "돋보기로 아직 안 봤어요";
+    tx("obs").textContent = L ? s.look : "돋보기로 먼저 관찰해 보세요";
     tx("obs").setAttribute("fill", L ? G.text : G.dim);
     tx("acid").textContent = D ? (s.acid ? "거품이 난다" : "변화가 없다") : "";
     tx("acid").setAttribute("fill", D && s.acid ? G.gold : G.text);
@@ -161,7 +161,7 @@ export const g2u2RockIdLab: StepRenderer = (host, step, api) => {
     tx("acid").textContent = "거품이 난다";
     tx("acid").setAttribute("fill", G.gold);
     f.say("여섯 표본을 모두 분류했어요. 다시 올린 <b>대리암</b>을 보며 답해 보세요.");
-    tm.later(() => lab.ask("밝은 <b>대리암</b>을 화강암과 가려내 준 것은?", ["묽은 염산에 생긴 거품", "암석의 밝은 색", "표본의 크기"], "대리암은 석회암이 변한 암석이라 <b>묽은 염산</b>과 반응해 거품이 나요.", () =>
+    tm.later(() => lab.ask("겉보기가 비슷한 밝은색 <b>대리암</b>과 화강암을 구별해 준 것은?", ["묽은 염산과 반응해 생긴 거품", "암석의 밝은 색", "표본 조각의 크기"], "대리암은 석회암이 변한 암석이라 <b>묽은 염산</b>과 반응해 거품이 나요.", () =>
       lab.finish("암석은 <b>만들어진 과정</b>에 따라 화성암, 퇴적암, 변성암으로 나눠요. 맞물린 결정, 퇴적물 알갱이, 줄무늬, 염산과의 반응 같은 특징이 그 암석이 만들어진 과정을 알려 줘요."),
     ), 900);
   }
@@ -187,7 +187,7 @@ const NODE: Record<Node, { name: string; x: number; y: number; c: string }> = {
 const PROC: Record<Proc, { name: string; sub: string }> = {
   break: { name: "부서진다", sub: "잘게 부서지고 깎임" },
   pack: { name: "다져지고 굳는다", sub: "쌓여서 눌림" },
-  heat: { name: "열과 압력", sub: "땅속 깊은 곳" },
+  heat: { name: "열과 압력을 받는다", sub: "땅속 깊은 곳" },
   melt: { name: "녹는다", sub: "더 높은 열" },
   cool: { name: "식어서 굳는다", sub: "마그마가 식음" },
 };
@@ -209,7 +209,7 @@ const VERB: Record<Proc, string> = { break: "부서지고 깎여", pack: "다져
 // 지나간 화살의 가운데에 붙이는 과정 이름(판정이 묻는 '거친 일'이 무대에 남게)
 const TAG: Record<Proc, string> = { break: "부서짐", pack: "다져지고 굳음", heat: "열과 압력", melt: "녹음", cool: "식어서 굳음" };
 const TASK: { from: Node; to: Node; say: string; path: Proc[] }[] = [
-  { from: "ign", to: "sed", say: "금빛 자리가 지금의 암석이에요. 아래에서 <b>일어날 일</b>을 골라 화성암을 퇴적암으로 바꿔 보세요.", path: ["break", "pack"] },
+  { from: "ign", to: "sed", say: "굵은 테두리가 현재 상태예요. 아래에서 <b>일어날 과정</b>을 차례로 골라 화성암을 퇴적암으로 바꿔 보세요.", path: ["break", "pack"] },
   { from: "sed", to: "ign", say: "이번에는 그 <b>퇴적암</b>이 다시 <b>화성암</b>이 되는 길을 찾아보세요.", path: ["melt", "cool"] },
 ];
 

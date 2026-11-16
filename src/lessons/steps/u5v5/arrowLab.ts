@@ -31,7 +31,7 @@ export const arrowLab: StepRenderer = (host, step, api) => {
   const f = u5Frame(host, { title: s.title, steps: 3, api });
   const st = u5Canvas(f.stage);
   const tm = bvTimers();
-  const log = u5Log([{ name: "상자를 오른쪽 점선으로" }, { name: "상자를 왼쪽 점선으로" }, { name: "찰흙을 점선 모양으로" }]);
+  const log = u5Log([{ name: "1. 상자를 오른쪽 점선으로" }, { name: "2. 상자를 왼쪽 점선으로" }, { name: "3. 찰흙을 점선 모양으로" }]);
   f.slot.setControls(log.el);
 
   let m = 0; // 지금 임무(0, 1 상자 / 2 찰흙 / 3 끝)
@@ -46,9 +46,9 @@ export const arrowLab: StepRenderer = (host, step, api) => {
   const GY = (h: number): number => (m >= 2 ? h - 74 : h - 30);
   const cx = (col: number): number => X0 + col * C + C / 2;
   const says = [
-    "상자에 손을 대고 <b>오른쪽</b>으로 끌어 화살표를 그려요. 모눈 한 칸이 <b>10 N</b>이에요. 상자를 점선 자리에 딱 맞게 보내요.",
-    "이번에는 점선이 <b>왼쪽</b>에 있어요. 방향과 길이를 맞춰 화살표를 그려 보세요.",
-    "찰흙 <b>위</b>에 손을 대고 <b>아래로</b> 끌어요. 찰흙이 점선 모양이 되게 눌러 보세요.",
+    "상자에서 <b>오른쪽</b>으로 끌어 화살표를 그려 보세요. 점선 자리(<b>3칸</b>)까지 딱 맞게 보내요.",
+    "이번에는 점선이 <b>왼쪽</b>에 있어요. 방향과 칸수를 맞춰 화살표를 그려 보세요.",
+    "찰흙 <b>윗면</b>에서 <b>아래로</b> 끌어 점선 모양에 맞게 눌러 보세요.",
   ];
   const setM = (n: number): void => {
     m = n;
@@ -104,14 +104,14 @@ export const arrowLab: StepRenderer = (host, step, api) => {
         if (d.n === CLAY_NEED) {
           haptic(HAPTIC.correct);
           log.set(2, "아래로 20 N", "모양이 변함");
-          f.say("찰흙이 점선 모양이 됐어요. 손을 떼도 그대로예요. 힘이 <b>모양</b>을 바꿨어요.");
+          f.say("찰흙이 납작해졌어요! 손을 떼도 그대로네요. 힘이 물체의 <b>모양</b>을 바꿨어요.");
           tm.later(() => {
             setM(3);
             askFinal();
           }, 1500);
           return;
         }
-        fail(d.n < CLAY_NEED ? "덜 눌렸어요. 화살표를 <b>더 길게</b> 그려 보세요." : "너무 납작해졌어요. 화살표를 <b>더 짧게</b> 그려 보세요.", () => (squash = 0));
+        fail(d.n < CLAY_NEED ? `조금 덜 눌렸어요. 화살표를 <b>${CLAY_NEED}칸</b> 길이로 더 길게 그려 보세요.` : `너무 많이 눌렸어요. 화살표를 <b>${CLAY_NEED}칸</b> 길이로 더 짧게 그려 보세요.`, () => (squash = 0));
       });
       return;
     }
@@ -122,7 +122,7 @@ export const arrowLab: StepRenderer = (host, step, api) => {
       if (dest === ms.to) {
         haptic(HAPTIC.correct);
         kept.push({ col: start, n: d.n, dir: d.dir });
-        log.set(m, `${d.dir > 0 ? "오른쪽" : "왼쪽"}으로 ${d.n * 10} N`, `${d.n}칸 감`);
+        log.set(m, `${d.dir > 0 ? "오른쪽" : "왼쪽"} ${d.n * 10} N`, `${d.n}칸 이동`);
         const next = m + 1;
         tm.later(() => {
           busy = false;
@@ -150,15 +150,15 @@ export const arrowLab: StepRenderer = (host, step, api) => {
 
   function askFinal(): void {
     f.slot.ask(
-      "상자를 3칸 보낸 화살표를 같은 방향으로 6칸까지 늘여 그리면 무엇이 달라질까요?",
-      [{ t: "힘의 크기가 2배가 됐어요", ok: true }, { t: "힘의 방향이 반대가 됐어요" }, { t: "힘이 작용하는 곳이 바뀌었어요" }],
+      "화살표를 같은 방향으로 <b>3칸에서 6칸</b>으로 두 배 길게 그리면 무엇이 달라질까요?",
+      [{ t: "힘의 크기가 2배가 돼요", ok: true }, { t: "힘의 방향이 반대가 돼요" }, { t: "힘이 작용하는 곳이 바뀌어요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "길이가 <b>힘의 크기</b>예요. 3칸은 30 N, 6칸은 60 N이에요.", onNext: finish },
+      { why: "화살표의 길이는 <b>힘의 크기</b>를 나타내요. 3칸은 30 N, 6칸은 60 N이에요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("힘은 물체의 <b>움직임</b>이나 <b>모양</b>을 바꿔요. 힘은 화살표로 나타내요. 시작점은 힘이 작용하는 곳, 길이는 크기, 촉은 방향이에요.");
+    f.say("화살표 하나로 힘을 어디에, 얼마나 세게, 어느 쪽으로 주었는지 모두 나타냈어요!");
+    f.slot.conclude("힘은 물체의 <b>운동 상태</b>나 <b>모양</b>을 바꿔요. 화살표의 시작점은 <b>작용점</b>, 길이는 <b>크기</b>, 화살촉은 <b>방향</b>을 나타내요.");
     api.enableCTA(s.cta ?? "다음");
   }
 

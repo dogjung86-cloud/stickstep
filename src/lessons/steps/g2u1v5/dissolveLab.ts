@@ -1,4 +1,4 @@
-// [중2 Ⅰ v5] g2u1l3 녹이기 랩: 「물 10 g에 얼마나 녹을까요?」
+// [중2 Ⅰ v5] g2u1l3 녹이기 랩: 「물 10 g에 최대 얼마나 녹을까요?」
 // 책의 탐구 1을 손으로 한다: 자석 젓개 위 유리병의 실온의 물 10 g에 질산 칼륨(또는 황산 구리(Ⅱ))을 0.5 g씩 넣어 더 녹지 않을 때까지의 양을 적는다.
 // 학생이 정하는 것: 어느 물질부터 할지, 몇 번 넣을지, 언제 한계라고 적을지.
 // 실패하는 길: 바닥에 남은 것이 없는데 한계라고 적으면 받아 주지 않는다(아직 더 녹는다).
@@ -94,7 +94,7 @@ export const g2u1DissolveLab: StepRenderer = (host, step, api) => {
     pile.innerHTML = pileSvg(left, s);
     jars.innerHTML = jarSvg(0, rec[0]) + jarSvg(1, rec[1]);
     nEl.textContent = `${fx(added[cur])} g`;
-    strip.set(`<span>${s.name}  ·  바닥에 남은 것 <b class="${left > 0 ? "k" : ""}">${left > 0 ? "있음" : "없음"}</b></span>`);
+    strip.set(`<span>${s.name}  ·  바닥에 남은 고체 <b class="${left > 0 ? "k" : ""}">${left > 0 ? "있음" : "없음"}</b></span>`);
     SOL.forEach((x, i) => {
       if (rec[i] !== null) seg.btns[i].innerHTML = `${x.name}<i>최대 ${fx(rec[i] as number)} g</i>`;
     });
@@ -105,12 +105,12 @@ export const g2u1DissolveLab: StepRenderer = (host, step, api) => {
     cur = i;
     seg.set(i);
     paint();
-    f.say(`<b>${SOL[i].eul}</b> 넣을 병이에요. 0.5 g씩 넣으며 더 녹지 않는 때를 찾아보세요.`);
+    f.say(`실온의 물 10 g에 <b>${SOL[i].eul}</b> 0.5 g씩 넣으며 최대 몇 g까지 녹는지 찾아보세요.`);
     sync();
   });
   const bAdd = bvBtn("main", "0.5 g 넣기");
   bAdd.dataset.k = "add";
-  const bRec = bvBtn("", "한계라고 적기");
+  const bRec = bvBtn("", "녹는 한계 기록하기");
   bRec.dataset.k = "rec";
 
   function sync(): void {
@@ -140,9 +140,9 @@ export const g2u1DissolveLab: StepRenderer = (host, step, api) => {
       const over = added[cur] > s.limit;
       if (over && added[cur] - s.limit <= 0.5) {
         haptic(HAPTIC.wrong);
-        f.say(`이번 0.5 g은 저어도 <b>녹지 않고 바닥에 남았어요</b>. 한계를 넘은 거예요.`);
-      } else if (over) f.say("더 넣어도 바닥에 <b>쌓이기만</b> 해요. 이제 한계를 적어 보세요.");
-      else f.say(`${fx(added[cur])} g까지 저으니 <b>다 녹았어요</b>. 바닥에 남은 것이 없어요.`);
+        f.say("이번에 넣은 0.5 g은 <b>녹지 않고 바닥에 남았어요</b>. 녹는 한계를 넘었어요.");
+      } else if (over) f.say("더 넣어도 녹지 않고 바닥에 <b>쌓이기만</b> 해요. 이제 녹는 한계를 기록해 보세요.");
+      else f.say(`${fx(added[cur])} g까지는 <b>모두 녹았어요</b>. 바닥에 남은 고체가 없어요.`);
       sync();
     }, 650);
   });
@@ -151,14 +151,14 @@ export const g2u1DissolveLab: StepRenderer = (host, step, api) => {
     if (added[cur] <= s.limit) {
       haptic(HAPTIC.wrong);
       host.dataset.g2u1Fail = "1";
-      f.say("바닥에 <b>남은 것이 없어요</b>. 아직 더 녹을 수 있으니 한계가 아니에요. 더 넣어 보세요.");
+      f.say("바닥에 <b>남은 고체가 없어요</b>. 아직 더 녹을 수 있으니 0.5 g씩 더 넣어 보세요.");
       return;
     }
     haptic(HAPTIC.correct);
     rec[cur] = s.limit;
     seg.btns[cur].classList.add("used");
     paint();
-    f.say(`${s.eun} 물 10 g에 <b>${fx(s.limit)} g</b>까지 녹고 그다음부터 남았어요. 표에 적었어요.`);
+    f.say(`${s.eun} 물 10 g에 최대 <b>${fx(s.limit)} g</b>까지 녹았어요. 오른쪽 병에 기록했어요.`);
     sync();
     if (rec.every((x) => x !== null)) tm.later(ask, 1100);
   });
@@ -168,15 +168,15 @@ export const g2u1DissolveLab: StepRenderer = (host, step, api) => {
     lab.judge(
       "질산 칼륨은 물 10 g에 3.0 g까지 녹았어요. 같은 온도의 물이 <b>100 g</b>이라면?",
       [{ t: "약 30 g까지 녹는다", ok: true }, { t: "똑같이 3.0 g까지 녹는다" }, { t: "넣는 대로 모두 녹는다" }],
-      "물이 10배면 녹을 수 있는 양도 10배예요. 그래도 <b>한계</b>는 있어요.",
-      () => lab.finish("일정한 양의 물에 녹는 양에는 <b>한계</b>가 있고, 그 한계는 <b>물질마다</b> 달라요. 질산 칼륨 3.0 g, 황산 구리(Ⅱ) 2.0 g."),
+      "물의 양이 10배가 되면 녹을 수 있는 최대 양도 10배가 돼요.",
+      () => lab.finish("일정한 양의 물에 녹는 양에는 <b>한계</b>가 있고, 그 한계는 <b>물질마다</b> 달라요(물 10 g에 질산 칼륨 3.0 g, 황산 구리(Ⅱ) 2.0 g)."),
     );
   }
 
   seg.set(0);
   paint();
   f.slot.setControls(strip.el, seg.el, g1Row(bAdd, bRec));
-  f.say("실온의 물 10 g이 든 병이에요. <b>0.5 g씩</b> 넣으며 더 녹지 않는 때를 찾아보세요.");
+  f.say("실온의 물 10 g이 든 병이에요. 고체를 <b>0.5 g씩</b> 넣으며 최대 몇 g까지 녹는지 찾아보세요.");
   sync();
   return lab.cleanup;
 };

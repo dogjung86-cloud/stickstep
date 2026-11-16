@@ -98,7 +98,7 @@ export function bet(c: OpenerCtx, question: string, choices: string[], go: strin
   c.ask(question, {
     choices,
     neutral: true,
-    good: `예측 완료! ${go}`,
+    good: `좋아요! 이제 ${go}`,
     onDone: (picked) => {
       c.step.dataset.opnPhase = "play";
       c.stage.classList.add("play");

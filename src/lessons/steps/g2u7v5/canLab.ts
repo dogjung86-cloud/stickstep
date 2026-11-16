@@ -41,7 +41,7 @@ const farRow = (away: number): [number, number][] =>
 
 export const canLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 4, api });
+  const f = xFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
 
@@ -57,20 +57,20 @@ export const canLab: StepRenderer = (host, step, api) => {
 
   const rod = xSegs(
     [
-      { k: "plain", t: "문지르지 않은 막대" },
-      { k: "neg", t: "문지른 막대 (−)" },
+      { k: "plain", t: "대전되지 않은 막대" },
+      { k: "neg", t: "문지른 (−) 막대" },
     ],
     "plain",
     (k) => {
       charged = k === "neg";
       reset(false);
-      f.say(charged ? "털가죽으로 문질러 <b>(−)전기</b>를 띤 막대예요. 닿지 않게 가까이 가져가 보세요." : "문지르지 않은 막대예요. 가까이 가져가면 어떻게 될까요?");
+      f.say(charged ? "털가죽으로 문질러 <b>(−)전기</b>를 띤 막대예요. 깡통에 닿지 않게 가까이 대 보세요." : "전기를 띠지 않은 막대예요. 깡통 가까이에 대면 어떻게 될까요?");
     },
   );
   const where = xSegs(
     [
-      { k: "L", t: "왼쪽에서" },
-      { k: "R", t: "오른쪽에서" },
+      { k: "L", t: "왼쪽에서 접근" },
+      { k: "R", t: "오른쪽에서 접근" },
     ],
     "L",
     (k) => {
@@ -83,8 +83,8 @@ export const canLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: 100,
     value: 0,
-    label: "막대를 깡통에 가까이",
-    ticks: ["멀리", "가까이", "닿음"],
+    label: "막대와 깡통 사이의 거리",
+    ticks: ["멀리", "가까이", "접촉(닿음)"],
     onInput: (v) => {
       if (touched || finished) return;
       closeness = v / 100;
@@ -107,10 +107,10 @@ export const canLab: StepRenderer = (host, step, api) => {
     touched = true;
     dist.input.disabled = true;
     haptic(HAPTIC.wrong);
-    f.say(charged ? "막대가 <b>닿았어요</b>. 전자가 깡통으로 건너가 깡통이 밀려나요. 닿지 않게 다시 해 봐요." : "막대가 닿았어요. 닿지 않게 다시 가져가 보세요.");
+    f.say(charged ? "막대가 깡통에 <b>닿아 버렸어요</b>! 전자가 깡통으로 건너가면서 같은 (−)전기를 띠어 밀려났어요. 이번에는 닿지 않게 가까이만 대 보세요." : "막대가 깡통에 닿았어요. 이번에는 닿지 않게 가까이만 대 보세요.");
     tm.later(() => {
       reset(true);
-      f.say("처음 자리로 돌려놓았어요. 이번에는 <b>닿지 않게</b> 가까이 가져가 보세요.");
+      f.say("막대를 처음 위치로 물렸어요. 이번에는 깡통에 <b>닿지 않게</b> 가까이만 대 보세요.");
     }, 2600);
   }
   const sides = new Set<number>();
@@ -118,17 +118,17 @@ export const canLab: StepRenderer = (host, step, api) => {
     if (closeness < 0.62) return;
     const before = done();
     if (!charged) {
-      if (!seen.plain) f.say("전자가 <b>고르게 퍼진 그대로</b>예요. 깡통도 움직이지 않아요. 문지른 막대로도 해 봐요.");
+      if (!seen.plain) f.say("깡통 속 전자가 <b>고르게 퍼진 채</b> 움직이지 않고, 깡통도 가만히 있어요. 이제 <b>문지른 (−) 막대</b>로 바꿔 해 보세요.");
       seen.plain = true;
     } else if (!sides.has(side)) {
       sides.add(side);
       haptic(HAPTIC.correct);
       if (sides.size === 1) {
         seen.near = true;
-        f.say("전자가 막대에서 <b>먼 쪽</b>으로 몰리고 깡통이 굴러와요. 반대쪽에서도 해 봐요.");
+        f.say("깡통 속 전자가 막대에서 <b>먼 쪽</b>으로 밀려나고, 깡통이 막대 쪽으로 굴러와요! 이제 <b>반대쪽</b>에서도 가까이 대 보세요.");
       } else {
         seen.other = true;
-        f.say("이번에도 전자는 <b>먼 쪽</b>으로 몰리고, 깡통은 막대 쪽으로 굴러와요.");
+        f.say("반대쪽에서 대도 전자는 막대에서 <b>먼 쪽</b>으로 밀려나고, 깡통은 막대 쪽으로 끌려와요!");
       }
     }
     if (done() !== before) f.pips(done());
@@ -138,29 +138,29 @@ export const canLab: StepRenderer = (host, step, api) => {
       where.lock(true);
       dist.input.disabled = true;
       tm.later(ask1, 2400);
-    } else if (seen.near && seen.other && !seen.plain) f.say("<b>문지르지 않은 막대</b>도 가까이 가져가서 비교해 보세요.");
+    } else if (seen.near && seen.other && !seen.plain) f.say("<b>대전되지 않은 막대</b>도 가까이 대 보면서 전자 분포가 어떻게 다른지 비교해 보세요.");
   }
 
   function ask1(): void {
     f.slot.ask(
-      "(−)전기를 띤 막대와 가까운 쪽 깡통이 띠는 전기는?",
+      "(−)전기를 띤 막대와 가까운 쪽 깡통 표면은 어떤 전기를 띠나요?",
       [{ t: "(+)전기", ok: true }, { t: "(−)전기" }, { t: "전기를 띠지 않아요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "전자가 먼 쪽으로 밀려나 가까운 쪽에는 <b>(+)</b>가 남았어요.", onNext: ask2 },
+      { why: "(−)전기를 띤 전자가 먼 쪽으로 밀려나면서 가까운 쪽에는 <b>(+)전하</b>가 남았어요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.slot.ask(
-      "막대를 가까이 하는 동안 깡통 속 전자의 전체 개수는?",
-      [{ t: "그대로예요", ok: true }, { t: "늘어났어요" }, { t: "줄어들었어요" }],
+      "막대가 닿지 않게 가까이 대는 동안 깡통 속 전자의 전체 개수는 어떻게 되나요?",
+      [{ t: "변함없이 그대로예요", ok: true }, { t: "처음보다 늘어났어요" }, { t: "처음보다 줄어들었어요" }],
       () => undefined,
-      { why: "닿지 않았으니 전자는 <b>깡통 안에서 자리만</b> 옮겼어요.", onNext: finish },
+      { why: "막대가 닿지 않았으므로 전자는 밖으로 나가지 않고 <b>깡통 안에서 위치만</b> 이동했어요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("(−)전기를 띤 막대를 가까이 하면 깡통의 전자가 <b>먼 쪽으로</b> 밀려나요. 가까운 쪽은 (+), 먼 쪽은 (−)전기를 띠어 깡통이 막대 쪽으로 끌려와요.");
+    f.say("전자가 먼 쪽으로 밀려나면서 막대와 가까운 쪽이 (+)전기를 띠어 끌려온다는 것을 확인했어요!");
+    f.slot.conclude("금속 깡통에 (−)전기를 띤 막대를 가까이 대면 깡통 속 전자가 <b>막대에서 먼 쪽으로</b> 밀려나요. 그 결과 막대와 가까운 쪽은 <b>(+)전기</b>, 먼 쪽은 <b>(−)전기</b>를 띠어 깡통이 막대 쪽으로 끌려와요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -264,8 +264,8 @@ export const canLab: StepRenderer = (host, step, api) => {
     xPill(ctx, touched ? "막대가 닿았어요" : shift > 0.45 ? "전자가 먼 쪽으로 몰림" : "전자가 고르게 퍼져 있음", touched ? X.plus : X.minus);
   });
 
-  f.say("깡통 속 붉은 점은 원자핵(+), 파란 알갱이는 전자(−)예요. 막대를 골라 <b>가까이</b> 가져가 보세요.");
-  api.setCTA("막대를 깡통에 가져가 보세요", { enabled: false });
+  f.say("금속 깡통 속 붉은 점은 원자핵(+), 파란 입자는 전자(−)예요. 막대를 골라 깡통에 <b>닿지 않게 가까이</b> 대 보세요.");
+  api.setCTA("두 막대를 양쪽에서 가까이 대 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

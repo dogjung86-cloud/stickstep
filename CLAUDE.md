@@ -682,8 +682,10 @@ src/
 - 틀: 제목(질문 한 줄) → 손그림 무대 → 아래 칸(조작 줄, 예측 보기, 쌤의 말). 장면은 `steps/opener/<장면>.ts`, 시트는
   `styles/opener*.css`(접두 `.opn-`), 그림은 `qa/sketch/scenes/intro-*.mjs` → `node qa/sketch/build-intro.mjs` →
   `ui/introArt.generated.ts`(생성물). 예측 보기는 공용 `hookAsk.ask()` 그대로다.
-- 장면 규칙(사용자 확정): 폰 한 화면(390×700) 안에 모든 시점, 물체 다섯 개 안쪽, 쌤의 말은 한 번에 두 줄 안쪽, 예측은 결과보다
+- 장면 규칙(사용자 확정): 폰 한 화면(390×700) 안에 모든 시점, 물체 다섯 개 안쪽, 쌤의 말은 한 번에 세 줄 안쪽, 예측은 결과보다
   앞에, 긴 끌기 금지(누르기·짧은 끌기·꾹 누르기). 만드는 법과 걸렸던 것은 design/u2-intro-samples.md.
+  쌤의 말은 처음에 두 줄 안쪽이었다가 2026-11-16 사용자 결정으로 세 줄까지 허용했다(390px 폰 기준. opener.ts가 14px로 두 줄을 넘으면 13px로 줄이고,
+  13px로도 세 줄을 넘으면 개발 모드에서 `[opn-fit]` 경고를 낸다). 360px 폰에서는 네 줄이 되는 말이 있지만 그런 폰은 화면이 더 길어 한 화면은 지킨다.
 - 주소로 레슨 바로 열기(`?u2intro=u2l4`)는 개발 서버에서만 된다. 간소 검사: `PORT=<포트> node qa/check-u2intro-rest.mjs`,
   `node qa/check-u1intro.mjs`. **옛 훅을 전제로 한 검사(e2e-u2v5 등의 도입 구간, check-u2intro-fit, e2e-u2intro)는 아직 새 틀에
   맞추지 않았다**(돌리려면 `?u2intro=0`으로 끄거나 고친다).

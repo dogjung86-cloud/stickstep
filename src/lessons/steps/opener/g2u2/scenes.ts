@@ -15,19 +15,19 @@ import { bet, clamp01, ctlBtn, head, hint, hold, layer, part, wrap, haptic, HAPT
 export function sea(c: OpenerCtx): void {
   layer(c, "seaBase");
   const wet = part(c, "opn-g2u2-se-wet"), ball = part(c, "opn-g2u2-se-ball");
-  bet(c, "지구의 물을 전부 모아 공 하나로 뭉치면 얼마나 클까요?", ["지구만큼 크다", "지구의 절반쯤 된다", "구슬처럼 작다"], "예측 완료! 버튼을 <b>꾹 눌러</b> 지구의 물을 모아 보세요.", (pred) => {
+  bet(c, "지구의 물을 전부 모아 공 하나로 뭉치면 얼마나 클까요?", ["지구만큼 크다", "지구의 절반쯤 된다", "구슬처럼 작다"], "좋아요! 버튼을 <b>꾹 눌러</b> 지구의 물을 한곳으로 모아 보세요.", (pred) => {
     const b = ctlBtn(c, "go", "꾹 눌러 물 모으기");
     hint(c, "hold:go");
     hold(c, b, 2000, (p) => {
       wet.style.opacity = String(1 - p);
       ball.style.transform = `scale(${p.toFixed(3)})`;
-    }, () => wrap(c, `${head(pred, "구슬")} 바다와 강, 빙하의 물을 다 모아도 <b>작은 구슬</b>만 해요. 지구의 나머지는 무엇일까요?`));
+    }, () => wrap(c, `${head(pred, "구슬")} 바다와 강, 빙하의 물을 모두 모아도 지구 앞에서는 <b>작은 구슬</b> 크기밖에 안 돼요. 그렇다면 지구는 또 무엇으로 이루어져 있을까요?`));
   });
 }
 
 export function grain(c: OpenerCtx): void {
   layer(c, "grainBase");
-  bet(c, "이 암석을 돋보기로 크게 보면 어떻게 보일까요?", ["한 가지 색으로 고르다", "색이 다른 알갱이들이 보인다", "작은 구멍만 보인다"], "예측 완료! 버튼을 눌러 <b>돋보기</b>를 대 보세요.", (pred) => {
+  bet(c, "이 암석을 돋보기로 크게 보면 어떻게 보일까요?", ["전체가 한 가지 색으로 보인다", "색이 다른 알갱이들이 보인다", "작은 구멍만 보인다"], "좋아요! 버튼을 눌러 암석에 <b>돋보기</b>를 대 보세요.", (pred) => {
     const b = ctlBtn(c, "go", "돋보기 대 보기");
     hint(c, "go");
     b.addEventListener("click", () => {
@@ -42,14 +42,14 @@ export function grain(c: OpenerCtx): void {
 export function lava(c: OpenerCtx): void {
   layer(c, "lavaBase");
   const top = part(c, "opn-g2u2-lv-topcool"), deep = part(c, "opn-g2u2-lv-deepcool"), heat = part(c, "opn-g2u2-lv-heat");
-  bet(c, "땅 위로 흘러나온 것과 땅속 깊이 있는 것, 어느 쪽이 먼저 식을까요?", ["땅 위로 흘러나온 쪽", "땅속 깊이 있는 쪽", "똑같이 식는다"], "예측 완료! 버튼을 <b>꾹 눌러</b> 시간을 보내 보세요.", (pred) => {
+  bet(c, "땅 위로 흘러나온 것과 땅속 깊이 있는 것, 어느 쪽이 먼저 식을까요?", ["땅 위로 흘러나온 쪽", "땅속 깊이 있는 쪽", "똑같이 식는다"], "좋아요! 버튼을 <b>꾹 눌러</b> 시간이 흐른 뒤의 모습을 확인해 보세요.", (pred) => {
     const b = ctlBtn(c, "go", "꾹 눌러 시간 보내기");
     hint(c, "hold:go");
     hold(c, b, 2400, (p) => {
       top.style.opacity = String(clamp01(p * 1.8));
       heat.style.opacity = String(1 - clamp01(p * 1.8));
       deep.style.opacity = String(p * 0.16);
-    }, () => wrap(c, `${head(pred, "땅 위")} 땅 위의 것은 벌써 굳었는데 땅속의 것은 아직 뜨거워요. 식는 <b>빠르기</b>가 다르면 굳은 돌도 다를까요?`));
+    }, () => wrap(c, `${head(pred, "땅 위")} 땅 위로 나온 용암은 금방 식어 굳었지만 땅속 깊은 곳은 아직 뜨거워요. 식는 <b>빠르기</b>가 다르면 만들어지는 암석도 다를까요?`));
   });
 }
 
@@ -72,8 +72,8 @@ export function jar(c: OpenerCtx): void {
 export function snow(c: OpenerCtx): void {
   layer(c, "snowBase");
   const soft = part(c, "opn-g2u2-sn-soft"), plate = part(c, "opn-g2u2-sn-plate"), hard = part(c, "opn-g2u2-sn-hard");
-  bet(c, "폭신한 눈 더미를 판으로 세게 누르면 어떻게 될까요?", ["녹아서 물이 된다", "단단한 덩어리가 된다", "다시 부풀어 오른다"], "예측 완료! 버튼을 <b>꾹 눌러</b> 눈을 눌러 보세요.", (pred) => {
-    const b = ctlBtn(c, "go", "꾹 눌러 누르기");
+  bet(c, "폭신한 눈 더미를 판으로 세게 누르면 어떻게 될까요?", ["녹아서 물이 된다", "단단한 덩어리가 된다", "다시 부풀어 오른다"], "좋아요! 버튼을 <b>꾹 눌러</b> 눈 더미를 세게 눌러 보세요.", (pred) => {
+    const b = ctlBtn(c, "go", "꾹 눌러 세게 누르기");
     hint(c, "hold:go");
     hold(c, b, 2000, (p) => {
       plate.style.transform = `translateY(${(p * 158).toFixed(1)}px)`;
@@ -96,7 +96,7 @@ export function pebble(c: OpenerCtx): void {
       haptic(HAPTIC.tap);
       c.stage.classList.add(`up${n}`);
       if (n === 1) {
-        c.say("강 중간의 돌은 더 크고 <b>덜 둥글어요</b>. 한 번 더 올라가 보세요.");
+        c.say("강 상류로 갈수록 돌이 더 크고 <b>덜 둥글어요</b>. 한 번 더 올라가 보세요.");
         return;
       }
       b.disabled = true;
@@ -108,7 +108,7 @@ export function pebble(c: OpenerCtx): void {
 export function bottle(c: OpenerCtx): void {
   layer(c, "bottleBase");
   const ice = part(c, "opn-g2u2-bt-ice"), crack = part(c, "opn-g2u2-bt-crack"), cold = part(c, "opn-g2u2-bt-cold");
-  bet(c, "물을 가득 채워 뚜껑을 닫은 유리병을 꽁꽁 얼리면 어떻게 될까요?", ["병에 금이 간다", "병이 안쪽으로 찌그러진다", "아무 일도 없다"], "예측 완료! 버튼을 <b>꾹 눌러</b> 병을 얼려 보세요.", (pred) => {
+  bet(c, "물을 가득 채워 뚜껑을 닫은 유리병을 꽁꽁 얼리면 어떻게 될까요?", ["병에 금이 간다", "병이 안쪽으로 찌그러진다", "아무 변화가 없다"], "예측 완료! 버튼을 <b>꾹 눌러</b> 병을 얼려 보세요.", (pred) => {
     const b = ctlBtn(c, "go", "꾹 눌러 얼리기");
     hint(c, "hold:go");
     hold(c, b, 2200, (p) => {
@@ -121,7 +121,7 @@ export function bottle(c: OpenerCtx): void {
 
 export function paper(c: OpenerCtx): void {
   layer(c, "paperBase");
-  bet(c, "찢어진 두 조각이 원래 한 장이었는지 알려면 무엇을 봐야 할까요?", ["찢어진 가장자리의 모양", "글줄과 그림이 이어지는지", "두 가지를 모두"], "예측 완료! 버튼을 눌러 두 조각을 <b>맞대</b> 보세요.", () => {
+  bet(c, "찢어진 두 조각이 원래 한 장이었는지 알려면 무엇을 봐야 할까요?", ["찢어진 가장자리의 모양", "글줄과 그림이 이어지는지", "두 가지 모두 확인한다"], "예측 완료! 버튼을 눌러 두 조각을 <b>맞대</b> 보세요.", () => {
     const b = ctlBtn(c, "go", "두 조각 맞대기");
     hint(c, "go");
     b.addEventListener("click", () => {
@@ -135,7 +135,7 @@ export function paper(c: OpenerCtx): void {
 
 export function ice(c: OpenerCtx): void {
   layer(c, "iceBase");
-  bet(c, "언 호수의 얼음판을 밀면 어디가 가장 요란할까요?", ["얼음판의 한가운데", "얼음판끼리 맞닿은 가장자리", "어디나 똑같다"], "예측 완료! 버튼을 눌러 왼쪽 <b>얼음판</b>을 밀어 보세요.", (pred) => {
+  bet(c, "호수 위의 커다란 얼음판을 옆으로 밀면 어느 부분이 부딪혀 부서질까요?", ["얼음판의 한가운데", "얼음판끼리 맞닿은 가장자리", "어디나 똑같다"], "예측 완료! 버튼을 눌러 왼쪽 <b>얼음판</b>을 밀어 보세요.", (pred) => {
     const b = ctlBtn(c, "go", "얼음판 밀기");
     hint(c, "go");
     b.addEventListener("click", () => {

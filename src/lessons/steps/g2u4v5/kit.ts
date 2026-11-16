@@ -35,9 +35,10 @@ export interface G4Lab {
   finished: () => boolean;
 }
 
-export function g4Lab(host: HTMLElement, api: StepAPI, s: G4Step, o: { steps: number; cls: string; wait: string }): G4Lab {
+/** tall: 도움말에 세 줄 글이 하나라도 있는 랩은 처음부터 세 줄 상자를 잡아 둔다(랩 도중에 무대가 밀리지 않게, b6Lab 「글 맞춤」). */
+export function g4Lab(host: HTMLElement, api: StepAPI, s: G4Step, o: { steps: number; cls: string; wait: string; tall?: boolean }): G4Lab {
   host.classList.add("g2u4x-step");
-  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `g2u4x-stage ${o.cls}`, qCls: "g2u4x-q", api });
+  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `g2u4x-stage ${o.cls}`, qCls: "g2u4x-q", api, tall: o.tall });
   const tm = bvTimers();
   const fns: Array<() => void> = [];
   let done = false;
@@ -68,7 +69,7 @@ export function g4Lab(host: HTMLElement, api: StepAPI, s: G4Step, o: { steps: nu
       done = true;
       host.dataset.g4Phase = "done";
       f.pips(o.steps);
-      f.say("잘했어요. <b>알게 된 것</b>을 읽고 다음으로 넘어가요.");
+      f.say("실험을 모두 마쳤어요! 아래 <b>핵심 정리</b>를 확인하고 다음으로 넘어가 보세요.");
       f.slot.conclude(html);
       haptic(HAPTIC.ctaUnlock);
       api.recordQuiz(wrong === 0);
@@ -312,6 +313,33 @@ export function stepper(label: string, key: string, onStep: (d: number) => void)
 }
 
 export { bvBtn };
+
+// ── 조사(받침에 맞춰) ───────────────────────────────────────────────
+// 변수로 이은 글의 조사를 앞말의 받침에 맞춘다("은(는)" 같은 겹쳐 쓰기 대신). 끝 글자가 한글이면 그 받침,
+// 숫자와 알파벳은 읽는 소리로 본다(1 일, 3 삼, 6 육, 7 칠, 8 팔, 0 영·십은 받침. 원소 기호 Cl은 '시엘'이라 받침 ㄹ).
+// 끝에 붙은 괄호 덧말("염화 나트륨(소금)")과 굵은 글씨 표시는 떼고 본다.
+/** 0: 받침 없음, 1: 받침 있음(ㄹ 아님), 2: ㄹ받침 */
+function batchim(word: string): 0 | 1 | 2 {
+  const w = word.replace(/<[^>]*>/g, "").trim().replace(/\([^()]*\)$/, "").trim();
+  const m = w.match(/[가-힣A-Za-z0-9](?=[^가-힣A-Za-z0-9]*$)/);
+  if (!m) return 0;
+  const ch = m[0];
+  if (/[가-힣]/.test(ch)) {
+    const j = (ch.charCodeAt(0) - 0xac00) % 28;
+    return j === 0 ? 0 : j === 8 ? 2 : 1;
+  }
+  if (/[0-9]/.test(ch)) return "178".includes(ch) ? 2 : "036".includes(ch) ? 1 : 0;
+  const up = ch.toUpperCase();
+  return "LR".includes(up) ? 2 : "MN".includes(up) ? 1 : 0;
+}
+export const eun = (w: string): string => (batchim(w) ? "은" : "는");
+export const iga = (w: string): string => (batchim(w) ? "이" : "가");
+export const eul = (w: string): string => (batchim(w) ? "을" : "를");
+/** 이에요/예요 */
+export const ida = (w: string): string => (batchim(w) ? "이에요" : "예요");
+/** 으로/로(ㄹ받침은 로) */
+export const ro = (w: string): string => (batchim(w) === 1 ? "으로" : "로");
+
 export const tap = (): void => haptic(HAPTIC.tap);
 export const good = (): void => haptic(HAPTIC.correct);
 export const bad = (): void => haptic(HAPTIC.wrong);

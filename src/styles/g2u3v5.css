@@ -82,6 +82,8 @@
 /* ── 랩: 준비물 버튼(세 칸) ── */
 .g2u3x-segs.tall .g2u3x-seg { height: 62px; }
 .g2u3x-segs.tall .g2u3x-seg i { font-size: 11.5px; }
+/* 보조 글이 칸 폭(99px)에 거의 차서(공기 중에 연기 채우기 96px) 넘치면 두 줄로 접는다(62px 칸에 이름 19 + 두 줄 28) */
+.g2u3x-segs.tall .g2u3x-seg i { white-space: normal; word-break: keep-all; line-height: 14px; text-align: center; }
 
 /* 3. 깜깜한 방 */
 .opn-g2u3-dark .night { fill: #0B1524; opacity: .97; transition: opacity .35s; }
@@ -125,6 +127,8 @@
 .g2u3x-seg.g2u3x-fac i { font-size: 13px; font-weight: 800; color: var(--ink); }
 .g2u3x-seg.g2u3x-fac b { font-size: 12.5px; color: var(--sub); }
 .g2u3x-seg.g2u3x-fac.on i { color: var(--subj-light-press); }
+/* 달라진 것 고르기: '파동의 모양(파형)'이 칸 폭(99px)에 1px만 남아서, 넘치면 두 줄로 접는다(48px 칸에 두 줄 34) */
+.g2u3x-segs.g2u3x-pk .g2u3x-seg b { white-space: normal; word-break: keep-all; line-height: 17px; text-align: center; }
 
 /* ── g2u3l6 켜고 끄는 버튼(손전등, 화소)과 네 칸 표 ── */
 .g2u3x-seg.g2u3x-ch { height: 56px; }

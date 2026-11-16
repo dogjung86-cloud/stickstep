@@ -17,7 +17,7 @@ const BALLS = Array.from({ length: N }, (_, i) => ({ x: rnd(i * 2.3 + 1) * 2 - 1
 
 export const modelLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = sFrame(host, { title: s.title, steps: 4, api });
+  const f = sFrame(host, { title: s.title, steps: 4, api, tall: true });
   f.stage.appendChild(sPhoto("g2u8x-mw", "milkyway-pan.webp", "밤하늘을 가로지르는 은하수"));
   const st = sCanvas(f.stage);
   const tm = bvTimers();
@@ -34,8 +34,8 @@ export const modelLab: StepRenderer = (host, step, api) => {
 
   const wireSeg = sSegs<Wire>(
     [
-      { k: "same", t: "철사 길이 같게" },
-      { k: "diff", t: "철사 길이 다르게" },
+      { k: "same", t: "철사 길이 같게(한 층)" },
+      { k: "diff", t: "철사 길이 다르게(여러 층)" },
     ],
     "same",
     (k) => {
@@ -47,8 +47,8 @@ export const modelLab: StepRenderer = (host, step, api) => {
   );
   const camSeg = sSegs<Cam>(
     [
-      { k: "front", t: "앞에서 찍기" },
-      { k: "top", t: "위에서 찍기" },
+      { k: "front", t: "옆(앞)에서 찍기" },
+      { k: "top", t: "위에서 내려다보며 찍기" },
     ],
     null,
     (c) => {
@@ -60,9 +60,9 @@ export const modelLab: StepRenderer = (host, step, api) => {
       done.add(`${wire}${c}`);
       log.set(idx(wire, c), band ? "한 줄 띠" : "흩어짐");
       f.pips(done.size);
-      if (c === "top") f.say("위에서 찍으니 공들이 <b>흩어져</b> 보여요. 두 모형이 똑같이 보여 가릴 수 없어요.");
-      else if (band) f.say("공들이 <b>한 줄로 겹쳐</b> 띠처럼 찍혔어요. 아래의 실제 은하수와 비교해 보세요.");
-      else f.say("공들이 위아래로 <b>흩어져</b> 찍혔어요. 띠 모양이 아니에요.");
+      if (c === "top") f.say("위에서 내려다보며 찍으니 공들이 사방으로 <b>골고루 흩어져</b> 찍혔어요. 위에서 찍은 사진만으로는 두 모형을 구별할 수 없어요.");
+      else if (band) f.say("공들이 같은 높이에 모여 있어서 옆(앞)에서 찍자 <b>가로로 긴 띠 모양</b>으로 겹쳐 찍혔어요! 아래의 실제 은하수 사진과 꼭 닮았죠?");
+      else f.say("철사 길이가 제각각이라 옆(앞)에서 찍어도 공들이 위아래로 <b>흩어져</b> 찍혔어요. 은하수 같은 띠 모양이 나타나지 않아요.");
       if (done.size === 4) {
         finished = true;
         tm.later(() => {
@@ -78,16 +78,16 @@ export const modelLab: StepRenderer = (host, step, api) => {
 
   function askFinal(): void {
     album = true;
-    f.say("찍은 네 장의 사진을 보며 아래 질문에 답해 보세요.");
+    f.say("두 모형을 옆(앞)과 위에서 찍은 네 장의 사진을 한눈에 모아 보았어요!");
     f.slot.ask(
-      "은하수처럼 띠 모양으로 찍힌 사진은?",
-      [{ t: "같은 길이 모형을 앞에서", ok: true }, { t: "다른 길이 모형을 앞에서" }, { t: "같은 길이 모형을 위에서" }],
+      "실제 은하수처럼 가로로 긴 띠 모양으로 찍힌 사진은 어느 것인가요?",
+      [{ t: "철사 길이가 같은 모형을 옆(앞)에서 찍은 사진", ok: true }, { t: "철사 길이가 다른 모형을 옆(앞)에서 찍은 사진" }, { t: "철사 길이가 같은 모형을 위에서 찍은 사진" }],
       (ok) => api.recordQuiz(ok),
-      { why: "공이 <b>한 층에 납작하게</b> 모여 있어 옆에서 보면 겹쳐요.", onNext: finish },
+      { why: "별(공)들이 <b>한 층에 납작한 원반처럼</b> 모여 있어야 옆에서 바라보았을 때 한 줄로 겹쳐 띠 모양으로 보여요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("은하수가 띠 모양으로 보이는 까닭은 우리은하의 별들이 납작한 원반 모양으로 모여 있기 때문이라는 것을 확인했어요!");
     f.slot.conclude("은하수가 띠로 보이는 것은 우리은하의 별들이 <b>납작한 원반 모양</b>으로 모여 있고, 우리가 그 안에서 옆으로 보기 때문이에요.");
     api.enableCTA(s.cta ?? "다음");
   }

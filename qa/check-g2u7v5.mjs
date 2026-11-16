@@ -87,7 +87,7 @@ const LAB = {
     await at("rub-moved");
     await tapText(page, "떼어 놓고"); await W(page, 600);
     await at("rub-apart");
-    await finishLab("rub", "이름 붙이기", 2);
+    await finishLab("rub", "용어 알아보기", 2);
   },
   async can() {
     await at("can-start");
@@ -102,21 +102,21 @@ const LAB = {
     await tapKey(page, "R"); await W(page, 300);
     await setRange(page, 85); await W(page, 1200);
     await at("can-other");
-    await finishLab("can", "이름 붙이기", 2);
+    await finishLab("can", "용어 알아보기", 2);
   },
   async wire() {
     await at("wire-start");
-    await tapText(page, "전지 돌려"); await W(page, 500);
+    await tapText(page, "전지 방향"); await W(page, 500);
     await at("wire-fail", false);
     await tapText(page, "스위치 닫기"); await W(page, 1200);
     await at("wire-closed");
-    await tapText(page, "전지 돌려"); await W(page, 1200);
+    await tapText(page, "전지 방향"); await W(page, 1200);
     await at("wire-flip");
-    await finishLab("wire", "물길과 비교하기", 2);
+    await finishLab("wire", "물길 모형과 비교하기", 2);
   },
   async water() {
     await at("water-start");
-    ok((await helper(page)).includes("빛나는 곳"), `water: 세로 안내 글이 힌트와 다른 말("${await helper(page)}")`);
+    ok((await helper(page)).includes("빛나는 요소"), `water: 세로 안내 글이 힌트와 다른 말("${await helper(page)}")`);
     await tapText(page, "가로 화면"); await W(page, 1200);
     const look = () => page.evaluate(() => {
       const c = document.querySelector(".g2u7x-wcv");
@@ -125,7 +125,7 @@ const LAB = {
     // 힌트: 열자마자 다섯 쌍의 열 자리가 모두 빛나고, 제목과 상태 줄이 무엇을 할지 알려 준다
     let s = await look();
     ok(s.hint.glow.length === 10, `water: 빛나는 자리 ${s.hint.glow.length}곳(열 곳이어야)`);
-    ok(s.say.includes("빛나는 곳을 눌러") && s.title.includes("빛나는 곳"), `water: 상태 줄이나 제목에 할 일이 없음("${s.say}" / "${s.title}")`);
+    ok(s.say.includes("빛나는 곳을 눌러") && s.title.includes("빛나는 요소"), `water: 상태 줄이나 제목에 할 일이 없음("${s.say}" / "${s.title}")`);
     const small = s.hint.boxes.filter(([, , w, h]) => w < 48 || h < 48);
     ok(small.length === 0, `water: 48px보다 작은 누르는 자리 ${small.length}곳`);
     // 빛이 실제로 칠해졌는지: 그림이 없는 전압 자리의 오른쪽 테두리를 읽는다
@@ -142,7 +142,7 @@ const LAB = {
     const vr = s.hits.gap[1];
     await tapRot(page, vr[0] + vr[2] + 30, vr[1] + vr[3] / 2); await W(page, 300);
     s = await look();
-    ok(s.hint.nudge === "gap:1" && s.say.includes("빛나는 곳을 눌러야"), `water: 빈 곳을 눌러도 가까운 자리를 짚지 않음(${s.hint.nudge}, "${s.say}")`);
+    ok(s.hint.nudge === "gap:1" && s.say.includes("빛나는 요소를 눌러야"), `water: 빈 곳을 눌러도 가까운 자리를 짚지 않음(${s.hint.nudge}, "${s.say}")`);
     await page.screenshot({ path: join(OUT, `${cur}-water-nudge.png`) });
     // 짝을 다 찾기 전에 세로로 돌아가면 빛나는 곳을 마저 누르라고 한다
     await page.evaluate(() => document.querySelector(".rot-exit").click()); await W(page, 900);
@@ -154,7 +154,7 @@ const LAB = {
       const r = (await look()).hits[k][i];
       await tapRot(page, r[0] + r[2] / 2, r[1] + r[3] / 2); await W(page, 250);
       s = await look();
-      ok(s.say.includes(`${a}의 짝은 ${b}예요`), `water: ${k}:${i}를 눌렀는데 "${s.say}"`);
+      ok(s.say.includes(`물길의 ${a}에 해당하는 전기 회로 요소는 ${b}${b === "전압" ? "이에요" : "예요"}`), `water: ${k}:${i}를 눌렀는데 "${s.say}"`);
     }
     ok(s.hint.glow.length === 0, `water: 다 찾았는데 빛나는 자리 ${s.hint.glow.length}곳`);
     await page.evaluate(() => document.querySelector('.g2u7x-wbar [data-k="2"]').click()); await W(page, 700);
@@ -164,7 +164,7 @@ const LAB = {
     const done = await page.evaluate(() => document.querySelector(".g2u7x-wsay").dataset.done);
     ok(done === "1", `water: 가로 화면의 할 일이 끝나지 않음(${await page.evaluate(() => document.querySelector(".g2u7x-wsay").textContent)})`);
     await page.evaluate(() => document.querySelector(".rot-exit").click()); await W(page, 900);
-    await finishLab("water", "이름 붙이기", 2);
+    await finishLab("water", "용어 알아보기", 2);
   },
   async ohm() {
     await at("ohm-start");
@@ -177,7 +177,7 @@ const LAB = {
     await tapKey(page, "short"); await W(page, 300);
     for (const v of [1, 2, 3]) { await setRange(page, v); await W(page, 200); await tapText(page, "그래프에 찍기"); await W(page, 300); }
     await at("ohm-both");
-    await finishLab("ohm", "그래프에서 식 찾기", 2);
+    await finishLab("ohm", "그래프에서 규칙 찾기", 2);
   },
   async formula() {
     await at("formula-start");
@@ -188,11 +188,11 @@ const LAB = {
     await tapStage(page, ...pt("short", 1));
     await tapStage(page, ...pt("short", 3)); await W(page, 300);
     await at("formula-ratio");
-    await tapText(page, "저항을 바꿔"); await W(page, 400);
+    await tapText(page, "저항 크기"); await W(page, 400);
     await at("formula-r");
     for (const r of [30, 15, 60]) { await tapKey(page, String(r)); await W(page, 400); }
     await at("formula-curve");
-    await finishLab("formula", "이름 붙이기", 1);
+    await finishLab("formula", "용어 알아보기", 1);
   },
   async bulb() {
     await at("bulb-start");
@@ -203,7 +203,7 @@ const LAB = {
     await tapKey(page, "parallel"); await W(page, 600);
     await tapStage(page, 173, 126); await W(page, 700);
     await at("bulb-parallel-out");
-    await finishLab("bulb", "직렬의 전류부터 재기", 2);
+    await finishLab("bulb", "직렬 회로의 전류 재러 가기", 2);
   },
   async scur() {
     ok(await waitAsk(page), "scur: 예측 질문이 뜨지 않음");
@@ -221,7 +221,7 @@ const LAB = {
     await at("scur-swapped");
     for (const [x, y] of [[302, 132], [173, 74], [44, 132]]) { await tapStage(page, x, y); await W(page, 2600); }
     await at("scur-slow");
-    await finishLab("scur", "직렬의 전압 재기", 2);
+    await finishLab("scur", "직렬 회로의 전압 재러 가기", 2);
   },
   async svolt() {
     await at("svolt-start");
@@ -241,7 +241,7 @@ const LAB = {
     await tapKey(page, "50"); await W(page, 300);
     await tapStage(page, 232, 104); await tapStage(page, 114, 104); await W(page, 400);
     await at("svolt-50");
-    await finishLab("svolt", "병렬로 넘어가기", 2);
+    await finishLab("svolt", "병렬 회로의 전압 알아보러 가기", 2);
   },
   async pvolt() {
     await at("pvolt-start");
@@ -262,7 +262,7 @@ const LAB = {
     await at("pvolt-ser-start");
     await tapStage(page, 232, 96); await tapStage(page, 114, 96); await W(page, 400);
     await at("pvolt-ser");
-    await finishLab("pvolt", "갈림길의 전류 재기", 2);
+    await finishLab("pvolt", "병렬 회로의 전류 재러 가기", 2);
   },
   async pcur() {
     await at("pcur-start");
@@ -280,7 +280,7 @@ const LAB = {
     await tapKey(page, "10"); await W(page, 300);
     for (const [x, y] of [[302, 162], [238, 66], [238, 126]]) { await tapStage(page, x, y); await W(page, 250); }
     await at("pcur-10");
-    await finishLab("pcur", "이름 붙이기", 2);
+    await finishLab("pcur", "용어 알아보기", 2);
   },
   async power() {
     await at("power-start");
@@ -290,7 +290,7 @@ const LAB = {
     await at("power-six");
     await tapKey(page, "10"); await tapKey(page, "fan"); await W(page, 1500);
     await at("power-ten");
-    await finishLab("power", "이름 붙이기", 2);
+    await finishLab("power", "용어 알아보기", 2);
   },
   async eff() {
     await at("eff-start");
@@ -302,7 +302,7 @@ const LAB = {
     await tapKey(page, "led"); await setRange(page, 5); await W(page, 200);
     await at("eff-led");
     await tapText(page, "기록하기"); await W(page, 300);
-    await finishLab("eff", "이름 붙이기", 1);
+    await finishLab("eff", "용어 알아보기", 1);
   },
   async coil() {
     await at("coil-start");
@@ -322,11 +322,11 @@ const LAB = {
     await at("coil-magnet");
     await tapText(page, "코일로"); await W(page, 700);
     await at("coil-ns");
-    await finishLab("coil", "쉽게 기억하는 법", 3);
+    await finishLab("coil", "오른손으로 극 찾는 법 알아보기", 3);
   },
   async grip() {
     await at("grip-start");
-    await finishLab("grip", "정리하기", 3);
+    await finishLab("grip", "핵심 정리하기", 3);
   },
   async swing() {
     await W(page, 1500);
@@ -341,7 +341,7 @@ const LAB = {
     await at("swing-predict");
     await answer(page, true); await W(page, 1700);
     await holdBtn(page, ".bv-ctl .g2u7x-hold", 900); await W(page, 300);
-    await tapText(page, "자석의 극");
+    await tapText(page, "자석 극");
     ok(await waitAsk(page), "swing: 자석 예측 질문이 뜨지 않음");
     await W(page, 300);
     await answer(page, false); await W(page, 1700);
@@ -350,7 +350,7 @@ const LAB = {
     await at("swing-both");
     await page.mouse.up(); await W(page, 300);
     await tapKey(page, "strong"); await holdBtn(page, ".bv-ctl .g2u7x-hold", 900); await W(page, 300);
-    await finishLab("swing", "전동기 속 코일 보기", 1);
+    await finishLab("swing", "전동기 속 코일 회전 원리 보기", 1);
   },
   async motor() {
     // 무대: WebGL2가 되면 입체 무대(3d), 안 되면(NOGL=1) 예전 2D 그림의 평면 무대(flat)
@@ -361,7 +361,7 @@ const LAB = {
     const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
     const same = (a, b) => a.every((x, i) => Math.abs(x - b[i]) < 0.02);
     await at("motor-start");
-    await tapText(page, "전류 흐르게"); await W(page, 1200);
+    await tapText(page, "전류 흘려주기"); await W(page, 1200);
     await at("motor-left");
     if (mode === "3d") {
       // 3D 좌표에서 검산: 힘 = 전류 × 자기장, 그린 화살표가 그 방향, 처음(N극 왼쪽, 왼쪽 변 전류가 뒤쪽 −z)엔 왼쪽 변이 아래(−y)
@@ -402,11 +402,11 @@ const LAB = {
       ok(!!m && same(m.field, [-1, 0, 0]) && same(m.left.force, [0, -1, 0]), `motor: 극까지 바꿨는데 왼쪽 변의 힘이 아래가 아님(${JSON.stringify(m?.left)})`);
     }
     await at("motor-flip");
-    await finishLab("motor", "이름 붙이기", 1);
+    await finishLab("motor", "용어 알아보기", 1);
   },
   async palm() {
     await at("palm-start");
-    await finishLab("palm", "정리하기", 3);
+    await finishLab("palm", "핵심 정리하기", 3);
   },
 };
 const PLAN = {

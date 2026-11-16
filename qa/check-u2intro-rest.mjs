@@ -1,5 +1,5 @@
 // 중1 Ⅱ 도입의 나머지 다섯 장면(u2l3, u2l5, u2l6, u2l8, u2l10)을 390×700에서 처음부터 끝까지 한 번씩 해 본다.
-// 보는 것: 시점마다 스텝이 스크롤 영역(554px) 안인가, 제목이 한 줄인가, 쌤의 말이 두 줄 안쪽인가, 페이지 오류가 없는가,
+// 보는 것: 시점마다 스텝이 스크롤 영역(554px) 안인가, 제목이 한 줄인가, 쌤의 말이 세 줄 안쪽인가(2026-11-16에 두 줄에서 바꿈), 페이지 오류가 없는가,
 //          끝의 버튼으로 다음 스텝이 열리는가. 끝 화면을 장면마다 한 장씩 남긴다.
 // 실행(dev 서버): PORT=5557 node qa/check-u2intro-rest.mjs [캡처 폴더]
 // 실행(서버 없이 빌드한 dist를 그대로 읽는다): DIST=1 node qa/check-u2intro-rest.mjs [캡처 폴더]
@@ -33,7 +33,7 @@ async function at(page, id, when) {
   const m = await fit(page);
   ok(m.need <= m.room && m.room <= 554, `${id} ${when}: 높이 ${m.need}/${m.room}px, 제목 ${m.titleLines}줄, 쌤의 말 ${m.sayLines}줄, 보이는 글 ${m.chars}자`);
   ok(m.titleLines === 1, `${id} ${when}: 제목 한 줄`);
-  ok(m.sayLines <= 2, `${id} ${when}: 쌤의 말 두 줄 안쪽`);
+  ok(m.sayLines <= 3, `${id} ${when}: 쌤의 말 세 줄 안쪽`);
   if (process.env.MID && when !== "끝") await page.screenshot({ path: join(process.env.MID, `${id}-${when.replace(/\s+/g, "")}.png`) });
 }
 

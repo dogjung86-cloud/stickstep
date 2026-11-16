@@ -109,27 +109,27 @@ const OBS_MAX = 24; // 이보다 위는 오른쪽 위 창에 가려진다
 
 export const u7SolarWhereLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = u7Frame(host, { title: s.title, steps: 3, cls: "u7x-ecl", api });
+  const f = u7Frame(host, { title: s.title, steps: 3, cls: "u7x-ecl", api, tall: true }); // 첫 도움말과 그림자 밖의 도움말이 세 줄이다
   const doneCta = s.cta ?? "다음 실험으로";
   const tm = bvTimers();
   const sc = solarScene(f.stage, "sw-", "person", `<text class="u7x-st dim" x="150" y="176" text-anchor="middle">달의 그림자</text>`);
 
   const goalsUi = u7Goals(1, [
-    { id: "total", name: "그림자의 가장 짙은 곳에 서기", sub: "태양이 어떻게 보일까요" },
-    { id: "partial", name: "그림자의 옅은 곳에 서기", sub: "태양이 어떻게 보일까요" },
-    { id: "none", name: "그림자 밖에 서기", sub: "태양이 어떻게 보일까요" },
+    { id: "total", name: "가장 짙은 그림자 안에 서기", sub: "태양이 어떻게 보일까요?" },
+    { id: "partial", name: "주변의 옅은 그림자 안에 서기", sub: "태양이 어떻게 보일까요?" },
+    { id: "none", name: "달의 그림자 밖에 서기", sub: "태양이 어떻게 보일까요?" },
   ]);
-  const FOUND = { total: "태양이 다 가려져요. 개기일식", partial: "태양의 일부만 가려져요. 부분일식", none: "태양이 그대로 보여요" };
+  const FOUND = { total: "태양 전체가 가려지는 개기일식", partial: "태양 일부만 가려지는 부분일식", none: "태양이 가려지지 않고 그대로 보여요" };
   const SAY = {
-    total: "가장 짙은 곳에서는 달이 태양을 <b>모두</b> 가려요. <b>개기일식</b>이에요.",
-    partial: "옅은 곳에서는 달이 태양의 <b>일부</b>만 가려요. <b>부분일식</b>이에요.",
-    none: "그림자 밖에서는 같은 시각에도 태양이 <b>그대로</b> 보여요.",
+    total: "짙은 그림자가 닿은 곳에서는 달이 태양을 <b>완전히</b> 가리는 <b>개기일식</b>이 나타나요.",
+    partial: "옅은 그림자가 닿은 곳에서는 달이 태양의 <b>일부</b>만 가리는 <b>부분일식</b>이 나타나요.",
+    none: "달의 그림자가 닿지 않는 곳에서는 같은 시각에도 일식이 일어나지 않아 태양이 <b>그대로</b> 보여요.",
   };
-  const PILL = { total: "개기일식", partial: "부분일식", none: "가려지지 않아요" };
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "세 곳에 서서 태양을 올려다봐요" }), goalsUi.el);
-  f.say("지구 위의 <b>사람</b>을 끌어 그림자 안팎으로 옮겨요. 오른쪽 위 창이 그곳에서 본 태양이에요.");
+  const PILL = { total: "개기일식 (전부 가려짐)", partial: "부분일식 (일부만 가려짐)", none: "일식이 보이지 않아요" };
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "사람을 끌어 세 위치에서 본 태양 모습을 비교해 보세요" }), goalsUi.el);
+  f.say("지구 위의 <b>사람</b>을 위아래로 끌어 달의 그림자 안팎으로 옮겨 보세요. 오른쪽 위 창에서 그 지역에서 본 태양 모습을 확인할 수 있어요.");
   f.pips(1);
-  api.setCTA("세 곳에서 태양을 봐요", { enabled: false });
+  api.setCTA("세 위치에서 태양 모습을 모두 확인해 보세요", { enabled: false });
   host.dataset.u7Phase = "play";
   host.dataset.u7Found = "0";
 
@@ -153,7 +153,7 @@ export const u7SolarWhereLab: StepRenderer = (host, step, api) => {
       host.dataset.u7Found = String(goalsUi.count());
     }
     const left = (["total", "partial", "none"] as const).filter((k) => !goalsUi.has(k));
-    f.say(SAY[v.kind] + (left.length ? " 다른 곳에도 서 봐요." : ""));
+    f.say(SAY[v.kind] + (left.length ? " 다른 위치로도 옮겨 보세요." : ""));
     if (!left.length) tm.later(askWhere, 1900);
   }
 
@@ -161,12 +161,12 @@ export const u7SolarWhereLab: StepRenderer = (host, step, api) => {
     phase = "ask";
     host.dataset.u7Phase = "ask";
     f.pips(2);
-    f.say("같은 시각인데 선 곳에 따라 태양이 다르게 보였어요.");
+    f.say("같은 시각이라도 지구 위의 위치에 따라 태양의 모습이 다르게 보였어요.");
     f.slot.ask(
-      "지금 이 순간 <b>개기일식</b>을 볼 수 있는 곳은 어디일까요?",
-      [{ t: "짙은 그림자가 닿은 좁은 곳", ok: true }, { t: "낮인 곳 어디서나" }, { t: "지구 어디서나" }],
+      "일식이 일어날 때 지구에서 <b>개기일식</b>을 관측할 수 있는 지역은 어디일까요?",
+      [{ t: "달의 짙은 그림자가 닿는 좁은 지역", ok: true }, { t: "태양이 떠 있는 낮 지역 어디서나" }, { t: "지구 위의 모든 지역" }],
       (ok) => api.recordQuiz(ok),
-      { why: "달의 그림자는 지구보다 훨씬 작아 일부에만 닿아요.", onNext: conclude },
+      { why: "달은 지구보다 작아서 달의 그림자가 지구 표면의 좁은 지역에만 닿기 때문이에요.", onNext: conclude },
     );
   }
 
@@ -174,8 +174,8 @@ export const u7SolarWhereLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("사람을 다시 옮기며 세 곳을 비교해 봐도 좋아요.");
-    f.slot.conclude("일식은 <b>달의 그림자가 닿은 곳</b>에서만 보여요. 가장 짙은 가운데에서는 <b>개기일식</b>, 그 둘레의 옅은 곳에서는 <b>부분일식</b>이에요.");
+    f.say("사람을 다시 움직여 보며 위치에 따라 태양이 어떻게 보이는지 확인해 보세요.");
+    f.slot.conclude("일식은 지구에서 <b>달의 그림자가 닿는 지역</b>에서만 관측할 수 있어요. 짙은 그림자가 닿는 좁은 지역에서는 <b>개기일식</b>이, 주변의 옅은 그림자가 닿는 지역에서는 <b>부분일식</b>이 나타나요.");
     api.enableCTA(doneCta);
   }
 
@@ -235,17 +235,17 @@ export const u7SolarSideLab: StepRenderer = (host, step, api) => {
     `<g fill="none" stroke="#9DBBF0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".9">
        <path d="M100 62Q94 82 96 100"/><path d="M91 93l5 8 6-7"/>
      </g>
-     <text class="u7x-st dim" x="74" y="54" text-anchor="middle">달이 도는 방향</text>`,
+     <text class="u7x-st dim" x="74" y="54" text-anchor="middle">달의 공전 방향</text>`,
   );
 
   const goalsUi = u7Goals(1, [
-    { id: "in", name: "태양이 가려지기 시작할 때", sub: "어느 쪽부터 가려질까요" },
-    { id: "total", name: "태양이 모두 가려질 때", sub: "달을 더 움직여 봐요" },
-    { id: "out", name: "태양이 다시 보이기 시작할 때", sub: "어느 쪽부터 보일까요" },
+    { id: "in", name: "태양이 가려지기 시작할 때", sub: "어느 쪽부터 가려질까요?" },
+    { id: "total", name: "태양이 완전히 가려질 때", sub: "달을 화살표 쪽으로 더 끌어 보세요" },
+    { id: "out", name: "태양이 다시 드러나기 시작할 때", sub: "어느 쪽부터 밝아질까요?" },
   ]);
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "달을 화살표 방향으로 끝까지 움직여요" }), goalsUi.el);
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "달을 화살표 방향으로 위에서 아래까지 천천히 끌어 보세요" }), goalsUi.el);
   f.pips(1);
-  api.setCTA("먼저 예상해 봐요", { enabled: false });
+  api.setCTA("먼저 가려지는 방향을 예상해 보세요", { enabled: false });
   host.dataset.u7Found = "0";
 
   let moon = MOON_MAX; // 양수면 아직 태양 앞에 오기 전(무대의 위쪽)
@@ -256,20 +256,21 @@ export const u7SolarSideLab: StepRenderer = (host, step, api) => {
   function paint(): void {
     const v = sc.set(moon, 0);
     const side = v.off > 0 ? "오른쪽" : "왼쪽";
-    sc.pill.textContent = v.kind === "total" ? "개기일식" : v.kind === "partial" ? `부분일식, ${side}이 가려졌어요` : "가려지지 않았어요";
+    // 가려지지 않은 때는 일식 앞과 뒤 둘 다라 "아직"을 붙이지 않는다
+    sc.pill.textContent = v.kind === "total" ? "개기일식 (완전히 가려짐)" : v.kind === "partial" ? `부분일식 (태양의 ${side}이 가려짐)` : "가려지지 않았어요";
     host.dataset.u7Kind = v.kind;
     if (phase !== "play") return;
-    if (v.kind === "partial" && moon > 0 && goalsUi.done("in", "오른쪽부터 가려져요")) {
+    if (v.kind === "partial" && moon > 0 && goalsUi.done("in", "태양의 오른쪽부터 가려져요")) {
       mark();
-      f.say(`${guess === "오른쪽부터" ? "예상대로" : "예상과 달리"} 태양의 <b>오른쪽</b>부터 가려져요. 달을 더 움직여요.`);
+      f.say(`${guess === "오른쪽부터" ? "예상대로" : "예상과 달리"} 태양의 <b>오른쪽</b>부터 가려지기 시작해요! 달을 화살표 방향으로 더 끌어 보세요.`);
     }
-    if (v.kind === "total" && goalsUi.done("total", "개기일식이에요")) {
+    if (v.kind === "total" && goalsUi.done("total", "전부 가려지는 개기일식이에요")) {
       mark();
-      f.say("달이 태양을 <b>모두</b> 가렸어요. 달을 같은 방향으로 더 움직여요.");
+      f.say("달이 태양을 <b>완전히</b> 가려 개기일식이 일어났어요! 달을 아래쪽으로 끝까지 더 끌어 보세요.");
     }
-    if (v.kind === "partial" && moon < 0 && goalsUi.has("total") && goalsUi.done("out", "오른쪽부터 다시 보여요")) {
+    if (v.kind === "partial" && moon < 0 && goalsUi.has("total") && goalsUi.done("out", "오른쪽부터 다시 드러나요")) {
       mark();
-      f.say("지구에서 보면 달이 왼쪽으로 비켜나 태양의 <b>오른쪽</b>부터 다시 보여요.");
+      f.say("달이 태양 앞을 지나가면서 먼저 가려졌던 <b>오른쪽</b>부터 태양이 다시 드러나요!");
     }
   }
 
@@ -283,20 +284,20 @@ export const u7SolarSideLab: StepRenderer = (host, step, api) => {
     phase = "play";
     host.dataset.u7Phase = "play";
     f.slot.showControls();
-    api.setCTA("달을 끝까지 움직여요", { enabled: false });
-    f.say("<b>달</b>을 화살표 방향으로 천천히 끌어요. 오른쪽 위 창이 지구의 사람이 본 태양이에요.");
+    api.setCTA("달을 화살표 끝까지 움직여 보세요", { enabled: false });
+    f.say("<b>달</b>을 화살표 방향으로 천천히 끌어 내려 보세요. 오른쪽 위 창에서 지구에서 본 태양 모습을 확인할 수 있어요.");
   }
 
   function askSide(): void {
     phase = "ask";
     host.dataset.u7Phase = "ask";
     f.pips(2);
-    f.say("달이 태양 앞을 지나갔어요. 본 것을 떠올려 답해 보세요.");
+    f.say("달이 태양 앞을 지나가는 동안 태양이 어떻게 변했는지 떠올리며 답해 보세요.");
     f.slot.ask(
-      "개기일식이 끝난 뒤 태양은 <b>어느 쪽부터</b> 다시 보였나요?",
-      [{ t: "오른쪽부터", ok: true }, { t: "왼쪽부터" }, { t: "한꺼번에 전부" }],
+      "개기일식이 끝난 뒤 태양은 <b>어느 쪽부터</b> 다시 모습을 드러냈나요?",
+      [{ t: "오른쪽부터", ok: true }, { t: "왼쪽부터" }, { t: "한꺼번에 전체가" }],
       (ok) => api.recordQuiz(ok),
-      { why: "하늘에서 달이 태양 앞을 오른쪽에서 왼쪽으로 지나가요.", onNext: conclude },
+      { why: "지구에서 볼 때 달이 태양의 오른쪽에서 왼쪽으로 지나가므로, 오른쪽부터 가려지고 오른쪽부터 다시 드러나요.", onNext: conclude },
     );
   }
 
@@ -304,8 +305,8 @@ export const u7SolarSideLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("달을 다시 움직이며 확인해도 좋아요. 우리나라(북반구)에서 볼 때의 방향이에요.");
-    f.slot.conclude("지구에서 보면 달은 태양 앞을 <b>오른쪽에서 왼쪽으로</b> 지나가요. 그래서 일식 때 태양은 <b>오른쪽부터</b> 가려지고, 오른쪽부터 다시 보여요.");
+    f.say("달을 다시 움직이며 확인해 보세요. 우리나라(북반구)에서 남쪽 하늘의 태양을 바라볼 때의 방향이에요.");
+    f.slot.conclude("우리나라에서 볼 때 달은 태양 앞을 <b>오른쪽에서 왼쪽으로</b> 지나가요. 따라서 일식이 일어날 때 태양은 <b>오른쪽부터</b> 가려지고, 오른쪽부터 다시 드러나요.");
     api.enableCTA(doneCta);
   }
 
@@ -355,9 +356,9 @@ export const u7SolarSideLab: StepRenderer = (host, step, api) => {
 
   paint();
   host.dataset.u7Phase = "predict";
-  f.say("달이 <b>화살표 방향</b>으로 돌아 태양 앞을 지나가요. 먼저 예상해 봐요.");
+  f.say("달이 공전 궤도를 따라 <b>화살표 방향</b>으로 돌며 태양 앞을 지나가요. 먼저 결과를 예상해 볼까요?");
   f.slot.ask(
-    "지구에서 볼 때 태양은 <b>어느 쪽부터</b> 가려질까요?",
+    "지구(우리나라)에서 태양을 바라볼 때, 태양은 <b>어느 쪽부터</b> 가려지기 시작할까요?",
     [{ t: "오른쪽부터" }, { t: "왼쪽부터" }, { t: "위쪽부터" }],
     () => undefined,
     { predict: true, onNext: play },

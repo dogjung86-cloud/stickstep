@@ -164,7 +164,7 @@ const LESSONS = {
       const b = await stagePt(page, 300, 380);
       await page.mouse.click(b.x, b.y);
     });
-    await isLab(id, 1, "온도가 오르면 입자는 어떻게 될까?");
+    await isLab(id, 1, "온도가 달라지면 입자는 어떻게 움직일까?");
     await W(page, 600);
     await atLab(id, 1, "mount", true);
     await setRange(page, ".u3x-range", 95, false);
@@ -194,7 +194,7 @@ const LESSONS = {
       await atOpn(id, "mid", true);
       await holdAt(330, 300, 2600);
     });
-    await isLab(id, 1, "뜨거운 물과 찬물이 닿으면?");
+    await isLab(id, 1, "온도가 다른 두 물이 만나면 어떻게 될까?");
     await W(page, 600);
     await atLab(id, 1, "mount", true);
     const settledIs = (v) => waitFor(page, (x) => document.querySelector(".screen.active .step")?.dataset.u3Settled === x, v, 100, 100);
@@ -243,7 +243,7 @@ const LESSONS = {
     await page.evaluate(() => document.querySelector(".screen.active .xbtn.fwd")?.click());
     await W(page, 900);
     // 1 전도
-    await isLab(id, 1, "어느 막대가 열을 빨리 전할까?");
+    await isLab(id, 1, "어느 막대가 열을 가장 빨리 전달할까?");
     await atLab(id, 1, "predict", true);
     await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
     await W(page, 1500);
@@ -268,7 +268,7 @@ const LESSONS = {
     await judge(id, 1, true);
     await conclude(id, 1);
     // 2 대류
-    await isLab(id, 2, "아래만 데워도 왜 다 따뜻해질까?");
+    await isLab(id, 2, "아래쪽만 가열해도 왜 전체가 따뜻해질까?");
     await atLab(id, 2, "mount", true);
     const sceneIs = (v) => waitFor(page, (x) => document.querySelector(".screen.active .step")?.dataset.u3Scene === x, v, 130, 100);
     await tapText("불 켜기");
@@ -276,27 +276,27 @@ const LESSONS = {
     await atLab(id, 2, "pot-run", true);
     ok(await sceneIs("pot:ok"), `${id}: 냄비가 끝나지 않음(${await dsU3("u3Scene")})`);
     await atLab(id, 2, "pot-ok");
-    await tapText("다음 실험으로");
+    await tapText("방 안 공기 실험으로 이동");
     await W(page, 500);
     await atLab(id, 2, "heater", true);
-    await tapText("위쪽에 달기");
+    await tapText("위쪽에 설치하기");
     ok(await sceneIs("heater:fail"), `${id}: 난방기 위쪽이 실패로 끝나지 않음(${await dsU3("u3Scene")})`);
     await W(page, 300);
     await atLab(id, 2, "heater-fail", true);
-    await tapText("아래쪽에 달기");
+    await tapText("아래쪽에 설치하기");
     ok(await sceneIs("heater:ok"), `${id}: 난방기 아래쪽이 끝나지 않음(${await dsU3("u3Scene")})`);
     await W(page, 300);
     await atLab(id, 2, "heater-ok", true);
-    await tapText("다음 실험으로");
+    await tapText("냉방기 실험으로 이동");
     await W(page, 500);
-    await tapText("위쪽에 달기");
+    await tapText("위쪽에 설치하기");
     ok(await sceneIs("cooler:ok"), `${id}: 냉방기 위쪽이 끝나지 않음(${await dsU3("u3Scene")})`);
     await W(page, 300);
     await atLab(id, 2, "cooler-ok", true);
     await judge(id, 2, true);
     await conclude(id, 2);
     // 3 복사
-    await isLab(id, 3, "난로 곁에 서면 왜 따뜻할까?");
+    await isLab(id, 3, "난로 가까이에 서면 왜 금방 따뜻해질까?");
     await atLab(id, 3, "mount", true);
     await setRange(page, ".u3x-range", 5);
     await W(page, 500);
@@ -306,7 +306,7 @@ const LESSONS = {
     await W(page, 500);
     await atLab(id, 3, "shield", true);
     ok(Number(await dsU3("u3Warm")) === 0, `${id}: 가림판을 세웠는데 열을 받음`);
-    await tapText("다음 실험: 유리 상자");
+    await tapText("공기 없는 상자 실험하기");
     await W(page, 600);
     await atLab(id, 3, "predict", true);
     await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
@@ -325,18 +325,18 @@ const LESSONS = {
       await atOpn(id, "mid", true);
       await holdAt(150, 118, 2500);
     });
-    await isLab(id, 1, "같은 불에 어느 쪽이 빨리 뜨거워질까?");
+    await isLab(id, 1, "같은 세기로 가열하면 어느 쪽 온도가 더 빨리 오를까?");
     await atLab(id, 1, "predict", true);
     await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
     await W(page, 1500);
     await atLab(id, 1, "mount", true);
     // 식용유를 절반만 담는다(공정하지 않은 실험)
-    await tapText("식용유 100 g");
+    await tapText("식용유 100 g 담기");
     await W(page, 300);
     await holdBtn(".u3x-hold", async () => (await dsU3("u3Oil")) === "0", 8000);
     ok((await dsU3("u3Oil")) === "0", `${id}: 공정하지 않은 실험이 되돌려지지 않음`);
     await atLab(id, 1, "unfair", true);
-    await tapText("식용유 200 g");
+    await tapText("식용유 200 g 담기");
     await W(page, 300);
     const box = await page.locator(".screen.active .u3x-hold").boundingBox();
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
@@ -363,9 +363,9 @@ const LESSONS = {
       await page.evaluate(() => [...document.querySelectorAll(".screen.active .opn-u3-btn")].find((b) => b.textContent.includes("겨울"))?.click());
     });
     // 1 철로 놓기
-    await isLab(id, 1, "한여름의 철로에는 무슨 일이 생길까?");
+    await isLab(id, 1, "철로를 빈틈없이 이어 붙이면 한여름에 어떻게 될까?");
     await atLab(id, 1, "mount", true);
-    await tapText("틈 없이 붙여 놓기");
+    await tapText("빈틈없이 붙여 놓기");
     await W(page, 300);
     await setRange(page, ".u3x-range", 60, false);
     await W(page, 900);
@@ -374,7 +374,7 @@ const LESSONS = {
     await setRange(page, ".u3x-range", -10);
     await W(page, 700);
     await atLab(id, 1, "relay");
-    await tapText("틈을 두고 놓기");
+    await tapText("틈을 남겨 두고 놓기");
     await W(page, 300);
     await setRange(page, ".u3x-range", 60);
     await W(page, 900);
@@ -382,7 +382,7 @@ const LESSONS = {
     await judge(id, 1, true);
     await conclude(id, 1);
     // 2 두 띠
-    await isLab(id, 2, "붙인 두 띠는 어느 쪽으로 휠까?");
+    await isLab(id, 2, "서로 다른 두 띠를 붙여 가열하면 어느 쪽으로 휠까?");
     await atLab(id, 2, "predict", true);
     await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
     await W(page, 1500);
@@ -391,11 +391,11 @@ const LESSONS = {
     await holdBtn(".u3x-hold", reached);
     ok(await reached(), `${id}: 띠가 끝까지 휘지 않음`);
     await atLab(id, 2, "al-top", true);
-    await tapText("띠 뒤집기 (종이를 위로)");
+    await tapText("띠 뒤집기 (종이가 위로 오게)");
     await W(page, 500);
     await holdBtn(".u3x-hold", reached);
     await atLab(id, 2, "paper-top", true);
-    await tapText("다리미 속 장치 보기");
+    await tapText("전기다리미 속 바이메탈 보기");
     await W(page, 500);
     await atLab(id, 2, "iron", true);
     await tapText("전원 켜기");

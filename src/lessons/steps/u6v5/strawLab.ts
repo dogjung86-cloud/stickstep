@@ -24,6 +24,8 @@ const ZR = 56;
 const GOLD = "#FFD68A";
 /** 누르는 힘(1~5)의 화살 길이 */
 const forceLen = (f: number): number => 8 + f * 7;
+/** 숫자 뒤의 '(으)로': 영, 삼, 육, 십처럼 ㄹ이 아닌 받침이면 '으로', 받침이 없거나 ㄹ받침(일, 칠, 팔)이면 '로' */
+const ro = (n: number): string => ([0, 3, 6].includes(n % 10) ? "으로" : "로");
 /** 한 칸이 받는 힘의 화살 길이 */
 const perLen = (per: number): number => 6 + per * 10;
 
@@ -150,7 +152,7 @@ function zoomLines(ctx: CanvasRenderingContext2D, ax: number, ay: number, ar: nu
 
 export const strawLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as { title: string; cta?: string };
-  const lab = u6Lab(host, api, { title: s.title, steps: 3, cls: "u6x-straw", label: "요구르트병 뚜껑을 빨대로 누르는 모습", wait: "빨대로 뚜껑을 눌러 보세요" });
+  const lab = u6Lab(host, api, { title: s.title, steps: 3, cls: "u6x-straw", label: "요구르트병 뚜껑을 빨대로 누르는 모습", wait: "빨대 끝과 힘을 골라 뚜껑을 눌러 보세요" });
   const { frame, tm } = lab;
   let end: End = "flat";
   let force = 3;
@@ -190,7 +192,7 @@ export const strawLab: StepRenderer = (host, step, api) => {
     phase = "ask";
     lab.phase("ask");
     frame.pips(2);
-    frame.say("아래 두 그림을 보세요. 칸 위 화살표의 길이가 <b>한 칸이 받는 힘</b>이에요.");
+    frame.say("무대의 두 그림을 비교해 보세요. 칸 위 화살표 길이가 <b>한 칸이 받는 힘</b>이에요.");
     frame.slot.ask(
       "같은 힘으로 눌렀는데 <b>뾰족한 쪽만</b> 뚫린 까닭은?",
       [{ t: "힘을 받는 면적이 좁아서", ok: true }, { t: "뾰족한 쪽을 더 세게 눌러서" }, { t: "빨대가 더 무거워져서" }],
@@ -233,8 +235,8 @@ export const strawLab: StepRenderer = (host, step, api) => {
       frame.say(ok ? "뚫렸어요! 같은 힘으로 누른 <b>편평한 쪽</b>의 기록과 비교해 보세요." : "같은 힘인데 편평한 쪽은 안 뚫려요. <b>뾰족한 쪽</b>의 기록과 비교해 보세요.");
       tm.later(ask, 1500);
     } else if (animEnd === "flat") frame.say("뚜껑이 움푹 들어갔다 되돌아왔어요. 이번에는 <b>뾰족한 쪽</b>으로 눌러 보세요.");
-    else if (!ok) frame.say("힘이 너무 약했어요. 조금 더 <b>세게</b> 눌러 보세요.");
-    else frame.say(`힘 ${animForce}로 뚫렸어요. <b>편평한 쪽</b>도 같은 힘(${animForce} 이상)으로 눌러 비교해 보세요.`);
+    else if (!ok) frame.say("힘 1은 너무 약해서 안 뚫렸어요. 누르는 힘을 <b>2 이상</b>으로 높여 눌러 보세요."); // 뾰족한 쪽이 안 뚫리는 힘은 1뿐이다(NEED 2)
+    else frame.say(`힘 ${animForce}${ro(animForce)} 뚫렸어요. <b>편평한 쪽</b>도 같은 힘(${animForce} 이상)으로 눌러 비교해 보세요.`);
   };
 
   push.addEventListener("click", () => {
@@ -248,7 +250,7 @@ export const strawLab: StepRenderer = (host, step, api) => {
   });
 
   lab.phase("play");
-  frame.say("요구르트병에 빨대를 꽂아요. <b>어느 끝</b>으로 <b>얼마나 세게</b> 누를지 정하고 눌러 보세요.");
+  frame.say("요구르트병 뚜껑을 빨대로 눌러 봐요. <b>편평한 쪽</b>과 <b>뾰족한 쪽</b>을 같은 힘으로 눌러 비교해 보세요.");
   sync();
 
   // ── 조작하는 동안의 무대: 왼쪽 병과 빨대, 오른쪽 확대 동그라미, 기록 ──
@@ -334,7 +336,12 @@ export const strawLab: StepRenderer = (host, step, api) => {
     zoomEnd(ctx, e, ZX, ZY, ZR, f, { burst: pierced && e === "sharp", dent, cell: 13 });
     const n = AREA[e];
     const per = f / n;
-    txt(ctx, `${n}칸 · ${per >= NEED ? "한 칸이 세게 눌려요" : "한 칸이 약하게 눌려요"}`, ZX, ZY + ZR + 14, { align: "center", size: 12.5, color: per >= NEED ? "#FFB37A" : "#9FB2D0" });
+    // 캡션: 한 칸이면 나눌 것이 없으므로 "1칸"만 쓴다. 긴 캡션(6칸, 약 189px)은 확대 동그라미 가운데(ZX)에 두면 무대 오른쪽 끝을 넘으므로
+    // 오른쪽 끝(336, 무대 테두리에서 10px) 안으로 당긴다(짧은 캡션은 그대로 가운데). 왼쪽 끝 147이라 병과 뚜껑(x 134까지)에는 닿지 않는다.
+    const cap = `${n === 1 ? "1칸" : `${n}칸에 나뉨`} · ${per >= NEED ? "한 칸에 힘이 집중돼요!" : "한 칸이 받는 힘이 약해요"}`;
+    ctx.font = `700 12.5px ${FONT}`;
+    const capX = Math.min(ZX, 336 - ctx.measureText(cap).width / 2);
+    txt(ctx, cap, capX, ZY + ZR + 14, { align: "center", size: 12.5, color: per >= NEED ? "#FFB37A" : "#9FB2D0" });
     // 기록(색은 중립: 뚫림은 흰색, 안 뚫림은 회색)
     logs.forEach((l, i) => {
       const y = 182 + i * 17;

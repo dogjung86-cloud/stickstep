@@ -32,7 +32,7 @@ const C_WATER = "#6FD3FF";
 export const raceLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as RaceStep;
   const tm = bvTimers();
-  const f = u3Frame(host, { title: s.title, steps: 3, cls: "u3x-race", api });
+  const f = u3Frame(host, { title: s.title, steps: 3, cls: "u3x-race", api, tall: true });
 
   let phase: "predict" | "setup" | "oil" | "water" | "ask" | "done" = "predict";
   let oilMass = 0; // 담은 식용유(g). 0이면 아직 담지 않았다
@@ -134,7 +134,7 @@ export const raceLab: StepRenderer = (host, step, api) => {
     txt(ctx, "식용유", 260, 215, { size: 12, align: "left", weight: 600 });
   });
 
-  const hold = u3Hold("가열하기 (꾹 누르고 있기)", (down) => {
+  const hold = u3Hold("꾹 눌러 가열하기", (down) => {
     if (phase === "setup" && oilMass && down) {
       phase = "oil";
       m100.disabled = m200.disabled = true;
@@ -143,12 +143,12 @@ export const raceLab: StepRenderer = (host, step, api) => {
     const was = heating; // 목표에 닿아 가열이 이미 멈춘 뒤에 손을 뗀 것이면 안내를 덮어쓰지 않는다
     heating = down;
     if (!down && !was) return;
-    if (down) f.say(phase === "oil" ? "가열 중! 두 온도와 그래프를 지켜봐요. <b>식용유가 60℃</b>가 될 때까지 누르고 있어요." : "물만 계속 가열해요. <b>물이 60℃</b>가 될 때까지 누르고 있어요.");
-    else f.say("손을 떼니 가열이 멈췄어요. 다시 <b>꾹</b> 눌러 이어서 가열해요.");
+    if (down) f.say(phase === "oil" ? "가열하는 중이에요! 두 액체의 온도와 그래프를 살펴보세요. <b>식용유가 60℃</b>에 도달할 때까지 계속 누르고 계세요." : "이제 물만 이어서 가열해요. <b>물이 60℃</b>에 도달할 때까지 계속 누르고 계세요.");
+    else f.say("손을 떼면 가열이 멈춰요. 목표 온도에 도달할 때까지 다시 <b>꾹</b> 눌러 가열해 보세요.");
   });
 
-  const m100 = bvBtn("", "식용유 100 g");
-  const m200 = bvBtn("", "식용유 200 g");
+  const m100 = bvBtn("", "식용유 100 g 담기");
+  const m200 = bvBtn("", "식용유 200 g 담기");
   const pour = (g: number): void => {
     if (phase !== "setup" || heating) return;
     haptic(HAPTIC.tap);
@@ -156,7 +156,7 @@ export const raceLab: StepRenderer = (host, step, api) => {
     m100.classList.toggle("on", g === 100);
     m200.classList.toggle("on", g === 200);
     hold.disabled = false;
-    f.say(`식용유를 <b>${g} g</b> 담았어요. <b>가열하기</b>를 꾹 눌러 봐요. 누르는 동안만 가열돼요.`);
+    f.say(`식용유 <b>${g} g</b>을 담았어요. 이제 <b>꾹 눌러 가열하기</b> 버튼을 누른 채로 온도 변화를 관찰해 보세요.`);
   };
   m100.addEventListener("click", () => pour(100));
   m200.addEventListener("click", () => pour(200));
@@ -167,7 +167,7 @@ export const raceLab: StepRenderer = (host, step, api) => {
     hold.disabled = true;
     hold.classList.remove("down");
     haptic(HAPTIC.wrong);
-    f.say(`식용유가 ${Math.round(tOil)}초 만에 60℃! 그런데 식용유가 물의 <b>절반</b>뿐이라 공정한 비교가 아니에요. <b>질량을 같게</b> 다시 담아요.`);
+    f.say(`식용유가 ${Math.round(tOil)}초 만에 60℃가 되었어요! 하지만 식용유의 양이 물(200 g)의 <b>절반</b>뿐이어서 공정한 비교가 되지 않아요. 두 액체의 <b>질량을 같게</b> 맞춰 다시 담아 볼까요?`);
     tm.later(() => {
       tOil = 0;
       tWater = 0;
@@ -190,7 +190,7 @@ export const raceLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.ctaUnlock);
     f.pips(1);
     const head = pred.includes("식용유") ? "예측대로" : "예측과 달리";
-    f.say(`${head} <b>식용유</b>가 먼저 60℃가 됐어요. 물은 아직 ${Math.round(waterT())}℃예요. 물도 60℃까지 더 가열해 봐요.`);
+    f.say(`${head} 같은 양을 가열했는데 <b>식용유</b>가 먼저 60℃에 도달했어요! 물은 아직 ${Math.round(waterT())}℃밖에 되지 않았네요. 물도 60℃가 될 때까지 마저 가열해 볼까요?`);
     tm.later(() => {
       hold.disabled = false;
     }, 900);
@@ -204,25 +204,25 @@ export const raceLab: StepRenderer = (host, step, api) => {
     hold.classList.remove("down");
     haptic(HAPTIC.correct);
     f.pips(2);
-    f.say(`물은 <b>${Math.round(tWater)}초</b>나 가열해야 60℃가 됐어요. 식용유는 ${Math.round(tOil)}초면 됐는데요.`);
+    f.say(`식용유는 ${Math.round(tOil)}초 만에 60℃가 되었는데, 물은 <b>${Math.round(tWater)}초</b> 동안 가열해서야 60℃에 도달했어요!`);
     tm.later(askFinal, 2600);
   }
 
   function askFinal(): void {
-    f.say("그래프의 두 시간을 비교해 보고 골라 봐요. 오래 가열할수록 열을 많이 준 거예요.");
+    f.say("그래프에 기록된 두 액체의 가열 시간을 비교해 보세요. 같은 세기의 불로 오래 가열할수록 열을 더 많이 받은 거예요.");
     f.slot.ask(
-      "20℃에서 60℃까지 데우는 데 <b>열이 더 많이</b> 든 쪽은?",
-      [{ t: "물", ok: true }, { t: "식용유" }, { t: "둘이 같다" }],
+      "같은 양(200 g)을 20℃에서 60℃까지 높이는 데 <b>열이 더 많이 필요한</b> 액체는 어느 것인가요?",
+      [{ t: "물", ok: true }, { t: "식용유" }, { t: "두 액체가 같다" }],
       (ok) => api.recordQuiz(ok),
-      { why: `물은 ${Math.round((GOAL - T0) / WATER_RATE)}초, 식용유는 ${Math.round((GOAL - T0) / OIL_RATE)}초를 가열했어요.`, onNext: finish },
+      { why: `60℃까지 높이는 데 식용유는 ${Math.round((GOAL - T0) / OIL_RATE)}초, 물은 ${Math.round((GOAL - T0) / WATER_RATE)}초 동안 가열해야 했어요.`, onNext: finish },
     );
   }
 
   function finish(): void {
     phase = "done";
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("같은 열을 받아도 온도가 변하는 정도는 <b>물질마다 달라요</b>. 식용유는 온도가 빨리 오르고, 물은 열을 더 많이 받아야 같은 온도만큼 올라요.");
+    f.say("물과 식용유의 온도를 같은 만큼 높이는 데 필요한 열의 양을 비교해 보았어요!");
+    f.slot.conclude("질량이 같은 물질에 같은 양의 열을 가해도 온도가 변하는 정도는 <b>물질의 종류마다 달라요</b>. 식용유는 물보다 적은 열로도 온도가 빨리 오르고, 물은 온도를 높이는 데 더 많은 열이 필요해요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
@@ -230,10 +230,10 @@ export const raceLab: StepRenderer = (host, step, api) => {
   f.slot.setControls(el("div", { class: "u3x-row" }, m100, m200), hold);
   hold.disabled = true;
   api.setCTA("두 액체를 가열해 보세요", { enabled: false });
-  f.say("물과 식용유를 같은 세기로 가열해 온도를 비교할 거예요. 먼저 <b>예측</b>부터 해 봐요.");
+  f.say("물과 식용유를 같은 세기의 불로 가열하며 온도 변화를 비교해 볼 거예요. 먼저 결과를 <b>예측</b>해 볼까요?");
   f.slot.ask(
-    "같은 양을 똑같이 가열하면 온도가 <b>더 빨리</b> 오르는 쪽은?",
-    [{ t: "물" }, { t: "식용유" }, { t: "둘이 같다" }],
+    "같은 양의 물과 식용유를 똑같이 가열하면 어느 쪽의 온도가 <b>더 빨리</b> 오를까요?",
+    [{ t: "물" }, { t: "식용유" }, { t: "두 액체가 같다" }],
     () => undefined,
     {
       predict: true,

@@ -20,6 +20,7 @@ import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { icon } from "../../../core/icons";
 import type { StepAPI } from "../../types";
+import { glue } from "../glue";
 
 // ── 타이머 묶음 ─────────────────────────────────────────────────────
 export interface BvTimers {
@@ -96,10 +97,74 @@ export interface BvAskOpts {
 // 제목과 도움말 맞춤은 폰 모양에서만 한다(넓은 화면은 wide.css가 두 상자를 이미 풀어 둔다).
 // 개발 모드에서는 맞춤이 일어나거나 맞춤으로도 모자라면 console.warn("[bv-fit] …")을 남긴다(검사 스크립트가 모은다).
 const wideView = (): boolean => document.documentElement.classList.contains("wide");
-const overX = (e: Element): boolean => e.scrollWidth > e.clientWidth + 1;
+/** 글이 한 줄 상자 폭을 넘는지. scrollWidth는 정수로 반올림돼서 1px 안쪽 넘침(그래도 말줄임은 생긴다)을 놓치므로,
+ *  넘침이 1px 안쪽이면 글의 실제 폭(소수점)을 잰다(u2l9 제목 263.3px / 상자 263px, g2u1 데우기 랩 18px 제목 315.8px / 315px). */
+const overX = (e: Element): boolean => {
+  if (e.scrollWidth > e.clientWidth + 1) return true;
+  if (e.scrollWidth < e.clientWidth) return false;
+  // 상자 폭도 소수점으로 잰다(clientWidth는 소수점을 버려, 글 폭에 꼭 맞춘 상자 35.08px를 35px로 보고 넘친다고 잘못 본다).
+  // 글과 상자를 같은 화면 좌표(getBoundingClientRect)로 비교하고, 안쪽 여백만 zoom 배율로 늘려 뺀다.
+  const r = document.createRange();
+  r.selectNodeContents(e);
+  const h = e as HTMLElement;
+  const box = e.getBoundingClientRect().width;
+  const z = h.offsetWidth ? box / h.offsetWidth : 1;
+  const cs = getComputedStyle(e);
+  const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0) + (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.borderRightWidth) || 0);
+  return r.getBoundingClientRect().width > box - pad * (z || 1) + 0.05;
+};
 const overY = (e: Element): boolean => e.scrollHeight > e.clientHeight + 1;
 function fitWarn(kind: string, e: Element): void {
   if (import.meta.env.DEV) console.warn(`[bv-fit] ${kind}: ${(e.textContent ?? "").trim().slice(0, 70)}`);
+}
+/** 글이 실제로 몇 줄로 그려졌는지와 가장 긴 줄의 폭. */
+function textLines(e: Element): { n: number; w: number } {
+  const r = document.createRange();
+  r.selectNodeContents(e);
+  const tops = new Set<number>();
+  let w = 0;
+  for (const q of r.getClientRects()) {
+    tops.add(Math.round(q.top));
+    w = Math.max(w, q.width);
+  }
+  return { n: tops.size, w };
+}
+/** 아래 큰 버튼(플레이어 공용 .btn.cta)의 글 맞춤. 과학 랩 틀만 이 클래스를 붙이고 떼므로 수학, 사회, 역사 버튼은 그대로다.
+ *  글이 버튼 양 끝에 붙거나(좌우 여유 10px 아래) 두 줄로 접히면 15px, 그래도 그러면 좌우 여백을 두고 두 줄을 고르게 나눈다.
+ *  버튼 글이 바뀔 때마다 다시 보고, 랩이 치워진 뒤 처음 글이 바뀌면 클래스를 떼고 지켜보기를 멈춘다. 돌려준 함수는 폭이 바뀔 때 부른다. */
+function watchCta(host: HTMLElement): () => void {
+  let cta: HTMLElement | null = null;
+  let mo: MutationObserver | null = null;
+  const fit = (): void => {
+    if (!cta) return;
+    cta.classList.remove("bv-cta-fs", "bv-cta-two");
+    if (!host.isConnected) {
+      mo?.disconnect();
+      cta = null;
+      return;
+    }
+    if (wideView() || !cta.textContent?.trim()) return;
+    let m = textLines(cta);
+    if (m.n <= 1 && m.w <= cta.clientWidth - 20) return;
+    cta.classList.add("bv-cta-fs");
+    m = textLines(cta);
+    if (m.n <= 1 && m.w <= cta.clientWidth - 20) return;
+    cta.classList.add("bv-cta-two");
+    fitWarn("큰 버튼 두 줄", cta);
+  };
+  const attach = (): void => {
+    cta = host.closest(".screen")?.querySelector<HTMLElement>(".footer .btn.cta") ?? null;
+    if (!cta) return;
+    mo = new MutationObserver(fit);
+    mo.observe(cta, { childList: true, characterData: true, subtree: true });
+    fit();
+  };
+  if (host.isConnected) attach();
+  else
+    requestAnimationFrame(() => {
+      if (host.isConnected) attach();
+    });
+  return fit;
 }
 /** 화면에 그려진 뒤(크기가 정해진 뒤) fn을 부른다. 이미 그려져 있으면 바로, 아니면 다음 프레임에 한 번 더 본다. */
 function whenLaid(e: Element, fn: () => void): void {
@@ -118,6 +183,20 @@ function fitChoice(b: HTMLElement): void {
   fitWarn("보기 두 줄", t);
   if (overY(t)) fitWarn("보기 넘침(두 줄로도 모자람)", t);
 }
+/** 판정 뒤(질문 + 누른 보기 + 정답 카드)가 조작 칸 높이를 넘으면 촘촘히(vd-tight), 그래도 넘으면 질문을 접는다(vd-tight2).
+ *  넘친 채 두면 '다음' 버튼이 화면 아래로 밀린다. 폰 모양에서만(넓은 화면은 판정이 노트 칸에 있다). */
+function fitVerdict(box: HTMLElement): void {
+  box.classList.remove("vd-tight", "vd-tight2");
+  const slot = box.parentElement;
+  if (wideView() || !slot || !slot.classList.contains("bv-slot")) return;
+  const over = (): boolean => box.scrollHeight > slot.clientHeight + 1;
+  if (!over()) return;
+  box.classList.add("vd-tight");
+  if (!over()) return;
+  box.classList.add("vd-tight2");
+  fitWarn(over() ? "판정 뒤 넘침(질문을 접어도 모자람)" : "판정 뒤 질문 접음", box);
+}
+
 /** 조건 카드 하나: 이름(b)과 보조 글(i)이 카드 폭을 넘으면 작게(fs), 그래도 넘으면 두 줄(two). */
 function fitCard(card: HTMLElement): void {
   const b = card.querySelector(".bv-card-tx > b");
@@ -146,7 +225,7 @@ function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (o
   box.classList.add("show");
   if (!opts.predict) api?.setCTA(CTA_ASK, { enabled: false });
   // 질문 글자는 span 하나로 감싼다(.bv-qt가 flex라 굵은 글씨 앞뒤의 띄어쓰기가 사라지는 것을 막는다).
-  const qEl = el("div", { class: "bv-qt" }, el("span", { html: question }));
+  const qEl = el("div", { class: "bv-qt" }, el("span", { html: glue(question) }));
   box.appendChild(qEl);
   // 질문이 두 줄(42px)을 넘으면 글씨를 조금 줄인다(보기 셋과 함께 조작 칸 208px에 들게).
   whenLaid(qEl, () => {
@@ -207,7 +286,7 @@ function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (o
         const card = el("div", { class: `bv-ans ${ok ? "ok" : "no"}`, attrs: { role: "status" } });
         if (!ok) card.appendChild(el("div", { class: "bv-ans-row" }, el("span", { class: "bv-ans-tag", text: "정답" }), el("span", { class: "bv-ans-t", text: good?.t ?? "" })));
         const foot = el("div", { class: "bv-ans-foot" });
-        foot.appendChild(el("span", { class: "bv-why", html: opts.why ?? "" }));
+        foot.appendChild(el("span", { class: "bv-why", html: glue(opts.why ?? "") }));
         if (fn) {
           const next = el("button", { class: "bv-next", text: "다음", attrs: { type: "button" } }) as HTMLButtonElement;
           next.addEventListener("click", () => {
@@ -224,6 +303,7 @@ function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (o
           ansT.classList.add("two");
           fitWarn("정답 글 두 줄", ansT);
         }
+        fitVerdict(box);
         if (fn) api?.setCTA(CTA_NEXT, { enabled: false });
       }
       onPick(ok);
@@ -278,7 +358,7 @@ function makeSlot(qCls: string, api?: Pick<StepAPI, "setCTA">): BvSlot {
       qBox.innerHTML = "";
       qBox.classList.remove("show");
       done.innerHTML = "";
-      done.append(el("div", { class: "bv-done-k", text: "핵심 정리" }), el("div", { class: "bv-done-t", html }));
+      done.append(el("div", { class: "bv-done-k", text: "핵심 정리" }), el("div", { class: "bv-done-t", html: glue(html) }));
       done.classList.add("show");
     },
   };
@@ -300,7 +380,7 @@ export interface BvFrame {
 export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cls: string; qCls: string; api?: Pick<StepAPI, "setCTA">; tall?: boolean }): BvFrame {
   host.classList.add("bv-step");
   const pipEls = Array.from({ length: o.steps }, () => el("i"));
-  const titleEl = el("div", { class: "bv-title", html: o.title });
+  const titleEl = el("div", { class: "bv-title", html: glue(o.title) });
   const head = el("div", { class: "bv-head" }, titleEl, el("div", { class: "bv-pips", attrs: { "aria-hidden": "true" } }, ...pipEls));
   const helper = el("div", { class: "bv-helper" });
   const stage = el("div", { class: `bv-stage ${o.cls}` });
@@ -326,6 +406,8 @@ export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cl
     helper.classList.remove("dense");
     if (wideView() || !helper.textContent) return;
     if (!tall && overY(helper)) {
+      // 글꼴을 받는 중이면 대체 글꼴로 잰 값이라 세 줄로 굳히지 않는다(다 받은 뒤 onFonts가 다시 본다)
+      if (document.fonts?.status === "loading") return;
       tall = true;
       host.classList.add("bv-tall");
       fitWarn("도움말 세 줄(랩 처음부터 tall: true로 잡으면 무대가 밀리지 않아요)", helper);
@@ -335,6 +417,7 @@ export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cl
       if (overY(helper)) fitWarn("도움말 넘침(세 줄로도 모자람)", helper);
     }
   };
+  const fitCta = watchCta(host);
   // 폭이 바뀔 때(처음 그려질 때, 화면 회전, 넓은 화면 전환) 다시 맞춘다. 높이 변화에는 반응하지 않는다(맞춤이 높이를 바꾸므로).
   let lastW = -1;
   const ro = new ResizeObserver(() => {
@@ -347,9 +430,21 @@ export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cl
     lastW = w;
     fitTitle();
     fitHelper();
+    fitCta();
   });
   ro.observe(titleEl);
   ro.observe(helper);
+  // 글꼴(Pretendard 조각)을 다 받으면 글 폭이 바뀌므로 한 번 더 맞춘다. 랩이 치워졌으면 듣기를 멈춘다.
+  const onFonts = (): void => {
+    if (!host.isConnected) {
+      if (lastW >= 0) document.fonts?.removeEventListener("loadingdone", onFonts);
+      return;
+    }
+    fitTitle();
+    fitHelper();
+    fitCta();
+  };
+  document.fonts?.addEventListener("loadingdone", onFonts);
   return {
     helper,
     stage,
@@ -357,7 +452,7 @@ export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cl
     say(html) {
       if (html === lastSay) return;
       lastSay = html;
-      helper.innerHTML = html;
+      helper.innerHTML = glue(html);
       if (helper.isConnected) fitHelper();
     },
     pips(n) {

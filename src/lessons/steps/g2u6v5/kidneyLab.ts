@@ -57,7 +57,7 @@ const TOKS: Tok[] = [
 
 export const g2u6NephronLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-nephron", wait: "오줌을 만들어 내보내 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-nephron", wait: "혈액을 걸러 필요한 물질을 되돌리고 오줌을 만들어 보세요", tall: true });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "토리와 보먼주머니, 세뇨관, 세뇨관을 감싸고 콩팥정맥으로 나가는 모세혈관, 오줌이 모이는 콩팥깔때기로 이루어진 콩팥단위 모식도");
   let phase: "start" | "filtered" | "out" = "start";
@@ -145,22 +145,22 @@ export const g2u6NephronLab: StepRenderer = (host, step, api) => {
     host.dataset.g6Back = `${back.glu ? 1 : 0}${back.water ? 1 : 0}${back.urea ? 1 : 0}`;
   };
 
-  const filter = bvBtn("main g2u6x-filter", "혈액을 토리로 흘려보내기");
-  const urine = bvBtn("main g2u6x-urine", "오줌으로 내보내기");
+  const filter = bvBtn("main g2u6x-filter", "혈액을 토리로 흘려보내기(여과)");
+  const urine = bvBtn("main g2u6x-urine", "세뇨관에 남은 물질을 오줌으로 내보내기");
   const mk = (k: "glu" | "water" | "urea", name: string): ReturnType<typeof chip> => {
-    const c = chip(k, name, "세뇨관에 둠", () => {
+    const c = chip(k, name, "세뇨관에 남김", () => {
       if (busy || phase !== "filtered") return;
       tap();
       back[k] = !back[k];
       c.on(back[k]);
-      c.sub(back[k] ? "모세혈관으로 되돌림" : "세뇨관에 둠");
+      c.sub(back[k] ? "모세혈관으로 재흡수" : "세뇨관에 남김");
       draw();
     });
     return c;
   };
   const cGlu = mk("glu", "포도당");
-  const cWater = mk("water", "물");
-  const cUrea = mk("urea", "요소");
+  const cWater = mk("water", "물(대부분)"); // 물은 넷 가운데 셋만 되돌린다(무대와 같은 뜻)
+  const cUrea = mk("urea", "요소(노폐물)");
 
   filter.addEventListener("click", () => {
     if (phase !== "start") return;
@@ -168,9 +168,9 @@ export const g2u6NephronLab: StepRenderer = (host, step, api) => {
     phase = "filtered";
     f.pips(1);
     draw();
-    f.say("작은 포도당, 요소, 물만 <b>보먼주머니</b>로 빠져나왔어요. 큰 적혈구와 단백질은 혈액에 남았어요.");
+    f.say("<b>토리</b>의 미세한 구멍을 지나면서 크기가 큰 <b>혈구와 단백질</b>은 통과하지 못하고, 크기가 작은 <b>물·포도당·요소</b>만 보먼주머니로 빠져나왔어요(<b>여과</b>).");
     f.slot.setControls(row(cGlu.el, cWater.el, cUrea.el), urine);
-    tm.later(() => f.say("세뇨관을 지나는 동안 <b>몸에 필요한 것</b>은 모세혈관으로 되돌려요. 무엇을 되돌릴까요?"), 3200);
+    tm.later(() => f.say("여과된 <b>포도당·물·요소</b>가 세뇨관을 지나고 있어요! 이 가운데 우리 몸에 꼭 필요한 물질을 골라 <b>모세혈관으로 다시 흡수(재흡수)</b>시켜 보세요."), 3200);
   });
   const fail = (kind: string, msg: string, say: string): void => {
     bad();
@@ -189,24 +189,26 @@ export const g2u6NephronLab: StepRenderer = (host, step, api) => {
   };
   urine.addEventListener("click", () => {
     if (busy || phase !== "filtered") return;
-    if (!back.glu) return fail("glu", "오줌에 포도당이 섞였어요", "포도당은 몸에 필요한 <b>영양소</b>예요. 오줌으로 버리지 말고 모세혈관으로 되돌려요.");
-    if (back.urea) return fail("urea", "요소가 혈액으로 되돌아갔어요", "요소는 내보내야 할 <b>노폐물</b>이에요. 되돌리지 말고 세뇨관에 두어요.");
-    if (!back.water) return fail("water", "물이 너무 많이 빠져나갔어요", "물은 몸에 꼭 필요해요. <b>대부분</b>을 모세혈관으로 되돌려요.");
+    // 포도당: 수정안의 "세포 호흡에 쓰이는"은 세포호흡을 다음 레슨에서 배우므로 "에너지를 내는 데 쓰이는"으로 썼다(레슨 1에서 배운 에너지원)
+    if (!back.glu) return fail("glu", "소중한 영양소인 포도당이 오줌으로 빠져나가요!", "<b>포도당</b>은 에너지를 내는 데 쓰이는 소중한 영양소예요. 오줌으로 버리지 말고 <b>모세혈관으로 재흡수</b>시켜 주세요.");
+    if (back.urea) return fail("urea", "노폐물인 요소가 다시 혈액 속으로 들어갔어요!", "<b>요소</b>는 몸 밖으로 내보내야 하는 노폐물이에요. 모세혈관으로 되돌리지 말고 <b>세뇨관에 남겨</b> 오줌으로 내보내 주세요.");
+    if (!back.water) return fail("water", "몸속의 수분을 너무 많이 잃게 돼요!", "여과된 물을 그대로 다 버리면 우리 몸에 수분이 부족해져요. <b>물(대부분)</b>도 모세혈관으로 다시 흡수시켜 주세요.");
     busy = true;
     host.dataset.g6Fail = "";
     good();
     f.pips(2);
     secreted = true;
     draw();
-    f.say("혈액에 남아 있던 요소도 모세혈관에서 세뇨관으로 나왔어요. 이 이동이 <b>분비</b>예요.");
+    f.say("필요한 포도당과 물은 모세혈관으로 <b>재흡수</b>되고, 덜 걸러진 혈액 속 요소는 세뇨관으로 <b>분비</b>되면서 오줌이 만들어져요.");
     tm.later(() => {
       phase = "out";
       f.pips(3);
       draw();
-      f.say("요소와 남은 물이 <b>오줌</b>이 되어 콩팥깔때기로 나갔어요.");
+      f.say("남은 물과 요소가 <b>콩팥깔때기</b>로 모여 오줌으로 배출되고, 노폐물이 걸러져 깨끗해진 혈액은 <b>콩팥정맥</b>을 따라 심장으로 돌아가요!");
       tm.later(() => {
-        lab.judge("보먼주머니로 빠져나왔지만 <b>오줌에는 없는</b> 물질은?", [{ t: "포도당", ok: true }, { t: "요소" }, { t: "적혈구" }], "포도당은 세뇨관에서 모세혈관으로 <b>모두</b> 되돌아가요.", () =>
-          lab.finish("오줌은 <b>여과, 재흡수, 분비</b>를 거쳐 만들어져요. 큰 적혈구와 단백질은 여과되지 않고, 포도당은 모두 재흡수되어 오줌에 없어요."),
+        // 이유 글은 세 줄 상자에 들게 수정안의 "세뇨관을 지나며"만 뺐다
+        lab.judge("토리에서 보먼주머니로 여과되었지만, 모두 재흡수되어 정상인의 <b>오줌에는 들어 있지 않은</b> 물질은 무엇인가요?", [{ t: "포도당", ok: true }, { t: "요소" }, { t: "적혈구(혈구)" }], "적혈구는 크기가 커서 처음부터 여과되지 않고, <b>포도당</b>은 여과된 뒤 모세혈관으로 <b>100% 재흡수</b>되어 오줌에는 남지 않아요.", () =>
+          lab.finish("오줌은 <b>토리에서 보먼주머니</b>로 크기가 작은 물질이 걸러지는 <b>여과</b>, 우리 몸에 필요한 <b>포도당과 물</b>을 세뇨관에서 모세혈관으로 되돌리는 <b>재흡수</b>, 미처 걸러지지 않은 노폐물을 세뇨관으로 내보내는 <b>분비</b> 과정을 거쳐 만들어져요."),
         );
       }, 1900);
     }, 2400);

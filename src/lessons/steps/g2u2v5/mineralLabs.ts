@@ -74,10 +74,10 @@ export const g2u2PowderLab: StepRenderer = (host, step, api) => {
   }
   function judge(): void {
     lab.ask(
-      "둘 다 검은 <b>자철석과 적철석</b>을 구별해 준 것은?",
+      "겉보기 색이 모두 검은 <b>자철석과 적철석</b>을 구별해 준 특성은?",
       ["가루의 색", "겉으로 보이는 색", "광물 조각의 크기"],
       "겉은 둘 다 검지만 가루는 <b>검은색과 적갈색</b>으로 달랐어요.",
-      () => lab.finish("광물을 조흔판에 긁으면 나오는 <b>가루의 색</b>은 겉보기 색과 다를 수 있어요. 그래서 겉보기 색이 닮은 광물이라도 가루의 색을 보면 가려낼 수 있어요."),
+      () => lab.finish("광물을 조흔판에 긁었을 때 나타나는 <b>가루의 색</b>은 겉보기 색과 다를 수 있어요. 따라서 겉보기 색이 비슷한 광물도 가루의 색으로 구별할 수 있어요."),
     );
   }
   f.say("검은 광물 둘과 노란 광물 둘이 있어요. 조흔판에 긁으면 <b>가루</b>가 묻어나요. 먼저 예측해 보세요.");
@@ -125,7 +125,7 @@ export const g2u2MineralLab: StepRenderer = (host, step, api) => {
     p.el.addEventListener("click", () => use(t.k, p));
     return p;
   });
-  const next = gBtn("next", "다음 광물로");
+  const next = gBtn("next", "다음 단계로");
   next.hidden = true;
 
   // 무대 배치: 사진(위) → 이름 → 조흔판 조각 자리(사진 아래 빈 칸) → 기록 세 줄. 사진은 광물 수에 따라 크게
@@ -192,9 +192,9 @@ export const g2u2MineralLab: StepRenderer = (host, step, api) => {
       busy = false;
       const good = T.good.includes(tool);
       if (task === 0) {
-        if (tool === "clip") f.say("<b>자철석</b>에만 클립이 달라붙었어요. 두 광물이 가려졌어요.");
+        if (tool === "clip") f.say("<b>자철석</b>에만 클립이 달라붙었어요. 두 광물을 구별할 수 있네요!");
         if (tool === "acid") f.say("두 광물 모두 <b>변화가 없어요</b>. 묽은 염산으로는 가려낼 수 없어요. 다른 도구를 써 보세요.");
-        if (tool === "plate") f.say("가루가 흑운모는 <b>흰색</b>, 자철석은 <b>검은색</b>이에요. 겉은 같아도 가루로 가려졌어요.");
+        if (tool === "plate") f.say("가루의 색이 흑운모는 <b>흰색</b>, 자철석은 <b>검은색</b>이에요. 가루 색으로도 구별할 수 있어요.");
       } else {
         if (tool === "acid") f.say("<b>방해석</b>에서만 거품이 생겼어요. 방해석을 찾았어요.");
         if (tool === "clip") f.say("세 광물 모두 <b>변화가 없어요</b>. 클립으로는 가려낼 수 없어요. 다른 도구를 써 보세요.");
@@ -208,7 +208,7 @@ export const g2u2MineralLab: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.correct);
         f.pips(task * 2 + 1);
         next.hidden = false;
-        next.textContent = task === 0 ? "다음, 밝은 광물 셋" : "다음, 서로 긁어 보기";
+        next.textContent = task === 0 ? "밝은 광물 셋 구별하기" : "두 광물 서로 긁어 보기";
       }
       hintNow();
     }, 1100);
@@ -268,7 +268,7 @@ export const g2u2MineralLab: StepRenderer = (host, step, api) => {
           f.stage.classList.add("marked");
           lab.q<SVGTextElement>(".g2u2x-mn-res").textContent = "방해석에만 흠집이 생겼어요";
           f.say(`${picked.startsWith("방해석") ? "예측대로" : "예측과 달리"} <b>방해석</b>에만 흠집이 생겼어요. 석영은 멀쩡해요.`);
-          tm.later(() => lab.ask("석영과 방해석 가운데 <b>더 단단한</b> 광물은?", ["석영", "방해석", "단단하기가 같다"], "서로 긁으면 <b>무른 쪽</b>에만 흠집이 생겨요. 긁힌 방해석이 더 물러요.", () =>
+          tm.later(() => lab.ask("석영과 방해석 가운데 <b>더 단단한</b> 광물은?", ["석영", "방해석", "단단한 정도가 같다"], "두 광물을 서로 긁으면 <b>더 무른 쪽</b>에 흠집이 생겨요. 흠집이 나지 않은 석영이 더 단단해요.", () =>
             lab.finish("광물마다 <b>가루의 색, 쇠붙이를 끌어당기는 성질, 묽은 염산과의 반응, 단단한 정도</b>가 달라요. 이런 특성을 이용하면 겉보기가 비슷한 광물도 가려낼 수 있어요."),
           ), 1000);
         }, 1200);

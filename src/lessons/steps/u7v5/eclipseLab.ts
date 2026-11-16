@@ -104,7 +104,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
 
   const f = u7Frame(host, { title: s.title, steps: 3, cls: "u7x-enter", api });
   const doneCta = s.cta ?? "개념 정리하기";
-  const enterBtn = el("button", { class: "u7x-enterbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 크게 열기" })) as HTMLButtonElement;
+  const enterBtn = el("button", { class: "u7x-enterbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 실험실 열기" })) as HTMLButtonElement;
   const art = el("div", { class: "u7x-enter-art", html: enterArtSvg() });
   f.stage.append(art, enterBtn);
   /** 판정과 결론 동안의 무대(기록 두 칸). */
@@ -114,13 +114,13 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     host.dataset.u7Art = state;
   };
   const goalsUi = u7Goals(1, [
-    { id: "solar", name: "지구에 달의 그림자 만들기", sub: "달을 어디에 두면 될까요" },
-    { id: "ground", name: "그림자 속 땅에서 올려다보기", sub: "태양은 어떤 모습일까요" },
-    { id: "lunar", name: "달을 지구의 그림자 속으로", sub: "달을 어디에 두면 될까요" },
+    { id: "solar", name: "지구에 달의 그림자 만들기", sub: "달을 어디에 놓으면 될까요?" },
+    { id: "ground", name: "그림자 속 지상에서 올려다보기", sub: "태양이 어떻게 보일까요?" },
+    { id: "lunar", name: "달을 지구의 그림자 속으로 넣기", sub: "달을 어디에 놓으면 될까요?" },
   ]);
-  const FOUND: Record<string, string> = { solar: "일식이에요", ground: "개기일식이에요", lunar: "월식이에요" };
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "가로 화면에서 세 가지를 해 봐요" }), goalsUi.el);
-  f.say("가로 화면에서 <b>달</b>을 끌어 태양, 지구와 <b>한 줄</b>로 세워 보세요.");
+  const FOUND: Record<string, string> = { solar: "태양, 달, 지구 (일식)", ground: "코로나가 보이는 개기일식", lunar: "태양, 지구, 달 (월식)" };
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "가로 화면에서 세 가지 미션을 차례로 해 보세요" }), goalsUi.el);
+  f.say("가로 화면을 열어 <b>달</b>을 끌어 움직이며 태양, 지구와 <b>한 줄</b>로 세워 보세요.");
   f.pips(1);
   host.dataset.u7Phase = "play";
 
@@ -128,14 +128,16 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
   let finished = false;
   let asked = false;
   let doneBar: HTMLElement | null = null;
+  let pillEl: HTMLElement | null = null;
 
   function showDone(): void {
     if (!finished || !rot || doneBar) return;
     // 가로 화면 안에서 끝을 알린다(세로 화면으로 돌아가야 정리가 이어진다)
     const back = el("button", { class: "u7x-rotdone-btn", attrs: { type: "button" }, text: "돌아가서 정리하기" });
     back.addEventListener("click", () => rot?.leave());
-    doneBar = el("div", { class: "u7x-rotdone" }, el("span", { text: "세 가지를 모두 해냈어요" }), back);
+    doneBar = el("div", { class: "u7x-rotdone" }, el("span", { text: "세 가지 미션을 모두 완료했어요!" }), back);
     rot.stage.appendChild(doneBar);
+    pillEl?.classList.add("hide"); // 둘째 줄의 상태 알약이 끝 알림과 겹친다(상태 설명은 아래 알림이 이어서 한다)
   }
 
   function collect(id: string, _subText: string): void {
@@ -155,16 +157,16 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     host.dataset.u7Phase = "ask";
     f.pips(2);
     // 교과서의 기록 두 칸: 지구에 그림자가 생길 때와 달에 그림자가 생길 때 세 천체의 자리
-    f.say("두 가지를 모두 만들었어요. 그때 세 천체의 자리를 떠올려 적어 봐요.");
+    f.say("방금 만든 두 현상에서 세 천체가 어떤 순서로 늘어섰는지 확인해 봐요.");
     setArt("q1");
     f.slot.ask(
-      "<b>지구에 달의 그림자</b>가 생겼을 때, 가운데에 있던 천체는?",
+      "<b>지구에 달의 그림자</b>가 생겨 태양이 가려졌을 때, 한가운데에 놓인 천체는 무엇이었나요?",
       [{ t: "달", ok: true }, { t: "지구" }, { t: "태양" }],
       (ok) => {
         setArt("a1");
         api.recordQuiz(ok);
       },
-      { why: "태양, 달, 지구의 차례로 한 줄이었어요.", onNext: askLunar },
+      { why: "태양, 달, 지구 순서로 한 줄이 되어 달이 태양 빛을 가렸어요.", onNext: askLunar },
     );
   }
 
@@ -172,10 +174,10 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     host.dataset.u7Phase = "ask2";
     setArt("q2");
     f.slot.ask(
-      "<b>달이 지구의 그림자</b>에 들어갔을 때, 가운데에 있던 천체는?",
+      "이번에는 반대로 <b>달이 지구의 그림자 속</b>에 들어갔을 때, 한가운데에 놓인 천체는 무엇이었나요?",
       [{ t: "지구", ok: true }, { t: "달" }, { t: "태양" }],
       () => setArt("a2"),
-      { why: "태양, 지구, 달의 차례로 한 줄이었어요.", onNext: conclude },
+      { why: "태양, 지구, 달 순서로 한 줄이 되어 지구의 그림자가 달을 가렸어요.", onNext: conclude },
     );
   }
 
@@ -183,8 +185,8 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     host.dataset.u7Phase = "done";
     setArt("a2");
     f.pips(3);
-    f.say("가로 화면의 <b>왜 매달 일어나지 않을까요?</b> 단추도 눌러 보면 좋아요.");
-    f.slot.conclude("<b>태양, 달, 지구</b> 차례로 한 줄이면 달이 태양을 가리는 <b>일식</b>, <b>태양, 지구, 달</b> 차례로 한 줄이면 달이 지구 그림자에 드는 <b>월식</b>이에요.");
+    f.say("가로 화면을 다시 열어 <b>왜 매달 일어나지 않을까요?</b> 버튼도 눌러 확인해 보세요!");
+    f.slot.conclude("<b>태양, 달, 지구</b> 순서로 한 줄이 되면 달이 태양을 가리는 <b>일식</b>이 일어나고, <b>태양, 지구, 달</b> 순서로 한 줄이 되면 달이 지구의 그림자 속에 들어가는 <b>월식</b>이 일어나요.");
     api.enableCTA(doneCta);
   }
 
@@ -216,14 +218,16 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     const { enterRotateStage } = await import("../../../ui/rotateStage");
     if (disposed) return;
     rot = enterRotateStage({
-      title: "일식과 월식, 달을 끌어서 일렬로",
+      title: "달을 끌어 태양·지구와 한 줄로 세워 보세요",
       onLeave: () => {
         leave();
       },
     });
     const canvas = el("canvas", { class: "sp3-canvas" }) as HTMLCanvasElement;
-    const phasePill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#FFB03A" }), el("span", { text: "달을 좌우로 끌어 보세요" }));
-    const groundBtn = el("button", { class: "sp3-groundbtn hide", attrs: { type: "button" } }, el("span", { text: "지상에서 보기" }));
+    // 상태 알약은 둘째 줄(u7x-rpill)에 둔다: 글이 길어져 첫 줄의 가운데 제목과 겹치지 않게(폰 가로 폭 660~850px)
+    const phasePill = el("div", { class: "pill sp3-pill u7x-rpill" }, el("span", { class: "pdot", style: "background:#FFB03A" }), el("span", { text: "달을 끌어 공전 궤도를 따라 움직여 보세요" }));
+    pillEl = phasePill;
+    const groundBtn = el("button", { class: "sp3-groundbtn hide", attrs: { type: "button" } }, el("span", { text: "지구(그림자 속)에서 올려다보기" }));
     const tiltBtn = el("button", { class: "sp3-tiltbtn", attrs: { type: "button", "aria-pressed": "false" } }, el("span", { text: "왜 매달 일어나지 않을까요?" }));
     const toast = el("div", { class: "sp3-toast u7x-toast" });
     rot.stage.append(canvas, phasePill, groundBtn, tiltBtn, toast);
@@ -234,13 +238,13 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     THREE = S.THREE;
     st = S.createSpaceStage(canvas, { fov: 34 });
     if (!st) {
-      pillText.textContent = "이 기기는 3D를 지원하지 않아요";
+      pillText.textContent = "이 기기에서는 3D 화면을 열 수 없어요";
       finished = true;
       asked = true;
       api.recordQuiz(true);
       rot?.leave();
       conclude();
-      f.say("이 기기에서는 입체 무대를 켤 수 없어요. 아래 글로 알아 두세요.");
+      f.say("이 기기에서는 3D 화면을 열 수 없어 핵심 내용으로 바로 정리할게요.");
       return;
     }
     const { scene, camera } = st;
@@ -367,7 +371,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
         lastT = t;
         if (!hintShown) {
           hintShown = true;
-          showToast("빈 우주를 끌거나 탭해도 달이 움직여요. 손가락으로 달을 가리지 않아도 돼요!");
+          showToast("빈 우주 공간을 끌거나 눌러도 달이 따라 움직여요!");
         }
       } else if (t != null) phi = t;
       try {
@@ -401,20 +405,20 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
 
     groundBtn.addEventListener("click", () => {
       groundView = !groundView;
-      groundBtn.querySelector("span")!.textContent = groundView ? "우주로 돌아가기" : "지상에서 보기";
+      groundBtn.querySelector("span")!.textContent = groundView ? "우주에서 내려다보기" : "지구(그림자 속)에서 올려다보기";
       haptic(HAPTIC.select);
     });
 
     tiltBtn.addEventListener("click", () => {
       tiltOn = !tiltOn;
-      tiltBtn.querySelector("span")!.textContent = tiltOn ? "궤도 평평하게 되돌리기" : "왜 매달 일어나지 않을까요?";
+      tiltBtn.querySelector("span")!.textContent = tiltOn ? "평평한 궤도로 되돌리기" : "왜 매달 일어나지 않을까요?";
       tiltBtn.setAttribute("aria-pressed", String(tiltOn));
       tiltBtn.classList.toggle("on", tiltOn);
       haptic(HAPTIC.select);
       if (tiltOn) {
-        showToast("달 궤도는 지구 궤도면보다 약 5° 기울어 있어요(그림은 과장). 달을 태양 쪽으로 끌어 보세요!");
+        showToast("실제로는 달의 공전 궤도가 약 5° 기울어져 있어요(화면은 보기 쉽게 과장했어요). 달을 태양 쪽이나 반대쪽으로 끌어 보세요!");
       } else {
-        showToast("궤도를 다시 평평하게, 이제 일렬 정렬을 만들 수 있어요");
+        showToast("궤도를 다시 평평하게 맞췄어요. 이제 세 천체를 한 줄로 세울 수 있어요.");
       }
     });
 
@@ -424,8 +428,9 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     //     동안 계속 떠 있고, 벗어나면 내려간다. 1회성이 점유 중이면 끝난 뒤 이어받는다.
     let eventToastMs = 0;
     let stateToastKey = "";
+    // 알림 글은 이 파일의 고정 글뿐이라 굵은 글씨(<b>)를 살려 innerHTML로 넣는다
     const showToast = (msg: string): void => {
-      toast.textContent = msg;
+      toast.innerHTML = msg;
       toast.classList.add("show");
       stateToastKey = "";
       eventToastMs = 3000;
@@ -522,38 +527,39 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
       // 재정렬할 때 접근 중 문구("부분일식")에 갇힌다(2026-07-26 사용자 실기기 리포트).
       if (!groundView) {
         pillText.textContent = nearMiss
-          ? "그림자가 비껴가요. 궤도가 기울어 있으니까!"
+          ? "궤도가 기울어 있어 그림자가 위아래로 비껴가요!"
           : solarAligned
-            ? "일식, 태양·달·지구가 일렬!"
+            ? "일식! 태양, 달, 지구가 한 줄로 섰어요"
             : lunarAligned
-              ? "월식, 태양·지구·달이 일렬!"
+              ? "월식! 태양, 지구, 달이 한 줄로 섰어요"
               : partialSolar
-                ? "부분일식, 태양 쪽으로 조금만 더!"
+                ? "부분일식! 정중앙으로 조금만 더 맞춰 보세요"
                 : partialLunar
-                  ? "부분월식, 더 깊이 넣어 보세요!"
+                  ? "부분월식! 그림자 한가운데로 더 넣어 보세요"
                   : dSolar < 40
-                    ? "태양 쪽으로 조금만 더…"
+                    ? "태양과 지구 사이로 조금만 더 옮겨 보세요"
                     : dLunar < 40
-                      ? "태양 반대쪽으로 조금만 더…"
-                      : "달을 좌우로 끌어 보세요";
+                      ? "지구 뒤쪽 그림자로 조금만 더 옮겨 보세요"
+                      : "달을 끌어 공전 궤도를 따라 움직여 보세요";
       }
 
       // 상태 토스트: 달이 그 자리에 머무는 동안 설명이 계속 떠 있는다
+      // (일식 알림이 부르는 버튼 이름은 groundBtn의 글과 같아야 한다)
       const stateToast: [string, string] | null =
         groundView && solarAligned
-          ? ["ground", "개기일식, 달이 태양을 완전히 가리면, 평소 안 보이던 태양의 대기가 드러나요"]
+          ? ["ground", "<b>개기일식!</b> 달이 밝은 태양(광구)을 완전히 가리면, 평소에는 안 보이던 태양의 대기(코로나)가 드러나요."]
           : nearMiss
             ? dSolar < 9
-              ? ["miss-s", "빗나갔어요! 삭이어도 달 그림자가 지구 위·아래로 비껴가요. 그래서 일식은 가끔만 일어나요"]
-              : ["miss-l", "빗나갔어요! 망이어도 달이 지구 그림자를 위·아래로 비껴가요. 그래서 월식도 드물죠"]
+              ? ["miss-s", "달의 궤도가 기울어 있어서, 태양 쪽에 와도 달 그림자가 지구 위아래로 비껴가요. 그래서 일식이 매달 일어나지는 않아요!"]
+              : ["miss-l", "달의 궤도가 기울어 있어서, 지구 반대쪽에 와도 달이 지구 그림자를 위아래로 비껴가요. 그래서 월식도 가끔만 일어나요!"]
             : solarAligned
-              ? ["solar", "일식! 달 그림자가 닿은 지역에서 태양이 가려져요. 이때 달의 위상은 삭"]
+              ? ["solar", "<b>일식!</b> 달의 그림자가 닿는 지구 지역에서 태양이 가려져요. 아래 <b>지구(그림자 속)에서 올려다보기</b> 버튼도 눌러 보세요!"]
               : lunarAligned
-                ? ["lunar", "월식! 달이 지구 그림자에 들어가 붉게 보여요. 이때 달의 위상은 망"]
+                ? ["lunar", "<b>월식!</b> 달이 지구의 그림자 속으로 들어가 어두워지며 붉게 보여요."]
                 : partialSolar
-                  ? ["p-solar", "태양이 일부만 가려졌어요. 부분일식! 더 정확히 일렬로 맞추면 개기일식이 돼요"]
+                  ? ["p-solar", "태양의 일부만 가려지는 <b>부분일식</b>이에요! 태양 정중앙으로 조금 더 옮기면 개기일식이 돼요."]
                   : partialLunar
-                    ? ["p-lunar", "달이 지구 그림자에 일부만 걸쳤어요. 부분월식! 더 깊이 넣으면 개기월식이 돼요"]
+                    ? ["p-lunar", "달이 지구 그림자에 일부만 걸친 <b>부분월식</b>이에요! 그림자 한가운데로 더 옮기면 개기월식이 돼요."]
                     : null;
       eventToastMs = Math.max(0, eventToastMs - dt * 16.7);
       // 지상 보기에서는 알림을 아래 단추 줄 사이로 내린다(검은 해와 코로나를 덮지 않게)
@@ -562,7 +568,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
         if (stateToast) {
           if (stateToastKey !== stateToast[0]) {
             stateToastKey = stateToast[0];
-            toast.textContent = stateToast[1];
+            toast.innerHTML = stateToast[1];
           }
           toast.classList.add("show");
         } else {
@@ -616,7 +622,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
         st.camera.updateProjectionMatrix();
         corona.material.opacity = Math.min(0.95, corona.material.opacity + 0.05 * dt);
         sunGlow.material.opacity = 0.1; // 개기 순간엔 하늘이 어두워진다: 코로나가 주인공
-        pillText.textContent = "개기일식, 검은 해 둘레로 코로나!";
+        pillText.textContent = "개기일식! 달 너머로 밝은 코로나가 보여요";
         if (groundMs > 900 && !goals.has("ground")) collect("ground", "코로나!");
       } else {
         groundMs = 0;
@@ -632,7 +638,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
         sunGlow.material.opacity = 1;
         if (groundView && !solarAligned) {
           groundView = false;
-          groundBtn.querySelector("span")!.textContent = "지상에서 보기";
+          groundBtn.querySelector("span")!.textContent = "지구(그림자 속)에서 올려다보기";
         }
       }
       groundBtn.classList.toggle("hide", !(solarAligned && goals.has("solar")));
@@ -649,14 +655,15 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     rot?.dispose();
     rot = null;
     doneBar = null;
+    pillEl = null;
     groundView = false;
     enterBtn.classList.remove("pulse");
     if (finished) {
-      enterBtn.querySelector("span")!.textContent = "다시 열어 보기";
+      enterBtn.querySelector("span")!.textContent = "가로 화면 다시 보기";
       if (!asked) askOrder();
     } else {
-      enterBtn.querySelector("span")!.textContent = "다시 열어서 이어 하기";
-      f.say("아직 남은 일이 있어요. 다시 열어서 <b>아래 세 가지</b>를 마저 해 보세요.");
+      enterBtn.querySelector("span")!.textContent = "가로 화면 다시 열기";
+      f.say("아직 완료하지 않은 미션이 남았어요. 가로 화면을 다시 열어 <b>세 가지 미션</b>을 모두 해 보세요.");
     }
   }
 
@@ -664,7 +671,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
   // 검사용(개발 서버에서만): 달을 주어진 각도에 놓는다(180 = 태양 쪽, 0 = 태양 반대쪽)
   u7Dev(host, { phi: (deg: number) => (phi = (deg * Math.PI) / 180) });
 
-  api.setCTA("일식과 월식을 만들어요", { enabled: false });
+  api.setCTA("가로 화면에서 세 가지 미션을 완료해 보세요", { enabled: false });
   return () => {
     disposed = true;
     loop?.stop();
@@ -770,7 +777,7 @@ function judgeArtSvg(state: JudgeState): string {
     const cx = 214;
     const cy = 107;
     return `${disc(`${p}qm`, "moon", cx, cy, 20, { filter: `${p}redf` })}
-      ${label(20, cy + 5, "지구의 그림자에 든 달", "dim", "start")}`;
+      ${label(20, cy + 5, "지구 그림자 속에 들어간 달", "dim", "start")}`;
   };
 
   const top = state === "q1" ? onlySpot() : rowSolar();

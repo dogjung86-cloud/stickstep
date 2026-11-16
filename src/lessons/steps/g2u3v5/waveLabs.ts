@@ -1,13 +1,13 @@
 // [중2 Ⅲ v5] g2u3l7 파동의 발생과 전달: 랩 두 판.
 //
-// 1) g2u3BallLab 「물결이 지나가면 탁구공은 어디로 갈까요?」
+// 1) g2u3BallLab 「물결이 지나갈 때 물 위의 탁구공은 어떻게 움직일까요?」
 //    책의 어디에서: 해 보기 '파동의 움직임 관찰하기'(사각 수조에 물을 채우고 수면이 잔잔해진 다음 탁구공을 올려놓는다. 나무 막대로 수면을 한 번 눌렀다 놓고 탁구공의 움직임을 화살표로 표시한다).
 //    학생이 정하는 것: 탁구공을 띄울 자리, 막대를 누를 때. 먼저 탁구공이 어떻게 될지 예측한다(정오를 매기지 않는다).
 //    실패하는 길: 수면이 잔잔해지기 전에 또 누르면 물결이 겹쳐 그 판은 기록되지 않는다(잔잔해진 뒤 다시 한다).
 //    한 통찰: 물결이 퍼져 나가도 물(매질)은 제자리에서 위아래로 진동만 한다. 탁구공이 지나간 자취가 무대에 세로줄로 남는다.
 //    옛 랩(waveLab)은 손잡이를 흔들어 파동을 만들고 목표 칩을 채웠다. 공의 자리를 표시해 기록하지 않았다.
 //
-// 2) g2u3WaveLab 「파동의 모양은 무엇이 정할까요?」
+// 2) g2u3WaveLab 「파동의 진폭과 파장은 어떻게 정해질까요?」
 //    책의 어디에서: 그림 Ⅲ-15(마루, 골, 파장, 진폭)와 주기, 진동수의 정의.
 //    학생이 정하는 것: 흔드는 폭과 1초에 흔드는 횟수. 주문한 모양(진동 중심에서 마루까지 3칸, 이웃한 마루 사이 2칸)을 만든다.
 //    한 통찰: 진동 중심에서 마루까지가 진폭, 이웃한 마루 사이가 파장이다. 1초에 진동하는 횟수가 늘면 한 번 진동하는 시간은 그만큼 짧아진다.
@@ -37,7 +37,7 @@ const PULSE = LAMBDA * 1.5;
 
 export const ballLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 3, api });
+  const f = lxFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "ball";
@@ -52,13 +52,13 @@ export const ballLab: StepRenderer = (host, step, api) => {
   let trace: [number, number] | null = null; // 공이 지나간 높이의 범위
   const recs: number[] = [];
 
-  const log = lxLog(["첫째 자리", "둘째 자리"]);
+  const log = lxLog(["1회 관찰 위치", "2회 관찰 위치"]);
   const range = bvRange({
     cls: "g2u3x-r",
     min: 110,
     max: 290,
     value: bx,
-    label: "탁구공을 띄울 자리",
+    label: "탁구공을 띄울 위치 조절",
     onInput: (v) => {
       if (phase !== "play") return;
       if (pulses.length) dirty = true; // 물결이 지나가는 동안 공을 옮기면 그 판은 버린다
@@ -88,7 +88,7 @@ export const ballLab: StepRenderer = (host, step, api) => {
     pulses.push(clock);
     pressAt = clock;
     host.dataset.lxBusy = "1";
-    f.say(dirty ? "물결이 아직 지나가는 중이었어요. 물결이 <b>겹쳐서</b> 탁구공의 움직임을 읽기 어려워요." : "물결이 퍼져 나가요. <b>탁구공</b>이 처음 자리에서 벗어나는지 지켜보세요.");
+    f.say(dirty ? "이전 물결이 아직 지나가는 중이었어요. 물결이 <b>서로 겹쳐서</b> 탁구공의 움직임을 정확히 관찰하기 어려워요." : "물결이 퍼져 나가고 있어요! <b>탁구공</b>이 처음 위치에서 옆으로 이동하는지 잘 지켜보세요.");
   });
 
   function settled(): void {
@@ -96,38 +96,39 @@ export const ballLab: StepRenderer = (host, step, api) => {
     if (dirty) {
       dirty = false;
       trace = null;
-      f.say("이번 판은 기록하지 않았어요. 수면이 <b>잔잔해진 뒤</b> 한 번만 눌러 다시 해 보세요.");
+      f.say("물결이 겹쳤던 실험은 기록하지 않았어요. 수면이 <b>완전히 잔잔해진 뒤</b> 버튼을 한 번만 눌러 다시 실험해 보세요.");
       return;
     }
     if (recs.some((x) => Math.abs(x - bx) < 40)) {
-      f.say("그 자리는 이미 기록했어요. 탁구공을 <b>다른 자리</b>로 옮겨 한 번 더 해 보세요.");
+      f.say("이미 기록한 위치와 너무 가까워요. 슬라이더를 움직여 탁구공을 <b>다른 위치</b>로 옮긴 뒤 한 번 더 실험해 보세요.");
       return;
     }
     recs.push(bx);
     haptic(HAPTIC.correct);
     const wait = ((bx - SX) / SPEED).toFixed(1);
-    log.set(recs.length - 1, `${wait}초 뒤, 위아래로만`);
+    log.set(recs.length - 1, `${wait}초 뒤, 제자리 진동`);
     f.pips(1 + recs.length);
     if (recs.length < 2) {
-      f.say("탁구공은 위아래로 흔들리고 <b>처음 자리</b>에 그대로 있어요. 공을 다른 자리로 옮겨 한 번 더 해 보세요.");
+      f.say("탁구공이 위아래로 오르내린 뒤 <b>처음 위치</b>에 그대로 머물러 있어요! 이제 탁구공을 다른 위치로 옮겨 한 번 더 확인해 보세요.");
       return;
     }
     phase = "end";
     host.dataset.lx = "ask";
-    f.say("먼 자리의 공은 더 늦게 흔들렸지만, 이번에도 <b>제자리</b>였어요.");
+    f.say("위치를 바꾸니 흔들리기 시작하는 시각만 달라졌을 뿐, 이번에도 옆으로 이동하지 않고 <b>제자리</b>에서 진동했어요!");
     tm.later(() => {
       f.slot.ask(
-        "물결이 오른쪽으로 퍼져 나가는 동안 수조의 물은 어떻게 움직였을까요?",
-        [{ t: "제자리에서 위아래로 진동했어요", ok: true }, { t: "물결과 함께 오른쪽으로 갔어요" }, { t: "막대 쪽으로 모여들었어요" }],
+        "물결이 오른쪽으로 퍼져 나가는 동안, 수조 속의 물 자체는 어떻게 움직였을까요?",
+        [{ t: "이동하지 않고 제자리에서 위아래로만 진동했어요", ok: true }, { t: "물결과 함께 오른쪽 끝으로 이동했어요" }, { t: "나무 막대가 있는 왼쪽으로 모여들었어요" }],
         (ok) => api.recordQuiz(ok),
-        { why: "물 위의 탁구공이 옆으로 밀려나지 않았어요. 공을 받치는 <b>물</b>도 제자리에서 진동만 해요.", onNext: finish },
+        // 수정안의 이유 글은 이유 칸에서 네 줄이 되어 오답 카드가 조작 칸(208px) 아래로 넘쳤다. 앞머리("물 위에 떠 있는 ")만 덜어 세 줄로 둔다.
+        { why: "탁구공이 옆으로 밀려가지 않은 것을 통해, 공을 받치고 있는 <b>물(매질)</b>도 제자리에서 위아래로 진동만 한다는 것을 알 수 있어요.", onNext: finish },
       );
     }, 1600);
   }
   function finish(): void {
     host.dataset.lx = "done";
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("물결이 퍼져 나가도 물은 <b>제자리에서 위아래로 진동</b>만 해요. 옆으로 퍼져 나가는 것은 물이 아니라 <b>진동</b>이에요.");
+    f.say("파동이 전달될 때 매질은 어떻게 움직이는지 확인했어요! 아래 핵심 정리를 읽어 보세요.");
+    f.slot.conclude("물결파가 퍼져 나가도 물(매질)은 이동하지 않고 <b>제자리에서 위아래로 진동</b>만 해요. 옆으로 퍼져 나가는 것은 물질이 아니라 <b>진동(에너지)</b>이에요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -180,7 +181,7 @@ export const ballLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(bx, 200);
     ctx.stroke();
     ctx.setLineDash([]);
-    lxText(ctx, "처음 자리", bx, 52, { color: "rgba(255,196,90,1)" });
+    lxText(ctx, "처음 위치", bx, 52, { color: "rgba(255,196,90,1)" });
     // 나무 막대(누르면 잠깐 내려간다)
     const dip = Math.max(0, 1 - Math.abs(clock - pressAt - 0.12) / 0.14) * 14;
     const sg = ctx.createLinearGradient(SX - 6, 0, SX + 6, 0);
@@ -215,14 +216,14 @@ export const ballLab: StepRenderer = (host, step, api) => {
     ctx.beginPath();
     ctx.arc(bx, by, 9, 0, Math.PI * 2);
     ctx.fill();
-    if (pulses.length) lxPill(ctx, dirty ? "물결이 겹쳤어요" : "물결이 지나가는 중", dirty ? LX.red : LX.blue, true);
+    if (pulses.length) lxPill(ctx, dirty ? "물결이 겹쳤어요" : "물결이 지나가는 중이에요", dirty ? LX.red : LX.blue, true);
     else lxPill(ctx, "수면이 잔잔해요", LX.green, true);
   });
 
   // 먼저 내기를 건다(정오를 매기지 않는다)
-  f.say("수조의 물 위에 탁구공을 띄웠어요. 나무 막대로 수면을 한 번 눌렀다 놓으면 물결이 퍼져 나가요.");
-  api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
-  f.slot.ask("물결이 탁구공을 지나갈 때 탁구공은 어떻게 될까요?", [{ t: "제자리에서 위아래로 움직여요" }, { t: "물결을 따라 옆으로 밀려가요" }, { t: "막대 쪽으로 끌려와요" }], () => undefined, {
+  f.say("수조의 물 위에 탁구공을 띄워 놓았어요. 왼쪽의 나무 막대로 수면을 한 번 눌렀다 놓으면 오른쪽으로 물결이 퍼져 나가요.");
+  api.setCTA("먼저 어떻게 될지 예측해 보세요", { enabled: false });
+  f.slot.ask("퍼져 나가는 물결이 탁구공을 지나갈 때, 탁구공은 어떻게 움직일까요?", [{ t: "제자리에서 위아래로만 흔들려요" }, { t: "물결을 따라 오른쪽으로 밀려가요" }, { t: "나무 막대가 있는 왼쪽으로 끌려와요" }], () => undefined, {
     predict: true,
     nextDelay: 700,
     onNext: () => {
@@ -230,8 +231,8 @@ export const ballLab: StepRenderer = (host, step, api) => {
       host.dataset.lx = "play";
       f.pips(1);
       f.slot.showControls();
-      f.say("예측 완료! 탁구공을 띄울 자리를 정하고 <b>막대로 수면을 눌러</b> 확인해 보세요.");
-      api.setCTA("두 자리에서 확인해 보세요", { enabled: false });
+      f.say("생각을 정했군요! 탁구공을 띄울 위치를 정한 뒤 <b>막대로 수면 누르기</b>를 눌러 확인해 보세요.");
+      api.setCTA("탁구공의 위치를 바꾸어 두 번 확인해 보세요", { enabled: false });
     },
   });
   return () => {
@@ -252,7 +253,7 @@ const WAVE_CELLS_PER_S = 8; // 1초에 퍼지는 칸 수
 
 export const waveLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 3, api });
+  const f = lxFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "wave";
@@ -279,17 +280,17 @@ export const waveLab: StepRenderer = (host, step, api) => {
         host.dataset.lx = "len";
         haptic(HAPTIC.correct);
         f.pips(1);
-        f.say("진동 중심에서 마루까지가 3칸이에요. 이 거리가 <b>진폭</b>이에요. 이제 이웃한 마루 사이가 <b>2칸</b>이 되게 해 보세요.");
-        api.setCTA("마루 사이를 2칸으로 만들어요", { enabled: false });
-      } else f.say(`지금은 진동 중심에서 마루까지 <b>${amp}칸</b>이에요. 3칸이 되게 바꿔 보세요.`);
+        f.say("잘했어요! 진동 중심에서 마루까지의 높이가 3칸이 되었어요. 이 높이를 <b>진폭</b>이라고 해요. 이제 1초 동안 흔드는 횟수를 바꾸어 이웃한 마루 사이의 거리가 <b>2칸</b>이 되게 만들어 보세요.");
+        api.setCTA("이웃한 마루와 마루 사이의 거리를 2칸으로 맞춰 보세요", { enabled: false });
+      } else f.say(`지금은 진동 중심에서 마루까지의 높이가 <b>${amp}칸</b>이에요. <b>3칸</b>이 되도록 바꾸어 보세요.`);
     },
     "low",
   );
   const segF = lxSeg<"1" | "2" | "4">(
     [
-      { k: "1", t: "1번" },
-      { k: "2", t: "2번" },
-      { k: "4", t: "4번" },
+      { k: "1", t: "1번 (1 Hz)" },
+      { k: "2", t: "2번 (2 Hz)" },
+      { k: "4", t: "4번 (4 Hz)" },
     ],
     "1",
     (k) => {
@@ -297,7 +298,7 @@ export const waveLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       const len = WAVE_CELLS_PER_S / freq;
       if (phase === "amp") {
-        f.say(`더 자주 흔들면 마루 사이가 달라져요. 먼저 <b>흔드는 폭</b>으로 마루까지를 3칸으로 만들어 보세요.`);
+        f.say(`흔드는 횟수를 바꾸면 마루 사이의 거리가 달라져요. 먼저 <b>위아래로 흔드는 폭</b>을 조절해 진동 중심에서 마루까지를 3칸으로 만들어 보세요.`);
         return;
       }
       if (phase !== "len") return;
@@ -306,26 +307,26 @@ export const waveLab: StepRenderer = (host, step, api) => {
         host.dataset.lx = "ask";
         haptic(HAPTIC.correct);
         f.pips(2);
-        f.say("이웃한 마루 사이가 2칸이에요. 이 거리가 <b>파장</b>이에요. 코르크는 한 번 진동하는 데 0.25초가 걸려요.");
+        f.say("정확해요! 이웃한 마루에서 마루까지의 거리가 2칸이 되었어요. 이 거리를 <b>파장</b>이라고 하며, 지금 코르크가 한 번 진동하는 데 걸리는 시간, 곧 주기는 0.25초예요.");
         tm.later(() => {
           f.slot.ask(
-            "1초에 2번 진동하게 바꾸면 코르크가 한 번 진동하는 데 걸리는 시간은 얼마일까요?",
+            "1초 동안 2번 진동하도록 바꾸면, 코르크가 한 번 위아래로 진동하는 데 걸리는 시간은 몇 초일까요?",
             [{ t: "0.5초", ok: true }, { t: "2초" }, { t: "0.25초" }],
             (ok) => api.recordQuiz(ok),
-            { why: "1초에 2번이면 한 번에 <b>1초의 절반</b>이 걸려요. 4번일 때 0.25초였던 것과 같은 셈이에요.", onNext: finish },
+            { why: "1초 동안 2번 진동하므로, 한 번 진동하는 데는 <b>1초의 절반인 0.5초</b>가 걸려요.", onNext: finish },
           );
         }, 3000);
-      } else f.say(`지금은 이웃한 마루 사이가 <b>${len}칸</b>이에요. 1초에 흔드는 횟수를 바꿔 2칸으로 만들어 보세요.`);
+      } else f.say(`지금은 이웃한 마루 사이의 거리가 <b>${len}칸</b>이에요. 1초 동안 흔드는 횟수를 바꾸어 <b>2칸</b>으로 만들어 보세요.`);
     },
     "low",
   );
-  f.slot.setControls(el("div", { class: "g2u3x-cap", text: "흔드는 폭" }), segA.el, el("div", { class: "g2u3x-cap", text: "1초에 흔드는 횟수" }), segF.el);
+  f.slot.setControls(el("div", { class: "g2u3x-cap", text: "위아래로 흔드는 폭" }), segA.el, el("div", { class: "g2u3x-cap", text: "1초 동안 흔드는 횟수(진동수)" }), segF.el);
 
   function finish(): void {
     host.dataset.lx = "done";
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("진동 중심에서 마루까지가 <b>진폭</b>, 이웃한 마루 사이가 <b>파장</b>이에요. 1초에 진동하는 횟수가 늘면 한 번 진동하는 시간은 그만큼 <b>짧아져요</b>.");
+    f.say("파동의 진폭과 파장, 진동하는 시간의 관계를 모두 확인했어요! 아래 핵심 정리를 읽어 보세요.");
+    f.slot.conclude("진동 중심에서 마루나 골까지의 거리를 <b>진폭</b>, 이웃한 마루와 마루(또는 골과 골) 사이의 거리를 <b>파장</b>이라고 해요. 1초 동안 진동하는 횟수가 늘어날수록 한 번 진동하는 데 걸리는 시간은 <b>짧아져요</b>.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -464,12 +465,15 @@ export const waveLab: StepRenderer = (host, step, api) => {
     ctx.stroke();
     ctx.restore();
     lxText(ctx, "1초", TS.x + tw + 6, TS.y, { color: LX.dim, align: "left" });
-    lxText(ctx, `한 번 진동에 ${freq === 1 ? "1" : freq === 2 ? "0.5" : "0.25"}초`, X1 + 6, TS.y, { color: LX.gold, align: "right" }); // 코르크의 색(진폭 화살표의 노랑과 따로)
+    // 코르크의 색(진폭 화살표의 노랑과 따로). 두 줄로 쓴다: 캔버스 글꼴 이름(Pretendard)을 앱이 싣지 않아 기기 글꼴로 그려지는데,
+    // 그러면 "한 번 진동하는 데 0.25초"가 한 줄로 142px까지 넓어져 시간 줄 끝의 '1초'(180~200)를 덮는다. 두 줄이면 왼쪽 끝이 225 근처다.
+    lxText(ctx, "한 번 진동하는 데", X1 + 6, TS.y - 7, { color: LX.gold, align: "right" });
+    lxText(ctx, `${freq === 1 ? "1" : freq === 2 ? "0.5" : "0.25"}초`, X1 + 6, TS.y + 8, { color: LX.gold, align: "right" });
     lxText(ctx, "느린 화면", X1, 14, { color: LX.dim, align: "right" });
   });
 
-  f.say("수면의 가장 높은 곳이 <b>마루</b>, 가장 낮은 곳이 <b>골</b>이에요. 흔드는 폭을 바꿔 진동 중심에서 마루까지를 <b>3칸</b>으로 만들어 보세요.");
-  api.setCTA("마루까지를 3칸으로 만들어요", { enabled: false });
+  f.say("파동에서 가장 높은 곳은 <b>마루</b>, 가장 낮은 곳은 <b>골</b>이라고 해요. 먼저 <b>위아래로 흔드는 폭</b>을 바꾸어 진동 중심에서 마루까지의 높이를 <b>3칸</b>으로 만들어 보세요.");
+  api.setCTA("진동 중심에서 마루까지의 높이를 3칸으로 맞춰 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

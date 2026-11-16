@@ -27,7 +27,7 @@ const LOGI: Record<number, number> = { 1: 0, 2: 1, 10: 2, 1000: 3 };
 
 export const parsecLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = sFrame(host, { title: s.title, steps: 3, api });
+  const f = sFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = sCanvas(f.stage);
   const tm = bvTimers();
 
@@ -41,19 +41,19 @@ export const parsecLab: StepRenderer = (host, step, api) => {
 
   const log = sLog(["1 pc", "2 pc", "10 pc", "1000 pc"], 4);
   log.el.classList.add("stack");
-  const bMeasure = bvBtn("main", "연주 시차 재기");
+  const bMeasure = bvBtn("main", "연주 시차 측정하기");
   const range = bvRange({
     cls: "g2u8x-r",
     min: 0,
     max: 4,
     value: 0,
-    label: "별까지의 거리",
+    label: "별까지의 거리 (pc)",
     ticks: ["1 pc", "2 pc", "4 pc", "10 pc", "1000 pc"],
     onInput: (v) => {
       di = v;
       measured = false;
       bMeasure.disabled = false;
-      f.say(`별을 <b>${PC[v]} pc</b> 거리에 놓았어요. <b>연주 시차 재기</b>를 눌러 보세요.`);
+      f.say(`별을 <b>${PC[v]} pc</b> 거리에 놓았어요. <b>연주 시차 측정하기</b>를 눌러 보세요.`);
     },
   });
   const lock = (v: boolean): void => {
@@ -69,11 +69,11 @@ export const parsecLab: StepRenderer = (host, step, api) => {
     const d = PC[di];
     const p = 1 / d;
     if (d === 1000) {
-      log.set(3, "못 잼", true);
-      f.say("연주 시차가 0.001″예요. 두 자리가 <b>겹쳐 보여</b> 이 사진으로는 잴 수 없어요.");
+      log.set(3, "측정 불가", true);
+      f.say("거리가 1000 pc이면 연주 시차가 0.001″로 너무 작아서, 두 사진 속 별의 위치가 <b>거의 겹쳐 보여</b> 측정할 수 없어요!");
     } else {
       if (d in LOGI) log.set(LOGI[d], sec(p));
-      f.say(`6개월 사이의 시차는 ${sec(2 * p)}, 그 절반인 연주 시차는 <b>${sec(p)}</b>예요.`);
+      f.say(`6개월 간격의 시차는 ${sec(2 * p)}이고, 그 절반인 연주 시차는 <b>${sec(p)}</b>예요.`);
     }
     tm.later(advance, 1700);
   });
@@ -85,8 +85,8 @@ export const parsecLab: StepRenderer = (host, step, api) => {
       if (log.has(0) && log.has(1)) {
         stage = "hunt";
         f.pips(1);
-        f.say("거리가 2배가 되자 연주 시차가 절반이 됐어요. 이번에는 <b>0.10″</b>인 별을 찾아 재 보세요.");
-      } else if (measured && PC[di] !== 2) f.say(log.has(0) ? "이번에는 별을 <b>2 pc</b>으로 보내고 다시 재 보세요." : "별을 <b>1 pc</b>에 놓고 재 보세요.");
+        f.say("거리가 1 pc에서 2 pc으로 2배가 되자 연주 시차는 1.00″에서 0.50″로 절반이 되었어요! 이번에는 연주 시차가 <b>0.10″</b>인 별은 몇 pc 거리에 있는지 찾아 측정해 보세요.");
+      } else if (measured && PC[di] !== 2) f.say(log.has(0) ? "이번에는 슬라이더를 움직여 별을 <b>2 pc</b> 위치에 놓고 측정해 보세요." : "먼저 별을 <b>1 pc</b> 위치에 놓고 측정해 보세요.");
       if (stage === "first") return;
     }
     if (stage === "hunt") {
@@ -94,7 +94,7 @@ export const parsecLab: StepRenderer = (host, step, api) => {
         asking = true;
         lock(true);
         askFar();
-      } else if (measured && PC[di] === 4) f.say("4 pc은 0.25″예요. 0.10″가 되려면 별을 <b>더 멀리</b> 보내야 해요.");
+      } else if (measured && PC[di] === 4) f.say("4 pc일 때의 연주 시차는 0.25″예요. 연주 시차가 0.10″가 되려면 별을 <b>더 먼 곳(10 pc)</b>으로 옮겨야 해요.");
       return;
     }
     if (stage === "far" && measured && PC[di] === 1000) {
@@ -104,13 +104,13 @@ export const parsecLab: StepRenderer = (host, step, api) => {
     }
   }
   function askFar(): void {
-    f.say("기록을 보고 아래 질문에 답해 보세요.");
+    f.say("1 pc, 2 pc, 10 pc 거리에 있는 별의 연주 시차를 모두 측정했어요!");
     f.slot.ask(
-      "연주 시차가 0.5″인 별과 0.1″인 별 가운데 더 먼 별은?",
-      [{ t: "0.1″인 별", ok: true }, { t: "0.5″인 별" }, { t: "두 별의 거리는 같아요" }],
+      "연주 시차가 0.5″인 별과 0.1″인 별 중 지구에서 더 멀리 있는 별은 어느 것인가요?",
+      [{ t: "연주 시차가 0.1″인 별", ok: true }, { t: "연주 시차가 0.5″인 별" }, { t: "두 별까지의 거리는 같아요" }],
       (ok) => api.recordQuiz(ok),
       {
-        why: "0.5″는 <b>2 pc</b>, 0.1″는 <b>10 pc</b>이었어요.",
+        why: "연주 시차가 0.5″인 별은 <b>2 pc</b>, 0.1″인 별은 <b>10 pc</b> 거리에 있으므로 연주 시차가 작을수록 더 먼 별이에요.",
         onNext: () => {
           asking = false;
           stage = "far";
@@ -119,26 +119,26 @@ export const parsecLab: StepRenderer = (host, step, api) => {
           api.setCTA("1000 pc의 별을 재 보세요", { enabled: false });
           lock(false);
           bMeasure.disabled = measured;
-          f.say("마지막으로 막대를 끝까지 밀어 <b>1000 pc</b>의 별을 재 보세요.");
+          f.say("이제 슬라이더를 오른쪽 끝까지 밀어 아주 먼 <b>1000 pc</b> 거리의 별도 측정해 보세요.");
           tm.later(advance, 700);
         },
       },
     );
   }
   function askLimit(): void {
-    f.say("마지막 질문이에요.");
+    f.say("1000 pc 거리에 있는 별까지 모두 확인해 보았어요!");
     f.slot.ask(
-      "아주 먼 별의 거리를 이 방법으로 알기 어려운 까닭은?",
-      [{ t: "연주 시차가 너무 작아서", ok: true }, { t: "별이 너무 어두워서" }, { t: "지구가 공전하지 않아서" }],
+      "지구에서 아주 멀리 떨어진 별의 거리를 연주 시차로 측정하기 어려운 까닭은 무엇인가요?",
+      [{ t: "연주 시차가 너무 작아서 측정하기 어렵기 때문에", ok: true }, { t: "별이 빛을 전혀 내지 않기 때문에" }, { t: "먼 별을 볼 때는 지구가 공전하지 않기 때문에" }],
       (ok) => api.recordQuiz(ok),
-      { why: "두 자리가 겹쳐 보일 만큼 <b>조금만</b> 옮겨 갔어요.", onNext: finish },
+      { why: "별이 너무 멀리 있으면 6개월 간격으로 관측해도 위치 변화가 거의 없어 <b>연주 시차가 너무 작게</b> 나타나기 때문이에요.", onNext: finish },
     );
   }
   function finish(): void {
     stage = "end";
     f.pips(3);
-    f.say("관측 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("연주 시차가 1″인 별까지의 거리가 <b>1 pc</b>이에요. 연주 시차가 <b>작을수록 먼 별</b>이고, 아주 먼 별은 연주 시차가 너무 작아 이 방법으로 거리를 알기 어려워요.");
+    f.say("연주 시차와 거리(pc)의 반비례 관계, 그리고 연주 시차 측정법의 한계까지 모두 알아냈어요!");
+    f.slot.conclude("연주 시차가 1″인 별까지의 거리를 <b>1 pc(파섹)</b>이라고 해요. 별까지의 거리(pc)는 연주 시차(″)에 반비례하므로 <b>연주 시차가 작을수록 먼 별</b>이며, 아주 먼 별은 연주 시차가 너무 작아 이 방법으로 거리를 구하기 어려워요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -227,7 +227,7 @@ export const parsecLab: StepRenderer = (host, step, api) => {
     sText(ctx, `거리 ${d} pc`, Math.min(w - 44, Math.max(AX + 30, (AX + sx) / 2)), 218, { color: "#fff", px: 13, w: 800 });
   });
 
-  f.say("거리가 <b>1 pc</b>인 별을 6개월 간격으로 찍었어요. <b>연주 시차 재기</b>를 눌러 보세요.");
+  f.say("거리가 <b>1 pc</b>인 별을 6개월 간격으로 찍었어요. <b>연주 시차 측정하기</b>를 눌러 보세요.");
   api.setCTA("별의 연주 시차를 재 보세요", { enabled: false });
   return () => {
     tm.clear();

@@ -6,7 +6,7 @@
 .step.opn-step { padding: 6px 22px 10px; }
 .opn-title {
   font-size: 21px; line-height: 30px; font-weight: 800; letter-spacing: -.03em; color: var(--ink);
-  word-break: keep-all;
+  word-break: keep-all; text-wrap: balance; /* 두 줄 제목의 둘째 줄이 낱말 하나로 남지 않게(줄 수는 그대로) */
 }
 
 /* ── 무대 ── */
@@ -51,6 +51,18 @@
 }
 .opn-bubble b { color: var(--ink); font-weight: 700; }
 .opn-bubble:empty { visibility: hidden; }
+/* 글 맞춤(2026-11-16): 14px로 두 줄을 넘는 말은 13px로 줄여 두 줄에 넣는다(opener.ts fitBubble) */
+.opn-bubble.sm { font-size: 13px; line-height: 19px; }
+/* 제목이 한 줄을 넘으면 19px, 18px로 줄인다. 18px로도 넘치면 두 줄이 되며 줄 높이를 24px로 줄인다(opener.ts fitTitle) */
+.opn-title.fs19 { font-size: 19px; }
+.opn-title.fs18 { font-size: 18px; line-height: 24px; }
+/* 한 화면 맞춤(2026-11-16, opener.ts fitSpace): 스텝이 554px를 넘을 때만 간격을 줄이고, 예측을 고르는 동안이면 안내 말풍선을 잠시 접는다 */
+.step.opn-step.opn-tight { padding-top: 3px; padding-bottom: 6px; }
+.opn-step.opn-tight .opn-stage { margin-top: 6px; }
+.opn-step.opn-tight .opn-slot { margin-top: 7px; gap: 6px; }
+.opn-step.opn-tight .hook-choices { gap: 6px; }
+.opn-step.opn-tight .opn-title.fs18 { line-height: 22px; }
+.opn-step.opn-tight2.opn-asking .opn-say { display: none; }
 
 /* ══════════ 1. 유난히 긴 세포 (longcell) ══════════
    그림은 아이 하나와 세포 하나. 오른쪽에 길이 숫자, 아래에 꾹 누르는 버튼 */

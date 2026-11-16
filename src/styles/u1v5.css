@@ -65,7 +65,9 @@
 .u1g-end { font-size: 12.5px; font-weight: 800; stroke: #0B1524; stroke-width: 3px; paint-order: stroke; }
 .u1g-end.v { font-size: 12px; font-weight: 700; }
 @keyframes u1gPop { 0% { opacity: 0; } 100% { opacity: 1; } }
-.u1x-cap { height: 20px; padding: 0 2px; font-size: 12.5px; font-weight: 700; line-height: 20px; color: var(--n700); white-space: nowrap; }
+/* 조작 칸의 안내 글. 한 줄(20px)이 넘치면 두 줄로 내린다(예전에는 한 줄 고정이라 넘치면 칸 밖으로 삐져나갔다).
+   두 줄이 되어도 조작 칸 208px 안: 그래프 랩 40 + 8 + 표 157 = 205, 온실 기체 랩 카드 84 + 8 + 20 + 8 + 40 = 160. */
+.u1x-cap { min-height: 20px; padding: 0 2px; font-size: 12.5px; font-weight: 700; line-height: 20px; color: var(--n700); word-break: keep-all; }
 .u1x-cap.center { text-align: center; color: var(--ter); }
 .u1x-table {
   display: grid; grid-template-columns: 1.15fr 1fr 1fr 1fr; border: 1.5px solid var(--n300); border-radius: 14px; overflow: hidden; background: #fff;

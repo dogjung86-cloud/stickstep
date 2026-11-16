@@ -22,11 +22,13 @@ interface SkyStep {
 type Dir = "E" | "S" | "W" | "N";
 const DIRS: Dir[] = ["E", "S", "W", "N"];
 const DIR_NAME: Record<Dir, string> = { E: "동쪽", S: "남쪽", W: "서쪽", N: "북쪽" };
+// 뒷문장(SEEN_MORE)은 네 하늘을 다 본 순간에는 떼어 낸다(onTime의 replace가 이 상수를 쓴다)
+const SEEN_MORE = " 다른 방향도 눌러 보세요.";
 const SEEN_SAY: Record<Dir, string> = {
-  E: "동쪽 하늘의 별은 <b>오른쪽 위로</b> 비스듬히 떠올라요. 다른 하늘도 골라 보세요.",
-  S: "남쪽 하늘의 별은 <b>왼쪽에서 오른쪽으로</b> 지나가요. 다른 하늘도 골라 보세요.",
-  W: "서쪽 하늘의 별은 <b>오른쪽 아래로</b> 비스듬히 져요. 다른 하늘도 골라 보세요.",
-  N: "북쪽 하늘의 별은 <b>한곳을 가운데 두고</b> 돌아요. 다른 하늘도 골라 보세요.",
+  E: `동쪽 하늘의 별은 <b>오른쪽 위로</b> 비스듬히 떠올라요.${SEEN_MORE}`,
+  S: `남쪽 하늘의 별은 지평선과 나란하게 <b>왼쪽에서 오른쪽으로</b> 흘러가요.${SEEN_MORE}`,
+  W: `서쪽 하늘의 별은 <b>오른쪽 아래로</b> 비스듬히 져요.${SEEN_MORE}`,
+  N: `북쪽 하늘의 별은 <b>한 별을 중심으로</b> 원을 그리며 돌아요.${SEEN_MORE}`,
 };
 const H = 230;
 const POLE_Y = 96;
@@ -92,17 +94,17 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: MAXQ,
     value: 0,
-    label: "시각을 밀어 보세요",
+    label: "막대를 밀어 시간을 흘려보내 보세요",
     ticks: ["저녁 8시", "밤 10시", "밤 12시", "새벽 2시"],
     onInput: (v) => {
       q = v;
       onTime();
     },
   });
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "어느 쪽 하늘을 볼까요" }), seg, range.el);
-  f.say("<b>시각 막대</b>를 밀어 보세요. 동쪽 하늘의 별이 어디로 움직이나요?");
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "관측할 밤하늘 방향을 골라 보세요" }), seg, range.el);
+  f.say("아래 <b>시각 막대</b>를 오른쪽으로 끝까지 밀어 보세요. 동쪽 하늘의 별이 어느 방향으로 움직이나요?");
   f.pips(1);
-  api.setCTA("네 하늘을 모두 살펴봐요", { enabled: false });
+  api.setCTA("동·남·서·북 네 하늘을 모두 관측해 보세요", { enabled: false });
 
   function paintSeg(): void {
     for (const [d, b] of dirBtns) {
@@ -120,7 +122,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     range.set(0);
     haptic(HAPTIC.select);
     paintSeg();
-    if (!seen.has(d)) f.say(`${DIR_NAME[d]} 하늘이에요. <b>시각 막대</b>를 밀어 별이 움직이는 쪽을 보세요.`);
+    if (!seen.has(d)) f.say(`${DIR_NAME[d]} 밤하늘이에요. <b>시각 막대</b>를 밀어 별이 움직이는 방향을 확인해 보세요.`);
     draw();
   }
 
@@ -134,7 +136,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
         host.dataset.u7Seen = String(seen.size);
         paintSeg();
         if (seen.size === DIRS.length) window.setTimeout(() => !disposed && phase === "look" && toPole(), 1300);
-        f.say(seen.size === DIRS.length ? SEEN_SAY[dir].replace(" 다른 하늘도 골라 보세요.", "") : SEEN_SAY[dir]);
+        f.say(seen.size === DIRS.length ? SEEN_SAY[dir].replace(SEEN_MORE, "") : SEEN_SAY[dir]);
       }
     }
     draw();
@@ -149,8 +151,8 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     pill.textContent = timeLabel(q);
     paintSeg();
     f.pips(2);
-    f.say("북쪽 하늘이에요. 여섯 시간 동안 거의 <b>움직이지 않은 별</b>을 찾아 눌러 보세요.");
-    api.setCTA("움직이지 않은 별을 눌러요", { enabled: false });
+    f.say("북쪽 하늘을 6시간 동안 관측한 모습이에요. 제자리에서 거의 <b>움직이지 않은 별</b>을 찾아 눌러 보세요.");
+    api.setCTA("가운데에서 움직이지 않은 별을 눌러 보세요", { enabled: false });
     draw();
   }
 
@@ -158,9 +160,9 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     phase = "ask";
     host.dataset.u7Phase = phase;
     f.pips(3);
-    f.say("그 별이 <b>북극성</b>이에요. 다른 별들의 자취를 보고 답해 보세요.");
+    f.say("찾았어요! 그 별이 바로 <b>북극성</b>이에요. 둘레 별들의 자취 끝에 있는 화살촉을 보고 답해 보세요.");
     f.slot.ask(
-      "북쪽 하늘의 별들은 <b>어느 방향</b>으로 돌았나요?",
+      "북쪽 하늘의 별들은 북극성을 중심으로 <b>어느 방향</b>으로 돌았나요?",
       [{ t: "시계 반대 방향", ok: true }, { t: "시계 방향" }],
       (ok) => {
         // 답한 뒤에는 무대에 도는 방향을 큰 화살로 확인해 준다(묻는 동안에는 자취의 옅고 진함과 작은 화살촉만)
@@ -168,7 +170,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
         draw();
         api.recordQuiz(ok);
       },
-      { why: "자취의 끝(밝은 점)이 시계 반대 방향으로 나아갔어요.", onNext: conclude },
+      { why: "별이 이동한 자취의 끝(밝은 점과 화살촉)을 따라가 보면 시계 반대 방향으로 돌았어요.", onNext: conclude },
     );
   }
 
@@ -176,8 +178,8 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.u7Phase = phase;
     f.pips(4);
-    f.say("별은 동쪽에서 떠서 남쪽 하늘을 지나 서쪽으로 져요.");
-    f.slot.conclude("별이 하루에 한 바퀴 도는 것처럼 보여요. 별이 도는 것이 아니라 <b>지구가 하루에 한 바퀴 스스로 돌기</b>(자전) 때문이에요. 그래서 별은 지구가 도는 방향과 반대로 움직여 보여요.");
+    f.say("밤하늘의 별은 동쪽에서 떠올라 남쪽 하늘을 지나 서쪽으로 지며 하루에 한 바퀴씩 돌아요.");
+    f.slot.conclude("별이 실제로 도는 것이 아니라 <b>지구가 서쪽에서 동쪽으로 하루에 한 바퀴씩 자전</b>하기 때문에, 별이 반대 방향(동쪽에서 서쪽)으로 하루에 한 바퀴 도는 것처럼 보여요.");
     api.enableCTA(doneCta);
   }
 
@@ -351,7 +353,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       toAsk();
     } else {
       haptic(HAPTIC.tap);
-      f.say("그 별은 자취를 길게 남겼어요. <b>자취가 없는 별</b>을 찾아보세요.");
+      f.say("그 별은 원을 그리며 길게 움직였어요. 동심원의 한가운데에서 <b>자취가 점으로 남은 별</b>을 눌러 보세요.");
     }
   });
   u7Dev(host, { time: (v: number) => { q = v; range.set(v); onTime(); } });

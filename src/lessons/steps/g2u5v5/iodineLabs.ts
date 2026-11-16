@@ -107,7 +107,7 @@ function testTube(ns: string, x: number, top: number, bottom: number, liquidTop:
 
 export const g2u5StarchLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-starch", wait: "실험을 차례대로 해 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-starch", wait: "실험 과정을 차례대로 진행해 보세요", tall: true });
   const { f, tm } = lab;
   const A = newNs("st");
   const ly = g5Layers(lab, "상추 모종 두 개와 어둠상자, 잎 조각을 처리하는 실험대", ["defs", "scene"]);
@@ -197,7 +197,7 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
     cBox.sub(box ? "씌움" : "씌우지 않음");
     draw();
   });
-  const day = bvBtn("main g2u5x-day", "햇빛이 드는 곳에 하루 두기");
+  const day = bvBtn("main g2u5x-day", "햇빛이 비치는 곳에 하루 동안 두기");
   day.addEventListener("click", () => {
     if (busy) return;
     tap();
@@ -209,7 +209,7 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     draw("g2u5x-pop");
     f.slot.setControls(row(cBath.el, cFire.el), row(cRinse.el, cDrop.el));
-    f.say("하루 뒤 두 모종에서 잎을 따 조각을 냈어요. <b>무엇부터</b> 할까요?");
+    f.say("하루 뒤 두 모종에서 잎을 따서 조각을 냈어요. 잎의 색깔 변화를 잘 보려면 <b>무엇부터</b> 해야 할까요?");
   });
   const toPrep = (): void => {
     phase = "prep";
@@ -219,11 +219,11 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
     f.pips(0);
     draw();
     f.slot.setControls(row(cBox.el), day);
-    f.say("한 모종에만 <b>어둠상자</b>를 씌울 수 있어요. 준비를 마치고 하루를 보내요.");
+    f.say("빛이 있을 때와 없을 때를 비교하려면 어떻게 해야 할까요? 한쪽 모종에 <b>어둠상자</b>를 씌우고 하루 동안 햇빛을 비춰 보세요.");
   };
 
   // 실험대: 처리 네 가지
-  const cBath = chip("bath", "뜨거운 물에 담그기", "에탄올에 넣은 잎을", () => {
+  const cBath = chip("bath", "뜨거운 물에 물중탕하기", "에탄올 시험관 담그기", () => {
     if (busy || pale) return;
     good();
     pale = true;
@@ -232,37 +232,37 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
     f.pips(2);
     cBath.done();
     draw("g2u5x-pop");
-    f.say("잎의 초록색이 에탄올로 <b>빠져나왔어요</b>. 잎 조각이 하얗게 됐어요.");
+    f.say("잎의 초록색 색소(엽록소)가 에탄올에 녹아 <b>빠져나왔어요</b>. 하얗게 탈색된 잎 조각을 이제 어떻게 할까요?");
   });
-  const cFire = chip("fire", "알코올램프로 가열", "에탄올에 넣은 잎을", () => {
+  const cFire = chip("fire", "알코올램프로 직접 가열", "에탄올 시험관에 불 대기", () => {
     if (busy) return;
     bad();
     lab.slip();
     flame = true;
     draw();
-    toast(lab, "불이 붙을 수 있어 위험해요", true);
-    f.say("에탄올은 불이 잘 붙어요. 불로 데우지 말고 <b>뜨거운 물</b>에 담가요.");
+    toast(lab, "에탄올에 불이 붙을 수 있어 위험해요!", true);
+    f.say("에탄올은 불이 잘 붙는 물질이라 직접 가열하면 위험해요. 반드시 <b>뜨거운 물에 물중탕</b>으로 가열해 주세요.");
     tm.later(() => {
       flame = false;
       if (phase === "bench") draw();
     }, 1600);
   });
-  const cRinse = chip("rinse", "증류수로 헹구기", "", () => {
+  const cRinse = chip("rinse", "증류수로 헹구기", "탈색한 잎 조각 씻기", () => {
     if (busy || rinsed) return;
     tap();
     if (!pale) {
-      f.say("물로 헹궈도 잎의 초록색은 <b>빠지지 않아요</b>. 다른 방법을 찾아요.");
+      f.say("먼저 에탄올 시험관을 뜨거운 물에 담가 잎의 <b>초록색을 빼낸 뒤</b>에 헹궈 주세요.");
       return;
     }
     rinsed = true;
     cRinse.done();
-    f.say("잎 조각에 묻은 에탄올을 씻어 냈어요. 이제 <b>용액</b>을 떨어뜨려요.");
+    f.say("잎에 묻은 에탄올을 깨끗이 씻어 냈어요. 이제 <b>아이오딘 용액</b>을 떨어뜨려 색깔 변화를 관찰해 보세요.");
   });
-  const cDrop = chip("drop", "아이오딘 용액", "한 방울씩 떨어뜨리기", () => {
+  const cDrop = chip("drop", "아이오딘 용액 떨어뜨리기", "잎 조각에 한 방울씩", () => {
     if (busy) return;
     if (pale && !rinsed) {
       bad();
-      f.say("잎 조각에 에탄올이 묻어 있어요. <b>증류수로 먼저</b> 헹궈요.");
+      f.say("탈색한 잎에 남아 있는 에탄올을 먼저 <b>증류수로 헹궈</b> 주세요.");
       return;
     }
     busy = true;
@@ -273,8 +273,8 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
       pieces = ["mud", "mud"];
       draw("g2u5x-pop");
       host.dataset.g5Fail = "green";
-      toast(lab, "색 변화가 보이지 않아요", true);
-      f.say("잎의 <b>초록색에 가려</b> 색이 변했는지 알 수 없어요. 새 조각으로 다시 해요.");
+      toast(lab, "초록색에 가려 색 변화가 잘 안 보여요", true);
+      f.say("잎이 초록색 그대로여서 아이오딘 반응 색깔이 <b>가려졌어요</b>. 먼저 에탄올 물중탕으로 잎의 초록색을 빼내 보세요.");
       tm.later(() => {
         pieces = ["fresh", "fresh"];
         dropped = false;
@@ -289,8 +289,8 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
       pieces = ["blue", "blue"];
       draw("g2u5x-pop");
       host.dataset.g5Fail = "nobox";
-      toast(lab, "두 조각 모두 청람색이에요", true);
-      f.say("둘 다 빛을 받아 <b>비교할 수 없어요</b>. 처음으로 돌아가 다시 준비해요.");
+      toast(lab, "두 모종 모두 빛을 받아 비교할 수 없어요", true);
+      f.say("두 모종이 모두 빛을 받아서 둘 다 청람색으로 변했어요. 빛의 역할을 알아볼 수 있도록 <b>모종 나에 어둠상자</b>를 씌우고 다시 실험해 보세요.");
       tm.later(() => {
         cBath.el.classList.remove("done");
         cRinse.el.classList.remove("done");
@@ -302,10 +302,10 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
     pieces = ["blue", "tan"];
     draw("g2u5x-pop");
     host.dataset.g5Fail = "";
-    f.say("빛을 받은 잎 조각만 <b>청람색</b>으로 변했어요.");
+    f.say("빛을 받은 잎 조각만 진한 <b>청람색</b>으로 변했어요!");
     tm.later(() => {
-      lab.judge("<b>청람색</b>으로 변한 잎 조각은?", [{ t: "빛을 받은 잎 조각", ok: true }, { t: "어둠상자 속 잎 조각" }, { t: "두 조각 모두" }], "청람색은 그곳에 <b>녹말</b>이 있다는 표시예요.", () =>
-        lab.finish("<b>빛을 받은 잎</b>에서만 <b>녹말</b>이 확인됐어요. 빛을 받아 광합성을 한 잎에 양분이 만들어진 거예요."),
+      lab.judge("아이오딘 용액을 떨어뜨렸을 때 <b>청람색</b>으로 변한 것은 어느 잎 조각인가요?", [{ t: "빛을 받은 잎 조각", ok: true }, { t: "어둠상자 속 잎 조각" }, { t: "두 잎 조각 모두" }], "청람색으로 변했다는 것은 그 잎에 <b>녹말</b>이 만들어졌다는 뜻이에요. 빛을 받은 잎 조각을 다시 확인해 보세요.", () =>
+        lab.finish("<b>빛을 받은 잎</b>에서만 <b>녹말</b>이 검출되었어요. 식물이 빛을 받아 광합성을 하면 포도당이 만들어지고, 곧바로 녹말로 바뀌어 잎에 잠시 저장돼요."),
       );
     }, 1700);
   });
@@ -316,12 +316,12 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
 
 // ── 작물의 저장 양분 ────────────────────────────────────────────────
 type Crop = "sweet" | "potato" | "grape" | "bean" | "sesame";
-const CROP: Record<Crop, { name: string; part: string; form: string; starch: boolean }> = {
-  sweet: { name: "고구마", part: "뿌리", form: "녹말", starch: true },
-  potato: { name: "감자", part: "줄기", form: "녹말", starch: true },
-  grape: { name: "포도", part: "열매", form: "포도당", starch: false },
-  bean: { name: "콩", part: "씨", form: "단백질", starch: false },
-  sesame: { name: "깨", part: "씨", form: "지방", starch: false },
+const CROP: Record<Crop, { name: string; part: string; form: string; starch: boolean; say: string }> = {
+  sweet: { name: "고구마", part: "뿌리", form: "녹말", starch: true, say: "<b>고구마</b>가 진한 청람색으로 변했어요! 뿌리에 양분을 <b>녹말</b> 형태로 저장해요." },
+  potato: { name: "감자", part: "줄기", form: "녹말", starch: true, say: "<b>감자</b>도 청람색으로 변했어요! 땅속줄기에 양분을 <b>녹말</b> 형태로 저장해요." },
+  grape: { name: "포도", part: "열매", form: "포도당", starch: false, say: "달콤한 <b>포도</b>는 갈색 그대로예요. 녹말이 아닌 다른 형태(포도당)로 양분을 저장해요." },
+  bean: { name: "콩", part: "씨", form: "단백질", starch: false, say: "<b>콩</b>도 색이 변하지 않아요. 녹말이 아닌 다른 형태(단백질)로 양분을 저장해요." },
+  sesame: { name: "깨", part: "씨", form: "지방", starch: false, say: "고소한 <b>깨</b>도 색이 변하지 않아요. 녹말이 아닌 다른 형태(지방)로 양분을 저장해요." },
 };
 const ORDER: Crop[] = ["sweet", "potato", "grape", "bean", "sesame"];
 
@@ -396,7 +396,7 @@ function reaction(ns: string, k: Crop, x: number, y: number, pop: boolean): stri
 
 export const g2u5StoreLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 2, cls: "g2u5x-store", wait: "다섯 작물을 모두 검사해 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 2, cls: "g2u5x-store", wait: "다섯 가지 작물에 모두 용액을 떨어뜨려 보세요", tall: true });
   const { f } = lab;
   const A = newNs("so");
   const ly = g5Layers(lab, "접시에 놓인 다섯 가지 작물 조각과 아이오딘 용액", ["defs", "tray", "react", "text", "drop"]);
@@ -418,18 +418,18 @@ export const g2u5StoreLab: StepRenderer = (host, step, api) => {
       const c = CROP[k];
       const x = X(i);
       out += txt(x, 148, c.name, { size: 13, fill: "#E8EEF9", weight: 800 }) + txt(x, 164, c.part, { size: 12, fill: P.dim });
-      if (done.has(k)) out += txt(x, 188, c.starch ? "청람색" : "변화 없음", { size: 12, fill: c.starch ? "#A9B0FF" : "#E3C27A" }) + txt(x, 208, c.starch ? "녹말" : "녹말 아님", { size: 13, fill: "#fff", weight: 800 });
+      if (done.has(k)) out += txt(x, 188, c.starch ? "청람색" : "변화 없음", { size: 12, fill: c.starch ? "#A9B0FF" : "#E3C27A" }) + txt(x, 208, c.starch ? "녹말 있음" : "다른 양분", { size: 13, fill: "#fff", weight: 800 });
     });
     ly.set("text", out);
     if (last) {
       const x = X(ORDER.indexOf(last));
       ly.set("drop", `<g class="g2u5x-pop">${dropper(A, x, 52, false)}</g>`);
-    } else ly.set("drop", tag(173, 30, "갈색 아이오딘 용액을 떨어뜨려요", { size: 12 }));
+    } else ly.set("drop", tag(173, 30, "작물을 눌러 갈색 아이오딘 용액을 떨어뜨려 보세요", { size: 12 }));
     host.dataset.g5Done = String(done.size);
   };
 
   const chips = ORDER.map((k) =>
-    chip(k, CROP[k].name, "", () => {
+    chip(k, CROP[k].name, "검사 전", () => {
       const c = CROP[k];
       last = k;
       if (done.has(k)) {
@@ -439,30 +439,27 @@ export const g2u5StoreLab: StepRenderer = (host, step, api) => {
       }
       done.add(k);
       chips[ORDER.indexOf(k)].done();
+      chips[ORDER.indexOf(k)].sub(c.starch ? "청람색(녹말)" : "변화 없음");
       draw();
-      if (c.starch) {
-        good();
-        f.say(`${c.name}는 <b>청람색</b>으로 변했어요. ${c.part}에 녹말이 저장돼 있어요.`);
-      } else {
-        tap();
-        f.say(`색이 변하지 않아요. 녹말이 아니에요. ${c.name}${k === "bean" ? "은" : "는"} 주로 <b>${c.form}</b>${k === "bean" ? "로" : "으로"} 저장해요.`);
-      }
+      if (c.starch) good();
+      else tap();
+      f.say(c.say);
       if (done.size === 5) {
         f.pips(1);
         go.disabled = false;
       }
     }),
   );
-  const go = bvBtn("main g2u5x-go", "다섯 작물 비교하기");
+  const go = bvBtn("main g2u5x-go", "다섯 작물의 검사 결과 비교하기");
   go.disabled = true;
   go.addEventListener("click", () => {
     tap();
-    lab.judge("색이 <b>변하지 않은</b> 포도, 콩, 깨에 대해 알맞은 것은?", [{ t: "녹말이 아닌 양분을 저장한다", ok: true }, { t: "양분을 저장하지 않는다" }, { t: "녹말을 가장 많이 저장한다" }], "이 용액은 <b>녹말</b>만 찾아내요.", () =>
-      lab.finish("식물은 양분을 <b>녹말</b>로만 저장하지 않아요. 포도는 주로 <b>포도당</b>, 콩은 <b>단백질</b>, 깨는 <b>지방</b>으로 저장해요."),
+    lab.judge("아이오딘 용액을 떨어뜨렸을 때 색이 <b>변하지 않은</b> 포도, 콩, 깨에 대한 설명으로 알맞은 것은 무엇인가요?", [{ t: "녹말이 아닌 다른 형태의 양분을 저장한다", ok: true }, { t: "식물이 만든 양분을 전혀 저장하지 않는다" }, { t: "고구마나 감자보다 녹말을 더 많이 저장한다" }], "아이오딘 용액은 <b>녹말</b>만 검출할 수 있어요. 색이 변하지 않았다고 해서 양분이 없는 것이 아니라, 다른 형태로 저장된 거예요.", () =>
+      lab.finish("식물은 쓰고 남은 양분을 <b>녹말</b>(고구마·감자)뿐만 아니라 <b>포도당</b>(포도), <b>단백질</b>(콩), <b>지방</b>(깨) 등 다양한 형태로 바꾸어 뿌리·줄기·열매·씨 등에 저장해요."),
     );
   });
   f.slot.setControls(row(chips[0].el, chips[1].el, chips[2].el), row(chips[3].el, chips[4].el), go);
   draw();
-  f.say("이 용액은 <b>녹말</b>을 만나면 청람색이 돼요. 작물마다 떨어뜨려 보세요.");
+  f.say("아이오딘 용액은 <b>녹말</b>과 만나면 청람색으로 변해요. 아래 다섯 가지 작물에 용액을 떨어뜨려 녹말이 들어 있는지 확인해 보세요.");
   return lab.cleanup;
 };

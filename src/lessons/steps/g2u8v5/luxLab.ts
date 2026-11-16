@@ -22,7 +22,7 @@ type P = "20" | "40" | "60" | "80" | "100";
 
 export const luxLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = sFrame(host, { title: s.title, steps: 5, api });
+  const f = sFrame(host, { title: s.title, steps: 5, api, tall: true });
   const st = sCanvas(f.stage);
   const tm = bvTimers();
 
@@ -36,10 +36,10 @@ export const luxLab: StepRenderer = (host, step, api) => {
 
   const bLamp = bvBtn("", "전등 켜기");
   const bRoom = bvBtn("", "교실 불 끄기");
-  const bMeas = bvBtn("main", "이 자리에서 밝기 재기");
+  const bMeas = bvBtn("main", "현재 위치에서 밝기 측정하기");
   const seg = sSegs<P>(POS.map((p) => ({ k: String(p) as P, t: `${p} cm` })), "20", (k) => {
     at = Number(k);
-    f.say(`기기를 줄자의 <b>${at} cm</b> 자리에 세웠어요. <b>밝기 재기</b>를 눌러 보세요.`);
+    f.say(`측정 기기를 전등에서 <b>${at} cm</b> 떨어진 위치에 세웠어요. <b>현재 위치에서 밝기 측정하기</b>를 눌러 보세요.`);
   });
   f.slot.setControls(sRow(bLamp, bRoom), seg.el, bMeas);
 
@@ -66,30 +66,31 @@ export const luxLab: StepRenderer = (host, step, api) => {
     flash = 1;
     haptic(ok ? HAPTIC.correct : HAPTIC.wrong);
     f.pips(good());
-    if (!lamp) f.say(`<b>${v} lx</b>. 전등이 꺼져 있어 전등 빛을 잴 수 없어요. <b>전등을 켜고</b> 다시 재 보세요.`);
-    else if (room) f.say(`<b>${v} lx</b>. 값에 <b>교실 빛</b>이 섞였어요. 어느 자리에서나 비슷하게 높게 나와요. 교실 불을 끄고 다시 재 보세요.`);
-    else if (good() < 5) f.say(`${at} cm 자리의 밝기는 <b>${v} lx</b>예요. 기기를 <b>다른 자리</b>로 옮겨 또 재 보세요.`);
+    // 전등 켜기, 교실 불 끄기: 지금 그 버튼에 적힌 글(전등이 꺼져 있으면 '전등 켜기', 교실 불이 켜져 있으면 '교실 불 끄기')로 부른다
+    if (!lamp) f.say(`측정값: <b>${v} lx</b>. 전등이 꺼져 있어서 전등의 밝기를 잴 수 없어요! 먼저 <b>전등 켜기</b>를 누른 뒤 다시 측정해 보세요.`);
+    else if (room) f.say(`측정값: <b>${v} lx</b>. 주변의 <b>교실 조명 빛(400 lx)</b>이 섞여 들어갔어요! 전등 빛만 정확히 재려면 <b>교실 불 끄기</b>를 누른 뒤 다시 측정해 보세요.`);
+    else if (good() < 5) f.say(`전등에서 ${at} cm 떨어진 곳의 밝기는 <b>${v} lx</b>예요. 기기를 <b>다른 거리</b>로 옮겨 모두 측정해 보세요.`);
     else {
       finished = true;
       [bLamp, bRoom, bMeas].forEach((b) => (b.disabled = true));
       seg.lock(true);
-      f.say("다섯 자리의 밝기를 모두 쟀어요. 기록을 비교해 볼까요?");
+      f.say("20 cm부터 100 cm까지 다섯 위치의 밝기를 모두 정확하게 측정했어요!");
       tm.later(askFinal, 1400);
     }
   });
 
   function askFinal(): void {
-    f.say("무대의 기록을 보고 아래 질문에 답해 보세요.");
+    f.say("막대그래프에 표시된 20 cm(900 lx)와 40 cm(225 lx)의 높이를 비교해 보세요.");
     f.slot.ask(
-      "거리가 20 cm에서 40 cm로 2배가 되자 밝기는?",
-      [{ t: "4분의 1이 됐어요", ok: true }, { t: "절반이 됐어요" }, { t: "변하지 않았어요" }],
+      "전등까지의 거리가 20 cm에서 40 cm로 2배 멀어졌을 때 밝기는 몇 배가 되었나요?",
+      [{ t: "1/4배(4분의 1)로 줄었어요", ok: true }, { t: "1/2배(절반)로 줄었어요" }, { t: "변하지 않았어요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "20 cm에서 <b>900 lx</b>, 40 cm에서 <b>225 lx</b>였어요.", onNext: finish },
+      { why: "20 cm에서 <b>900 lx</b>이던 밝기가 40 cm에서는 900 ÷ 4 = <b>225 lx</b>로, 즉 4분의 1로 줄어들었어요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("전등에서 <b>멀어질수록 어두워져요</b>. 거리가 2배가 되면 밝기는 절반이 아니라 <b>4분의 1</b>로 줄어요.");
+    f.say("광원에서 거리가 2배로 멀어지면 밝기는 4분의 1로 줄어든다는 것을 실험으로 확인했어요!");
+    f.slot.conclude("광원(전등)에서 <b>멀어질수록 빛의 밝기는 어두워져요</b>. 거리가 2배로 멀어지면 밝기는 절반이 아니라 <b>4분의 1</b>로 줄어들어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 

@@ -20,6 +20,8 @@
 .u4x-step .bv-range-in::-moz-range-progress { background: var(--subj-matter); }
 .u4x-step .bv-range-in::-moz-range-thumb { border-color: var(--subj-matter); box-shadow: 0 2px 8px rgba(124, 107, 255, .35); }
 .u4x-step .bv-range-in:disabled { opacity: .55; }
+/* 두 칸 줄의 버튼(시계 접시의 종이 대기, 올리브유 다시 재기)은 글이 두 줄이 된다. 낱말 가운데가 아니라 띄어쓰기에서 줄을 바꾼다 */
+.u4x-step .bv-btn { word-break: keep-all; }
 
 /* ── 꾹 누르는 버튼, 입자의 눈 버튼 ─────────────────── */
 .u4x-hold { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; height: 56px; }
@@ -84,12 +86,14 @@
 .u4x-move-card.col { height: 60px; }
 .u4x-move .tempread small { font-size: 14px; margin-left: 2px; }
 .u4x-rec { display: grid; gap: 8px; }
-.u4x-rec-row { display: grid; grid-template-columns: 62px 1fr; align-items: center; gap: 8px; }
+/* 이름 칸은 "모양", "부피" 두 글자라 48px. 고르는 버튼("일정하다(그대로다)")이 그만큼 넓어진다. 좁은 폰에서는 괄호 앞(<wbr>)에서만 두 줄로 접힌다 */
+.u4x-rec-row { display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 8px; }
 .u4x-rec-l { font-size: 15px; font-weight: 800; color: var(--ink); }
 .u4x-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .u4x-seg-b {
   height: 50px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; color: var(--ink);
   font-size: 15px; font-weight: 700; box-shadow: var(--sh-card); transition: transform .12s, border-color .2s, background .2s;
+  word-break: keep-all;
 }
 .u4x-seg-b:active { transform: scale(.97); }
 .u4x-seg-b.on { border-color: var(--subj-matter); background: var(--subj-matter-tint); color: var(--subj-matter-press); box-shadow: 0 0 0 1px var(--subj-matter) inset; }
@@ -108,10 +112,12 @@
   100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .u4x-watch-vp { animation: none; } }
+/* 이름표("시계 접시 아랫면", "비커 속 뜨거운 물")는 두 줄까지. 띄어쓰기에서만 줄을 바꾸고, 안쪽 여백으로 "비커 속 / 뜨거운 물"처럼 나뉘게 한다 */
 .u4x-watch-spot {
-  position: absolute; right: 10px; width: 96px; height: 48px; border-radius: 14px;
+  /* 오른쪽 여백 14px: 본 곳 표시 점(오른쪽 위 7px)이 글에 닿지 않게. 두 줄 이름("비커 속 뜨거운 물")은 고르게 나눈다(외톨이 "물" 방지) */
+  position: absolute; right: 10px; width: 96px; height: 48px; padding: 0 14px 0 8px; border-radius: 14px;
   border: 1.5px solid rgba(255, 255, 255, .28); background: rgba(255, 255, 255, .08); color: #E8EEF9;
-  font-size: 14px; font-weight: 800; transition: background .2s, border-color .2s, transform .12s;
+  font-size: 14px; font-weight: 800; line-height: 1.2; word-break: keep-all; text-wrap: balance; transition: background .2s, border-color .2s, transform .12s;
 }
 .u4x-watch-spot[hidden] { display: none; }
 .u4x-watch-spot:active { transform: scale(.96); }
@@ -150,8 +156,9 @@
 .u4x-curve .pill { padding: 6px 10px; font-size: 12.5px; }
 .u4x-curve .toast { top: 76px; font-size: 12px; padding: 7px 10px; }
 .u4x-heat-temp { position: absolute; right: 12px; top: 8px; font-size: 24px; font-weight: 800; color: #F4F8FD; font-variant-numeric: tabular-nums; letter-spacing: -.03em; pointer-events: none; }
+/* "열에너지를 흡수하는 중"(약 109px)이 왼쪽 칸(무대의 42%) 안에 들게 옆 여백을 8px로 */
 .u4x-heat-tag {
-  position: absolute; left: 8px; top: 44px; height: 26px; padding: 0 10px; border-radius: 999px; display: grid; place-items: center;
+  position: absolute; left: 8px; top: 44px; height: 26px; padding: 0 8px; border-radius: 999px; display: grid; place-items: center;
   font-size: 12px; font-weight: 800; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .2s;
   background: rgba(255, 146, 43, .26); border: 1px solid rgba(255, 192, 120, .62); color: #FFE8CC; /* 열이 들어옴: 주황(빨강은 오답 색) */
 }
@@ -168,7 +175,8 @@
 .u4x-around.out .u4x-around-flow { opacity: 1; }
 .u4x-around.in .u4x-around-flow path, .u4x-around.out .u4x-around-flow path { animation: u4xFlow .8s ease-in-out infinite; }
 @keyframes u4xFlow { 0% { opacity: .2; translate: -8px 0; } 60% { opacity: 1; } 100% { opacity: .2; translate: 10px 0; } }
-.u4x-around-ex { position: absolute; left: 14px; bottom: 9px; max-width: 236px; font-size: 12.5px; line-height: 17px; font-weight: 700; color: #B9C8DE; white-space: nowrap; pointer-events: none; }
+/* 예시 글: 390 폭에서는 한 줄(236px 안). 온도계 아래 "시원해졌어요" 글에 닿지 않게 폭을 무대에 맞춰 줄이고, 좁은 폰에서는 띄어쓰기에서 두 줄로 접는다(위로 자라도 입자 창 아래) */
+.u4x-around-ex { position: absolute; left: 14px; bottom: 9px; max-width: calc(100% - 110px); font-size: 12.5px; line-height: 17px; font-weight: 700; color: #B9C8DE; word-break: keep-all; pointer-events: none; }
 .u4x-around-card.col { height: 60px; }
 .u4x-around-card.cool { border-color: #74C0FC; background: #EEF7FF; }
 .u4x-around-card.warm { border-color: #FFB45C; background: #FFF4E6; } /* 따뜻해짐: 주황(빨강은 오답 색) */

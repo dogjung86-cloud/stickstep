@@ -68,7 +68,7 @@ const EARTH: { key: string; name: string; at: number; icon: string }[] = [
     icon: `<path d="M8 7.2v7.3M5.6 14.5h4.8M8 7.2 5.9 12.6M8 7.2l2.1 5.4" stroke-width="1.4"/><path d="M5.1 5.1a4.1 4.1 0 0 1 5.8 0M3.2 3.2a6.8 6.8 0 0 1 9.6 0" stroke-width="1.4"/><path d="M12.4 9.2l2.6 2.6M15 9.2l-2.6 2.6" class="u7x-x" stroke-width="1.5"/>`,
   },
   {
-    key: "power", name: "정전", at: 0.85,
+    key: "power", name: "대규모 정전", at: 0.85,
     icon: `<path d="M8 1.6 4.4 14.6M8 1.6l3.6 13M4.9 5.2h6.2M3.6 8.4h8.8M5.2 8.4l5.4 4.4M10.8 8.4l-5.4 4.4M3.4 14.6h9.2" stroke-width="1.3"/>`,
   },
 ];
@@ -79,7 +79,7 @@ const countAt = (a: number): number => shownAt(a).filter((i) => SPOTS[i][3]).len
 
 export const u7SunLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as SunStep;
-  const f = u7Frame(host, { title: s.title, steps: 4, cls: "u7x-sun", api });
+  const f = u7Frame(host, { title: s.title, steps: 4, cls: "u7x-sun", api, tall: true }); // 할 일을 이어 붙인 도움말이 세 줄이 된다
   const doneCta = s.cta ?? "개념 정리하기";
   const photoUrl = (file: string): string => `${import.meta.env.BASE_URL}photos/${file}`;
 
@@ -101,14 +101,14 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
 
   // 조작부
   const surfBtn = el("button", { class: "u7x-segbtn on", attrs: { type: "button", "aria-pressed": "true" }, dataset: { v: "surf" } }, el("span", { text: "평소의 태양" })) as HTMLButtonElement;
-  const eclBtn = el("button", { class: "u7x-segbtn", attrs: { type: "button", "aria-pressed": "false" }, dataset: { v: "ecl" } }, el("span", { text: "달이 가렸을 때" })) as HTMLButtonElement;
+  const eclBtn = el("button", { class: "u7x-segbtn", attrs: { type: "button", "aria-pressed": "false" }, dataset: { v: "ecl" } }, el("span", { text: "달이 가렸을 때(개기일식)" })) as HTMLButtonElement;
   const seg = el("div", { class: "u7x-seg two" }, surfBtn, eclBtn);
   const range = bvRange({
     cls: "u7x-range",
     min: 0,
     max: 100,
     value: 20,
-    label: "흑점 수를 바꿔 보세요",
+    label: "흑점 수를 조절해 보세요",
     ticks: ["흑점이 적을 때", "흑점이 많을 때"],
     onInput: (v) => {
       activity = v / 100;
@@ -123,11 +123,11 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
       el("b", { text: e.name }),
     ),
   );
-  const earthRow = el("div", { class: "u7x-lamps" }, el("i", { text: "그때 지구는" }), ...lamps);
+  const earthRow = el("div", { class: "u7x-lamps" }, el("i", { text: "지구에 나타나는 일" }), ...lamps);
   f.slot.setControls(seg, range.el, earthRow);
-  f.say("태양의 밝은 표면이에요. <b>어두운 점</b>을 하나 눌러 보세요.");
+  f.say("태양의 밝은 표면인 <b>광구</b>예요. 표면에 보이는 <b>어두운 점</b>을 눌러 보세요.");
   f.pips(1);
-  api.setCTA("태양을 살펴봐요", { enabled: false });
+  api.setCTA("태양의 표면과 대기를 모두 살펴보세요", { enabled: false });
 
   function setMode(m: "surf" | "ecl"): void {
     if (mode === m) return;
@@ -151,8 +151,9 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
       window.setTimeout(() => !disposed && ask(), 1600);
     }
   }
+  // 둘째 할 일은 버튼 이름(eclBtn) 그대로 부른다
   const todo = (): string =>
-    !did.spot ? " <b>평소의 태양</b>에서 어두운 점을 눌러 보세요." : !did.corona ? " 이제 <b>달이 가렸을 때</b>를 눌러 보세요." : !did.active ? " 가려진 채로 <b>흑점 수</b>를 끝까지 늘려 보세요." : "";
+    !did.spot ? " <b>평소의 태양</b> 탭에서 표면의 어두운 점을 눌러 보세요." : !did.corona ? " 이제 <b>달이 가렸을 때(개기일식)</b>를 눌러 태양의 대기를 살펴보세요." : !did.active ? " 달이 가린 상태에서 <b>흑점 수 막대</b>를 오른쪽 끝까지 밀어 보세요." : "";
 
   function ask(): void {
     phase = "ask";
@@ -160,20 +161,20 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
     board = true; // 원인(흑점)과 결과(코로나, 홍염)를 적을 때와 많을 때로 나란히
     pill.style.display = "none";
     f.pips(3);
-    f.say("세 가지를 모두 봤어요. 본 것을 떠올리며 답해 보세요.");
+    f.say("흑점이 적을 때와 많을 때의 모습을 비교하며 질문에 답해 보세요.");
     f.slot.ask(
-      "흑점이 <b>많을 때</b> 태양은 어떤 모습이었나요?",
-      [{ t: "홍염이 잦고 코로나가 커요", ok: true }, { t: "홍염이 줄고 코로나가 작아요" }, { t: "언제나 같은 모습이에요" }],
+      "흑점이 <b>많을 때</b> 태양의 대기에서는 어떤 변화가 나타났나요?",
+      [{ t: "홍염이 자주 나타나고 코로나가 커져요", ok: true }, { t: "홍염이 줄어들고 코로나가 작아져요" }, { t: "흑점 수와 상관없이 늘 같은 모습이에요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "흑점이 많을수록 태양의 활동이 활발해요.", onNext: conclude },
+      { why: "흑점 수가 많을수록 태양 활동이 활발해져 코로나가 커지고 홍염과 플레어가 자주 나타나요.", onNext: conclude },
     );
   }
   function conclude(): void {
     phase = "done";
     host.dataset.u7Phase = phase;
     f.pips(4);
-    f.say("흑점 수는 약 11년마다 늘었다 줄었다 해요.");
-    f.slot.conclude("흑점이 <b>많을 때</b> 태양은 활발해요. 홍염이 잦고 코로나가 커져요. 그때 지구에서는 <b>오로라</b>가 넓게 나타나고 통신 장애나 정전이 생기기도 해요.");
+    f.say("흑점 수는 약 <b>11년</b>을 주기로 많아졌다 적어지기를 반복해요.");
+    f.slot.conclude("흑점이 <b>많을수록</b> 태양 활동이 활발해져 코로나가 커지고 홍염과 플레어가 자주 나타나요. 이때 지구에서는 <b>오로라</b>가 넓게 나타나고 무선 통신 장애나 정전이 일어나기도 해요.");
     if (s.curio) host.appendChild(curioCard(s.curio));
     api.enableCTA(doneCta);
   }
@@ -458,7 +459,7 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
       moonDisk(ctx, x, yE, rm * 1.012);
     }
     label(ctx, "평소", W / 2, 70, "center", "#A9BBDA", 12.5);
-    label(ctx, "가리면", W / 2, 172, "center", "#A9BBDA", 12.5);
+    label(ctx, "개기일식", W / 2, 172, "center", "#A9BBDA", 12.5);
   }
 
   canvas.addEventListener("pointerdown", (e) => {
@@ -483,11 +484,11 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
       if (!did.spot) {
         did.spot = true;
-        if (phase === "play") f.say(`이 점이 <b>흑점</b>이에요. 주위보다 온도가 낮아 어두워요.${todo()}`);
+        if (phase === "play") f.say(`주위보다 온도가 낮아 어둡게 보이는 <b>흑점</b>이에요!${todo()}`);
         next();
       }
     } else if (!did.spot && phase === "play") {
-      f.say("밝은 표면이에요. 그 위의 <b>어두운 점</b>을 눌러 보세요.");
+      f.say("여기는 밝은 광구예요. 주위보다 어둡게 보이는 <b>검은 점(흑점)</b>을 찾아 눌러 보세요.");
     }
   });
   u7Dev(host, { act: (v: number) => { activity = v / 100; range.set(v); } });
@@ -501,7 +502,7 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
     coverT = clamp(coverT + (mode === "ecl" ? 0.03 : -0.06) * dt, 0, 1);
     const covered = coverT > 0.96;
     const n = countAt(activity);
-    pill.textContent = covered ? "밝은 표면이 가려졌어요" : `흑점 ${n}개`;
+    pill.textContent = covered ? "광구가 가려져 대기가 보여요" : `흑점 ${n}개`;
     lamps.forEach((l, i) => l.classList.toggle("on", activity >= EARTH[i].at));
 
     ctx.clearRect(0, 0, W, H);
@@ -558,7 +559,7 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
         ctx.stroke();
         label(ctx, "흑점", sx, sy - rr - 12);
       }
-      label(ctx, "태양의 밝은 표면, 광구", cx, CY + R + 22);
+      label(ctx, "태양의 밝은 표면(광구)", cx, CY + R + 22);
     }
 
     if (covered) {
@@ -566,7 +567,7 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
       if (coronaMs > 600 && !did.corona) {
         did.corona = true;
         haptic(HAPTIC.ctaUnlock);
-        if (phase === "play") f.say(`밝은 표면이 가려지자 <b>채층</b>과 <b>코로나</b>가 드러났어요.${todo()}`);
+        if (phase === "play") f.say(`밝은 광구가 가려지자 대기인 <b>채층</b>과 <b>코로나</b>가 드러났어요!${todo()}`);
         next();
       }
     } else coronaMs = 0;
@@ -575,7 +576,7 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
       if (activeMs > 500 && !did.active) {
         did.active = true;
         haptic(HAPTIC.ctaUnlock);
-        if (phase === "play") f.say(`흑점이 늘자 <b>홍염</b>이 잦아지고 <b>코로나</b>가 커졌어요.${todo()}`);
+        if (phase === "play") f.say(`흑점이 많아지자 <b>홍염</b>이 더 많이 솟아오르고 <b>코로나</b>가 크게 뻗어 나가요!${todo()}`);
         next();
       }
     } else activeMs = 0;

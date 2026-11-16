@@ -27,8 +27,8 @@ export const L2: Step[] = lessonSteps(
       ],
       cta: "광물 가려내러 가기",
     }),
-    powderLab({ title: "색이 같으면 가루 색도 같을까요?", cta: "다음, 도구로 가려내기" }),
-    mineralLab({ title: "이 광물들을 무엇으로 가려낼까요?", cta: "이름 붙이기" }),
+    powderLab({ title: "겉보기 색이 같으면 가루 색도 같을까요?", cta: "여러 도구로 광물 구별하기" }),
+    mineralLab({ title: "겉보기가 비슷한 광물을 무엇으로 구별할까요?", cta: "광물의 특성 정리하기" }),
     words({
       title: "광물의 특성,<br>광물마다 다른 성질",
       lead: "조흔판, 클립, 묽은 염산, 서로 긁기로 광물을 가려냈어요. 그때 본 성질에 이름을 붙여요.",
@@ -124,8 +124,8 @@ export const L2: Step[] = lessonSteps(
 export const L3: Step[] = lessonSteps(
   [
     opener({ title: "어느 쪽이 먼저 식을까요?", scene: "g2u2-lava", wait: "먼저 예측하고 시간을 보내 보세요", cta: "식는 빠르기 실험하기" }),
-    coolLab({ title: "천천히 식으면 알갱이가 어떻게 될까요?", cta: "다음, 굳은 암석 분류하기" }),
-    igneousLab({ title: "이 암석은 표의 어느 칸일까요?", cta: "이름 붙이기" }),
+    coolLab({ title: "마그마가 천천히 식으면 알갱이 크기는요?", cta: "화성암 표본 분류하기" }),
+    igneousLab({ title: "이 화성암은 분류표의 어느 칸에 들어갈까요?", cta: "화성암의 분류 정리하기" }),
     words({
       title: "화성암,<br>마그마가 식어 굳은 암석",
       lead: "마그마를 두 곳에서 식혀 보고, 화성암 네 가지를 표에 놓았어요. 본 것에 이름을 붙여요.",

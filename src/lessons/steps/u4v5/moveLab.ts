@@ -1,7 +1,7 @@
 // [중1 Ⅳ v5] u4l2 옮겨 담기 랩: 「옮겨 담으면 무엇이 달라질까요?」
 // 책의 세 상태의 성질(모양과 부피가 일정한가, 그릇에 따라 달라지는가)을 학생이 관찰하고 직접 기록한다.
 // 무대는 메타볼(물리 수치 불변)에 그릇 벽을 세운 것. 얼음, 물, 공기를 컵과 접시에 옮겨 담으면 모양이 보이고 부피 눈금이 읽힌다.
-// 조작: 물질 카드, '그릇 바꾸기' → 두 그릇에 다 담아 본 물질은 '관찰한 것 기록하기'가 열린다 → 모양과 부피를 "그대로다 / 달라졌다"로 적는다.
+// 조작: 물질 카드, '접시로(컵으로) 옮겨 담기' → 두 그릇에 다 담아 본 물질은 '관찰 결과 기록하기'가 열린다 → 모양과 부피를 "일정하다 / 변한다"로 적는다.
 // 기록이 관찰과 다르면 그 자리에서 무엇이 달랐는지 알려 주고 다시 옮겨 보게 한다(판정 질문은 따로 없다. 기록이 곧 판정이다).
 // 공기의 그릇에는 뚜껑을 그린다(열린 그릇이면 밖으로 퍼져 나간다). 부피의 값(100 mL, 300 mL, 200 mL)은 이 랩에서 정한 값이다.
 // 부피 읽기(2026-11-15 다시 그림, 감사 중 후보): 두 그릇에 눈금(컵 100·200·300, 접시 100·200)을 그리고 읽은 값은 그 그림 옆에 둔다(무대 구석의 숫자를 걷었다).
@@ -198,7 +198,8 @@ export const u4MoveLab: StepRenderer = (host, step, api) => {
 
   const cards = {} as Record<Key, ReturnType<typeof bvCard>>;
   KEYS.forEach((k) => {
-    cards[k] = bvCard("col u4x-move-card", { name: SUB[k].word, sub: "아직 기록 전", key: k });
+    // 카드 이름에만 상태를 붙인다(SUB.word는 도움말과 무대 알약의 글에도 쓰여 그대로 둔다)
+    cards[k] = bvCard("col u4x-move-card", { name: `${SUB[k].word}(${SUB[k].state})`, sub: "관찰 전", key: k });
     cards[k].el.addEventListener("click", () => {
       if (cur === k) return;
       haptic(HAPTIC.tap);
@@ -212,17 +213,27 @@ export const u4MoveLab: StepRenderer = (host, step, api) => {
     shape = shape === "cup" ? "dish" : "cup";
     refresh();
   });
-  const rec = bvBtn("main u4x-move-rec", "관찰한 것 기록하기");
+  const rec = bvBtn("main u4x-move-rec", "관찰 결과 기록하기");
   rec.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     form();
   });
   const controls = (): void => f.slot.setControls(bvCards(3, cards.sol, cards.liq, cards.gas), swap, rec);
 
+  // 부피의 값은 무대의 읽은 값과 같아야 한다(SUB.ml, FULL: 얼음과 물 100 mL, 공기는 컵 300 mL, 접시 200 mL)
   const SAY: Record<Key, Record<Shape, string>> = {
-    sol: { cup: "얼음을 컵에 담았어요. <b>그릇 바꾸기</b>를 눌러 접시로 옮겨 보세요.", dish: "얼음을 접시로 옮겼어요. 모양과 <b>부피 눈금</b>을 컵일 때와 비교해 보세요." },
-    liq: { cup: "물을 컵에 담았어요. 모양과 <b>부피 눈금</b>을 보고 접시로 옮겨 보세요.", dish: "물을 접시로 옮겼어요. 모양과 <b>부피 눈금</b>을 컵일 때와 비교해 보세요." },
-    gas: { cup: "공기를 <b>뚜껑 덮은</b> 컵에 담았어요. 어디까지 차 있는지 보세요.", dish: "공기를 <b>뚜껑 덮은</b> 접시로 옮겼어요. 컵일 때와 비교해 보세요." },
+    sol: {
+      cup: "얼음(100 mL)을 컵에 담았어요. <b>접시로 옮겨 담기</b>를 눌러 모양과 부피가 달라지는지 살펴보세요.",
+      dish: "얼음을 넓은 접시로 옮겼어요! 얼음의 모양과 <b>부피(100 mL)</b>가 컵에 있을 때와 달라졌는지 비교해 보세요.",
+    },
+    liq: {
+      cup: "물(100 mL)을 컵에 담았어요. 물의 모양과 <b>부피 눈금</b>을 확인한 뒤 접시로 옮겨 담아 보세요.",
+      dish: "물을 넓은 접시로 옮겼어요! 물의 모양과 <b>부피 눈금(100 mL)</b>이 컵에 있을 때와 달라졌는지 비교해 보세요.",
+    },
+    gas: {
+      cup: "공기를 <b>뚜껑을 덮은</b> 컵(300 mL)에 가득 담았어요. 접시로 옮기면 어떻게 될지 눌러 보세요.",
+      dish: "공기를 <b>뚜껑 덮인</b> 접시(200 mL)로 옮겼어요! 공기가 차지하는 모양과 부피가 어떻게 달라졌는지 비교해 보세요.",
+    },
   };
 
   function refresh(): void {
@@ -232,7 +243,7 @@ export const u4MoveLab: StepRenderer = (host, step, api) => {
     name.textContent = `${p.word} · ${BOWL[shape]}`;
     cvs.forEach((c) => (c.style.filter = p.tint));
     dot.style.background = p.dot;
-    swap.textContent = shape === "cup" ? "그릇 바꾸기: 컵에서 접시로" : "그릇 바꾸기: 접시에서 컵으로";
+    swap.textContent = shape === "cup" ? "접시로 옮겨 담기" : "컵으로 옮겨 담기";
     KEYS.forEach((k) => cards[k].on(k === cur));
     tried[cur].add(shape);
     rec.disabled = done.has(cur) || tried[cur].size < 2;
@@ -243,15 +254,16 @@ export const u4MoveLab: StepRenderer = (host, step, api) => {
     else f.say(SAY[cur][shape]);
   }
 
-  // 기록 칸: 모양과 부피를 "그대로다 / 달라졌다"로 적는다
+  // 기록 칸: 모양과 부피를 "일정하다(그대로다) / 변한다(달라졌다)"로 적는다
   function form(): void {
     const p = SUB[cur];
     const pick: { shape: boolean | null; vol: boolean | null } = { shape: null, vol: null };
-    const ok = bvBtn("main u4x-move-ok", "기록하기");
+    const ok = bvBtn("main u4x-move-ok", "기록 완료");
     ok.disabled = true;
     const row = (label: string, key: "shape" | "vol"): HTMLElement => {
-      const mk = (text: string, v: boolean): HTMLButtonElement => {
-        const b = el("button", { class: "u4x-seg-b", text, attrs: { type: "button" } }) as HTMLButtonElement;
+      // 괄호 앞에 <wbr>: 버튼이 좁으면 괄호 앞에서만 줄을 바꾼다(390 폭에서는 한 줄)
+      const mk = (html: string, v: boolean): HTMLButtonElement => {
+        const b = el("button", { class: "u4x-seg-b", html, attrs: { type: "button" } }) as HTMLButtonElement;
         b.dataset.v = v ? "diff" : "same";
         b.addEventListener("click", () => {
           haptic(HAPTIC.tap);
@@ -261,7 +273,7 @@ export const u4MoveLab: StepRenderer = (host, step, api) => {
         });
         return b;
       };
-      const seg = el("div", { class: "u4x-seg" }, mk("그대로다", false), mk("달라졌다", true));
+      const seg = el("div", { class: "u4x-seg" }, mk("일정하다<wbr>(그대로다)", false), mk("변한다<wbr>(달라졌다)", true));
       seg.dataset.k = key;
       return el("div", { class: "u4x-rec-row" }, el("span", { class: "u4x-rec-l", text: label }), seg);
     };
@@ -272,13 +284,14 @@ export const u4MoveLab: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.correct);
         done.add(cur);
         cards[cur].done();
-        cards[cur].sub(p.shape && p.vol ? "둘 다 달라짐" : p.shape ? "모양만 달라짐" : "둘 다 그대로");
+        cards[cur].sub(p.shape && p.vol ? "모양·부피 모두 변함" : p.shape ? "모양만 변함" : "모양·부피 일정함");
         f.pips(done.size);
         controls();
         refresh();
         if (done.size === KEYS.length) {
           api.recordQuiz(slips === 0);
-          tm.later(() => lab.finish("고체는 <b>모양과 부피</b>가 일정해요. 액체는 <b>모양만</b>, 기체는 <b>모양과 부피</b>가 모두 담는 그릇에 따라 달라져요."), 900);
+          // '모양은 변하지만'은 단원 평가 보기(u4l2)와 16자가 겹쳐(qa/u4v5-docs.mjs 겹침 검사) '바뀌지만'으로 쓴다
+          tm.later(() => lab.finish("고체는 담는 그릇이 바뀌어도 <b>모양과 부피</b>가 일정해요. 액체는 담는 그릇에 따라 <b>모양은 바뀌지만 부피는 일정</b>하고, 기체는 <b>모양과 부피</b>가 모두 담는 그릇에 따라 달라져요."), 900);
         }
         return;
       }
@@ -294,8 +307,8 @@ export const u4MoveLab: StepRenderer = (host, step, api) => {
             : `${p.word}의 <b>부피 눈금</b>을 다시 보세요. 컵에서도 접시에서도 ${p.ml.cup} mL였어요.`,
       );
     });
-    f.say(`${p.word}${p.eul} 컵에서 접시로 옮겼을 때 <b>본 대로</b> 골라 기록하세요.`);
-    f.slot.setControls(el("div", { class: "u4x-rec" }, row("모양은", "shape"), row("부피는", "vol"), ok));
+    f.say(`${p.word}${p.eul} 컵에서 접시로 옮겨 담았을 때 <b>모양과 부피</b>가 어떠했는지 각각 골라 보세요.`);
+    f.slot.setControls(el("div", { class: "u4x-rec" }, row("모양", "shape"), row("부피", "vol"), ok));
   }
 
   controls();

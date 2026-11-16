@@ -130,10 +130,10 @@ export const slopeLab: StepRenderer = (host, step, api) => {
     f.pips(n);
     if (n === 2) {
       busy = true;
-      f.say("거친 <b>사포 면</b>이 아래일 때 더 많이 기울여야 미끄러졌어요. 거친 면이 더 세게 붙잡아요.");
+      f.say(`거친 <b>사포 면(${SLIP.sand}도)</b>이 매끈한 <b>나무 면(${SLIP.wood}도)</b>보다 훨씬 더 잘 버텼어요!`);
       tm.later(toPull, 2400);
     } else {
-      f.say(`기록했어요. 이번에는 <b>${tilt.wood === undefined ? "나무 면" : "사포 면"}을 아래로</b> 눌러 바꾸고 다시 기울여 보세요.`);
+      f.say(`기록 완료! 이번에는 <b>${tilt.wood === undefined ? "나무 면" : "사포 면"}을 아래로</b> 카드를 고른 뒤 다시 기울여 보세요.`);
     }
     paintTilt();
   }
@@ -168,7 +168,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
   function toPull(): void {
     scene = "pull";
     busy = false;
-    f.say("이번에는 나무판을 눕히고 도막을 <b>힘 센서</b>로 끌어요. 꾹 누르면 끄는 힘이 커져요. 도막 수를 바꿔 비교해 보세요.");
+    f.say("이번엔 평평한 판 위에서 <b>도막 1개</b>와 <b>2개</b>를 끌어 봐요. <b>꾹 눌러 끌기</b>를 움직일 때까지 눌러 보세요.");
     paintPull();
     f.slot.setControls(el("div", { class: "u5x-segs" }, seg1, seg2), pullBtn, note2);
     api.setCTA("도막 1개와 2개를 끌어 보세요", { enabled: false });
@@ -187,7 +187,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
       moved = 0;
       if (pulled[1] && pulled[2]) {
         finished = true;
-        f.say("같은 면인데 도막이 무거워지니 힘이 <b>2배</b>로 들었어요.");
+        f.say(`도막을 2개로 쌓아 무거워지니 움직이는 데 드는 힘도 <b>${PULL[1]} N에서 ${PULL[2]} N으로 2배</b>가 됐어요!`);
         tm.later(askFinal, 1800);
       } else f.say(`기록했어요. 이번에는 <b>도막 ${pulled[1] ? 2 : 1}개</b>로 바꿔 끌어 보세요.`);
     }, 1400);
@@ -202,7 +202,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("바닥의 거칠기와 물체의 무게에 따라 미끄러짐을 막는 힘이 어떻게 달라지는지 밝혔어요!");
     f.slot.conclude("맞닿은 면이 <b>거칠수록</b>, 물체가 <b>무거울수록</b> 미끄러짐을 방해하는 힘이 커요. 이 힘은 움직이려는 쪽과 <b>반대</b>로 작용해요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -398,7 +398,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
   // 시작: 예상부터(정오를 매기지 않는다)
   paintTilt();
   f.slot.setControls(bvCards(2, cWood, cSand), note);
-  f.say("나무 도막의 한 면에는 <b>사포</b>를 붙였어요. 나무판을 기울이면 도막이 미끄러져요. 먼저 예상해 봐요.");
+  f.say("한 면에 <b>사포</b>를 붙인 나무 도막이에요. 나무판을 기울이기 전에 먼저 예상해 볼까요?");
   f.slot.ask(
     "어느 면을 아래로 놓았을 때 나무판을 더 많이 기울여야 미끄러질까요?",
     [{ t: "거친 사포 면" }, { t: "매끈한 나무 면" }, { t: "둘이 똑같아요" }],
@@ -408,7 +408,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
       onNext: () => {
         f.slot.showControls();
         ready = true;
-        f.say("확인해 봐요. 나무판의 <b>오른쪽 끝</b>을 위로 끌어 올려 도막이 미끄러지는 기울기를 찾아요.");
+        f.say("직접 확인해 봐요! 나무판의 <b>오른쪽 끝 손잡이</b>를 위로 끌어 올려 미끄러지는 각도를 찾아보세요.");
       },
     },
   );

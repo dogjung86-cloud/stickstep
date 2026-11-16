@@ -92,7 +92,8 @@ export const graphLab: StepRenderer = (host, step, api) => {
       return c;
     });
   });
-  const cap = el("div", { class: "u1x-cap", text: "측정한 물의 온도. 색칠된 칸을 그래프에 찍어요." });
+  // 그래프(무대)는 이 표의 위에 있다(넓은 화면도 무대 바로 아래에 조작이 온다). 그래서 "위 그래프"라고 부른다.
+  const cap = el("div", { class: "u1x-cap", text: "측정한 물의 온도예요. 색칠된 칸의 값을 위 그래프에 찍어 보세요." });
 
   // 찍을 차례: 컵마다 1시간 뒤, 2시간 뒤
   const ORDER: [number, number][] = [];
@@ -162,7 +163,8 @@ export const graphLab: StepRenderer = (host, step, api) => {
     colHi.setAttribute("x", String(XS[ti] - 28));
     colHi.setAttribute("opacity", ".13");
     if (import.meta.env.DEV) host.dataset.u1Target = String(SERIES[si].v[ti]);
-    f.say(`<b>${SERIES[si].name} 컵, ${TIMES[ti]} ${SERIES[si].v[ti]} ℃</b>를 찍어요. 그래프를 누른 채 끌어 맞추고 손을 떼요.`);
+    // "파란 기둥" = 찍을 시각의 세로 칸을 파랗게 밝힌 띠(colHi). 그래프 어디를 눌러도 점은 이 기둥 위에 찍힌다.
+    f.say(`<b>${SERIES[si].name} 컵의 ${TIMES[ti]} 온도(${SERIES[si].v[ti]} ℃)</b>를 찍어 보세요. 그래프의 파란 기둥을 누른 채 위아래로 맞춰 손을 떼면 돼요.`);
   }
 
   const tempAt = (clientX: number, clientY: number): number => {
@@ -200,7 +202,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
       paintTurn();
       if (idx >= ORDER.length) {
         busy = true;
-        f.say("여섯 점을 모두 찍었어요. 세 선이 올라가는 모습을 비교해 봐요.");
+        f.say("여섯 개의 점을 모두 찍었어요! 세 선이 올라가는 모습을 비교해 볼까요?");
         tm.later(askFinal, 1700);
       }
       return;
@@ -208,7 +210,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.wrong);
     busy = true;
     showGhost(t, true);
-    f.say(`놓은 자리는 ${t} ℃예요. 표의 값은 <b>${want} ℃</b>예요. 눈금을 보고 다시 맞춰 봐요.`);
+    f.say(`방금 놓은 자리는 ${t} ℃예요. 표에 적힌 값은 <b>${want} ℃</b>이니 세로축 눈금을 보고 다시 맞춰 보세요.`);
     tm.later(() => {
       ghost.style.display = "none";
       ghost.classList.remove("bad");
@@ -243,20 +245,20 @@ export const graphLab: StepRenderer = (host, step, api) => {
   f.stage.addEventListener("pointercancel", cancel);
 
   function askFinal(): void {
-    f.say("그래프가 완성됐어요. 세 선이 <b>올라가는 모습</b>을 보고 골라 봐요.");
+    f.say("그래프가 완성됐어요! 세 선이 <b>얼마나 가파르게 올라가는지</b> 비교하며 답해 보세요.");
     f.slot.ask(
       "2시간 동안 온도가 <b>가장 많이 오른</b> 컵의 선은 어떤 모습인가요?",
       [{ t: "가장 가파르게 올라간다", ok: true }, { t: "가장 완만하게 올라간다" }, { t: "가장 아래쪽에 놓인다" }],
       (ok) => api.recordQuiz(ok),
-      { why: "검은색 컵의 선이 가장 가팔라요. <b>많이 오를수록</b> 가파르게 서요.", onNext: finish },
+      { why: "검은색 컵의 선이 가장 가팔라요. 온도가 <b>많이 오를수록</b> 선이 가파르게 올라가요.", onNext: finish },
     );
   }
 
   function finish(): void {
     finished = true;
     f.pips(4);
-    f.say("그래프 완성! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("표를 그래프로 바꾸면 차이가 한눈에 보여요. 이렇게 자료에서 규칙을 찾는 일이 <b>자료 해석</b>이에요. 온도는 검은색, 파란색, 흰색 순으로 많이 올랐어요.");
+    f.say("숫자로만 보던 표를 그래프로 옮기니 색깔별 온도 변화가 한눈에 비교돼요!");
+    f.slot.conclude("표를 그래프로 바꾸면 변화와 차이가 한눈에 보여요. 이렇게 정리한 자료에서 규칙이나 관계를 찾는 과정을 <b>자료 해석</b>이라고 해요. 물의 온도는 검은색, 파란색, 흰색 컵 순으로 많이 올랐어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 

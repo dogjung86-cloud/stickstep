@@ -49,14 +49,14 @@ interface Run {
 }
 // 그래프 두 칸(설계 좌표). 세로는 0~100℃.
 const PANEL: Record<PanelKey, { title: string; x0: number; x1: number; y0: number; y1: number; ty: number }> = {
-  cold: { title: "찬 컵을 넣었을 때", x0: 224, x1: 334, y0: 26, y1: 104, ty: 13 },
-  hot: { title: "뜨거운 컵을 넣었을 때", x0: 224, x1: 334, y0: 132, y1: 210, ty: 120 },
+  cold: { title: "찬물 컵을 넣었을 때", x0: 224, x1: 334, y0: 26, y1: 104, ty: 13 },
+  hot: { title: "뜨거운 물 컵을 넣었을 때", x0: 224, x1: 334, y0: 132, y1: 210, ty: 120 },
 };
 
 export const contactLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as ContactStep;
   const tm = bvTimers();
-  const f = u3Frame(host, { title: s.title, steps: 3, cls: "u3x-contact", api });
+  const f = u3Frame(host, { title: s.title, steps: 3, cls: "u3x-contact", api, tall: true });
 
   let cup0 = 10; // 넣기 전 컵 속 물의 온도(막대)
   let inserted = false;
@@ -221,7 +221,7 @@ export const contactLab: StepRenderer = (host, step, api) => {
     txt(ctx, "0", P.x0 - 4, py(0), { size: 12, color: SUB, align: "right", weight: 600 });
     const r = shown[key];
     if (!r) {
-      txt(ctx, "아직 안 했어요", (P.x0 + P.x1) / 2, (P.y0 + P.y1) / 2, { size: 12, color: SUB, weight: 600 });
+      txt(ctx, "실험 전", (P.x0 + P.x1) / 2, (P.y0 + P.y1) / 2, { size: 12, color: SUB, weight: 600 });
       return;
     }
     const cupC = r.equal ? SUB : r.cupHot ? HOT : COLD;
@@ -283,7 +283,9 @@ export const contactLab: StepRenderer = (host, step, api) => {
         txt(ctx, "열", x + 13.5, ly + 0.5, { size: 12.5, color: HEAT, weight: 800 });
       }
     }
-    if (r.done && r.leaky) txt(ctx, "계속 내려가요", (P.x0 + P.x1) / 2 + 8, P.y1 - 10, { size: 12.5, color: "#FF8F8F", weight: 800 });
+    // 글이 길어져(계속 내려가요 → 열이 새어 계속 식어요) 12px로 줄이고 가운데를 283으로 옮겼다. 폭 약 100px(한글이 1em인 글꼴이면 약 117px):
+    // 축(224)과 무대 끝(346) 사이에 든다
+    if (r.done && r.leaky) txt(ctx, "열이 새어 계속 식어요", (P.x0 + P.x1) / 2 + 4, P.y1 - 10, { size: 12, color: "#FF8F8F", weight: 800 });
     if (r.done && !r.leaky && !r.equal) {
       // 선 끝의 이름: 위에서 내려온 선(처음에 뜨거웠던 물)은 끝 위에, 아래에서 올라온 선은 끝 아래에
       const yEnd = py(r.fin);
@@ -329,7 +331,7 @@ export const contactLab: StepRenderer = (host, step, api) => {
     max: 95,
     value: cup0,
     label: "컵 속 물의 온도",
-    ticks: [{ t: "5℃", p: 0 }, { t: "바깥 물 60℃", p: 61 }, { t: "95℃", p: 100 }],
+    ticks: [{ t: "5℃", p: 0 }, { t: "바깥 물(60℃)", p: 61 }, { t: "95℃", p: 100 }],
     onInput: (v) => {
       cup0 = v;
       hint();
@@ -351,9 +353,9 @@ export const contactLab: StepRenderer = (host, step, api) => {
 
   function hint(): void {
     if (phase !== "play" || inserted) return;
-    if (!coldDone && !hotDone) f.say("<b>60℃ 물</b>이 든 열량계예요. 컵의 온도를 정해 넣고, 뚜껑을 닫은 뒤 측정을 시작해요.");
-    else if (coldDone && !hotDone) f.say(cup0 >= 80 ? "좋아요. 컵을 넣고 뚜껑을 닫은 뒤 측정해 예측을 확인해 봐요." : "이번엔 온도 막대를 올려 컵 속 물을 <b>바깥 물보다 뜨겁게</b>(80℃ 이상) 만들고 넣어 봐요.");
-    else if (!coldDone && hotDone) f.say(cup0 <= 40 ? "좋아요. 컵을 넣고 뚜껑을 닫은 뒤 측정해 예측을 확인해 봐요." : "이번엔 온도 막대를 내려 컵 속 물을 <b>바깥 물보다 차갑게</b>(40℃ 이하) 만들고 넣어 봐요.");
+    if (!coldDone && !hotDone) f.say("<b>60℃ 물</b>이 담긴 열량계예요. 컵 속 물의 온도를 정해 열량계에 넣고, 뚜껑을 닫은 뒤 측정을 시작해 보세요.");
+    else if (coldDone && !hotDone) f.say(cup0 >= 80 ? "좋아요! 이제 컵을 넣고 뚜껑을 닫은 뒤 측정을 시작해 보세요." : "이번에는 온도 막대를 오른쪽으로 밀어 컵 속 물을 <b>바깥 물보다 뜨겁게</b>(80℃ 이상) 맞춰 보세요.");
+    else if (!coldDone && hotDone) f.say(cup0 <= 40 ? "좋아요! 이제 컵을 넣고 뚜껑을 닫은 뒤 측정을 시작해 보세요." : "이번에는 온도 막대를 왼쪽으로 밀어 컵 속 물을 <b>바깥 물보다 차갑게</b>(40℃ 이하) 맞춰 보세요.");
   }
 
   function onSettled(): void {
@@ -361,7 +363,7 @@ export const contactLab: StepRenderer = (host, step, api) => {
     if (live) live.done = true;
     if (leaky) {
       haptic(HAPTIC.wrong);
-      f.say("뚜껑이 열려 있어 열이 <b>공기 중으로</b> 빠져나갔어요. 두 온도가 만난 뒤에도 계속 내려가요. 컵을 꺼내 다시 해 봐요.");
+      f.say("뚜껑이 열려 있어서 열이 <b>바깥 공기로</b> 빠져나갔어요! 두 온도가 같아진 뒤에도 계속 식네요. 컵을 꺼내고 뚜껑을 닫아 다시 측정해 보세요.");
       sync();
       return;
     }
@@ -373,16 +375,16 @@ export const contactLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.ctaUnlock);
     const fin = Math.round(run0.fin);
     const d = run0.cup - OUT0;
-    if (Math.abs(d) < 1.5) f.say("두 물의 온도가 같아서 열이 이동하지 않았어요. 컵을 꺼내 온도 차이를 크게 해 봐요.");
+    if (Math.abs(d) < 1.5) f.say("두 물의 온도가 같아서 열이 이동하지 않았어요. 컵을 꺼낸 뒤 온도 차이를 크게 벌려 다시 해 보세요.");
     else if (d <= -20) {
       coldDone = true;
       kept.cold = live;
-      f.say(`열이 <b>바깥 물에서 컵으로</b> 이동했어요. 바깥 물은 식고 컵 속 물은 데워져 <b>${fin}℃</b>에서 같아졌어요.`);
+      f.say(`열이 <b>바깥 물에서 컵 속 물로</b> 이동했어요! 바깥 물은 식고 컵 속 물은 데워져 두 온도가 <b>${fin}℃</b>에서 같아졌어요.`);
     } else if (d >= 20) {
       hotDone = true;
       kept.hot = live;
-      f.say(`열이 <b>컵에서 바깥 물로</b> 이동했어요. 컵 속 물은 식고 바깥 물은 데워져 <b>${fin}℃</b>에서 같아졌어요.`);
-    } else f.say(`<b>${fin}℃</b>에서 같아졌어요. 온도 차이가 작아 변화도 작네요. 컵을 꺼내 차이를 크게 해 봐요.`);
+      f.say(`열이 <b>컵 속 물에서 바깥 물로</b> 이동했어요! 컵 속 물은 식고 바깥 물은 데워져 두 온도가 <b>${fin}℃</b>에서 같아졌어요.`);
+    } else f.say(`두 온도가 <b>${fin}℃</b>에서 같아졌지만, 처음 온도 차이가 작아서 변화가 잘 보이지 않네요. 컵을 꺼내 온도 차이를 더 크게 해 보세요.`);
     f.pips((coldDone ? 1 : 0) + (hotDone ? 1 : 0));
     sync();
     if (coldDone && hotDone) {
@@ -412,9 +414,9 @@ export const contactLab: StepRenderer = (host, step, api) => {
         cup0 = 10;
         range.set(10);
       }
-      f.say("바깥 물을 새 60℃ 물로 바꿨어요. 넣기 전에 <b>예측</b>부터 해 봐요.");
+      f.say("바깥 물을 새로운 60℃ 물로 바꿨어요. 두 번째 실험을 하기 전에 먼저 <b>예측</b>해 볼까요?");
       f.slot.ask(
-        toHot ? "이번엔 컵 속 물이 <b>더 뜨거워요</b>. 열은 어디로 갈까요?" : "이번엔 컵 속 물이 <b>더 차가워요</b>. 열은 어디로 갈까요?",
+        toHot ? "이번에 넣을 컵 속 물은 바깥 물보다 <b>더 뜨거워요</b>. 열은 어느 쪽으로 이동할까요?" : "이번에 넣을 컵 속 물은 바깥 물보다 <b>더 차가워요</b>. 열은 어느 쪽으로 이동할까요?",
         [{ t: "컵 속 물에서 바깥 물로" }, { t: "바깥 물에서 컵 속 물로" }],
         () => undefined,
         {
@@ -438,7 +440,7 @@ export const contactLab: StepRenderer = (host, step, api) => {
     }
     inserted = true;
     sync();
-    f.say("컵을 넣었어요. 열이 밖으로 새지 않게 <b>뚜껑</b>을 닫고 <b>측정 시작</b>을 눌러요.");
+    f.say("컵을 넣었어요. 열이 밖으로 새지 않도록 <b>뚜껑 닫기</b>를 누른 뒤 <b>측정 시작</b>을 눌러 보세요.");
   });
   lidBtn.addEventListener("click", () => {
     if (phase !== "play" || !inserted || measuring) return;
@@ -458,27 +460,27 @@ export const contactLab: StepRenderer = (host, step, api) => {
     live = { cupHot: d > 0, equal: Math.abs(d) < 1.5, leaky, fin: run0.fin, cup: [[0, cup0]], out: [[0, OUT0]], done: false };
     shown[d > 0 ? "hot" : "cold"] = live;
     sync();
-    f.say("측정을 시작했어요. 컵의 벽을 건너는 <b>열 화살표</b>와 두 온도의 그래프를 지켜봐요.");
+    f.say("측정이 시작되었어요! 컵 벽을 통과하는 <b>열의 이동 화살표</b>와 온도 변화 그래프를 살펴보세요.");
   });
 
   function askFinal(): void {
     phase = "ask";
     shown.cold = kept.cold;
     shown.hot = kept.hot;
-    f.say("찬 컵과 뜨거운 컵을 모두 넣어 봤어요. 두 그래프를 비교해 보고 골라 봐요.");
+    f.say("찬물 컵과 뜨거운 물 컵을 넣었을 때의 두 그래프가 완성되었어요! 두 결과를 비교해 보고 답해 보세요.");
     f.slot.ask(
-      "두 번의 실험에서 열은 언제나 어느 쪽으로 이동했나요?",
-      [{ t: "온도가 높은 물에서 낮은 물로", ok: true }, { t: "늘 바깥 물에서 컵 속 물로" }, { t: "늘 컵 속 물에서 바깥 물로" }],
+      "두 실험에서 열은 항상 어느 쪽으로 이동했나요?",
+      [{ t: "온도가 높은 물에서 낮은 물로", ok: true }, { t: "항상 바깥 물에서 컵 속 물로" }, { t: "항상 컵 속 물에서 바깥 물로" }],
       (ok) => api.recordQuiz(ok),
-      { why: "컵이 차가울 땐 <b>컵으로</b>, 뜨거울 땐 <b>바깥으로</b> 갔어요.", onNext: finish },
+      { why: "컵 속 물이 차가울 때는 <b>바깥 물에서 컵 속으로</b>, 뜨거울 때는 <b>컵 속에서 바깥 물로</b> 열이 이동했어요.", onNext: finish },
     );
   }
 
   function finish(): void {
     phase = "done";
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("열은 <b>온도가 높은 물체에서 낮은 물체로</b> 이동해요. 두 물체의 온도가 같아지면 멈추는데, 이 상태를 <b>열평형</b>이라고 해요.");
+    f.say("온도가 다른 두 물이 만날 때 열이 어떻게 이동하는지 밝혀냈어요!");
+    f.slot.conclude("열은 항상 <b>온도가 높은 물체에서 낮은 물체로</b> 이동해요. 두 물체의 온도가 같아지면 열의 이동이 멈추는데, 이 상태를 <b>열평형</b>이라고 해요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }

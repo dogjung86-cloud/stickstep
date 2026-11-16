@@ -1,4 +1,4 @@
-// [중1 Ⅱ v5] u2l6 ecoMapLab: 「생물이 다양한지 무엇으로 알까?」
+// [중1 Ⅱ v5] u2l6 ecoMapLab: 「생물이 얼마나 다양한지는 무엇으로 알까?」
 // 한 통찰: 생물이 다양한 정도는 생물의 수가 아니라 세 가지로 안다. 사는 환경이 여러 가지인가, 생물의 종류가 많은가,
 //   같은 종류 안에서도 서로 다른가.
 // 무대: 땅 세 칸(처음에는 모두 숲)과 눈금 셋, 그리고 생물의 수. 생물의 수는 끝까지 60 그대로다.
@@ -43,7 +43,8 @@ const bugDot = (sw: { base: string; red: boolean }, i: number): string => {
 export const ecoMapLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as EmpStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 4, cls: "emp-stage", qCls: "emp-q", api });
+  // 세 줄 도움말을 처음부터 잡아 둔다(무당벌레를 볼 때의 글이 세 줄이다. 랩 도중에 무대가 밀리지 않게)
+  const f = bvFrame(host, { title: s.title, steps: 4, cls: "emp-stage", qCls: "emp-q", api, tall: true });
   const canvas = bvCanvas(f.stage);
 
   // ── 무대: 땅 세 칸 ───────────────────────────────────────────────
@@ -111,7 +112,7 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
   cards.wet = bvCard("emp-card col", { name: "습지로 바꾸기", sub: "가운데 칸", icon: `<img src="${bvSrc(HAB.wet.img)}" alt="" draggable="false" />`, key: "wet" });
   cards.flat = bvCard("emp-card col", { name: "갯벌로 바꾸기", sub: "오른쪽 칸", icon: `<img src="${bvSrc(HAB.flat.img)}" alt="" draggable="false" />`, key: "flat" });
   cards.bug = bvCard("emp-card col bug", { name: "무당벌레 보기", sub: "숲속에서", icon: ladybugIconSvg(2), key: "bug" });
-  const doneBtn = bvBtn("main emp-check", "알게 된 것 확인하기");
+  const doneBtn = bvBtn("main emp-check", "질문에 답하고 정리하기");
   doneBtn.hidden = true;
 
   const envN = (): number => 1 + (on.wet ? 1 : 0) + (on.flat ? 1 : 0);
@@ -139,9 +140,9 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
     cards.wet.on(on.wet);
     cards.flat.on(on.flat);
     cards.bug.on(on.bug);
-    cards.wet.sub(on.wet ? "누르면 다시 숲" : "가운데 칸");
-    cards.flat.sub(on.flat ? "누르면 다시 숲" : "오른쪽 칸");
-    cards.bug.sub(on.bug ? "누르면 닫기" : "숲속에서");
+    cards.wet.sub(on.wet ? "다시 누르면 숲으로" : "가운데 칸");
+    cards.flat.sub(on.flat ? "다시 누르면 숲으로" : "오른쪽 칸");
+    cards.bug.sub(on.bug ? "다시 누르면 닫기" : "숲속에서");
     host.dataset.empEnv = String(n);
     host.dataset.empKinds = String(n * 4);
     host.dataset.empTried = KEYS.filter((k) => tried[k]).join(",");
@@ -185,8 +186,8 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
     paint();
     flash("hit-kind");
     const name = HAB[k].name;
-    if (on[k]) f.say(`생물의 수는 그대로인데 <b>종류가 4가지 늘었어요</b>. ${name}에는 숲과 다른 생물이 살아요.`);
-    else f.say(`${name}${k === "wet" ? "가" : "이"} 사라지자 거기 살던 생물도 함께 사라졌어요. <b>종류가 줄었어요</b>.`);
+    if (on[k]) f.say(`전체 생물의 수(60마리)는 그대로인데 <b>생물의 종류가 4가지 더 늘었어요!</b> ${name}에는 숲과 또 다른 생물들이 살기 때문이에요.`);
+    else f.say(`${name}${k === "wet" ? "가" : "이"} 사라지자 그곳에 살던 생물들도 함께 사라져 <b>생물의 종류가 줄어들었어요</b>.`);
   }
 
   function press(k: Key): void {
@@ -199,17 +200,17 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
       paint();
       if (on.bug) {
         if (first) flash("hit-vary");
-        f.say("같은 무당벌레인데 겉날개의 <b>색과 무늬가 저마다</b> 달라요. 이것도 다양함이에요.");
-      } else f.say("같은 종류 안에서도 서로 달랐어요. 세 번째 눈금이 채워졌어요.");
+        f.say("모두 같은 종류의 무당벌레지만 겉날개의 <b>색깔과 반점 무늬가 저마다</b> 달라요! 이렇게 같은 종류 안에서 나타나는 차이도 생물다양성에 포함돼요.");
+      } else f.say("같은 종류의 생물이라도 생김새와 특징이 조금씩 달라요. 세 번째 눈금까지 모두 채워졌어요!");
       return;
     }
     if (!predicted) {
       // 처음 환경을 바꾸기 전에 짐작해 본다(채점하지 않는다)
       predicted = true;
-      f.say("바꾸기 전에 먼저 짐작해 봐요. 결과는 바로 눈금에서 확인할 수 있어요.");
+      f.say("환경을 바꾸기 전에 먼저 결과를 예측해 볼까요?");
       f.slot.ask(
-        `숲 한 칸을 ${HAB[k].name}로 바꾸면 생물의 종류는?`,
-        [{ t: "늘어난다", ok: true }, { t: "그대로다" }, { t: "줄어든다" }],
+        `숲으로만 이루어진 땅의 한 칸을 <b>${HAB[k].name}</b>로 바꾸면 이 지역에 사는 생물의 종류는 어떻게 될까요?`,
+        [{ t: "더 늘어난다", ok: true }, { t: "변함없이 그대로이다" }, { t: "오히려 줄어든다" }],
         () => undefined,
         {
           predict: true,
@@ -235,12 +236,12 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
     on.bug = false;
     paint();
     host.dataset.empPhase = phase;
-    f.say("숲, 습지, 갯벌이 함께 있는 땅이에요. 생물의 수는 처음과 같은 60이에요.");
+    f.say("숲, 습지, 갯벌이 고루 있는 지역이 됐어요. 전체 생물의 수는 처음과 똑같이 60이에요.");
     f.slot.ask(
-      "숲 한 칸을 습지로 바꾸자 종류가 늘었어요. 까닭은?",
-      [{ t: "환경이 다르면 사는 생물도 달라서", ok: true }, { t: "생물의 수가 더 많아져서" }, { t: "습지가 숲보다 더 넓어서" }],
+      "숲 한 칸을 습지로 바꾸었더니 생물의 종류가 늘어난 까닭은 무엇인가요?",
+      [{ t: "환경이 달라지면 그곳에 사는 생물의 종류도 달라지기 때문에", ok: true }, { t: "전체 생물의 마릿수가 처음보다 더 많아졌기 때문에" }, { t: "습지의 넓이가 숲보다 훨씬 더 넓기 때문에" }],
       (ok) => api.recordQuiz(ok),
-      { why: "생물의 수는 60 그대로였어요. <b>환경이 달라서</b> 다른 생물이 사는 거예요.", onNext: finish },
+      { why: "전체 생물의 수는 60으로 같았지만, <b>사는 환경(생태계)이 다양해지면서</b> 각 환경에 어울리는 서로 다른 생물들이 살게 되었기 때문이에요.", onNext: finish },
     );
   });
 
@@ -248,8 +249,8 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.empPhase = phase;
     f.pips(4);
-    f.say("눈금 세 개로 이 땅의 다양함을 쟀어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("생물이 다양한 정도는 <b>사는 환경, 생물의 종류, 같은 종류 안의 차이</b>로 알아요. 수가 많다고 다양한 것은 아니에요.");
+    f.say("사는 환경, 생물의 종류, 같은 종류 안의 차이까지 생물다양성을 이루는 세 가지를 모두 확인했어요!");
+    f.slot.conclude("생물다양성은 <b>생물이 사는 환경(생태계)의 다양함, 생물 종류(종)의 다양함, 같은 종류 안에서 나타나는 특징(변이)의 다양함</b>을 모두 뜻해요. 단순히 생물의 마릿수가 많다고 해서 생물다양성이 높은 것은 아니에요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
@@ -257,8 +258,8 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
   f.slot.setControls(bvCards(3, cards.wet, cards.flat, cards.bug), doneBtn);
   paint();
   host.dataset.empPhase = phase;
-  f.say("숲만 세 칸인 땅이에요. 아래에서 가운데 칸을 <b>습지로 바꿔</b> 보세요.");
-  api.setCTA("카드 세 장을 모두 눌러 보세요", { enabled: false });
+  f.say("지금은 세 칸 모두 숲으로만 이루어진 땅이에요. 아래 카드를 눌러 가운데 칸을 <b>습지로 바꿔</b> 보세요.");
+  api.setCTA("아래 카드 세 장을 모두 실행해 보세요", { enabled: false });
   return () => {
     tm.clear();
     canvas.off();

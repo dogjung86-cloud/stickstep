@@ -110,6 +110,8 @@
 .u5x-tug-b.sm { width: 48px; height: 48px; }
 .u5x-sum-n { text-align: center; font-size: 14.5px; font-weight: 800; color: var(--ink); white-space: nowrap; }
 .u5x-sum.tall { height: 84px; font-size: 13.5px; line-height: 20px; padding: 11px 13px; }
+/* 글 맞춤(u5l2): 글이 세 줄 상자를 넘칠 때만 sumLab이 dense를 붙인다(13px 세 줄 = 57px, 상자 안 59px) */
+.u5x-sum.tall.dense { font-size: 13px; line-height: 19px; }
 
 /* ── 측정 표(u5l3) ─────────────────────────────────── */
 .u5x-table { display: grid; grid-template-columns: 92px 1fr 1fr; gap: 4px; align-items: stretch; }
