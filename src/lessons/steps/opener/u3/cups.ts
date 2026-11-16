@@ -10,7 +10,7 @@ import type { OpenerCtx } from "../opener";
 import { hitBtn, metaOf } from "./util";
 
 type Side = "left" | "right";
-const PICKS = ["왼쪽 컵", "오른쪽 컵", "겉만 봐서는 모른다"];
+const PICKS = ["왼쪽 컵", "오른쪽 컵", "겉모습만으로는 알 수 없다"];
 
 export function cups(c: OpenerCtx): void {
   const M = metaOf(c).cups;
@@ -26,7 +26,7 @@ export function cups(c: OpenerCtx): void {
     c.stage.classList.add(`open-${side}`, "touched");
     const hot = M[side].kind === "hot";
     c.face(hot ? "surprised" : "curious");
-    if (opened.size < 2) c.say(hot ? "김이 모락모락! 이쪽이 <b>뜨거운 물</b>이에요. 다른 컵도 열어 봐요." : "얼음이 동동, 이쪽은 <b>찬물</b>이네요. 다른 컵도 열어 봐요.");
+    if (opened.size < 2) c.say(hot ? "김이 모락모락 피어오르네요! 이쪽이 <b>뜨거운 물</b>이에요. 반대쪽 컵도 열어 볼까요?" : "얼음이 동동 떠 있네요! 이쪽은 <b>찬물</b>이에요. 반대쪽 컵도 열어 볼까요?");
     else c.later(wrapUp, 700);
   };
 
@@ -34,8 +34,8 @@ export function cups(c: OpenerCtx): void {
     phase = "done";
     c.stage.classList.add("done");
     haptic(HAPTIC.correct);
-    const head = pred === PICKS[1] ? "예측대로 오른쪽이 뜨거웠어요." : pred === PICKS[0] ? "예측과 달리 오른쪽이 뜨거웠어요." : "맞아요, 열기 전에는 알 수 없었죠.";
-    c.say(`${head} 겉은 똑같은데 <b>물속</b>은 무엇이 다를까요?`);
+    const head = pred === PICKS[1] ? "예측한 대로 오른쪽 컵이 뜨거운 물이었어요." : pred === PICKS[0] ? "예측과 달리 오른쪽 컵이 뜨거운 물이었어요." : "맞아요, 뚜껑을 열기 전에는 알 수 없었죠.";
+    c.say(`${head} 차가운 물과 뜨거운 물은 <b>물속</b>에서 무엇이 다를까요?`);
     c.finish();
   }
 
@@ -46,10 +46,10 @@ export function cups(c: OpenerCtx): void {
   });
 
   c.step.dataset.opnPhase = "ask";
-  c.ask("똑같이 생긴 두 컵이에요. 한쪽에만 뜨거운 물이 들었어요. 어느 쪽일까요?", {
+  c.ask("겉모습이 똑같은 두 컵 중 한쪽에만 뜨거운 물이 들어 있어요. 어느 쪽일까요?", {
     choices: PICKS,
     neutral: true,
-    good: "예측 완료! 두 컵을 <b>눌러서</b> 뚜껑을 열어 보세요.",
+    good: "좋아요! 이제 두 컵을 차례로 <b>눌러</b> 뚜껑을 열어 보세요.",
     onDone: (picked) => {
       pred = picked;
       phase = "play";

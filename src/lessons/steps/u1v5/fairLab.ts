@@ -31,10 +31,12 @@ const RAY_DX = 30.2;
 const STOP = { x: 66.1, y: 59.8 }; // 왼쪽 컵으로 가는 빛줄기가 파라솔 윗면에 닿는 곳(파라솔 곡선과의 교점)
 const NAMES = ["검은 컵", "파란 컵", "흰 컵"];
 
-const COND: Record<Key, { name: string; same: string; diff: string }> = {
+// 물의 양과 놓는 곳을 다르게 하면 늘 왼쪽 컵만 달라진다. 그 컵은 색종이가 세 가지 색일 때만 검은 컵이라,
+// 색깔을 모두 흰색으로 맞춘 동안에는 "왼쪽 컵만"(diffPlain)으로 부른다(무대에 검은 컵이 없는데 "검은 컵만"이라 쓰지 않게).
+const COND: Record<Key, { name: string; same: string; diff: string; diffPlain?: string }> = {
   color: { name: "색종이 색깔", same: "모두 흰색", diff: "세 가지 색" },
-  water: { name: "물의 양", same: "모두 100 mL", diff: "왼쪽만 200 mL" },
-  place: { name: "놓는 곳", same: "모두 햇빛", diff: "왼쪽만 그늘" },
+  water: { name: "물의 양", same: "모두 100 mL", diff: "검은 컵만 200 mL", diffPlain: "왼쪽 컵만 200 mL" },
+  place: { name: "놓는 곳", same: "모두 햇빛", diff: "검은 컵만 그늘", diffPlain: "왼쪽 컵만 그늘" },
 };
 
 function stageSvg(): string {
@@ -152,12 +154,13 @@ export const fairLab: StepRenderer = (host, step, api) => {
       const c = conds[k];
       c.tag.textContent = diff[k] ? "다르게" : "같게";
       c.tag.classList.toggle("diff", diff[k]);
-      c.sub.textContent = diff[k] ? COND[k].diff : COND[k].same;
+      const plain = COND[k].diffPlain;
+      c.sub.textContent = !diff[k] ? COND[k].same : plain && !diff.color ? plain : COND[k].diff;
       c.el.dataset.diff = diff[k] ? "1" : "0";
       c.el.setAttribute("aria-label", `${COND[k].name}: ${diff[k] ? "다르게" : "같게"}, ${c.sub.textContent}`);
     });
   }
-  const RUN = "실험 시작 (햇빛에 2시간)";
+  const RUN = "실험 시작하기 (햇빛에 2시간)";
   const runBtn = bvBtn("main u1f-run", RUN);
 
   function reset(): void {
@@ -170,24 +173,24 @@ export const fairLab: StepRenderer = (host, step, api) => {
     paintConds();
     runBtn.disabled = false;
     runBtn.textContent = RUN;
-    f.say(runs === 0 ? "조건 카드를 눌러 <b>같게</b> 할지 <b>다르게</b> 할지 정하고 실험을 시작해 봐요." : "조건을 바꿨어요. <b>실험 시작</b>을 눌러 결과가 어떻게 달라지는지 봐요.");
+    f.say(runs === 0 ? "아래 조건 카드를 눌러 각 조건을 <b>같게</b> 할지 <b>다르게</b> 할지 정한 뒤 실험을 시작해 보세요." : "조건을 바꿨어요. <b>실험 시작하기</b>를 눌러 결과가 어떻게 달라지는지 확인해 보세요.");
   }
 
   function resultSay(v: number[]): { fair: boolean; say: string; label: string } {
     const others = [diff.water ? "물의 양" : "", diff.place ? "놓는 곳" : ""].filter(Boolean);
     if (!diff.color) {
-      if (!others.length) return { fair: false, label: "색깔이 모두 같아요", say: "세 컵이 똑같이 올랐어요. 색깔이 같으면 <b>색깔의 영향</b>을 알아볼 수 없어요." };
-      return { fair: false, label: "색깔이 모두 같아요", say: `색깔은 같고 <b>${others.join(", ")}</b>만 달라요. 색깔을 알아보는 실험이 아니에요.` };
+      if (!others.length) return { fair: false, label: "색깔이 모두 같아요", say: "세 컵의 물 온도가 똑같이 올랐어요. 색깔이 모두 같으면 <b>색깔에 따른 차이</b>를 알아볼 수 없어요." };
+      return { fair: false, label: "색깔이 모두 같아요", say: `색깔은 모두 같고 <b>${others.join(", ")}</b>만 달라요. 이러면 색깔 때문에 온도가 달라졌는지 알아볼 수 없어요.` };
     }
     if (others.length) {
       const top = v.indexOf(Math.max(...v));
       return {
         fair: false,
         label: "공정하지 않아요",
-        say: `<b>${NAMES[top]}</b>이 가장 뜨거워요. 그런데 <b>${others.join(", ")}</b>도 달라서 색깔 때문인지 알 수 없어요.`,
+        say: `<b>${NAMES[top]}</b>이 가장 뜨거워졌어요. 하지만 <b>${others.join(", ")}</b>도 함께 달라서 색깔 때문인지 알 수 없어요.`,
       };
     }
-    return { fair: true, label: "공정한 실험이에요", say: "색깔만 달랐어요. 온도 차이는 <b>색깔 때문</b>이라고 말할 수 있어요. 검은 컵이 가장 뜨거워요." };
+    return { fair: true, label: "공정한 실험이에요", say: "색깔만 다르게 했더니 <b>검은 컵</b>이 가장 뜨거워졌어요! 이제 온도 차이가 <b>색깔 때문</b>이라고 분명히 말할 수 있어요." };
   }
 
   function run(): void {
@@ -196,7 +199,7 @@ export const fairLab: StepRenderer = (host, step, api) => {
     runs += 1;
     haptic(HAPTIC.tap);
     runBtn.disabled = true;
-    f.say("햇빛에 두고 1시간마다 온도를 재요. 온도계를 지켜봐요.");
+    f.say("햇빛 아래에 두고 1시간마다 물의 온도를 재고 있어요. 온도계가 올라가는 모습을 지켜보세요.");
     const target = finalTemps();
     bvTween(
       tm,
@@ -214,7 +217,7 @@ export const fairLab: StepRenderer = (host, step, api) => {
         host.dataset.u1Fair = r.fair ? "1" : "0";
         f.say(r.say);
         f.pips(r.fair || fairDone ? 2 : 1);
-        runBtn.textContent = r.fair ? "공정한 실험 성공" : "카드를 눌러 조건을 바꿔 보세요";
+        runBtn.textContent = r.fair ? "공정한 실험 성공!" : "카드를 눌러 조건을 다시 맞춰 보세요";
         if (r.fair && !fairDone) {
           fairDone = true;
           haptic(HAPTIC.ctaUnlock);
@@ -240,16 +243,16 @@ export const fairLab: StepRenderer = (host, step, api) => {
     showTemps(finalTemps());
     verdictEl.textContent = "공정하지 않아요";
     verdictEl.className = "u1x-verdict show no";
-    f.say("공정한 실험에 성공했어요. 이번에는 무대의 <b>검은 컵만 그늘에 둔 실험</b>을 보고 골라 봐요.");
+    f.say("공정한 실험에 성공했어요! 그렇다면 아까처럼 <b>검은 컵만 그늘에 둔 실험</b>에서는 무엇을 알 수 있을까요?");
     f.slot.ask(
-      "검은 컵만 그늘에 두었더니 검은 컵이 가장 덜 뜨거웠어요. 알 수 있는 것은?",
+      "검은 컵만 그늘에 두었더니 검은 컵이 가장 덜 뜨거웠어요. 이 결과로 알 수 있는 점은 무엇인가요?",
       [
-        { t: "색깔 때문인지 알 수 없다", ok: true },
-        { t: "검은색은 잘 데워지지 않는다" },
-        { t: "그늘에 두면 더 잘 데워진다" },
+        { t: "온도 차이가 색깔 때문인지 알 수 없다", ok: true },
+        { t: "검은색 컵은 햇빛에 잘 데워지지 않는다" },
+        { t: "그늘에 두면 물이 더 잘 데워진다" },
       ],
       (ok) => api.recordQuiz(ok),
-      { why: "색깔과 <b>놓는 곳</b>이 함께 달라서 원인을 가릴 수 없어요.", onNext: finish },
+      { why: "색깔과 <b>놓는 곳</b> 두 가지가 함께 달라서 무엇 때문에 온도가 달라졌는지 알 수 없어요.", onNext: finish },
     );
   }
 
@@ -269,13 +272,13 @@ export const fairLab: StepRenderer = (host, step, api) => {
     timeEl.textContent = "2시간 뒤";
     verdictEl.textContent = "공정한 실험이에요";
     verdictEl.className = "u1x-verdict show ok";
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("알아보려는 것 <b>하나만 다르게</b> 두고 나머지 조건은 모두 같게 맞춰요. 이렇게 조건을 맞추는 일이 <b>변인 통제</b>예요.");
+    f.say("조건을 공평하게 맞추니 온도가 달라진 진짜 원인이 또렷하게 드러났어요!");
+    f.slot.conclude("알아보려는 조건 <b>하나만 다르게</b> 하고 나머지 조건은 모두 같게 맞춰야 해요. 이렇게 조건을 맞추는 것을 <b>변인 통제</b>라고 해요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
   f.slot.setControls(el("div", { class: "u1x-conds" }, conds.color.el, conds.water.el, conds.place.el), runBtn);
   reset();
-  api.setCTA("공정한 실험을 만들어 보세요", { enabled: false });
+  api.setCTA("공정한 실험을 완성해 보세요", { enabled: false });
   return () => tm.clear();
 };

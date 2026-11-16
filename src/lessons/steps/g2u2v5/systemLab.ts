@@ -5,7 +5,7 @@
 // 판정 하나: 물속에 사는 물고기는 어느 영역인가. 통찰 하나: 지구를 이루는 것은 다섯 영역으로 나뉜다.
 
 import type { StepRenderer } from "../../types";
-import { gGrid, gLab, gPick, gTap, haptic, HAPTIC, svgOpen, el, type GStep } from "./kit";
+import { gGrid, gLab, gPick, gTap, haptic, HAPTIC, josa, svgOpen, el, type GStep } from "./kit";
 
 type Sph = "air" | "water" | "land" | "life" | "space";
 const SPH: Record<Sph, { name: string; sub: string; color: string }> = {
@@ -100,7 +100,7 @@ export const g2u2SystemLab: StepRenderer = (host, step, api) => {
       btn.classList.remove("g2u2x-shake");
       void btn.offsetWidth;
       btn.classList.add("g2u2x-shake");
-      f.say(`${SPH[s].name}에는 들어가지 않아요. ${it.why} 다시 골라 보세요.`);
+      f.say(`${SPH[s].name}에 속하지 않아요. ${it.why} 다시 골라 보세요.`);
       host.dataset.g2Miss = String(Number(host.dataset.g2Miss ?? 0) + 1);
       return;
     }
@@ -120,7 +120,7 @@ export const g2u2SystemLab: StepRenderer = (host, step, api) => {
     }
     const next = ITEMS.findIndex((x) => !done.has(x.k));
     pick(next);
-    f.say(`${it.why} 다음은 <b>${ITEMS[next].name}</b>예요. 다른 것을 눌러 골라도 돼요.`);
+    f.say(`${it.why} 다음은 <b>${ITEMS[next].name}</b>${josa(ITEMS[next].name, "이에요", "예요")}. 다른 요소를 먼저 눌러도 돼요.`);
   }
 
   function judge(): void {
@@ -130,7 +130,7 @@ export const g2u2SystemLab: StepRenderer = (host, step, api) => {
       "바닷속을 헤엄치는 <b>물고기</b>는 어느 영역에 속할까요?",
       ["생물권", "수권", "지권"],
       "물속에 살아도 <b>생물</b>은 모두 생물권이에요. 수권은 물 그 자체예요.",
-      () => lab.finish("지구를 이루는 것은 <b>기권, 수권, 지권, 생물권, 외권</b>의 다섯 영역으로 나눌 수 있어요. 얼음인 빙하도 물이라 수권이고, 어디에 살든 생물은 생물권이에요."),
+      () => lab.finish("지구를 이루는 요소들은 <b>기권, 수권, 지권, 생물권, 외권</b>의 다섯 영역으로 나뉘어요. 얼음인 빙하도 물이므로 수권에 속하고, 물속에 사는 생물도 생물권에 속해요."),
     );
   }
 

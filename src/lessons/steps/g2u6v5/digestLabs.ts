@@ -23,16 +23,17 @@ import { P, bad, bvBtn, bvTween, chip, dot, g6Lab, g6Svg, good, row, tag, tap, t
 import { VILLI_ABSORBED, VILLI_TOTAL, villiInset, villiInsetLink, villiWall, villiWallLabels } from "./villiArt";
 
 // ── 침의 소화 작용 ─────────────────────────────────────────────────
-// fail: 침이 일을 못 한 까닭의 말. 얼음물에서도 아주 조금은 작용하므로 "거의"를 붙인다(레슨 문제의 "잘 작용하지 못해서"와 맞춘다).
+// fail: 침이 일을 못 한 까닭의 말(실패 안내). 얼음물에서도 아주 조금은 작용하므로 "활발히 작용하지 못해"로 쓴다(레슨 문제의 "잘 작용하지 못해서"와 맞춘다).
+//   소화효소라는 이름은 이 랩 바로 뒤의 개념 스텝이 붙이므로 여기서는 "침", "침 속 물질"이라고만 쓴다.
 const TEMPS = [
-  { name: "얼음물", sub: "0~5 ℃", fill: "rgba(140,200,255,.20)", line: "#8CC8FF", ok: false, fail: "거의 작용하지 못했어요" },
-  { name: "따뜻한 물", sub: "35~40 ℃", fill: "rgba(255,200,120,.20)", line: "#FFC878", ok: true, fail: "" },
-  { name: "끓는 물", sub: "100 ℃", fill: "rgba(255,120,90,.24)", line: "#FF8A6A", ok: false, fail: "작용하지 못했어요" },
+  { name: "얼음물", sub: "0~5 ℃", fill: "rgba(140,200,255,.20)", line: "#8CC8FF", ok: false, fail: "차가운 얼음물에서는 침이 활발히 작용하지 못해 둘 다 녹말이 그대로 남았어요." },
+  { name: "체온과 비슷한 물", sub: "35~40 ℃", fill: "rgba(255,200,120,.20)", line: "#FFC878", ok: true, fail: "" },
+  { name: "뜨거운 물", sub: "100 ℃", fill: "rgba(255,120,90,.24)", line: "#FF8A6A", ok: false, fail: "너무 뜨거운 물에서는 침 속 물질의 성질이 변해 작용하지 못했어요." },
 ];
 
 export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-saliva", wait: "실험을 차례대로 해 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-saliva", wait: "실험 조건을 맞추고 두 가지 검사를 해 보세요", tall: true });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "녹말 용액이 든 시험관 두 개와 물이 담긴 비커, 받침 유리");
   let phase: "prep" | "test" = "prep";
@@ -72,7 +73,7 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
   };
 
   const cTube = [0, 1].map((i) =>
-    chip(`t${i}`, i ? "(나)에 넣기" : "(가)에 넣기", "증류수 5 mL", () => {
+    chip(`t${i}`, i ? "시험관 (나)" : "시험관 (가)", "증류수 5 mL", () => {
       if (busy) return;
       tap();
       sal[i] = !sal[i];
@@ -81,7 +82,7 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
       draw();
     }),
   );
-  const cTemp = chip("temp", "물의 온도", "눌러서 고르기", () => {
+  const cTemp = chip("temp", "비커의 물 온도", "온도 선택하기", () => {
     if (busy) return;
     tap();
     temp = (temp + 1) % 3;
@@ -89,7 +90,7 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
     cTemp.on(true);
     draw();
   });
-  const soak = bvBtn("main g2u6x-soak", "10분 담가 두기");
+  const soak = bvBtn("main g2u6x-soak", "비커에 10분 동안 담가 두기");
   const toPrep = (): void => {
     phase = "prep";
     iod = false;
@@ -106,7 +107,7 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
     if (busy) return;
     if (temp < 0) {
       bad();
-      f.say("담가 둘 <b>물의 온도</b>를 먼저 골라요.");
+      f.say("먼저 <b>비커의 물 온도</b> 버튼을 눌러 물의 온도를 골라 주세요.");
       return;
     }
     tap();
@@ -114,7 +115,7 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     draw();
     f.slot.setControls(row(cIod.el), row(cBen.el));
-    f.say("두 시험관을 같은 물에 10분 함께 담갔어요. 두 가지 검사로 <b>비교해</b> 봐요.");
+    f.say("10분이 지났어요! 이제 녹말이 남아 있는지 확인하는 <b>아이오딘 반응 검사</b>와 당분이 생겼는지 확인하는 <b>베네딕트 반응 검사</b>를 차례로 해 보세요.");
   });
 
   const fail = (kind: string, msg: string, say: string): void => {
@@ -127,18 +128,18 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
     tm.later(toPrep, 2600);
   };
   const after = (): void => {
-    if (sal[0] === sal[1]) return fail("same", "두 시험관의 결과가 같아요", "두 시험관에 <b>같은 것</b>을 넣어서 침이 한 일을 알 수 없어요. 다시 준비해요.");
-    if (!TEMPS[temp].ok) return fail("temp", "침을 넣은 쪽도 그대로예요", `${TEMPS[temp].name}에서는 침이 ${TEMPS[temp].fail}. <b>체온과 비슷한</b> 온도로 다시 해요.`);
+    if (sal[0] === sal[1]) return fail("same", "두 시험관에 넣은 용액이 같아 비교할 수 없어요", "두 시험관에 같은 용액을 넣어서 결과가 똑같이 나왔어요. 한쪽은 <b>침 용액</b>, 다른 쪽은 <b>증류수</b>로 다르게 넣고 다시 실험해 보세요.");
+    if (!TEMPS[temp].ok) return fail("temp", "이 온도에서는 침이 제대로 작용하지 못했어요", `${TEMPS[temp].fail} <b>체온과 비슷한 따뜻한 물(35~40 ℃)</b>로 바꿔 보세요.`);
     host.dataset.g6Fail = "";
     if (iod && ben) {
       f.pips(2);
       good();
-      // 해석은 판정에서 학생이 한다. 여기서는 색이 다 나왔다는 것만 말한다.
-      f.say("두 검사의 색이 다 나왔어요. 침을 넣은 쪽에서 <b>무슨 일</b>이 일어났을까요?");
+      // 해석은 판정에서 학생이 한다. 여기서는 두 검사의 색만 말한다(수정안 괄호의 "녹말 사라짐", "엿당 생성"은 바로 뒤 판정의 답이라 뺐다).
+      f.say("침 용액을 넣은 시험관만 아이오딘 반응에서 <b>색이 변하지 않았고</b>, 베네딕트 반응에서 <b>황적색</b>으로 변했어요!");
       tm.later(() => {
         // 오답 보기 둘은 한쪽 검사만 읽은 답이다(아이오딘을 안 읽으면 "녹말은 그대로", 베네딕트를 안 읽으면 "당분은 없다").
         lab.judge(
-          "<b>침 용액</b>을 넣은 시험관에서만 일어난 일은?",
+          "체온과 비슷한 온도에서 <b>침 용액</b>을 넣은 시험관에서만 일어난 변화는 무엇인가요?",
           [{ t: "녹말이 없어지고 당분이 생겼다", ok: true }, { t: "녹말은 그대로이고 당분이 생겼다" }, { t: "녹말이 없어졌지만 당분은 없다" }],
           "청람색은 <b>녹말</b>, 황적색은 <b>당분</b>이 있다는 표시예요.",
           () => {
@@ -146,18 +147,18 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
             f.pips(3);
             f.say("이번에는 <b>증류수 쪽</b>을 봐요. 같은 물에 10분 함께 담가 둔 시험관이에요.");
             lab.judge(
-              "<b>증류수 쪽</b> 결과로 알 수 있는 것은?",
+              "<b>증류수를 넣은 시험관</b>의 결과로 알 수 있는 사실은 무엇인가요?",
               [{ t: "녹말이 없어진 것은 침 때문이다", ok: true }, { t: "녹말은 10분이면 저절로 없어진다" }, { t: "따뜻한 물만으로도 녹말이 없어진다" }],
-              "침만 빼고 똑같이 둔 쪽은 녹말이 그대로였어요.",
+              "증류수를 넣은 쪽은 녹말이 그대로 남아 있어서, 녹말이 분해된 것이 물이 아니라 <b>침</b> 때문임을 확실히 증명해 줘요.",
               () =>
                 lab.finish("침만 빼고 똑같이 둔 시험관은 녹말이 그대로였으니, 녹말을 <b>당분(엿당)</b>으로 분해한 것은 <b>침</b>이에요. 침은 체온과 비슷한 온도에서 잘 작용해요."),
             );
           },
         );
       }, 1500);
-    } else f.say(iod ? "증류수 쪽은 <b>청람색</b>, 침을 넣은 쪽은 변화가 없어요. 다른 검사도 해요." : "증류수 쪽은 <b>푸른색</b>, 침을 넣은 쪽은 <b>황적색</b>이에요. 다른 검사도 해요.");
+    } else f.say(iod ? "아이오딘 검사를 마쳤어요! 침을 넣은 쪽은 청람색이 나타나지 않네요. 이제 <b>베네딕트 반응 검사</b>도 해 볼까요?" : "베네딕트 용액을 넣고 가열했더니 침을 넣은 쪽이 황적색으로 변했어요! 이제 <b>아이오딘 반응 검사</b>도 마저 해 볼까요?");
   };
-  const cIod = chip("iod", "아이오딘 검사", "받침 유리에 덜어 한 방울씩", () => {
+  const cIod = chip("iod", "아이오딘 반응 검사", "녹말이 남아 있는지 확인", () => {
     if (busy || iod) return;
     tap();
     iod = true;
@@ -165,7 +166,7 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
     draw();
     after();
   });
-  const cBen = chip("ben", "베네딕트 검사", "넣고 뜨거운 물(80~90 ℃)에 담그기", () => {
+  const cBen = chip("ben", "베네딕트 반응 검사", "가열하여 당분이 생겼는지 확인", () => {
     if (busy || ben) return;
     tap();
     ben = true;
@@ -183,11 +184,12 @@ export { g2u6EnzymeLab } from "./organLab";
 
 // ── 작은창자 안쪽 벽(그림은 villiArt.ts, 2026-11-15 책의 그림 Ⅵ-5처럼 자세히 다시 그림) ──────────
 export { VILLI_ABSORBED };
-const WALL_NAMES = ["매끈한 벽", "주름진 벽", "주름과 융털"];
+// 세 칸 단추(한 칸 약 110px)에 들어가게 짧은 이름을 쓴다(수정안 첫 안 "주름과 융털이 있는 벽"은 칸을 넘어 대안을 썼다)
+const WALL_NAMES = ["매끈한 벽", "주름진 벽", "주름 + 융털 벽"];
 
 export const g2u6VilliLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 2, cls: "g2u6x-villi", wait: "세 가지 벽에 모두 흘려보내 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 2, cls: "g2u6x-villi", wait: "세 가지 벽 모양에 영양소를 모두 흘려보내 보세요" });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "작은창자 안쪽 벽의 단면과 그 위를 지나는 영양소");
   let level = 0;
@@ -229,11 +231,11 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
       run = -1;
       chips.forEach((c, j) => c.on(j === i));
       draw();
-      f.say(`<b>${n}</b>이에요. 영양소 ${VILLI_TOTAL}개를 흘려보내 몇 개가 흡수되는지 봐요.`);
+      f.say(`<b>${n}</b> 모형을 골랐어요. 아래 버튼을 눌러 영양소 ${VILLI_TOTAL}개를 흘려보내 보세요.`);
     }),
   );
   const flow = bvBtn("main g2u6x-flow-btn", "영양소 20개 흘려보내기");
-  const sum = bvBtn("g2u6x-go", "세 벽 비교하기");
+  const sum = bvBtn("g2u6x-go", "세 가지 벽의 흡수량 비교하기");
   sum.disabled = true;
   flow.addEventListener("click", () => {
     if (busy) return;
@@ -259,13 +261,13 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
   sum.addEventListener("click", () => {
     if (busy) return;
     tap();
-    lab.judge("주름과 융털이 있을 때 <b>더 많이</b> 흡수된 까닭은?", [{ t: "영양소와 닿는 표면적이 넓어서", ok: true }, { t: "영양소의 크기가 더 작아져서" }, { t: "근육층이 더 두꺼워져서" }], "같은 길이의 창자라도 벽이 구불구불할수록 <b>닿는 면</b>이 넓어요.", () =>
-      lab.finish("작은창자 안쪽 벽은 <b>주름과 융털</b> 덕분에 영양소와 닿는 <b>표면적</b>이 매우 넓어요. 그래서 영양소를 효율적으로 흡수해요."),
+    lab.judge("작은창자 안쪽 벽에 주름과 융털이 많을 때 영양소가 <b>훨씬 더 많이</b> 흡수된 까닭은 무엇인가요?", [{ t: "영양소와 닿는 표면적이 매우 넓어져서", ok: true }, { t: "융털이 영양소의 크기를 더 작게 분해해서" }, { t: "작은창자의 근육층이 더 두꺼워져서" }], "주름과 융털은 작은창자 안쪽 벽이 영양소와 닿는 <b>표면적</b>을 크게 넓혀 주어 영양소를 효율적으로 흡수하게 해 줘요.", () =>
+      lab.finish("작은창자 안쪽 벽에는 수많은 주름과 작은 돌기인 <b>융털</b>이 빽빽하게 나 있어 영양소와 닿는 <b>표면적</b>이 매우 넓어요. 덕분에 소화된 영양소를 효율적으로 흡수할 수 있어요."),
     );
   });
   f.slot.setControls(row(...chips.map((c) => c.el)), flow, sum);
   chips[0].on(true);
   draw();
-  f.say("벽의 <b>모양</b>을 고르고 영양소를 흘려보내요. 노란 알갱이가 영양소예요.");
+  f.say("작게 분해된 영양소 20개가 작은창자 안을 지나가요. <b>안쪽 벽의 모양</b>에 따라 영양소가 얼마나 많이 흡수되는지 비교해 보세요.");
   return lab.cleanup;
 };

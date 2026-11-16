@@ -1,10 +1,10 @@
-// [중1 Ⅱ v5] u2l5 levelBuildLab: 「세포가 모이면 무엇이 될까?」
+// [중1 Ⅱ v5] u2l5 levelBuildLab: 「세포가 차례대로 모이면 무엇이 될까?」
 // 한 통찰: 생물의 몸은 세포가 그냥 모인 것이 아니라 세포, 조직, 기관, 개체의 단계를 거쳐 이루어진다.
 //   동물에는 기관계가, 식물에는 조직계가 한 단계 더 있다.
 // 조작: 막대를 밀면 그림이 더 큰 단계로 넓어지고(작은 것이 큰 것 속의 한 자리가 된다), 오른쪽 계단에 단계 이름이 아래에서부터 쌓인다.
 //   동물: 상피세포 → 상피조직 → 위 → 소화계 → 사람.  식물: 잎살세포 → 울타리 조직 → 잎의 조직계 → 잎 → 나무.
 //   (조직계 칸의 그림은 위아래 표피까지 든 잎 조각이라 기본 조직계 하나가 아니다. 표피 조직계와 기본 조직계가 함께 있다.)
-//   두 계단을 다 쌓으면 "두 계단 견주어 보기"가 뜨고, 나란히 놓인 두 계단을 보며 판정 두 번(첫 판정만 채점).
+//   두 계단을 다 쌓으면 "동물과 식물의 단계 비교하기"가 뜨고, 나란히 놓인 두 계단을 보며 판정 두 번(첫 판정만 채점).
 // 그림: 동물 쪽 네 장은 v4 브랜치 발주본의 사본(public/bio6/levels), 사람과 식물 쪽은 구작(public/bio2/levels).
 // 넓어지는 움직임: 다음 단계 그림 속의 한 자리(ANCHOR)에서 화면 가득 보이던 시야가 그림 전체로 물러난다.
 //   앞 단계 그림은 그 자리에 놓인 채 함께 작아지다 사라진다(두 그림이 똑같지는 않아서 겹쳐 넘긴다). 그림 상자는 한 변 196px.
@@ -113,11 +113,11 @@ const ROUTES: Record<Route, RouteDef> = {
     card: "동물",
     sub: "사람의 몸",
     levels: [
-      { rank: "세포", name: "상피세포", img: EPI_CELL, say: "<b>상피세포</b> 하나예요. 아래 막대를 밀어 세포를 모아 보세요." },
-      { rank: "조직", name: "상피조직", img: EPI_TISSUE, say: "모양과 하는 일이 비슷한 세포가 모여 <b>조직</b>이 됐어요. 상피조직이에요." },
-      { rank: "기관", name: "위", img: "bio6/levels/stomach.webp", say: "여러 조직이 모여 고유한 모양과 기능을 가진 <b>기관</b>이 됐어요. 위예요." },
-      { rank: "기관계", name: "소화계", img: "bio6/levels/digestive.webp", say: "위, 작은창자처럼 관련된 일을 하는 기관이 모여 <b>기관계</b>가 됐어요. 소화계예요." },
-      { rank: "개체", name: "사람", img: "bio2/levels/human.webp", say: "여러 기관계가 모여 하나의 생물, <b>개체</b>가 됐어요. 사람이에요." },
+      { rank: "세포", name: "상피세포", img: EPI_CELL, say: "생물의 몸을 이루는 기본 단위인 <b>상피세포</b> 하나예요. 아래 막대를 오른쪽으로 밀어 세포를 모아 보세요." },
+      { rank: "조직", name: "상피조직", img: EPI_TISSUE, say: "모양과 기능이 비슷한 세포들이 모여 <b>조직</b>(상피조직)을 이루었어요." },
+      { rank: "기관", name: "위", img: "bio6/levels/stomach.webp", say: "여러 조직이 모여 고유한 모양과 기능을 갖춘 <b>기관</b>(위)이 됐어요." },
+      { rank: "기관계", name: "소화계", img: "bio6/levels/digestive.webp", say: "위, 작은창자처럼 연관된 일을 하는 여러 기관이 모여 <b>기관계</b>(소화계)를 이루었어요." },
+      { rank: "개체", name: "사람", img: "bio2/levels/human.webp", say: "여러 기관계가 모여 독립된 하나의 생물인 <b>개체</b>(사람)가 완성됐어요!" },
     ],
     // 세포 → 조직: 세포 칸의 세포(폭 50)가 조직 칸 가운데 세포(폭 24)로. 조직 → 위: 위 안쪽의 주름진 벽.
     anchor: [[0, 0, 0.48], [30, 2, 0.26], [15, -4, 0.2], [0, -30, 0.6]],
@@ -128,11 +128,11 @@ const ROUTES: Record<Route, RouteDef> = {
     card: "식물",
     sub: "나무의 몸",
     levels: [
-      { rank: "세포", name: "잎살세포", img: LEAF_CELL, say: "잎을 이루는 <b>잎살세포</b> 하나예요. 막대를 밀어 세포를 모아 보세요." },
-      { rank: "조직", name: "울타리 조직", img: PALISADE, say: "비슷한 세포가 모여 <b>조직</b>이 됐어요. 울타리 조직이에요." },
-      { rank: "조직계", name: "잎의 조직계", img: "bio2/levels/tissue-system.webp", say: "여러 조직이 모여 <b>조직계</b>가 됐어요. 동물의 계단에는 없던 단계예요." },
-      { rank: "기관", name: "잎", img: "bio2/levels/leaf.webp", say: "조직계가 모여 <b>기관</b>이 됐어요. 잎이에요. 뿌리와 줄기도 기관이에요." },
-      { rank: "개체", name: "나무", img: "bio2/levels/tree.webp", say: "기관이 모여 하나의 생물, <b>개체</b>가 됐어요. 나무예요." },
+      { rank: "세포", name: "잎살세포", img: LEAF_CELL, say: "식물의 잎을 이루는 <b>잎살세포</b> 하나예요. 아래 막대를 밀어 세포를 모아 보세요." },
+      { rank: "조직", name: "울타리 조직", img: PALISADE, say: "모양과 기능이 비슷한 세포들이 모여 <b>조직</b>(울타리 조직)을 이루었어요." },
+      { rank: "조직계", name: "잎의 조직계", img: "bio2/levels/tissue-system.webp", say: "여러 조직이 모여 <b>조직계</b>를 이루었어요. 동물에는 없고 식물에 있는 단계예요!" },
+      { rank: "기관", name: "잎", img: "bio2/levels/leaf.webp", say: "여러 조직계가 모여 고유한 모양과 기능을 갖춘 <b>기관</b>(잎)이 됐어요. 뿌리, 줄기, 꽃도 식물의 기관이에요." },
+      { rank: "개체", name: "나무", img: "bio2/levels/tree.webp", say: "여러 기관이 모여 독립된 하나의 생물인 <b>개체</b>(나무)가 완성됐어요!" },
     ],
     // 세포 → 조직: 세포 칸의 세포(폭 46)가 조직 칸 가운데 세포(폭 24)로. 조직 → 조직계: 잎 단면의 울타리 조직 층(높이 62~100).
     anchor: [[0, 0, 0.522], [0, -17, 0.43], [8, 4, 0.22], [26, -42, 0.1]],
@@ -141,6 +141,11 @@ const ROUTES: Record<Route, RouteDef> = {
   },
 };
 const ORDER: Route[] = ["animal", "plant"];
+/** 낱말 뒤의 목적격 조사(받침이 있으면 "을", 없으면 "를"). */
+const eul = (w: string): string => {
+  const c = w.charCodeAt(w.length - 1) - 0xac00;
+  return c >= 0 && c < 11172 && c % 28 !== 0 ? "을" : "를";
+};
 
 const ramp = (a: number, b: number, x: number): number => {
   const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
@@ -150,7 +155,8 @@ const ramp = (a: number, b: number, x: number): number => {
 export const levelBuildLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as BlvStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 3, cls: "blv-stage", qCls: "blv-q", api });
+  // 세 줄 도움말을 처음부터 잡아 둔다(한쪽 계단을 다 쌓은 뒤의 글이 세 줄이다. 랩 도중에 무대가 밀리지 않게)
+  const f = bvFrame(host, { title: s.title, steps: 3, cls: "blv-stage", qCls: "blv-q", api, tall: true });
   const canvas = bvCanvas(f.stage);
 
   // ── 무대: 왼쪽 그림 상자, 오른쪽 계단 ─────────────────────────────
@@ -242,7 +248,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     const last = ROUTES[r].levels[4];
     cards[r] = bvCard("blv-card", { name: ROUTES[r].card, sub: ROUTES[r].sub, icon: `<img src="${bvSrc(last.img)}" alt="" draggable="false" />`, key: r });
   });
-  const cmpBtn = bvBtn("main blv-cmp", "두 계단 비교하기");
+  const cmpBtn = bvBtn("main blv-cmp", "동물과 식물의 단계 비교하기");
   cmpBtn.hidden = true;
 
   const mark = (level: number): void => {
@@ -304,13 +310,13 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
       cards[route].done();
       f.pips(ORDER.filter((r) => finished[r]).length);
       const other = ORDER.find((r) => !finished[r]);
-      if (other) say += ` 이번에는 <b>${ROUTES[other].card}</b>을 골라 봐요.`;
+      if (other) say += ` 이제 아래 카드에서 <b>${ROUTES[other].card}</b>${eul(ROUTES[other].card)} 골라 끝까지 모아 보세요.`;
       else {
         // 마지막 계단을 볼 시간을 준 뒤 버튼을 띄운다
         tm.later(() => {
           cmpBtn.hidden = false;
           range.el.hidden = true;
-          f.say("두 계단을 다 쌓았어요. 이제 <b>두 계단을 나란히</b> 놓고 비교해 봐요.");
+          f.say("동물과 식물의 구성 단계를 모두 완성했어요! 이제 아래 버튼을 눌러 <b>두 구성 단계를 나란히</b> 비교해 보세요.");
         }, 1300);
       }
     }
@@ -322,7 +328,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
   /** 막대를 끄는 동안의 안내 글: 그림이 어느 단계에 와 있으면 그 단계의 글, 단계 사이를 지나는 중이면 '막대를 미는 중'.
    *  (그림은 다음 단계로 넘어갔는데 글은 앞 단계를 말하는 일이 없게 한다. 경계에서 깜빡이지 않게 들어올 때와 나갈 때의 문턱을 달리 둔다.) */
   let sayKey = "L0";
-  const MOVING = "막대를 미는 중이에요. 손을 떼면 무엇이 됐는지 알 수 있어요.";
+  const MOVING = "막대를 움직이는 중이에요. 원하는 단계에서 손을 떼어 확인해 보세요.";
   function narrate(v: number): void {
     const near = Math.round(v / 100);
     const dist = Math.abs(v - near * 100);
@@ -338,7 +344,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: 400,
     value: 0,
-    label: "밀어서 모으기",
+    label: "막대를 밀어 다음 단계로 모으기",
     ticks: ["세포", "", "", "", "개체"],
     onInput: (v) => {
       if (phase !== "build") return;
@@ -390,45 +396,46 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     }),
   );
 
-  // ── 두 계단 견주기(판정) ─────────────────────────────────────────
+  // ── 두 계단 비교하기(판정) ───────────────────────────────────────
   cmpBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     phase = "duo";
     f.stage.classList.add("duo");
     mark(4);
-    f.say("왼쪽은 동물, 오른쪽은 식물의 계단이에요. 칸을 하나씩 비교해 봐요.");
+    f.say("왼쪽은 동물, 오른쪽은 식물의 구성 단계예요. 각 단계를 나란히 비교해 보세요.");
     f.slot.ask(
-      "동물의 계단에만 있는 단계는 무엇인가요?",
+      "식물에는 없고 동물의 구성 단계에만 있는 단계는 무엇인가요?",
       [{ t: "기관계", ok: true }, { t: "조직계" }, { t: "기관" }],
       (ok) => {
         api.recordQuiz(ok);
         f.stage.classList.add("reveal"); // 답한 뒤에야 서로 다른 칸에 색을 입힌다
       },
-      { why: "동물은 기관이 모여 <b>기관계</b>를 이뤄요. 조직계는 식물의 단계예요.", onNext: ask2 },
+      { why: "동물은 연관된 일을 하는 여러 기관이 모여 <b>기관계</b>를 이루지만, 식물에는 기관계가 없어요.", onNext: ask2 },
     );
   });
   function ask2(): void {
-    f.say("이번에는 식물의 계단을 봐요. 조직계가 놓인 자리를 찾아봐요.");
+    // 첫 판정에 답하면 서로 다른 칸(기관계, 조직계)이 노랗게 칠해진다(.reveal). 수정안의 "노란색 테두리"는 무대와 달라 "노란색으로 표시된"으로 썼다
+    f.say("이번에는 오른쪽 식물의 구성 단계를 살펴보세요. 노란색으로 표시된 <b>조직계</b>의 위치를 찾아볼까요?");
     f.slot.ask(
-      "식물의 조직계는 어느 단계 사이에 있나요?",
+      "식물의 구성 단계에서 조직계는 어느 단계 사이에 있나요?",
       [{ t: "조직과 기관 사이", ok: true }, { t: "기관과 개체 사이" }, { t: "세포와 조직 사이" }],
       () => undefined,
-      { why: "식물은 세포, 조직, <b>조직계</b>, 기관, 개체의 순서예요.", onNext: finish },
+      { why: "식물의 몸은 세포, 조직, <b>조직계</b>, 기관, 개체의 순서로 이루어져 있어요.", onNext: finish },
     );
   }
   function finish(): void {
     phase = "done";
     f.pips(3);
     mark(4);
-    f.say("두 계단을 비교해 봤어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("생물의 몸은 <b>세포, 조직, 기관, 개체</b>의 단계로 이루어져요. 동물에는 기관계가, 식물에는 조직계가 더 있어요.");
+    f.say("동물과 식물의 몸이 어떤 단계를 거쳐 이루어지는지 한눈에 비교해 봤어요!");
+    f.slot.conclude("여러 세포로 된 생물의 몸은 공통적으로 <b>세포, 조직, 기관, 개체</b>의 단계를 거쳐 이루어져요. 여기서 동물에는 <b>기관계</b>(기관과 개체 사이)가, 식물에는 <b>조직계</b>(조직과 기관 사이)가 있어요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
   f.slot.setControls(bvCards(2, cards.animal, cards.plant), range.el, cmpBtn);
   setRoute("animal");
-  api.setCTA("두 계단을 끝까지 쌓아 보세요", { enabled: false });
+  api.setCTA("동물과 식물의 단계를 모두 끝까지 모아 보세요", { enabled: false });
   return () => {
     tm.clear();
     canvas.off();

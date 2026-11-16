@@ -50,7 +50,7 @@ const toC = (scene: Scene, T: number): number => (scene === "pot" ? Math.round(1
 export const convLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as ConvStep;
   const tm = bvTimers();
-  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-conv", api });
+  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-conv", api, tall: true });
 
   let scene: Scene = "pot";
   let place: Place | null = "bottom"; // 열원의 자리(방에서는 학생이 고른다)
@@ -295,10 +295,11 @@ export const convLab: StepRenderer = (host, step, api) => {
   });
 
   // ── 조작 ──
+  // 불 켜기는 그대로 둔다(안내 글이 "불을 켜고"로 부른다). 다음 버튼의 글은 어느 실험으로 가는지에 따라 onResult가 정한다.
   const fire = bvBtn("main", "불 켜기");
-  const next = bvBtn("main", "다음 실험으로");
-  const top = bvBtn("", "위쪽에 달기");
-  const bottom = bvBtn("", "아래쪽에 달기");
+  const next = bvBtn("main", "방 안 공기 실험으로 이동");
+  const top = bvBtn("", "위쪽에 설치하기");
+  const bottom = bvBtn("", "아래쪽에 설치하기");
   const row = el("div", { class: "u3x-row" }, top, bottom);
   next.hidden = true;
   row.hidden = true;
@@ -309,15 +310,19 @@ export const convLab: StepRenderer = (host, step, api) => {
     if (scene === "pot") {
       done = 1;
       fire.hidden = true;
-      f.say("데워진 물 입자가 <b>위로 올라가고</b> 위의 찬 입자가 내려와요. 그렇게 돌면서 위쪽 물까지 뜨거워졌어요.");
+      f.say("아래에서 데워진 물 입자가 <b>위로 올라가고</b>, 위에 있던 찬 물 입자가 <b>아래로 내려와요</b>. 이렇게 순환하면서 물 전체가 골고루 뜨거워졌어요!");
+      next.textContent = "방 안 공기 실험으로 이동";
       next.hidden = false;
     } else if (ok) {
       done = scene === "heater" ? 2 : 3;
-      f.say(scene === "heater" ? "따뜻해진 공기가 <b>위로 올라가며</b> 방을 한 바퀴 돌아요. 사람이 있는 아래쪽까지 따뜻해졌어요." : "차가워진 공기가 <b>아래로 내려오며</b> 방을 한 바퀴 돌아요. 방 전체가 시원해졌어요.");
-      if (scene === "heater") next.hidden = false;
-      else tm.later(askFinal, 2400);
+      f.say(scene === "heater" ? "아래에서 따뜻해진 공기가 <b>위로 올라가며</b> 방 안을 골고루 돌아요! 덕분에 바닥 근처까지 따뜻해졌어요." : "위에서 차가워진 공기가 <b>아래로 내려오며</b> 방 안을 골고루 돌아요! 덕분에 방 전체가 시원해졌어요.");
+      if (scene === "heater") {
+        // 이미 방 안 공기 실험이다. 다음은 더운 방의 냉방기(수정안의 "방 안 공기 실험으로 이동"을 이 자리에 맞게 바꿈)
+        next.textContent = "냉방기 실험으로 이동";
+        next.hidden = false;
+      } else tm.later(askFinal, 2400);
     } else {
-      f.say(scene === "heater" ? "따뜻한 공기는 위에만 머물러요. 사람이 있는 <b>아래쪽은 그대로</b> 추워요. 다른 자리에 달아 봐요." : "차가운 공기는 아래에만 깔려요. <b>위쪽은 그대로</b> 더워요. 다른 자리에 달아 봐요.");
+      f.say(scene === "heater" ? "난방기를 위쪽에 설치하니 따뜻한 공기가 천장 근처에만 머물러서 <b>아래쪽은 여전히 추워요</b>. 이번엔 아래쪽에 설치해 볼까요?" : "냉방기를 아래쪽에 설치하니 차가운 공기가 바닥에만 깔려서 <b>위쪽은 여전히 더워요</b>. 이번엔 위쪽에 설치해 볼까요?");
       top.disabled = place === "top";
       bottom.disabled = place === "bottom";
     }
@@ -339,11 +344,11 @@ export const convLab: StepRenderer = (host, step, api) => {
     top.classList.remove("on");
     bottom.classList.remove("on");
     if (sc === "heater") {
-      f.say("추운 방에 <b>난방기</b>를 달아요. 사람이 있는 아래쪽까지 따뜻해지려면 어디에 달까요?");
-      api.setCTA("난방기를 달 자리를 골라 보세요", { enabled: false });
+      f.say("추운 방에 <b>난방기</b>를 설치해 볼까요? 방 전체가 고루 따뜻해지려면 어디에 설치해야 할까요?");
+      api.setCTA("난방기를 설치할 위치를 골라 보세요", { enabled: false });
     } else if (sc === "cooler") {
-      f.say("이번엔 더운 방에 <b>냉방기</b>를 달아요. 방 전체가 시원해지려면 어디에 달까요?");
-      api.setCTA("냉방기를 달 자리를 골라 보세요", { enabled: false });
+      f.say("이번에는 더운 방에 <b>냉방기</b>를 설치해 볼까요? 방 전체가 고루 시원해지려면 어디에 설치해야 할까요?");
+      api.setCTA("냉방기를 설치할 위치를 골라 보세요", { enabled: false });
     }
   }
 
@@ -360,7 +365,7 @@ export const convLab: StepRenderer = (host, step, api) => {
     top.classList.toggle("on", pl === "top");
     bottom.classList.toggle("on", pl === "bottom");
     top.disabled = bottom.disabled = true;
-    f.say(`${scene === "heater" ? "난방기" : "냉방기"}를 ${pl === "top" ? "위쪽" : "아래쪽"}에 달고 켰어요. 공기 입자와 두 온도를 지켜봐요.`);
+    f.say(`${scene === "heater" ? "난방기" : "냉방기"}를 ${pl === "top" ? "위쪽" : "아래쪽"}에 설치하고 켰어요. 공기 입자의 움직임과 위아래 온도 변화를 살펴보세요.`);
   }
   top.addEventListener("click", () => install("top"));
   bottom.addEventListener("click", () => install("bottom"));
@@ -369,7 +374,7 @@ export const convLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     running = true;
     fire.disabled = true;
-    f.say("불을 켰어요. 아래에서 데워진 <b>물 입자</b>가 어디로 가는지 지켜봐요.");
+    f.say("불을 켰어요! 바닥 근처에서 데워진 <b>물 입자</b>가 어느 쪽으로 움직이는지 살펴보세요.");
   });
   next.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -387,27 +392,27 @@ export const convLab: StepRenderer = (host, step, api) => {
     runT = 0;
     seed();
     row.hidden = true;
-    f.say("난방기를 아래에 단 방을 다시 돌렸어요. 무대의 공기 입자를 보고 골라 봐요.");
+    f.say("난방기를 아래쪽에 설치한 방의 모습을 다시 보여 줄게요. 공기 입자의 움직임을 보며 답해 보세요.");
     f.slot.ask(
-      "난방기를 아래에 달았을 때 방 전체가 따뜻해진 까닭은?",
-      [{ t: "데워진 공기 입자가 직접 이동해서", ok: true }, { t: "공기 입자가 제자리에서 떨기만 해서" }, { t: "열이 공기 없이 날아가서" }],
+      "난방기를 아래쪽에 설치했을 때 방 전체가 따뜻해진 까닭은 무엇인가요?",
+      [{ t: "따뜻해진 공기 입자가 직접 이동하며 순환해서", ok: true }, { t: "공기 입자가 제자리에서 떨림만 전달해서" }, { t: "열이 공기를 거치지 않고 곧장 날아가서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "따뜻한 공기는 <b>위로</b>, 찬 공기는 <b>아래로</b> 움직이며 돌았어요.", onNext: finish },
+      { why: "따뜻해진 공기는 <b>위로 올라가고</b> 차가운 공기는 <b>아래로 내려오면서</b> 방 안을 골고루 데웠어요.", onNext: finish },
     );
   }
 
   function finish(): void {
     phase = "done";
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("물이나 공기의 입자가 <b>직접 이동</b>하면서 열을 전달하는 것이 <b>대류</b>예요. 그래서 난방기는 아래쪽에, 냉방기는 위쪽에 달아요.");
+    f.say("액체와 기체에서 입자가 직접 움직이며 열을 전달하는 과정을 모두 확인했어요!");
+    f.slot.conclude("액체나 기체 상태의 입자가 <b>직접 이동</b>하면서 열을 전달하는 현상을 <b>대류</b>라고 해요. 대류 현상 때문에 난방기는 아래쪽에, 냉방기는 위쪽에 설치해요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
   f.slot.setControls(fire, row, next);
-  f.say("물이 든 냄비예요. 불은 <b>아래쪽</b>에만 있어요. 불을 켜고 물 입자를 지켜봐요.");
-  api.setCTA("불을 켜고 물 입자를 지켜보세요", { enabled: false });
+  f.say("물이 담긴 냄비의 <b>아래쪽</b>만 가열해 볼 거예요. 불을 켜고 물 입자가 어떻게 움직이는지 관찰해 보세요.");
+  api.setCTA("불을 켜고 물 입자의 움직임을 관찰해 보세요", { enabled: false });
   return () => {
     tm.clear();
     cv.stop();

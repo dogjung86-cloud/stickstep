@@ -1,4 +1,4 @@
-// [중2 Ⅰ v5] g2u1l9 증류 랩: 「시험관은 언제 바꿔야 할까요?」
+// [중2 Ⅰ v5] g2u1l9 증류 랩: 「끓어 나오는 액체를 받으려면 시험관을 언제 바꿀까요?」
 // 책의 탐구(물과 에탄올 혼합물 분리하기)를 손으로 한다: 가지 달린 삼각 플라스크의 혼합물을 가열하며 온도 그래프를 보고,
 //   나오는 물질을 얼음물에 담근 시험관 (가)~(라)에 차례로 모은 뒤 냄새와 푸른색 염화 코발트 종이로 확인한다.
 // 학생이 정하는 것: 가열하다가 시험관을 바꾸는 때, 어느 시험관을 무엇으로 확인할지.
@@ -97,7 +97,7 @@ export const g2u1DistillLab: StepRenderer = (host, step, api) => {
     segName(cur, segT, lastT);
     segT = lastT;
     cur += 1;
-    bSwap.textContent = cur < 3 ? `다음 시험관으로 바꾸기 (지금 ${NAME[cur]})` : "마지막 시험관 (라)";
+    bSwap.textContent = cur < 3 ? `다음 시험관으로 바꾸기 (현재 ${NAME[cur]})` : "마지막 시험관 (라)";
     bSwap.disabled = cur >= 3;
     paintTubes();
     f.say(`시험관 <b>${NAME[cur]}</b>로 바꿨어요. 계속 가열하며 그래프가 꺾이는 때를 지켜보세요.`);
@@ -112,7 +112,7 @@ export const g2u1DistillLab: StepRenderer = (host, step, api) => {
     lines.innerHTML = "";
     cuts.innerHTML = "";
     bSwap.disabled = false;
-    bSwap.textContent = "다음 시험관으로 바꾸기 (지금 (가))";
+    bSwap.textContent = "다음 시험관으로 바꾸기 (현재 (가))";
     paintTubes();
     const hold = g1Curve(lab, pl, lines, {
       tMax: TMAX,
@@ -151,13 +151,13 @@ export const g2u1DistillLab: StepRenderer = (host, step, api) => {
       tries += 1;
       haptic(HAPTIC.wrong);
       host.dataset.g2u1Fail = String(tries);
-      f.say("회색 시험관에는 에탄올과 물이 <b>섞여</b> 모였어요. 그래프가 <b>꺾일 때마다</b> 시험관을 바꿔 다시 해 봐요.");
+      f.say("에탄올과 물이 한 시험관에 <b>섞여</b> 모였어요. 온도 그래프의 <b>기울기가 바뀔 때마다</b> 시험관을 교체해 보세요.");
       const again = bvBtn("main", "혼합물을 새로 넣고 다시 하기");
       again.dataset.k = "again";
       again.addEventListener("click", () => {
         haptic(HAPTIC.tap);
         tEl.textContent = "25.0 ℃";
-        f.say("온도가 <b>평평해지기 시작할 때</b>, <b>다시 오를 때</b>, <b>다시 평평해질 때</b> 시험관을 바꿔요.");
+        f.say("온도가 <b>일정해지기 시작할 때</b>, <b>다시 올라갈 때</b>, <b>다시 일정해질 때</b> 시험관을 바꿔 보세요.");
         run();
       });
       f.slot.setControls(again);
@@ -169,7 +169,7 @@ export const g2u1DistillLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     f.say(`평평한 두 구간의 액체가 시험관 ${NAME[eth]}와 ${NAME[wat]}에 따로 모였어요. 무엇인지 확인해 봐요.`);
     const bSmell = bvBtn("", `${NAME[eth]}의 냄새 맡아 보기`);
-    const bPaper = bvBtn("", `${NAME[wat]}에 푸른 염화 코발트 종이 대기`);
+    const bPaper = bvBtn("", `${NAME[wat]}에 푸른색 염화 코발트 종이 대기`);
     bSmell.dataset.k = "smell";
     bPaper.dataset.k = "paper";
     const done = new Set<string>();
@@ -180,8 +180,8 @@ export const g2u1DistillLab: StepRenderer = (host, step, api) => {
       tm.later(
         () =>
           lab.judge(
-            "<b>첫 번째 평평한 구간</b>에서 주로 끓어 나온 물질과 그 까닭은?",
-            [{ t: "에탄올, 물보다 끓는점이 낮아서", ok: true }, { t: "물, 에탄올보다 끓는점이 낮아서" }, { t: "에탄올, 물보다 양이 많아서" }],
+            "<b>온도가 첫 번째로 일정한 구간(약 78 ℃)</b>에서 주로 끓어 나온 물질과 그 까닭은?",
+            [{ t: "에탄올 (물보다 끓는점이 낮아서)", ok: true }, { t: "물 (에탄올보다 끓는점이 낮아서)" }, { t: "에탄올 (물보다 양이 더 많아서)" }],
             "약 78 ℃의 구간에서 나온 액체에서 <b>소독용 알코올 냄새</b>가 났어요.",
             () => lab.finish("끓는점이 <b>낮은</b> 에탄올이 먼저 끓어 나오고, 끓는점이 높은 물이 나중에 나와요. 끓는점 차로 혼합물을 나누는 이 방법이 <b>증류</b>예요."),
           ),
@@ -207,7 +207,7 @@ export const g2u1DistillLab: StepRenderer = (host, step, api) => {
     lab.todo("[data-k='smell']");
   }
 
-  f.say("버튼을 <b>꾹 눌러</b> 가열해요. 그래프가 꺾일 때 손을 떼고 <b>시험관을 바꿔</b> 나오는 액체를 나눠 받아요.");
+  f.say("버튼을 <b>꾹 눌러</b> 가열하다가 온도 그래프가 꺾일 때마다 <b>시험관을 바꿔</b> 액체를 따로 모아 보세요.");
   run();
   return lab.cleanup;
 };

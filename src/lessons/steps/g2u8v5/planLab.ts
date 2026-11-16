@@ -11,16 +11,16 @@ import { bvBtn, bvTimers } from "../bio6/b6Lab";
 import { S, sBox, sCanvas, sDisk, sFrame, sText, type LabStep } from "./kit";
 
 const TASKS = [
-  { name: "기지 세울 땅 조사하기", need: 0, fail: "땅의 성분을 알아낼 장비가 없었어요" },
-  { name: "지구와 통신하기", need: 1, fail: "지구와 연락할 장비가 없었어요" },
-  { name: "숨 쉴 산소 만들기", need: 2, fail: "산소를 만들 장비가 없었어요" },
+  { name: "기지를 세울 토양 조사하기", need: 0, fail: "화성 토양의 성분을 분석할 장비가 없었어요" },
+  { name: "지구에 탐사 자료 전송하기", need: 1, fail: "지구와 신호를 주고받을 통신 장비가 없었어요" },
+  { name: "비행사가 숨 쉴 산소 확보하기", need: 2, fail: "화성에서 산소를 만들어 낼 장비가 없었어요" },
 ];
 const GEAR = ["토양 분석기", "통신 안테나", "산소 발생 장치", "우산", "고무보트", "부채"];
 const BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
 export const planLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = sFrame(host, { title: s.title, steps: 3, api });
+  const f = sFrame(host, { title: s.title, steps: 3, api, tall: true });
   f.stage.appendChild(el("img", { class: "g2u8x-mars", attrs: { src: `${BASE}photos/mars.jpg`, alt: "붉은 화성", draggable: "false" } }));
   const st = sCanvas(f.stage);
   const tm = bvTimers();
@@ -48,11 +48,11 @@ export const planLab: StepRenderer = (host, step, api) => {
     });
     return b;
   });
-  const bGo = bvBtn("main", "화성으로 출발");
+  const bGo = bvBtn("main", "탐사선 발사하기");
   const paint = (): void => {
     chips.forEach((c, i) => c.classList.toggle("on", picked.has(i)));
     bGo.disabled = picked.size !== 3 || flying || finished;
-    bGo.textContent = picked.size === 3 ? "화성으로 출발" : `장비를 ${3 - picked.size}개 더 골라요`;
+    bGo.textContent = picked.size === 3 ? "탐사선 발사하기" : `장비를 ${3 - picked.size}개 더 골라 주세요`;
   };
   f.slot.setControls(el("div", { class: "g2u8x-chips c3" }, ...chips), bGo);
 
@@ -72,28 +72,28 @@ export const planLab: StepRenderer = (host, step, api) => {
         finished = true;
         haptic(HAPTIC.correct);
         paint();
-        f.say("세 임무를 <b>모두 해냈어요</b>. 임무에 꼭 맞는 장비를 골랐어요.");
+        f.say("세 가지 임무를 <b>모두 성공적으로 완수했어요</b>! 탐사 목적과 임무에 꼭 맞는 장비를 골랐기 때문이에요.");
         tm.later(askFinal, 1800);
       } else {
         haptic(HAPTIC.wrong);
         const bad = TASKS.find((_task, i) => !result![i])!;
         paint();
-        f.say(`임무 ${3 - ok}개가 <b>실패</b>했어요. ${bad.fail}. 장비를 바꿔 <b>계획을 고쳐</b> 다시 보내 보세요.`);
+        f.say(`임무 ${3 - ok}개가 <b>실패</b>했어요(${bad.fail}). 임무와 맞지 않는 장비를 빼고 <b>탐사 계획을 수정해</b> 다시 발사해 보세요.`);
       }
     }, 2000);
   });
 
   function askFinal(): void {
     f.slot.ask(
-      "탐사에 가져갈 장비는 무엇에 맞춰 골라야 할까요?",
-      [{ t: "탐사의 목적과 임무", ok: true }, { t: "장비의 크기" }, { t: "장비의 색깔" }],
+      "우주 탐사 계획을 세울 때 탐사선에 실어 갈 장비는 무엇에 맞추어 결정해야 하나요?",
+      [{ t: "탐사할 천체의 환경 및 탐사 목적과 임무", ok: true }, { t: "장비의 겉모양과 색깔" }, { t: "일상생활에서 자주 쓰는 순서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "임무에 맞지 않는 장비로는 임무를 해낼 수 없어요.", onNext: finish },
+      { why: "우주 탐사 계획은 먼저 <b>탐사할 천체와 목적</b>을 정하고, 그 목적을 이루기 위한 <b>임무</b>에 꼭 필요한 장비를 선택해야 해요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("계획 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("우주 탐사 계획은 <b>탐사할 천체와 목적</b>을 먼저 정하고, 목적에 맞는 <b>임무</b>와 임무를 해낼 <b>장비</b>를 갖춰 세워요.");
+    f.say("탐사 목적에 맞는 임무와 장비를 갖추어 화성 기지 답사를 성공적으로 마쳤어요!");
+    f.slot.conclude("우주 탐사 계획을 세울 때는 <b>탐사할 천체와 탐사 목적</b>을 먼저 정한 뒤, 목적에 맞는 구체적인 <b>임무</b>와 그 임무를 수행할 <b>장비</b>를 맞추어 계획해요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -107,7 +107,8 @@ export const planLab: StepRenderer = (host, step, api) => {
       sBox(ctx, 10, y, w - 132, 40, 10, "rgba(255,255,255,.06)", r === null ? "rgba(255,255,255,.14)" : r ? S.ok : "#FF7A85", 1.4);
       sText(ctx, `임무 ${i + 1}`, 20, y + 13, { color: S.dim, px: 12, align: "left" });
       sText(ctx, task.name, 20, y + 28, { color: S.ink, px: 12.5, align: "left", w: 800 });
-      if (r !== null) sText(ctx, r ? "성공" : "실패", w - 132, y + 20, { color: r ? S.ok : "#FF7A85", px: 13, align: "right", w: 800 });
+      // 성공과 실패는 '임무 N'과 같은 윗줄에 적는다(임무 이름이 길어 가운데 높이에 두면 이름 끝과 겹친다)
+      if (r !== null) sText(ctx, r ? "성공" : "실패", w - 132, y + 13, { color: r ? S.ok : "#FF7A85", px: 13, align: "right", w: 800 });
     });
     sText(ctx, `실은 장비 ${picked.size}/3`, 12, h - 14, { color: picked.size === 3 ? S.gold : S.dim, px: 12.5, align: "left", w: 800 });
     // 날아가는 탐사선(오른쪽 화성 사진 쪽으로)

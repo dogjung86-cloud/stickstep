@@ -16,7 +16,7 @@ import { A, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type Pt, type U4St
 type Way = "spread" | "lump";
 const M0 = 0.5;
 const END: Record<Way, number> = { spread: 0.31, lump: 0.44 };
-const LABEL: Record<Way, string> = { spread: "넓게 펴 바른 것", lump: "한 덩이로 올린 것" };
+const LABEL: Record<Way, string> = { spread: "넓게 펴 바른 쪽", lump: "한곳에 뭉쳐 올린 쪽" };
 const NEED = 3200; // 한 번 지켜보는 데 눌러야 하는 시간(ms)
 const PW = 165; // 칸 폭
 const OX: Record<Way, number> = { spread: 4, lump: 177 }; // 칸의 왼쪽
@@ -52,7 +52,7 @@ function layout(w: Way, cx: number, rnd: () => number): { pts: Pt[]; fly: number
 
 export const u4EvapLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
-  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-evap" });
+  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-evap", tall: true });
   const { f, tm } = lab;
   const rnd = seeded(53);
   const L: Record<Way, ReturnType<typeof layout>> = {
@@ -67,7 +67,7 @@ export const u4EvapLab: StepRenderer = (host, step, api) => {
     return `<g class="u4x-evap-pn" data-k="${w}">
       <text class="u4x-evap-lb" x="${cx}" y="17" text-anchor="middle" font-size="12.5" font-weight="800">${LABEL[w]}</text>
       <rect class="u4x-evap-fr" x="${ox + 5}" y="25" width="${PW - 10}" height="128" rx="12" fill="rgba(124,107,255,.10)" stroke-width="1.5"/>
-      <text x="${cx}" y="40" text-anchor="middle" font-size="12" font-weight="800" fill="#C9BEFF">입자의 눈</text>
+      <text x="${cx}" y="40" text-anchor="middle" font-size="12" font-weight="800" fill="#C9BEFF">입자 모형</text>
       <rect x="${ox + 11}" y="${PAPER}" width="${PW - 22}" height="6" rx="2" fill="#E4EAF1" opacity=".88"/>
       <g class="u4x-evap-liq" opacity="0">
         <path d="${l.surf}" stroke="#7EE8F2" stroke-width="7" stroke-opacity=".22" stroke-linecap="round" stroke-linejoin="round"/>
@@ -124,10 +124,10 @@ export const u4EvapLab: StepRenderer = (host, step, api) => {
   }
 
   const cards: Record<Way, ReturnType<typeof bvCard>> = {
-    spread: bvCard("u4x-evap-card", { name: "넓게 펴 바르기", sub: "얇고 넓게", key: "spread" }),
-    lump: bvCard("u4x-evap-card", { name: "한 덩이로 올리기", sub: "좁고 두껍게", key: "lump" }),
+    spread: bvCard("u4x-evap-card", { name: "넓게 펴 바르기", sub: "표면을 넓고 얇게", key: "spread" }),
+    lump: bvCard("u4x-evap-card", { name: "한곳에 뭉쳐 올리기", sub: "표면을 좁고 두껍게", key: "lump" }),
   };
-  const hold = u4Hold(lab, "꾹 눌러 시간 보내기", (ms) => {
+  const hold = u4Hold(lab, "꾹 눌러 변화 관찰하기", (ms) => {
     t = Math.min(1, t + ms / NEED);
     paint();
     if (t >= 1) {
@@ -146,10 +146,10 @@ export const u4EvapLab: StepRenderer = (host, step, api) => {
       if (done.has(w)) return;
       haptic(HAPTIC.tap);
       setup(w);
-      f.say(`저울이 <b>${M0.toFixed(2)} g</b>을 가리켜요. 버튼을 <b>꾹 눌러</b> 시간을 보내며 숫자를 보세요.`);
+      f.say(`처음 질량은 <b>${M0.toFixed(2)} g</b>이에요. 아래 버튼을 <b>꾹 누른 채로</b> 저울의 숫자와 입자의 움직임을 관찰해 보세요.`);
       hold.disabled = false;
       f.slot.setControls(hold);
-      api.setCTA("꾹 눌러 시간을 보내세요", { enabled: false });
+      api.setCTA("버튼을 꾹 눌러 질량 변화를 관찰해 보세요", { enabled: false });
     }),
   );
 
@@ -164,32 +164,33 @@ export const u4EvapLab: StepRenderer = (host, step, api) => {
     f.pips(done.size);
     if (done.size === 1) {
       const head = pred.startsWith("점점 줄어") ? "예측대로" : "예측과 달리";
-      f.say(`${head} 숫자가 <b>줄었어요</b>. 같은 양을 <b>다르게 발라</b> 같은 시간 동안 비교해요.`);
+      f.say(`${head} 시간이 지나자 질량이 <b>줄어들었어요</b>! 이번에는 같은 양을 <b>다른 방법으로도 발라</b> 같은 시간 동안 얼마나 줄어드는지 비교해 볼까요?`);
       tm.later(choose, 700);
     } else {
-      f.say("같은 양, 같은 시간인데 <b>넓게 펴 바른 쪽</b>이 훨씬 많이 줄었어요.");
+      f.say("같은 양을 같은 시간 동안 두었는데, <b>넓게 펴 바른 쪽</b>의 질량이 훨씬 더 많이 줄어들었어요!");
       tm.later(judge, 800);
     }
   }
 
   function judge(): void {
     f.slot.ask(
-      "<b>넓게 펴 바른 쪽</b>이 더 많이 줄어든 까닭은?",
-      [{ t: "공기와 닿는 표면이 넓어서", ok: true }, { t: "소독제의 양이 더 많아서" }, { t: "거름종이가 더 넓어서" }],
+      "같은 시간 동안 <b>넓게 펴 바른 쪽</b>의 질량이 더 많이 줄어든 까닭은 무엇인가요?",
+      [{ t: "공기와 맞닿는 액체의 표면이 더 넓어서", ok: true }, { t: "처음에 바른 소독제의 양이 더 많아서" }, { t: "아래에 깔린 거름종이가 더 넓어서" }],
       (ok) => api.recordQuiz(ok),
       {
-        why: "입자는 액체의 <b>표면</b>에서 날아가요. 두 번 다 양은 0.50 g으로 같았어요.",
-        onNext: () => lab.finish("액체 <b>표면</b>의 입자가 스스로 움직여 기체가 되어 날아갔어요. 이 현상이 <b>증발</b>이에요."),
+        why: "증발은 액체의 <b>표면</b>에서 일어나므로, 공기와 닿는 표면이 넓을수록 입자가 더 많이 날아가요.",
+        onNext: () => lab.finish("액체 <b>표면</b>에서 입자가 스스로 움직여 기체로 변해 공기 중으로 날아가는 현상을 <b>증발</b>이라고 해요."),
       },
     );
   }
 
-  f.say("전자저울 위 거름종이에 <b>손 소독제</b>를 바를 거예요. 먼저 예측해 보세요.");
-  u4Predict(lab, "소독제를 바르고 가만히 두면 저울의 <b>숫자</b>는?", ["점점 줄어든다", "그대로다", "점점 늘어난다"], (picked) => {
+  f.say("전자저울 위의 거름종이에 <b>손 소독제</b>를 바르고 가만히 두려고 해요. 먼저 결과를 예측해 볼까요?");
+  // 첫 보기는 "점점 줄어"로 시작해야 한다(첫 실험 끝의 말머리가 pred.startsWith("점점 줄어")로 가른다)
+  u4Predict(lab, "손 소독제를 바르고 시간이 지나면 전자저울에 나타나는 <b>질량</b>은 어떻게 될까요?", ["점점 줄어든다", "변함없이 그대로다", "점점 늘어난다"], (picked) => {
     pred = picked;
-    f.say("같은 양의 소독제예요. <b>어떻게 바를지</b> 골라 보세요. 둘 다 해 볼 거예요.");
+    f.say("같은 양(0.50 g)의 손 소독제예요. 거름종이에 <b>어떻게 바를지</b> 먼저 하나를 골라 보세요.");
     choose();
   });
-  api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
+  api.setCTA("먼저 결과를 예측해 보세요", { enabled: false });
   return lab.cleanup;
 };

@@ -9,6 +9,7 @@ import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepAPI } from "../../types";
 import { bvBtn, bvFrame, bvTimers, bvTween, type BvChoice, type BvFrame, type BvTimers } from "../bio6/b6Lab";
+import { glue } from "../glue";
 
 export const SW = 346;
 export const SH = 230;
@@ -61,9 +62,10 @@ export interface G6Lab {
   finished: () => boolean;
 }
 
-export function g6Lab(host: HTMLElement, api: StepAPI, s: G6Step, o: { steps: number; cls: string; wait: string }): G6Lab {
+/** o.tall: 도움말에 세 줄이 되는 글이 있는 랩은 처음부터 세 줄 상자를 잡는다(bvFrame tall, 랩 도중에 무대가 밀리지 않게). */
+export function g6Lab(host: HTMLElement, api: StepAPI, s: G6Step, o: { steps: number; cls: string; wait: string; tall?: boolean }): G6Lab {
   host.classList.add("g2u6x-step");
-  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `g2u6x-stage ${o.cls}`, qCls: "g2u6x-q", api });
+  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `g2u6x-stage ${o.cls}`, qCls: "g2u6x-q", api, tall: o.tall });
   const tm = bvTimers();
   const fns: Array<() => void> = [];
   let done = false;
@@ -99,7 +101,8 @@ export function g6Lab(host: HTMLElement, api: StepAPI, s: G6Step, o: { steps: nu
       done = true;
       host.dataset.g6Phase = "done";
       f.pips(o.steps);
-      f.say("잘했어요. <b>알게 된 것</b>을 읽고 다음으로 넘어가요.");
+      // 결론 상자의 머리 칩 이름이 "핵심 정리"라 그 이름으로 부른다(수정안의 "정리 카드"는 화면에 없는 이름)
+      f.say("실험 결과를 모두 확인했어요! 아래 핵심 정리를 읽고 다음으로 넘어가 볼까요?");
       f.slot.conclude(html);
       haptic(HAPTIC.ctaUnlock);
       api.recordQuiz(wrong === 0);
@@ -225,5 +228,5 @@ export function mix(a: string, b: string, t: number): string {
 
 /** 조작 칸에 놓는 안내 글 한 줄(버튼이 없는 랩에서 쓴다). */
 export function noteLine(html: string): HTMLElement {
-  return el("div", { class: "g2u6x-note", html });
+  return el("div", { class: "g2u6x-note", html: glue(html) }); // 무대 아래 안내: 굵은 글 뒤 조사가 떨어지지 않게(steps/glue.ts)
 }

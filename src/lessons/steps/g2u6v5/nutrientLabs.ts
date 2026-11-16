@@ -37,7 +37,7 @@ const REAGENTS: Reagent[] = [
 
 export const g2u6PlateLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-plate", wait: "시약을 골라 홈에 떨어뜨려 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-plate", wait: "세 가지 시약을 골라 홈판에 떨어뜨려 보세요", tall: true });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "다섯 가지 시료를 세로줄에 담은 홈판. 가로줄마다 다른 시약을 떨어뜨린다");
   const filled = new Set<string>(); // "행-열"
@@ -72,18 +72,19 @@ export const g2u6PlateLab: StepRenderer = (host, step, api) => {
     host.dataset.g6Filled = String(filled.size);
   };
 
+  // 단추의 보조 글에는 검출하는 영양소를 적지 않는다(판정에서 묻는 답을 미리 알려 준다). 가로줄 이름만.
   const chips = REAGENTS.map((rg, r) =>
-    chip(rg.key, rg.name, `${rg.row} 줄`, () => {
+    chip(rg.key, `${rg.name} 용액`, `${rg.row} 가로줄`, () => {
       if (reading) return;
       tap();
       cur = r;
       chips.forEach((c, i) => c.on(i === r));
       last = "";
       draw();
-      f.say(`<b>${rg.full}</b>을 골랐어요. ${rg.row} 줄의 홈을 눌러 한 방울씩 떨어뜨려요.`);
+      f.say(`<b>${rg.name} 용액</b> 스포이트를 골랐어요. 홈판에서 <b>${rg.row} 줄</b>의 홈들을 눌러 용액을 떨어뜨려 보세요.`);
     }),
   );
-  const read = bvBtn("main g2u6x-go", "색깔 변화 읽기");
+  const read = bvBtn("main g2u6x-go", "색깔 변화 결과 확인하기");
   read.disabled = true;
 
   onStageTap(stage, (key) => {
@@ -100,12 +101,13 @@ export const g2u6PlateLab: StepRenderer = (host, step, api) => {
     filled.add(k);
     last = k;
     draw();
+    // 시료 이름 뒤에는 받침과 상관없는 "에", "에서는"만 붙인다(옛 글은 "달걀흰자액가"로 나왔다). 색 이름은 모두 '색'으로 끝나 "으로".
     if (rg.target === c) {
       good();
-      f.say(`${SAMPLES[c]}${c === 1 ? "이" : "가"} <b>${rg.hitName}</b>으로 변했어요.`);
+      f.say(`<b>${SAMPLES[c]}</b>에 ${rg.name} 용액을 떨어뜨리자 <b>${rg.hitName}</b>으로 변했어요!`);
     } else {
       tap();
-      f.say(`${SAMPLES[c]}${c === 1 || c === 2 || c === 3 ? "은" : "는"} 색이 변하지 않았어요. 시약의 색 그대로예요.`);
+      f.say(`<b>${SAMPLES[c]}</b>에서는 색깔 변화가 나타나지 않았어요. 다른 홈에도 떨어뜨려 비교해 보세요.`);
     }
     const foods = [...filled].filter((x) => !x.endsWith("-0")).length;
     f.pips(foods >= 12 ? 1 : 0);
@@ -120,8 +122,8 @@ export const g2u6PlateLab: StepRenderer = (host, step, api) => {
       bad();
       lab.slip();
       host.dataset.g6Fail = "water";
-      toast(lab, "증류수 줄이 비어 있어요", true);
-      f.say("증류수에도 떨어뜨려야 <b>시약 자체의 색</b>과 비교할 수 있어요. 증류수 줄을 채워요.");
+      toast(lab, "비교 기준이 되는 증류수 홈이 비어 있어요", true);
+      f.say("시약의 색이 정말 변했는지 정확히 알아보려면 영양소가 없는 <b>증류수</b>와 색깔을 비교해야 해요. 맨 왼쪽 증류수 줄에도 시약을 떨어뜨려 보세요.");
       return;
     }
     tap();
@@ -131,7 +133,7 @@ export const g2u6PlateLab: StepRenderer = (host, step, api) => {
     draw();
     f.say("증류수 줄과 색이 <b>다른 홈</b>이 반응이 일어난 곳이에요.");
     tm.later(() => {
-      lab.judge("달걀흰자액은 <b>뷰렛 용액</b>에만 색이 변했어요. 들어 있는 영양소는?", [{ t: "단백질", ok: true }, { t: "녹말" }, { t: "지방" }], "보라색은 뷰렛 용액이 <b>단백질</b>과 반응한 색이에요.", () =>
+      lab.judge("달걀흰자액은 <b>뷰렛 용액</b>을 넣었을 때 보라색으로 변했어요. 달걀흰자액에 들어 있는 영양소는 무엇인가요?", [{ t: "단백질", ok: true }, { t: "녹말" }, { t: "지방" }], "뷰렛 용액은 <b>단백질</b>과 반응하면 보라색으로 변해요.", () =>
         lab.finish("밥물에는 <b>녹말</b>, 달걀흰자액에는 <b>단백질</b>, 식용유에는 <b>지방</b>이 들어 있어요. 양파즙은 세 시약 모두 변화가 없었어요."),
       );
     }, 900);
@@ -140,7 +142,7 @@ export const g2u6PlateLab: StepRenderer = (host, step, api) => {
   f.slot.setControls(row(...chips.map((c) => c.el)), read);
   chips[0].on(true);
   draw();
-  f.say("세로줄마다 다른 시료가 담겨 있어요. <b>(가) 줄</b>의 홈을 눌러 아이오딘 용액부터 떨어뜨려요.");
+  f.say("홈판의 세로줄마다 서로 다른 시료가 담겨 있어요. 먼저 <b>(가) 줄</b>의 홈을 눌러 아이오딘 용액을 떨어뜨려 보세요.");
   return lab.cleanup;
 };
 
@@ -172,7 +174,7 @@ export const g2u6BenedictLab: StepRenderer = (host, step, api) => {
       out += tube(X(i), 50, 126, col, 0.58, 13, pop ? "g2u6x-pop" : "");
       if (added && i === 4) out += `<rect x="${X(i) - 11.5}" y="${50 + 126 * 0.42}" width="23" height="12" fill="rgba(245,208,80,.9)"/>`;
       out += txt(X(i), 30, n, { size: 12, fill: P.hi });
-      if (heat < 1 && bath === "hot" && i === 2) out += txt(173, 214, "뜨거운 물에 담가 둔 시험관", { size: 12, fill: "#FFC2AC" });
+      if (heat < 1 && bath === "hot" && i === 2) out += txt(173, 214, "뜨거운 물에 담근 시험관", { size: 12, fill: "#FFC2AC" });
       // 결과는 그 시험관의 색 이름으로 짧게(옛 '변화 없음'은 시험관 간격보다 넓어 이웃끼리 겹쳤다)
       if (heat >= 1) out += tag(X(i), 214, i === 2 ? "황적색" : "푸른색", { size: 12, fill: i === 2 ? "#FFD2A8" : "#9CCFF5" });
     });
@@ -181,7 +183,8 @@ export const g2u6BenedictLab: StepRenderer = (host, step, api) => {
     host.dataset.g6Heat = String(heat);
   };
 
-  const cAdd = chip("add", "베네딕트 용액", "두세 방울씩 넣기", () => {
+  // 수정안은 "두 시험관에 조금씩"이었지만 이 무대의 시험관은 다섯 개다
+  const cAdd = chip("add", "베네딕트 용액 넣기", "다섯 시험관에 조금씩", () => {
     if (busy || added) return;
     good();
     added = true;
@@ -201,14 +204,14 @@ export const g2u6BenedictLab: StepRenderer = (host, step, api) => {
     tap();
     bath = hot ? "hot" : "room";
     draw();
-    f.say(hot ? "뜨거운 물에 담그고 5분을 기다려요." : "시험관대에 그대로 두고 5분을 기다려요.");
+    f.say(hot ? "뜨거운 물이 담긴 비커에 다섯 시험관을 넣고 가열하고 있어요." : "시험관대에 그대로 두고 5분을 기다려요.");
     if (!hot) {
       tm.later(() => {
         bad();
         lab.slip();
         host.dataset.g6Fail = "cold";
-        toast(lab, "색이 변하지 않았어요", true);
-        f.say("5분이 지나도 모두 푸른색 그대로예요. 베네딕트 용액은 <b>가열해야</b> 반응해요.");
+        toast(lab, "가열하지 않으면 색깔이 변하지 않아요", true);
+        f.say("베네딕트 용액은 상온에서 반응이 매우 느리게 일어나요. 반드시 <b>뜨거운 물</b>에 담가 가열해 보세요.");
         bath = "none";
         busy = false;
         draw();
@@ -223,18 +226,18 @@ export const g2u6BenedictLab: StepRenderer = (host, step, api) => {
       host.dataset.g6Fail = "";
       draw();
       good();
-      f.say("양파즙만 <b>황적색</b>으로 변했어요. 나머지는 푸른색 그대로예요.");
+      f.say("뜨거운 물에 가열하자 양파즙 시험관이 <b>황적색</b>으로 변했어요! 반면 증류수는 푸른색 그대로예요.");
       tm.later(() => {
-        lab.judge("가열하자 <b>양파즙</b>만 황적색으로 변했어요. 양파즙에 들어 있는 것은?", [{ t: "포도당 같은 당분", ok: true }, { t: "녹말" }, { t: "단백질" }], "베네딕트 용액은 <b>당분</b>을 만나 가열되면 황적색이 돼요.", () =>
-          lab.finish("양파즙에는 포도당 같은 <b>당분</b>이 들어 있어요. 베네딕트 용액은 넣고 <b>가열해야</b> 색이 변해요. 당분과 녹말은 모두 탄수화물이에요."),
+        lab.judge("베네딕트 용액을 넣고 가열했을 때 황적색으로 변한 <b>양파즙</b>에는 어떤 영양소가 들어 있나요?", [{ t: "포도당 같은 당분", ok: true }, { t: "녹말" }, { t: "단백질" }], "베네딕트 용액은 <b>포도당</b> 등이 들어 있는 시료와 섞어 가열하면 황적색으로 변해요.", () =>
+          lab.finish("<b>베네딕트 용액</b>은 시료에 넣고 <b>가열</b>하면 <b>포도당</b>(또는 엿당)과 반응하여 푸른색에서 <b>황적색</b>으로 변해요."),
         );
       }, 1400);
     });
   };
-  const cRoom = chip("room", "그대로 두기", "시험관대에 5분", () => wait(false));
-  const cHot = chip("hot", "뜨거운 물에 담그기", "80~90 ℃에 5분", () => wait(true));
+  const cRoom = chip("room", "상온에 그대로 두기", "가열하지 않고 기다리기", () => wait(false));
+  const cHot = chip("hot", "뜨거운 물에 담그기", "80~90 ℃ 물중탕 가열", () => wait(true));
   f.slot.setControls(row(cAdd.el), row(cRoom.el, cHot.el));
   draw();
-  f.say("앞의 세 시약에 변화가 없던 양파즙을 <b>베네딕트 용액</b>으로 다시 검사해요.");
+  f.say("앞 실험에서 양파즙은 세 가지 시약 모두에서 색이 변하지 않았어요. 이번에는 <b>베네딕트 용액</b>을 넣어 확인해 볼까요?");
   return lab.cleanup;
 };

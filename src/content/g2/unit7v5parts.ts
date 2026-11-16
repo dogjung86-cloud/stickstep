@@ -86,9 +86,9 @@ const formulaLab = lab("g2u7FormulaLab");
 
 // ══ 1. 마찰 전기 ══
 export const L1: Step[] = numbered([
-  opener({ title: "빗을 떼면 머리카락은 어떻게 될까요?", scene: "g2u7-comb", wait: "빗으로 머리를 빗어 보세요", cta: "실험실 열기" }),
+  opener({ title: "빗을 떼면 머리카락은 어떻게 될까요?", scene: "g2u7-comb", wait: "빗으로 머리를 여러 번 빗어 보세요", cta: "실험실 열기" }),
   strawLab({ title: "문지른 빨대는 어느 쪽으로 움직일까요?", cta: "빨대 속 들여다보기" }),
-  rubLab({ title: "문지르는 동안 무엇이 옮겨 갈까요?", cta: "이름 붙이기" }),
+  rubLab({ title: "문지르는 동안 무엇이 옮겨 갈까요?", cta: "용어 알아보기" }),
   words({
     title: "마찰 전기,<br>전자가 옮겨 가서 생겨요",
     lead: "문지른 빨대는 끌려오기도, 밀려나기도 했어요. 들여다보니 전자가 털가죽에서 빨대로 건너갔죠. 이 현상들을 알아볼까요?",
@@ -171,8 +171,8 @@ export const L1: Step[] = numbered([
 
 // ══ 2. 정전기 유도 ══
 export const L2: Step[] = numbered([
-  opener({ title: "풍선을 가져가면 인형은 어떻게 될까요?", scene: "g2u7-foil", wait: "풍선을 인형 위로 내려 보세요", cta: "실험실 열기" }),
-  canLab({ title: "깡통은 왜 굴러올까요?", cta: "이름 붙이기" }),
+  opener({ title: "풍선을 가까이 가져가면 인형은 어떻게 될까요?", scene: "g2u7-foil", wait: "풍선을 인형 가까이 내려 보세요", cta: "실험실 열기" }),
+  canLab({ title: "빈 깡통은 왜 막대 쪽으로 굴러올까요?", cta: "용어 알아보기" }),
   words({
     title: "정전기 유도,<br>전자가 한쪽으로 몰려요",
     lead: "막대를 가까이 가져가기만 했는데 깡통 속 전자가 먼 쪽으로 몰렸죠. 이 현상을 알아볼까요?",
@@ -239,9 +239,9 @@ export const L2: Step[] = numbered([
 
 // ══ 3. 전류와 전압 ══
 export const L3: Step[] = numbered([
-  opener({ title: "전지는 시계 속에서 무슨 일을 할까요?", scene: "g2u7-clock", wait: "시계에 전지를 끼워 보세요", cta: "실험실 열기" }),
-  wireLab({ title: "스위치를 닫으면 전자는?", cta: "물길과 비교하기" }),
-  waterLab({ title: "물길과 회로는 어디가 닮았나요?", cta: "이름 붙이기" }),
+  opener({ title: "전지는 시계 속에서 어떤 역할을 할까요?", scene: "g2u7-clock", wait: "시계에 새 전지를 끼워 보세요", cta: "실험실 열기" }),
+  wireLab({ title: "스위치를 닫으면 전자는 어느 쪽으로 움직일까요?", cta: "물길 모형과 비교하기" }),
+  waterLab({ title: "물길 모형과 전기 회로는 무엇이 닮았을까요?", cta: "용어 알아보기" }),
   words({
     title: "전류와 전압,<br>흐름과 흐르게 하는 능력",
     lead: "스위치를 닫자 전자가 한 방향으로 이동했고, 전지는 펌프처럼 흐름을 이어 줬죠. 이 두 개념을 알아봐요.",
@@ -316,9 +316,9 @@ export const L3: Step[] = numbered([
 
 // ══ 4. 옴의 법칙 ══
 export const L4: Step[] = numbered([
-  opener({ title: "전지를 하나 더 끼우면 전구는?", scene: "g2u7-dim", wait: "전지를 하나 더 끼워 보세요", cta: "실험실 열기" }),
-  ohmLab({ title: "전압을 올리면 전류는?", cta: "그래프에서 식 찾기" }),
-  formulaLab({ title: "그래프에서 어떤 식이 나올까요?", cta: "이름 붙이기" }),
+  opener({ title: "전지를 하나 더 연결하면 전구 밝기는 어떻게 될까요?", scene: "g2u7-dim", wait: "전지를 하나 더 연결해 보세요", cta: "실험실 열기" }),
+  ohmLab({ title: "전압을 높이면 전류의 세기는 어떻게 변할까요?", cta: "그래프에서 규칙 찾기" }),
+  formulaLab({ title: "전압, 전류, 저항 사이에는 어떤 관계가 있을까요?", cta: "용어 알아보기" }),
   words({
     title: "저항과 옴의 법칙,<br>그래프가 알려 준 식",
     lead: "어느 점에서나 전압을 전류로 나눈 값이 같았고, 저항이 2배가 되면 전류는 절반이 됐죠. 이 관계를 알아봐요.",

@@ -2,7 +2,7 @@
 //   u4Lab      뼈대 + 타이머 + 정리(cleanup) 묶음 + 끝맺음(결론, 끝 버튼, 궁금증 카드)
 //   u4Hold     꾹 누르는 동안만 일이 진행되는 버튼(손을 떼면 멈춘다. 키보드는 누를 때마다 조금씩)
 //   u4Matter   단원의 메타볼 무대(ui/matterStage)를 뼈대의 무대 칸에 올린다(물리 수치는 건드리지 않는다)
-//   u4ViewBtn  '입자의 눈' 전환 버튼(조작 칸에 놓는 50px 버튼. 무대 구석의 작은 칩 대신 쓴다)
+//   u4ViewBtn  '입자 모형' 전환 버튼(조작 칸에 놓는 50px 버튼. 무대 구석의 작은 칩 대신 쓴다)
 //   그림 조각  비커, 전자저울, 삼각 플라스크, 입자 창(어두운 무대용 SVG 조각. 좌표는 계산으로 맞춘다)
 // 무대 좌표는 346×230(폰 390 화면의 무대 크기)이다.
 
@@ -35,9 +35,10 @@ export interface U4Lab {
   finished: () => boolean;
 }
 
-export function u4Lab(host: HTMLElement, api: StepAPI, s: U4Step, o: { steps: number; cls: string }): U4Lab {
+/** o.tall: 도움말이 세 줄이 되는 글이 있는 랩은 처음부터 세 줄 상자를 잡는다(랩 도중에 무대가 밀리지 않게, b6Lab 「글 맞춤」). */
+export function u4Lab(host: HTMLElement, api: StepAPI, s: U4Step, o: { steps: number; cls: string; tall?: boolean }): U4Lab {
   host.classList.add("u4x-step");
-  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `u4x-stage ${o.cls}`, qCls: "u4x-q", api });
+  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `u4x-stage ${o.cls}`, qCls: "u4x-q", api, tall: o.tall });
   const tm = bvTimers();
   const fns: Array<() => void> = [];
   let done = false;
@@ -71,7 +72,7 @@ export function u4Predict(lab: U4Lab, question: string, choices: string[], next:
     if (b && !picked) picked = b.textContent?.trim() ?? "";
   };
   lab.f.slot.qBox.addEventListener("click", grab, true);
-  lab.api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
+  lab.api.setCTA("먼저 결과를 예측해 보세요", { enabled: false });
   lab.f.slot.ask(question, choices.map((t) => ({ t })), () => undefined, {
     predict: true,
     nextDelay: delay,
@@ -167,13 +168,13 @@ export function u4Matter(lab: U4Lab, opts: Omit<MatterStageOpts, "height" | "tog
   return { ms, pill, read };
 }
 
-/** '입자의 눈' 전환 버튼. 누를 때마다 물질 모습과 입자 모습을 오간다. onUse는 처음 입자의 눈을 켰을 때 한 번. */
+/** '입자 모형' 전환 버튼. 누를 때마다 실제 모습과 입자 모형을 오간다. onUse는 처음 입자 모형을 켰을 때 한 번. */
 export function u4ViewBtn(m: U4Matter, onUse?: () => void): HTMLButtonElement {
   const b = bvBtn("u4x-view", "");
   let used = false;
   const paint = (): void => {
     const p = m.ms.view() === "particle";
-    b.innerHTML = `<span class="u4x-view-ic">${icon("microscope", 18)}</span><span>${p ? "물질 모습으로 보기" : "입자의 눈으로 보기"}</span>`;
+    b.innerHTML = `<span class="u4x-view-ic">${icon("microscope", 18)}</span><span>${p ? "실제 모습으로 보기" : "입자 모형으로 보기"}</span>`;
     b.classList.toggle("on", p);
     b.setAttribute("aria-pressed", String(p));
   };
@@ -429,11 +430,11 @@ export function flask(cx: number, baseY: number, h: number, ns: string, fill: st
   </g>`;
 }
 
-/** 입자 창: 무대 오른쪽의 둥근 창. 제목 "입자의 눈"과 입자들(class="<ns>-p")을 담는다. */
+/** 입자 창: 무대 오른쪽의 둥근 창. 제목 "입자 모형"과 입자들(class="<ns>-p")을 담는다. */
 export function partWin(x: number, y: number, w: number, h: number, pts: Pt[], ns: string, r = 5.5): string {
   return `<g class="${ns}-win">
     <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="rgba(124,107,255,.10)" stroke="rgba(155,140,255,.5)" stroke-width="1.6"/>
-    <text x="${x + w / 2}" y="${y + 19}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9BEFF">입자의 눈</text>
+    <text x="${x + w / 2}" y="${y + 19}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9BEFF">입자 모형</text>
     ${pts.map((p, i) => `<circle class="${ns}-p" data-i="${i}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r}" fill="${A.part}" stroke="${A.partEdge}" stroke-width="1.2"/>`).join("")}
   </g>`;
 }

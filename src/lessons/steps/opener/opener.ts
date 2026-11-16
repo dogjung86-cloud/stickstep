@@ -12,6 +12,7 @@
 import { el } from "../../../core/dom";
 import { stickAvatar, setStickAvatar, type AvatarKind } from "../../../ui/avatar";
 import { ask as hookAsk, type AskOpts } from "../hookAsk";
+import { glue } from "../glue";
 import type { StepRenderer } from "../../types";
 import { longCell } from "./longCell";
 import { baskets } from "./baskets";
@@ -99,13 +100,83 @@ export const opener: StepRenderer = (host, step, api) => {
   const bubble = el("div", { class: "opn-bubble", attrs: { role: "status", "aria-live": "polite" } });
   const avatar = stickAvatar("smile");
   const say = el("div", { class: "opn-say" }, el("div", { class: "opn-avatar" }, avatar), bubble);
-  host.append(el("div", { class: "opn-title", html: s.title }), stage, el("div", { class: "opn-slot" }, controls, choices, say));
+  const titleEl = el("div", { class: "opn-title", html: glue(s.title) });
+  host.append(titleEl, stage, el("div", { class: "opn-slot" }, controls, choices, say));
   const waitLabel = s.wait ?? "먼저 직접 해 보세요";
   api.setCTA(waitLabel, { enabled: false });
 
+  // 글 맞춤(2026-11-16, 도입과 랩 글 다듬기): 쌤의 말은 한 번에 세 줄 안쪽(390px 폰 기준)이 규칙이다
+  // (처음 규칙은 두 줄, 같은 날 사용자 결정으로 세 줄 허용. 한 화면 554px는 그대로 지킨다).
+  // 14px로 두 줄을 넘으면 13px로 줄인다(장면의 say와 hookAsk가 바꾸는 글 모두). 13px로도 세 줄을 넘으면 개발 모드에서 경고를 남긴다.
+  const bubbleLines = (): number => {
+    const cs = getComputedStyle(bubble);
+    const lh = parseFloat(cs.lineHeight) || 20;
+    return Math.round((bubble.scrollHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) / lh);
+  };
+  const fitBubble = (): void => {
+    bubble.classList.remove("sm");
+    if (!bubble.isConnected || !bubble.textContent?.trim() || bubbleLines() <= 2) return;
+    bubble.classList.add("sm");
+    if (import.meta.env.DEV && bubbleLines() > 3) console.warn(`[opn-fit] 쌤의 말 ${bubbleLines()}줄: ${bubble.textContent.trim().slice(0, 70)}`);
+  };
+  const bubbleMo = new MutationObserver(fitBubble);
+  bubbleMo.observe(bubble, { childList: true, characterData: true, subtree: true });
+  // 제목은 질문 한 줄이 규칙이다(한 화면 예산이 제목 30px를 잡는다). 21px로 한 줄을 넘으면 19px, 18px로 줄이고,
+  // 18px로도 넘치면 18px 두 줄(줄 높이 24px)로 둔다.
+  const titleLines = (): number => Math.round(titleEl.scrollHeight / (parseFloat(getComputedStyle(titleEl).lineHeight) || 30));
+  const fitTitle = (): void => {
+    titleEl.classList.remove("fs19", "fs18");
+    if (!titleEl.isConnected || titleLines() <= 1) return;
+    titleEl.classList.add("fs19");
+    if (titleLines() <= 1) return;
+    titleEl.classList.replace("fs19", "fs18");
+    if (import.meta.env.DEV && titleLines() > 1) console.warn(`[opn-fit] 도입 제목 두 줄: ${titleEl.textContent?.trim().slice(0, 70)}`);
+  };
+  let bubbleW = -1;
+  let titleW = -1;
+  const bubbleRo = new ResizeObserver(() => {
+    if (titleEl.clientWidth !== titleW) {
+      titleW = titleEl.clientWidth;
+      fitTitle();
+    }
+    if (bubble.clientWidth === bubbleW) return;
+    bubbleW = bubble.clientWidth;
+    fitBubble();
+  });
+  bubbleRo.observe(bubble);
+  bubbleRo.observe(titleEl);
+  // 글꼴(Pretendard 조각)을 다 받으면 글 폭이 바뀌므로 한 번 더 맞춘다(먼저 대체 글꼴로 재면 실제보다 넓게 잰다).
+  const onFonts = (): void => {
+    fitTitle();
+    fitBubble();
+  };
+  document.fonts?.addEventListener("loadingdone", onFonts);
+  // 한 화면 맞춤: 스텝이 스크롤 영역(폰 390×700에서 554px)을 넘으면 간격을 줄이고(opn-tight),
+  // 예측을 고르는 동안이면 안내 말풍선을 잠시 접는다(opn-tight2. 고르면 쌤의 말이 다시 보인다). 넓은 화면은 칸이 넉넉해 하지 않는다.
+  const fitSpace = (): void => {
+    host.classList.remove("opn-tight", "opn-tight2");
+    const sc = host.closest(".scroll");
+    if (!sc || document.documentElement.classList.contains("wide")) return;
+    const over = (): boolean => sc.scrollHeight > sc.clientHeight;
+    if (!over()) return;
+    host.classList.add("opn-tight");
+    if (!over() || !host.classList.contains("opn-asking")) return;
+    host.classList.add("opn-tight2");
+    if (import.meta.env.DEV && over()) console.warn(`[opn-fit] 도입 한 화면 넘침: ${titleEl.textContent?.trim().slice(0, 40)}`);
+  };
+  const spaceRo = new ResizeObserver(fitSpace);
+  spaceRo.observe(host);
+
   let on = true;
   const ids = new Set<number>();
-  const cleanups: Array<() => void> = [];
+  const cleanups: Array<() => void> = [
+    () => {
+      bubbleMo.disconnect();
+      bubbleRo.disconnect();
+      spaceRo.disconnect();
+      document.fonts?.removeEventListener("loadingdone", onFonts);
+    },
+  ];
   const later = (fn: () => void, ms: number): number => {
     const id = window.setTimeout(() => {
       ids.delete(id);
@@ -132,16 +203,22 @@ export const opener: StepRenderer = (host, step, api) => {
       art: m.INTRO_ART,
       meta: m.INTRO_META as IntroArt["INTRO_META"], // 묶음의 장면은 자기 단원의 표 타입으로 다시 읽는다(uN/index.ts 머리말)
       say: (html) => {
-        bubble.innerHTML = html;
+        bubble.innerHTML = glue(html); // 숫자와 단위, 짧은 괄호가 줄바꿈으로 갈리지 않게(steps/glue.ts)
       },
       face: (kind) => setStickAvatar(avatar, kind),
       ask: (question, o) => {
-        bubble.innerHTML = question; // ask()가 이 글을 보기 위(.hook-q)로 옮기고, 말풍선은 안내로 바꾼다
-        api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
+        bubble.innerHTML = glue(question); // ask()가 이 글을 보기 위(.hook-q)로 옮기고, 말풍선은 안내로 바꾼다(붙여 쓰기 덩이도 함께 옮겨 간다)
+        api.setCTA("먼저 결과를 예측해 보세요", { enabled: false });
+        host.classList.add("opn-asking");
         hookAsk(choices, bubble, {
+          hint: "정답을 몰라도 괜찮아요. 느낌대로 하나를 골라 보세요. 예측은 채점하지 않아요!",
           ...o,
+          // 고른 뒤 말풍선에 뜨는 말도 붙여 쓰기(hookAsk는 수학, 사회, 역사도 쓰므로 과학 도입인 여기서 글을 넘기기 전에 건다)
+          good: glue(o.good),
+          ...(o.bad !== undefined ? { bad: glue(o.bad) } : {}),
           onDone: () => {
             const mine = choices.querySelector(".hook-choice.sel, .hook-choice.miss");
+            host.classList.remove("opn-asking");
             host.classList.add("opn-picked");
             api.setCTA(waitLabel, { enabled: false }); // 예측 뒤에 할 일이 남은 장면을 위해 안내를 되돌린다(끝나는 장면은 곧 finish가 연다)
             o.onDone?.(mine?.textContent?.trim() ?? "");

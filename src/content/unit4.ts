@@ -50,9 +50,10 @@ const L1 = {
   standard: "책 116~119쪽",
   doneNote: "입자가 스스로 끊임없이 운동함을 배웠어요",
   steps: [
-    opener({ title: "냄새는 어떻게 퍼질까요?", scene: "u4-lid", wait: "먼저 뚜껑을 열어 보세요", cta: "실험실 열기" }),
-    inkLab({ title: "젓지 않아도 잉크가 퍼질까요?", cta: "다음 실험, 증발" }),
-    evapLab({ title: "저울의 숫자는 어떻게 될까요?", cta: "이름 붙이기" }),
+    // 도입 제목은 예측의 답(멀리 있는 친구도 맡는다)을 미리 말하지 않는다(훅 예측 규칙)
+    opener({ title: "맛있는 냄새는 멀리까지 퍼질까요?", scene: "u4-lid", wait: "버튼을 꾹 눌러 뚜껑을 열어 보세요", cta: "실험으로 알아보기" }),
+    inkLab({ title: "젓지 않아도 잉크가 저절로 퍼질까요?", cta: "다음 실험: 증발" }),
+    evapLab({ title: "소독제를 바른 거름종이의 질량은 어떻게 될까요?", cta: "개념 정리하기" }),
     words({
       title: "확산과 증발,<br>입자가 스스로 움직여요",
       lead: "잉크는 젓지 않아도 퍼졌고, 소독제는 가만히 두어도 줄었죠? 이 두 현상을 알아봐요.",
@@ -152,9 +153,10 @@ const L2 = {
   standard: "책 120~122쪽",
   doneNote: "세 가지 상태의 특징을 입자 배열로 배웠어요",
   steps: [
-    opener({ title: "얼음은 줍는데 주스는요?", scene: "u4-spill", wait: "먼저 얼음과 주스를 주워 보세요", cta: "실험실 열기" }),
-    moveLab({ title: "옮겨 담으면 무엇이 달라질까요?", cta: "다음, 입자 모형 만들기" }),
-    buildLab({ title: "입자 모형을 만들어 볼까요?", cta: "이름 붙이기" }),
+    // 도입 제목은 예측의 답(주스는 못 줍는다)을 미리 말하지 않는다(훅 예측 규칙)
+    opener({ title: "쏟아진 얼음은 손으로 줍는데, 주스도 주울 수 있을까요?", scene: "u4-spill", wait: "얼음과 주스를 차례로 눌러 접시에 담아 보세요", cta: "실험으로 알아보기" }),
+    moveLab({ title: "다른 그릇에 옮겨 담으면 모양과 부피는 어떻게 될까요?", cta: "다음 실험: 입자 모형 만들기" }),
+    buildLab({ title: "고체·액체·기체의 입자 모형을 만들어 볼까요?", cta: "개념 정리하기" }),
     words({
       title: "고체, 액체, 기체,<br>세 가지 상태",
       lead: "그릇을 옮겨 담을 때 달랐던 성질을 입자 모형과 함께 알아봐요.",
@@ -284,13 +286,13 @@ const L3 = {
   steps: [
     // 만화: 글과 그림 모두 장면 파일 qa/sketch/scenes/comic-u4l3.mjs 가 정본(편성 근거와 사실 확인은 qa/sketch/research/u4l3.md).
     comic(comicStory("u4l3")),
-    watchLab({ title: "물방울은 어디에서 왔을까요?", cta: "다음 실험, 두 컵",
+    watchLab({ title: "시계 접시 아랫면의 물방울은 어디에서 왔을까요?", cta: "다음 실험: 드라이아이스",
       curio: {
         q: "끓는 주전자에서 나오는 <b>하얀 김</b>은 수증기일까요?",
         a: "아니에요! 수증기는 기체라서 <b>눈에 안 보여요</b>. 주전자 입구 바로 앞의 <b>투명한 부분</b>이 진짜 수증기예요.<br><br>하얀 김의 정체는, 뿜어져 나온 수증기가 찬 공기를 만나 식으면서 <b>다시 뭉친 아주 작은 물방울들</b>, 그러니까 김은 기체가 아니라 <b>액체</b>예요(기화했다가 곧바로 액화!). 구름과 안개도 같은 원리랍니다.",
       },
     }),
-    dryIceLab({ title: "비누막은 어떻게 될까요?", cta: "이름 붙이기" }),
+    dryIceLab({ title: "드라이아이스가 든 컵의 비누막은 어떻게 될까요?", cta: "개념 정리하기" }),
     words({
       title: "상태 변화의 이름,<br>방향이 정해요",
       lead: "물질의 상태가 바뀌는 현상을 <b>상태 변화</b>라고 해요. 얼음 접시와 두 컵에서 일어난 변화를 알아봐요.",
@@ -304,7 +306,7 @@ const L3 = {
       ],
       cta: "이름대로 일으켜 보기",
     }),
-    namesLab({ title: "이름대로 물을 바꿔 볼까요?", cta: "개념 정리하기" }),
+    namesLab({ title: "온도를 조절해 네 가지 상태 변화를 일으켜 볼까요?", cta: "개념 정리하기" }),
     recap({
       title: "상태 변화,<br>카드 세 장으로 정리",
       narrator: "변화의 길은 여섯 갈래지만 반대 방향끼리 <b>세 쌍</b>으로 묶여요. 하나씩 볼까요?",
@@ -425,9 +427,9 @@ const L4 = {
   standard: "책 128~131쪽",
   doneNote: "상태 변화에서 질량은 불변, 부피만 변함을 배웠어요",
   steps: [
-    opener({ title: "국그릇의 랩은 어떻게 될까요?", scene: "u4-wrap", wait: "먼저 랩을 지켜보세요", cta: "실험실 열기" }),
-    oliveLab({ title: "얼리면 질량이 달라질까요?", cta: "다음 실험, 풍선" }),
-    balloonLab({ title: "풍선은 어떻게 될까요?", cta: "개념 정리하기" }),
+    opener({ title: "뜨거운 국그릇에 씌운 랩은 어떻게 될까요?", scene: "u4-wrap", wait: "버튼을 꾹 눌러 랩의 변화를 관찰해 보세요", cta: "실험으로 알아보기" }),
+    oliveLab({ title: "액체 올리브유가 얼면 질량과 부피는 어떻게 될까요?", cta: "다음 실험: 아세톤과 풍선" }),
+    balloonLab({ title: "아세톤이 든 플라스크를 데우면 풍선은 어떻게 될까요?", cta: "개념 정리하기" }),
     recap({
       title: "그대로인 것과<br>달라지는 것",
       narrator: "올리브유와 풍선 실험을 통해 상태가 변할 때 <b>그대로인 것</b>과 <b>달라지는 것</b>을 알아봐요.",
@@ -549,9 +551,9 @@ const L5 = {
   standard: "책 136~139쪽",
   doneNote: "상태가 변하는 동안 온도가 일정한 까닭을 배웠어요",
   steps: [
-    opener({ title: "센 불이면 더 뜨거울까요?", scene: "u4-ramen", wait: "먼저 불을 세게 해 보세요", cta: "실험실 열기" }),
-    curveLab({ title: "녹는 동안 온도는 오를까요?", mode: "melt", cta: "다음 실험, 물 끓이기" }),
-    curveLab({ title: "센 불이면 더 뜨거워질까요?", mode: "boil", cta: "이름 붙이기" }),
+    opener({ title: "물이 끓을 때 불을 더 세게 하면 물이 더 뜨거워질까요?", scene: "u4-ramen", wait: "버튼을 눌러 불의 세기를 높여 보세요", cta: "실험으로 알아보기" }),
+    curveLab({ title: "얼음이 녹는 동안 온도는 어떻게 변할까요?", mode: "melt", cta: "다음 실험: 물 끓이기" }),
+    curveLab({ title: "불의 세기를 달리하면 물이 끓는 온도가 달라질까요?", mode: "boil", cta: "개념 정리하기" }),
     words({
       title: "열에너지를 흡수하는<br>상태 변화",
       lead: "얼음이 녹을 때도 물이 끓을 때도 온도가 멈췄어요. 그동안 받은 열은 어디에 쓰였을까요?",
@@ -658,8 +660,8 @@ const L6 = {
   steps: [
     // 만화: 글과 그림 모두 장면 파일 qa/sketch/scenes/comic-u4l6.mjs 가 정본(편성 근거와 사실 확인은 qa/sketch/research/u4l6.md).
     comic(comicStory("u4l6")),
-    curveLab({ title: "어는 동안 온도는 내려갈까요?", mode: "freeze", cta: "다음, 주변의 온도" }),
-    aroundLab({ title: "주변은 시원해질까요?", cta: "이름 붙이기" }),
+    curveLab({ title: "물이 어는 동안 온도는 어떻게 변할까요?", mode: "freeze", cta: "다음 실험: 주변의 온도 변화" }),
+    aroundLab({ title: "어떤 상태 변화가 일어날 때 주변이 시원해질까요?", cta: "개념 정리하기" }),
     words({
       title: "열에너지를 방출하는<br>상태 변화",
       lead: "물이 얼 때도 온도가 일정하게 멈추고, 상태가 변할 때마다 주변 온도계가 움직였죠?",

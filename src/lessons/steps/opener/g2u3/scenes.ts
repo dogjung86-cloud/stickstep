@@ -54,9 +54,9 @@ export function btn(c: OpenerCtx, key: string, label: string, sub: string): HTML
   c.controls.appendChild(b);
   return b;
 }
-/** 내기: 첫 보기가 조작으로 드러날 결과다. 끝말 앞에 붙일 "예측대로" 또는 "예측과 달리"를 돌려준다. */
+/** 내기: 첫 보기가 조작으로 드러날 결과다. 끝말 앞에 붙일 "예측한 대로" 또는 "예측과는 달리"를 돌려준다. */
 export function bet(c: OpenerCtx, question: string, picks: string[], go: string): () => string {
-  let verdict = "예측과 달리";
+  let verdict = "예측과는 달리";
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
   c.ask(question, {
@@ -64,7 +64,7 @@ export function bet(c: OpenerCtx, question: string, picks: string[], go: string)
     neutral: true,
     good: go,
     onDone: (picked) => {
-      verdict = picked === picks[0] ? "예측대로" : "예측과 달리";
+      verdict = picked === picks[0] ? "예측한 대로" : "예측과는 달리";
       c.step.dataset.opnPhase = "play";
       c.stage.classList.add("play");
       c.controls.hidden = c.controls.children.length === 0;
@@ -158,7 +158,7 @@ const town: OpenerScene = (c) => {
     if (!playing(c) || done) return;
     const next = Math.max(0, Math.min(M.spots.length - 1, idx + d));
     if (next === idx) {
-      c.say("더는 기울어지지 않아요. <b>반대쪽</b>으로 기울여 보세요.");
+      c.say("더 이상 기울일 수 없어요. <b>반대쪽</b>으로 움직여 보세요.");
       return;
     }
     idx = next;
@@ -166,15 +166,16 @@ const town: OpenerScene = (c) => {
     aim();
     if (idx === M.plaza) {
       done = true;
-      c.later(() => end(c, `${verdict()} 각도를 맞추자 광장이 밝아졌어요. 거울에서 빛은 어떤 규칙으로 방향을 바꿀까요?`), 900);
-    } else c.say(idx > M.plaza ? "햇빛이 아직 <b>산 쪽</b>에 떨어져요. 거울을 더 숙여 보세요." : "햇빛이 마을을 지나 <b>언덕 쪽</b>에 떨어져요. 거울을 세워 보세요.");
+      c.later(() => end(c, `${verdict()} 각도를 맞추자 광장이 환해졌어요! 빛은 어떤 규칙으로 방향을 바꿀까요?`), 900);
+      // 광장보다 산 쪽 자리는 둘(산기슭, 산 중턱)이라 수정안의 "산 중턱" 대신 "산 쪽"으로 둔다(2026-11-16)
+    } else c.say(idx > M.plaza ? "햇빛이 아직 <b>산 쪽</b>을 비추고 있어요. 거울을 조금 더 숙여 보세요." : "햇빛이 마을을 지나쳐 <b>언덕 쪽</b>으로 갔어요. 거울을 다시 세워 보세요.");
   };
-  const down = btn(c, "down", "거울 숙이기", "햇빛이 언덕 쪽으로");
-  const upB = btn(c, "up", "거울 세우기", "햇빛이 산 쪽으로");
+  const down = btn(c, "down", "거울 숙이기", "빛을 언덕 쪽으로");
+  const upB = btn(c, "up", "거울 세우기", "빛을 산 쪽으로");
   c.controls.classList.add("opn-g2u3-two");
   down.addEventListener("click", () => move(-1));
   upB.addEventListener("click", () => move(1));
-  const verdict = bet(c, "산에 가려 해가 들지 않는 마을이 있어요. 맞은편 언덕의 거울로 광장을 밝힐 수 있을까요?", ["각도를 잘 맞추면 밝아져요", "거울은 빛을 못 내서 안 돼요", "어느 각도로 두어도 밝아져요"], "예측 완료! 거울을 기울여 햇빛을 <b>광장</b>에 보내 보세요.");
+  const verdict = bet(c, "산에 가려 해가 들지 않는 마을이 있어요. 맞은편 언덕의 거울로 광장을 밝힐 수 있을까요?", ["거울 각도를 잘 맞추면 밝힐 수 있어요", "거울은 스스로 빛을 못 내서 밝힐 수 없어요", "거울을 어느 각도로 두어도 밝아져요"], "생각을 정했군요! 거울을 기울여 햇빛을 <b>광장</b>에 보내 보세요.");
 };
 
 // ── 2. 유리컵과 빨대 ────────────────────────────────────────────
@@ -210,7 +211,7 @@ const straw: OpenerScene = (c) => {
   let kept = 0;
   const pour = btn(c, "pour", "물 붓기", "꾹 누르고 있어요");
   c.controls.classList.add("opn-g2u3-one");
-  const verdict = bet(c, "빈 유리컵에 빨대를 꽂아 두었어요. 여기에 물을 부으면 빨대는 어떻게 보일까요?", ["수면에서 꺾여 보여요", "그대로 곧게 보여요", "물속 부분이 안 보여요"], "예측 완료! <b>물 붓기</b>를 꾹 눌러 컵에 물을 채워 보세요.");
+  const verdict = bet(c, "빈 유리컵에 빨대를 꽂아 두었어요. 여기에 물을 부으면 빨대는 어떻게 보일까요?", ["수면 경계에서 꺾여 보여요", "곧은 모습 그대로 보여요", "물속에 잠긴 부분이 보이지 않아요"], "생각을 정했군요! <b>물 붓기</b>를 꾹 눌러 컵에 물을 채워 보세요.");
   holdFill(
     c,
     pour,
@@ -225,7 +226,7 @@ const straw: OpenerScene = (c) => {
       }
       done = true;
       pour.disabled = true;
-      c.later(() => end(c, `${verdict()} 빨대가 수면에서 꺾여 보여요. 빨대는 그대로인데 왜 꺾여 보일까요?`), 600);
+      c.later(() => end(c, `${verdict()} 곧은 빨대가 수면 경계에서 <b>꺾인 것처럼</b> 보여요! 빛이 물과 공기의 경계를 지날 때 무슨 일이 일어난 걸까요?`), 600);
     },
   );
 };
@@ -248,33 +249,39 @@ const dark: OpenerScene = (c) => {
   let busy = false;
   let lit = false;
   let over = false;
-  const stare = btn(c, "stare", "눈 크게 뜨기", "빛 없이 기다려요");
-  const torch = btn(c, "torch", "손전등 켜기", "고양이 쪽으로");
+  const stare = btn(c, "stare", "눈 크게 뜨기", "불을 끈 채 기다리기");
+  const torch = btn(c, "torch", "손전등 켜기", "고양이 쪽 비추기");
   const torchLabel = torch.querySelector("b") as HTMLElement;
+  // 보조 글도 이름과 함께 바꾼다: 수정안의 "고양이 쪽 비추기"는 켜기에만 맞아서, 켜진 동안("손전등 끄기")은 "다시 어둡게 하기"(2026-11-16)
+  const torchSub = torch.querySelector("span") as HTMLElement;
+  const torchText = (on: boolean): void => {
+    torchLabel.textContent = on ? "손전등 끄기" : "손전등 켜기";
+    torchSub.textContent = on ? "다시 어둡게 하기" : "고양이 쪽 비추기";
+  };
   c.controls.classList.add("opn-g2u3-two");
-  const verdict = bet(c, "빛이 전혀 없는 깜깜한 방에 고양이가 있어요. 눈을 크게 뜨고 기다리면 고양이가 보일까요?", ["끝까지 보이지 않아요", "조금 지나면 어렴풋이 보여요", "눈을 크게 뜨면 보여요"], "예측 완료! 먼저 <b>눈을 크게 뜨고</b> 기다려 보세요.");
+  const verdict = bet(c, "빛이 전혀 없는 깜깜한 방에 고양이가 있어요. 눈을 크게 뜨고 기다리면 고양이가 보일까요?", ["아무리 기다려도 보이지 않아요", "눈이 어둠에 익숙해지면 어렴풋이 보여요", "눈을 크게 뜨면 뚜렷하게 보여요"], "생각을 정했군요! 먼저 <b>눈을 크게 뜨고</b> 기다려 보세요.");
   const finishIf = (): void => {
     if (over || !tried.stare || !tried.torch) return;
     over = true;
-    c.later(() => end(c, `${verdict()} 빛이 없을 때는 끝까지 안 보였고, 손전등을 켜자 보였어요. 그 빛은 어디로 갔을까요?`), 700);
+    c.later(() => end(c, `${verdict()} 빛이 없으면 안 보였고 손전등을 켜야 보였어요! 빛은 어떤 길을 따라왔을까요?`), 700);
   };
   stare.addEventListener("click", () => {
     if (!playing(c) || busy || over) return;
     if (lit) {
       lit = false;
       c.stage.classList.remove("lit");
-      torchLabel.textContent = "손전등 켜기";
+      torchText(false);
     }
     busy = true;
     haptic(HAPTIC.tap);
     c.stage.classList.add("wide");
-    c.say("눈을 크게 뜨고 기다리는 중이에요.");
+    c.say("어둠 속에서 눈을 크게 뜨고 기다리는 중이에요.");
     c.later(() => {
       busy = false;
       c.stage.classList.remove("wide");
       tried.stare = true;
       stare.classList.add("tried");
-      if (!tried.torch) c.say("아무리 기다려도 <b>깜깜</b>해요. 이번엔 <b>손전등</b>을 켜 보세요.");
+      if (!tried.torch) c.say("아무리 기다려도 <b>고양이가 보이지 않아요</b>. 이번엔 <b>손전등</b>을 켜 보세요.");
       finishIf();
     }, 1800);
   });
@@ -283,14 +290,14 @@ const dark: OpenerScene = (c) => {
     haptic(HAPTIC.tap);
     lit = !lit;
     c.stage.classList.toggle("lit", lit);
-    torchLabel.textContent = lit ? "손전등 끄기" : "손전등 켜기";
+    torchText(lit);
     if (!lit) {
-      c.say("다시 깜깜해졌어요.");
+      c.say("손전등을 끄니 다시 아무것도 보이지 않아요.");
       return;
     }
     tried.torch = true;
     torch.classList.add("tried");
-    if (!tried.stare) c.say("고양이가 보여요! 손전등을 끄고 <b>눈을 크게 떠서</b> 기다려 보면 어떨까요?");
+    if (!tried.stare) c.say("손전등을 비추니 고양이가 보여요! 이번엔 <b>눈 크게 뜨기</b>도 눌러 확인해 보세요.");
     finishIf();
   });
 };
@@ -302,9 +309,9 @@ const catMirror: OpenerScene = (c) => {
   const real = c.stage.querySelector<SVGElement>(".opn-g2u3-cat");
   const twin = c.stage.querySelector<SVGElement>(".opn-g2u3-cat2");
   let n = 0;
-  const go = btn(c, "step", "한 걸음 다가가기", "고양이가 거울 쪽으로");
+  const go = btn(c, "step", "한 걸음 다가가기", "거울을 향해 이동하기");
   c.controls.classList.add("opn-g2u3-one");
-  const verdict = bet(c, "고양이가 거울을 보고 있어요. 고양이가 거울 쪽으로 한 걸음 다가가면 거울 속 고양이는?", ["똑같이 한 걸음 다가와요", "제자리에 그대로 있어요", "한 걸음 뒤로 물러나요"], "예측 완료! 고양이를 거울 쪽으로 <b>세 걸음</b> 걷게 해 보세요.");
+  const verdict = bet(c, "거울 앞에 앉아 있던 고양이가 거울 쪽으로 한 걸음 다가가면, 거울 속 고양이는 어떻게 될까요?", ["거울 쪽으로 똑같이 한 걸음 다가와요", "원래 자리에 그대로 멈춰 있어요", "거울에서 한 걸음 더 멀어져요"], "생각을 정했군요! 버튼을 세 번 눌러 고양이를 거울 앞으로 다가가게 해 보세요.");
   go.addEventListener("click", () => {
     if (!playing(c) || n >= M.steps) return;
     n += 1;
@@ -312,11 +319,11 @@ const catMirror: OpenerScene = (c) => {
     if (real) real.style.transform = `translateX(${n * M.step}px)`;
     if (twin) twin.style.transform = `translateX(${-n * M.step}px)`;
     if (n < M.steps) {
-      c.say(`거울 속 고양이도 움직였어요. <b>${M.steps - n}걸음</b> 더 다가가 보세요.`);
+      c.say(`거울 속 고양이도 함께 다가왔어요! <b>${M.steps - n}걸음</b> 더 다가가 보세요.`);
       return;
     }
     go.disabled = true;
-    c.later(() => end(c, `${verdict()} 거울 속 고양이도 똑같이 다가왔어요. 거울 속 고양이는 거울에서 얼마나 떨어져 있을까요?`), 800);
+    c.later(() => end(c, `${verdict()} 거울 속 고양이도 똑같이 다가왔어요! 거울 속 모습은 어디에 생기는 걸까요?`), 800);
   });
 };
 
@@ -328,7 +335,7 @@ const spoon: OpenerScene = (c) => {
   const bIn = btn(c, "in", "오목한 쪽 보기", "숟가락의 안쪽");
   const bOut = btn(c, "out", "볼록한 쪽 보기", "숟가락의 뒷면");
   c.controls.classList.add("opn-g2u3-two");
-  const verdict = bet(c, "숟가락을 들고 오목한 안쪽에 얼굴을 비춰요. 얼굴은 어떻게 보일까요?", ["거꾸로 보여요", "똑바로 크게 보여요", "평소와 똑같이 보여요"], "예측 완료! 숟가락의 <b>두 쪽</b>에 얼굴을 비춰 보세요.");
+  const verdict = bet(c, "숟가락을 들고 오목한 안쪽에 얼굴을 비춰요. 얼굴은 어떻게 보일까요?", ["거꾸로 보여요", "똑바로 크게 보여요", "평소와 똑같이 보여요"], "생각을 정했군요! 숟가락의 <b>두 쪽</b>에 얼굴을 비춰 보세요.");
   const show = (k: "in" | "out"): void => {
     if (!playing(c) || over) return;
     haptic(HAPTIC.tap);
@@ -390,7 +397,7 @@ const dots: OpenerScene = (c) => {
   let kept = 0;
   const back = btn(c, "back", "뒤로 물러나기", "꾹 누르고 있어요");
   c.controls.classList.add("opn-g2u3-one");
-  const verdict = bet(c, "빨간 점과 초록 점만 촘촘히 찍어 물고기를 그렸어요. 멀리 물러나서 보면 무슨 색으로 보일까요?", ["노란색으로 보여요", "갈색으로 보여요", "빨강과 초록 그대로 보여요"], "예측 완료! <b>뒤로 물러나기</b>를 꾹 눌러 그림에서 멀어져 보세요.");
+  const verdict = bet(c, "빨간색 점과 초록색 점만 촘촘하게 찍어 놓은 그림을 멀리 떨어져서 보면 어떤 색으로 보일까요?", ["노란색으로 보여요", "갈색으로 보여요", "빨강과 초록 그대로 보여요"], "생각을 정했군요! <b>뒤로 물러나기</b>를 꾹 눌러 그림에서 멀어져 보세요.");
   holdFill(
     c,
     back,
@@ -405,7 +412,7 @@ const dots: OpenerScene = (c) => {
       }
       done = true;
       back.disabled = true;
-      c.later(() => end(c, `${verdict()} 멀리서 보니 노란 물고기예요. 노란 점은 하나도 없는데 어떻게 된 걸까요?`), 600);
+      c.later(() => end(c, `${verdict()} 노란색은 전혀 찍지 않았는데도 멀리서 보니 <b>노란색</b>으로 보여요! 빨간 빛과 초록 빛이 눈에 함께 들어오면 무슨 일이 일어나는 걸까요?`), 600);
     },
   );
 };
@@ -424,7 +431,7 @@ const floatScene: OpenerScene = (c) => {
   const cone = c.stage.querySelector<SVGElement>(".opn-g2u3-cone");
   const b = hit(c, M.hit, "솔방울을 눌러 연못에 떨어뜨리기");
   let done = false;
-  const verdict = bet(c, "연못에 솔방울이 떨어져 물결이 퍼져 나가요. 물결이 지나갈 때 낚시찌는 어떻게 될까요?", ["제자리에서 오르내려요", "물결을 따라 밀려가요", "솔방울 쪽으로 끌려와요"], "예측 완료! 나뭇가지의 <b>솔방울</b>을 눌러 연못에 떨어뜨려 보세요.");
+  const verdict = bet(c, "잔잔한 연못에 솔방울이 풍덩 떨어지면서 물결이 퍼져 나가요. 물 위에 떠 있는 낚시찌는 어떻게 움직일까요?", ["제자리에서 위아래로만 오르내려요", "퍼져 나가는 물결을 따라 바깥쪽으로 밀려가요", "솔방울이 떨어진 안쪽으로 끌려와요"], "생각을 정했군요! 나뭇가지의 <b>솔방울</b>을 눌러 연못에 떨어뜨려 보세요.");
   b.addEventListener("click", () => {
     if (!playing(c) || done) return;
     done = true;
@@ -437,7 +444,7 @@ const floatScene: OpenerScene = (c) => {
       c.say("퐁당! 물결이 퍼져 나가요. <b>낚시찌</b>를 지켜보세요.");
     }, 520);
     c.later(() => c.stage.classList.add("bob"), 1900);
-    c.later(() => end(c, `${verdict()} 찌는 제자리에서 오르내리기만 했어요. 물결은 지나갔는데 찌는 왜 밀려가지 않을까요?`), 4300);
+    c.later(() => end(c, `${verdict()} 물결은 바깥쪽으로 멀리 퍼져 나갔는데, 낚시찌는 <b>제자리</b>에서 위아래로 오르내릴 뿐이에요! 왜 물결을 따라 이동하지 않을까요?`), 4300);
   });
 };
 
@@ -476,7 +483,7 @@ const kalimba: OpenerScene = (c) => {
       /* 이미 닫힌 경우 */
     }
   });
-  const verdict = bet(c, "칼림바의 긴 막대와 짧은 막대를 같은 세기로 튕겨요. 어느 쪽에서 더 높은 소리가 날까요?", ["짧은 막대", "긴 막대", "둘 다 같은 높이예요"], "예측 완료! <b>긴 막대</b>와 <b>짧은 막대</b>를 한 번씩 눌러 튕겨 보세요.");
+  const verdict = bet(c, "칼림바의 긴 금속 막대와 짧은 금속 막대를 같은 세기로 튕기면, 어느 막대에서 더 높은 소리가 날까요?", ["짧은 막대에서 더 높은 소리가 나요", "긴 막대에서 더 높은 소리가 나요", "길이에 관계없이 두 막대의 소리 높이가 같아요"], "생각을 정했군요! <b>긴 막대</b>와 <b>짧은 막대</b>를 한 번씩 눌러 튕겨 보세요.");
   const pluck = (k: "long" | "short"): void => {
     if (!playing(c) || over) return;
     haptic(HAPTIC.tap);

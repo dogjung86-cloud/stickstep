@@ -1,18 +1,18 @@
 // [중2 Ⅲ v5] g2u3l6 빛의 합성: 랩 세 판.
 //
-// 1) g2u3LampLab 「조명이 바뀌면 장미는 무슨 색일까요?」
+// 1) g2u3LampLab 「조명의 색이 바뀌면 장미는 무슨 색으로 보일까요?」
 //    책의 어디에서: 그림 Ⅲ-11(물체는 일부 색의 빛을 흡수하고 나머지를 반사한다. 반사하는 빛의 색으로 보인다)과 스스로 확인하기 3(빨간 조명 아래의 장미꽃과 잎).
 //    학생이 정하는 것: 조명의 색(흰색, 빨간색, 초록색). 파란색 조명은 가려 두었다가 예측한 뒤에 켠다.
 //    한 통찰: 물체는 반사하는 빛의 색으로 보인다. 반사할 빛이 조명에 없으면 검게 보인다.
 //    옛 랩(objectColorLab)은 물체와 조명을 골라 결과를 구경했다. 가려 둔 조명을 예측하는 판정이 없었다.
 //
-// 2) g2u3TorchLab 「세 빛을 겹치면 무슨 색이 될까요?」
+// 2) g2u3TorchLab 「빨강, 초록, 파랑 빛을 겹치면 무슨 색이 될까요?」
 //    책의 어디에서: 해 보기 '빛의 합성 관찰하기'(빨간색, 초록색, 파란색 빛을 내는 손전등을 스크린에 여러 가지로 조합해 비추고 겹친 부분의 색을 표에 쓴다).
 //    학생이 정하는 것: 켤 손전등의 조합과 차례. 표의 네 칸(둘씩 세 가지와 셋 모두)은 그 조합을 처음 만들었을 때 채워진다.
 //    한 통찰: 빨강, 초록, 파랑 빛을 합치면 다른 색의 빛이 되고, 셋을 모두 합치면 흰색이 된다. 색은 캔버스의 더하기 합성으로 실제로 더한다.
 //    옛 랩(colorMixLab)은 스포트라이트를 끌어 겹쳤다. 표를 채우는 판이 아니었다.
 //
-// 3) g2u3PixelLab 「화면의 색은 무엇으로 만들까요?」
+// 3) g2u3PixelLab 「영상 장치의 화면은 어떻게 여러 가지 색을 나타낼까요?」
 //    책의 어디에서: 탐구 '영상 장치에서 다양한 색이 표현되는 원리 관찰하기'(스마트폰 현미경으로 노트북 화면의 색마다 확대해 화소를 그린다)와 그림 Ⅲ-13.
 //    학생이 정하는 것: 확대해 볼 색, 그리고 주문한 색(노란색, 흰색)을 내려고 켤 화소.
 //    실패하는 길: 주문한 색과 다른 화소를 켜고 멀리서 보면 화면의 색이 주문한 색과 나란히 어긋나 보인다.
@@ -54,7 +54,7 @@ const LIGHTS: Record<Light, { name: string; has: Ch[]; css: string }> = {
 
 export const lampLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 4, api });
+  const f = lxFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "lamp";
@@ -79,9 +79,9 @@ export const lampLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       log.set(["w", "r", "g"].indexOf(k), look(k));
       f.pips(tried.size);
-      if (k === "w") f.say("흰색 조명에는 여러 색의 빛이 다 들어 있어요. 꽃잎은 <b>빨간색 빛</b>을, 잎은 <b>초록색 빛</b>을 반사해요.");
-      else if (k === "r") f.say("빨간색 빛뿐이에요. 꽃잎은 그 빛을 반사하지만, 잎은 반사할 초록색 빛이 없어 <b>검게</b> 보여요.");
-      else f.say("초록색 빛뿐이에요. 잎은 그 빛을 반사하지만, 꽃잎은 반사할 빨간색 빛이 없어 <b>검게</b> 보여요.");
+      if (k === "w") f.say("흰색 조명에는 여러 색의 빛이 모두 들어 있어요. 그래서 꽃잎은 <b>빨간색 빛</b>을, 잎은 <b>초록색 빛</b>을 반사하여 원래 색으로 보여요.");
+      else if (k === "r") f.say("빨간색 조명 아래에서는 꽃잎만 빨간색 빛을 반사해 빨갛게 보이고, 초록 잎은 반사할 초록색 빛이 없어 <b>검은색</b>으로 보여요.");
+      else f.say("초록색 조명 아래에서는 반대로 초록 잎만 초록색으로 보이고, 빨간 꽃잎은 반사할 빨간색 빛이 없어 <b>검은색</b>으로 보여요.");
       if (tried.size === 3) {
         asked = true;
         host.dataset.lx = "ask";
@@ -104,8 +104,8 @@ export const lampLab: StepRenderer = (host, step, api) => {
     light = "b";
     host.dataset.lx = "done";
     f.pips(4);
-    f.say("파란색 조명을 켰어요. 꽃잎도 잎도 반사할 빛이 없어 <b>검게</b> 보여요.");
-    f.slot.conclude("물체는 자신이 <b>반사하는 빛의 색</b>으로 보여요. 반사할 색의 빛이 조명에 없으면 <b>검게</b> 보여요.");
+    f.say("파란색 조명 아래에서는 꽃잎과 잎 모두 파란색 빛을 반사하지 못하므로 <b>둘 다 검은색</b>으로 보여요.");
+    f.slot.conclude("물체는 그 물체가 <b>반사하여 우리 눈에 들어오는 빛의 색</b>으로 보여요. 반사하는 빛이 전혀 없으면 <b>검은색</b>으로 보여요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -323,8 +323,8 @@ export const lampLab: StepRenderer = (host, step, api) => {
     else lxPill(ctx, "조명이 꺼져 있어요", LX.dim, true, 196);
   });
 
-  f.say("빨간 장미꽃과 초록 잎이에요. <b>조명의 색</b>을 바꿔 가며 꽃잎과 잎이 무슨 색으로 보이는지 살펴보세요.");
-  api.setCTA("세 가지 조명을 켜 보세요", { enabled: false });
+  f.say("낮에 볼 때 빨간 꽃잎과 초록 잎을 가진 장미예요. <b>세 가지 조명</b>을 차례로 비추어 보고, 장미의 꽃잎과 잎이 각각 무슨 색으로 보이는지 살펴보세요.");
+  api.setCTA("세 가지 색의 조명을 차례로 모두 켜 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();
@@ -374,18 +374,18 @@ function chToggles(label: (c: Ch) => string, onChange: (on: Record<Ch, boolean>)
 
 export const torchLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 4, api });
+  const f = lxFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "torch";
   host.dataset.lx = "mix";
 
   const COMBOS = ["rg", "rb", "gb", "rgb"];
-  const log = lxLog(["빨강+초록", "빨강+파랑", "초록+파랑", "셋 모두"], "four");
+  const log = lxLog(["빨강 + 초록", "빨강 + 파랑", "초록 + 파랑", "세 빛 모두"], "four");
   const found = new Set<string>();
   let asked = false;
   const tg = chToggles(
-    (c) => `${CH_NAME[c].slice(0, 2)} 손전등`,
+    (c) => `${CH_NAME[c]} 손전등`,
     (on) => {
       if (asked) return;
       const k = `${on.r ? "r" : ""}${on.g ? "g" : ""}${on.b ? "b" : ""}`;
@@ -396,9 +396,9 @@ export const torchLab: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.correct);
         f.pips(found.size);
       }
-      if (k.length === 0) f.say("손전등이 모두 꺼졌어요. 두 개 이상을 함께 켜 겹친 곳을 보세요.");
-      else if (k.length === 1) f.say(`${CH_NAME[k as Ch]} 빛 하나예요. 다른 손전등을 <b>함께</b> 켜면 겹친 곳은 무슨 색일까요?`);
-      else f.say(`겹친 곳이 <b>${mixName(on)}</b>으로 보여요. ${found.size < 4 ? `남은 조합 ${4 - found.size}가지도 만들어 보세요.` : "네 가지를 모두 찾았어요."}`);
+      if (k.length === 0) f.say("손전등이 모두 꺼져 있어요. 손전등을 <b>두 개 이상</b> 켜서 빛을 겹쳐 보세요.");
+      else if (k.length === 1) f.say("손전등이 하나만 켜져 있어요. <b>다른 색 손전등</b>을 하나 더 켜서 빛을 겹쳐 보세요.");
+      else f.say(`겹친 부분이 <b>${mixName(on)}</b>으로 보여요! ${found.size < 4 ? `손전등을 바꾸어 켜며 남은 조합(${4 - found.size}개)도 찾아보세요.` : "네 가지 합성 색을 모두 찾았어요!"}`);
       if (found.size === 4) {
         asked = true;
         tg.lock(true);
@@ -418,8 +418,8 @@ export const torchLab: StepRenderer = (host, step, api) => {
 
   function finish(): void {
     host.dataset.lx = "done";
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("빨강, 초록, 파랑 빛을 겹치면 <b>다른 색의 빛</b>으로 보여요. 세 빛을 모두 겹치면 <b>흰색</b>이 돼요.");
+    f.say("세 가지 빛을 합쳐 여러 가지 색의 빛을 만들어 보았어요! 아래 핵심 정리를 읽어 보세요.");
+    f.slot.conclude("빛의 삼원색인 <b>빨간색, 초록색, 파란색</b> 빛을 합치면 노란색, 자홍색, 청록색 빛을 만들 수 있고, 세 빛을 모두 합치면 <b>흰색</b> 빛이 돼요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -454,11 +454,13 @@ export const torchLab: StepRenderer = (host, step, api) => {
     ctx.stroke();
     lxText(ctx, "스크린", 80, 38, { color: LX.dim });
     const n = CH.filter((c) => tg.on[c]).length;
-    if (n >= 2) lxPill(ctx, `겹친 곳: ${mixName(tg.on)}`, mixCss(tg.on), true, 174);
+    // 글이 길어져(빛이 겹친 곳) 띠의 왼쪽 끝이 파란 빛의 가장자리에 닿아서 6px 내려 그 원 밖에 둔다(스크린 안쪽 끝 208에 띠 아래 끝 206).
+    if (n >= 2) lxPill(ctx, `빛이 겹친 곳: ${mixName(tg.on)}`, mixCss(tg.on), true, 180);
   });
 
-  f.say("빨간색, 초록색, 파란색 손전등이 있어요. 원하는 대로 <b>켜고 꺼서</b> 스크린에서 빛이 겹친 곳의 색을 살펴보세요.");
-  api.setCTA("네 가지 조합을 만들어 보세요", { enabled: false });
+  // 무대의 스크린은 더하기 합성이 보이게 어둡게 그렸다. 수정안의 '하얀 스크린'은 무대와 맞지 않아 '스크린'으로 둔다.
+  f.say("스크린에 빨간색, 초록색, 파란색 손전등을 비추어 볼 거예요. 손전등을 자유롭게 켜고 끄면서 <b>아래 표의 네 가지 빛 조합</b>을 모두 만들어 보세요.");
+  api.setCTA("손전등을 조합해 표의 네 칸을 모두 채워 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();
@@ -470,7 +472,7 @@ export const torchLab: StepRenderer = (host, step, api) => {
 // ══════════════════════════════════════════════════════════
 export const pixelLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 4, api });
+  const f = lxFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "pixel";
@@ -519,8 +521,8 @@ export const pixelLab: StepRenderer = (host, step, api) => {
     patch = null;
     tg.set({ r: false, g: false, b: false });
     f.slot.setControls(tg.el, confirm);
-    f.say(`이번에는 직접 켜요. 화면이 <b>${GOALS[goal].name}</b>으로 보이게 화소를 켜고 <b>멀리서 화면 보기</b>를 눌러요.`);
-    api.setCTA("주문한 색을 만들어 보세요", { enabled: false });
+    f.say(`이번에는 직접 켜요. 빨강, 초록, 파랑 <b>화소</b>를 알맞게 켜고 아래 <b>멀리서 화면 보기</b> 버튼을 눌러 먼저 <b>${GOALS[goal].name} 화면</b>을 만들어 보세요.`);
+    api.setCTA("화소를 켜서 노란색 화면과 흰색 화면을 차례로 만들어 보세요", { enabled: false });
   }
   confirm.addEventListener("click", () => {
     if (phase !== "make") return;
@@ -536,35 +538,35 @@ export const pixelLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.correct);
     f.pips(2 + goal);
     if (goal === 0) {
-      f.say("노란색 화면이 됐어요. 노란 화소는 없는데도 <b>빨강과 초록</b> 빛이 합쳐져 노랗게 보여요.");
+      f.say("맞아요! 빨강 화소와 초록 화소를 함께 켜면 멀리서 볼 때 두 빛이 합쳐져 <b>노란색</b>으로 보여요.");
       tg.lock(true);
       tm.later(() => {
         goal = 1;
         checked = "";
         tg.lock(false);
         tg.set({ r: false, g: false, b: false });
-        f.say("이번 주문은 <b>흰색</b>이에요. 화소를 켜고 멀리서 확인해 보세요.");
+        f.say("이제 <b>흰색 화면</b>도 만들어 보세요.");
       }, 2400);
       return;
     }
     phase = "end";
     tg.lock(true);
     host.dataset.lx = "ask";
-    f.say("세 화소를 모두 켜자 <b>흰색</b> 화면이 됐어요.");
+    f.say("맞아요! 빨강, 초록, 파랑 세 화소를 모두 켜면 멀리서 볼 때 <b>흰색</b>으로 보여요!");
     tm.later(() => {
       f.slot.ask(
-        "자홍색으로 보이는 화면을 확대하면 어떤 화소가 켜져 있을까요?",
+        "화면에서 자홍색으로 보이는 부분을 돋보기나 현미경으로 크게 확대해 보면 어떤 화소가 켜져 있을까요?",
         [{ t: "빨강 화소와 파랑 화소", ok: true }, { t: "빨강 화소와 초록 화소" }, { t: "초록 화소와 파랑 화소" }],
         (ok) => api.recordQuiz(ok),
-        { why: "자홍색은 <b>빨강과 파랑</b> 빛을 합친 색이에요. 손전등 실험의 표와 같아요.", onNext: finish },
+        { why: "영상 장치의 화면에는 빨강, 초록, 파랑 화소만 들어 있어요. 자홍색은 <b>빨간 빛과 파란 빛</b>이 합쳐져서 만들어진 색이에요.", onNext: finish },
       );
     }, 2200);
   });
   function finish(): void {
     host.dataset.lx = "done";
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("화면은 <b>빨강, 초록, 파랑</b> 빛을 내는 아주 작은 화소로 이루어져 있어요. 화소의 빛이 합성되어 여러 가지 색으로 보여요.");
+    f.say("화면 속 화소들이 빛의 합성으로 색을 만드는 원리를 확인했어요! 아래 핵심 정리를 읽어 보세요.");
+    f.slot.conclude("영상 장치의 화면은 <b>빨간색, 초록색, 파란색(RGB) 화소</b>에서 나오는 빛을 합성하여 다양한 색을 나타내요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -659,8 +661,9 @@ export const pixelLab: StepRenderer = (host, step, api) => {
     ctx.arc(VIEW.x, VIEW.y, VIEW.r, 0, Math.PI * 2);
     ctx.stroke();
     lxText(ctx, phase === "look" && !patch ? "확대할 곳을 골라요" : "확대한 화소", VIEW.x, VIEW.y + VIEW.r + 16, { color: LX.ink });
-    if (checked === "ok") lxPill(ctx, "주문한 색과 같아요", LX.green);
-    else if (checked === "no") lxPill(ctx, "주문한 색과 달라요", LX.red);
+    // 판정 알약은 오른쪽 위에 둔다(왼쪽 위에 두면 "노트북 화면" 이름표를 덮었다. 확대 원의 위끝 46보다 위라 원도 가리지 않는다)
+    if (checked === "ok") lxPill(ctx, "주문한 색과 같아요", LX.green, true);
+    else if (checked === "no") lxPill(ctx, "주문한 색과 달라요", LX.red, true);
   });
 
   f.say("노트북 화면에 스마트폰 현미경을 대요. <b>빨간색, 초록색, 파란색 부분</b>을 차례로 확대해 무엇이 켜져 있는지 보세요.");

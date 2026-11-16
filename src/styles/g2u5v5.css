@@ -27,6 +27,9 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, .35); animation: g2u5xToast 1.9s var(--ease-out) both; z-index: 3;
 }
 .g2u5x-toast.bad { background: rgba(240, 68, 82, .95); }
+/* 잎의 기체 랩: 알림이 가운데(44%)에 뜨면 오른쪽 '나가는 기체' 칸(알림이 보라고 가리키는 칸)이나 잎 쪽 칸의 글을 덮는다.
+   무대 위쪽 띠(빛 세기 알약 자리, y 11~44)에 한 줄로 띄운다. 오른쪽 칸은 y 48, 잎 쪽 칸은 y 53부터라 닿지 않고, 빛 세기는 아래 조작 줄에도 보인다 */
+.g2u5x-light .g2u5x-toast { top: 12%; }
 @keyframes g2u5xToast { 0% { opacity: 0; margin-top: 8px; } 12%, 80% { opacity: 1; margin-top: 0; } 100% { opacity: 0; } }
 .g2u5x-pop { animation: g2u5xPop .4s var(--ease-out) both; }
 @keyframes g2u5xPop { 0% { opacity: 0; } 100% { opacity: 1; } }
@@ -76,6 +79,8 @@
 }
 .g2u5x-chipbtn.miss { border-color: var(--red); animation: g2u5xShake .4s ease-in-out 1; }
 .g2u5x-st { display: grid; grid-template-columns: 1fr 52px 84px 52px; align-items: center; gap: 6px; height: 50px; }
+/* 값이 긴 수 조절(빛의 세기 랩의 '약한 빛(아침·저녁)', 15px로 약 113px): 값 칸만 넓힌다. 이름 칸은 남는 폭(폰 약 100px)으로 '빛의 세기'가 든다 */
+.g2u5x-st.wide { grid-template-columns: 1fr 52px 124px 52px; }
 .g2u5x-st-l { font-size: 15px; font-weight: 800; color: var(--ink); padding-left: 4px; white-space: nowrap; }
 .g2u5x-st-v { text-align: center; font-size: 15px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .g2u5x-st-b {

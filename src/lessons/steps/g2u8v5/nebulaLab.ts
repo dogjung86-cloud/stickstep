@@ -22,7 +22,7 @@ const REAL: Record<Mode, { file: string; name: string; alt: string }> = {
 
 export const nebulaLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = sFrame(host, { title: s.title, steps: 3, api });
+  const f = sFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = sCanvas(f.stage);
   const pic = el("img", { class: "g2u8x-real", attrs: { alt: "", draggable: "false" } }) as HTMLImageElement;
   f.stage.appendChild(pic);
@@ -42,9 +42,9 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
   };
   const seg = sSegs<Mode>(
     [
-      { k: "hot", t: "아주 뜨거운 별" },
-      { k: "cool", t: "덜 뜨거운 별" },
-      { k: "none", t: "뒤에 밝은 빛" },
+      { k: "hot", t: "주변에 아주 뜨거운 별" },
+      { k: "cool", t: "주변에 덜 뜨거운 별" },
+      { k: "none", t: "뒤쪽에 밝은 별빛" },
     ],
     null,
     (m) => {
@@ -52,13 +52,13 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       if (m === "hot") {
         log.set(0, "스스로 붉게 빛남");
-        f.say("<b>아주 뜨거운 별</b>이 곁에 있어요. 구름의 가스가 별빛에 달궈져 <b>스스로 붉게</b> 빛나요.");
+        f.say("구름 가까이 <b>아주 뜨거운 별</b>이 있으면, 성간 물질(가스)이 강한 별빛에 가열되어 <b>스스로 붉은 빛</b>을 내요(방출 성운)!");
       } else if (m === "cool") {
         log.set(1, "별빛을 반사해 파랗게");
-        f.say("<b>덜 뜨거운 별</b>이 곁에 있어요. 구름의 티끌이 별빛을 <b>반사해</b> 파랗게 보여요.");
+        f.say("구름 가까이 가스를 달굴 만큼 뜨겁지 않은 <b>별</b>이 있으면, 티끌이 그 별빛을 <b>반사하여 파랗게</b> 보여요(반사 성운)!");
       } else {
         log.set(2, "뒤의 빛을 가려 검게");
-        f.say("곁에 별이 없어요. 구름이 <b>뒤에서 오는 빛을 가로막아</b> 검게 보여요.");
+        f.say("가까이에 비추는 별이 없고 <b>뒤쪽에서 밝은 빛</b>이 오면, 짙은 구름이 <b>뒤쪽의 별빛을 가로막아</b> 검은 그림자처럼 보여요(암흑 성운)!");
       }
       const n = [0, 1, 2].filter((i) => log.has(i)).length;
       f.pips(n);
@@ -71,6 +71,7 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
       }
     },
   );
+  seg.el.classList.add("wrap"); // 이름이 긴 세 칸이라 13px 두 줄까지 쓴다(한 줄로 두면 칸이 글만큼 넓어져 줄이 조작 칸 밖으로 나간다)
   f.slot.setControls(seg.el, log.el);
 
   function askFinal(): void {
@@ -79,16 +80,17 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
       show("none");
       seg.set("none");
     }
-    f.say("검게 보이는 구름을 보며 아래 질문에 답해 보세요.");
+    f.say("세 가지 조건에서 가스와 티끌 구름이 어떻게 다르게 보이는지 모두 비교했어요!");
+    // 정답 보기는 오답 카드의 정답 줄에 한 줄로 들어가는 길이로 둔다(두 줄이면 오답 화면이 조작 칸 208을 넘는다)
     f.slot.ask(
-      "구름 뒤의 별빛이 우리에게 오지 못한 까닭은?",
-      [{ t: "구름이 별빛을 가로막아서", ok: true }, { t: "뒤의 별이 빛을 내지 않아서" }, { t: "구름이 별을 삼켜 버려서" }],
+      "말머리성운처럼 검게 보이는 성운에서 뒤쪽의 별빛이 우리 눈에 도달하지 못하는 까닭은 무엇인가요?",
+      [{ t: "빽빽한 가스와 티끌 구름이 별빛을 가로막아서", ok: true }, { t: "구름 뒤쪽에 있는 별들이 빛을 전혀 내지 않아서" }, { t: "검은 구름이 뒤쪽의 별들을 모두 삼켜 없애 버려서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "구름 뒤에도 별은 있어요. 가스와 티끌이 빛을 <b>가렸어요</b>.", onNext: finish },
+      { why: "검게 보이는 곳 뒤에도 별과 밝은 성운이 있지만, 앞쪽의 성간 물질(가스와 티끌)이 별빛을 <b>가로막아 가렸기</b> 때문이에요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("탐험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("성간 물질이 모인 성운은 주변 별빛과의 관계에 따라 방출·반사·암흑 성운으로 다르게 보인다는 것을 확인했어요!");
     f.slot.conclude("가스와 티끌의 구름은 곁에 무엇이 있느냐에 따라 달라 보여요. <b>아주 뜨거운 별</b>에 달궈지면 스스로 붉게 빛나고, 덜 뜨거운 별의 빛을 <b>반사하면 파랗게</b>, 뒤의 빛을 <b>가로막으면 검게</b> 보여요.");
     api.enableCTA(s.cta ?? "다음");
   }

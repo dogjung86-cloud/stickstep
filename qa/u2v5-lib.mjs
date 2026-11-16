@@ -17,6 +17,18 @@ export async function launch({ width = 390, height = 700 } = {}) {
       premium: true, reviewMode: true, goalMin: 10, streak: 1, totalXp: 800, lessons: {}, minigame: {},
     }));
   });
+  // 다른 세션이 파일을 저장해도 화면이 다시 읽히지 않게 HMR만 끈다(CSS 주입은 살린다. check-u1v5와 같은 줄)
+  await page.route("**/@vite/client", (r) =>
+    r.fulfill({
+      contentType: "application/javascript",
+      body: `export function updateStyle(id, css){ let el = document.querySelector('style[data-vite-dev-id="' + id + '"]'); if (!el) { el = document.createElement("style"); el.setAttribute("data-vite-dev-id", id); document.head.appendChild(el); } el.textContent = css; }
+export function removeStyle(id){ document.querySelector('style[data-vite-dev-id="' + id + '"]')?.remove(); }
+export function createHotContext(){ return { accept(){}, acceptExports(){}, dispose(){}, prune(){}, on(){}, off(){}, send(){}, invalidate(){}, data: {} }; }
+export function injectQuery(u){ return u; }
+export const ErrorOverlay = class {};
+export default {};`,
+    }),
+  );
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(1200);
   return { browser, page, errors };
@@ -536,7 +548,7 @@ export async function playEcoMap(page, { wrong = false, miss = false, on = noop 
   await waitAsk(page);
   await W(page, 300);
   await on("predict");
-  await pickText(page, miss ? "그대로다" : "늘어난다");
+  await pickText(page, miss ? "그대로" : "늘어난다");
   await askGone(page);
   await waitDs(page, "empEnv", "2");
   await W(page, 700);

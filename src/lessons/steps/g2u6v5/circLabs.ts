@@ -28,7 +28,7 @@ let heartSeq = 0;
 
 export const g2u6HeartLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-heart", wait: "심방과 심실을 수축시켜 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-heart", wait: "심방과 심실을 차례로 수축시켜 보세요", tall: true });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "앞에서 본 심장의 단면. 그림의 왼쪽이 우심방과 우심실, 오른쪽이 좌심방과 좌심실이고, 대정맥은 우심방으로, 폐정맥은 좌심방으로 들어오며 폐동맥과 대동맥이 가운데에서 위로 나간다");
   const ns = `g6h${++heartSeq}`;
@@ -45,7 +45,7 @@ export const g2u6HeartLab: StepRenderer = (host, step, api) => {
     host.dataset.g6Where = where;
     host.dataset.g6Valves = valves ? "1" : "0";
   };
-  const go = bvBtn("main g2u6x-go", "알아낸 것 정리하기");
+  const go = bvBtn("main g2u6x-go", "판막이 하는 일 정리하기");
   go.disabled = true;
   const check = (): void => {
     f.pips((seenCycle ? 1 : 0) + (seenBack ? 1 : 0));
@@ -64,21 +64,22 @@ export const g2u6HeartLab: StepRenderer = (host, step, api) => {
     check();
   };
 
-  const cA = chip("atrium", "심방 수축", "위쪽 방", () => {
+  // 심방 수축은 판막을 뺀 때에도 같은 글이 뜬다. 그래서 수정안의 "판막이 열리면서"는 뺐다(판막이 없을 때는 틀린 말).
+  const cA = chip("atrium", "심방 수축하기", "위쪽 방(우심방·좌심방)", () => {
     if (judging) return;
     endHold();
     if (where !== "atrium") return;
     tap();
     where = "ventricle";
     draw();
-    f.say("심방이 수축해 혈액이 <b>심실</b>로 내려갔어요. 이제 심실을 수축시켜요.");
+    f.say("위쪽의 <b>심방</b>이 수축하자 혈액이 아래쪽 <b>심실</b>로 내려왔어요! 이어서 <b>심실 수축하기</b>를 눌러 보세요.");
   });
-  const cV = chip("ventricle", "심실 수축", "아래쪽 방", () => {
+  const cV = chip("ventricle", "심실 수축하기", "아래쪽 방(우심실·좌심실)", () => {
     if (judging) return;
     endHold();
     if (where !== "ventricle") {
       bad();
-      f.say("심실이 비어 있어요. <b>심방</b>을 먼저 수축시켜 혈액을 내려보내요.");
+      f.say("아직 심실에 혈액이 채워지지 않았어요. 먼저 <b>심방 수축하기</b>를 눌러 심방의 혈액을 심실로 보내 주세요.");
       return;
     }
     if (valves) {
@@ -86,15 +87,16 @@ export const g2u6HeartLab: StepRenderer = (host, step, api) => {
       where = "artery";
       seenCycle = true;
       draw();
-      f.say("심실이 수축해 혈액이 <b>동맥</b>으로만 나갔어요. 심방 쪽은 판막이 막았어요.");
+      // 다음에 할 일은 3초 뒤 check()가 상황에 맞게 알려 준다(판막을 뺀 경우를 먼저 봤으면 "판막 없이 해 보라"는 말이 틀린다)
+      f.say("두꺼운 <b>심실</b>이 강하게 수축하자 심방과 심실 사이의 판막이 딱 닫히면서 혈액이 모두 <b>동맥</b>으로 밀려 나갔어요!");
     } else {
       bad();
       where = "back";
       seenBack = true;
       host.dataset.g6Fail = "back";
       draw();
-      toast(lab, "혈액이 심방으로 거꾸로 흘렀어요", true, true);
-      f.say("판막이 없으니 혈액의 일부가 <b>심방으로 되돌아갔어요</b>. 동맥으로 나간 양이 줄었어요.");
+      toast(lab, "혈액이 심방 쪽으로 거꾸로 역류했어요!", true, true);
+      f.say("막아 주는 판막이 없자 심실이 수축할 때 혈액이 동맥으로만 가지 못하고 <b>심방으로 거꾸로</b> 밀려 올라갔어요!");
     }
     f.pips((seenCycle ? 1 : 0) + (seenBack ? 1 : 0));
     go.disabled = !(seenCycle && seenBack);
@@ -105,16 +107,16 @@ export const g2u6HeartLab: StepRenderer = (host, step, api) => {
       check();
     }, HOLD_MS);
   });
-  const cValve = chip("valve", "판막", "끼워 둠", () => {
+  const cValve = chip("valve", "판막 조건", "판막 있음", () => {
     if (judging) return;
     endHold();
     tap();
     valves = !valves;
-    cValve.sub(valves ? "끼워 둠" : "빼 둠");
+    cValve.sub(valves ? "판막 있음" : "판막 없음(제거)");
     cValve.on(!valves);
     where = "atrium";
     draw();
-    if (!seenCycle || !seenBack) f.say(valves ? "판막을 끼웠어요. 같은 차례로 <b>심방</b>부터 수축시켜 봐요." : "판막을 뺐어요. 같은 차례로 <b>심방</b>부터 수축시켜 봐요.");
+    if (!seenCycle || !seenBack) f.say(valves ? "판막을 끼웠어요. 같은 차례로 <b>심방</b>부터 수축시켜 봐요." : "심장 속 판막을 <b>없앴어요</b>. 이 상태에서 <b>심방 수축하기 → 심실 수축하기</b>를 차례로 눌러 보세요.");
   });
   go.addEventListener("click", () => {
     if (judging || go.disabled) return;
@@ -130,17 +132,17 @@ export const g2u6HeartLab: StepRenderer = (host, step, api) => {
     where = "back";
     draw(false);
     f.say("판막을 뺐을 때의 모습이에요. 혈액이 <b>심방 쪽으로</b> 거꾸로 올라갔어요.");
-    lab.judge("판막을 빼자 혈액이 <b>심방으로 거꾸로</b> 흘렀어요. 판막이 하는 일은?", [{ t: "혈액이 거꾸로 흐르지 않게 막는다", ok: true }, { t: "혈액을 더 세게 밀어낸다" }, { t: "혈액에 산소를 넣어 준다" }], "혈액을 밀어내는 것은 판막이 아니라 <b>심실의 근육</b>이에요.", () => {
+    lab.judge("판막이 없을 때 심실이 수축하자 혈액이 <b>심방으로 거꾸로</b> 흘렀어요. 이를 통해 알 수 있는 판막의 역할은 무엇인가요?", [{ t: "혈액이 거꾸로 흐르지(역류하지) 않게 막아 준다", ok: true }, { t: "스스로 수축하여 혈액을 더 세게 밀어낸다" }, { t: "혈액 속에 산소를 공급해 준다" }], "혈액을 밀어내는 것은 판막이 아니라 <b>심실의 근육</b>이에요.", () => {
       // 결론: 판막이 있어 동맥으로만 나가는 모습
       valves = true;
       where = "artery";
       draw(false);
-      lab.finish("혈액은 <b>심방 → 심실 → 동맥</b> 한 방향으로만 흘러요. 심방과 심실 사이, 심실과 동맥 사이의 <b>판막</b>이 거꾸로 흐르는 것을 막아요.");
+      lab.finish("심장에서 혈액은 <b>정맥 → 심방 → 심실 → 동맥</b>의 한 방향으로만 흘러요. 심방과 심실 사이, 심실과 동맥 사이에 있는 <b>판막</b>이 혈액이 거꾸로 흐르는 것을 막아 주기 때문이에요.");
     });
   });
   f.slot.setControls(row(cA.el, cV.el), row(cValve.el), go);
   draw();
-  f.say("위쪽 방이 <b>심방</b>, 아래쪽 방이 <b>심실</b>이에요. 심방부터 수축시켜 봐요.");
+  f.say("심장의 위쪽 방은 <b>심방</b>, 두꺼운 근육으로 된 아래쪽 방은 <b>심실</b>이에요. 먼저 <b>심방 수축하기</b> 버튼을 눌러 혈액이 어디로 이동하는지 살펴보세요.");
   return lab.cleanup;
 };
 
@@ -153,21 +155,21 @@ const PARTS = [
 ];
 let bloodSeq = 0;
 const JOBS: { ask: string; ans: string; short: string; done: string; scene: BloodJob }[] = [
-  { ask: "온몸의 세포에 <b>산소</b>를 날라야 해요. 무엇이 맡을까요?", ans: "rbc", short: "세포에 산소 나르기", done: "적혈구가 <b>산소</b>를 싣고 세포로 갔어요.", scene: "o2" },
-  { ask: "몸속에 <b>세균</b>이 들어왔어요. 무엇이 맡을까요?", ans: "wbc", short: "몸속의 세균 없애기", done: "백혈구가 세균을 <b>잡아먹었어요</b>.", scene: "germ" },
-  { ask: "상처가 나서 <b>피가 나요</b>. 무엇이 맡을까요?", ans: "plt", short: "상처의 피 멎게 하기", done: "혈소판이 모여 혈액을 굳혀 <b>피가 멎었어요</b>.", scene: "cut" },
-  { ask: "<b>영양소와 노폐물</b>을 녹여서 날라야 해요. 무엇이 맡을까요?", ans: "pla", short: "영양소와 노폐물 녹여 나르기", done: "액체인 혈장이 영양소와 노폐물을 <b>녹여 날랐어요</b>.", scene: "nut" },
+  { ask: "(1/4) 허파에서 받은 <b>산소를 온몸의 조직세포로 운반하는</b> 성분은 무엇일까요?", ans: "rbc", short: "산소 운반", done: "맞아요! 붉은색 색소(헤모글로빈)가 있는 <b>적혈구</b>가 산소를 운반해요.", scene: "o2" },
+  { ask: "(2/4) 몸속에 침입한 <b>세균을 잡아먹어 우리 몸을 지키는</b> 성분은 무엇일까요?", ans: "wbc", short: "식균 작용", done: "맞아요! 핵이 있는 큰 세포인 <b>백혈구</b>가 세균을 감싸서 없애 줘요.", scene: "germ" },
+  { ask: "(3/4) 상처가 났을 때 <b>혈액을 굳게 하여 출혈을 멈추게 하는</b> 성분은 무엇일까요?", ans: "plt", short: "혈액 응고", done: "맞아요! 작은 조각 모양인 <b>혈소판</b>이 혈액을 응고시켜 피를 멈추게 해요.", scene: "cut" },
+  { ask: "(4/4) <b>영양소와 노폐물</b>을 녹여서 운반하는 노란색 액체 성분은 무엇일까요?", ans: "pla", short: "영양소·노폐물 운반", done: "맞아요! 액체 성분인 <b>혈장</b>이 영양소와 노폐물을 녹여 운반해요.", scene: "nut" },
 ];
 const MISS: Record<string, string> = {
-  rbc: "적혈구는 산소를 나르는 일을 해요.",
-  wbc: "백혈구는 몸속에 들어온 세균을 없애는 일을 해요.",
-  plt: "혈소판은 상처가 났을 때 혈액을 굳히는 일을 해요.",
-  pla: "혈장은 액체라서 영양소와 노폐물을 녹여 날라요.",
+  rbc: "적혈구는 붉은색 헤모글로빈이 있어 <b>산소</b>를 운반하는 혈구예요.",
+  wbc: "백혈구는 몸속에 들어온 <b>세균</b>을 잡아먹는 혈구예요.",
+  plt: "혈소판은 상처가 났을 때 <b>혈액을 응고시키는</b> 작은 조각이에요.",
+  pla: "혈장은 영양소와 노폐물을 녹여서 운반하는 <b>노란색 액체</b>예요.",
 };
 
 export const g2u6BloodLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 5, cls: "g2u6x-blood", wait: "혈액을 가라앉혀 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 5, cls: "g2u6x-blood", wait: "혈액을 분리하고 네 성분의 역할을 확인해 보세요" });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "혈액이 든 시험관과, 혈액이 맡을 일의 장면");
   const ns = `g6b${++bloodSeq}`;
@@ -215,8 +217,8 @@ export const g2u6BloodLab: StepRenderer = (host, step, api) => {
           // 판정의 근거(확대한 혈구)를 다시 보인다
           finalView = true;
           draw();
-          lab.judge("확대한 혈구 가운데 수가 <b>가장 많은</b> 것은?", [{ t: "적혈구", ok: true }, { t: "백혈구" }, { t: "혈소판" }], "붉은 원반 모양의 적혈구가 가장 많아 혈액이 <b>붉게</b> 보여요.", () =>
-            lab.finish("혈액은 액체인 <b>혈장</b>과 세포인 <b>혈구</b>로 이루어져요. 적혈구는 산소 운반, 백혈구는 세균 제거, 혈소판은 혈액 응고를 맡아요."),
+          lab.judge("현미경으로 확대한 혈구 가운데 그 수가 <b>가장 많은</b> 것은 무엇인가요?", [{ t: "적혈구", ok: true }, { t: "백혈구" }, { t: "혈소판" }], "현미경 시야를 보면 붉은 원반 모양의 <b>적혈구</b>가 가장 많이 분포해 있어요. 혈액이 붉게 보이는 것도 적혈구 때문이에요.", () =>
+            lab.finish("혈액은 액체 성분인 <b>혈장</b>(영양소·노폐물 운반)과 혈구 성분인 <b>적혈구</b>(산소 운반), <b>백혈구</b>(식균 작용), <b>혈소판</b>(혈액 응고)으로 이루어져 있어요."),
           );
         }
       }, 1700);
@@ -226,11 +228,12 @@ export const g2u6BloodLab: StepRenderer = (host, step, api) => {
   const nextJob = (): void => {
     job += 1;
     state = "ask";
-    jobNote.innerHTML = `일 ${job + 1} / 4: <b>${JOBS[job].short}</b><br>이 일을 맡을 성분을 아래에서 골라요.`;
+    // 몇 번째 일인지는 도움말 앞의 "(1/4)"가 알려 준다
+    jobNote.innerHTML = `찾아야 할 역할: <b>${JOBS[job].short}</b> (아래에서 알맞은 혈액 성분을 골라 보세요)`;
     draw();
     f.say(JOBS[job].ask);
   };
-  const spin = bvBtn("main g2u6x-spin", "혈액을 가라앉히기");
+  const spin = bvBtn("main g2u6x-spin", "혈액 가라앉히기(분리하기)");
   spin.addEventListener("click", () => {
     if (settled) return;
     good();
@@ -243,7 +246,7 @@ export const g2u6BloodLab: StepRenderer = (host, step, api) => {
   });
   f.slot.setControls(spin);
   draw();
-  f.say("붉은 혈액을 가만히 두어 <b>가라앉히면</b> 층이 나뉘어요. 버튼을 눌러 봐요.");
+  f.say("시험관에 붉은 혈액이 담겨 있어요. 먼저 아래 버튼을 눌러 <b>혈액을 가라앉히면</b> 어떤 성분으로 나뉘는지 살펴보세요.");
   return lab.cleanup;
 };
 
@@ -288,7 +291,8 @@ const PATHS: Record<string, [number, number][]> = {
 
 export const g2u6LoopLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-loop", wait: "혈액이 갈 곳을 차례로 눌러 보세요" });
+  // 수정안의 "화살표를 따라"는 뺐다(이 모식도의 길에는 화살표가 없다)
+  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-loop", wait: "혈액이 이동할 곳을 차례로 눌러 보세요", tall: true });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "심장과 허파, 온몸을 잇는 혈액 순환 모식도");
   let at = 0; // ROUTE의 몇 번째에 있는가
@@ -321,16 +325,18 @@ export const g2u6LoopLab: StepRenderer = (host, step, api) => {
     host.dataset.g6At = String(at);
     host.dataset.g6Next = ended ? "" : ROUTE[at + 1];
   };
+  // 색 이름은 범례와 순환 여행 랩의 말(선홍색, 어두워졌어요)에 맞춘다(수정안의 '암적색'은 이 단원에서 쓰지 않는 이름이라 바꿨다).
+  // 다음에 누를 곳은 학생이 찾는다. 그래서 우심방과 좌심방에서 다음 곳을 알려 주던 수정안의 뒷문장은 뺐다.
   const SAY: Record<string, string> = {
-    ao: "좌심실이 수축해 혈액이 <b>대동맥</b>으로 나갔어요. 다음은 어디일까요?",
-    body: "온몸의 세포에 산소와 영양소를 주고 이산화 탄소와 노폐물을 받았어요. 혈액이 <b>어두워졌어요</b>.",
-    vc: "산소가 적은 혈액이 <b>대정맥</b>을 따라 심장으로 돌아가요.",
-    ra: "우심방에 닿았어요. 좌심실에서 여기까지가 <b>온몸순환</b>이에요.",
-    rv: "우심방에서 <b>우심실</b>로 내려왔어요. 이제 어디로 나갈까요?",
-    pa: "우심실이 수축해 혈액이 <b>폐동맥</b>으로 나갔어요.",
-    lung: "허파에서 이산화 탄소를 내보내고 산소를 받았어요. 혈액이 <b>선홍색</b>이 됐어요.",
-    pv: "산소가 많은 혈액이 <b>폐정맥</b>을 따라 심장으로 돌아가요.",
-    la: "좌심방에 닿았어요. 우심실에서 여기까지가 <b>허파순환</b>이에요.",
+    ao: "<b>좌심실</b>에서 나온 선홍색 혈액이 <b>대동맥</b>을 따라 온몸으로 뻗어 나가요. 다음은 어디로 갈까요?",
+    body: "<b>온몸의 모세혈관</b>에서 조직세포에 산소를 넘겨주자 혈액이 <b>어두워졌어요</b>!",
+    vc: "산소가 줄어든 혈액이 <b>대정맥</b>을 따라 다시 심장으로 돌아와요.",
+    ra: "<b>우심방</b>으로 돌아와 <b>온몸순환</b>을 마쳤어요!",
+    rv: "<b>우심실</b>에 혈액이 모였어요. 이제 산소를 공급받기 위해 허파로 이어진 혈관으로 나가 볼까요?",
+    pa: "심실에서 나가는 혈관인 <b>폐동맥</b>을 지나요. 동맥이지만 아직 산소를 받기 전이라 <b>어두운 혈액</b>이 흐른다는 점에 주목해 보세요!",
+    lung: "<b>허파의 모세혈관</b>에서 산소를 공급받자 혈액이 다시 밝은 <b>선홍색</b>으로 변했어요!",
+    pv: "산소를 가득 실은 선홍색 혈액이 <b>폐정맥</b>을 따라 심장으로 돌아와요.",
+    la: "<b>좌심방</b>으로 돌아와 <b>허파순환</b>도 마쳤어요!",
   };
   onStageTap(stage, (key) => {
     if (ended || !key.startsWith("n")) return;
@@ -357,10 +363,11 @@ export const g2u6LoopLab: StepRenderer = (host, step, api) => {
     if (at === ROUTE.length - 1) {
       ended = true;
       draw();
-      f.say("다시 좌심실이에요. 한 바퀴 도는 동안 심장을 <b>두 번</b> 지났어요.");
+      f.say("혈액이 <b>온몸순환</b>과 <b>허파순환</b>을 차례로 거쳐 다시 출발점인 좌심실로 돌아왔어요!");
       tm.later(() => {
-        lab.judge("<b>선홍색</b>(산소가 많은) 혈액이 흐른 혈관 두 개는?", [{ t: "폐정맥과 대동맥", ok: true }, { t: "폐동맥과 대정맥" }, { t: "폐동맥과 대동맥" }], "허파에서 산소를 받은 혈액이 <b>폐정맥</b>, 좌심방, 좌심실, <b>대동맥</b>으로 흘러요.", () =>
-          lab.finish("혈액은 <b>온몸순환</b>(좌심실 → 온몸 → 우심방)과 <b>허파순환</b>(우심실 → 허파 → 좌심방)을 번갈아 돌아요. 한 바퀴에 심장을 두 번 지나요."),
+        // 수정안의 "(동맥혈)"은 뺐다: 이 단원에서 쓰지 않는 말이고, 오답 "폐동맥과 대동맥"으로 끄는 힌트가 된다
+        lab.judge("순환 경로 중 산소가 풍부한 <b>선홍색 혈액</b>이 흐른 혈관 두 개는 무엇인가요?", [{ t: "폐정맥과 대동맥", ok: true }, { t: "폐동맥과 대정맥" }, { t: "폐동맥과 대동맥" }], "허파에서 산소를 공급받은 뒤 심장으로 들어가는 <b>폐정맥</b>과, 좌심실에서 온몸으로 나가는 <b>대동맥</b>에 선홍색 혈액이 흘러요.", () =>
+          lab.finish("혈액은 <b>좌심실 → 대동맥 → 온몸의 모세혈관 → 대정맥 → 우심방</b>으로 흐르는 <b>온몸순환</b>과, <b>우심실 → 폐동맥 → 허파의 모세혈관 → 폐정맥 → 좌심방</b>으로 흐르는 <b>허파순환</b>을 번갈아 이어 가며 끊임없이 온몸을 순환해요."),
         );
       }, 1600);
       return;

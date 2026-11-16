@@ -3,7 +3,7 @@
 //   1 처음 화면: 겨울. 눈구름 아래 두 전봇대 사이에 전깃줄이 팽팽하다. 바로 예측(정오를 매기지 않는다).
 //   2 "여름으로"를 누르면 해가 뜨고 전깃줄이 축 늘어진다. "겨울로"를 누르면 다시 팽팽해진다.
 //   3 여름을 본 뒤 겨울로 한 번 돌아오면 끝: 전봇대는 그대로인데 줄에 무슨 일이 생겼을까, 로 맺어 막대 가열 랩으로 넘긴다.
-// 도입은 "열팽창"과 "길이가 늘어난다"를 말하지 않는다(뒤의 랩이 눈금으로 보여 준다).
+// 도입은 "열팽창"을 말하지 않는다. 2026-11-16 글 다듬기부터 여름에 전깃줄이 길어졌다는 것과 "왜 길이가 달라질까"까지는 말한다(까닭은 뒤의 랩이 보여 준다).
 // 전깃줄은 이 코드가 그린다(두 이음 자리를 잇는 곡선, 늘어진 깊이만 바뀐다). 늘어짐은 잘 보이게 실제보다 크게 그렸다.
 
 import { el } from "../../../../core/dom";
@@ -12,7 +12,7 @@ import type { OpenerCtx } from "../opener";
 import { metaOf } from "./util";
 
 type Season = "winter" | "summer";
-const PICKS = ["더 축 처진다", "더 팽팽해진다", "그대로다"];
+const PICKS = ["겨울보다 더 축 처진다", "겨울보다 더 팽팽해진다", "겨울과 똑같다"];
 
 export function wire(c: OpenerCtx): void {
   const M = metaOf(c).wire;
@@ -68,7 +68,7 @@ export function wire(c: OpenerCtx): void {
         sawSummer = true;
         c.face("surprised");
         const head = pred === PICKS[0] ? "예측대로" : "예측과 달리";
-        c.say(`${head} 여름엔 <b>축 처졌어요</b>. 이번엔 겨울로 되돌려 봐요.`);
+        c.say(`${head} 무더운 여름이 되니 전깃줄이 <b>길어져서 축 처졌어요</b>! 다시 <b>겨울로</b> 버튼을 눌러 볼까요?`);
       });
     } else {
       tweenTo(M.sagWinter, () => {
@@ -77,7 +77,7 @@ export function wire(c: OpenerCtx): void {
         phase = "done";
         sync();
         haptic(HAPTIC.correct);
-        c.say("겨울엔 다시 팽팽해요. 전봇대 사이는 그대로인데, <b>전깃줄</b>에 무슨 일이 생긴 걸까요?");
+        c.say("추운 겨울이 되니 전깃줄이 다시 팽팽해졌어요! 전봇대 사이의 거리는 그대로인데 왜 계절에 따라 <b>전깃줄의 길이</b>가 달라질까요?");
         c.finish();
       });
     }
@@ -93,10 +93,11 @@ export function wire(c: OpenerCtx): void {
   sync();
 
   c.step.dataset.opnPhase = "ask";
-  c.ask("겨울의 전깃줄이에요. 한여름이 되면 이 전깃줄은 어떻게 될까요?", {
+  c.ask("추운 겨울날 팽팽하게 걸려 있는 전깃줄이에요. 무더운 한여름이 되면 이 전깃줄은 어떻게 달라질까요?", {
     choices: PICKS,
     neutral: true,
-    good: "예측 완료! <b>여름으로</b>를 눌러 확인해 보세요.",
+    // 수정안의 "아래의"는 뺐다: 여름으로, 겨울로 버튼은 무대 바로 밑(쌤의 말보다 위)에 있다
+    good: "좋아요! <b>여름으로</b> 버튼을 눌러 확인해 보세요.",
     onDone: (picked) => {
       pred = picked;
       phase = "play";

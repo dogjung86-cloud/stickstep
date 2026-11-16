@@ -100,7 +100,7 @@ export const springLab5: StepRenderer = (host, step, api) => {
     if (!held || dragging) return;
     haptic(HAPTIC.tap);
     held = false;
-    if (phase === "measure") f.say("고리가 당긴 쪽과 <b>반대로</b> 돌아갔어요. 다시 끌어서 다른 길이를 재 보세요.");
+    if (phase === "measure") f.say("손을 놓자 고리가 당긴 <b>반대쪽(왼쪽)</b>으로 돌아갔어요! 다시 끌어 다른 길이를 재 보세요.");
   });
   recBtn.addEventListener("click", () => {
     if (phase === "end" || dragging) return;
@@ -115,12 +115,12 @@ export const springLab5: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.correct);
         phase = "end";
         f.pips(4);
-        f.say("힘 센서가 정확히 <b>5 N</b>이에요. 그래프의 직선만 보고 길이를 맞혔어요.");
+        f.say(`정확히 <b>${GOAL} N(${GOAL / K} cm)</b>이에요! 그래프의 직선 규칙으로 센서 없이도 길이를 맞혔어요.`);
         paintGraph();
         tm.later(askFinal, 2200);
       } else {
         haptic(HAPTIC.wrong);
-        f.say(`열어 보니 <b>${(ext * K).toFixed(1)} N</b>이에요. 그래프에서 5 N일 때의 길이를 다시 읽어 보세요.`);
+        f.say(`확인해 보니 <b>${(ext * K).toFixed(1)} N</b>이에요. 그래프에서 세로축 <b>5 N</b>과 직선이 만나는 가로축 길이를 읽어 보세요.`);
         tm.later(() => (reveal = 0), 1600);
       }
       return;
@@ -135,12 +135,12 @@ export const springLab5: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.correct);
     f.pips(got.length);
     paintGraph();
-    if (got.length < 3) f.say(`${ext} cm에 <b>${(ext * K).toFixed(1)} N</b>. 점이 찍혔어요. 다른 길이로 ${3 - got.length}번 더 재 보세요.`);
+    if (got.length < 3) f.say(`늘어난 길이 ${ext} cm일 때 <b>${(ext * K).toFixed(1)} N</b>! 그래프에 점이 찍혔어요. 다른 길이로 <b>${3 - got.length}번 더</b> 재 보세요.`);
     else {
       phase = "goal";
       paintGraph();
-      recBtn.textContent = "센서 열어 확인하기";
-      f.say("점 세 개가 <b>직선</b> 위에 있어요. 이번에는 센서를 가렸어요. 그래프를 보고 <b>5 N</b>이 되게 늘여 보세요.");
+      recBtn.textContent = "센서 눈금 확인하기";
+      f.say("세 점이 나란히 <b>직선</b>을 이루네요! 이번엔 센서 눈금을 가렸어요. 그래프를 보고 <b>5 N</b>이 되는 길이만큼 늘여 보세요.");
       api.setCTA("5 N이 되는 길이를 맞혀 보세요", { enabled: false });
     }
   });
@@ -154,7 +154,7 @@ export const springLab5: StepRenderer = (host, step, api) => {
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("용수철이 늘어난 길이에 비례해 되당기는 힘(탄성력)이 커지는 규칙을 찾았어요!");
     f.slot.conclude("용수철이 원래 길이로 돌아가려고 되당기는 힘은 <b>늘어난 길이에 비례</b>해요. 방향은 당긴 쪽과 <b>반대</b>예요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -274,7 +274,7 @@ export const springLab5: StepRenderer = (host, step, api) => {
   });
 
   paintGraph();
-  f.say("용수철 끝의 <b>고리</b>를 끌어 원하는 만큼 늘이고 <b>기록하기</b>를 눌러요. 길이를 바꿔 세 번 재 보세요.");
+  f.say("용수철 끝 <b>고리</b>를 오른쪽으로 끌어 늘인 뒤 <b>기록하기</b>를 눌러 보세요. 서로 다른 길이로 <b>세 번</b> 기록해요.");
   api.setCTA("길이를 바꿔 세 번 재 보세요", { enabled: false });
   return () => {
     tm.clear();

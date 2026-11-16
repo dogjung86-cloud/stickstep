@@ -1,4 +1,4 @@
-// [중1 Ⅱ v5] u2l7 beakIslesLab: 「두 섬의 새는 어떻게 달라질까?」
+// [중1 Ⅱ v5] u2l7 beakIslesLab: 「두 섬의 새 무리는 어떻게 달라질까?」
 // 한 통찰: 변이가 있는 무리가 서로 다른 환경에 살면, 그 환경에 알맞은 변이를 가진 생물이 더 많이 살아남아 자손을 남긴다.
 //   그래서 무리의 구성이 달라진다(새 한 마리의 부리가 변하는 것이 아니다).
 // 무대: 섬 (가)(크고 단단한 씨앗)와 섬 (나)(나무 속 작은 곤충). 두 섬에 같은 무리(두꺼운 부리 3, 긴 부리 3, 짧은 부리 3)가 내려앉아 있다.
@@ -126,7 +126,8 @@ function stageSvg(): string {
 export const beakIslesLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as BkiStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 3, cls: "bki-stage", qCls: "bki-q", api });
+  // 세 줄 도움말을 처음부터 잡아 둔다(시간 막대를 밀 때의 글이 세 줄이다. 랩 도중에 무대가 밀리지 않게)
+  const f = bvFrame(host, { title: s.title, steps: 3, cls: "bki-stage", qCls: "bki-q", api, tall: true });
   f.stage.innerHTML = stageSvg();
   const svg = f.stage.querySelector("svg") as SVGSVGElement;
 
@@ -174,10 +175,10 @@ export const beakIslesLab: StepRenderer = (host, step, api) => {
   }
 
   const SAY = [
-    "처음 모습이에요. 두 섬에 내려앉은 새 무리는 <b>똑같았어요</b>.",
-    "먹이를 잘 먹는 새가 더 많이 살아남아 <b>새끼</b>를 낳았어요. 새끼의 부리는 어미를 닮아요.",
-    "섬 (가)에는 <b>두꺼운 부리</b>의 새가, 섬 (나)에는 <b>긴 부리</b>의 새가 점점 늘어요.",
-    "오랜 시간 뒤, 두 섬의 새 무리가 <b>서로 달라졌어요</b>.",
+    "처음 모습이에요. 두 섬에 날아온 새 무리에는 세 가지 부리 모양의 새가 <b>비슷하게 섞여 있었어요</b>.",
+    "각 섬의 먹이를 먹기에 알맞은 부리를 가진 새가 더 많이 살아남아 <b>자손(새끼)</b>을 남겼어요. 새끼의 부리는 어미를 닮아요.",
+    "세대를 거듭할수록 씨앗이 많은 섬 (가)에는 <b>두꺼운 부리</b>의 새가, 곤충이 많은 섬 (나)에는 <b>긴 부리</b>의 새가 점점 늘어나요.",
+    "오랜 세월이 흐른 뒤, 두 섬에 사는 새 무리의 부리 모양이 <b>서로 뚜렷하게 달라졌어요</b>!",
   ];
 
   const range = bvRange({
@@ -185,8 +186,8 @@ export const beakIslesLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: 3,
     value: 0,
-    label: "밀어서 시간 흐르게 하기",
-    ticks: ["처음", "오랜 시간 뒤"],
+    label: "막대를 밀어 세대(시간) 흐르게 하기",
+    ticks: ["처음", "오랜 세월이 흐른 뒤"],
     onInput: (v) => {
       if (phase !== "time" || v === cur) return;
       haptic(HAPTIC.tap);
@@ -207,32 +208,33 @@ export const beakIslesLab: StepRenderer = (host, step, api) => {
     host.dataset.bkiPhase = phase;
     range.set(3);
     render(3, false);
-    f.say("섬 (가)에는 두꺼운 부리의 새만, 섬 (나)에는 긴 부리의 새만 남았어요.");
+    f.say("오랜 세월이 흐른 뒤 섬 (가)에는 두꺼운 부리의 새만, 섬 (나)에는 긴 부리의 새만 남았어요.");
     f.slot.ask(
-      "섬 (가)에 두꺼운 부리의 새만 남은 까닭은?",
-      [{ t: "두꺼운 부리의 새가 더 많이 살아남아서", ok: true }, { t: "새들이 부리를 두껍게 바꿔서" }, { t: "다른 새들이 섬 (나)로 날아가서" }],
+      "단단한 씨앗이 많은 섬 (가)에 두꺼운 부리의 새만 남게 된 까닭은 무엇인가요?",
+      [{ t: "두꺼운 부리를 가진 새가 더 많이 살아남아 자손을 남겨서", ok: true }, { t: "새들이 씨앗을 먹으려고 스스로 부리를 두껍게 바꿔서" }, { t: "부리가 얇은 새들이 모두 섬 (나)로 날아가서" }],
       (ok) => api.recordQuiz(ok),
       // 이유는 어느 오답을 골랐든, 맞혔든 같은 글이 보인다. 한 오답만 받아치지 않게 쓴다(2026-11-11 눈검수)
-      { why: "<b>씨앗을 잘 깨는 새</b>가 살아남아 새끼를 낳았어요. 부리를 바꾸거나 떠난 새는 없어요.", onNext: ask2 },
+      { why: "단단한 <b>씨앗을 깨 먹기에 알맞은 두꺼운 부리</b>의 새가 더 잘 살아남아 자손을 남겼기 때문이에요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.pips(2);
-    f.say("이번에는 새 한 마리 한 마리를 떠올려 봐요. 부리가 달라진 새가 있었나요?");
+    f.say("이번에는 새 한 마리 한 마리를 떠올려 보세요. 살아 있는 동안 부리 모양이 바뀐 새가 있었나요?");
     f.slot.ask(
-      "그동안 새 한 마리 한 마리의 부리 모양은?",
-      // 새는 자라면서 부리도 커지므로 '태어날 때', '나이가 들수록' 같은 말은 쓰지 않는다(타고난 모양이 먹이에 맞춰 바뀌지 않는다는 것만 묻는다)
-      [{ t: "타고난 모양 그대로였다", ok: true }, { t: "먹이에 맞게 조금씩 변했다" }, { t: "많이 쓸수록 모양이 달라졌다" }],
+      "세대가 흐르는 동안 새 한 마리 한 마리의 부리 모양은 어떠했나요?",
+      // 새는 자라면서 부리도 커지므로 '태어날 때', '나이가 들수록' 같은 말은 쓰지 않는다(타고난 모양이 먹이에 맞춰 바뀌지 않는다는 것만 묻는다).
+      // 2026-11-16 글 다듬기: 수정안의 "태어날 때 지닌 모양"도 같은 까닭으로 "타고난 모양"을 지켰다(보기와 이유 둘 다)
+      [{ t: "타고난 모양 그대로였다", ok: true }, { t: "먹이에 맞춰 살아가는 동안 조금씩 변했다" }, { t: "부리를 많이 쓸수록 모양이 달라졌다" }],
       () => undefined,
-      { why: "새 한 마리의 부리는 타고난 모양 그대로였어요. 달라진 것은 <b>무리를 이루는 새</b>예요.", onNext: finish },
+      { why: "새 한 마리의 부리는 타고난 모양 그대로예요. 달라진 것은 개체의 부리가 아니라 <b>무리 안에서 어떤 부리의 새가 살아남아 늘어났는가</b>예요.", onNext: finish },
     );
   }
   function finish(): void {
     phase = "done";
     host.dataset.bkiPhase = phase;
     f.pips(3);
-    f.say("두 섬의 새가 달라진 까닭을 알아냈어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("환경에 알맞은 변이를 가진 새가 <b>더 많이 살아남아 자손을 남겨요</b>. 그래서 두 섬의 무리가 달라졌어요.");
+    f.say("먹이 환경에 알맞은 변이를 가진 새가 살아남아 자손을 남기면서 두 섬의 새 무리가 달라졌어요!");
+    f.slot.conclude("같은 종류의 생물이라도 조금씩 다른 특징(변이)을 가지고 있어요. 그중 <b>사는 환경에 알맞은 변이를 가진 생물이 더 많이 살아남아 자손을 남기면서</b> 오랜 세월 뒤 서로 다른 모습의 무리가 돼요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
@@ -240,9 +242,9 @@ export const beakIslesLab: StepRenderer = (host, step, api) => {
   f.slot.setControls(range.el);
   render(0, false);
   host.dataset.bkiPhase = phase;
-  f.say("부리 모양이 조금씩 다른 새 한 무리가 <b>두 섬</b>에 나뉘어 살게 됐어요. 먼저 짐작해 봐요.");
+  f.say("부리 모양이 조금씩 다른 새 무리가 먹이가 다른 <b>두 섬</b>에 나뉘어 살게 됐어요. 먼저 결과를 예측해 볼까요?");
   f.slot.ask(
-    "씨앗이 많은 섬 (가)에는 어떤 새가 많아질까요?",
+    "크고 단단한 씨앗이 많은 섬 (가)에는 오랜 세월 뒤 어떤 새가 많아질까요?",
     [{ t: "두꺼운 부리의 새", ok: true }, { t: "긴 부리의 새" }, { t: "짧은 부리의 새" }],
     () => undefined,
     {
@@ -252,10 +254,10 @@ export const beakIslesLab: StepRenderer = (host, step, api) => {
         phase = "time";
         host.dataset.bkiPhase = phase;
         f.slot.showControls();
-        f.say("이제 아래 막대를 밀어 <b>시간</b>을 흘려 보내세요. 두 섬을 함께 지켜봐요.");
+        f.say("이제 아래 막대를 오른쪽으로 밀어 <b>오랜 세월</b>이 흐르게 해 보세요. 두 섬의 새 무리가 어떻게 달라지는지 지켜보세요.");
       },
     },
   );
-  api.setCTA("시간을 끝까지 흘려 보내세요", { enabled: false });
+  api.setCTA("막대를 오른쪽 끝까지 밀어 보세요", { enabled: false });
   return () => tm.clear();
 };

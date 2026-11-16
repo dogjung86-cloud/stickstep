@@ -9,7 +9,7 @@
 //   학생이 정하는 것: 음식물이 닿은 곳마다 그 소화액이 분해할 영양소(여럿 또는 '없음'). 입(침), 위(위액), 작은창자(쓸개즙, 이자액) 네 번.
 //   실패하는 길: 분해되지 않는 영양소를 고르면 그 칸에 소화효소가 오지 않고 상자에 '그대로'가 붙는다.
 //               쓸개즙에 지방을 고르면 지방이 작은 방울로 나뉘기만 하고 아직 지방인 것이 보인다(쓸개즙에는 소화효소가 없다).
-//               분해되는 것을 빠뜨리면 그 단추에 점선과 '분해됐어요'가 붙는다. 고른 것은 채점하지 않는다(처음 만나는 소화액이라 예측이다).
+//               분해되는 것을 빠뜨리면 그 단추에 점선과 '화학적 분해됨'이 붙는다. 고른 것은 채점하지 않는다(처음 만나는 소화액이라 예측이다).
 //   판정 둘(채점): ① 작은창자에 오기 전에 분해되기 시작한 영양소(입과 위 두 줄을 함께 읽는다)
 //                ② 위에서 녹말이 그대로였던 까닭(소화효소마다 분해하는 영양소가 정해져 있다. 오답 둘은 무대가 지운다:
 //                   위에서도 소화효소(펩신)가 나왔고, 녹말은 작은창자에서 다시 분해됐다).
@@ -58,7 +58,7 @@ interface Stop {
 const STOPS: Stop[] = [
   { key: "mouth", juice: "침", color: "#63E6BE", y: 32, tags: ["아밀레이스", null, null], cut: [true, false, false], from: [61, 31], focus: ["mouth", "gland"], labels: ["mouth", "gland"] },
   { key: "stomach", juice: "위액", color: "#C9A0F0", y: 78, tags: [null, "펩신", null], cut: [false, true, false], from: null, focus: ["stomach"], labels: ["stomach"] },
-  { key: "bile", juice: "쓸개즙", color: "#9BD15F", y: 118, tags: [null, null, "효소 없음"], cut: [false, false, false], from: PAPILLA, focus: ["gall", "liver"], labels: ["liver", "gall", "small"] },
+  { key: "bile", juice: "쓸개즙", color: "#9BD15F", y: 118, tags: [null, null, "소화효소 없음"], cut: [false, false, false], from: PAPILLA, focus: ["gall", "liver"], labels: ["liver", "gall", "small"] },
   { key: "pancreas", juice: "이자액", color: "#FF9F7A", y: 140, tags: ["아밀레이스", "트립신", "라이페이스"], cut: [true, true, true], from: PAPILLA, focus: ["pancreas"], labels: ["liver", "gall", "pancreas", "small"] },
 ];
 const PILL_X = 88; // 소화액 이름표의 가운데(몸 그림의 오른쪽 가장자리)
@@ -161,7 +161,7 @@ function lanePill(x: number, y: number, t: string, color: string, dashed = false
 
 export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-organ", wait: "음식물을 따라 끝까지 가 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-organ", wait: "음식물을 따라 소화 기관 끝까지 이동해 보세요", tall: true });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "앞에서 본 몸속 소화기관과 녹말, 단백질, 지방의 세 칸. 소화액이 나오는 높이에서 칸으로 화살표가 뻗는다");
 
@@ -272,29 +272,34 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
       c.el.classList.remove("ro");
       mark(c, "");
     });
+    // '없음'이 무엇이 없다는 뜻인지 처음부터 둘째 줄에 적는다(수정안의 대안. 첫 안 "분해되는 것 없음"은 네 칸 단추에 들어가지 않는다)
+    chips[3].sub("효소 분해 없음");
   };
   chips.forEach((c) => c.el.classList.add("pk"));
-  const main = bvBtn("main g2u6x-mix", "침 섞기");
+  const main = bvBtn("main g2u6x-mix", "침 섞어 보기");
 
+  // 이 랩은 섞기 전에 고른다(예측). 그래서 도착 안내는 "골라 보세요"로 맺는다(수정안의 "섞어 보세요"는 고르기 전에 단추가 잠겨 있어 맞지 않는다).
   const PROMPT: Record<StopKey, string> = {
-    mouth: "음식물이 입에 들어왔어요. <b>침</b>이 분해할 영양소를 모두 골라요.",
-    stomach: "위에 닿았어요. <b>위액</b>이 분해할 영양소를 모두 골라요.",
-    bile: "작은창자에 닿자 간에서 만든 <b>쓸개즙</b>이 쓸개에서 나와요. 분해할 영양소를 골라요.",
-    pancreas: "작은창자에 이자에서 만든 <b>이자액</b>도 나와요. 분해할 영양소를 모두 골라요.",
+    mouth: "<b>입</b>안에 음식물이 들어왔어요. 침을 섞으면 세 가지 영양소 중 무엇이 분해될지 골라 보세요.",
+    stomach: "음식물이 식도를 지나 <b>위</b>에 도착했어요. 위액을 섞으면 어떤 영양소가 분해될까요?",
+    bile: "<b>작은창자</b>로 내려왔어요! 먼저 간에서 만들어져 쓸개에 저장되었다가 분비되는 <b>쓸개즙</b>이 분해할 영양소를 골라 보세요.",
+    pancreas: "이번에는 이자에서 분비된 <b>이자액</b>과 작은창자의 소화효소가 작용할 차례예요. 분해할 영양소를 모두 골라 보세요.",
   };
+  // 이자액을 섞은 직후에는 아직 엿당과 더 작은 조각이다(포도당과 아미노산은 잠시 뒤 "소화가 끝나"에서). 그래서 이자액의 RIGHT는 예전 글 그대로 둔다.
   const RIGHT: Record<StopKey, string> = {
-    mouth: "맞아요. 침 속 <b>아밀레이스</b>가 녹말을 <b>엿당</b>으로 분해하기 시작했어요.",
-    stomach: "맞아요. 위액 속 <b>펩신</b>이 염산의 도움을 받아 단백질을 분해했어요.",
-    bile: "맞아요. 쓸개즙에는 <b>소화효소가 없어요</b>. 지방을 작은 방울로 나눠 도와요.",
+    mouth: "맞아요! 침 속의 소화효소인 <b>아밀레이스</b>가 <b>녹말</b>을 <b>엿당</b>으로 분해하기 시작했어요. 이제 위로 보내 볼까요?",
+    stomach: "맞아요! 위액 속의 소화효소인 <b>펩신</b>이 염산의 도움을 받아 <b>단백질</b>을 분해했어요.",
+    bile: "맞아요! <b>쓸개즙</b>에는 소화효소가 들어 있지 않아 영양소를 직접 분해하지는 못하고, <b>지방</b>을 작은 방울로 섞이게 도와줘요.",
     pancreas: "맞아요. 이자액에는 세 영양소를 분해하는 <b>소화효소</b>가 다 들어 있어요.",
   };
+  // 섞은 뒤에는 단추를 다시 고를 수 없다(ro). 그래서 "없음을 골라 보세요", "남은 영양소도 눌러 보세요" 같은 다시 고르라는 말은 뺐다.
   const WRONG: Record<StopKey, string> = {
-    mouth: "침 속 <b>아밀레이스</b>는 녹말만 분해해요. 녹말 일부가 <b>엿당</b>이 됐어요.",
-    stomach: "위액 속 <b>펩신</b>은 단백질만 분해해요. 녹말과 지방은 그대로예요.",
-    bile: "쓸개즙에는 <b>소화효소가 없어요</b>. 지방을 작은 방울로 나눠 소화를 도울 뿐이에요.",
-    pancreas: "이자액의 <b>아밀레이스, 트립신, 라이페이스</b>가 세 영양소를 모두 분해해요.",
+    mouth: "침을 섞었을 때 사슬이 끊어진 영양소 칸을 다시 살펴보세요. 입에서는 <b>녹말</b>만 엿당으로 분해돼요.",
+    stomach: "위에서는 <b>단백질</b> 사슬만 끊어졌어요. 녹말과 지방은 위에서 분해되지 않고 그대로 지나가요.",
+    bile: "쓸개즙에는 <b>소화효소가 없어요</b>. 지방이 작은 방울로 흩어졌을 뿐 다른 물질로 분해된 것은 아니에요.",
+    pancreas: "이자액에는 세 가지 영양소를 분해하는 효소가 모두 들어 있어서 <b>녹말·단백질·지방</b>이 모두 분해돼요.",
   };
-  const NEXT_LABEL: Record<StopKey, string> = { mouth: "삼켜서 위로 보내기", stomach: "작은창자로 보내기", bile: "이자액도 알아보기", pancreas: "큰창자로 보내기" };
+  const NEXT_LABEL: Record<StopKey, string> = { mouth: "식도를 거쳐 위로 보내기", stomach: "작은창자로 보내기", bile: "다음: 이자액 섞어 보기", pancreas: "큰창자로 보내기" };
 
   const toStop = (k: number): void => {
     at = k;
@@ -303,7 +308,7 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
     marks = [false, false, false];
     drops = [];
     resetChips();
-    main.textContent = `${STOPS[k].juice} 섞기`;
+    main.textContent = `${STOPS[k].juice} 섞어 보기`;
     main.disabled = true;
     showRoute();
     f.say(PROMPT[STOPS[k].key]);
@@ -351,11 +356,11 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
         chips.forEach((c) => c.on(false));
         st.cut.forEach((c, i) => {
           const p = pick.has(i);
-          chips[i].sub(c ? "분해됐어요" : st.key === "bile" && i === 2 ? "방울만 작아져요" : "그대로예요");
+          chips[i].sub(c ? "화학적 분해됨" : st.key === "bile" && i === 2 ? "방울만 작아짐" : "변화 없음");
           mark(chips[i], p ? (c ? "hit" : "miss") : c ? "lack" : "");
           marks[i] = p && !c;
         });
-        chips[3].sub(none ? "분해 없어요" : "분해 있어요");
+        chips[3].sub(none ? "효소 분해 없음" : "분해 일어남");
         mark(chips[3], pick.has(3) ? (none ? "hit" : "miss") : none ? "lack" : "");
         const wrong = chips.filter((c) => c.el.classList.contains("miss") || c.el.classList.contains("lack")).length;
         host.dataset.g6Miss = String(wrong);
@@ -443,8 +448,8 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
         busy = false;
         water = 1;
         draw();
-        f.say("큰창자에서는 소화가 거의 일어나지 않고 남은 <b>물</b>이 흡수돼요.");
-        main.textContent = "결과 정리하기";
+        f.say("마지막으로 <b>큰창자</b>에 도착했어요! 큰창자에서는 소화액이 분비되지 않고 주로 남아 있는 <b>물</b>이 흡수돼요. 이제 소화 결과를 정리해 볼까요?");
+        main.textContent = "소화 결과 정리하기";
         main.disabled = false;
       });
     } else if (at === 4) {
@@ -467,17 +472,18 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
   // 판정. 무대에는 네 곳의 소화효소 이름표와 지금 모습(마지막 산물)이 남아 있다.
   const ask = (): void => {
     lab.judge(
-      "작은창자에 오기 <b>전에</b> 분해되기 시작한 영양소는?",
+      "음식물이 작은창자에 도달하기 <b>전에</b>(입과 위에서) 먼저 분해되기 시작한 영양소는 무엇인가요?",
       [{ t: "녹말과 단백질", ok: true }, { t: "녹말뿐" }, { t: "녹말, 단백질, 지방 모두" }],
-      "녹말은 <b>입</b>에서, 단백질은 <b>위</b>에서 분해되기 시작했어요.",
+      "녹말은 <b>입</b>에서, 단백질은 <b>위</b>에서 먼저 분해가 시작되었고, 지방은 <b>작은창자</b>에 와서야 처음으로 분해되었어요.",
       () => {
         f.say("이번에는 <b>위</b>의 줄을 봐요.");
+        // 이유 글은 예전 한 줄 그대로 둔다: 첫 보기가 길어 정답 카드가 두 줄이 되어, 수정안의 세 줄 이유를 더하면 조작 칸(208px)을 넘는다
         lab.judge(
-          "<b>위</b>에서 녹말이 그대로였던 까닭은?",
-          [{ t: "위액에 녹말을 분해하는 효소가 없어서", ok: true }, { t: "위에서는 소화효소가 나오지 않아서" }, { t: "녹말은 입에서 소화가 끝나서" }],
+          "<b>위</b>에서 단백질만 분해되고 녹말은 그대로였던 까닭은 무엇인가요?",
+          [{ t: "소화효소마다 분해하는 영양소의 종류가 정해져 있어서", ok: true }, { t: "위에서는 소화액이 전혀 분비되지 않아서" }, { t: "녹말이 이미 입에서 남김없이 분해되어서" }],
           "소화효소마다 분해하는 영양소가 <b>정해져</b> 있어요.",
           () =>
-            lab.finish("녹말은 <b>입과 작은창자</b>, 단백질은 <b>위와 작은창자</b>, 지방은 <b>작은창자</b>에서 분해돼요. 쓸개즙은 소화효소 없이 지방의 소화를 돕고, 소화가 끝나면 포도당, 아미노산, 지방산과 모노글리세라이드가 돼요."),
+            lab.finish("소화효소의 작용으로 <b>녹말</b>은 입과 작은창자에서 <b>포도당</b>으로, <b>단백질</b>은 위와 작은창자에서 <b>아미노산</b>으로, <b>지방</b>은 쓸개즙의 도움을 받아 작은창자에서 <b>지방산과 모노글리세라이드</b>로 최종 분해돼요."),
         );
       },
     );

@@ -34,8 +34,8 @@ export function gasBlanket(c: OpenerCtx): void {
     c.controls.appendChild(b);
     return b;
   };
-  const up = mk("up", "늘리기", "기체를 더 뿜어요", 1);
-  const down = mk("down", "줄이기", "기체를 덜어 내요", -1);
+  const up = mk("up", "늘리기", "기체가 더 나와요", 1);
+  const down = mk("down", "줄이기", "기체를 줄여요", -1);
 
   function paint(): void {
     for (let i = MIN; i <= MAX; i++) c.stage.classList.toggle(`lv-${i}`, lv === i);
@@ -61,7 +61,7 @@ export function gasBlanket(c: OpenerCtx): void {
       sawMax = true;
       c.face("surprised");
       paint();
-      c.say("빠져나가던 <b>열</b>이 담요에 막혀요. 이번엔 <b>줄여</b> 보세요.");
+      c.say("우주로 빠져나가던 <b>열</b>이 기체 층에 막혀 되돌아와요! 이번에는 기체를 <b>줄여</b> 보세요.");
       return;
     }
     if (d < 0 && sawMax) {
@@ -69,7 +69,7 @@ export function gasBlanket(c: OpenerCtx): void {
       paint();
       c.face("smile");
       haptic(HAPTIC.correct);
-      c.say(`${pred.verdict} 담요가 두꺼울수록 더워져요. 이 기체가 <b>온실 기체</b>예요. 더 두꺼워지지 않게 하려면 어떻게 할까요?`);
+      c.say(`${pred.verdict} 기체 층이 두꺼워질수록 지구의 온도가 올라가요. 이 기체가 바로 <b>온실 기체</b>예요. 기체 층이 더 두꺼워지지 않게 하려면 어떻게 해야 할까요?`);
       c.finish();
       return;
     }
@@ -79,10 +79,12 @@ export function gasBlanket(c: OpenerCtx): void {
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
   paint();
-  c.ask("굴뚝에서 나온 기체가 지구를 담요처럼 덮어요. 담요가 두꺼워지면 지구의 온도는?", {
+  c.ask("굴뚝에서 나온 기체가 지구를 담요처럼 감싸고 있어요. 이 기체 층이 두꺼워지면 지구의 온도는 어떻게 될까요?", {
     choices: PICKS.map((p) => p.t),
     neutral: true,
-    good: "예측 완료! 안 보이는 기체를 그려 놓았어요. <b>늘려</b> 보세요.",
+    // 기체 층은 지구를 두른 회색 고리로 그렸다(주황은 빠져나가는 열 화살표의 색이다. qa/sketch/scenes/intro-u1.mjs blanketBase).
+    // 늘리기, 줄이기 버튼 줄은 아래 칸의 맨 위(무대 바로 아래)에 있어 이 말풍선보다 위다.
+    good: "예측 완료! 눈에 보이지 않는 기체를 회색 층으로 나타냈어요. 위 버튼을 눌러 기체를 <b>늘려</b> 보세요.",
     onDone: (picked) => {
       pred = PICKS.find((p) => p.t === picked) ?? PICKS[0];
       phase = "play";

@@ -44,17 +44,17 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
   const read = el(
     "div",
     { class: "u7x-read" },
-    el("div", { class: "u7x-read-row sun" }, el("span", { text: "태양 쪽" }), sunRow, el("i", { text: "햇빛에 묻혀 안 보여요" })),
-    el("div", { class: "u7x-read-row night" }, el("span", { text: "한밤중 남쪽" }), nightRow, el("i", { text: "잘 보여요" })),
+    el("div", { class: "u7x-read-row sun" }, el("span", { text: "태양 쪽(낮)" }), sunRow, el("i", { text: "햇빛에 가려 안 보여요" })),
+    el("div", { class: "u7x-read-row night" }, el("span", { text: "한밤중 남쪽" }), nightRow, el("i", { text: "밤하늘에 잘 보여요" })),
   );
   const goals = u7Goals(2, [
-    { id: "night", name: "궁수자리가 한밤중에", sub: "몇 월일까요" },
-    { id: "sun", name: "궁수자리가 태양 쪽에", sub: "몇 월일까요" },
+    { id: "night", name: "한밤중에 보이는 궁수자리", sub: "몇 월에 잘 보일까요?" },
+    { id: "sun", name: "태양 쪽에 있는 궁수자리", sub: "몇 월에 안 보일까요?" },
   ]);
   f.slot.setControls(read, goals.el);
-  f.say("<b>지구</b>를 끌어 태양 둘레를 돌려 보세요. 아래 두 줄이 어떻게 바뀌나요?");
+  f.say("<b>지구</b>를 끌어 태양 주위로 돌려 보세요. 달마다 보이는 별자리가 어떻게 달라지나요?");
   f.pips(1);
-  api.setCTA("지구를 옮겨 별자리를 찾아요", { enabled: false });
+  api.setCTA("지구를 공전시켜 궁수자리를 찾아보세요", { enabled: false });
 
   let earthA = Math.PI; // 1월 자리
   let month = 0;
@@ -74,20 +74,20 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
   function conclude(): void {
     setPhase("done");
     f.pips(4);
-    f.say("지구를 더 돌려 보며 다른 달의 별자리도 확인해 보세요.");
-    f.slot.conclude("지구가 태양 둘레를 <b>1년에 한 바퀴</b> 돌아요(공전). 그래서 태양 쪽 별자리와 <b>한밤중에 보이는 별자리</b>가 달마다 바뀌어, 계절마다 보이는 별자리가 달라져요.");
+    f.say("지구가 태양 주위를 공전하기 때문에 계절마다 밤하늘에서 보이는 별자리가 달라져요!");
+    f.slot.conclude("지구가 태양 주위를 <b>1년에 한 바퀴씩 공전</b>하기 때문에, 달마다 태양 쪽 별자리와 <b>한밤중에 보이는 별자리</b>가 달라져 계절에 따라 보이는 별자리가 바뀌어요.");
     api.enableCTA(doneCta);
   }
 
   function ask(): void {
     setPhase("ask");
     f.pips(3);
-    f.say("7월에는 한밤중에 보이던 궁수자리가 1월에는 태양 쪽에 있어요.");
+    f.say("7월에는 한밤중에 잘 보이던 궁수자리가 1월에는 태양과 같은 방향에 놓였어요.");
     f.slot.ask(
-      "1월에 <b>궁수자리를 볼 수 없는</b> 까닭은 무엇일까요?",
-      [{ t: "태양과 같은 쪽에 있어서", ok: true }, { t: "지구 그림자에 가려서" }, { t: "별자리가 사라져서" }],
+      "1월에 밤하늘에서 <b>궁수자리를 볼 수 없는</b> 까닭은 무엇일까요?",
+      [{ t: "태양과 같은 방향에 있어 햇빛에 가려지므로", ok: true }, { t: "지구 그림자에 가려 빛을 못 받으므로" }, { t: "겨울에는 별자리가 우주에서 사라지므로" }],
       (ok) => api.recordQuiz(ok),
-      { why: "태양 쪽 별자리는 낮 하늘에 떠서 햇빛에 묻혀요.", onNext: conclude },
+      { why: "태양과 같은 방향에 있는 별자리는 낮 하늘에 함께 떠 있어 밝은 햇빛에 가려 보이지 않아요.", onNext: conclude },
     );
   }
 
@@ -112,7 +112,7 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
       f.stage.classList.add("u7x-fallback");
       api.recordQuiz(true);
       conclude();
-      f.say("이 기기에서는 입체 무대를 켤 수 없어요. 아래 글로 알아 두세요.");
+      f.say("이 기기에서는 3D 화면을 열 수 없어 핵심 내용으로 바로 정리할게요.");
       return;
     }
     const { scene, camera } = st;
@@ -254,7 +254,7 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
     if (phase === "free" && moved > 50) {
       setPhase("night");
       f.pips(2);
-      f.say("이제 <b>궁수자리</b>가 한밤중 남쪽 하늘에 오도록 지구를 옮겨 보세요.");
+      f.say("달마다 별자리가 바뀌네요! 먼저 <b>궁수자리</b>가 <b>한밤중 남쪽 하늘</b>에서 보이도록 지구를 옮겨 보세요.");
     }
     const want = phase === "night" ? nightK === TARGET : phase === "sun" ? month === TARGET : false;
     hold = want ? hold + dt * 16.7 : 0;
@@ -262,13 +262,14 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
       hold = 0;
       haptic(HAPTIC.ctaUnlock);
       if (phase === "night") {
-        goals.done("night", `${month + 1}월이에요`);
+        goals.done("night", `${month + 1}월 (한밤중 남쪽)`);
         setPhase("sun");
-        f.say(`${month + 1}월이에요. 이번에는 궁수자리가 <b>태양 쪽</b>에 오도록 옮겨 보세요.`);
+        // 여기서 month + 1은 늘 7이다(궁수자리가 한밤중 남쪽에 오는 달)
+        f.say(`맞아요, ${month + 1}월이에요! 이번에는 <b>궁수자리</b>가 <b>태양 쪽</b>에 놓이도록 지구를 옮겨 보세요.`);
       } else {
-        goals.done("sun", `${month + 1}월이에요`);
+        goals.done("sun", `${month + 1}월 (태양 쪽)`);
         setPhase("wait");
-        f.say("1월이에요. 반년 만에 궁수자리는 <b>볼 수 없는 별자리</b>가 됐어요.");
+        f.say("1월이 되자 궁수자리가 태양 쪽에 놓여 <b>밤하늘에서 볼 수 없게</b> 되었어요!");
         window.setTimeout(() => !disposed && ask(), 1500);
       }
     }

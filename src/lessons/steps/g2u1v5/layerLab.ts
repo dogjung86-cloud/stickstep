@@ -1,4 +1,4 @@
-// [중2 Ⅰ v5] g2u1l2 층 쌓기 랩: 「세 액체는 어떤 차례로 쌓일까요?」
+// [중2 Ⅰ v5] g2u1l2 층 쌓기 랩: 「세 액체는 어떤 순서로 층을 이룰까요?」
 // 책의 해 보기를 손으로 한다: 컵에 물, 식용유, 에탄올을 넣어 층을 만들고 동전과 얼음을 넣어 멈추는 자리를 본다.
 // 학생이 정하는 것: 세 액체를 붓는 차례, 동전과 얼음이 멈출 자리의 예측.
 // 실패하는 길: 물과 에탄올은 서로 섞인다. 둘이 맞닿게 부으면(식용유가 사이를 막지 못하면) 섞여서 두 층만 남는다.
@@ -83,7 +83,7 @@ export const g2u1LayerLab: StepRenderer = (host, step, api) => {
     poured.clear();
     pourBtns.forEach((b) => (b.disabled = false));
     paint();
-    f.say("물과 에탄올은 서로 잘 섞여요. 둘이 <b>맞닿지 않게</b> 붓는 차례를 다시 정해 보세요.");
+    f.say("물과 에탄올은 서로 잘 섞여요. 두 액체가 <b>맞닿지 않게</b> 식용유를 사이에 넣어 보세요.");
     pourPhase();
   });
 
@@ -126,13 +126,13 @@ export const g2u1LayerLab: StepRenderer = (host, step, api) => {
       if (stack.join("") === "woe") {
         haptic(HAPTIC.correct);
         f.pips(1);
-        f.say("세 층이 됐어요. 아래부터 <b>물, 식용유, 에탄올</b>. 숫자는 밀도(g/cm³)예요.");
+        f.say("세 층으로 나뉘었어요! 아래부터 <b>물, 식용유, 에탄올</b> 순서예요. 옆의 숫자는 밀도(g/cm³)예요.");
         tm.later(dropPhase, 900);
       } else {
         haptic(HAPTIC.wrong);
         tries += 1;
         host.dataset.g2u1Fail = String(tries);
-        f.say("층이 <b>둘뿐</b>이에요. 물과 에탄올이 섞였기 때문이에요. 컵을 비우고 다시 해 봐요.");
+        f.say("물과 에탄올이 섞여서 <b>두 층</b>만 생겼어요. 컵을 비우고 다른 순서로 부어 보세요.");
         f.slot.setControls(bReset);
         api.setCTA("컵을 비우고 다시 부어 보세요", { enabled: false });
         lab.todo("[data-k='reset']");
@@ -153,7 +153,7 @@ export const g2u1LayerLab: StepRenderer = (host, step, api) => {
       if (dropped.has(o)) return;
       haptic(HAPTIC.tap);
       const ob = OBJ[o];
-      f.say(`${ob.name}의 밀도는 <b>${ob.d}</b>예요. 컵에 넣으면 어디에서 멈출지 먼저 예측해 보세요.`);
+      f.say(`${ob.name}의 밀도는 <b>${ob.d} g/cm³</b>예요. 컵에 넣으면 어디에 자리 잡을지 예측해 보세요.`);
       g1Predict(lab, `<b>${ob.name}</b>을 넣으면 어디에서 멈출까요?`, ["바닥까지 가라앉는다", "식용유와 물 사이에 멈춘다", "맨 위에 뜬다"], (picked) => {
         dropped.add(o);
         dropBtns[o].disabled = true;
@@ -170,7 +170,7 @@ export const g2u1LayerLab: StepRenderer = (host, step, api) => {
     });
   });
   function dropPhase(): void {
-    if (!dropped.size) f.say("이번에는 <b>동전</b>과 <b>얼음</b>을 넣어 볼 거예요. 넣을 것을 골라 보세요.");
+    if (!dropped.size) f.say("이번에는 세 층으로 나뉜 컵에 <b>동전</b>과 <b>얼음</b>을 넣어 보세요.");
     f.slot.setControls(g1Row(dropBtns.coin, dropBtns.ice));
     api.setCTA("동전과 얼음을 넣어 보세요", { enabled: false });
     lab.todo(dropped.has("coin") ? "[data-k='ice']" : "[data-k='coin']");
@@ -179,13 +179,14 @@ export const g2u1LayerLab: StepRenderer = (host, step, api) => {
     lab.judge(
       "얼음(0.92)이 <b>식용유 아래, 물 위</b>에 멈춘 까닭은?",
       [{ t: "식용유보다 밀도가 크고 물보다 작아서", ok: true }, { t: "세 액체보다 밀도가 작아서" }, { t: "차가워서 식용유보다 무거워져서" }],
-      "0.91 &lt; 0.92 &lt; 1.00. 식용유에서는 가라앉고 물에서는 떠요.",
+      "밀도가 식용유(0.91) &lt; 얼음(0.92) &lt; 물(1.00) 순서여서 식용유 아래로 가라앉고 물 위에 떠요.",
       () => lab.finish("밀도가 <b>작은</b> 물질은 위로 뜨고 <b>큰</b> 물질은 아래로 가라앉아요. 멈춘 자리를 보면 밀도의 순서를 알 수 있어요."),
     );
   }
 
   paint();
-  f.say("빈 컵에 <b>물, 식용유, 에탄올</b>을 부어 세 층을 만들 거예요. 붓는 차례를 정해 보세요.");
+  // 붓는 차례는 학생이 정한다(실패하는 길이 있는 랩). 수정안의 "차례로 부어"는 적힌 차례(정답 차례)를 따르라는 말로 읽혀 "하나씩"으로 썼다.
+  f.say("빈 컵에 <b>물, 식용유, 에탄올</b>을 하나씩 부어 세 층으로 나누어 보세요.");
   pourPhase();
   return lab.cleanup;
 };

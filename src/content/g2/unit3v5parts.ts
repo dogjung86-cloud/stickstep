@@ -38,9 +38,9 @@ const term = (o: { title: string; lead: string; blocks: Block[]; cta?: string })
 
 // ══════════ g2u3l1 빛의 반사 ══════════
 const L1: G2U3Part = {
-  intro: opener({ title: "거울로 그늘진 마을을 밝힐 수 있을까요?", scene: "g2u3-town", wait: "거울을 기울여 보세요", cta: "실험실 열기" }),
+  intro: opener({ title: "거울로 그늘진 마을을 밝힐 수 있을까요?", scene: "g2u3-town", wait: "거울을 기울여 광장에 햇빛을 보내 보세요", cta: "실험실로 이동하기" }),
   body: [
-    reflectLab({ title: "반사한 빛은 어느 쪽으로 갈까요?", cta: "용어 정리하기" }),
+    reflectLab({ title: "평면거울에 부딪힌 빛은 어느 방향으로 나아갈까요?", cta: "용어 정리하기" }),
     term({
       title: "반사에<br>이름을 붙여요",
       lead: "방금 레이저를 세 번 기울여 두 각을 쟀죠? 그때 본 빛과 선, 각을 하나씩 알아봐요.",
@@ -54,7 +54,7 @@ const L1: G2U3Part = {
       ],
       cta: "다음 실험으로",
     }),
-    roughLab({ title: "거친 면에서도 두 각은 같을까요?", cta: "정리하기" }),
+    roughLab({ title: "거친 면에서도 입사각과 반사각은 같을까요?", cta: "정리하기" }),
     recap({
       title: "빛의 반사,<br>카드 두 장으로 정리",
       narrator: "레이저를 어느 각으로 기울여도 두 각은 <b>같았어요</b>. 거친 면에서도 빛줄기 하나하나는 같은 규칙을 따랐죠.",
@@ -113,9 +113,9 @@ const L1: G2U3Part = {
 
 // ══════════ g2u3l2 빛의 굴절 ══════════
 const L2: G2U3Part = {
-  intro: opener({ title: "물을 부으면 빨대는 어떻게 보일까요?", scene: "g2u3-straw", wait: "컵에 물을 부어 보세요", cta: "실험실 열기" }),
+  intro: opener({ title: "물을 부으면 곧은 빨대는 어떻게 보일까요?", scene: "g2u3-straw", wait: "컵에 물을 부어 보세요", cta: "실험실로 이동하기" }),
   body: [
-    tankLab({ title: "물에 들어간 빛은 어떻게 나아갈까요?", cta: "용어 정리하기" }),
+    tankLab({ title: "공기에서 물로 들어간 빛은 어떻게 나아갈까요?", cta: "용어 정리하기" }),
     term({
       title: "꺾이는 빛에<br>이름을 붙여요",
       lead: "수조에서 레이저 빛이 수면을 지나며 꺾였죠? 이 현상과 기록했던 두 각을 하나씩 알아봐요.",
@@ -128,7 +128,7 @@ const L2: G2U3Part = {
       ],
       cta: "다음 실험으로",
     }),
-    coinLab({ title: "물을 부으면 왜 동전이 보일까요?", cta: "정리하기" }),
+    coinLab({ title: "컵에 물을 부으면 왜 보이지 않던 동전이 보일까요?", cta: "정리하기" }),
     recap({
       title: "빛의 굴절,<br>카드 두 장으로 정리",
       narrator: "수조에서는 빛이 물의 표면에서 <b>꺾였고</b>, 컵에서는 그 꺾인 빛 덕분에 숨어 있던 동전이 보였죠.",
@@ -195,9 +195,9 @@ const L2: G2U3Part = {
 
 // ══════════ g2u3l3 물체를 보는 과정 ══════════
 const L3: G2U3Part = {
-  intro: opener({ title: "깜깜한 방에서 고양이가 보일까요?", scene: "g2u3-dark", wait: "두 가지를 해 보세요", cta: "실험실 열기" }),
+  intro: opener({ title: "빛이 없는 깜깜한 방에서 고양이가 보일까요?", scene: "g2u3-dark", wait: "눈 크게 뜨기와 손전등 켜기를 모두 해 보세요", cta: "실험실로 이동하기" }),
   body: [
-    pathLab({ title: "책이 보이려면 빛은 어디로 갈까요?", cta: "용어 정리하기" }),
+    pathLab({ title: "책이 눈에 보이려면 빛은 어떤 길로 나아가야 할까요?", cta: "용어 정리하기" }),
     term({
       title: "보인다는 것에<br>이름을 붙여요",
       lead: "화살표를 전등에서 책으로, 책에서 눈으로 이었을 때 책이 보였죠? 빛이 나온 곳과 나아간 길을 알아봐요.",
@@ -261,10 +261,10 @@ const L3: G2U3Part = {
 
 // ══════════ g2u3l4 평면거울에서 상이 생기는 원리 ══════════
 const L4: G2U3Part = {
-  intro: opener({ title: "다가가면 거울 속 고양이는 어떻게 할까요?", scene: "g2u3-cat", wait: "고양이를 걷게 해 보세요", cta: "실험실 열기" }),
+  intro: opener({ title: "거울 앞으로 다가가면 거울 속 고양이는 어떻게 움직일까요?", scene: "g2u3-cat", wait: "버튼을 눌러 고양이가 거울로 다가가게 해 보세요", cta: "실험실로 이동하기" }),
   body: [
-    halfMirrorLab({ title: "거울 속 상은 어디에 있을까요?", cta: "다음 실험으로" }),
-    extendLab({ title: "상은 왜 거울 뒤에 보일까요?", cta: "용어 정리하기" }),
+    halfMirrorLab({ title: "평면거울에 비친 상은 어디에 생길까요?", cta: "다음 실험으로" }),
+    extendLab({ title: "평면거울의 상은 왜 거울 뒤쪽에 있는 것처럼 보일까요?", cta: "용어 정리하기" }),
     term({
       title: "거울 속 모습에<br>이름을 붙여요",
       lead: "반투명 거울 뒤에서 (나)와 꼭 겹쳤던 모습과 연장선이 만난 점을 무엇이라 부르는지 알아봐요.",
@@ -340,9 +340,9 @@ const L4: G2U3Part = {
 
 // ══════════ g2u3l5 거울과 렌즈 ══════════
 const L5: G2U3Part = {
-  intro: opener({ title: "숟가락에 비친 얼굴은 어떻게 보일까요?", scene: "g2u3-spoon", wait: "두 쪽에 비춰 보세요", cta: "실험실 열기" }),
+  intro: opener({ title: "숟가락의 앞면과 뒷면에 비친 내 얼굴은 어떻게 다를까요?", scene: "g2u3-spoon", wait: "두 쪽에 비춰 보세요", cta: "실험실로 이동하기" }),
   body: [
-    curveLab({ title: "두 거울에는 어떻게 비칠까요?", cta: "용어 정리하기", mode: "mirror" }),
+    curveLab({ title: "볼록 거울과 오목 거울에 비친 상은 어떻게 다를까요?", cta: "용어 정리하기", mode: "mirror" }),
     term({
       title: "굽은 거울에<br>이름을 붙여요",
       lead: "두 거울에 인형을 비춰 가까울 때와 멀 때의 모습을 비교했죠? 두 거울의 생김새와 상을 알아봐요.",
@@ -354,7 +354,7 @@ const L5: G2U3Part = {
       ],
       cta: "다음 관찰로",
     }),
-    curveLab({ title: "두 렌즈로는 어떻게 보일까요?", cta: "용어 정리하기", mode: "lens" }),
+    curveLab({ title: "볼록 렌즈와 오목 렌즈로 본 상은 어떻게 다를까요?", cta: "용어 정리하기", mode: "lens" }),
     term({
       title: "두 렌즈에<br>이름을 붙여요",
       lead: "이번엔 렌즈로 인형을 관찰했죠? 두 렌즈의 생김새와 상을 알아봐요.",
@@ -366,7 +366,7 @@ const L5: G2U3Part = {
       ],
       cta: "다음 실험으로",
     }),
-    useLab({ title: "굽은 길에는 어떤 거울을 세울까요?", cta: "정리하기" }),
+    useLab({ title: "시야가 가려진 굽은 길에는 어떤 거울을 세워야 할까요?", cta: "정리하기" }),
     recap({
       title: "거울과 렌즈,<br>카드 석 장으로 정리",
       narrator: "표의 네 칸을 떠올려 봐요. 늘 <b>작고 바로</b> 보이던 쪽과 가까울 때, 멀 때가 <b>달랐던</b> 쪽이 있었죠.",
@@ -435,11 +435,11 @@ const L5: G2U3Part = {
 // ══════════ g2u3l6 빛의 합성 ══════════
 // 도입 뒤의 만화(뉴턴의 프리즘, 백색광)는 정본의 것이 그대로 따라온다. 본문은 그 뒤에 이어진다.
 const L6: G2U3Part = {
-  intro: opener({ title: "빨간 점과 초록 점, 멀리서 보면?", scene: "g2u3-dots", wait: "그림에서 물러나 보세요", cta: "이야기 보기" }),
+  intro: opener({ title: "빨간 점과 초록 점으로 그린 그림을 멀리서 보면 무슨 색일까요?", scene: "g2u3-dots", wait: "그림에서 뒤로 물러나며 색을 확인해 보세요", cta: "이야기 보기" }),
   body: [
-    lampLab({ title: "조명이 바뀌면 장미는 무슨 색일까요?", cta: "다음 실험으로" }),
-    torchLab({ title: "세 빛을 겹치면 무슨 색이 될까요?", cta: "다음 실험으로" }),
-    pixelLab({ title: "화면의 색은 무엇으로 만들까요?", cta: "용어 정리하기" }),
+    lampLab({ title: "조명의 색이 바뀌면 장미는 무슨 색으로 보일까요?", cta: "다음 실험으로" }),
+    torchLab({ title: "빨강, 초록, 파랑 빛을 겹치면 무슨 색이 될까요?", cta: "다음 실험으로" }),
+    pixelLab({ title: "영상 장치의 화면은 어떻게 여러 가지 색을 나타낼까요?", cta: "용어 정리하기" }),
     term({
       title: "빛을 합치는 일에<br>이름을 붙여요",
       lead: "손전등 셋으로 여러 색을 만들고, 화소를 켜서 노란색과 흰색 화면을 만들었죠? 이 원리와 용어를 알아봐요.",
@@ -510,9 +510,9 @@ const L6: G2U3Part = {
 
 // ══════════ g2u3l7 파동의 발생과 전달 ══════════
 const L7: G2U3Part = {
-  intro: opener({ title: "물결이 지나가면 낚시찌는 어떻게 될까요?", scene: "g2u3-float", wait: "솔방울을 떨어뜨려 보세요", cta: "실험실 열기" }),
+  intro: opener({ title: "연못에 물결이 퍼져 나가면 낚시찌는 어떻게 움직일까요?", scene: "g2u3-float", wait: "연못에 솔방울을 떨어뜨려 보세요", cta: "실험실로 이동하기" }),
   body: [
-    ballLab({ title: "물결이 오면 탁구공은 어디로 갈까요?", cta: "용어 정리하기" }),
+    ballLab({ title: "물결이 지나갈 때 물 위의 탁구공은 어떻게 움직일까요?", cta: "용어 정리하기" }),
     term({
       title: "퍼져 나가는 진동에<br>이름을 붙여요",
       lead: "막대로 누른 곳의 물결은 수조 끝까지 퍼져 나갔지만 탁구공은 제자리였죠? 퍼져 나간 것과 제자리에 남은 것을 알아봐요.",
@@ -524,7 +524,7 @@ const L7: G2U3Part = {
       ],
       cta: "다음 실험으로",
     }),
-    waveLab({ title: "파동의 모양은 무엇이 정할까요?", cta: "용어 정리하기" }),
+    waveLab({ title: "파동의 진폭과 파장은 어떻게 정해질까요?", cta: "용어 정리하기" }),
     term({
       title: "파동의 모습에<br>이름을 붙여요",
       lead: "흔드는 폭과 횟수를 바꿔 원하는 모양의 파동을 만들었죠? 그때 잰 거리와 시간 요소를 알아봐요.",
@@ -611,9 +611,9 @@ const L7: G2U3Part = {
 
 // ══════════ g2u3l8 소리의 특성 ══════════
 const L8: G2U3Part = {
-  intro: opener({ title: "어느 막대에서 더 높은 소리가 날까요?", scene: "g2u3-kalimba", wait: "두 막대를 튕겨 보세요", cta: "실험실 열기" }),
+  intro: opener({ title: "칼림바의 긴 막대와 짧은 막대 중 어느 쪽에서 더 높은 소리가 날까요?", scene: "g2u3-kalimba", wait: "두 금속 막대를 차례로 튕겨 소리를 비교해 보세요", cta: "실험실로 이동하기" }),
   body: [
-    soundLab({ title: "소리가 다르면 파동은 어떻게 다를까요?", cta: "용어 정리하기" }),
+    soundLab({ title: "소리의 세기·높이·악기가 다르면 파동은 어떻게 달라질까요?", cta: "용어 정리하기" }),
     term({
       title: "소리의 차이에<br>이름을 붙여요",
       lead: "기준 소리에서 조건을 하나씩 바꿔 파형을 비교했죠? 달라진 세 가지 소리의 특성을 알아봐요.",

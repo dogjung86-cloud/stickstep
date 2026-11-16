@@ -58,7 +58,7 @@ const LY = 32;
 
 export const g2u5SensorLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-sensor", wait: "장치를 꾸며 측정해 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-sensor", wait: "실험 장치를 맞추고 기체 농도를 측정해 보세요" });
   const { f, tm } = lab;
   const A = newNs("se");
   const ly = g5Layers(lab, "상추 모종을 넣은 투명 용기와 센서, 농도 그래프", ["defs", "rig", "air", "jar", "graph"]);
@@ -101,14 +101,14 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
     host.dataset.g5Kept = `${kept.bright ? "b" : ""}${kept.dark ? "d" : ""}`;
   };
 
-  const cPlant = chip("plant", "상추 모종", "밖에 있음", () => flip("plant"));
+  const cPlant = chip("plant", "상추 모종", "용기 밖", () => flip("plant"));
   const cLid = chip("lid", "뚜껑", "열림", () => flip("lid"));
   const cLight = chip("light", "전등", "꺼짐", () => flip("light"));
   const flip = (k: "plant" | "lid" | "light"): void => {
     if (busy) return;
     if (k === "plant" && st.lid) {
       bad();
-      f.say("뚜껑이 닫혀 있어요. 먼저 <b>뚜껑을 열고</b> 모종을 옮겨요.");
+      f.say("용기 뚜껑이 닫혀 있어요. 먼저 <b>뚜껑을 연 뒤에</b> 상추 모종을 옮겨 보세요.");
       return;
     }
     tap();
@@ -116,14 +116,14 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
     live = null;
     mix = { co2: 0.5, o2: 0.5 };
     cPlant.on(st.plant);
-    cPlant.sub(st.plant ? "용기 안" : "밖에 있음");
+    cPlant.sub(st.plant ? "용기 안" : "용기 밖");
     cLid.on(st.lid);
     cLid.sub(st.lid ? "닫힘" : "열림");
     cLight.on(st.light);
     cLight.sub(st.light ? "켜짐" : "꺼짐");
     draw();
   };
-  const run = bvBtn("main g2u5x-run", "10분 동안 측정");
+  const run = bvBtn("main g2u5x-run", "10분 동안 기체 농도 측정하기");
   run.addEventListener("click", () => {
     if (busy) return;
     busy = true;
@@ -133,7 +133,7 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
     live = { co2: full ? ramp(st.light ? 0.18 : 0.62) : ramp(0.5), o2: full ? ramp(st.light ? 0.84 : 0.4) : ramp(0.5), dash: kind !== "bright", t: 0 };
     [cPlant, cLid, cLight].forEach((c) => c.lock(true));
     run.disabled = true;
-    f.say("센서가 두 기체의 농도를 재고 있어요.");
+    f.say("센서로 용기 속 이산화 탄소와 산소 농도를 측정하고 있어요.");
     bvTween(tm, 2200, (t) => {
       if (live) {
         live.t = t;
@@ -149,14 +149,14 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
       if (kind === "open") {
         bad();
         lab.slip();
-        toast(lab, "농도가 변하지 않아요", true);
-        f.say("뚜껑이 열려 있어 <b>바깥 공기와 섞였어요</b>. 뚜껑을 닫고 다시 재요.");
+        toast(lab, "기체 농도가 변하지 않아요", true);
+        f.say("뚜껑이 열려 있어서 용기 안팎의 <b>공기가 섞여 버렸어요</b>. 뚜껑을 꼭 닫고 다시 측정해 보세요.");
         return;
       }
       if (kind === "empty") {
         bad();
-        toast(lab, "농도가 변하지 않아요", true);
-        f.say("용기 안에 식물이 없으면 농도가 <b>그대로</b>예요. 모종을 넣고 재요.");
+        toast(lab, "기체 농도가 변하지 않아요", true);
+        f.say("용기 안에 상추 모종이 없어서 기체 농도가 <b>그대로</b>예요. 모종을 용기 안에 넣고 다시 측정해 보세요.");
         return;
       }
       good();
@@ -164,17 +164,19 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
       kept[kind] = true;
       draw();
       f.pips(kept.bright && kept.dark ? 2 : 1);
-      if (kind === "bright") f.say(kept.dark ? "전등을 켜자 <b>이산화 탄소는 줄고 산소는 늘었어요</b>." : "이산화 탄소는 줄고 산소는 늘었어요. <b>전등을 끄고</b> 한 번 더 재요.");
-      else f.say(kept.bright ? "빛이 없으니 이산화 탄소가 <b>줄지 않았어요</b>. 오히려 조금 늘었어요." : "이산화 탄소가 줄지 않고 조금 늘었어요. <b>전등을 켜고</b> 다시 재요.");
+      const lit = "전등을 켜니 <b>이산화 탄소는 줄어들고 산소는 늘어났어요</b>.";
+      const unlit = "전등을 끄니 반대로 <b>산소가 줄어들고 이산화 탄소가 늘어났어요</b>.";
+      if (kind === "bright") f.say(kept.dark ? `${lit} 이제 두 결과를 비교해 봐요!` : `${lit} 이번에는 전등을 끄고도 측정해 볼까요?`);
+      else f.say(kept.bright ? `${unlit} 이제 두 결과를 비교해 봐요!` : `${unlit} 이번에는 전등을 켜고도 측정해 볼까요?`);
       if (kept.bright && kept.dark) {
         [cPlant, cLid, cLight].forEach((c) => c.lock(true));
-        run.textContent = "두 측정 비교하기";
+        run.textContent = "전등 켰을 때와 껐을 때 비교하기";
         run.classList.add("g2u5x-go");
         busy = true;
         run.onclick = () => {
           tap();
-          lab.judge("전등을 <b>켰을 때</b> 용기 안에서 줄어든 기체는?", [{ t: "이산화 탄소", ok: true }, { t: "산소" }, { t: "두 기체 모두" }], "빛을 받으면 <b>이산화 탄소</b>가 줄고 산소가 늘어요.", () =>
-            lab.finish("빛을 받은 식물은 <b>이산화 탄소</b>를 쓰고 <b>산소</b>를 내놓아요. 광합성에 이산화 탄소가 쓰이고 산소가 생긴다는 증거예요."),
+          lab.judge("전등을 <b>켰을 때</b> 상추가 흡수하여 용기 안에서 줄어든 기체는 무엇인가요?", [{ t: "이산화 탄소", ok: true }, { t: "산소" }, { t: "두 기체 모두" }], "빛을 받으면 광합성이 일어나 <b>이산화 탄소</b> 농도가 줄어들고 산소 농도가 늘어나요.", () =>
+            lab.finish("빛을 받은 식물은 <b>이산화 탄소</b>를 흡수하고 <b>산소</b>를 내보내요. 이를 통해 광합성에 이산화 탄소가 쓰이고 산소가 만들어진다는 것을 알 수 있어요."),
           );
         };
       }
@@ -182,7 +184,7 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
   });
   f.slot.setControls(row(cPlant.el, cLid.el, cLight.el), run);
   draw();
-  f.say("용기와 센서가 있어요. 장치를 꾸미고 <b>10분 동안</b> 농도를 재 보세요.");
+  f.say("상추 모종을 용기에 넣고 뚜껑을 닫은 뒤, 전등을 켜거나 꺼서 <b>10분 동안</b> 기체 농도를 측정해 보세요.");
   return lab.cleanup;
 };
 
@@ -197,10 +199,15 @@ const DX = 34;
 const DY = 78;
 const DW = 102;
 const DH = 116;
+/** 받침이 있으면 "을", 없으면 "를"(마지막 글자로 가른다. 상추 잎을, 당근 뿌리를). */
+const eul = (w: string): string => {
+  const c = w.charCodeAt(w.length - 1) - 0xac00;
+  return c >= 0 && c <= 11171 && c % 28 ? "을" : "를";
+};
 
 export const g2u5DarkLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-dark", wait: "넣을 것을 골라 측정해 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-dark", wait: "세 가지 용기를 모두 측정해 보세요" });
   const { f, tm } = lab;
   const A = newNs("dk");
   const ly = g5Layers(lab, "알루미늄박으로 감싸는 투명 용기와 농도 그래프", ["defs", "jar", "tag", "graph"]);
@@ -226,28 +233,28 @@ export const g2u5DarkLab: StepRenderer = (host, step, api) => {
       o2.push({ v: ramp(IN[k].o2), color: IN[k].color, upto: mine ? liveT : 1 });
     });
     ly.set("jar", art(`${pick}${wrapped}`, () => bench(2, 164, 196) + container(A, DX, DY, DW, DH, { lid: true, inside: inside(pick), foil: wrapped ? foil(A, DX, DY, DW, DH) : "" })));
-    ly.set("tag", tag(85, 30, wrapped ? "알루미늄박으로 감쌈" : `넣은 것: ${IN[pick].name}`, { size: 12 }) + legend(6, 220, [...kept].map((k) => ({ name: k === "leaf" ? "잎" : k === "root" ? "뿌리" : "빈 용기", color: IN[k].color }))));
+    ly.set("tag", tag(85, 30, wrapped ? "알루미늄박으로 빛 차단" : `용기 속: ${pick === "none" ? "비어 있음" : IN[pick].name}`, { size: 12 }) + legend(6, 220, [...kept].map((k) => ({ name: k === "leaf" ? "잎" : k === "root" ? "뿌리" : "빈 용기", color: IN[k].color }))));
     ly.set("graph", graphs(co2, o2));
     host.dataset.g5Kept = String(kept.size);
   };
 
   const chips = (Object.keys(IN) as Inside[]).map((k) =>
-    chip(k, IN[k].name, "", () => {
+    chip(k, IN[k].name, "측정 전", () => {
       if (liveT >= 0) return;
       tap();
       pick = k;
       wrapped = false;
       chips.forEach((c) => c.on(c.el.dataset.k === k));
       draw();
-      f.say(`${k === "leaf" ? "상추 잎을 넣었어요" : k === "root" ? "당근 뿌리를 넣었어요" : "용기를 비웠어요"}. <b>알루미늄박</b>으로 감싸 빛을 막고 재요.`);
+      f.say(k === "none" ? "비교를 위해 아무것도 넣지 않은 <b>빈 용기</b>를 골랐어요. 똑같이 빛을 가리고 측정해 보세요." : `용기에 <b>${IN[k].name}</b>${eul(IN[k].name)} 넣었어요. 알루미늄박으로 빛을 가리고 측정해 보세요.`);
     }),
   );
   chips[0].on(true);
-  const run = bvBtn("main g2u5x-run", "알루미늄박으로 감싸고 10분 측정");
+  const run = bvBtn("main g2u5x-run", "알루미늄박으로 감싸고 10분 동안 측정하기");
   run.addEventListener("click", () => {
     if (liveT !== -1) return;
     if (kept.has(pick)) {
-      f.say("이미 잰 것이에요. <b>다른 것</b>을 넣어 비교해 보세요.");
+      f.say("이미 측정을 마친 용기예요. 아직 측정하지 않은 <b>다른 용기</b>를 골라 보세요.");
       return;
     }
     tap();
@@ -255,14 +262,16 @@ export const g2u5DarkLab: StepRenderer = (host, step, api) => {
     liveT = 0;
     chips.forEach((c) => c.lock(true));
     run.disabled = true;
-    f.say("빛이 들어가지 않는 용기 안에서 센서가 농도를 재고 있어요.");
+    f.say(`빛을 차단한 상태에서 <b>${IN[pick].name}</b>의 기체 농도 변화를 측정하고 있어요.`);
     bvTween(tm, 2200, (t) => {
       liveT = t;
       draw();
     }, () => {
       liveT = -1;
       kept.add(pick);
-      chips.find((c) => c.el.dataset.k === pick)?.done();
+      const mine = chips.find((c) => c.el.dataset.k === pick);
+      mine?.done();
+      mine?.sub("측정 완료");
       chips.forEach((c) => c.lock(false));
       run.disabled = false;
       draw();
@@ -271,19 +280,19 @@ export const g2u5DarkLab: StepRenderer = (host, step, api) => {
       f.pips(kept.size === 3 ? 2 : living ? 1 : 0);
       if (pick === "none") {
         tap();
-        f.say("빈 용기는 두 기체의 농도가 <b>그대로</b>예요. 변화는 식물이 만든 것이에요.");
+        f.say("식물이 없는 빈 용기에서는 두 기체의 농도가 모두 <b>변하지 않았어요</b>.");
       } else {
         good();
-        f.say(`${IN[pick].name}${pick === "leaf" ? "은" : "는"} 어둠 속에서 <b>산소를 쓰고 이산화 탄소를 내놓았어요</b>.`);
+        f.say(pick === "root" ? "엽록체가 없는 <b>당근 뿌리</b>에서도 산소가 줄고 이산화 탄소가 늘어났어요! 뿌리도 잎처럼 숨을 쉰다는 뜻이에요." : "빛이 없자 <b>상추 잎</b>에서도 산소가 줄고 이산화 탄소가 늘어났어요.");
       }
       if (kept.size === 3) {
         chips.forEach((c) => c.lock(true));
-        run.textContent = "세 측정 비교하기";
+        run.textContent = "세 용기의 측정 결과 비교하기";
         run.classList.add("g2u5x-go");
         run.onclick = () => {
           tap();
-          lab.judge("빛이 없는 용기에서 잎과 뿌리가 <b>써서 줄어든</b> 기체는?", [{ t: "산소", ok: true }, { t: "이산화 탄소" }, { t: "줄어든 기체가 없다" }], "잎도 뿌리도 <b>산소</b>가 줄고 이산화 탄소가 늘었어요.", () =>
-            lab.finish("빛이 없어도 잎과 뿌리는 <b>산소</b>를 쓰고 <b>이산화 탄소</b>를 내놓아요. 살아 있는 세포에서 늘 일어나는 이 일이 <b>호흡</b>이에요."),
+          lab.judge("빛이 없는 용기 안에서 상추 잎과 당근 뿌리가 <b>흡수하여 줄어든</b> 기체는 무엇인가요?", [{ t: "산소", ok: true }, { t: "이산화 탄소" }, { t: "줄어든 기체가 없다" }], "상추 잎과 당근 뿌리가 들어 있는 두 용기 모두 <b>산소</b> 농도가 줄고 이산화 탄소 농도가 늘어났어요.", () =>
+            lab.finish("식물은 초록색 잎뿐만 아니라 <b>뿌리</b>까지 살아 있는 모든 세포에서 끊임없이 <b>산소</b>를 흡수하고 <b>이산화 탄소</b>를 내보내요. 이 일이 <b>호흡</b>이에요."),
           );
         };
         liveT = -2; // 더는 측정하지 않는다(단추는 판정으로 간다)
@@ -292,7 +301,7 @@ export const g2u5DarkLab: StepRenderer = (host, step, api) => {
   });
   f.slot.setControls(row(...chips.map((c) => c.el)), run);
   draw();
-  f.say("이번에는 빛을 막아요. 용기에 넣을 것을 고르고 <b>감싸서</b> 재 보세요.");
+  f.say("이번에는 알루미늄박으로 빛을 완전히 가려 볼 거예요. 용기에 넣을 대상을 고르고 기체 농도를 측정해 보세요.");
   return lab.cleanup;
 };
 
@@ -302,7 +311,7 @@ const GAIN = [0, 2, 4, 5, 5];
 
 export const g2u5DesignLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-design", wait: "전등 수를 바꿔 가며 재 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-design", wait: "전등 수를 1개부터 4개까지 바꿔 가며 측정해 보세요", tall: true });
   const { f, tm } = lab;
   const A = newNs("de");
   const ly = g5Layers(lab, "전등 네 개와 상추 용기, 켠 전등 수에 따른 산소 증가량 그래프", ["defs", "rig", "jar", "chart"]);
@@ -342,21 +351,22 @@ export const g2u5DesignLab: StepRenderer = (host, step, api) => {
     }
     let grid = "";
     [1, 2, 3, 4, 5, 6].forEach((k) => (grid += `<line x1="179" y1="${Y(k)}" x2="330" y2="${Y(k)}" stroke="#1E3150" stroke-width="1"/>`));
+    // 머리 줄은 제목만(제목이 길어 '점선' 이름표와 겹친다). 가로축 이름은 왼쪽(축 시작) 맞춤, '점선' 이름표는 같은 줄 오른쪽 끝(2026-11-16 글 다듬기)
     ly.set(
       "chart",
       `<rect x="150" y="10" width="188" height="210" rx="10" fill="#0E1A2E" stroke="#2A4266"/><rect x="151" y="11" width="186" height="24" rx="9" fill="#14233C"/>` +
-        txt(160, 28, "산소가 늘어난 양", { anchor: "start", size: 12, fill: P.o2 }) +
+        txt(160, 28, "발생한 산소량(광합성량)", { anchor: "start", size: 12, fill: P.o2 }) +
         grid +
         `<line x1="178" y1="40" x2="178" y2="186" stroke="#55698A"/><line x1="178" y1="186" x2="330" y2="186" stroke="#55698A"/>` +
         bars +
-        txt(244, 216, "켠 전등의 수", { size: 12, fill: P.dim }) +
-        (off.size || (grow && grow.odd) ? txt(330, 28, "점선: 온도 다름", { anchor: "end", size: 12, fill: P.bad }) : ""),
+        txt(180, 216, "켠 전등 개수", { anchor: "start", size: 12, fill: P.dim }) +
+        (off.size || (grow && grow.odd) ? txt(330, 216, "점선: 온도가 다름", { anchor: "end", size: 12, fill: P.bad }) : ""),
     );
     host.dataset.g5Valid = String(valid.size);
     host.dataset.g5Off = String(off.size);
   };
 
-  const sLamp = stepper("켠 전등", "lamp", (d) => {
+  const sLamp = stepper("켠 전등 개수", "lamp", (d) => {
     if (busy) return;
     lamps = Math.max(1, Math.min(4, lamps + d));
     sLamp.set(`${lamps}개`);
@@ -370,7 +380,7 @@ export const g2u5DesignLab: StepRenderer = (host, step, api) => {
   });
   sLamp.set("1개");
   sTemp.set(`${TEMPS[0]} ℃`);
-  const run = bvBtn("main g2u5x-run", "5분 동안 측정");
+  const run = bvBtn("main g2u5x-run", "5분 동안 산소량 측정하기");
   run.addEventListener("click", () => {
     if (busy) return;
     busy = true;
@@ -397,8 +407,8 @@ export const g2u5DesignLab: StepRenderer = (host, step, api) => {
         draw();
         bad();
         lab.slip();
-        toast(lab, "온도가 달라 비교할 수 없어요", true);
-        f.say(`온도까지 바꿨어요. 차이가 빛 때문인지 알 수 없어요. <b>${ref} ℃</b>로 되돌려요.`);
+        toast(lab, "온도가 달라져서 결과를 비교할 수 없어요", true);
+        f.say(`전등 개수와 함께 온도까지 바꾸면 광합성량 차이가 빛 때문인지 알 수 없어요. 온도를 처음과 같은 <b>${ref} ℃</b>로 맞추고 다시 측정해 보세요.`);
         return;
       }
       valid.set(lamps, v);
@@ -406,7 +416,7 @@ export const g2u5DesignLab: StepRenderer = (host, step, api) => {
       good();
       f.pips(valid.size >= 4 ? 2 : 1);
       if (valid.size < 4) {
-        f.say(`전등 ${lamps}개일 때를 쟀어요. <b>전등 수만</b> 바꿔 가며 네 가지를 모두 재요.`);
+        f.say(`전등 <b>${lamps}개</b>일 때의 결과를 기록했어요. 남은 전등 개수도 같은 온도(<b>${ref} ℃</b>)에서 측정해 보세요.`);
         return;
       }
       busy = true;
@@ -415,16 +425,16 @@ export const g2u5DesignLab: StepRenderer = (host, step, api) => {
       run.disabled = true;
       off.clear();
       draw();
-      f.say("네 가지를 모두 쟀어요. 막대의 높이를 <b>비교해</b> 보세요.");
+      f.say("전등 1개부터 4개까지 같은 온도에서 모두 측정했어요! 그래프의 막대 높이를 비교해 볼까요?");
       tm.later(() => {
-        lab.judge("전등을 <b>3개에서 4개</b>로 늘렸을 때 광합성량은?", [{ t: "더 늘지 않았다", ok: true }, { t: "계속 늘었다" }, { t: "오히려 줄었다" }], "3개와 4개의 막대 높이가 <b>같아요</b>.", () =>
-          lab.finish("빛이 셀수록 광합성량이 <b>늘다가</b>, 일정 세기 이상이 되면 <b>더 늘지 않고 일정</b>해져요. 온도 같은 다른 조건은 같게 두어야 비교할 수 있어요."),
+        lab.judge("전등을 <b>3개에서 4개</b>로 늘렸을 때 광합성량은 어떻게 변했나요?", [{ t: "더 이상 늘어나지 않고 일정했다", ok: true }, { t: "계속 늘어났다" }, { t: "오히려 줄어들었다" }], "그래프에서 전등이 3개일 때와 4개일 때의 막대 높이가 <b>같다는 점</b>을 확인해 보세요.", () =>
+          lab.finish("빛이 강할수록 광합성량이 <b>증가하다가</b>, 일정한 세기 이상이 되면 <b>더 이상 증가하지 않고 일정</b>하게 유지돼요. 이때 온도 같은 다른 조건은 같게 유지해야 빛의 효과를 정확히 비교할 수 있어요."),
         );
       }, 1500);
     });
   });
   f.slot.setControls(sLamp.el, sTemp.el, run);
   draw();
-  f.say("산소가 많이 늘수록 광합성량이 많은 거예요. <b>무엇을 바꾸고 무엇을 같게</b> 둘까요?");
+  f.say("발생한 산소량이 많을수록 광합성이 활발하게 일어난 거예요. 빛의 세기 효과를 알아보려면 <b>무엇을 바꾸고 무엇을 같게</b> 유지해야 할까요?");
   return lab.cleanup;
 };

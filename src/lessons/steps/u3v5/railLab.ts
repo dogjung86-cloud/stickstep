@@ -6,7 +6,7 @@
 //   위: 양 끝을 고정한 철로 두 개와 가운데의 이음 자리   아래: 철로 속을 확대한 창(입자의 떨림과 사이 거리)
 // 흐름: 놓기 → 여름까지 데우기(휘면 되돌려 다시) → 판정 → 결론.
 // 휜 모양은 계산으로 그린다: 한쪽 끝이 고정된 길이 L + d의 철로가 가로 L 안에 들어가려면 acos(L / (L + d))만큼 꺾인다.
-// 늘어나는 길이는 잘 보이게 실제보다 훨씬 크게 그렸다(무대에 "실제보다 크게 그린 그림"이라고 적는다).
+// 늘어나는 길이는 잘 보이게 실제보다 훨씬 크게 그렸다(무대에 "변화를 과장하여 나타낸 모형"이라고 적는다).
 // 2026-11-15 그래픽 감사 고침:
 //   · 철로를 위에서 본 모습으로 그린다(두 줄의 레일과 침목, 자갈 바닥). 틈 없이 놓은 철로는 한여름에 옆으로 휜다.
 //     옆에서 본 그림은 두 철로가 위로 솟아 지붕 모양이 되었는데, 실제 철로는 주로 옆으로 휜다.
@@ -47,7 +47,7 @@ const GRAVEL = Array.from({ length: 70 }, (_, i) => ({ x: X0 - 8 + ((i * 47.3) %
 export const railLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as RailStep;
   const tm = bvTimers();
-  const f = u3Frame(host, { title: s.title, steps: 3, cls: "u3x-rail", api });
+  const f = u3Frame(host, { title: s.title, steps: 3, cls: "u3x-rail", api, tall: true });
 
   let T = T_MIN;
   let shown = T_MIN;
@@ -193,12 +193,12 @@ export const railLab: StepRenderer = (host, step, api) => {
       drawGlowParticle(ctx, 268, 176, 5.5, 0.12 + 0.8 * k, 1.2);
       txt(ctx, "한여름", 279, 176.5, { size: 12, color: tempColor(0.12 + 0.8 * k), align: "left", weight: 700 });
     }
-    txt(ctx, "철로 속을 확대한 창", 30, 222, { size: 12, color: SUB, align: "left", weight: 600 });
-    txt(ctx, "실제보다 크게 그린 그림", 314, 222, { size: 12, color: SUB, align: "right", weight: 600 });
+    txt(ctx, "철로 속 입자 확대", 30, 222, { size: 12, color: SUB, align: "left", weight: 600 });
+    txt(ctx, "변화를 과장하여 나타낸 모형", 314, 222, { size: 12, color: SUB, align: "right", weight: 600 });
   });
 
-  const tight = bvBtn("", "틈 없이 붙여 놓기");
-  const spaced = bvBtn("", "틈을 두고 놓기");
+  const tight = bvBtn("", "빈틈없이 붙여 놓기");
+  const spaced = bvBtn("", "틈을 남겨 두고 놓기");
   const range = bvRange({
     cls: "u3x-range",
     min: T_MIN,
@@ -231,7 +231,7 @@ export const railLab: StepRenderer = (host, step, api) => {
         spaced.disabled = false;
         range.input.disabled = true;
         f.pips(0);
-        f.say("겨울이 되자 철로가 다시 줄어 펴졌어요. 이번엔 어떻게 놓을까요?");
+        f.say("다시 겨울로 낮추니 철로가 줄어들며 곧게 펴졌어요. 이번에는 이음매를 어떻게 놓아 볼까요?");
       } else if (laid === "gap" && okSummer) {
         phase = "ask";
         range.input.disabled = true;
@@ -243,9 +243,9 @@ export const railLab: StepRenderer = (host, step, api) => {
 
   function hint(): void {
     if (phase !== "play") return;
-    if (laid === "none") f.say("겨울이에요. 양 끝을 고정한 <b>철로 두 개</b>를 놓을 거예요. 가운데 이음 자리를 어떻게 할까요?");
-    else if (laid === "tight") f.say(buckled ? "늘어난 철로가 갈 곳이 없어 <b>옆으로 휘었어요</b>. 기차가 다닐 수 없어요. 겨울로 되돌려 다시 놓아 봐요." : "틈 없이 놓았어요. <b>온도 막대</b>를 밀어 한여름까지 데워 봐요. 철로 끝과 입자를 봐요.");
-    else f.say(okSummer ? "철로가 늘어나 <b>틈이 좁아졌지만</b> 휘지 않았어요. 입자 사이가 멀어진 만큼 철로가 길어졌어요." : "틈을 두고 놓았어요. <b>온도 막대</b>를 밀어 한여름까지 데워 봐요. 틈과 입자를 봐요.");
+    if (laid === "none") f.say("추운 겨울날, 양 끝이 고정된 <b>철로 두 개</b>를 이어 놓으려고 해요. 가운데 이음매를 어떻게 놓을지 골라 보세요.");
+    else if (laid === "tight") f.say(buckled ? "길어진 철로가 밀려 나갈 공간이 없어서 <b>옆으로 휘어 버렸어요</b>! 이대로는 기차가 다닐 수 없으니 온도를 다시 겨울로 낮춘 뒤 다른 방법으로 놓아 보세요." : "철로를 빈틈없이 붙여 놓았어요. 이제 <b>철로의 온도</b> 막대를 오른쪽으로 밀어 한여름까지 온도를 올려 보세요.");
+    else f.say(okSummer ? "철로가 길어지면서 <b>미리 남겨 둔 틈이 좁아졌지만</b> 철로가 휘지는 않았어요! 입자 사이의 거리가 멀어진 만큼 철로가 길어진 거예요." : "철로 사이에 틈을 남겨 두고 놓았어요. 이제 <b>철로의 온도</b> 막대를 오른쪽으로 밀어 한여름까지 온도를 올려 보세요.");
   }
 
   const lay = (how: "tight" | "gap"): void => {
@@ -262,20 +262,20 @@ export const railLab: StepRenderer = (host, step, api) => {
   spaced.addEventListener("click", () => lay("gap"));
 
   function askFinal(): void {
-    f.say("한여름의 철로예요. 무대의 <b>확대 창</b>을 보고 골라 봐요.");
+    f.say("한여름에 뜨거워진 철로 속 입자의 모습을 보고 답해 보세요.");
     f.slot.ask(
-      "한여름에 철로가 길어진 까닭은?",
-      [{ t: "입자 사이의 거리가 멀어져서", ok: true }, { t: "입자 하나하나가 커져서" }, { t: "입자의 수가 늘어나서" }],
+      "한여름에 온도가 올라가면 철로가 길어지는 까닭은 무엇인가요?",
+      [{ t: "입자 운동이 활발해져 입자 사이의 거리가 멀어져서", ok: true }, { t: "철로를 이루는 입자 하나하나의 크기가 커져서" }, { t: "철로를 이루는 입자의 개수가 늘어나서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "입자의 <b>크기와 수는 그대로</b>이고 사이만 벌어졌어요.", onNext: finish },
+      { why: "온도가 올라가도 입자의 <b>크기와 개수는 변하지 않고</b>, 입자 사이의 거리만 멀어져요.", onNext: finish },
     );
   }
 
   function finish(): void {
     phase = "done";
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("물체가 열을 받으면 입자 운동이 활발해져 <b>입자 사이가 멀어지고</b>, 그래서 길이와 부피가 늘어나요. 이것이 <b>열팽창</b>이에요. 그래서 철로에는 틈을 둬요.");
+    f.say("온도가 올라갈 때 철로가 왜 길어지는지 입자 모형으로 확인했어요!");
+    f.slot.conclude("물체가 열을 받으면 입자 운동이 활발해지면서 <b>입자 사이의 거리가 멀어져</b> 길이와 부피가 늘어나요. 이 현상을 <b>열팽창</b>이라고 해요. 기차선로에 미리 틈을 남겨 두는 것도 열팽창 때문이에요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }

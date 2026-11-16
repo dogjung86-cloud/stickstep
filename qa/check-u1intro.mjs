@@ -81,7 +81,7 @@ const SCENES = {
     await page.mouse.down();
     await W(page, 2200);
     await page.mouse.up();
-    await finish(id, "탐구 설계 시작");
+    await finish(id, "공정하게 다시 실험하기");
   },
   u1l4: async (id) => {
     await at(id, "ask");
@@ -95,7 +95,7 @@ const SCENES = {
     await click('.opn-u1-btn[data-n="2"]');
     await W(page, 2000);
     await click('.opn-u1-btn[data-n="3"]');
-    await finish(id, "기술 카드 열기");
+    await finish(id, "첨단 기술 켜 보기");
   },
   u1l5: async (id) => {
     await at(id, "ask");
@@ -109,7 +109,7 @@ const SCENES = {
     await at(id, "mid");
     await page.screenshot({ path: join(OUT, `${id}-mid.png`) });
     await click(".opn-u1-btn.down");
-    await finish(id, "실천 분류하기");
+    await finish(id, "온실 기체 줄여 보기");
   },
 };
 

@@ -17,7 +17,7 @@ const plateLab = lab("g2u2PlateLab");
 export const L7: Step[] = lessonSteps(
   [
     opener({ title: "물이 가득 찬 병을 얼리면?", scene: "g2u2-bottle", wait: "먼저 예측하고 병을 얼려 보세요", cta: "바위틈의 물 얼려 보기" }),
-    frostLab({ title: "바위틈의 물이 얼면 틈은 어떻게 될까요?", cta: "이름 붙이기" }),
+    frostLab({ title: "바위틈의 물이 얼고 녹기를 반복하면?", cta: "풍화 작용 정리하기" }),
     words({
       title: "풍화,<br>암석이 부서지고 변하는 일",
       lead: "바위틈에 스며든 물이 얼고 녹기를 되풀이하자 바위가 쪼개졌죠? 이 현상을 알아봐요.",
@@ -29,7 +29,7 @@ export const L7: Step[] = lessonSteps(
       ],
       cta: "부서진 암석은 무엇이 될까",
     }),
-    soilLab({ title: "토양의 층은 어떤 차례로 생겼을까요?", cta: "이름 붙이기" }),
+    soilLab({ title: "토양의 층은 어떤 순서로 만들어질까요?", cta: "토양의 생성 과정 정리하기" }),
     words({
       title: "토양,<br>암석이 풍화되어 생긴 흙",
       lead: "단단한 암석이 풍화되고 비를 맞으며 네 층을 이뤘죠? 이 흙을 알아봐요.",
@@ -108,8 +108,8 @@ export const L7: Step[] = lessonSteps(
 export const L8: Step[] = lessonSteps(
   [
     opener({ title: "찢어진 두 조각, 원래 한 장이었을까요?", scene: "g2u2-paper", wait: "먼저 예측하고 두 조각을 맞대 보세요", cta: "대륙 조각 맞춰 보기" }),
-    fitLab({ title: "두 대륙의 해안선은 맞물릴까요?", cta: "다음 증거, 빙하의 흔적" }),
-    iceLab({ title: "더운 인도에 왜 빙하의 흔적이 있을까요?", cta: "이름 붙이기" }),
+    fitLab({ title: "두 대륙의 해안선은 꼭 맞물릴까요?", cta: "빙하의 흔적 증거 살펴보기" }),
+    iceLab({ title: "더운 인도에 왜 빙하의 흔적이 남아 있을까요?", cta: "대륙 이동설 정리하기" }),
     words({
       title: "대륙 이동설,<br>움직이는 대륙",
       lead: "해안선을 맞추니 화석 산지가 이어지고, 대륙을 모으니 빙하 흔적도 한곳에 모였죠? 이 주장을 알아봐요.",
@@ -192,8 +192,8 @@ export const L8: Step[] = lessonSteps(
 // ══ 9. 판의 경계: 언 호수의 얼음판(도입) → 깃발 꽂고 지진 자료와 비교하기 → 용어(화산대, 지진대, 판) → 판의 경계와 비교하기 → 정리 → 문제 ══
 export const L9: Step[] = lessonSteps(
   [
-    opener({ title: "얼음판을 밀면 어디가 요란할까요?", scene: "g2u2-ice", wait: "먼저 예측하고 얼음판을 밀어 보세요", cta: "지진이 나는 곳 찾기" }),
-    quakeLab({ title: "다음 지진은 어디에서 날까요?", cta: "이름 붙이기" }),
+    opener({ title: "얼음판이 부딪히면 어디가 부서질까요?", scene: "g2u2-ice", wait: "먼저 예측하고 얼음판을 밀어 보세요", cta: "지진이 자주 일어나는 곳 찾기" }),
+    quakeLab({ title: "지진과 화산 활동은 어디에서 자주 일어날까요?", cta: "화산대와 지진대 알아보기" }),
     words({
       title: "화산대와 지진대,<br>그리고 판",
       lead: "지진과 화산 활동이 긴 띠 모양으로 일어나는 걸 봤죠? 이 띠의 이름과 비밀을 풀 열쇠인 '판'을 알아봐요.",
@@ -207,7 +207,7 @@ export const L9: Step[] = lessonSteps(
       ],
       cta: "판의 경계와 비교해 보기",
     }),
-    plateLab({ title: "그 띠는 무엇과 겹칠까요?", cta: "정리하기" }),
+    plateLab({ title: "화산대와 지진대는 무엇과 겹칠까요?", cta: "판의 경계 정리하기" }),
     recap({
       title: "판의 경계,<br>카드 두 장으로 정리",
       narrator: "지진과 화산 활동이 일어나는 띠를 판의 경계와 비교해 봤죠? 핵심만 모아 정리해 볼게요.",

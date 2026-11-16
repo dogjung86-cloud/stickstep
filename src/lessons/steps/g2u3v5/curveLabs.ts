@@ -1,6 +1,6 @@
 // [중2 Ⅲ v5] g2u3l5 거울과 렌즈: 랩 세 판(렌더러 둘).
 //
-// 1) g2u3CurveLab (mode: "mirror" | "lens") 「볼록 거울과 오목 거울은 어떻게 다를까요?」 「볼록 렌즈와 오목 렌즈는 어떻게 다를까요?」
+// 1) g2u3CurveLab (mode: "mirror" | "lens") 「볼록 거울과 오목 거울에 비친 상은 어떻게 다를까요?」 「볼록 렌즈와 오목 렌즈로 본 상은 어떻게 다를까요?」
 //    책의 어디에서: 탐구 '거울과 렌즈에 의한 상의 특징 관찰하기'(볼록 거울, 오목 거울, 볼록 렌즈, 오목 렌즈 앞의 물체를 가까울 때와 멀 때 관찰해 표에 그린다).
 //    학생이 정하는 것: 거울(렌즈)의 종류, 물체까지의 거리, 지금 보이는 모습을 '가까울 때' 칸에 적을지 '멀 때' 칸에 적을지.
 //    실패하는 길: 물체가 멀리 있는데 '가까울 때' 칸을 누르면 적히지 않는다. 가깝지도 멀지도 않은 자리, 상이 흐려지는 자리에서도 적히지 않는다
@@ -9,7 +9,7 @@
 //    상의 배율은 계산한다: m = f / (f − d). 볼록 거울과 오목 렌즈는 f가 음수다. 화면에 '초점, 실상, 허상'은 쓰지 않는다.
 //    옛 랩(opticView, mirrorLens)은 3D 촛불 관찰소와 가로 작도 벤치였다. 표를 채우는 관찰 실험이 아니었다.
 //
-// 2) g2u3UseLab 「굽은 길에는 어떤 거울을 세울까요?」
+// 2) g2u3UseLab 「시야가 가려진 굽은 길에는 어떤 거울을 세워야 할까요?」
 //    책의 어디에서: 해 보기 '일상생활에서 사용하는 거울과 렌즈 분류하기', 그림 Ⅲ-9(굽은 도로의 거울은 볼록 거울로 넓은 범위를 본다).
 //    학생이 정하는 것: 세 갈래 길 건너편에 세울 거울(평면거울, 볼록 거울, 오목 거울).
 //    실패하는 길: 평면거울과 오목 거울을 세우면 거울에 비치는 범위가 좁아 양옆에서 오는 차가 보이지 않는다.
@@ -27,6 +27,14 @@ interface S {
   cta?: string;
   mode?: "mirror" | "lens";
 }
+
+/** 낱말 뒤에 붙는 '으로/로'(받침이 없거나 ㄹ 받침이면 '로'). 기록한 모습('크고 바로 선 상')을 글에 이을 때 쓴다. */
+const euro = (w: string): string => {
+  const c = w.charCodeAt(w.length - 1) - 0xac00;
+  if (c < 0 || c > 11171) return "으로";
+  const jong = c % 28;
+  return jong === 0 || jong === 8 ? "로" : "으로";
+};
 
 /** 인형(위아래가 다른 물체). (cx, cy)가 가운데, h가 키. inv면 거꾸로 선다. */
 function doll(ctx: CanvasRenderingContext2D, cx: number, cy: number, h: number, o: { inv?: boolean; alpha?: number; ghost?: boolean } = {}): void {
@@ -102,7 +110,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
   };
   const blurry = (): boolean => gather() && Math.abs(v * 0.15 - 1) < 0.16;
   const look = (): string => {
-    if (blurry()) return "흐려서 알아볼 수 없어요";
+    if (blurry()) return "흐릿해서 알아볼 수 없어요";
     const m = mag();
     return `${Math.abs(m) > 1.04 ? "크고" : "작고"} ${m > 0 ? "바로" : "거꾸로"} 선 상`;
   };
@@ -110,12 +118,12 @@ export const curveLab: StepRenderer = (host, step, api) => {
   const seg = lxSeg<Dev>(
     lens
       ? [
-          { k: "cvx", t: "볼록 렌즈", sub: "가운데가 두꺼워요" },
-          { k: "ccv", t: "오목 렌즈", sub: "가장자리가 두꺼워요" },
+          { k: "cvx", t: "볼록 렌즈", sub: "가운데가 두꺼운 렌즈" },
+          { k: "ccv", t: "오목 렌즈", sub: "가운데가 얇은 렌즈" },
         ]
       : [
-          { k: "cvx", t: "볼록 거울", sub: "가운데가 볼록해요" },
-          { k: "ccv", t: "오목 거울", sub: "가운데가 오목해요" },
+          { k: "cvx", t: "볼록 거울", sub: "가운데가 볼록한 거울" },
+          { k: "ccv", t: "오목 거울", sub: "가운데가 오목한 거울" },
         ],
     "cvx",
     (k) => {
@@ -123,7 +131,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
       dev = k;
       haptic(HAPTIC.tap);
       paintCells();
-      f.say(`<b>${name()}</b>${lens ? "예요" : "이에요"}. 물체를 가까이 댔다가 멀리 옮기며 보이는 모습을 살펴보세요.`);
+      f.say(`<b>${name()}</b>${lens ? "예요" : "이에요"}. 물체를 가까이 두었다가 멀리 옮기며 상의 모습을 살펴보세요.`);
     },
     "low",
   );
@@ -133,14 +141,14 @@ export const curveLab: StepRenderer = (host, step, api) => {
     min: 1,
     max: 20,
     value: v,
-    label: `물체를 ${word}에서 멀리 옮기기`,
+    label: `${word}${lens ? "와" : "과"} 물체 사이의 거리 조절하기`,
     onInput: (x) => {
       v = x;
     },
   });
   const cells = [0, 1].map((i) => {
     const nm = el("span", { class: "g2u3x-log-n", text: i === 0 ? `${word}에 가까울 때` : `${word}에서 멀 때` });
-    const val = el("b", { class: "g2u3x-log-v", text: "눌러서 적기" });
+    const val = el("b", { class: "g2u3x-log-v", text: "눌러서 기록하기" });
     const b = el("button", { class: "g2u3x-cell", attrs: { type: "button" } }, nm, val) as HTMLButtonElement;
     b.dataset.k = i === 0 ? "near" : "far";
     b.addEventListener("click", () => record(i as 0 | 1));
@@ -151,7 +159,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
   function paintCells(): void {
     cells.forEach((c, i) => {
       const t = filled[dev][i];
-      c.val.textContent = t || "눌러서 적기";
+      c.val.textContent = t || "눌러서 기록하기";
       c.b.classList.toggle("on", !!t);
     });
     (["cvx", "ccv"] as Dev[]).forEach((d) => {
@@ -164,22 +172,22 @@ export const curveLab: StepRenderer = (host, step, api) => {
     const far = v >= FAR_MIN;
     if (blurry()) {
       haptic(HAPTIC.wrong);
-      f.say("지금은 상이 <b>흐려서</b> 적을 수 없어요. 물체를 더 가까이 대거나 더 멀리 옮겨 보세요.");
+      f.say(`지금은 상이 <b>흐릿해서</b> 기록할 수 없어요. 물체를 ${word}에 더 가까이 두거나 더 멀리 옮겨 보세요.`);
       return;
     }
     if (i === 0 && !near) {
       haptic(HAPTIC.wrong);
-      f.say(`지금은 물체가 ${word}에서 떨어져 있어요. '가까울 때' 칸은 물체를 <b>바짝 대고</b> 적어요.`);
+      f.say(`지금은 물체가 ${word}에서 멀리 떨어져 있어요. '가까울 때' 칸은 물체를 <b>가까이 놓은 뒤</b>에 눌러 기록해 보세요.`);
       return;
     }
     if (i === 1 && !far) {
       haptic(HAPTIC.wrong);
-      f.say(`'멀 때' 칸은 물체를 ${word}에서 <b>더 멀리</b> 옮긴 뒤에 적어요.`);
+      f.say(`'멀 때' 칸은 물체를 ${word}에서 <b>더 멀리</b> 옮긴 뒤에 눌러 기록해 보세요.`);
       return;
     }
     const m = mag();
-    let t = `${Math.abs(m) > 1.04 ? "크고" : "작고"} ${m > 0 ? "바로" : "거꾸로"}`;
-    if (i === 1 && !gather()) t = "더 작고 바로";
+    let t = `${Math.abs(m) > 1.04 ? "크고" : "작고"} ${m > 0 ? "바로" : "거꾸로"} 선 상`;
+    if (i === 1 && !gather()) t = "더 작고 바로 선 상";
     filled[dev][i] = t;
     haptic(HAPTIC.correct);
     paintCells();
@@ -189,36 +197,37 @@ export const curveLab: StepRenderer = (host, step, api) => {
     if (n < 4) {
       const other = dev === "cvx" ? "ccv" : "cvx";
       const here = filled[dev][0] && filled[dev][1];
-      f.say(here ? `${name()}의 두 칸을 채웠어요. 이제 <b>${lens ? (other === "cvx" ? "볼록 렌즈" : "오목 렌즈") : other === "cvx" ? "볼록 거울" : "오목 거울"}</b>로 바꿔 관찰해 보세요.` : `'${t}'라고 적었어요. 물체를 옮겨 <b>나머지 칸</b>도 채워 보세요.`);
+      f.say(here ? `${name()}의 두 칸을 모두 채웠어요! 이제 위쪽 탭에서 <b>${lens ? (other === "cvx" ? "볼록 렌즈" : "오목 렌즈") : other === "cvx" ? "볼록 거울" : "오목 거울"}</b>로 바꾸어 관찰해 보세요.` : `'${t}'${euro(t)} 기록했어요. 이제 물체의 거리를 바꾸어 <b>나머지 칸</b>도 채워 보세요.`);
       return;
     }
     end = true;
     host.dataset.lx = "ask";
-    f.say("네 칸을 모두 채웠어요. 두 표를 비교해 봐요.");
+    f.say(`네 칸을 모두 채웠어요! 두 ${word}에서 상이 어떻게 다른지 비교해 봐요.`);
     tm.later(() => {
       if (lens)
         f.slot.ask(
-          "가까이 있는 작은 글씨를 크게 보려면 어떤 렌즈를 써야 할까요?",
-          [{ t: "볼록 렌즈", ok: true }, { t: "오목 렌즈" }, { t: "어느 렌즈나 똑같아요" }],
+          "가까이에 있는 책의 작은 글씨를 크게 확대해서 보려면 어떤 렌즈를 사용해야 할까요?",
+          [{ t: "볼록 렌즈", ok: true }, { t: "오목 렌즈" }, { t: "어떤 렌즈든 똑같아요" }],
           (ok) => api.recordQuiz(ok),
-          { why: "가까울 때 <b>크고 바로</b> 보인 것은 볼록 렌즈였어요. 오목 렌즈는 늘 작게 보였어요.", onNext: finish },
+          { why: "물체가 가까울 때 <b>크고 바로 선 상</b>으로 보인 것은 볼록 렌즈였어요. 오목 렌즈는 항상 작게 보였어요.", onNext: finish },
         );
       else
         f.slot.ask(
-          "물체를 아무리 멀리 옮겨도 거꾸로 선 상이 생기지 않는 거울은 무엇일까요?",
+          "물체를 거울에서 아무리 멀리 옮겨도 거꾸로 선 상이 생기지 않는 거울은 무엇인가요?",
           [{ t: "볼록 거울", ok: true }, { t: "오목 거울" }, { t: "두 거울 모두" }],
           (ok) => api.recordQuiz(ok),
-          { why: "볼록 거울은 두 칸 모두 <b>바로</b> 선 상이었어요. 오목 거울은 멀 때 거꾸로 섰어요.", onNext: finish },
+          { why: "볼록 거울은 거리에 관계없이 항상 <b>작고 바로 선 상</b>이 생겼고, 오목 거울은 멀어졌을 때 거꾸로 선 상이 생겼어요.", onNext: finish },
         );
     }, 1500);
   }
   function finish(): void {
     host.dataset.lx = "done";
-    f.say("관찰 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    // 수정안은 두 판에 같은 글("거울과 렌즈의 상이 …")이었다. 거울 판에서는 아직 렌즈를 보지 않았으므로 판마다 그 판의 이름을 쓴다.
+    f.say(`${word}의 상이 거리에 따라 어떻게 달라지는지 모두 확인했어요! 아래 핵심 정리를 읽어 보세요.`);
     f.slot.conclude(
       lens
-        ? "<b>볼록 렌즈</b>의 상은 가까우면 크고 바로, 멀면 작고 거꾸로 서요. <b>오목 렌즈</b>의 상은 늘 작고 바로 서요."
-        : "<b>볼록 거울</b>의 상은 늘 작고 바로 서요. <b>오목 거울</b>의 상은 가까우면 크고 바로, 멀면 작고 거꾸로 서요.",
+        ? "<b>볼록 렌즈</b>로 물체를 보면 가까울 때는 크고 바로 선 상이, 멀 때는 거꾸로 선 상이 보여요. <b>오목 렌즈</b>로 보면 항상 실물보다 작고 바로 선 상이 보여요."
+        : "<b>볼록 거울</b>은 항상 실물보다 작고 바로 선 상을 만들어요. <b>오목 거울</b>은 가까울 때는 크고 바로 선 상을, 멀 때는 거꾸로 선 상을 만들어요.",
     );
     api.enableCTA(s.cta ?? "다음");
   }
@@ -327,14 +336,15 @@ export const curveLab: StepRenderer = (host, step, api) => {
     ctx.beginPath();
     ctx.arc(VIEW.x, VIEW.y, VIEW.r, 0, Math.PI * 2);
     ctx.stroke();
-    lxText(ctx, `${word}${lens ? "로" : "에"} 보이는 모습`, VIEW.x, VIEW.y + VIEW.r + 16, { color: LX.ink });
-    lxText(ctx, "점선: 실제 크기", VIEW.x, VIEW.y + VIEW.r + 32, { color: LX.dim });
+    lxText(ctx, `${word}${lens ? "로" : "에"} 보이는 상`, VIEW.x, VIEW.y + VIEW.r + 16, { color: LX.ink });
+    lxText(ctx, "점선: 실제 물체 크기", VIEW.x, VIEW.y + VIEW.r + 32, { color: LX.dim });
     lxPill(ctx, look(), blurry() ? LX.red : LX.gold);
   });
 
   paintCells();
-  f.say(`<b>볼록 ${word}</b>${lens ? "로" : "에"} 인형을 ${lens ? "봐요" : "비춰요"}. 물체를 가까이 댔다가 멀리 옮기며, 보이는 모습을 <b>두 칸</b>에 적어 보세요.`);
-  api.setCTA("네 칸을 모두 채워 보세요", { enabled: false });
+  // 렌즈는 물체를 '비추지' 않고 렌즈를 통해 '본다'. 수정안은 두 판 모두 '비추어 볼 거예요'여서 렌즈 판은 '볼 거예요'로 둔다.
+  f.say(`<b>볼록 ${word}</b>${lens ? "로" : "에"} 인형을 ${lens ? "볼 거예요" : "비추어 볼 거예요"}. 물체를 가까이 두었다가 멀리 옮기며, 눈에 보이는 상의 모습을 <b>두 칸</b>에 기록해 보세요.`);
+  api.setCTA("가까울 때와 멀 때의 모습을 네 칸에 모두 기록해 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();
@@ -378,7 +388,7 @@ function inView(kind: Kind, x: number, y: number): boolean {
 
 export const useLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 3, api });
+  const f = lxFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "use";
@@ -402,19 +412,19 @@ export const useLab: StepRenderer = (host, step, api) => {
       tried.add(k);
       haptic(HAPTIC.tap);
       const n = CARS.filter((c) => inView(k, c.x, c.y)).length;
-      log.set(["plane", "convex", "concave"].indexOf(k), `차 ${n}대 보임`);
+      log.set(["plane", "convex", "concave"].indexOf(k), `자동차 ${n}대 보임`);
       f.pips(Math.min(2, tried.size));
-      if (k === "convex") f.say(tried.size > 1 ? "볼록 거울에는 <b>넓은 범위</b>가 비쳐 양쪽에서 오는 차가 모두 보여요." : "양쪽 차가 모두 보여요! <b>다른 거울</b>도 세워 비치는 범위를 비교해 보세요.");
-      else f.say(`${NAMES[k]}에는 <b>좁은 범위</b>만 비쳐요. 양옆에서 달려오는 차가 보이지 않아요.`);
+      if (k === "convex") f.say(tried.size > 1 ? "볼록 거울에는 <b>넓은 범위</b>가 비치기 때문에 양쪽에서 오는 차가 모두 한눈에 보여요!" : "양쪽 길에서 오는 차가 모두 보여요! <b>다른 거울</b>도 세워 보며 비치는 시야 범위를 비교해 보세요.");
+      else f.say(`${NAMES[k]}에는 <b>좁은 범위</b>만 비쳐요. 양옆 길에서 달려오는 차가 보이지 않아 위험해요.`);
       if (tried.has("convex") && tried.size >= 2) {
         asked = true;
         host.dataset.lx = "ask";
         tm.later(() => {
           f.slot.ask(
-            "얼굴을 가까이 대고 크게 비춰 보는 화장 거울에는 어떤 거울이 알맞을까요?",
+            "얼굴을 가까이 대고 세밀한 부분까지 크게 확대해 보는 화장용 확대 거울에는 어떤 거울이 알맞을까요?",
             [{ t: "오목 거울", ok: true }, { t: "볼록 거울" }, { t: "평면거울" }],
             (ok) => api.recordQuiz(ok),
-            { why: "가까이 있는 물체가 <b>크고 바로</b> 보이는 거울은 오목 거울이었어요.", onNext: finish },
+            { why: "가까이 있는 물체를 <b>실물보다 크고 바로 선 모습</b>으로 보여 주는 거울은 오목 거울이기 때문이에요.", onNext: finish },
           );
         }, 2400);
       }
@@ -422,13 +432,13 @@ export const useLab: StepRenderer = (host, step, api) => {
     "low",
   );
   seg.btns.plane.classList.remove("on");
-  f.slot.setControls(seg.el, el("div", { class: "g2u3x-cap", text: "거울마다 보이는 차" }), log.el);
+  f.slot.setControls(seg.el, el("div", { class: "g2u3x-cap", text: "거울 종류별 보이는 자동차 수" }), log.el);
 
   function finish(): void {
     host.dataset.lx = "done";
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("볼록 거울은 상이 작은 대신 <b>넓은 범위</b>를 보여 줘요. 그래서 굽은 길의 거울이나 자동차 옆 거울에 써요.");
+    f.say("거울의 성질을 우리 생활에서 어떻게 활용하는지 알아봤어요! 아래 핵심 정리를 읽어 보세요.");
+    f.slot.conclude("<b>볼록 거울</b>은 상이 실물보다 작게 보이는 대신 <b>넓은 범위</b>를 비추어 주므로 굽은 길의 안전 거울이나 자동차 측면 거울에 활용해요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -528,13 +538,14 @@ export const useLab: StepRenderer = (host, step, api) => {
     ctx.quadraticCurveTo(MC.x, MC.y + bow * 2, MC.x + MC.a, MC.y);
     ctx.stroke();
     ctx.restore();
-    lxText(ctx, kind ? NAMES[kind] : "거울을 세울 자리", MC.x - 66, 24, { color: LX.ink });
-    // 알림 띠는 오른쪽 위(내 차를 가리지 않게)
-    if (kind) lxPill(ctx, "노란 곳: 비치는 범위", LX.gold, true, 6);
+    lxText(ctx, kind ? NAMES[kind] : "거울을 세울 위치", MC.x - 66, 24, { color: LX.ink });
+    // 알림 띠는 오른쪽 위(내 차를 가리지 않게). 왼쪽 끝이 거울(오른쪽 끝 x 189)과 뒷면 빗금에 닿지 않는 폭이어야 한다.
+    // 수정안의 "노란 영역: 거울에 비치는 시야 범위"(띠 폭 194)는 거울과 받침대를 덮어서 "노란 영역: 비치는 범위"(띠 폭 135)로 줄였다.
+    if (kind) lxPill(ctx, "노란 영역: 비치는 범위", LX.gold, true, 6);
   });
 
-  f.say("건물에 가려 양옆에서 오는 차가 보이지 않아요. 길 건너편에 세울 <b>거울</b>을 골라 비치는 범위를 비교해 보세요.");
-  api.setCTA("양쪽 차가 다 보이게 해 보세요", { enabled: false });
+  f.say("건물에 시야가 가려져 양옆 길에서 달려오는 차가 보이지 않아요. 길 건너편 모퉁이에 세울 <b>거울</b>을 골라 거울에 비치는 범위를 비교해 보세요.");
+  api.setCTA("양쪽 길에서 오는 차가 모두 보이는 거울을 찾아보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

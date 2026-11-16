@@ -55,7 +55,8 @@ const LOG: { loop: "b" | "l"; k: string; t: string }[] = [
 
 export const g2u6RideLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 5, cls: "g2u6x-ride", wait: "무대에서 좌심실을 수축시켜 보세요" });
+  // 큰 버튼의 안내는 '무대' 대신 '화면 속'이라고 쓴다(무대는 제작 말)
+  const lab = g6Lab(host, api, s, { steps: 5, cls: "g2u6x-ride", wait: "화면 속 '좌심실 수축' 버튼을 눌러 출발해 보세요" });
   host.classList.add("g2u6x-ride-step");
   const { f, tm } = lab;
   let st: RideState = startState();
@@ -176,14 +177,14 @@ export const g2u6RideLab: StepRenderer = (host, step, api) => {
     await pick();
     tap();
     push({ picks: [] });
-    cta("혈액이 가는 길을 지켜보세요");
+    cta("혈액이 이동하는 모습을 살펴보세요");
   };
   /** 고르는 결정. 누른 단추에 결과를 새긴다(맞으면 체크와 "맞아요", 틀리면 가위표와 "아니에요").
    *  틀리면 무대가 결과를 보이는 동안 단추를 잠그고(hide면 잠깐 걷어 무대의 근거를 보이고), 틀린 단추는 표시가 남은 채 다시 고르게 한다. */
   const decide = async (picks: Pick[], right: PickKey, wrong: (k: PickKey) => Promise<void>, o: { hide?: boolean } = {}): Promise<void> => {
     let ps = picks;
     push({ picks: ps });
-    cta("무대에서 골라 보세요");
+    cta("화면 속에서 알맞은 곳을 골라 눌러 보세요");
     showStage();
     for (;;) {
       const k = await pick();
@@ -192,7 +193,7 @@ export const g2u6RideLab: StepRenderer = (host, step, api) => {
         host.dataset.g6Fail = "";
         // 맞힌 단추에 체크를 잠깐 보인 뒤 걷는다(다른 단추는 바로 걷는다)
         push({ picks: ps.filter((p) => p.key === k).map((p) => ({ ...p, mark: "ok" as const, lock: true })) });
-        cta("혈액이 가는 길을 지켜보세요");
+        cta("혈액이 이동하는 모습을 살펴보세요");
         await sleep(900);
         push({ picks: [] });
         return;
@@ -212,14 +213,15 @@ export const g2u6RideLab: StepRenderer = (host, step, api) => {
     // 0. 출발: 좌심실
     phase("start");
     mark("lv", true);
-    say("산소를 가득 실은 혈액이 <b>좌심실</b>에 있어요. 좌심실을 수축시켜 내보내요.");
-    await act({ key: "pump", text: "좌심실 수축", hot: true, at: [262, 314] }, "무대에서 좌심실을 수축시켜 보세요");
+    say("여기는 <b>좌심실</b>이에요. 산소를 가득 실은 <b>선홍색 혈액</b>이 출발을 기다리고 있어요. 좌심실을 수축시켜 출발해 볼까요?");
+    await act({ key: "pump", text: "좌심실 수축", hot: true, at: [262, 314] }, "화면 속 '좌심실 수축' 버튼을 눌러 출발해 보세요");
 
     // 1. 좌심실 → 대동맥 → 온몸. 글이 판막을 말하는 동안 심실이 수축한 자세(방실판막 닫힘, 동맥 쪽 판막 열림)를 붙잡는다
     phase("aorta");
     push({ beat: "vent", bt0: now(), bhold: 2300 });
     move("ao", 0, 0.12, 700);
-    say("좌심실이 수축하면 심방과 심실 사이의 판막이 닫혀 <b>대동맥</b>으로만 나가요.");
+    // 판막을 말할 때는 어느 판막인지 쓴다(SCI_GUIDE 순환 여행 랩). 수정안의 "판막이 열리며"에 "심실과 대동맥 사이의"를 넣었다(이 자세에서 열려 있는 판막).
+    say("두꺼운 좌심실이 힘차게 수축하자 심실과 대동맥 사이의 판막이 열리며 혈액이 대동맥으로 뿜어져 나와요!");
     await sleep(2200);
     frame("follow", 900, { place: "대동맥", tags: ["lungs", "tissue", "ao"] });
     move("ao", 0.12, 1, 3300);
@@ -303,7 +305,7 @@ export const g2u6RideLab: StepRenderer = (host, step, api) => {
     // 5. 심장 수축: 우심방 → 우심실 → 폐동맥
     phase("pump2");
     say("이제 심장을 수축시켜 이 혈액을 내보내요.");
-    await act({ key: "pump", text: "심장 수축", hot: true, at: [173, 370] }, "무대에서 심장을 수축시켜 보세요");
+    await act({ key: "pump", text: "심장 수축", hot: true, at: [173, 370] }, "화면 속 '심장 수축' 버튼을 눌러 보세요");
     push({ beat: "atria", bt0: now(), bhold: 900 });
     move("rv", 0, 1, 800);
     mark("rv", false);
@@ -316,7 +318,7 @@ export const g2u6RideLab: StepRenderer = (host, step, api) => {
     frame("follow", 900, { place: "폐동맥", tags: ["lungs", "pa", "vc", "ao"] });
     move("pa", 0.17, 1, 2700);
     mark("pa", false);
-    say("<b>폐동맥</b>에는 산소가 적은 혈액이 흘러요. 그래도 심장에서 나가니 동맥이에요.");
+    say("우심실이 수축하자 <b>폐동맥</b>을 따라 허파로 이동해요. 심장에서 나가는 동맥이지만 아직 <b>산소가 적은 혈액</b>이 흘러요.");
     await sleep(2800);
     done("pa");
 
@@ -327,7 +329,7 @@ export const g2u6RideLab: StepRenderer = (host, step, api) => {
     move("lcap", 0, 0.2, 900);
     await sleep(1000);
     say("허파꽈리를 감싼 <b>모세혈관</b>이에요. 숨을 들이쉬어 허파꽈리에 공기를 넣어요.");
-    await act({ key: "breath", text: "숨 들이쉬기", hot: true, at: [173, 378] }, "무대에서 숨을 들이쉬어 보세요");
+    await act({ key: "breath", text: "숨 들이쉬기", hot: true, at: [173, 378] }, "화면 속 '숨 들이쉬기' 버튼을 눌러 보세요");
     push({ ex: "breath", et0: now() });
     say("들이마신 공기가 허파꽈리로 들어왔어요. 허파꽈리에 <b>산소</b>가 많아요.");
     await sleep(BREATH_DUR);
@@ -376,10 +378,10 @@ export const g2u6RideLab: StepRenderer = (host, step, api) => {
     say("<b>좌심방</b>에 들어왔어요. 우심실에서 여기까지가 <b>허파순환</b>이에요.");
     await sleep(1900);
     say("심장을 수축시켜 이 혈액을 좌심실로 보내요.");
-    await act({ key: "pump", text: "심장 수축", hot: true, at: [173, 370] }, "무대에서 심장을 수축시켜 보세요");
+    await act({ key: "pump", text: "심장 수축", hot: true, at: [173, 370] }, "화면 속 '심장 수축' 버튼을 눌러 보세요");
     push({ beat: "atria", bt0: now(), bhold: 900 });
     move("lv", 0, 1, 900, 0, { place: "좌심실" });
-    say("다시 <b>좌심실</b>이에요. 한 바퀴 도는 동안 심장을 <b>두 번</b> 지났어요.");
+    say("혈액이 다시 출발점인 <b>좌심실</b>로 내려왔어요! 온몸순환과 허파순환이 하나로 이어져 온몸을 한 바퀴 순환했어요.");
     await sleep(1700);
 
     // 9. 한눈에 보기와 판정: 두 순환의 구역, 심장 안 이음매 두 곳의 화살
@@ -387,12 +389,13 @@ export const g2u6RideLab: StepRenderer = (host, step, api) => {
     frame("all", 1500, { place: "", links: true, tags: ["lungs", "tissue", "ra", "rv", "la", "lv", "ao", "vc", "pa", "pv", "bodyLoop", "lungLoop"] });
     say("두 순환이 <b>심장</b>에서 이어져 한 길이 돼요. 무대에 칠해진 길을 보고 답해요.");
     await sleep(1700);
+    // 색 이름: 수정안의 '암적색'은 이 단원에서 쓰지 않는 이름이라 뺐다(이유 글), "색이 어두워져"로 바꿨다(결론. 무대 글 "어두워졌어요"와 같은 말)
     lab.judge(
-      "<b>온몸순환</b>을 마친 혈액은 다음에 어디로 갔나요?",
-      [{ t: "우심실을 거쳐 허파로", ok: true }, { t: "좌심방을 거쳐 온몸으로" }, { t: "대동맥을 거쳐 온몸으로" }],
-      "우심방에서 우심실을 거쳐 <b>폐동맥</b>으로 나가 허파로 가요.",
+      "<b>온몸순환</b>을 마치고 우심방으로 돌아온 혈액은 이어서 어디로 이동했나요?",
+      [{ t: "우심실을 거쳐 허파로 이동했다", ok: true }, { t: "좌심방을 거쳐 다시 온몸으로 이동했다" }, { t: "대동맥을 거쳐 곧바로 온몸으로 이동했다" }],
+      "온몸에 산소를 전달하고 우심방으로 돌아온 혈액은 <b>우심실 → 폐동맥 → 허파</b>로 이동해 다시 산소를 공급받아요.",
       () => {
-        lab.finish("혈액은 <b>온몸순환</b>(좌심실 → 온몸 → 우심방)에서 산소를 주고, <b>허파순환</b>(우심실 → 허파 → 좌심방)에서 산소를 받아요. 두 순환은 <b>심장</b>에서 이어져요.");
+        lab.finish("혈액은 <b>온몸의 모세혈관</b>에서 조직세포에 산소를 주고 색이 어두워져 우심방으로 돌아오고(온몸순환), 이어서 <b>허파의 모세혈관</b>에서 산소를 받아 선홍색이 되어 좌심방으로 돌아와요(허파순환). 이 두 순환이 끊임없이 이어지며 온몸에 산소와 영양소를 전달해요.");
         tm.later(() => f.slot.el.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
       },
     );

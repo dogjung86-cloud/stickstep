@@ -105,7 +105,7 @@ export function gPredict(lab: GLab, question: string, choices: string[], next: (
     if (b && !picked) picked = b.textContent?.trim() ?? "";
   };
   lab.f.slot.qBox.addEventListener("click", grab, true);
-  lab.api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
+  lab.api.setCTA("먼저 어떻게 될지 예측해 보세요", { enabled: false });
   lab.hint("predict");
   lab.f.slot.ask(question, choices.map((t) => ({ t })), () => undefined, {
     predict: true,

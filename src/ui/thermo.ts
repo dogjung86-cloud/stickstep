@@ -35,7 +35,7 @@ export function tempColor(t: number, alpha = 1): string {
 
 /** 입자 운동의 활발한 정도를 말로 — HUD·헬퍼 공용 */
 export function motionWord(t: number): string {
-  return t < 0.34 ? "둔해요" : t < 0.67 ? "보통이에요" : "활발해요";
+  return t < 0.34 ? "느려요" : t < 0.67 ? "보통이에요" : "활발해요";
 }
 
 /** 발광 입자 — 글로우 + 코어 + 하이라이트 */

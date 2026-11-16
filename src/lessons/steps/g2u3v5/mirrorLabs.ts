@@ -37,7 +37,8 @@ type Mirror = "none" | "plain" | "half";
 
 export const halfMirrorLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 3, api });
+  // 도움말에 세 줄 글이 있어(처음 겹쳤을 때, 360px 폰의 반투명 거울 안내) 처음부터 세 줄 칸으로 잡는다(2026-11-16)
+  const f = lxFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "half";
@@ -52,8 +53,8 @@ export const halfMirrorLab: StepRenderer = (host, step, api) => {
 
   const seg = lxSeg<"plain" | "half">(
     [
-      { k: "plain", t: "보통 거울", sub: "뒤가 비치지 않아요" },
-      { k: "half", t: "반투명 거울", sub: "뒤가 비쳐 보여요" },
+      { k: "plain", t: "보통 거울", sub: "거울 뒤쪽이 막혀 있어요" },
+      { k: "half", t: "반투명 거울", sub: "거울 뒤쪽도 비쳐 보여요" },
     ],
     "plain",
     (k) => {
@@ -62,7 +63,7 @@ export const halfMirrorLab: StepRenderer = (host, step, api) => {
       checked = "";
       haptic(HAPTIC.tap);
       host.dataset.lx = "place";
-      f.say(k === "plain" ? "보통 거울을 세웠어요. 거울 속에 (가)의 상이 보여요. <b>(나)</b>를 상의 자리로 옮기고 확인해 보세요." : "반투명 거울은 상도 보이고 거울 뒤도 비쳐요. <b>(나)</b>를 옮겨 상에 꼭 겹치게 하고 확인해 보세요.");
+      f.say(k === "plain" ? "보통 거울을 세웠더니 거울 속에 (가)의 상이 비쳐요. 이제 <b>물체 (나)</b>를 움직여 상의 위치에 맞춘 뒤 확인해 보세요." : "반투명 거울은 (가)의 상도 비치고 거울 뒤쪽도 함께 보여요! <b>물체 (나)</b>를 움직여 상과 정확히 겹치게 맞춘 뒤 확인해 보세요.");
       sync();
     },
     "low",
@@ -102,19 +103,20 @@ export const halfMirrorLab: StepRenderer = (host, step, api) => {
     if (mirror === "plain") {
       checked = "blind";
       haptic(HAPTIC.wrong);
-      f.say("보통 거울은 뒤가 보이지 않아 (나)가 상과 겹쳤는지 <b>알 수 없어요</b>. 다른 거울을 세워 보세요.");
+      // 거울 고르기 칸은 무대 아래 조작 칸에 있어 수정안의 "위에서"는 뺐다(2026-11-16)
+      f.say("보통 거울은 뒤쪽이 가려져서 (나)가 상과 겹쳤는지 <b>확인할 수 없어요</b>. <b>반투명 거울</b>로 바꾸어 세워 보세요.");
       return;
     }
     if (db !== da) {
       checked = "off";
       haptic(HAPTIC.wrong);
-      f.say(`어긋났어요. 상과 (나)가 <b>따로</b> 보여요. (나)를 ${db > da ? "거울 쪽으로" : "거울에서 멀리"} 옮겨 꼭 겹쳐 보세요.`);
+      f.say(`위치가 어긋나서 상과 (나)가 <b>따로</b> 보여요. 물체 (나)를 ${db > da ? "거울에 더 가깝게" : "거울에서 더 멀게"} 옮겨 정확히 겹쳐 보세요.`);
       return;
     }
     if (recs.includes(da)) {
       checked = "ok";
       haptic(HAPTIC.wrong);
-      f.say("이미 기록한 자리예요. <b>(가)</b>를 다른 칸으로 옮기고 다시 상을 찾아보세요.");
+      f.say("이미 확인하여 기록한 위치예요. <b>물체 (가)</b>를 다른 칸으로 옮긴 뒤 상의 위치를 한 번 더 찾아보세요.");
       return;
     }
     checked = "ok";
@@ -122,27 +124,27 @@ export const halfMirrorLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.correct);
     f.pips(recs.length);
     if (recs.length < 2) {
-      f.say(`꼭 겹쳤어요. 거울 앞 <b>${da}칸</b>, 거울 뒤 <b>${da}칸</b>이고 크기도 같아요. (가)를 옮겨 한 번 더 해 보세요.`);
+      f.say(`정확히 겹쳤어요! 거울 앞 <b>${da}칸</b>일 때 상도 거울 뒤 <b>${da}칸</b>에 같은 크기로 생겼어요. 이제 <b>물체 (가)</b>의 위치를 바꾸어 한 번 더 확인해 보세요.`);
       return;
     }
     end = true;
     sync();
-    f.say(`이번에도 앞 ${da}칸, 뒤 ${da}칸에서 꼭 겹쳤어요. 두 기록을 비교해 봐요.`);
+    f.say(`이번에도 거울 앞 <b>${da}칸</b>, 거울 뒤 <b>${da}칸</b>에서 정확히 겹쳤어요! 두 측정 기록을 비교해 볼까요?`);
     host.dataset.lx = "ask";
     tm.later(() => {
       f.slot.ask(
-        "평면거울 앞 8칸에 물체를 놓으면 상은 어디에 생길까요?",
-        [{ t: "거울 뒤 8칸", ok: true }, { t: "거울 뒤 4칸" }, { t: "거울 뒤 16칸" }],
+        "모눈종이 위 평면거울 앞쪽으로 8칸 떨어진 곳에 물체를 놓으면, 이 물체의 상은 어디에 생길까요?",
+        [{ t: "거울 뒤쪽으로 8칸 떨어진 곳", ok: true }, { t: "거울 뒤쪽으로 4칸 떨어진 곳" }, { t: "거울 뒤쪽으로 16칸 떨어진 곳" }],
         (ok) => api.recordQuiz(ok),
-        { why: "두 번 모두 거울 앞의 칸 수와 거울 뒤의 칸 수가 <b>같았어요</b>.", onNext: finish },
+        { why: "두 번의 실험 모두 거울에서 물체까지의 거리(칸 수)와 거울에서 상까지의 거리가 <b>서로 같았어요</b>.", onNext: finish },
       );
     }, 1700);
   });
   function finish(): void {
     host.dataset.lx = "done";
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("평면거울의 상은 <b>거울 뒤</b>에, 거울에서 물체까지와 <b>같은 거리</b>에, 물체와 <b>같은 크기</b>로 생겨요.");
+    f.say("평면거울에서 상이 생기는 위치를 확인했어요! 아래 핵심 정리를 읽어 보세요.");
+    f.slot.conclude("평면거울에 비친 상은 <b>거울 뒤쪽</b>에 생기며, 거울에서 물체까지의 거리와 상까지의 거리가 <b>서로 같고</b> 물체와 <b>크기도 같아요</b>.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -246,16 +248,18 @@ export const halfMirrorLab: StepRenderer = (host, step, api) => {
     if (checked === "ok") {
       span(ctx, ax, MX, da);
       span(ctx, MX, ix, da);
-      lxPill(ctx, "상과 (나)가 꼭 겹쳤어요", LX.green);
+      // 왼쪽 위 알약은 오른쪽 위 "세운 거울: …" 글과 한 줄에 선다. 수정안 글("…정확히 겹쳤어요", "거울 뒤의 (나)가 보이지 않아요")은
+      // 그 글과 5px, 1px까지 붙어서 짧게 썼다(18px, 43px 떨어짐. 둘째는 수정안이 대안으로 준 글, 2026-11-16)
+      lxPill(ctx, "상과 (나)가 정확히 겹쳐요", LX.green);
     } else if (checked === "off") lxPill(ctx, "상과 (나)가 어긋났어요", LX.red);
-    else if (checked === "blind") lxPill(ctx, "(나)가 보이지 않아요", LX.red);
+    else if (checked === "blind") lxPill(ctx, "뒤쪽의 (나)가 안 보여요", LX.red);
     // 기록
     recs.forEach((d, i) => lxText(ctx, `기록 ${i + 1}: 앞 ${d}칸, 뒤 ${d}칸`, PAPER.x + PAPER.w - 8, PAPER.y + PAPER.h - 10 - (recs.length - 1 - i) * 16, { align: "right", color: "#1B2B45", px: 12.5, plain: true }));
   });
 
   sync();
-  f.say("모눈종이를 위에서 내려다본 모습이에요. 먼저 <b>기준선에 세울 거울</b>을 골라 보세요.");
-  api.setCTA("상의 자리를 두 번 찾아보세요", { enabled: false });
+  f.say("모눈종이를 위에서 내려다본 모습이에요. 먼저 가운데 기준선에 <b>어떤 거울을 세울지</b> 골라 보세요.");
+  api.setCTA("물체 위치를 바꾸어 상의 위치를 두 번 찾아보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();
@@ -272,7 +276,8 @@ const EYE_X = 76;
 
 export const extendLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 3, api });
+  // 도움말에 세 줄 글이 있어(처음 안내, 360px 폰의 세 번째 표시 뒤) 처음부터 세 줄 칸으로 잡는다(2026-11-16)
+  const f = lxFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "extend";
@@ -287,12 +292,12 @@ export const extendLab: StepRenderer = (host, step, api) => {
     min: 104,
     max: 208,
     value: ey,
-    label: "눈의 자리 옮기기",
+    label: "관찰하는 눈의 위치 옮기기",
     onInput: (v) => {
       ey = v;
     },
   });
-  const keep = bvBtn("main", "반사한 빛의 연장선 남기기");
+  const keep = bvBtn("main", "반사한 빛의 연장선 표시하기");
   keep.dataset.k = "keep";
   f.slot.setControls(range.el, keep);
 
@@ -302,33 +307,33 @@ export const extendLab: StepRenderer = (host, step, api) => {
     if (end) return;
     if (kept.some((y) => Math.abs(y - ey) < 16)) {
       haptic(HAPTIC.wrong);
-      f.say("그 자리의 연장선은 이미 남겼어요. <b>눈의 자리</b>를 더 옮긴 뒤 남겨 보세요.");
+      f.say("이미 연장선을 표시한 위치예요. 슬라이더로 <b>눈의 위치</b>를 다른 곳으로 옮긴 뒤 눌러 보세요.");
       return;
     }
     kept.push(ey);
     haptic(HAPTIC.correct);
     f.pips(kept.length);
     if (kept.length < 3) {
-      f.say(`연장선을 남겼어요. 눈을 다른 자리로 옮겨 <b>${3 - kept.length}번</b> 더 남겨 보세요.`);
+      f.say(`반사한 빛을 거울 뒤로 곧게 이은 연장선을 표시했어요! 눈을 다른 위치로 옮겨 <b>${3 - kept.length}번</b> 더 표시해 보세요.`);
       return;
     }
     end = true;
     keep.disabled = true;
     host.dataset.lx = "ask";
-    f.say("눈을 어디에 두어도 연장선은 거울 뒤의 <b>한 점</b>을 지나요. 거울까지의 거리도 비교해 보세요.");
+    f.say("세 위치에서 그은 연장선이 모두 거울 뒤의 <b>똑같은 한 점</b>에서 만났어요! 거울 앞뒤의 칸 수도 비교해 보세요.");
     tm.later(() => {
       f.slot.ask(
-        "거울에서 반사한 빛을 본 눈은 그 빛이 어디에서 나온 것으로 느낄까요?",
-        [{ t: "거울 뒤, 연장선이 만난 점", ok: true }, { t: "거울 면 위, 빛이 반사한 점" }, { t: "거울 앞, 눈과 물체의 가운데" }],
+        "거울에서 반사되어 들어온 빛을 본 우리 눈은, 그 빛이 어디에서 나온 것처럼 인식할까요?",
+        [{ t: "거울 뒤쪽에서 연장선이 만나는 점", ok: true }, { t: "거울 표면 위에서 빛이 반사된 점" }, { t: "거울 앞쪽에서 눈과 물체 사이의 점" }],
         (ok) => api.recordQuiz(ok),
-        { why: "눈은 빛이 <b>곧게</b> 온 것으로 여겨요. 그래서 연장선이 만난 점에 상이 보여요.", onNext: finish },
+        { why: "우리 눈은 눈에 들어온 빛이 꺾이지 않고 <b>곧게 직진해 온 것</b>으로 인식하기 때문에, 연장선이 만나는 거울 뒤쪽 지점에 상이 보여요.", onNext: finish },
       );
     }, 2600);
   });
   function finish(): void {
     host.dataset.lx = "done";
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("거울에서 반사한 빛을 거슬러 곧게 이으면 <b>거울 뒤의 한 점</b>에서 만나요. 눈은 그 점에서 빛이 나온 것으로 느끼고, 그곳에 상이 보여요.");
+    f.say("반사한 빛의 연장선이 한 점에서 만나는 원리를 확인했어요! 아래 핵심 정리를 읽어 보세요.");
+    f.slot.conclude("물체에서 나와 거울에서 반사된 빛을 거울 뒤쪽으로 곧게 연장하면 <b>한 점</b>에서 만나요. 우리 눈은 이 점에서 빛이 나온 것처럼 인식하므로 거울 뒤에 상이 보여요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -406,8 +411,8 @@ export const extendLab: StepRenderer = (host, step, api) => {
     lxPill(ctx, `연장선 ${kept.length}/3`, LX.gold);
   });
 
-  f.say("물체에서 나온 빛이 거울에서 반사해 눈에 들어와요. <b>눈의 자리</b>를 옮기고 반사한 빛의 연장선을 남겨 보세요.");
-  api.setCTA("연장선을 세 번 남겨 보세요", { enabled: false });
+  f.say("물체에서 나온 빛이 거울에서 반사되어 눈으로 들어오고 있어요. <b>눈의 위치</b>를 바꾸어 가며 반사한 빛의 연장선을 세 번 표시해 보세요.");
+  api.setCTA("위치를 바꾸어 연장선을 세 번 표시해 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

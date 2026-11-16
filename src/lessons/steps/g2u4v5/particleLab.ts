@@ -1,28 +1,29 @@
 // [중2 Ⅳ v5] g2u4l5 입자 랩 두 판.
-//   g2u4MolLab 「원자를 붙이거나 떼면 같은 물질일까요?」
+//   g2u4MolLab 「결합하는 원자의 개수가 달라지면 물질의 성질은 어떻게 될까요?」
 //     책의 해 보기(여러 가지 분자의 구성 알아보기: 일산화 탄소와 이산화 탄소처럼 원자의 종류가 같은 분자의 성질은 같을까)와 본문(물 분자를 나누면 물의 성질이 사라진다).
 //     학생이 정하는 것: 탄소 원자에 산소 원자를 붙이고 떼는 일, 물 분자를 원자로 나누는 일. 손을 대면 이름과 성질 카드가 그 자리에서 바뀐다.
 //     판정(CO와 CO₂는 같은 물질일까요?)이 뜨면 두 분자를 나란히 놓고 아래에 성질을 한 줄씩 적는다. 물 분자는 굽은 모양(결합 각 104.5°).
-//   g2u4IonLab 「전자를 주고받으면 원자는 어떻게 될까요?」
+//   g2u4IonLab 「원자가 전자를 잃거나 얻으면 어떤 전하를 띠게 될까요?」
 //     책의 그림(이온의 형성)과 본문(나트륨 원자는 전자를 잃고 염소 원자는 전자를 얻는다). 학생이 전자를 한 개씩 건넨다. 양쪽의 (+)와 (−) 개수가 그 자리에서 바뀐다.
 //     나트륨과 염소(전자 1개) → 마그네슘과 산소(전자 2개). 원자와 이온은 책처럼 구름 모형이고, 구름의 크기는 실제 반지름의 비를 따른다.
 
 import type { StepRenderer } from "../../types";
 import { bvTween } from "../bio6/b6Lab";
-import { ball, bond, bvBtn, cloud, cloudDefs, cloudSpots, electron, g4Lab, g4Svg, good, nucleus, row, spotAngle, tap, txt, type G4Step } from "./kit";
+import { ball, bond, bvBtn, cloud, cloudDefs, cloudSpots, electron, g4Lab, g4Svg, good, iga, nucleus, ro, row, spotAngle, tap, txt, type G4Step } from "./kit";
 
 // ── 분자 ────────────────────────────────────────────────────────────
 const CX = 173;
 const CY = 92;
+// 이산화 탄소 카드: 수정안의 "탄산음료에 들어 있는 안전한 기체"에서 "안전한"을 뺐다(이산화 탄소도 많이 들이마시면 해롭다)
 const CARB = [
-  { name: "탄소 원자", f: "C", prop: "아직 아무것도 붙지 않았어요" },
-  { name: "일산화 탄소", f: "CO", prop: "마시면 위험한 기체" },
-  { name: "이산화 탄소", f: "CO₂", prop: "탄산음료에 녹아 있는 기체" },
+  { name: "탄소 원자", f: "C", prop: "아직 다른 원자와 결합하지 않은 원자" },
+  { name: "일산화 탄소 분자", f: "CO", prop: "독성이 있어 흡입하면 위험한 기체" },
+  { name: "이산화 탄소 분자", f: "CO₂", prop: "탄산음료에 들어 있는 기체" },
 ];
 
 export const g2u4MolLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G4Step;
-  const lab = g4Lab(host, api, s, { steps: 4, cls: "g2u4x-mol", wait: "원자를 붙이고 떼어 보세요" });
+  const lab = g4Lab(host, api, s, { steps: 4, cls: "g2u4x-mol", wait: "탄소 원자에 산소 원자를 결합해 보고 성질을 비교해 보세요", tall: true });
   const { f, tm } = lab;
   const stage = g4Svg(lab, "원자가 결합한 분자 모형");
   let o = 0;
@@ -66,20 +67,20 @@ export const g2u4MolLab: StepRenderer = (host, step, api) => {
     const art = split
       ? ball(CX - hx - 46, hy + 10, "H", { k: 1.7 }) + ball(CX + hx + 46, hy + 10, "H", { k: 1.7 }) + ball(CX, oy - 22, "O", { k: 1.7 })
       : bond(CX, oy, CX - hx, hy) + bond(CX, oy, CX + hx, hy) + ball(CX - hx, hy, "H", { k: 1.7 }) + ball(CX + hx, hy, "H", { k: 1.7 }) + ball(CX, oy, "O", { k: 1.7 });
-    stage.set(art + (split ? card("수소 원자 2개, 산소 원자 1개", "", "물의 성질이 사라졌어요") : card("물 분자", "H₂O", "마실 수 있는 물의 성질")));
+    stage.set(art + (split ? card("수소 원자 2개와 산소 원자 1개", "", "물 고유한 성질이 사라짐") : card("물 분자", "H₂O", "마실 수 있는 물 고유한 성질을 지님")));
     host.dataset.g4Split = split ? "1" : "0";
   };
 
-  const add = bvBtn("main g2u4x-mol-add", "산소 원자 붙이기");
-  const sub = bvBtn("g2u4x-mol-sub", "산소 원자 떼기");
-  const cut = bvBtn("main g2u4x-mol-cut", "원자로 나누기");
+  const add = bvBtn("main g2u4x-mol-add", "산소 원자 1개 붙이기");
+  const sub = bvBtn("g2u4x-mol-sub", "산소 원자 1개 떼기");
+  const cut = bvBtn("main g2u4x-mol-cut", "낱개의 원자로 나누기");
   const act2 = (): void => {
     act = 2;
     f.pips(2);
     draw();
     f.slot.setControls(cut);
-    api.setCTA("물 분자를 원자로 나눠 보세요", { enabled: false });
-    f.say("이번에는 <b>물 분자</b>예요. 수소 원자 2개와 산소 원자 1개가 결합해 있어요. 원자로 나눠 보세요.");
+    api.setCTA("물 분자를 원자로 나누어 성질이 유지되는지 확인해 보세요", { enabled: false });
+    f.say("이번에는 수소 원자 2개와 산소 원자 1개가 결합한 <b>물 분자(H₂O)</b>예요. 아래 버튼을 눌러 물 분자를 낱개의 원자로 나누어 보세요.");
   };
   const check = (): void => {
     if (seen.size < 3 || act !== 1) return;
@@ -87,20 +88,31 @@ export const g2u4MolLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     tm.later(() => {
       draw(); // 두 분자를 나란히 놓고 묻는다
-      lab.judge("CO와 CO₂는 원자의 종류가 같아요. <b>같은 물질</b>일까요?", [{ t: "개수가 달라 다른 물질이다", ok: true }, { t: "종류가 같아 같은 물질이다" }, { t: "이름만 다른 같은 물질이다" }], "산소 원자 하나 차이로 <b>성질이 달라졌어요</b>.", act2);
+      lab.judge(
+        "일산화 탄소(CO)와 이산화 탄소(CO₂)는 이루는 원자의 종류가 탄소와 산소로 같아요. 그렇다면 두 물질은 <b>같은 물질</b>일까요?",
+        // 정답 보기는 수정안의 "결합한 원자의 개수가 다르므로 성질이 다른 별개의 물질이다"를 줄였다(오답 카드의 정답 글이 두 줄이 되면 조작 칸 208px를 넘는다)
+        [{ t: "결합한 원자의 개수가 달라 성질이 다른 물질이다", ok: true }, { t: "이루는 원자의 종류가 같으므로 성질도 같은 물질이다" }, { t: "부르는 이름만 다를 뿐 실제로는 같은 물질이다" }],
+        "같은 종류의 원자로 이루어져 있어도 <b>결합한 원자의 개수</b>가 다르면 성질이 전혀 다른 새로운 분자가 되기 때문이에요.",
+        act2,
+      );
     }, 1100);
   };
   add.addEventListener("click", () => {
     if (act !== 1) return;
     if (o >= 2) {
-      f.say("이 탄소 원자에는 산소 원자가 더 붙지 않아요. 이번에는 <b>떼어</b> 보세요.");
+      // 수정안의 "탄소 원자 하나에는 산소 원자가 최대 2개까지만 결합해요"는 틀린 일반화라(제빵 소다 속 탄소에는 산소 3개가 붙는다) 이 탄소 원자에 한정해 둔다
+      f.say("이 탄소 원자에는 산소 원자가 더 결합하지 않아요. 이번에는 산소 원자를 <b>떼어</b> 보세요.");
       return;
     }
     tap();
     o += 1;
     seen.add(o);
     draw();
-    f.say(o === 1 ? "산소 원자 하나가 결합해 <b>일산화 탄소</b>가 됐어요. 하나 더 붙여 보세요." : "산소 원자가 둘이 되자 <b>이산화 탄소</b>가 됐어요. 이름도 성질도 달라졌어요.");
+    f.say(
+      o === 1
+        ? "탄소 원자에 산소 원자 1개가 결합해 <b>일산화 탄소(CO)</b> 분자가 되었어요! 산소 원자를 하나 더 붙여 볼까요?"
+        : "산소 원자가 2개가 되자 <b>이산화 탄소(CO₂)</b> 분자가 되었어요! 결합한 산소 원자의 개수가 달라지니 물질의 이름도, 성질도 완전히 달라졌네요.",
+    );
     check();
   });
   sub.addEventListener("click", () => {
@@ -108,7 +120,7 @@ export const g2u4MolLab: StepRenderer = (host, step, api) => {
     tap();
     o -= 1;
     draw();
-    f.say(`산소 원자 하나를 떼었더니 <b>${CARB[o].name}</b>가 됐어요.`);
+    f.say(`산소 원자 1개를 떼어 냈더니 다시 <b>${CARB[o].name}</b>${iga(CARB[o].name)} 되었어요.`);
   });
   cut.addEventListener("click", () => {
     if (split) return;
@@ -117,16 +129,19 @@ export const g2u4MolLab: StepRenderer = (host, step, api) => {
     cut.disabled = true;
     draw();
     f.pips(3);
-    f.say("원자로 흩어지자 더는 물이 아니에요. <b>물의 성질</b>은 물 분자일 때만 나타나요.");
+    f.say("결합이 끊어져 낱개의 원자로 흩어지자 더 이상 물의 성질을 나타내지 못해요! <b>물의 성질</b>은 물 분자 상태로 결합해 있을 때만 나타나요.");
     tm.later(() => {
-      lab.judge("<b>물의 성질</b>을 지닌 가장 작은 입자는 무엇인가요?", [{ t: "물 분자", ok: true }, { t: "수소 원자" }, { t: "산소 원자" }], "원자로 나누면 물의 성질이 <b>사라져요</b>.", () =>
-        lab.finish("원자가 결합한 <b>분자</b>가 물질의 성질을 나타내요. 원자의 종류나 개수가 다르면 다른 분자예요."),
+      lab.judge(
+        "물질이 <b>물의 고유한 성질</b>을 그대로 지니고 있는 가장 작은 입자는 무엇인가요?",
+        [{ t: "물 분자", ok: true }, { t: "수소 원자" }, { t: "산소 원자" }],
+        "물 분자가 수소 원자와 산소 원자로 나뉘면 물 고유한 성질이 <b>사라지기</b> 때문이에요.",
+        () => lab.finish("독립된 입자로 존재하여 물질의 성질을 나타내는 가장 작은 입자를 <b>분자</b>라고 해요. 결합한 원자의 종류나 개수가 달라지면 성질이 다른 새로운 분자가 돼요."),
       );
     }, 1900);
   });
   f.slot.setControls(row(sub, add));
   draw();
-  f.say("<b>탄소 원자</b> 하나가 있어요. 산소 원자를 붙여 보세요. 무엇이 달라지나요?");
+  f.say("화면 가운데에 <b>탄소 원자(C)</b> 하나가 있어요. 아래 버튼을 눌러 산소 원자를 하나씩 결합해 보세요. 어떤 물질이 만들어질까요?");
   return lab.cleanup;
 };
 
@@ -161,6 +176,8 @@ const RMAX = 74;
 const NR = 11; // 원자핵 반지름(+17도 12px 글자로 든다)
 const ER = 4.3; // 전자 반지름
 const signed = (n: number): string => (n === 0 ? "0" : n > 0 ? `+${n}` : `−${Math.abs(n)}`);
+/** 전자를 건네기 전 맨 아래 버튼의 글(처음과 둘째 판이 같다) */
+const ION_WAIT = "전자를 이동시켜 이온이 만들어지는 과정을 확인해 보세요";
 /** 전자를 m개 건넨 뒤의 구름 반지름(px). */
 const radius = (pr: Pair, side: Side, m: number): number => {
   const k = RMAX / Math.max(pr.a.atomPm, pr.a.ionPm, pr.b.atomPm, pr.b.ionPm);
@@ -176,7 +193,7 @@ const phases = (pr: Pair): { a: number; b: number } => ({
 
 export const g2u4IonLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G4Step;
-  const lab = g4Lab(host, api, s, { steps: 4, cls: "g2u4x-ion", wait: "전자를 건네 보세요" });
+  const lab = g4Lab(host, api, s, { steps: 4, cls: "g2u4x-ion", wait: ION_WAIT, tall: true });
   const { f, tm } = lab;
   const stage = g4Svg(lab, "전자를 주고받는 두 원자의 구름 모형");
   let pi = 0;
@@ -191,9 +208,9 @@ export const g2u4IonLab: StepRenderer = (host, step, api) => {
     const c = o.p - e;
     const ion = named && c !== 0;
     return (
-      txt(cx, 19, ion ? `${o.ionName} ${o.ion}` : `${o.name} 원자`, { size: 13.5, fill: ion ? "#FFE58A" : "#fff", weight: 800 }) +
-      txt(cx, 201, `(+) ${o.p}개  (−) ${e}개`, { size: 12.5 }) +
-      txt(cx, 221, `전하의 합 ${signed(c)}`, { size: 13.5, fill: c === 0 ? "#7CF29C" : c > 0 ? "#FFB4A8" : "#A8CCFF", weight: 800 })
+      txt(cx, 19, ion ? `${o.ionName} (${o.ion})` : `${o.name} 원자`, { size: 13.5, fill: ion ? "#FFE58A" : "#fff", weight: 800 }) +
+      txt(cx, 201, `양성자(+) ${o.p}개 · 전자(−) ${e}개`, { size: 12.5 }) +
+      txt(cx, 221, `전하의 합: ${signed(c)}`, { size: 13.5, fill: c === 0 ? "#7CF29C" : c > 0 ? "#FFB4A8" : "#A8CCFF", weight: 800 })
     );
   };
   const arrow = `<path d="M163 ${AY} L185 ${AY} M179 ${AY - 5} L185 ${AY} L179 ${AY + 5}" stroke="#6F8AB0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -208,15 +225,16 @@ export const g2u4IonLab: StepRenderer = (host, step, api) => {
   };
 
   const give = bvBtn("main g2u4x-ion-give", "");
-  const back = bvBtn("g2u4x-ion-back", "전자 되돌리기");
+  const back = bvBtn("g2u4x-ion-back", "전자 원래대로 되돌리기");
   const label = (): void => {
-    give.textContent = `${PAIRS[pi].a.name}의 전자 1개를 ${PAIRS[pi].b.name}에 건네기`;
+    const b = PAIRS[pi].b.name;
+    give.textContent = `${PAIRS[pi].a.name}의 전자 1개를 ${b}${ro(b)} 이동시키기`;
   };
   const after = (): void => {
     const pr = PAIRS[pi];
     if (moved < pr.n) {
       busy = false;
-      f.say(`전자 하나가 건너갔어요. 마그네슘은 전자를 <b>2개</b> 내놓아요. 하나 더 건네 보세요.`);
+      f.say("전자 1개가 이동했어요. 마그네슘 원자는 전자를 <b>2개</b> 잃고 이온이 돼요. 전자를 1개 더 이동시켜 보세요.");
       return;
     }
     f.pips(pi * 2 + 1);
@@ -225,7 +243,7 @@ export const g2u4IonLab: StepRenderer = (host, step, api) => {
       draw();
       f.pips(pi * 2 + 2);
       if (pi === 0) {
-        f.say("전하를 띠게 된 입자를 <b>이온</b>이라고 해요. 나트륨 이온은 Na⁺, 염화 이온은 Cl⁻로 나타내요.");
+        f.say("이처럼 원자가 전자를 잃거나 얻어 전하를 띠게 된 입자를 <b>이온</b>이라고 해요. 나트륨 이온은 Na⁺, 염화 이온은 Cl⁻로 나타내요.");
         tm.later(() => {
           pi = 1;
           moved = 0;
@@ -234,15 +252,28 @@ export const g2u4IonLab: StepRenderer = (host, step, api) => {
           label();
           draw();
           f.slot.setControls(give, back);
-          api.setCTA("전자를 건네 보세요", { enabled: false });
-          f.say("이번에는 <b>마그네슘과 산소</b>예요. 전자를 건네면 전하의 합이 어떻게 되나요?");
+          api.setCTA(ION_WAIT, { enabled: false });
+          f.say("이번에는 <b>마그네슘 원자</b>와 <b>산소 원자</b>예요. 전자를 이동시키면 두 입자의 전하의 합이 어떻게 변할까요?");
         }, 3000);
         return;
       }
-      lab.finish("원자가 전자를 <b>잃으면 양이온</b>, <b>얻으면 음이온</b>이 돼요. 양성자수는 그대로예요.");
+      lab.finish("원자가 전자를 <b>잃으면 (+)전하를 띤 양이온</b>이 되고, 전자를 <b>얻으면 (−)전하를 띤 음이온</b>이 돼요. 이때 원자핵 속 양성자수는 변하지 않아요.");
     };
-    if (pi === 0) lab.judge("전자를 <b>잃은</b> 나트륨은 어떤 전하를 띠나요?", [{ t: "(+)전하", ok: true }, { t: "(−)전하" }, { t: "전하를 띠지 않는다" }], "(−)가 하나 줄어 <b>(+)가 하나 더 많아요</b>.", next);
-    else lab.judge("전자 2개를 <b>얻은</b> 산소의 전하의 합은 얼마인가요?", [{ t: "−2", ok: true }, { t: "+2" }, { t: "+8" }], "(−)가 (+)보다 <b>2개 더 많아요</b>.", next);
+    // 첫 판정의 이유: 수정안의 "양성자가 1개 더 많아졌기"는 양성자가 늘어난 것처럼 읽혀 "전자보다"를 넣었다(이온이 되어도 양성자수는 그대로다)
+    if (pi === 0)
+      lab.judge(
+        "전자 1개를 <b>잃은</b> 나트륨은 어떤 전하를 띠게 되었나요?",
+        [{ t: "(+)전하", ok: true }, { t: "(−)전하" }, { t: "전하를 띠지 않는다" }],
+        "(−)전하를 띤 전자가 1개 줄어들어 <b>(+)전하를 띤 양성자가 전자보다 1개 더 많아졌기</b> 때문이에요.",
+        next,
+      );
+    else
+      lab.judge(
+        "전자 2개를 <b>얻은</b> 산소(산화 이온, O²⁻)의 전체 전하의 합은 얼마인가요?",
+        [{ t: "−2", ok: true }, { t: "+2" }, { t: "+8" }],
+        "(−)전하를 띤 전자가 (+)전하를 띤 양성자보다 <b>2개 더 많아졌기</b> 때문이에요.",
+        next,
+      );
   };
   give.addEventListener("click", () => {
     const pr = PAIRS[pi];
@@ -292,11 +323,11 @@ export const g2u4IonLab: StepRenderer = (host, step, api) => {
     tap();
     moved -= 1;
     draw();
-    f.say("전자를 되돌렸어요. (+)와 (−)의 개수를 다시 비교해 보세요.");
+    f.say("전자를 원래 원자로 되돌렸어요. 양성자(+)와 전자(−)의 개수를 다시 비교해 보세요.");
   });
   label();
   f.slot.setControls(give, back);
   draw();
-  f.say("<b>나트륨 원자</b>와 <b>염소 원자</b>예요. 지금은 둘 다 전하의 합이 0이에요. 전자를 건네 보세요.");
+  f.say("전기를 띠지 않는 중성 상태의 <b>나트륨 원자</b>와 <b>염소 원자</b>예요. 아래 버튼을 눌러 나트륨의 전자를 염소 쪽으로 이동시켜 보세요.");
   return lab.cleanup;
 };

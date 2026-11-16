@@ -46,13 +46,14 @@ const makeCup = (x: number, w: number, T: number): Cup => {
 export const tempLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as TempStep;
   const tm = bvTimers();
-  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-temp", api });
+  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-temp", api, tall: true });
 
   let T = 25;
   let phase: "explore" | "match" | "ask" | "done" = "explore";
   let hot = false;
   let cold = false;
   let solved = false;
+  let missed = false; // 맞추기에서 한 번 틀렸다(그 뒤로는 "새 컵이 나타났어요" 없이 할 일만 다시 보인다)
   let wrongFlash = 0;
   const mine = makeCup(22, 132, T);
   const secret = makeCup(192, 132, SECRET);
@@ -102,7 +103,7 @@ export const tempLab: StepRenderer = (host, step, api) => {
   const cv = u3Canvas(f.stage, (ctx, dt, tMs) => {
     if (host.dataset.u3Phase !== phase) host.dataset.u3Phase = phase;
     mine.T += (T - mine.T) * Math.min(1, 0.2 * dt);
-    drawCup(ctx, mine, dt, tMs, { gray: false, label: `내 물 ${Math.round(T)}℃`, fire: true });
+    drawCup(ctx, mine, dt, tMs, { gray: false, label: `내가 조절하는 물 ${Math.round(T)}℃`, fire: true });
     if (phase === "explore") {
       // 오른쪽: 큰 온도계와 입자 운동의 말
       const x = 258;
@@ -120,14 +121,14 @@ export const tempLab: StepRenderer = (host, step, api) => {
       ctx.fill();
       for (const v of [0, 50, 100]) txt(ctx, `${v}`, x + 17, bot - (v / 100) * (bot - top), { size: 12, color: SUB, align: "left", weight: 600 });
       txt(ctx, "온도계", x, 26, { size: 12.5, color: SUB });
-      txt(ctx, "입자 운동이", x, 196, { size: 12, color: SUB, weight: 600 });
+      txt(ctx, "입자 운동:", x, 196, { size: 12, color: SUB, weight: 600 });
       txt(ctx, motionWord(t01(mine.T)), x, 212, { size: 14, weight: 800, color: tempColor(t01(mine.T)) });
     } else {
       if (wrongFlash > 0) wrongFlash -= dt;
-      drawCup(ctx, secret, dt, tMs, { gray: !solved, label: solved ? `비밀의 물 ${SECRET}℃` : "비밀의 물 ?℃", fire: false });
+      drawCup(ctx, secret, dt, tMs, { gray: !solved, label: solved ? `수수께끼 컵 ${SECRET}℃` : "수수께끼 컵 ?℃", fire: false });
       if (solved) {
-        if (phase === "match") txt(ctx, "같은 온도, 같은 움직임", 258, BOTTOM + 22, { size: 12.5, color: "#7BE0B0" });
-      } else txt(ctx, "입자만 보고 맞혀요", 258, BOTTOM + 22, { size: 12.5, color: wrongFlash > 0 ? "#FF8F8F" : SUB });
+        if (phase === "match") txt(ctx, "온도가 같으면 움직임도 같아요", 258, BOTTOM + 22, { size: 12.5, color: "#7BE0B0" });
+      } else txt(ctx, "입자 움직임만 보고 맞춰 보세요", 258, BOTTOM + 22, { size: 12.5, color: wrongFlash > 0 ? "#FF8F8F" : SUB });
     }
   });
 
@@ -136,7 +137,7 @@ export const tempLab: StepRenderer = (host, step, api) => {
     min: T_MIN,
     max: T_MAX,
     value: T,
-    label: "물의 온도",
+    label: "물의 온도 조절",
     ticks: ["차갑게", "뜨겁게"],
     onInput: (v) => {
       T = v;
@@ -157,16 +158,17 @@ export const tempLab: StepRenderer = (host, step, api) => {
       if (phase === "explore" && hot && cold) startMatch();
     },
   });
-  const check = bvBtn("main", "이 온도로 확인하기");
+  const check = bvBtn("main", "이 온도로 정답 확인하기");
   check.hidden = true;
 
   function hint(): void {
     if (phase === "explore") {
-      if (!hot && !cold) f.say("<b>물의 온도</b> 막대를 밀어 물을 데워 봐요. 물속 입자가 어떻게 달라지나요?");
-      else if (hot && !cold) f.say(T >= 85 ? "입자가 빠르게 움직이고 서로 멀어졌어요. 이번엔 <b>차갑게</b> 식혀 봐요." : "이번엔 막대를 왼쪽 끝까지 밀어 <b>차갑게</b> 식혀 봐요.");
-      else if (!hot && cold) f.say(T <= 12 ? "입자가 둔해지고 서로 가까워졌어요. 이번엔 <b>뜨겁게</b> 데워 봐요." : "이번엔 막대를 오른쪽 끝까지 밀어 <b>뜨겁게</b> 데워 봐요.");
+      if (!hot && !cold) f.say("<b>물의 온도 조절</b> 막대를 움직여 온도를 바꿔 보세요. 물속 입자의 움직임이 어떻게 달라지나요?");
+      else if (hot && !cold) f.say(T >= 85 ? "온도가 높아지니 입자가 활발하게 움직이고 사이도 멀어졌어요! 이번엔 왼쪽 끝으로 밀어 <b>차갑게</b> 식혀 보세요." : "이번엔 막대를 왼쪽 끝까지 밀어 물을 <b>차갑게</b> 식혀 보세요.");
+      else if (!hot && cold) f.say(T <= 12 ? "온도가 낮아지니 입자 움직임이 둔해지고 사이도 가까워졌어요! 이번엔 오른쪽 끝으로 밀어 <b>뜨겁게</b> 데워 보세요." : "이번엔 막대를 오른쪽 끝까지 밀어 물을 <b>뜨겁게</b> 데워 보세요.");
     } else if (phase === "match" && !solved) {
-      f.say("새 컵의 온도는 비밀이에요. <b>입자의 움직임</b>이 같아지게 내 물의 온도를 맞추고 확인을 눌러요.");
+      const todo = "두 컵의 <b>입자 움직임</b>이 같아지도록 온도를 맞춘 뒤 버튼을 눌러 보세요.";
+      f.say(missed ? todo : `오른쪽에 온도를 가린 새 컵이 나타났어요! ${todo}`);
     }
   }
 
@@ -175,7 +177,7 @@ export const tempLab: StepRenderer = (host, step, api) => {
     check.hidden = false;
     haptic(HAPTIC.tap);
     hint();
-    api.setCTA("비밀의 물과 같은 온도를 만들어 보세요", { enabled: false });
+    api.setCTA("오른쪽 컵과 입자 움직임이 같아지도록 온도를 맞춰 보세요", { enabled: false });
   }
 
   check.addEventListener("click", () => {
@@ -187,12 +189,13 @@ export const tempLab: StepRenderer = (host, step, api) => {
       range.input.disabled = true;
       haptic(HAPTIC.correct);
       f.pips(3);
-      f.say(`맞혔어요. 비밀의 물은 <b>${SECRET}℃</b>였어요. 입자의 움직임만 보고도 온도를 알 수 있네요.`);
+      f.say(`정확해요! 오른쪽 컵의 물은 <b>${SECRET}℃</b>였어요. 입자의 움직임만 보고도 온도를 알아낼 수 있네요.`);
       tm.later(askFinal, 1900);
     } else {
       haptic(HAPTIC.wrong);
       wrongFlash = 40;
-      f.say(d < 0 ? "아직 달라요. 비밀의 물은 입자가 <b>더 활발</b>하고 사이도 더 멀어요. 온도를 올려 봐요." : "아직 달라요. 비밀의 물은 입자가 <b>더 둔하고</b> 사이도 더 가까워요. 온도를 내려 봐요.");
+      missed = true;
+      f.say(d < 0 ? "아직 빠르기가 달라요. 오른쪽 컵의 입자가 <b>더 활발하게</b> 움직이고 사이도 더 넓어요. 온도를 더 올려 보세요." : "아직 빠르기가 달라요. 오른쪽 컵의 입자가 <b>더 둔하게</b> 움직이고 사이도 더 좁아요. 온도를 더 내려 보세요.");
     }
   });
 
@@ -200,28 +203,28 @@ export const tempLab: StepRenderer = (host, step, api) => {
     phase = "ask";
     T = T_MIN;
     range.set(T_MIN);
-    f.say("내 물을 가장 차갑게 식혔어요. 무대의 <b>내 물</b>을 보고 골라 봐요.");
+    f.say("왼쪽 컵의 물을 가장 차갑게 식혔어요. 차가운 물속 <b>입자의 움직임</b>을 자세히 보고 답해 보세요.");
     f.slot.ask(
-      "가장 차가운 물에서 입자는 어떤가요?",
-      [{ t: "둔해졌지만 계속 움직인다", ok: true }, { t: "완전히 멈춰 있다" }, { t: "입자가 작아졌다" }],
+      "가장 차가운 물에서 입자는 어떻게 움직이나요?",
+      [{ t: "움직임이 둔해졌지만 계속 움직인다", ok: true }, { t: "움직임을 멈추고 가만히 있다" }, { t: "입자 크기가 작아졌다" }],
       (ok) => api.recordQuiz(ok),
-      { why: "차가운 물의 입자도 <b>느리게 계속</b> 움직여요.", onNext: finish },
+      { why: "온도가 낮아져도 입자는 멈추지 않고 <b>느리게 계속</b> 움직여요.", onNext: finish },
     );
   }
 
   function finish(): void {
     phase = "done";
     f.pips(4);
-    f.say("관찰 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("<b>온도</b>는 입자 운동이 활발한 정도예요. 온도가 높을수록 입자가 활발하게 움직이고 입자 사이가 멀어져요.");
+    f.say("온도에 따라 입자 운동이 어떻게 달라지는지 모두 확인했어요!");
+    f.slot.conclude("<b>온도</b>는 입자 운동이 활발한 정도를 나타내요. 온도가 높을수록 입자가 활발하게 움직이고 입자 사이의 거리가 멀어져요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
   // 물 높이는 입자 사이가 멀어지는 것을 보이려고 크게 바꿔 그렸다(5℃에서 95℃까지 1.5배). 그 말을 무대 아래에 둔다(2026-11-15 그래픽 감사).
-  f.slot.setControls(range.el, check, el("div", { class: "u3x-cap", text: "물 높이의 변화는 실제보다 크게 그렸어요." }));
+  f.slot.setControls(range.el, check, el("div", { class: "u3x-cap", text: "눈에 잘 보이도록 물 높이 변화를 실제보다 과장하여 나타냈어요." }));
   hint();
-  api.setCTA("온도를 바꿔 입자를 관찰해 보세요", { enabled: false });
+  api.setCTA("온도를 바꾸며 입자의 움직임을 관찰해 보세요", { enabled: false });
   return () => {
     tm.clear();
     cv.stop();

@@ -27,8 +27,11 @@
 .g2u8x-seg:active { transform: scale(.97); }
 .g2u8x-seg.on { border-color: var(--subj-star); background: var(--subj-star-tint); color: var(--x-ink); }
 .g2u8x-seg:disabled { opacity: .45; }
+/* 이름이 긴 세 칸 고르기(성운 랩의 곁에 있는 것): 한 줄로 두면 칸이 글만큼 넓어져 줄이 조작 칸 밖으로 나간다. 13px 두 줄까지(높이 48 그대로) */
+.g2u8x-segs.wrap .g2u8x-seg { white-space: normal; font-size: 13px; line-height: 16px; word-break: keep-all; text-wrap: balance; } /* "주변에 아주 뜨거운 / 별"처럼 한 글자만 떨어지지 않게 */
 .g2u8x-row { display: grid; gap: 8px; }
-.g2u8x-row .bv-btn { font-size: 14.5px; letter-spacing: -.03em; }
+/* 두세 칸 버튼은 낱말 단위로 끊는다(한글이 글자 사이에서 끊겨 "누르 / 기"처럼 남지 않게) */
+.g2u8x-row .bv-btn { font-size: 14.5px; letter-spacing: -.03em; word-break: keep-all; }
 .g2u8x-cap { font-size: 12.5px; font-weight: 700; color: var(--sub); line-height: 18px; }
 .g2u8x-hold { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .g2u8x-step .bv-btn.g2u8x-hold.on { background: var(--subj-star); color: #fff; transform: scale(.975); }
@@ -47,6 +50,8 @@
 .g2u8x-log-row.bad .g2u8x-log-v { color: var(--red); }
 .g2u8x-log.tight { gap: 6px; }
 .g2u8x-log.tight .g2u8x-log-row { height: 38px; }
+/* 세 칸 기록(별 이름 + "관측 전"): 칸 안 여백을 줄여 값이 말줄임 되지 않게. 아래 stack 규칙이 뒤에 있어 세로 쌓기 칸은 그쪽을 따른다 */
+.g2u8x-log.c3 .g2u8x-log-row { padding: 0 7px; gap: 4px; }
 .g2u8x-photo { position: absolute; object-fit: cover; border-radius: 10px; pointer-events: none; user-select: none; }
 
 /* ── 실사를 얹는 무대 ───────────────────────────────── */

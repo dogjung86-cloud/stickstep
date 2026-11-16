@@ -29,7 +29,7 @@ const reachT = (d: number): number => Math.pow(d / (1.55 * 61), 1 / 0.7);
 
 export const u4InkLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
-  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-ink" });
+  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-ink", tall: true });
   const { f, tm } = lab;
   const rnd = seeded(41);
 
@@ -204,8 +204,8 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
       min: 0,
       max: 100,
       value: 0,
-      label: "시간 보내기: 막대를 오른쪽으로 밀어요",
-      ticks: ["처음", "한참 뒤"],
+      label: "시간의 흐름 (막대를 오른쪽으로 밀어 보세요)",
+      ticks: ["처음", "충분한 시간 뒤"],
       onInput: (v) => {
         if (v < p) {
           r.set(p);
@@ -238,8 +238,8 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     host.dataset.u4Pair = "1";
   }
 
-  const addInk = bvBtn("main u4x-ink-add", "스포이트로 잉크 넣기");
-  const toDish = bvBtn("main u4x-ink-next", "다음 실험: 접시와 식초");
+  const addInk = bvBtn("main u4x-ink-add", "스포이트로 잉크 떨어뜨리기");
+  const toDish = bvBtn("main u4x-ink-next", "기체에서도 퍼지는지 실험하기");
   const addVin = bvBtn("main u4x-ink-vinbtn", "식초 떨어뜨리고 뚜껑 덮기");
 
   function startA(): void {
@@ -248,9 +248,9 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     api.setCTA("잉크를 넣고 지켜보세요", { enabled: false });
   }
   // 잉크를 넣은 뒤 어떻게 할지는 학생이 정한다. 저으면 금방 섞이지만 무엇 때문에 섞였는지 알 수 없어 새 물로 다시 한다.
-  const cStir = bvCard("u4x-ink-way", { name: "유리 막대로 젓기", sub: "빨리 섞어 본다", key: "stir" });
-  const cWait = bvCard("u4x-ink-way", { name: "가만히 두기", sub: "젓지 않고 기다린다", key: "wait" });
-  const redo = bvBtn("main u4x-ink-redo", "새 물로 다시 하기");
+  const cStir = bvCard("u4x-ink-way", { name: "유리 막대로 젓기", sub: "직접 저어서 섞기", key: "stir" });
+  const cWait = bvCard("u4x-ink-way", { name: "가만히 두기", sub: "건드리지 않고 관찰하기", key: "wait" });
+  const redo = bvBtn("main u4x-ink-redo", "새 물에 다시 해 보기");
   let stirred = false;
   addInk.addEventListener("click", () => {
     addInk.disabled = true;
@@ -264,7 +264,7 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     }, 500);
     tm.later(() => {
       dropper.style.transform = "translateY(-150px)";
-      f.say(stirred ? "새 물에 잉크를 다시 넣었어요. 이번에는 어떻게 할까요?" : "잉크를 넣었어요. 이제 <b>어떻게 할지</b> 골라 보세요.");
+      f.say(stirred ? "깨끗한 물에 잉크를 다시 넣었어요. 이번에는 <b>가만히 두기</b>를 골라 볼까요?" : "잉크를 떨어뜨렸어요. 이제 <b>어떻게 관찰할지</b> 방법을 골라 보세요.");
       f.slot.setControls(bvCards(2, cStir, cWait));
     }, 1100);
   });
@@ -281,7 +281,7 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
       rod.classList.remove("stir");
       haptic(HAPTIC.wrong);
       cStir.done();
-      f.say("금방 섞였어요. 그런데 <b>저어서</b> 섞인 건지 <b>스스로</b> 퍼진 건지 알 수 없어요.");
+      f.say("유리 막대로 저으니 금방 섞였어요. 하지만 <b>막대로 저어서</b> 섞인 것인지 잉크가 <b>스스로</b> 퍼진 것인지 알 수 없네요. 새 물에 다시 해 볼까요?");
       f.slot.setControls(redo);
     });
   });
@@ -291,17 +291,17 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     pA = 0;
     cWait.el.disabled = false;
     addInk.disabled = false;
-    f.say("새 물을 담았어요. 스포이트로 <b>잉크</b>를 다시 넣어 보세요.");
+    f.say("깨끗한 물을 새로 준비했어요. 스포이트로 <b>잉크</b>를 다시 떨어뜨려 보세요.");
     f.slot.setControls(addInk);
   });
   cWait.el.addEventListener("click", () => {
     haptic(HAPTIC.tap);
-    f.say("젓지 않고 <b>시간만</b> 보내요. 막대를 오른쪽으로 밀어 보세요.");
+    f.say("물을 젓지 않고 가만히 둔 채 <b>시간의 흐름</b> 막대를 오른쪽으로 밀어 보세요.");
     f.slot.setControls(
       timeBar("u4x-ink-ta", (t) => paintInk(Math.max(pA, t)), () => {
         f.pips(1);
         const head = pred.startsWith("물 전체") ? "예측대로" : "예측과 달리";
-        f.say(`${head} 젓지 않았는데 <b>물 전체</b>가 잉크 색이 됐어요.`);
+        f.say(`${head} 유리 막대로 젓지 않았는데도 잉크가 스스로 퍼져 <b>물 전체</b>가 골고루 물들었어요!`);
         tm.later(() => f.slot.setControls(toDish), 500);
       }).el,
     );
@@ -310,7 +310,7 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     sceneA.style.display = "none";
     sceneB.style.display = "";
-    f.say("<b>BTB 용액</b> 방울은 식초를 만나면 <b>노랗게</b> 변해요. 가운데에 식초를 떨어뜨려요.");
+    f.say("초록색 <b>BTB 용액</b> 방울은 식초 성분을 만나면 <b>노란색</b>으로 변해요. 접시 한가운데에 식초를 떨어뜨리고 뚜껑을 덮어 보세요.");
     f.slot.setControls(addVin);
     api.setCTA("식초를 떨어뜨리고 지켜보세요", { enabled: false });
   });
@@ -322,11 +322,11 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     paintDish(0);
     tm.later(() => lid.setAttribute("opacity", "1"), 350);
     tm.later(() => {
-      f.say("뚜껑을 덮어 <b>바람이 없어요</b>. 시간을 보내며 어느 방울부터 변하는지 보세요.");
+      f.say("뚜껑을 덮어 <b>바람을 완전히 막았어요</b>. 시간 막대를 오른쪽으로 밀면서 어느 방울부터 색이 변하는지 살펴보세요.");
       f.slot.setControls(
         timeBar("u4x-ink-tb", (t) => paintDish(t), () => {
           f.pips(2);
-          f.say("식초에 <b>가까운 방울부터</b> 차례로 노랗게 변했어요.");
+          f.say("가운데 식초에서 <b>가까운 방울부터 바깥쪽으로</b> 차례차례 노랗게 변했어요!");
           tm.later(judge, 700);
         }).el,
       );
@@ -336,16 +336,16 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
   function judge(): void {
     showPair();
     f.slot.ask(
-      "<b>바깥쪽 방울</b>이 더 늦게 노랗게 변한 까닭은?",
+      "가장자리인 <b>바깥쪽 방울</b>이 안쪽 방울보다 더 늦게 노랗게 변한 까닭은 무엇인가요?",
       [
-        { t: "식초 입자가 닿는 데 시간이 걸려서", ok: true },
-        { t: "바깥쪽 방울이 더 진해서" },
-        { t: "뚜껑이 바깥쪽을 눌러서" },
+        { t: "식초 입자가 스스로 퍼져 나가는 데 시간이 걸려서", ok: true },
+        { t: "바깥쪽 BTB 용액 방울이 더 진해서" },
+        { t: "뚜껑이 바깥쪽 방울을 누르고 있어서" },
       ],
       (ok) => api.recordQuiz(ok),
       {
-        why: "식초 입자가 <b>가운데에서 사방으로</b> 퍼져 나가 먼 곳에 늦게 닿았어요.",
-        onNext: () => lab.finish("젓지도 불지도 않았는데 퍼졌어요. 입자가 <b>스스로 움직여</b> 멀리 퍼져 나가는 현상이 <b>확산</b>이에요."),
+        why: "가운데에 떨어뜨린 식초 입자가 <b>사방으로 스스로 퍼져 나가면서</b> 가까운 곳부터 차례로 닿았기 때문이에요.",
+        onNext: () => lab.finish("저어 주거나 바람이 불지 않아도 물질을 이루는 입자가 <b>스스로 움직여</b> 사방으로 퍼져 나가는 현상을 <b>확산</b>이라고 해요."),
       },
     );
   }
@@ -353,11 +353,12 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
   // 처음: 예측
   paintInk(0);
   load.setAttribute("opacity", "0");
-  f.say("비커 바닥에 잉크를 넣고 <b>젓지 않을</b> 거예요. 먼저 예측해 보세요.");
-  u4Predict(lab, "바닥에 넣은 잉크를 <b>젓지 않고</b> 두면 어떻게 될까요?", ["물 전체로 퍼진다", "바닥에만 머문다", "물 위로 떠올라 모인다"], (picked) => {
+  f.say("물이 담긴 비커 바닥에 잉크를 떨어뜨리고 <b>젓지 않은 채</b> 가만히 두려고 해요. 먼저 결과를 예측해 볼까요?");
+  // 첫 보기는 "물 전체"로 시작해야 한다(시간 막대 끝의 말머리가 pred.startsWith("물 전체")로 가른다)
+  u4Predict(lab, "비커 바닥에 떨어뜨린 잉크를 <b>젓지 않고</b> 그대로 두면 어떻게 될까요?", ["물 전체로 골고루 퍼진다", "비커 바닥에만 가라앉아 머문다", "물 위쪽으로만 떠올라 모인다"], (picked) => {
     pred = picked;
     startA();
   });
-  api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
+  api.setCTA("먼저 결과를 예측해 보세요", { enabled: false });
   return lab.cleanup;
 };

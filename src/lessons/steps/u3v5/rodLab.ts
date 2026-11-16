@@ -4,7 +4,7 @@
 // 조작: 막대 카드 셋 + 꾹 누르는 불. 누르는 동안만 가열되고, 떨림이 번지는 앞머리가 반대쪽 끝에 닿으면 그 막대는 끝.
 //   유리는 정해 둔 시간(GLASS_STOP)이 지나도 끝이 뜨거워지지 않아 거기서 멈춘다(실패도 결과다).
 // 흐름: 예측(정오 없음) → 세 막대 가열 → 판정(입자는 어떻게 열을 전했나) → 결론.
-// 화면의 시간은 견주기 좋게 빠르게 돌린 것이다(무대에 "빠르게 돌린 화면"이라고 적는다).
+// 화면의 시간은 견주기 좋게 빠르게 돌린 것이다(무대에 "빠르게 재생한 화면"이라고 적는다).
 // 빠르기 근거: 열이 전도되는 정도는 구리 > 철 > 유리(구리는 철의 다섯 배쯤, 유리는 철의 수십 분의 일).
 // 2026-11-15 그래픽 감사 고침:
 //   · 입자는 제자리 격자를 지킨다. 크게 흔들던 것(뜨거우면 4.9px)을 줄이고 떨림은 입자 곁의 호 무늬(뜨거울수록 진하고 길다)로 보인다(책 그림 Ⅲ-4).
@@ -45,7 +45,7 @@ const ORDER: Key[] = ["cu", "fe", "glass"];
 export const rodLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as RodStep;
   const tm = bvTimers();
-  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-rod", api });
+  const f = u3Frame(host, { title: s.title, steps: 4, cls: "u3x-rod", api, tall: true });
 
   let cur: Key = "cu";
   let prog = 0; // 떨림의 앞머리(0: 가열 전, 1: 반대쪽 끝에 닿음)
@@ -60,9 +60,9 @@ export const rodLab: StepRenderer = (host, step, api) => {
   const heatAt = (i: number): number => clamp((prog * (COLS + 3) - i) / 3, 0, 1);
 
   const cards: Record<Key, BvCard> = {
-    cu: bvCard("col", { name: "구리 막대", sub: "아직 안 해 봄", key: "cu" }),
-    fe: bvCard("col", { name: "철 막대", sub: "아직 안 해 봄", key: "fe" }),
-    glass: bvCard("col", { name: "유리 막대", sub: "아직 안 해 봄", key: "glass" }),
+    cu: bvCard("col", { name: "구리 막대", sub: "가열 전", key: "cu" }),
+    fe: bvCard("col", { name: "철 막대", sub: "가열 전", key: "fe" }),
+    glass: bvCard("col", { name: "유리 막대", sub: "가열 전", key: "glass" }),
   };
 
   /** 열의 이동 방향(막대 위, 왼쪽 끝에서 오른쪽 끝으로). */
@@ -126,10 +126,10 @@ export const rodLab: StepRenderer = (host, step, api) => {
         ctx.lineTo(BX + w + 34, y);
         ctx.stroke();
         ctx.setLineDash([]);
-        txt(ctx, "6.5초에도 미지근", BX, y + 24, { size: 12, color: SUB, align: "left", weight: 700 });
+        txt(ctx, "6.5초 뒤에도 미지근함", BX, y + 24, { size: 12, color: SUB, align: "left", weight: 700 });
       } else txt(ctx, `${sec.toFixed(1)}초`, BX + w + 8, y, { size: 13, color: rod.edge, align: "left", weight: 800 });
     });
-    txt(ctx, "빠르게 돌린 화면", 326, 222, { size: 12, color: SUB, align: "right", weight: 600 });
+    txt(ctx, "빠르게 재생한 화면", 326, 222, { size: 12, color: SUB, align: "right", weight: 600 });
   }
 
   const cv = u3Canvas(f.stage, (ctx, dt, tMs) => {
@@ -143,8 +143,8 @@ export const rodLab: StepRenderer = (host, step, api) => {
     if (heating && !result[cur]) {
       held += dt / 60;
       prog = Math.min(1, prog + dt / 60 / rod.secs);
-      if (prog >= 1) finishRod(`끝까지 ${held.toFixed(1)}초`);
-      else if (cur === "glass" && held >= GLASS_STOP) finishRod(`${GLASS_STOP}초에도 미지근`);
+      if (prog >= 1) finishRod(`도달 시간 ${held.toFixed(1)}초`);
+      else if (cur === "glass" && held >= GLASS_STOP) finishRod(`${GLASS_STOP}초 뒤에도 미지근함`);
     }
     // 불
     rr(ctx, 34, 196, 56, 10, 4);
@@ -201,15 +201,15 @@ export const rodLab: StepRenderer = (host, step, api) => {
     pill(ctx, `가열 ${held.toFixed(1)}초`, 286, 20, { color: heating || replay ? "#FFD666" : undefined });
     const hEnd = heatAt(COLS - 1);
     txt(ctx, "가열하는 끝", 62, 222, { size: 12, color: SUB, weight: 600 });
-    txt(ctx, hEnd > 0.85 ? "반대쪽 끝: 뜨거워요" : hEnd > 0.2 ? "반대쪽 끝: 따뜻해져요" : "반대쪽 끝: 그대로예요", 322, 168, { size: 12.5, color: tempColor(0.12 + 0.86 * hEnd), weight: 800, align: "right" });
-    txt(ctx, "빠르게 돌린 화면", 268, 222, { size: 12, color: SUB, weight: 600 });
+    txt(ctx, hEnd > 0.85 ? "반대쪽 끝: 뜨거워짐" : hEnd > 0.2 ? "반대쪽 끝: 따뜻해지는 중" : "반대쪽 끝: 변화 없음", 322, 168, { size: 12.5, color: tempColor(0.12 + 0.86 * hEnd), weight: 800, align: "right" });
+    txt(ctx, "빠르게 재생한 화면", 268, 222, { size: 12, color: SUB, weight: 600 });
   });
 
-  const hold = u3Hold("불 켜기 (꾹 누르고 있기)", (down) => {
+  const hold = u3Hold("꾹 눌러 가열하기", (down) => {
     if (phase !== "play" || result[cur]) return;
     heating = down;
-    if (down) f.say("가열 중! 입자의 <b>떨림</b>이 옆 입자로 번져 가요. 반대쪽 끝이 뜨거워질 때까지 누르고 있어요.");
-    else if (!result[cur]) f.say("손을 떼니 불이 꺼졌어요. 다시 <b>꾹</b> 눌러 이어서 가열해요.");
+    if (down) f.say("가열하는 중이에요! 입자의 <b>떨림</b>이 이웃한 입자로 차례차례 전달돼요. 반대쪽 끝까지 뜨거워지도록 계속 누르고 계세요.");
+    else if (!result[cur]) f.say("손을 떼면 불이 꺼져요. 반대쪽 끝까지 열이 닿도록 다시 <b>꾹</b> 눌러 가열해 보세요.");
   });
 
   function finishRod(text: string): void {
@@ -224,8 +224,8 @@ export const rodLab: StepRenderer = (host, step, api) => {
     const n = ORDER.filter((k) => result[k]).length;
     f.pips(n);
     const next = ORDER.find((k) => !result[k]);
-    if (cur === "glass") f.say(`유리는 ${GLASS_STOP}초를 가열해도 떨림이 거의 번지지 않았어요.${next ? ` 이제 <b>${RODS[next].name} 막대</b>를 골라 봐요.` : ""}`);
-    else f.say(`${RODS[cur].name} 막대는 <b>${held.toFixed(1)}초</b> 만에 반대쪽 끝까지 뜨거워졌어요.${next ? ` 이제 <b>${RODS[next].name} 막대</b>를 골라 봐요.` : ""}`);
+    if (cur === "glass") f.say(`유리 막대는 ${GLASS_STOP}초 동안 가열해도 입자의 떨림이 거의 전달되지 않았어요.${next ? ` 이제 <b>${RODS[next].name} 막대</b> 카드를 눌러 실험해 보세요.` : ""}`);
+    else f.say(`${RODS[cur].name} 막대는 <b>${held.toFixed(1)}초</b> 만에 반대쪽 끝까지 뜨거워졌어요!${next ? ` 이제 <b>${RODS[next].name} 막대</b> 카드를 눌러 실험해 보세요.` : ""}`);
     if (!next) tm.later(askFinal, 2200);
   }
 
@@ -240,7 +240,7 @@ export const rodLab: StepRenderer = (host, step, api) => {
     } else {
       prog = 0;
       held = 0;
-      f.say(`<b>${RODS[k].name} 막대</b>예요. 불을 꾹 눌러 한쪽 끝을 가열하고, 입자의 떨림이 번지는 빠르기를 봐요.`);
+      f.say(`<b>${RODS[k].name} 막대</b>를 골랐어요. 버튼을 꾹 눌러 한쪽 끝을 가열하면서 입자의 떨림이 전달되는 빠르기를 관찰해 보세요.`);
     }
   }
   ORDER.forEach((k) =>
@@ -269,13 +269,13 @@ export const rodLab: StepRenderer = (host, step, api) => {
       },
       (x) => x,
     );
-    const head = pred.includes("구리") ? "예측대로 구리가 가장 빨랐어요." : "가장 빠른 것은 구리였어요.";
-    f.say(`${head} <b>철 막대</b>를 다시 데우며 <b>입자</b>를 봐요.`);
+    const head = pred.includes("구리") ? "예측한 대로 구리 막대가 가장 빨랐어요!" : "실험 결과, 열을 가장 빨리 전달한 것은 구리 막대였어요.";
+    f.say(`${head} 가열할 때 막대 속 <b>입자</b>가 어떻게 움직였는지 떠올리며 답해 보세요.`);
     f.slot.ask(
-      "막대 속 입자는 열을 어떻게 전했나요?",
-      [{ t: "제자리에서 떨며 옆 입자에 전했다", ok: true }, { t: "뜨거운 입자가 끝까지 이동했다" }, { t: "입자가 점점 커졌다" }],
+      "가열할 때 막대 속 입자는 열을 어떻게 전달했나요?",
+      [{ t: "제자리에서 떨면서 이웃한 입자에 떨림을 전달했다", ok: true }, { t: "뜨거워진 입자가 반대쪽 끝까지 직접 이동했다" }, { t: "입자 하나하나의 크기가 점점 커졌다" }],
       (ok) => api.recordQuiz(ok),
-      { why: "입자는 자리를 지키고 <b>떨림</b>만 옆으로 번졌어요.", onNext: finish },
+      { why: "고체 막대 속 입자는 직접 이동하지 않고 제자리에서 떨면서 <b>입자의 운동</b>만 옆으로 전달해요.", onNext: finish },
     );
   }
 
@@ -283,8 +283,8 @@ export const rodLab: StepRenderer = (host, step, api) => {
     phase = "done";
     replay = false;
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("입자의 운동이 이웃한 입자에 차례로 전달되어 열이 이동하는 것이 <b>전도</b>예요. 전도되는 빠르기는 물질마다 달라요(구리, 철, 유리 순).");
+    f.say("고체에서 열이 어떻게 전달되는지, 또 물질마다 빠르기가 어떻게 다른지 확인했어요!");
+    f.slot.conclude("고체에서 입자의 운동이 이웃한 입자에 차례로 전달되어 열이 이동하는 현상을 <b>전도</b>라고 해요. 열이 전도되는 빠르기는 물질의 종류에 따라 달라요(구리 > 철 > 유리).");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
@@ -293,9 +293,9 @@ export const rodLab: StepRenderer = (host, step, api) => {
   cards.cu.on(true);
   hold.disabled = true;
   api.setCTA("세 막대를 모두 가열해 보세요", { enabled: false });
-  f.say("구리, 철, 유리 막대예요. 한쪽 끝을 똑같이 가열할 거예요. 먼저 <b>예측</b>부터 해 봐요.");
+  f.say("구리, 철, 유리로 된 세 막대의 한쪽 끝을 같은 세기로 가열해 볼 거예요. 먼저 결과를 <b>예측</b>해 볼까요?");
   f.slot.ask(
-    "반대쪽 끝이 <b>가장 먼저</b> 뜨거워질 막대는?",
+    "가열했을 때 반대쪽 끝이 <b>가장 먼저</b> 뜨거워지는 막대는 어느 것일까요?",
     ORDER.map((k) => ({ t: `${RODS[k].name} 막대` })),
     () => undefined,
     {

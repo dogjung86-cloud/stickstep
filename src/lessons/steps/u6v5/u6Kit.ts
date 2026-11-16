@@ -1,5 +1,5 @@
 // u6Kit: 중1 Ⅵ v5 랩 다섯 판이 함께 쓰는 무대 도구.
-// 뼈대는 Ⅱ단원과 같은 bvFrame(질문 한 줄, 도움말 두 줄, 무대 230px, 높이 고정 조작 칸 208px)이다.
+// 뼈대는 Ⅱ단원과 같은 bvFrame(질문 한 줄, 도움말 두 줄, 무대 230px, 높이 고정 조작 칸 208px)이다. 도움말이 세 줄인 랩은 u6Lab({ tall: true }).
 // 무대는 캔버스 하나다. 346×230 설계 좌표로 그리고, 무대 폭이 달라지면 통째로 비율을 맞춘다.
 // 입자는 ui/gasKit의 GasBox(자유 입자, 벽 충돌 번쩍임, 충돌 수)를 그대로 쓴다.
 import { localPt, stageDpr } from "../../../core/wide";
@@ -29,9 +29,10 @@ export interface U6Lab {
   cleanup: () => void;
 }
 
-export function u6Lab(host: HTMLElement, api: StepAPI, o: { title: string; steps: number; cls: string; label: string; wait: string }): U6Lab {
+/** tall: 세 줄이 되는 도움말이 있는 랩은 처음부터 세 줄 상자를 잡는다(bvFrame의 「글 맞춤」. 랩 도중에 무대가 밀리지 않게). */
+export function u6Lab(host: HTMLElement, api: StepAPI, o: { title: string; steps: number; cls: string; label: string; wait: string; tall?: boolean }): U6Lab {
   host.classList.add("u6x-step");
-  const frame = bvFrame(host, { title: o.title, steps: o.steps, cls: `u6x-stage ${o.cls}`, qCls: "u6x-q", api });
+  const frame = bvFrame(host, { title: o.title, steps: o.steps, cls: `u6x-stage ${o.cls}`, qCls: "u6x-q", api, tall: o.tall });
   const cv = el("canvas", { class: "u6x-cv", attrs: { role: "img", "aria-label": o.label } }) as HTMLCanvasElement;
   frame.stage.appendChild(cv);
   api.setCTA(o.wait, { enabled: false });

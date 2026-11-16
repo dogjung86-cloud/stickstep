@@ -43,7 +43,7 @@ const L1 = {
   standard: "책 154~157쪽",
   doneNote: "힘의 뜻과 화살표 표현(3요소)을 배웠어요",
   steps: [
-    opener({ title: "당겼다 놓은 풍선은 어디로 갈까요?", scene: "u5-balloon", wait: "풍선 줄을 당겼다 놓아 보세요", cta: "실험실 열기" }),
+    opener({ title: "줄을 당겼다 놓으면 풍선은 어떻게 될까요?", scene: "u5-balloon", wait: "풍선을 꾹 눌러 당겼다 놓아 보세요", cta: "실험실 열기" }),
     arrowLab({ title: "힘을 화살표로 어떻게 나타낼까요?", cta: "개념 정리하기" }),
     ...tail("u5l1"),
   ],
@@ -63,8 +63,8 @@ const L2 = {
   standard: "책 158~159쪽",
   doneNote: "알짜힘 구하기와 힘의 평형 조건을 배웠어요",
   steps: [
-    opener({ title: "세게 당기는데 왜 안 움직일까요?", scene: "u5-tug", wait: "더 세게 당기게 해 보세요", cta: "실험실 열기" }),
-    sumLab({ title: "두 힘을 합치면 얼마일까요?", cta: "개념 정리하기" }),
+    opener({ title: "양쪽에서 세게 당기는데 왜 안 움직일까요?", scene: "u5-tug", wait: "더 세게 당기기! 버튼을 세 번 눌러 보세요", cta: "실험실 열기" }),
+    sumLab({ title: "두 힘을 합치면 어떻게 될까요?", cta: "개념 정리하기" }),
     ...tail("u5l2"),
   ],
 };
@@ -113,8 +113,8 @@ const L4 = {
   standard: "책 164~167쪽",
   doneNote: "탄성력의 방향과 크기 규칙을 배웠어요",
   steps: [
-    opener({ title: "뒤로 당긴 화살은 왜 앞으로 갈까요?", scene: "u5-bow", wait: "두 가지로 쏴 보세요", cta: "실험실 열기" }),
-    springLab5({ title: "늘일수록 힘은 어떻게 변할까요?", cta: "개념 정리하기" }),
+    opener({ title: "뒤로 당긴 화살은 왜 앞으로 날아갈까요?", scene: "u5-bow", wait: "당기는 정도를 다르게 해 활을 쏴 보세요", cta: "실험실 열기" }),
+    springLab5({ title: "용수철을 늘일수록 힘은 어떻게 변할까요?", cta: "개념 정리하기" }),
     ...tail("u5l4"),
   ],
 };
@@ -134,8 +134,8 @@ const L5 = {
   standard: "책 168~169쪽",
   doneNote: "마찰력의 방향과 크기를 정하는 조건을 배웠어요",
   steps: [
-    opener({ title: "썰매는 어느 길에서 멀리 갈까요?", scene: "u5-sled", wait: "두 길에서 밀어 보세요", cta: "실험실 열기" }),
-    slopeLab({ title: "어느 때 더 잘 버틸까요?", cta: "개념 정리하기" }),
+    opener({ title: "썰매는 어느 길에서 더 멀리 갈까요?", scene: "u5-sled", wait: "흙길과 빙판길에서 썰매를 밀어 보세요", cta: "실험실 열기" }),
+    slopeLab({ title: "어느 조건에서 미끄러지지 않고 더 잘 버틸까요?", cta: "개념 정리하기" }),
     ...tail("u5l5"),
   ],
 };
@@ -155,8 +155,8 @@ const L6 = {
   standard: "책 170~173쪽",
   doneNote: "부력의 방향과 크기 재는 법을 배웠어요",
   steps: [
-    opener({ title: "눌러 넣은 병은 어떻게 될까요?", scene: "u5-bottle", wait: "병을 눌렀다 놓아 보세요", cta: "실험실 열기" }),
-    buoyLab({ title: "물속에서 눈금은 왜 줄어들까요?", cta: "개념 정리하기" }),
+    opener({ title: "물속에 눌러 넣은 페트병, 손을 떼면?", scene: "u5-bottle", wait: "페트병을 꾹 눌렀다 놓아 보세요", cta: "실험실 열기" }),
+    buoyLab({ title: "추를 물에 담그면 센서 눈금은 왜 줄어들까요?", cta: "개념 정리하기" }),
     ...tail("u5l6"),
   ],
 };
@@ -176,8 +176,8 @@ const L7 = {
   standard: "책 178~185쪽",
   doneNote: "힘의 방향에 따른 운동 변화를 배웠어요",
   steps: [
-    opener({ title: "찬 공은 끝까지 굴러갈까요?", scene: "u5-roll", wait: "공을 차고 지켜보세요", cta: "실험실 열기" }),
-    fanLab({ title: "바람은 공을 어떻게 바꿀까요?", cta: "개념 정리하기" }),
+    opener({ title: "잔디밭에서 찬 공은 끝까지 굴러갈까요?", scene: "u5-roll", wait: "공 차기 버튼을 눌러 보세요", cta: "실험실 열기" }),
+    fanLab({ title: "바람의 방향에 따라 공의 운동은 어떻게 달라질까요?", cta: "개념 정리하기" }),
     ...tail("u5l7"),
   ],
 };

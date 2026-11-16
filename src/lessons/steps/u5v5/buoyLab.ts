@@ -92,24 +92,24 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     f.pips(count());
     if (row === 3) {
       lock = true;
-      f.say("무게는 같은데 큰 추는 <b>12 N</b>이나 줄었어요. 작은 추의 2배예요.");
+      f.say(`무게는 똑같이 ${AIR} N인데, 부피가 2배인 큰 추는 눈금이 <b>${SIZE.big.lift} N</b>이나 줄어 <b>${AIR - SIZE.big.lift} N</b>이 됐어요!`);
       tm.later(askFinal, 2400);
       return;
     }
     if (count() === 3) {
       lock = true;
-      f.say("많이 잠길수록 눈금이 더 줄었어요. 다 잠긴 뒤에는 더 내려도 그대로예요. 이제 <b>큰 추</b>로 바꿔 봐요.");
+      f.say("많이 잠길수록 눈금이 줄고, 다 잠긴 뒤엔 일정해요! 이제 부피가 2배인 <b>큰 추</b>로 바꿔 볼까요?");
       tm.later(askBig, 2000);
       return;
     }
     const left = [!done[0] && "잠기기 전", !done[1] && "절반 잠긴 자리", !done[2] && "완전히 잠긴 자리"].filter(Boolean).join(", ");
-    f.say(`적었어요. 이번에는 <b>${left}</b>에서 기록해 보세요.`);
+    f.say(`기록 완료! 남은 위치(<b>${left}</b>)에서도 기록해 보세요.`);
   });
 
   function askBig(): void {
     f.slot.ask(
       "무게는 같고 부피가 2배인 큰 추를 완전히 잠그면, 눈금은 작은 추(14 N)와 비교해 어떨까요?",
-      [{ t: "14 N보다 작아요" }, { t: "똑같이 14 N이에요" }, { t: "14 N보다 커요" }],
+      [{ t: "14 N보다 더 작아져요 (더 많이 줄어듦)" }, { t: "작은 추와 똑같이 14 N이에요" }, { t: "14 N보다 더 커져요" }],
       () => undefined,
       {
         predict: true,
@@ -119,7 +119,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
           y = TOP;
           lock = false;
           log.mark(3);
-          f.say("확인해 봐요. <b>큰 추</b>를 끌어 완전히 잠기게 하고 <b>기록하기</b>를 눌러요.");
+          f.say("직접 확인해 봐요! <b>큰 추</b>를 물속에 끝까지 내려 완전히 잠기게 한 뒤 <b>기록하기</b>를 눌러 보세요.");
           api.setCTA("큰 추를 완전히 잠가 기록해 보세요", { enabled: false });
         },
       },
@@ -131,12 +131,12 @@ export const buoyLab: StepRenderer = (host, step, api) => {
       "두 추의 무게는 같아요. 큰 추의 눈금이 더 많이 줄어든 까닭은?",
       [{ t: "물에 잠긴 부피가 더 커서", ok: true }, { t: "더 깊이 들어가서" }, { t: "물속에서 더 무거워져서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "작은 추도 절반보다 완전히 잠겼을 때 더 줄었어요. <b>잠긴 부피</b>가 정해요.", onNext: finish },
+      { why: "물이 밀어 올리는 힘은 무게가 아니라 물에 <b>잠긴 부피</b>가 클수록 커져요.", onNext: finish },
     );
   }
   function finish(): void {
     asking = false;
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("물에 잠긴 부피가 클수록 물이 위로 밀어 올리는 힘도 커진다는 것을 확인했어요!");
     f.slot.conclude("물이 물체를 <b>위로 밀어 올리는 힘</b>이 있어요. 그 크기는 줄어든 눈금만큼이고, 물에 <b>잠긴 부피</b>가 클수록 커요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -313,7 +313,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     u5Pill(ctx, sb === 0 ? "물 밖" : sb < 1 ? (sb === 0.5 ? "절반 잠김" : `${Math.round(sb * 100)}% 잠김`) : "완전히 잠김", U5.push);
   });
 
-  f.say("힘 센서에 매단 <b>추</b>를 위아래로 끌어요. 잠기기 전, <b>절반</b>, <b>완전히</b> 잠긴 자리에서 <b>기록하기</b>를 눌러 표를 채워요.");
+  f.say("<b>추</b>를 위아래로 끌어 <b>물 밖</b>, <b>절반 잠김</b>, <b>완전히 잠김</b> 세 위치에서 <b>기록하기</b>를 눌러 보세요.");
   api.setCTA("세 자리에서 눈금을 기록해 보세요", { enabled: false });
   return () => {
     tm.clear();

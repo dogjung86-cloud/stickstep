@@ -1,12 +1,12 @@
-// [중1 Ⅱ v5] u2l3 scopeCompareLab: 「두 세포는 무엇이 다를까?」
+// [중1 Ⅱ v5] u2l3 scopeCompareLab: 「동물세포와 식물세포는 무엇이 다를까?」
 // 탐구(입안 상피세포와 검정말잎 세포 관찰)의 관찰과 비교 부분을 손으로 해 본다.
 // 한 통찰: 염색하면 핵이 또렷해진다. 식물세포에서는 세포벽과 엽록체가 더 보인다.
 // 무대: 현미경 시야(원형 창) 하나 + 오른쪽 기록(표본, 떨어뜨린 용액, 찾은 구조). 찾은 구조는 이끎선으로 그림에 이어진다.
 // 조작: ① 초점 막대로 흐린 상을 또렷하게 맞춘다
 //       ② 표본 카드 셋을 바꿔 올리며, 무대에서 핵을 찾아 누른다.
-//          물만 떨어뜨린 검정말잎에서는 핵이 안 보인다. 그때는 "핵이 안 보여요"를 누르는 것이 옳은 관찰이다.
+//          물만 떨어뜨린 검정말잎에서는 핵이 안 보인다. 그때는 "핵이 보이지 않아요"를 누르는 것이 옳은 관찰이다.
 //          아세트올세인 표본은 처음 올릴 때 "5분 기다리는 중"이 지나며 핵이 붉게 드러난다.
-// 판정: 세 표본을 다 본 뒤 "두 세포 견주어 보기" → 두 시야를 나란히 놓고 두 번 묻는다(첫 질문만 채점).
+// 판정: 세 표본을 다 본 뒤 "두 세포 나란히 비교하기" → 두 시야를 나란히 놓고 두 번 묻는다(첫 질문만 채점).
 // 그림: 입안 세포는 cheek.webp, 검정말잎은 같은 자리의 두 장(elodea-ao-plain: 물만, elodea-ao: 염색 뒤).
 //       핵의 자리(%)는 그림에서 잰 값이다(qa/make-bio6-assets.py 주석 참고). 그림을 바꾸면 함께 다시 잰다.
 // 현미경 조작 이름(조동 나사 따위)은 쓰지 않는다. 책 본문에 없는 말이다.
@@ -65,7 +65,8 @@ const FOCUS = 64; // 초점이 맞는 막대 값
 export const scopeCompareLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as ScpStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 5, cls: "scp-stage", qCls: "scp-q", api });
+  // 세 줄 도움말을 처음부터 잡아 둔다(360 폭에서 세 줄이 되는 글이 있다. 랩 도중에 무대가 밀리지 않게)
+  const f = bvFrame(host, { title: s.title, steps: 5, cls: "scp-stage", qCls: "scp-q", api, tall: true });
 
   // ── 무대: 한 시야 ────────────────────────────────────────────────
   const canvas = bvCanvas(f.stage);
@@ -192,17 +193,17 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: 100,
     value: 10,
-    label: "초점 맞추기",
+    label: "초점 맞추기", // 수정안 첫 안 "초점 조절 나사 돌리기"는 쓰지 않는다(머리말: 현미경 조작 이름은 책 본문에 없는 말이다)
     onInput: (v) => setBlur(v),
     onChange: (v) => onFocusRelease(v),
   });
   const cards: Record<Sp, BvCard> = {
-    cheek: bvCard("scp-card col", { name: "입안 세포", sub: "메틸렌 블루", icon: BV_ICON.cheek, key: "cheek" }),
-    water: bvCard("scp-card col", { name: "검정말잎", sub: "물만", icon: BV_ICON.leafWater, key: "water" }),
-    stain: bvCard("scp-card col", { name: "검정말잎", sub: "아세트올세인", icon: BV_ICON.leafStain, key: "stain" }),
+    cheek: bvCard("scp-card col", { name: "입안 상피세포", sub: "메틸렌 블루 염색", icon: BV_ICON.cheek, key: "cheek" }),
+    water: bvCard("scp-card col", { name: "검정말잎 세포", sub: "물만 떨어뜨림", icon: BV_ICON.leafWater, key: "water" }),
+    stain: bvCard("scp-card col", { name: "검정말잎 세포", sub: "아세트올세인 염색", icon: BV_ICON.leafStain, key: "stain" }),
   };
-  const noBtn = bvBtn("scp-no", "핵이 안 보여요");
-  const cmpBtn = bvBtn("main scp-cmp", "두 세포 비교하기");
+  const noBtn = bvBtn("scp-no", "핵이 보이지 않아요");
+  const cmpBtn = bvBtn("main scp-cmp", "두 세포 나란히 비교하기");
   cmpBtn.hidden = true;
 
   function setBlur(v: number): void {
@@ -213,7 +214,7 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
   function onFocusRelease(v: number): void {
     if (phase !== "focus") return;
     if (Math.abs(v - FOCUS) > 5) {
-      f.say("아직 흐릿해요. 가장 <b>또렷하게</b> 보이는 곳에서 손을 떼요.");
+      f.say("아직 상이 흐릿해요. 세포가 가장 <b>또렷하게</b> 보이는 곳에서 손을 떼어 보세요.");
       return;
     }
     haptic(HAPTIC.correct);
@@ -222,20 +223,20 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     cards.cheek.on(true);
     f.slot.setControls(bvCards(3, cards.cheek, cards.water, cards.stain), noBtn, cmpBtn);
-    f.say("또렷해졌어요! 이제 현미경 화면에서 <b>핵</b>을 찾아 눌러 보세요.");
+    f.say("세포가 또렷하게 보여요! 이제 현미경 화면에서 진하게 물든 <b>핵</b>을 찾아 눌러 보세요.");
     api.setCTA("세 표본을 모두 관찰해 보세요", { enabled: false });
     mark();
   }
 
   const ASK_HUNT: Record<Sp, string> = {
-    cheek: "입안 세포 표본이에요. 현미경 화면에서 <b>핵</b>을 찾아 눌러 보세요.",
-    water: "검정말잎에 <b>물</b>만 떨어뜨리고 덮은 표본이에요. 여기서도 핵을 찾아봐요.",
-    stain: "염색이 끝났어요. 현미경 화면에서 <b>핵</b>을 찾아 눌러 보세요.",
+    cheek: "입안 상피세포 표본이에요. 현미경 화면에서 푸르게 물든 <b>핵</b>을 찾아 눌러 보세요.",
+    water: "검정말잎에 염색액 대신 <b>물</b>만 떨어뜨린 표본이에요. 여기서도 핵이 보이는지 찾아보세요.",
+    stain: "염색이 끝났어요! 현미경 화면에서 붉게 물든 <b>핵</b>을 찾아 눌러 보세요.",
   };
   const SEEN: Record<Sp, string> = {
-    cheek: "찾았어요. 메틸렌 블루에 푸르게 물든 점이 <b>핵</b>이에요.",
-    water: "맞아요. 염색하지 않으면 핵이 잘 안 보여요. <b>세포벽</b>과 <b>엽록체</b>는 보여요.",
-    stain: "찾았어요. 붉게 물든 점이 <b>핵</b>이에요. 세포벽과 엽록체도 그대로 보여요.",
+    cheek: "잘 찾았어요! 메틸렌 블루 용액에 푸르게 물든 둥근 점이 바로 <b>핵</b>이에요.",
+    water: "맞아요! 염색하지 않으면 핵이 투명해서 잘 보이지 않아요. 대신 초록색 <b>엽록체</b>와 네모난 <b>세포벽</b>은 그대로 보여요.",
+    stain: "잘 찾았어요! 아세트올세인 용액에 붉게 물든 점이 바로 <b>핵</b>이에요. 세포벽과 엽록체도 함께 보여요.",
   };
 
   /** 표본을 바꿔 올린다. */
@@ -257,7 +258,7 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
       waiting = true;
       field.classList.add("staining");
       wait.classList.add("on");
-      f.say("검정말잎에 <b>아세트올세인 용액</b>을 떨어뜨렸어요. 5분 동안 기다려요.");
+      f.say("검정말잎에 <b>아세트올세인 용액</b>을 떨어뜨렸어요. 핵이 물들 때까지 잠시 기다려 볼게요.");
       drawMarks();
       mark();
       tm.later(() => field.classList.add("stained"), 60);
@@ -321,7 +322,7 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
       return;
     }
     miss(p);
-    f.say(cur === "water" ? "거기에는 핵이 보이지 않아요. 정말 안 보이면 아래 버튼을 눌러요." : "거기는 핵이 아니에요. 세포마다 하나씩 있는 <b>진한 점</b>을 찾아요.");
+    f.say(cur === "water" ? "그곳에는 핵이 보이지 않아요. 아무리 찾아도 핵이 보이지 않는다면 아래 <b>핵이 보이지 않아요</b> 버튼을 눌러 보세요." : "그곳은 핵이 아니에요. 세포마다 하나씩 들어 있는 <b>진하게 물든 둥근 점</b>을 찾아 눌러 보세요.");
   });
 
   noBtn.addEventListener("click", () => {
@@ -338,32 +339,32 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
     noBtn.classList.remove("no");
     void noBtn.offsetWidth;
     noBtn.classList.add("no");
-    f.say("다시 잘 봐요. 세포마다 <b>진한 점</b>이 하나씩 있어요.");
+    f.say("현미경 화면을 다시 자세히 살펴보세요. 세포마다 <b>진하게 물든 점(핵)</b>이 하나씩 보여요!");
   });
 
   SPS.forEach((sp) => cards[sp].el.addEventListener("click", () => show(sp)));
 
-  // ── 견주어 보기(판정) ────────────────────────────────────────────
+  // ── 나란히 비교하기(판정) ────────────────────────────────────────
   cmpBtn.addEventListener("click", () => {
     if (phase !== "hunt") return;
     haptic(HAPTIC.tap);
     phase = "ask";
     mark();
     setDuo("cheek", "stain");
-    f.say("왼쪽은 입안 상피세포, 오른쪽은 검정말잎 세포예요. 나란히 놓고 비교해 봐요.");
+    f.say("왼쪽은 동물세포인 입안 상피세포, 오른쪽은 식물세포인 검정말잎 세포예요. 두 모습을 나란히 비교해 보세요.");
     f.slot.ask(
-      "검정말잎 세포에서만 볼 수 있는 것은?",
+      "입안 상피세포에는 없고 검정말잎 세포에서만 볼 수 있는 구조는 무엇인가요?",
       [{ t: "세포벽과 엽록체", ok: true }, { t: "핵과 세포막" }, { t: "핵과 엽록체" }],
       (ok) => api.recordQuiz(ok),
-      { why: "<b>핵</b>은 염색하면 두 세포 모두에서 보여요.", onNext: ask2 },
+      { why: "<b>핵</b>은 두 세포 모두에 있고, <b>세포벽과 엽록체</b>는 식물세포인 검정말잎 세포에만 있어요.", onNext: ask2 },
     );
   });
 
   function ask2(): void {
     setDuo("water", "stain");
-    f.say("이번에는 둘 다 검정말잎이에요. 왼쪽은 물만, 오른쪽은 염색액을 떨어뜨렸어요.");
-    f.slot.ask("염색액을 떨어뜨린 표본에서만 보이는 것은?", [{ t: "핵", ok: true }, { t: "세포벽" }, { t: "엽록체" }], () => undefined, {
-      why: "염색액이 <b>핵</b>을 물들여 또렷하게 해 줘요.",
+    f.say("이번에는 둘 다 검정말잎 세포예요. 왼쪽은 물만 떨어뜨렸고, 오른쪽은 염색액을 떨어뜨렸어요.");
+    f.slot.ask("물만 떨어뜨렸을 때는 안 보이다가 염색액을 떨어뜨린 표본에서 또렷하게 보이는 구조는 무엇인가요?", [{ t: "핵", ok: true }, { t: "세포벽" }, { t: "엽록체" }], () => undefined, {
+      why: "투명해서 잘 보이지 않던 <b>핵</b>이 염색액에 물들어 또렷하게 나타나기 때문이에요.",
       onNext: finish,
     });
   }
@@ -372,8 +373,8 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
     phase = "done";
     setDuo("cheek", "stain");
     f.pips(5);
-    f.say("두 세포의 관찰을 마쳤어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("염색하면 <b>핵</b>이 또렷하게 보여요. 식물세포에서는 <b>세포벽</b>과 <b>엽록체</b>도 볼 수 있어요.");
+    f.say("입안 상피세포와 검정말잎 세포의 공통점과 차이점을 현미경으로 직접 확인했어요!");
+    f.slot.conclude("세포를 염색하면 투명했던 <b>핵</b>이 물들어 또렷하게 보여요. 동물세포와 식물세포 모두 핵이 있고, 식물세포에서는 <b>세포벽</b>과 <b>엽록체</b>도 관찰할 수 있어요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
     mark();

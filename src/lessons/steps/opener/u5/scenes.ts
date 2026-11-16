@@ -1,7 +1,7 @@
 // [중1 Ⅴ 도입] 여섯 장면. 형식은 Ⅰ·Ⅱ단원과 같다: 내기(예측)를 먼저 걸고 → 손으로 한 일이 장면을 바꾸고 → 끝에서 예측과 견준다.
 // 예측은 모두 neutral(답이 조작으로 드러난다). 원리의 답은 말하지 않고 물음으로 맺어 바로 뒤의 랩에 넘긴다.
 //   u5-balloon (u5l1) 풍선을 꾹 눌러 줄을 당겼다 놓는다          → 랩: 힘을 화살표로 나타내기
-//   u5-tug     (u5l2) "더 세게" 버튼 세 번, 리본은 제자리          → 랩: 줄다리기의 남는 힘
+//   u5-tug     (u5l2) "더 세게 당기기!" 버튼 세 번, 리본은 제자리  → 랩: 줄다리기의 남는 힘
 //   u5-bow     (u5l4) 조금 당겨 쏘기와 많이 당겨 쏘기              → 랩: 용수철을 늘인 길이와 힘
 //   u5-sled    (u5l5) 흙길과 빙판길에서 같은 세기로 썰매 밀기       → 랩: 바닥과 무게를 바꿔 상자 밀기
 //   u5-bottle  (u5l6) 빈 페트병을 꾹 눌러 넣었다 놓는다             → 랩: 추를 물에 담그며 눈금 읽기
@@ -119,7 +119,7 @@ const balloon: OpenerScene = (c) => {
     if (bal) bal.style.transform = `translateY(${v * M.pull}px)`;
     str?.setAttribute("y2", String(M.top + v * M.pull));
   };
-  const verdict = bet(c, "쌤이 헬륨 풍선의 줄을 아래로 당겼다가 놓으면 풍선은?", ["다시 위로 올라가요", "내려온 자리에 멈춰요", "바닥으로 떨어져요"], "예측 완료! <b>풍선</b>을 꾹 눌러 줄을 당겼다가 놓아 보세요.", () => undefined);
+  const verdict = bet(c, "헬륨 풍선의 줄을 아래로 당겼다가 놓으면 어떻게 될까요?", ["다시 위로 올라가요", "내려온 자리에 멈춰요", "바닥으로 가라앉아요"], "예측 완료! <b>풍선</b>을 꾹 눌러 끝까지 당겼다가 놓아 보세요.", () => undefined);
   holdFill(
     c,
     b,
@@ -137,7 +137,7 @@ const balloon: OpenerScene = (c) => {
         return;
       }
       done = true;
-      c.later(() => end(c, `${verdict()} 풍선이 다시 올라갔어요. 무엇이 풍선의 움직임을 바꿨을까요?`), 800);
+      c.later(() => end(c, `${verdict()} 손을 놓자 풍선이 위로 솟아올랐어요. 무엇이 풍선의 움직임을 바꿨을까요?`), 800);
     },
   );
 };
@@ -146,9 +146,9 @@ const balloon: OpenerScene = (c) => {
 const tug: OpenerScene = (c) => {
   art(c, "tugBase");
   let lv = 0;
-  const more = btn(c, "more", "더 세게!", "양쪽 모두 힘을 더 줘요");
+  const more = btn(c, "more", "더 세게 당기기!", "양쪽 모두 같은 힘으로 더 당겨요");
   more.classList.add("wide");
-  const verdict = bet(c, "양 팀이 똑같은 힘으로 점점 더 세게 당기면 가운데 리본은?", ["제자리에 있어요", "이리저리 크게 움직여요", "한쪽으로 끌려가요"], "예측 완료! <b>더 세게!</b>를 세 번 눌러 보세요.", () => undefined);
+  const verdict = bet(c, "양 팀이 똑같은 힘으로 점점 더 세게 당기면 가운데 리본은 어떻게 될까요?", ["제자리에 있어요", "이리저리 크게 움직여요", "한쪽으로 끌려가요"], "예측 완료! <b>더 세게 당기기!</b>를 세 번 눌러 보세요.", () => undefined);
   more.addEventListener("click", () => {
     if (c.step.dataset.opnPhase !== "play" || lv >= 3) return;
     lv += 1;
@@ -159,7 +159,7 @@ const tug: OpenerScene = (c) => {
     c.step.dataset.opnLevel = String(lv);
     if (lv === 3) {
       more.disabled = true;
-      c.later(() => end(c, `${verdict()} 리본은 제자리예요. 이렇게 세게 당기는데 왜 안 움직일까요?`), 900);
+      c.later(() => end(c, `${verdict()} 리본은 꿈쩍도 하지 않아요. 양쪽 다 힘을 주는데 왜 안 움직일까요?`), 900);
     }
   });
 };
@@ -197,7 +197,7 @@ const bow: OpenerScene = (c) => {
       (k === "small" ? bSmall : bBig).classList.add("tried");
       c.later(() => {
         if (tried.small && tried.big) {
-          end(c, `${verdict()} 많이 당기면 더 멀리 가요. 뒤로 당겼는데 왜 앞으로 날아갈까요?`);
+          end(c, `${verdict()} 시위를 많이 당길수록 화살이 더 멀리 날아가요. 뒤로 당겼는데 왜 앞으로 나아갈까요?`);
           return;
         }
         c.say(k === "small" ? "과녁에 못 미쳤어요. 이번엔 <b>많이 당겨</b> 쏴 보세요." : "과녁에 꽂혔어요. <b>조금만 당겨</b> 쏘면 어떨까요?");
@@ -214,7 +214,7 @@ const bow: OpenerScene = (c) => {
   c.controls.classList.add("opn-u5-two");
   bSmall.addEventListener("click", () => shoot("small"));
   bBig.addEventListener("click", () => shoot("big"));
-  const verdict = bet(c, "활시위를 더 많이 당겼다 놓으면 화살은 어떻게 날아갈까요?", ["더 멀리 날아가요", "똑같이 날아가요", "덜 날아가요"], "예측 완료! 두 가지로 쏴서 비교해 보세요.", () => undefined);
+  const verdict = bet(c, "활시위를 더 많이 당겼다 놓으면 화살은 어떻게 날아갈까요?", ["더 멀리 날아가요", "똑같이 날아가요", "덜 날아가요"], "예측 완료! <b>조금 당겨 쏘기</b>와 <b>많이 당겨 쏘기</b>를 모두 눌러 비교해 보세요.", () => undefined);
 };
 
 // ── 4. 흙길과 빙판길 ────────────────────────────────────────────
@@ -237,14 +237,14 @@ const sled: OpenerScene = (c) => {
     c.later(
       () => {
         busy = false;
-        if (tried.dirt && tried.ice) end(c, `${verdict()} 빙판길에서 훨씬 멀리 갔어요. 흙길에서는 무엇이 썰매를 세웠을까요?`);
+        if (tried.dirt && tried.ice) end(c, `${verdict()} 빙판길에서 훨씬 멀리 미끄러졌어요. 흙길에서는 무엇이 썰매를 멈추게 했을까요?`);
         else c.say(k === "dirt" ? "금방 멈췄어요. 이번엔 <b>빙판길</b>에서 밀어 보세요." : "쭉 미끄러졌어요. 이번엔 <b>흙길</b>에서 밀어 보세요.");
       },
       k === "dirt" ? 1100 : 2600,
     );
   };
-  const bDirt = btn(c, "dirt", "흙길에서 밀기", "위쪽 길");
-  const bIce = btn(c, "ice", "빙판길에서 밀기", "아래쪽 길");
+  const bDirt = btn(c, "dirt", "흙길에서 밀기", "거친 위쪽 길");
+  const bIce = btn(c, "ice", "빙판길에서 밀기", "매끄러운 아래쪽 길");
   c.controls.classList.add("opn-u5-two");
   bDirt.addEventListener("click", () => push("dirt"));
   bIce.addEventListener("click", () => push("ice"));
@@ -283,7 +283,7 @@ const bottle: OpenerScene = (c) => {
       }
       done = true;
       c.stage.classList.add("splash");
-      c.later(() => end(c, `${verdict()} 병이 퐁 하고 솟았어요. 누를 때 손을 밀어 올린 것은 무엇일까요?`), 700);
+      c.later(() => end(c, `${verdict()} 페트병이 물 위로 퐁 솟아올랐어요! 물속에서 병을 위로 밀어 올린 것은 무엇일까요?`), 700);
     },
   );
 };
@@ -305,7 +305,7 @@ const roll: OpenerScene = (c) => {
       ballG.style.transform = `translateX(${M.far}px)`;
     }
     c.say("공이 굴러가요. 속력이 어떻게 변하는지 보세요.");
-    c.later(() => end(c, `${verdict()} 공이 깃발에 닿기 전에 멈췄어요. 무엇이 공을 세웠을까요?`), 3200);
+    c.later(() => end(c, `${verdict()} 공이 점점 느려지더니 깃발 앞에서 멈췄어요. 무엇이 공의 속력을 줄였을까요?`), 3200);
   });
 };
 

@@ -203,9 +203,9 @@ export const cleanLab: StepRenderer = (host, step, api) => {
     if (k === "plant") return clean.plant ? "햇빛으로 전기를 만들어요. <b>석탄을 태우지 않아</b> 온실 기체가 나오지 않아요." : "다시 석탄을 태워 전기를 만들어요. 굴뚝에서 온실 기체가 나와요.";
     if (k === "car") {
       if (!clean.car) return "다시 휘발유를 태우며 달려요. 배기구에서 온실 기체가 나와요.";
-      return clean.plant ? "햇빛으로 만든 전기로 달려요. 자동차도 발전소도 온실 기체를 내지 않아요." : "달릴 때는 온실 기체가 안 나와요. 그런데 충전할 전기를 만드느라 <b>발전소</b>에서 더 나와요.";
+      return clean.plant ? "햇빛으로 만든 전기로 달려요. 자동차도 발전소도 온실 기체를 내지 않아요." : "달릴 때는 온실 기체가 나오지 않아요. 하지만 충전할 전기를 만드느라 <b>석탄 발전소</b>에서 온실 기체가 더 나와요.";
     }
-    return clean.fac ? "굴뚝에서 나오는 이산화 탄소를 <b>붙잡아 모아요</b>. 하늘로 올라가는 양이 줄었어요." : "장치를 떼자 굴뚝의 이산화 탄소가 다시 하늘로 올라가요.";
+    return clean.fac ? "굴뚝에서 나오는 이산화 탄소를 <b>포집해 모아요</b>(붙잡아 모아요). 하늘로 나가는 양이 크게 줄었어요." : "장치를 떼자 굴뚝의 이산화 탄소가 다시 하늘로 올라가요.";
   }
 
   KEYS.forEach((k) =>
@@ -220,34 +220,35 @@ export const cleanLab: StepRenderer = (host, step, api) => {
       if (n === KEYS.length) {
         locked = true;
         haptic(HAPTIC.ctaUnlock);
-        tm.later(() => f.say("셋을 모두 바꿨어요. 막대가 짧아지고 <b>기체 층</b>은 아주 느리게 쌓여요."), 1600);
+        tm.later(() => f.say("세 가지를 모두 바꿨어요! 해마다 더해지는 양이 확 줄어들어 <b>온실 기체 층</b>이 아주 천천히 두꺼워져요."), 1600);
         tm.later(askFinal, 3600);
       }
     }),
   );
 
   function askFinal(): void {
-    f.say("전기도 자동차도 공장도 그대로 쓰고 있어요. 무대를 보고 골라 봐요.");
+    f.say("전기도 쓰고 자동차와 공장도 그대로 가동하고 있어요. 방금 바꾼 세 기술의 공통점을 골라 보세요.");
     f.slot.ask(
-      "기체 층이 느리게 쌓여요. 방금 바꾼 <b>세 가지의 공통점</b>은?",
-      [{ t: "하늘로 가는 온실 기체를 줄인다", ok: true }, { t: "에너지를 전혀 쓰지 않게 한다" }, { t: "지하자원을 더 많이 쓰게 한다" }],
+      "온실 기체 층이 아주 천천히 쌓여요. 방금 바꾼 <b>세 가지 기술의 공통점</b>은 무엇인가요?",
+      [{ t: "하늘로 배출되는 온실 기체를 줄인다", ok: true }, { t: "에너지를 아예 쓰지 않는다" }, { t: "석탄이나 휘발유를 더 많이 쓴다" }],
       (ok) => api.recordQuiz(ok),
-      { why: "전기와 자동차는 그대로 쓰면서 <b>나오는 기체만</b> 줄였어요.", onNext: finish },
+      { why: "필요한 에너지와 기술은 그대로 쓰면서 <b>배출되는 온실 기체만</b> 크게 줄였어요.", onNext: finish },
     );
   }
 
   function finish(): void {
     f.pips(4);
-    f.say("끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("과학기술은 에너지와 환경 문제를 푸는 데 쓰여요. <b>태양광 발전</b>, <b>전기 자동차</b>, <b>탄소 포집 장치</b>가 온실 기체를 줄여요.");
+    f.say("친환경 과학기술을 활용하면 편리한 생활을 유지하면서도 온실 기체를 크게 줄일 수 있어요!");
+    f.slot.conclude("과학기술은 에너지와 환경 문제를 해결하는 데 중요한 역할을 해요. <b>태양광 발전</b>, <b>전기 자동차</b>, <b>탄소 포집 장치</b>는 모두 온실 기체 배출을 줄이는 기술이에요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
-  f.slot.setControls(bvCards(3, cards.plant, cards.car, cards.fac), el("div", { class: "u1x-cap center", text: "카드를 누르면 바뀌고, 다시 누르면 되돌아가요." }), el("div", { class: "u1x-cap center", text: "온실 기체는 눈에 보이지 않아요. 알아보기 쉽게 그렸어요." }));
+  // 둘째 안내는 폰 폭에서 한 줄을 넘어 두 줄로 내린다(u1v5.css .u1x-cap. 조작 칸: 카드 84 + 8 + 20 + 8 + 40 = 160 ≤ 208)
+  f.slot.setControls(bvCards(3, cards.plant, cards.car, cards.fac), el("div", { class: "u1x-cap center", text: "카드를 누르면 기술이 바뀌고, 다시 누르면 원래대로 돌아가요." }), el("div", { class: "u1x-cap center", text: "실제 온실 기체는 눈에 보이지 않지만, 알아보기 쉽게 색깔 층으로 나타냈어요." }));
   paint();
   showLayer();
   tm.later(tick, TICK);
-  f.say("카드를 눌러 <b>발전소, 자동차, 공장 굴뚝</b>을 하나씩 바꿔 봐요. 하늘의 기체 층을 지켜봐요.");
-  api.setCTA("세 가지를 모두 바꿔 보세요", { enabled: false });
+  f.say("아래 카드를 눌러 <b>발전소, 자동차, 공장 굴뚝</b>을 하나씩 바꿔 보세요. 하늘의 온실 기체 층이 어떻게 달라지는지 지켜보세요.");
+  api.setCTA("세 가지 기술을 모두 바꿔 보세요", { enabled: false });
   return () => tm.clear();
 };

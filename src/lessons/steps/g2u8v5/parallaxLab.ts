@@ -40,7 +40,7 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
 
   const log = sLog(["거리 1배", "거리 2배", "거리 3배", "거리 4배"], 4);
   log.el.classList.add("stack");
-  const bHalf = bvBtn("main", "시차를 반으로 나누기");
+  const bHalf = bvBtn("main", "시차의 절반(연주 시차) 표시하기");
   const range = bvRange({
     cls: "g2u8x-r",
     min: 1,
@@ -49,10 +49,11 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
     label: "별까지의 거리",
     ticks: ["1배", "2배", "3배", "4배"],
     onInput: (v) => {
+      const nearer = v < n; // 바로 전보다 가까워졌는가(가까워지면 시차와 그 절반이 커진다)
       n = v;
       if (phase === "far") {
         log.set(v - 1, `${cells(v)}칸`);
-        f.say(v === 1 ? "거리 1배: 두 자리 사이가 <b>12칸</b>이에요." : `거리 <b>${v}배</b>: 두 시선이 좁아져 <b>${cells(v)}칸</b>만 옮겨 보여요.`);
+        f.say(v === 1 ? "거리가 1배일 때는 6개월 동안 별이 <b>12칸</b> 옮겨 보여요." : `거리가 <b>${v}배</b>로 멀어지자 두 시선이 이루는 각이 좁아져 <b>${cells(v)}칸</b>(1/${v})만 옮겨 보여요.`);
         if ([0, 1, 2, 3].every((i) => log.has(i))) {
           phase = "end";
           f.pips(1);
@@ -62,7 +63,7 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
           }, 1500);
         }
       } else if (phase === "halfMove") {
-        f.say(`거리 <b>${v}배</b>: 시차가 작아지니 그 <b>절반</b>도 함께 작아져요.`);
+        f.say(nearer ? `거리가 <b>${v}배</b>로 가까워지자 시차가 커지면서 시차의 <b>절반(초록색 각)</b>도 함께 커져요.` : `거리가 <b>${v}배</b>가 되자 시차가 작아지면서 시차의 <b>절반(초록색 각)</b>도 함께 작아져요.`);
         if (v !== 2 && !movedHalf) {
           movedHalf = true;
           tm.later(() => {
@@ -78,15 +79,15 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
     phase = "far";
     f.slot.setControls(range.el, log.el);
     log.set(0, `${cells(1)}칸`);
-    f.say("예측 완료! 막대를 밀어 별을 <b>멀리</b> 보내고 옮겨 간 칸 수를 보세요.");
+    f.say("예측 완료! 슬라이더를 밀어 별을 <b>멀리</b> 보내고 옮겨 간 칸 수를 보세요.");
   }
   function askRule(): void {
-    f.say("기록을 보고 아래 질문에 답해 보세요.");
+    f.say("거리가 1배에서 4배까지 멀어질 때 옮겨 보인 칸 수를 모두 기록했어요!");
     f.slot.ask(
-      "거리가 6배인 별은 몇 칸 옮겨 보일까요?",
+      "이 규칙대로라면 거리가 6배인 별은 밤하늘에서 몇 칸 옮겨 보일까요?",
       [{ t: "2칸", ok: true }, { t: "1칸" }, { t: "6칸" }],
       (ok) => api.recordQuiz(ok),
-      { why: "거리 × 칸 수가 늘 <b>12</b>예요(1×12, 2×6, 3×4, 4×3).", onNext: startHalf },
+      { why: "옮겨 보인 칸 수는 거리에 반비례해요. 거리가 1배일 때 12칸이므로, 거리가 6배이면 12 ÷ 6 = <b>2칸</b> 옮겨 보여요.", onNext: startHalf },
     );
   }
   function startHalf(): void {
@@ -96,32 +97,32 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
     range.set(2);
     f.slot.setControls(bHalf);
     api.setCTA("시차를 반으로 나눠 보세요", { enabled: false });
-    f.say("이번에는 각을 봐요. 두 시선이 별에서 만드는 각이 <b>시차</b>예요. 반으로 나눠 보세요.");
+    f.say("이번에는 두 시선이 별에서 이루는 각도인 <b>시차</b>를 살펴볼까요? 아래 버튼을 눌러 시차를 반으로 나누어 보세요.");
   }
   bHalf.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     bHalf.disabled = true;
     phase = "halfMove";
-    f.say("태양과 별을 이은 선이 시차를 <b>똑같이 둘로</b> 나눠요. 한쪽이 시차의 절반이에요.");
+    f.say("태양과 별을 잇는 기준선이 시차를 <b>똑같이 절반으로</b> 나누었어요! 이 절반의 각을 <b>연주 시차</b>라고 불러요.");
     tm.later(() => {
       range.input.disabled = false;
       f.slot.setControls(range.el);
-      f.say("막대를 밀어 별의 거리를 바꾸고, <b>절반의 각</b>이 어떻게 되는지 보세요.");
+      f.say("이제 슬라이더를 움직여 별의 거리를 바꾸면서 <b>시차의 절반(초록색 각)</b>이 어떻게 변하는지 확인해 보세요.");
     }, 2600);
   });
   function askHalf(): void {
-    f.say("마지막 질문이에요.");
+    f.say("별의 거리에 따라 시차의 절반이 어떻게 달라지는지 확인했어요!");
     f.slot.ask(
-      "별이 멀어지면 시차의 절반은?",
-      [{ t: "함께 작아져요", ok: true }, { t: "그대로예요" }, { t: "오히려 커져요" }],
+      "별까지의 거리가 멀어지면 시차의 절반(연주 시차)은 어떻게 되나요?",
+      [{ t: "시차와 함께 작아져요", ok: true }, { t: "변함없이 그대로예요" }, { t: "오히려 점점 커져요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "시차가 작아지면 <b>그 절반</b>도 작아져요.", onNext: finish },
+      { why: "별이 멀어질수록 시차가 작아지므로, 시차의 절반인 <b>연주 시차</b>도 거리에 반비례하여 작아져요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(3);
-    f.say("관측 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("별이 <b>멀수록 시차가 작아요</b>. 거리가 2배, 3배가 되면 밤하늘에서 옮겨 간 칸 수는 2분의 1, 3분의 1이 돼요. 6개월 간격으로 잰 시차의 <b>절반</b>으로 별의 거리를 나타내요.");
+    f.say("별까지의 거리가 멀수록 시차와 연주 시차가 반비례하여 작아진다는 것을 확인했어요!");
+    f.slot.conclude("별까지의 거리가 <b>멀수록 시차는 작아져요</b>. 거리가 2배, 3배로 멀어지면 시차도 1/2, 1/3로 줄어들어요. 지구에서 6개월 간격으로 관측한 시차의 <b>절반(연주 시차)</b>을 이용하면 별까지의 거리를 구할 수 있어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -214,10 +215,10 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
     sText(ctx, "6개월 뒤", e2.x + 12, e2.y, { color: S.ok, px: 12, align: "left" });
   });
 
-  f.say("지구가 <b>처음</b>과 <b>6개월 뒤</b>에 본 별 S예요. 밤하늘에서 12칸 옮겨 보여요.");
+  f.say("지구가 <b>처음 위치</b>와 <b>6개월 뒤 위치</b>에서 관측한 별 S의 모습이에요. 거리가 1배일 때는 밤하늘에서 12칸 옮겨 보여요.");
   api.setCTA("별을 멀리 보내 보세요", { enabled: false });
   f.slot.ask(
-    "별 S가 2배 멀어지면 옮겨 간 칸 수는 어떻게 될까요?",
+    "별 S가 지금보다 2배 더 멀어지면 밤하늘에서 옮겨 보이는 칸 수는 어떻게 될까요?",
     [{ t: "절반으로 줄어요" }, { t: "2배로 늘어요" }, { t: "그대로예요" }],
     () => undefined,
     { predict: true, onNext: startFar },

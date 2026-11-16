@@ -17,10 +17,11 @@ import { bvBtn, bvCard, bvCards } from "../bio6/b6Lab";
 import { beaker, svgOpen, u4Lab, type Pt, type U4Step } from "./u4Kit";
 
 type Spot = "top" | "under" | "water";
+// 이름표는 무대 오른쪽 버튼(폭 96)에 두 줄까지 든다(u4v5.css .u4x-watch-spot, 띄어쓰기에서만 줄을 바꾼다)
 const SPOTS: { k: Spot; label: string; y: number; say: string }[] = [
-  { k: "top", label: "접시 위", y: 14, say: "접시 위: 얼음이 녹아 <b>물</b>이 되고 있어요. 고체가 액체로 변했어요." },
-  { k: "under", label: "접시 아래", y: 70, say: "접시 아랫면: 처음에는 없던 <b>물방울</b>이 맺혔어요. 어디에서 왔을까요?" },
-  { k: "water", label: "비커 속", y: 126, say: "비커 속: 뜨거운 물이 <b>수증기</b>가 되어 올라가요. 액체가 기체로 변했어요." },
+  { k: "top", label: "시계 접시 위", y: 14, say: "시계 접시 위: 단단하던 얼음이 녹아 <b>물</b>이 되고 있어요(고체 → 액체)." },
+  { k: "under", label: "시계 접시 아랫면", y: 70, say: "시계 접시 아랫면: 처음에는 없던 <b>물방울</b>이 송골송골 맺혔어요! 이 물방울은 어디에서 왔을까요?" },
+  { k: "water", label: "비커 속 뜨거운 물", y: 126, say: "비커 속: 뜨거운 물이 눈에 보이지 않는 <b>수증기</b>가 되어 위로 올라가고 있어요(액체 → 기체)." },
 ];
 const CX = 128; // 비커 가운데
 const BT = 64; // 비커 입구(수증기가 올라가는 길을 길게 보이려고 비커를 높이고 물을 낮게 담았다)
@@ -161,10 +162,10 @@ export const u4WatchLab: StepRenderer = (host, step, api) => {
   });
 
   // 1. 비커에 담을 물 고르기
-  const cHot = bvCard("u4x-watch-water", { name: "뜨거운 물", sub: "김이 올라온다", key: "hot" });
-  const cCold = bvCard("u4x-watch-water", { name: "찬물", sub: "김이 없다", key: "cold" });
-  const put = bvBtn("main u4x-watch-put", "얼음 접시를 비커 위에 올리기");
-  const redo = bvBtn("main u4x-watch-redo", "뜨거운 물로 바꿔 다시 하기");
+  const cHot = bvCard("u4x-watch-water", { name: "뜨거운 물", sub: "수증기가 활발히 올라옴", key: "hot" });
+  const cCold = bvCard("u4x-watch-water", { name: "찬물", sub: "수증기가 거의 올라오지 않음", key: "cold" });
+  const put = bvBtn("main u4x-watch-put", "얼음이 담긴 시계 접시 올리기");
+  const redo = bvBtn("main u4x-watch-redo", "뜨거운 물로 바꿔 다시 실험하기");
   const fill = (h: boolean): void => {
     hot = h;
     haptic(HAPTIC.tap);
@@ -219,11 +220,12 @@ export const u4WatchLab: StepRenderer = (host, step, api) => {
 
   function judge(): void {
     f.slot.ask(
-      "접시 <b>아랫면의 물방울</b>은 어디에서 왔을까요?",
-      [{ t: "비커에서 올라온 수증기가 식어서", ok: true }, { t: "얼음 녹은 물이 접시를 뚫고 나와서" }, { t: "비커의 물이 튀어 올라서" }],
+      "시계 접시 <b>아랫면에 맺힌 물방울</b>은 어디에서 온 것일까요?",
+      // 정답 보기는 오답 카드의 정답 줄에 한 줄로 들게 둔다(두 줄이면 틀렸을 때 조작 칸 208px를 넘는다)
+      [{ t: "비커에서 올라온 수증기가 접시에 닿아 식어서", ok: true }, { t: "접시 위의 얼음이 녹은 물이 유리를 통과해 내려와서" }, { t: "비커 속 뜨거운 물이 위로 튀어 올라서" }],
       (ok) => api.recordQuiz(ok),
       {
-        why: "수증기가 차가운 접시에 닿아 <b>다시 물</b>이 됐어요. 기체가 액체로 변한 거예요.",
+        why: "비커에서 올라온 수증기(기체)가 차가운 시계 접시 아랫면에 닿아 식으면서 <b>다시 물(액체)</b>로 변한 거예요.",
         onNext: paper,
       },
     );
@@ -234,7 +236,7 @@ export const u4WatchLab: StepRenderer = (host, step, api) => {
     f.pips(2);
     spotBtns.forEach((b) => (b.hidden = true));
     dish.style.transform = `translateY(${-LIFT}px)`;
-    f.say("<b>푸른색 염화 코발트 종이</b>는 물에 닿으면 붉게 변해요. 두 곳에 대 보세요.");
+    f.say("<b>푸른색 염화 코발트 종이</b>는 물에 닿으면 붉은색으로 변해요. 비커 속 물과 시계 접시 아랫면의 물방울에 각각 대 보세요.");
     api.setCTA("종이를 두 곳에 대 보세요", { enabled: false });
     const done = new Set<string>();
     const mk = (cls: string, text: string, where: string): HTMLButtonElement => {
@@ -248,13 +250,13 @@ export const u4WatchLab: StepRenderer = (host, step, api) => {
         tm.later(() => {
           haptic(HAPTIC.correct);
           done.add(cls);
-          f.say(`${where}에 댄 종이가 <b>붉게</b> 변했어요.${done.size < 2 ? " 다른 곳에도 대 보세요." : ""}`);
-          if (done.size === 2) tm.later(() => lab.finish("두 곳 모두 종이가 붉게 변했어요. 둘 다 물이에요. 물질의 상태가 변해도 <b>성질은 변하지 않아요</b>."), 1100);
+          f.say(`${where}에 댄 염화 코발트 종이가 <b>붉게</b> 변했어요!${done.size < 2 ? " 다른 한 곳에도 대 보세요." : ""}`);
+          if (done.size === 2) tm.later(() => lab.finish("두 곳 모두 푸른색 염화 코발트 종이가 붉게 변했어요! 수증기가 식어 맺힌 액체도 비커 속 물과 같은 '물'이에요. 즉, 물질의 상태가 변해도 <b>물질의 성질은 변하지 않아요</b>."), 1100);
         }, 1200);
       });
       return b;
     };
-    f.slot.setControls(el("div", { class: "u4x-row" }, mk("sa", "비커의 물에 대기", "비커의 물"), mk("sb", "물방울에 대기", "접시 아랫면의 물방울")));
+    f.slot.setControls(el("div", { class: "u4x-row" }, mk("sa", "비커 속 물에 대 보기", "비커의 물"), mk("sb", "접시 아랫면 물방울에 대 보기", "접시 아랫면의 물방울")));
   }
 
   reset();

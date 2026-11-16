@@ -155,7 +155,7 @@ const LABS = {
       ok(await waitDone(page), `${id}: 결론이 뜨지 않음`);
       await W(page, 400);
     }
-    await finish(id, "이름표 붙이기");
+    await finish(id, "천체 개념 정리하기");
     await newQuiz(id, 4, 1);
   },
   // u7l2: 행성을 두 무리로
@@ -175,7 +175,7 @@ const LABS = {
     await setRange(page, ".u7x-range", 4);
     await tap(page, ".bv-btn.main");
     await judge(id);
-    await finish(id, "용어로 정리하기");
+    await finish(id, "두 무리 이름 알아보기");
     await newQuiz(id, 3, 0);
   },
   // u7l3: 태양(만화 다음)
@@ -197,7 +197,7 @@ const LABS = {
     await W(page, 400);
     await at(id, "2corona");
     await judge(id);
-    await finish(id, "사진에 이름 붙이기", { curio: true });
+    await finish(id, "실제 사진에서 확인하기", { curio: true });
     await newQuiz(id, 3, 0);
   },
   // u7l4: 별의 움직임, 계절과 별자리
@@ -220,7 +220,7 @@ const LABS = {
     const pole = await stagePt(page, 173, 96);
     await page.mouse.click(pole.x, pole.y);
     await judge(id + "a");
-    await finish(id + "a", "이름 붙이기");
+    await finish(id + "a", "자전과 일주 운동 정리하기");
 
     await goStep(page, 2); // 개념과 그림 문제를 건너 별자리 랩으로
     await isLab(id);
@@ -238,7 +238,7 @@ const LABS = {
       await judge(id + "b");
     } else console.log(`  ${id}b: 3D를 켜지 못해 조작은 건너뜀`);
     ok(await waitDone(page), `${id}b: 결론이 뜨지 않음`);
-    await finish(id + "b", "이름 붙이기");
+    await finish(id + "b", "공전과 연주 운동 정리하기");
     await newQuiz(id, 3, 0);
   },
   // u7l5: 달의 위상
@@ -262,7 +262,7 @@ const LABS = {
       await judge(id);
     } else console.log(`  ${id}: 3D를 켜지 못해 조작은 건너뜀`);
     ok(await waitDone(page), `${id}: 결론이 뜨지 않음`);
-    await finish(id, "이름 정리하기");
+    await finish(id, "달의 위상 정리하기");
     await newQuiz(id, 4, 0);
   },
   // u7l6: 일식과 월식(가로 3D 하나 + 위에서 내려다본 2D 넷)
@@ -297,7 +297,7 @@ const LABS = {
       await W(page, 700);
       await judge(id, { second: true });
     }
-    await finish(id, "그때 달의 모양 보기");
+    await finish(id, "그때 달의 위상 알아보기");
 
     // 둘째 랩: 한 줄일 때 달의 위상(달을 끌어 망 자리에, 검사 손잡이로 삭 자리에)
     await isLab(id);
@@ -314,7 +314,7 @@ const LABS = {
     ok(await waitDs(page, "u7Found", "2", 30), `${id}b: 삭 자리에서 반응이 없음`);
     await at(id + "b", "2new");
     await judge(id + "b", { second: true });
-    await finish(id + "b", "이름 정리하기");
+    await finish(id + "b", "일식과 월식 개념 정리하기");
     await goStep(page, 1); // 개념 스텝을 지나 셋째 랩으로
 
     // 셋째 랩: 일식이 보이는 곳(사람을 그림자 밖, 옅은 곳, 짙은 곳에)
@@ -333,7 +333,7 @@ const LABS = {
     await W(page, 300);
     await at(id + "c", "2total");
     await judge(id + "c");
-    await finish(id + "c", "가려지는 쪽 보기");
+    await finish(id + "c", "태양이 가려지는 방향 보기");
 
     // 넷째 랩: 태양이 가려지는 쪽(예상 → 달을 움직인다)
     await isLab(id);
@@ -352,7 +352,7 @@ const LABS = {
     ok(await waitDs(page, "u7Found", "3", 30), `${id}d: 지나간 뒤 다시 보이는 단계가 없음`);
     await at(id + "d", "2out");
     await judge(id + "d");
-    await finish(id + "d", "월식 자세히 보기");
+    await finish(id + "d", "월식 자세히 알아보기");
 
     // 다섯째 랩: 월식(예상 → 달을 그림자에 넣었다 뺀다)
     await isLab(id);
@@ -371,7 +371,7 @@ const LABS = {
     ok(await waitDs(page, "u7Found", "3", 30), `${id}e: 빠져나오는 단계가 없음`);
     await at(id + "e", "2out");
     await judge(id + "e");
-    await finish(id + "e", "정리하기");
+    await finish(id + "e", "일식과 월식 정리하기");
     await newQuiz(id, 5, 0);
   },
 };
@@ -414,11 +414,11 @@ async function playOpener(id, { pick, mid, rest, want }) {
   await W(page, 500);
 }
 const OPENERS = {
-  u7l1: (id) => playOpener(id, { pick: "아주 밝은 별", want: "태양계로 출발", mid: () => holdOn(".opn-u7-hit", 800), rest: () => holdOn(".opn-u7-hit", 1500) }),
-  u7l2: (id) => playOpener(id, { pick: "6개쯤", want: "여덟 행성 비교하기", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
+  u7l1: (id) => playOpener(id, { pick: "스스로 빛나는", want: "태양계 둘러보기", mid: () => holdOn(".opn-u7-hit", 800), rest: () => holdOn(".opn-u7-hit", 1500) }),
+  u7l2: (id) => playOpener(id, { pick: "약 6개", want: "여덟 행성 비교하기", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
   u7l4: (id) => playOpener(id, { pick: "왼쪽으로", want: "밤하늘 살펴보기", mid: async () => { await tap(page, '.opn-u7-btn[data-n="2"]'); await W(page, 600); }, rest: () => tap(page, '.opn-u7-btn[data-n="3"]') }),
   u7l5: (id) => playOpener(id, { pick: "가느다란", want: "달을 직접 옮겨 보기", mid: () => holdOn(".opn-u7-btn.hold", 1300), rest: () => holdOn(".opn-u7-btn.hold", 2300) }),
-  u7l6: (id) => playOpener(id, { pick: "구름", want: "세 천체를 한 줄로", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
+  u7l6: (id) => playOpener(id, { pick: "구름", want: "세 천체를 한 줄로 세워 보기", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
 };
 
 for (const id of Object.keys(LABS)) {

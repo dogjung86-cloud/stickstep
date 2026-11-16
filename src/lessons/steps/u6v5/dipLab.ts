@@ -1,4 +1,4 @@
-// u6DipLab (u6l4 첫 랩): 「뜨거운 물과 얼음물, 피스톤은?」
+// u6DipLab (u6l4 첫 랩): 「뜨거운 물과 얼음물에 넣으면 피스톤은 어떻게 될까?」
 // 나온 곳: 탐구 1 "온도에 따른 기체의 부피 변화 관찰하기"(피스톤을 중간쯤에 두고 끝을 마개로 막은 주사기를 뜨거운 물과 얼음물에 각각 넣어 피스톤을 본다).
 // 학생이 정하는 것: 마개를 막을지, 주사기를 어디에 넣을지(뜨거운 물, 실험대, 얼음물). 차례는 정해 주지 않는다.
 // 실패하는 길: 마개를 막지 않고 담그면 열린 끝으로 공기가 드나들어 피스톤이 움직이지 않는다(뜨거운 물에서는 공기 방울이 빠져나간다).
@@ -60,7 +60,7 @@ export const dipLab: StepRenderer = (host, step, api) => {
     (Object.keys(cards) as Place[]).forEach((k) => cards[k].on(place === k));
     cap.textContent = capped ? "마개를 막았어요" : "주사기 끝을 마개로 막기";
     cap.disabled = capped;
-    note.set(`주사기는 <b>${NAME[place]}</b>에`, capped ? "끝을 <b>막았어요</b>" : "끝이 <b>열려</b> 있어요");
+    note.set(`위치: <b>${NAME[place]}</b>`, `주사기 끝: <b>${capped ? "마개로 막음" : "열려 있음"}</b>`);
     host.dataset.u6Place = place;
     host.dataset.u6Cap = capped ? "1" : "0";
   };
@@ -84,7 +84,8 @@ export const dipLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       if (!capped && k !== "table" && !failed) {
         failed = true;
-        frame.say("끝이 열려 있어 공기가 <b>드나들어요</b>. 피스톤이 그대로예요. 꺼내서 <b>마개</b>를 막아요.");
+        // 뜨거운 물에서는 부푼 공기가 방울로 빠져나간다(무대에도 방울이 보인다). 얼음물에서는 빠져나가지 않으므로 '드나들어요'로 둔다
+        frame.say(`주사기 끝이 열려 있어 공기가 <b>${k === "hot" ? "빠져나가요" : "드나들어요"}</b>! 먼저 <b>실험대</b>로 꺼내 마개를 막아 주세요.`);
       }
       sync();
     }),
@@ -117,7 +118,7 @@ export const dipLab: StepRenderer = (host, step, api) => {
     phase = "play";
     lab.phase("play");
     api.setCTA("주사기를 물에 넣어 보세요", { enabled: false });
-    frame.say("실험으로 확인해요. 주사기의 <b>끝을 막고</b> 뜨거운 물과 얼음물에 넣어 보세요.");
+    frame.say("직접 확인해 봐요! 먼저 <b>주사기 끝을 마개로 막기</b>를 누른 뒤, <b>뜨거운 물</b>과 <b>얼음물</b>에 넣어 보세요.");
     frame.slot.setControls(cap, bvCards(3, cards.hot, cards.table, cards.ice), note.el);
     sync();
   };
@@ -140,8 +141,8 @@ export const dipLab: StepRenderer = (host, step, api) => {
       seen.add(place);
       haptic(HAPTIC.select);
       if (seen.size === 2) {
-        api.setCTA("피스톤을 살펴보고 있어요", { enabled: false });
-        frame.say("뜨거운 물에서는 <b>올라가고</b> 얼음물에서는 <b>내려갔어요</b>.");
+        api.setCTA("피스톤 높이 변화를 비교해 볼까요?", { enabled: false });
+        frame.say("뜨거운 물에서는 피스톤이 <b>올라가고</b>, 얼음물에서는 <b>내려갔어요</b>!");
         phase = "ask";
         tm.later(ask, 1500);
       } else if (place === "hot") frame.say("피스톤이 <b>밀려 올라갔어요</b>. 이번에는 <b>얼음물</b>에 넣어 보세요.");

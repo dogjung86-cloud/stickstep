@@ -1,7 +1,7 @@
-// [중1 Ⅱ v5] u2l8 kinLab: 「박쥐는 누구와 더 가까울까?」
+// [중1 Ⅱ v5] u2l8 kinLab: 「하늘을 나는 박쥐는 누구와 더 가까울까?」
 // 한 통찰: 생물은 겉모습 하나가 아니라 여러 고유한 특징을 견주어 나눈다. 같은 특징이 많을수록 가까운 사이다.
 // 무대: 갈매기, 박쥐, 다람쥐가 나란히 있고 그 아래에 특징 네 줄의 표가 있다.
-// 조작: 특징 카드 넷(날개, 몸의 겉, 태어나는 법, 젖)을 누르면 그 줄이 채워진다. 박쥐와 같은 칸은 초록 줄로 이어지고,
+// 조작: 특징 카드 넷(날개, 몸 표면, 번식 방법, 새끼 키우기)을 누르면 그 줄이 채워진다. 박쥐와 같은 칸은 초록 줄로 이어지고,
 //   박쥐가 같은 점이 많은 쪽으로 다가간다(날개만 보면 갈매기 쪽, 넷을 다 보면 다람쥐 쪽).
 // 흐름: 예측(채점하지 않음) → 조사 넷 → 판정(채점).
 // 사실: 박쥐는 날개가 있지만 온몸이 털로 덮여 있고 새끼를 낳아 젖을 먹여 키운다(다람쥐와 같다). 갈매기는 깃털, 알.
@@ -44,22 +44,22 @@ const FEAT: Record<Key, Feat> = {
     say: "갈매기와 박쥐는 <b>날개</b>가 있어요. 겉모습은 갈매기 쪽과 닮았네요.",
   },
   skin: {
-    name: "몸의 겉",
+    name: "몸 표면",
     sub: "털일까, 깃털일까",
     cells: { gull: "깃털로 덮임", bat: "털로 덮임", squirrel: "털로 덮임" },
     like: "squirrel",
     say: "박쥐의 몸은 깃털이 아니라 <b>털</b>로 덮여 있어요. 다람쥐와 같아요.",
   },
   birth: {
-    name: "태어나는 법",
+    name: "번식 방법",
     sub: "알일까, 새끼일까",
     cells: { gull: "알을 낳음", bat: "새끼를 낳음", squirrel: "새끼를 낳음" },
     like: "squirrel",
     say: "박쥐는 알이 아니라 <b>새끼</b>를 낳아요. 다람쥐와 같아요.",
   },
   milk: {
-    name: "젖",
-    sub: "먹여 키울까",
+    name: "새끼 키우기",
+    sub: "젖을 먹여 키울까",
     cells: { gull: "젖을 안 먹임", bat: "젖을 먹임", squirrel: "젖을 먹임" },
     like: "squirrel",
     say: "박쥐는 새끼에게 <b>젖</b>을 먹여 키워요. 이것도 다람쥐와 같아요.",
@@ -77,7 +77,8 @@ const ICON: Record<Key, string> = {
 export const kinLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as KnlStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: KEYS.length + 1, cls: "knl-stage", qCls: "knl-q", api });
+  // 세 줄 도움말을 처음부터 잡아 둔다(360 폭에서 세 줄이 되는 글이 있다. 랩 도중에 무대가 밀리지 않게)
+  const f = bvFrame(host, { title: s.title, steps: KEYS.length + 1, cls: "knl-stage", qCls: "knl-q", api, tall: true });
   const canvas = bvCanvas(f.stage);
 
   // ── 무대: 세 동물 ────────────────────────────────────────────────
@@ -175,27 +176,29 @@ export const kinLab: StepRenderer = (host, step, api) => {
   function ask(): void {
     phase = "ask";
     tally();
-    f.say("네 가지를 다 조사했어요. 박쥐가 어느 쪽으로 다가갔는지 봐요.");
+    f.say("네 가지 특징을 모두 조사했어요! 박쥐가 갈매기와 다람쥐 중 어느 쪽으로 다가갔는지 살펴보세요.");
     f.slot.ask(
-      "박쥐는 날개가 있는데도 다람쥐와 더 가까워요. 까닭은?",
-      [{ t: "다람쥐와 같은 특징이 더 많아서", ok: true }, { t: "다람쥐와 사는 곳이 같아서" }, { t: "갈매기보다 몸집이 작아서" }],
+      "박쥐는 날개가 있어 하늘을 나는데도 갈매기보다 다람쥐와 더 가까운 사이예요. 그 까닭은 무엇인가요?",
+      // 정답 보기만 길지 않게 줄였다(SCI_GUIDE 중1 Ⅱ v5 문제 저작 규칙). 수정안 "몸 표면이나 번식 방법 등 고유한 특징이 다람쥐와 더 많이 같아서"(31자)는
+      // 다른 보기(17자, 14자)의 두 배쯤이라 길이만 보고 고를 수 있었다. 몸 표면과 번식 방법은 이유 글이 말한다
+      [{ t: "고유한 특징이 다람쥐와 더 많이 같아서", ok: true }, { t: "다람쥐와 살아가는 서식지가 비슷해서" }, { t: "갈매기보다 몸집이 더 작아서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "털, 새끼, 젖. 다람쥐와는 <b>셋</b>이 같고, 갈매기와는 날개 하나뿐이에요.", onNext: finish },
+      { why: "박쥐는 갈매기와 날개가 있다는 점만 같지만, 다람쥐와는 <b>몸이 털로 덮여 있고 새끼를 낳아 젖을 먹여 키운다는 세 가지 고유한 특징</b>이 같아요.", onNext: finish },
     );
   }
   function finish(): void {
     phase = "done";
     tally();
     f.pips(KEYS.length + 1);
-    f.say("박쥐의 가까운 사이를 찾았어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("생물은 겉모습 하나가 아니라 <b>여러 특징</b>을 비교해 나눠요. 같은 특징이 많을수록 가까운 사이예요.");
+    f.say("날개만 보면 갈매기와 닮았지만, 생물 고유의 특징을 여러 가지 비교해 보니 다람쥐와 훨씬 가까운 사이였어요!");
+    f.slot.conclude("생물을 분류할 때는 눈에 띄는 겉모습 하나가 아니라 몸의 구조, 번식 방법 등 <b>생물 고유의 여러 특징</b>을 비교해야 해요. 공통된 특징이 많을수록 더 가까운 사이예요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
   f.slot.setControls(bvCards(2, ...KEYS.map((k) => cards[k])));
   tally();
-  f.say("날개로 하늘을 나는 <b>박쥐</b>예요. 갈매기와 다람쥐 가운데 누구와 더 가까울지 짐작해 봐요.");
+  f.say("날개로 밤하늘을 나는 <b>박쥐</b>예요. 새인 갈매기와 포유류인 다람쥐 가운데 누구와 더 가까운 사이일지 예측해 볼까요?");
   f.slot.ask(
     "박쥐는 누구와 더 가까운 사이일까요?",
     [{ t: "다람쥐", ok: true }, { t: "갈매기" }],
@@ -206,12 +209,12 @@ export const kinLab: StepRenderer = (host, step, api) => {
       onNext: () => {
         phase = "look";
         f.slot.showControls();
-        f.say("이제 아래에서 <b>특징</b>을 하나씩 조사해 봐요. 박쥐와 같은 특징끼리 이어져요.");
+        f.say("이제 아래 카드를 눌러 <b>네 가지 특징</b>을 하나씩 조사해 보세요. 박쥐와 같은 특징을 가진 동물 쪽으로 선이 이어져요.");
         tally();
       },
     },
   );
-  api.setCTA("특징 네 가지를 조사해 보세요", { enabled: false });
+  api.setCTA("네 가지 특징 카드를 모두 조사해 보세요", { enabled: false });
   return () => {
     tm.clear();
     canvas.off();

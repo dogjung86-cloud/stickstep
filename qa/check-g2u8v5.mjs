@@ -95,11 +95,11 @@ const LAB = {
     await tapKey(page, "L"); await W(page, 500);
     await tapKey(page, "R"); await W(page, 900);
     await at("pencil-far");
-    await finishLab("pencil", "이름 붙이기", 1);
+    await finishLab("pencil", "용어 알아보기", 1);
   },
   async orbit() {
     await at("orbit-start");
-    await tapText(page, "지금"); await W(page, 600);
+    await tapText(page, "현재 별의"); await W(page, 600);
     await at("orbit-noted");
     await predict("orbit");
     await at("orbit-ready");
@@ -109,7 +109,7 @@ const LAB = {
     await at("orbit-1y");
     await setRange(page, 2); await W(page, 1300);
     await at("orbit-6m");
-    await finishLab("orbit", "별을 멀리 보내기", 1);
+    await finishLab("orbit", "별의 거리를 바꿔 실험하기", 1);
   },
   async parallax() {
     await predict("parallax");
@@ -127,7 +127,7 @@ const LAB = {
     await at("parallax-miss");
     await next(page); await W(page, 700);
     await at("parallax-half0");
-    await tapText(page, "반으로"); await W(page, 3200);
+    await tapText(page, "절반"); await W(page, 3200);
     await at("parallax-half");
     await setRange(page, 4); await W(page, 1200);
     await at("parallax-half4");
@@ -138,20 +138,20 @@ const LAB = {
     await answer(page, true); await W(page, 500);
     await at("parallax-hit");
     await next(page); await W(page, 700);
-    await finishLab("parallax", "이름 붙이기", 0);
+    await finishLab("parallax", "용어 알아보기", 0);
   },
   async parsec() {
     await at("parsec-start");
-    await tapText(page, "재기"); await W(page, 2000);
+    await tapText(page, "측정하기"); await W(page, 2000);
     await at("parsec-1pc");
     await setRange(page, 1); await W(page, 700);
-    await tapText(page, "재기"); await W(page, 2200);
+    await tapText(page, "측정하기"); await W(page, 2200);
     await at("parsec-2pc");
     await setRange(page, 2); await W(page, 700);
-    await tapText(page, "재기"); await W(page, 2200);
+    await tapText(page, "측정하기"); await W(page, 2200);
     await at("parsec-4pc");
     await setRange(page, 3); await W(page, 900);
-    await tapText(page, "재기"); await W(page, 1200);
+    await tapText(page, "측정하기"); await W(page, 1200);
     await at("parsec-10pc");
     ok(await waitAsk(page), "parsec: 판정 1이 뜨지 않음");
     await W(page, 400);
@@ -161,27 +161,27 @@ const LAB = {
     await next(page); await W(page, 900);
     await setRange(page, 4); await W(page, 1200);
     await at("parsec-far0");
-    await tapText(page, "재기"); await W(page, 1200);
+    await tapText(page, "측정하기"); await W(page, 1200);
     await at("parsec-far");
     ok(await waitAsk(page), "parsec: 판정 2가 뜨지 않음");
     await W(page, 400);
     await answer(page, true); await W(page, 500);
     await at("parsec-hit");
     await next(page); await W(page, 700);
-    await finishLab("parsec", "정리하기", 0);
+    await finishLab("parsec", "핵심 정리하기", 0);
   },
   async lux() {
     await at("lux-start");
-    await tapText(page, "밝기 재기"); await W(page, 400);
+    await tapText(page, "밝기 측정"); await W(page, 400);
     await at("lux-off", false);
     await tapText(page, "전등 켜기"); await W(page, 300);
     await tapKey(page, "40"); await W(page, 500);
-    await tapText(page, "밝기 재기"); await W(page, 400);
+    await tapText(page, "밝기 측정"); await W(page, 400);
     await at("lux-mixed");
     await tapText(page, "교실 불 끄기"); await W(page, 300);
-    for (const p of ["20", "40", "60", "80", "100"]) { await tapKey(page, p); await W(page, 500); await tapText(page, "밝기 재기"); await W(page, 300); }
+    for (const p of ["20", "40", "60", "80", "100"]) { await tapKey(page, p); await W(page, 500); await tapText(page, "밝기 측정"); await W(page, 300); }
     await at("lux-all");
-    await finishLab("lux", "빛이 퍼지는 모습 보기", 1);
+    await finishLab("lux", "빛이 퍼지는 까닭 알아보기", 1);
   },
   async spread() {
     await predict("spread");
@@ -190,7 +190,7 @@ const LAB = {
     await at("spread-2");
     await tapKey(page, "3"); await W(page, 900);
     await at("spread-3");
-    await finishLab("spread", "이름 붙이기", 1);
+    await finishLab("spread", "용어 알아보기", 1);
   },
   async mag() {
     await at("mag-start");
@@ -207,7 +207,7 @@ const LAB = {
     await at("mag-mid");
     await setRange(page, 5); await W(page, 500);
     await at("mag-top", false);
-    await finishLab("mag", "이름 붙이기", 1);
+    await finishLab("mag", "용어 알아보기", 1);
   },
   async abs() {
     await predict("abs");
@@ -217,7 +217,7 @@ const LAB = {
     await tapText(page, "북극성"); await W(page, 1900);
     await tapText(page, "데네브"); await W(page, 1900);
     await at("abs-all");
-    await finishLab("abs", "이름 붙이기", 1);
+    await finishLab("abs", "용어 알아보기", 1);
   },
   async heater() {
     await at("heater-start");
@@ -227,22 +227,22 @@ const LAB = {
     await hold("전원", 5200, () => at("heater-yellow"));
     await W(page, 1200);
     await at("heater-cool", false);
-    await finishLab("heater", "별의 색 맞추기", 1);
+    await finishLab("heater", "별의 색과 온도 비교하기", 1);
   },
   async temp() {
     await at("temp-start");
     await setRange(page, 40); await W(page, 500);
-    await tapText(page, "이 색"); await W(page, 400);
+    await tapText(page, "색 맞추기"); await W(page, 400);
     await at("temp-wrong");
     await setRange(page, 2); await W(page, 500);
-    await tapText(page, "이 색"); await W(page, 400);
+    await tapText(page, "색 맞추기"); await W(page, 400);
     await setRange(page, 6); await W(page, 500);
-    await tapText(page, "이 색"); await W(page, 400);
+    await tapText(page, "색 맞추기"); await W(page, 400);
     await at("temp-two");
     await setRange(page, 62); await W(page, 500);
     await at("temp-white");
-    await tapText(page, "이 색"); await W(page, 500);
-    await finishLab("temp", "이름 붙이기", 1);
+    await tapText(page, "색 맞추기"); await W(page, 500);
+    await finishLab("temp", "용어 알아보기", 1);
   },
   async model() {
     await at("model-start");
@@ -254,19 +254,19 @@ const LAB = {
     await tapKey(page, "front"); await W(page, 700);
     await at("model-scatter");
     await tapKey(page, "top"); await W(page, 700);
-    await finishLab("model", "위에서 내려다보기", 1);
+    await finishLab("model", "우리은하에서 태양계 위치 찾기", 1);
   },
   async galaxy() {
     await at("galaxy-start");
     await tapStage(page, 113, 115); await W(page, 400);
     await at("galaxy-guess");
-    await tapText(page, "실제 자리"); await W(page, 3100);
+    await tapText(page, "실제 태양계"); await W(page, 3100);
     await at("galaxy-real");
     await tapKey(page, "in"); await W(page, 900);
     await at("galaxy-in");
     await tapKey(page, "out"); await W(page, 900);
     await at("galaxy-out");
-    await finishLab("galaxy", "이름 붙이기", 1);
+    await finishLab("galaxy", "용어 알아보기", 1);
   },
   async observe() {
     await at("observe-start");
@@ -284,7 +284,7 @@ const LAB = {
     }
     await W(page, 1700);
     await at("observe-album");
-    await finishLab("observe", "이름 붙이기", 1);
+    await finishLab("observe", "성단의 종류 알아보기", 1);
   },
   async nebula() {
     await at("nebula-start");
@@ -298,7 +298,7 @@ const LAB = {
     // 판정은 암흑 성운을 묻는다: 마지막에 다른 장면을 골랐어도 판정이 뜨면 무대가 검게 보이는 구름으로 돌아온다
     ok(await waitAsk(page), "nebula: 판정이 뜨지 않음");
     ok(await page.evaluate(() => document.querySelector(".screen.active .bv-ctl [data-k=none]")?.classList.contains("on")), "nebula: 판정 때 무대가 검은 구름으로 돌아오지 않음");
-    await finishLab("nebula", "이름 붙이기", 1);
+    await finishLab("nebula", "성운의 종류 알아보기", 1);
   },
   async balloon() {
     await at("balloon-start");
@@ -319,19 +319,19 @@ const LAB = {
     await W(page, 400);
     await tapText(page, "줄자"); await W(page, 500);
     await at("balloon-after");
-    await finishLab("balloon", "공간을 늘려 보기", 1);
+    await finishLab("balloon", "은하 사이의 공간 늘려 보기", 1);
   },
   async center() {
     await at("center-start");
-    await tapText(page, "공간 늘리기"); await W(page, 1900);
+    await tapText(page, "팽창시키기"); await W(page, 1900);
     await at("center-me");
     await tapKey(page, "1"); await W(page, 300);
-    await tapText(page, "공간 늘리기"); await W(page, 1900);
+    await tapText(page, "팽창시키기"); await W(page, 1900);
     await at("center-ga");
     await tapKey(page, "2"); await W(page, 300);
-    await tapText(page, "공간 늘리기"); await W(page, 1900);
+    await tapText(page, "팽창시키기"); await W(page, 1900);
     await at("center-na");
-    await finishLab("center", "이름 붙이기", 1);
+    await finishLab("center", "용어 알아보기", 1);
   },
   async mission() {
     await at("mission-start");
@@ -339,18 +339,18 @@ const LAB = {
     await at("mission-far");
     for (const k of ["sp", "ap", "hb", "is"]) { await tapKey(page, k); await W(page, 1300); }
     await at("mission-all");
-    await finishLab("mission", "탐사 계획 세우기", 1);
+    await finishLab("mission", "화성 탐사 계획 세우러 가기", 1);
   },
   async plan() {
     await at("plan-start");
     for (const k of ["0", "1", "3"]) { await tapKey(page, k); await W(page, 200); }
-    await tapText(page, "화성으로"); await W(page, 2500);
+    await tapText(page, "발사하기"); await W(page, 2500);
     await at("plan-fail");
     await tapKey(page, "3"); await W(page, 200);
     await tapKey(page, "2"); await W(page, 200);
-    await tapText(page, "화성으로"); await W(page, 2500);
+    await tapText(page, "발사하기"); await W(page, 2500);
     await at("plan-ok");
-    await finishLab("plan", "이름 붙이기", 1);
+    await finishLab("plan", "용어 알아보기", 1);
   },
 };
 const PLAN = {

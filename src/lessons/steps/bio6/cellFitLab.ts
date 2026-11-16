@@ -26,7 +26,7 @@ interface CftStep {
 type Cell = "nerve" | "rbc" | "epi";
 const CELLS: Cell[] = ["nerve", "rbc", "epi"];
 const NAME: Record<Cell, string> = { nerve: "신경세포", rbc: "적혈구", epi: "상피세포" };
-const SHAPE: Record<Cell, string> = { nerve: "가늘고 긴 모양", rbc: "작고 둥근 원반", epi: "납작한 모양" };
+const SHAPE: Record<Cell, string> = { nerve: "가늘고 긴 모양", rbc: "작고 둥근 원반 모양", epi: "납작한 모양" };
 const THUMB: Record<Cell, string> = { nerve: "bio3/figs/cell-nerve.webp", rbc: "bio3/figs/cell-rbc.webp", epi: "bio6/levels/epi-cell.webp" };
 
 // 무대 그림의 색(카드 그림과 같은 계열)
@@ -53,29 +53,29 @@ const JOBS: Job[] = [
     pill: "먼 곳까지 신호 보내기",
     right: "nerve",
     start: "<b>먼 곳까지 신호</b>를 보내야 해요. 어느 세포에게 맡길지 아래에서 골라 보세요.",
-    ok: "신경세포는 <b>가늘고 길어서</b> 신호를 먼 곳까지 전달해요. 1 m쯤 되는 것도 있어요.",
+    ok: "신경세포는 <b>가늘고 길게 뻗어 있어서</b> 신호를 먼 곳까지 빠르게 전달해요. 길이가 1 m쯤 되는 것도 있어요.",
     okCap: "신호가 끝까지 전해졌어요",
     fail: {
-      rbc: { say: "적혈구는 작고 둥글어서 받는 곳까지 <b>닿지 않아요</b>. 다른 세포에게 맡겨 봐요.", cap: "받는 곳까지 닿지 않아요" },
-      epi: { say: "상피세포는 납작한 조각이라 받는 곳까지 <b>닿지 않아요</b>. 다른 세포에게 맡겨 봐요.", cap: "받는 곳까지 닿지 않아요" },
+      rbc: { say: "적혈구는 작고 둥글어서 신호를 받는 곳까지 <b>닿지 않아요</b>. 다른 세포를 골라 보세요.", cap: "받는 곳까지 닿지 않아요" },
+      epi: { say: "상피세포는 납작한 조각 모양이라 신호를 받는 곳까지 <b>닿지 않아요</b>. 다른 세포를 골라 보세요.", cap: "받는 곳까지 닿지 않아요" },
     },
   },
   {
     pill: "좁은 혈관으로 산소 나르기",
     right: "rbc",
     start: "이번에는 <b>좁은 혈관</b>을 지나 온몸에 산소를 날라야 해요. 어느 세포가 해낼까요?",
-    ok: "적혈구는 <b>작고 둥근 원반</b> 모양이라 좁은 혈관도 지나며 산소를 날라요.",
+    ok: "적혈구는 <b>작고 둥근 원반 모양</b>이라 좁은 혈관도 부드럽게 빠져나가며 산소를 날라요.",
     okCap: "좁은 혈관을 지나갔어요",
     fail: {
-      nerve: { say: "신경세포는 길게 뻗어 있어 좁은 혈관에 <b>걸려요</b>. 다른 세포에게 맡겨 봐요.", cap: "좁은 곳에 걸렸어요" },
-      epi: { say: "상피세포는 넓적해서 좁은 혈관에 <b>걸려요</b>. 다른 세포에게 맡겨 봐요.", cap: "좁은 곳에 걸렸어요" },
+      nerve: { say: "신경세포는 사방으로 길게 뻗어 있어서 좁은 혈관에 <b>걸려 움직이지 못해요</b>. 다른 세포를 골라 보세요.", cap: "좁은 곳에 걸렸어요" },
+      epi: { say: "상피세포는 넓적해서 좁은 혈관 입구에 <b>걸려 지나가지 못해요</b>. 다른 세포를 골라 보세요.", cap: "좁은 곳에 걸렸어요" },
     },
   },
   {
     pill: "몸의 표면 빈틈없이 덮기",
     right: "epi",
     start: "마지막 일이에요. 세균이 들어오지 못하게 몸의 <b>표면을 빈틈없이</b> 덮어야 해요.",
-    ok: "상피세포는 <b>납작하고 편평해서</b> 서로 맞닿아 표면을 빈틈없이 덮어요.",
+    ok: "상피세포는 타일처럼 <b>납작하고 편평해서</b> 서로 빈틈없이 맞닿아 몸의 표면을 덮어 보호해요.",
     okCap: "빈틈이 없어 세균이 못 들어와요",
     fail: {
       nerve: { say: "신경세포는 가늘어서 덮지 못한 곳이 많아요. 그 사이로 <b>세균이 들어와요</b>.", cap: "빈 곳으로 세균이 들어와요" },
@@ -330,7 +330,7 @@ export const cellFitLab: StepRenderer = (host, step, api) => {
     svg.setAttribute("class", `cft-svg job-${job} run c-${c}`);
     actors.innerHTML = ACTORS[job](c);
     CELLS.forEach((x) => cards[x].on(x === c));
-    f.say(`<b>${NAME[c]}</b>에게 맡겼어요. 어떻게 되는지 지켜봐요.`);
+    f.say(`<b>${NAME[c]}</b>에게 일을 맡겼어요. 어떻게 되는지 지켜보세요.`);
     mark();
     tm.later(() => {
       busy = false;
@@ -339,12 +339,12 @@ export const cellFitLab: StepRenderer = (host, step, api) => {
       haptic(ok ? HAPTIC.correct : HAPTIC.wrong);
       if (ok) {
         solved = true;
-        cards[c].sub("해냈어요");
+        cards[c].sub("성공! 알맞은 모양");
         cards[c].el.classList.add("done");
         CELLS.forEach((x) => (cards[x].el.disabled = true));
         f.say(J.ok);
         f.pips(job + 1);
-        nextBtn.textContent = job < JOBS.length - 1 ? "다음 일 맡기기" : "세 가지 일 돌아보기";
+        nextBtn.textContent = job < JOBS.length - 1 ? "다음 일 맡기기" : "세 세포 한눈에 비교하기";
         nextBtn.hidden = false;
       } else {
         cards[c].sub("알맞지 않아요");
@@ -368,25 +368,25 @@ export const cellFitLab: StepRenderer = (host, step, api) => {
     actors.innerHTML = "";
     svg.setAttribute("class", "cft-svg job-3");
     mark();
-    f.say("세 가지 일을 해낸 세포가 저마다 달랐어요. 위 그림을 보고 까닭을 골라요.");
+    f.say("세 가지 일을 해낸 세포가 저마다 달랐어요! 위 그림을 비교하며 그 까닭을 골라 보세요.");
     f.slot.ask(
-      "세 가지 일을 맡겨 보니, 세포의 모양이 서로 다른 까닭은?",
-      [{ t: "맡은 일에 알맞은 모양이 달라서", ok: true }, { t: "세포마다 나이가 서로 달라서" }, { t: "모양은 하는 일과 상관없어서" }],
+      "우리 몸에 있는 세포들의 모양과 크기가 서로 다른 까닭은 무엇인가요?",
+      [{ t: "세포마다 하는 일에 알맞은 모양이 다르기 때문에", ok: true }, { t: "세포가 만들어진 나이가 서로 다르기 때문에" }, { t: "세포의 모양은 하는 일과 아무 관련이 없기 때문에" }],
       (ok) => api.recordQuiz(ok),
-      { why: "일마다 해낸 세포가 달랐어요. <b>모양이 그 일에 알맞아야</b> 했죠.", onNext: finish },
+      { why: "세포마다 우리 몸에서 맡은 일이 다르고, <b>그 일을 가장 잘할 수 있는 모양</b>을 하고 있기 때문이에요.", onNext: finish },
     );
   }
 
   function finish(): void {
     f.pips(JOBS.length + 1);
-    f.say("세포의 모양에는 까닭이 있었어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("세포는 종류에 따라 <b>모양이 다르고</b>, 그 모양은 <b>맡은 일</b>을 하기에 알맞아요.");
+    f.say("신경세포, 적혈구, 상피세포 모두 저마다 맡은 일을 가장 잘할 수 있는 모양을 하고 있어요!");
+    f.slot.conclude("생물의 몸을 이루는 세포는 종류에 따라 <b>크기와 모양이 서로 다르며</b>, 각각 자기가 <b>맡은 기능(하는 일)</b>에 알맞은 모습을 하고 있어요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
   f.slot.setControls(bvCards(3, ...CELLS.map((c) => cards[c])), nextBtn);
   setJob(0);
-  api.setCTA("세 가지 일을 맡겨 보세요", { enabled: false });
+  api.setCTA("세 가지 일을 알맞은 세포에게 맡겨 보세요", { enabled: false });
   return () => tm.clear();
 };

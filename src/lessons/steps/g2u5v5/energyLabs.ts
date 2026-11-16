@@ -77,7 +77,7 @@ const AIR_CO2: Pt[] = [[104, 62], [226, 66], [160, 58], [272, 61], [132, 69], [1
 
 export const g2u5FarmLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-farm", wait: "온실의 조건을 정해 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-farm", wait: "이산화 탄소 농도와 온도를 차례로 맞춰 보세요" });
   const { f } = lab;
   const A = newNs("fm");
   const ly = g5Layers(lab, "온실의 상추와 이산화 탄소 공급 장치, 냉난방 장치, 광합성량 막대, 이산화 탄소 농도 그래프와 온도 그래프", ["defs", "house", "plants", "gas", "meter", "charts"]);
@@ -157,12 +157,12 @@ export const g2u5FarmLab: StepRenderer = (host, step, api) => {
     host.dataset.g5Val = v.toFixed(2);
   };
 
-  const sC = stepper("이산화 탄소", "c", (d) => {
+  const sC = stepper("이산화 탄소 농도", "c", (d) => {
     ci = Math.max(0, Math.min(5, ci + d));
     seenC.add(ci);
     sC.set(`${ci + 1}단계`);
     draw();
-    f.say(ci >= 4 && PC[ci] === PC[ci - 1] ? "농도를 높였는데 광합성량이 <b>더 늘지 않아요</b>." : d > 0 ? "이산화 탄소를 더 넣자 광합성량이 <b>늘었어요</b>." : "이산화 탄소를 줄이자 광합성량도 줄었어요.");
+    f.say(ci >= 4 && PC[ci] === PC[ci - 1] ? "<b>4단계</b> 이상부터는 이산화 탄소를 더 넣어 주어도 광합성량이 <b>일정하게 유지돼요</b>." : d > 0 ? "이산화 탄소 농도를 높이자 광합성량도 <b>함께 늘어나요</b>. 한 단계씩 더 높여 볼까요?" : "이산화 탄소를 줄이자 광합성량도 줄었어요.");
   });
   const sT = stepper("온실 온도", "t", (d) => {
     const before = PT[ti];
@@ -173,26 +173,26 @@ export const g2u5FarmLab: StepRenderer = (host, step, api) => {
     if (TS[ti] >= 40) {
       bad();
       toast(lab, "잎이 처지고 있어요", true);
-      f.say("온도가 너무 높아요. 광합성량이 <b>뚝 떨어졌어요</b>.");
+      f.say("온도가 30 ℃를 넘어가자 광합성량이 <b>급격히 줄어들어요</b>!");
     } else {
       lab.f.stage.querySelector(".g2u5x-toast")?.remove();
-      f.say(PT[ti] > before ? "온도를 높이자 광합성량이 <b>늘었어요</b>." : PT[ti] < before ? "광합성량이 <b>줄었어요</b>. 가장 큰 곳은 어디일까요?" : "더 바꿀 수 없어요.");
+      f.say(PT[ti] > before ? "온도가 올라가자 광합성량도 <b>늘어나고 있어요</b>. 온도를 조금 더 높여 보세요." : PT[ti] < before ? "광합성량이 <b>줄었어요</b>. 가장 큰 곳은 어디일까요?" : "더 바꿀 수 없어요.");
     }
   });
   sC.set("1단계");
   sT.set(`${TS[ti]} ℃`);
-  const pickC = bvBtn("main g2u5x-pick", "이 농도로 정하기");
+  const pickC = bvBtn("main g2u5x-pick", "이 농도로 결정하기");
   pickC.addEventListener("click", () => {
     if (!seenC.has(4)) {
       tap();
-      f.say("어디까지 늘어나는지 아직 몰라요. 농도를 <b>더 높여</b> 재 보세요.");
+      f.say("단계를 조금 더 바꿔 가며 그래프 선이 <b>어떻게 변하는지</b> 먼저 살펴보세요.");
       return;
     }
     if (PC[ci] < 1) {
       bad();
       lab.slip();
-      toast(lab, "광합성량을 더 늘릴 수 있어요", true);
-      f.say("이 농도에서는 광합성량이 <b>가장 크지 않아요</b>. 그래프를 다시 봐요.");
+      toast(lab, "이산화 탄소 농도를 높이면 광합성량이 더 늘어나요", true);
+      f.say("아직 이산화 탄소 농도가 낮아 광합성량이 최대에 이르지 못했어요. 단계를 더 높여 보세요.");
       return;
     }
     good();
@@ -203,34 +203,35 @@ export const g2u5FarmLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     draw();
     f.slot.setControls(sT.el, pickT);
-    f.say("농도를 정했어요. 이제 낮은 온도에서 시작해 <b>온도</b>를 올려 가며 재요.");
+    f.say("좋아요! 이번에는 <b>온실 온도</b>를 조절해 보세요. 온도는 무조건 높을수록 좋을까요?");
   });
-  const pickT = bvBtn("main g2u5x-pick", "이 온도로 정하기");
+  const pickT = bvBtn("main g2u5x-pick", "이 온도로 결정하기");
   pickT.addEventListener("click", () => {
     if (phase !== "temp") return;
     if (!seenT.has(5)) {
       tap();
-      f.say("더 높은 온도에서는 어떨까요? <b>35 ℃ 위</b>까지 재 보세요.");
+      f.say("온도를 30 ℃보다 <b>더 높이면</b> 광합성량이 어떻게 변하는지도 꼭 확인해 보세요.");
       return;
     }
     if (ti !== 4) {
       bad();
       lab.slip();
-      toast(lab, "광합성량이 더 큰 온도가 있어요", true);
-      f.say("그래프에서 점이 <b>가장 높은</b> 온도를 찾아 맞춰요.");
+      toast(lab, "광합성이 가장 활발한 온도가 따로 있어요", true);
+      // 알맞은 온도(30 ℃, 4번)보다 높은지 낮은지로 말을 가른다. 35 ℃에서도 광합성량이 절반쯤 남으므로 '거의 멈춤'이 아니라 '크게 줄었어요'로 쓴다.
+      f.say(ti > 4 ? "온도가 너무 높아서 광합성량이 <b>크게 줄었어요</b>. 광합성량이 가장 많았던 온도로 되돌려 보세요." : "아직 온실 온도가 낮아요. 그래프에서 광합성량이 <b>가장 많은 온도</b>를 골라 보세요.");
       return;
     }
     good();
     phase = "end";
     f.pips(2);
     sT.lock(true);
-    lab.judge("알맞은 온도보다 <b>더 높이면</b> 광합성량은?", [{ t: "빠르게 줄어든다", ok: true }, { t: "더 늘지 않고 일정하다" }, { t: "계속 늘어난다" }], "30 ℃를 넘기자 점이 <b>뚝 떨어졌어요</b>.", () =>
-      lab.finish("이산화 탄소 농도가 높을수록 광합성량이 늘다가 일정 농도 이상에서는 <b>일정</b>해져요. 온도는 높을수록 늘다가 일정 온도 이상에서는 <b>빠르게 줄어요</b>."),
+    lab.judge("온실 온도를 알맞은 온도(30 ℃)보다 <b>더 높이면</b> 광합성량은 어떻게 되나요?", [{ t: "급격히 줄어든다", ok: true }, { t: "더 이상 늘지 않고 일정하게 유지된다" }, { t: "계속 늘어난다" }], "온도가 30 ℃를 넘어가자 그래프의 점이 아래로 <b>급격히 떨어진 것</b>을 떠올려 보세요.", () =>
+      lab.finish("<b>이산화 탄소 농도</b>가 높아질수록 광합성량은 증가하다가 일정 수준 이상에서 <b>일정</b>해져요. 반면 <b>온도</b>는 올라갈수록 광합성량이 증가하다가, 알맞은 온도를 넘어서면 <b>급격히 줄어들어요</b>."),
     );
   });
   f.slot.setControls(sC.el, pickC);
   draw();
-  f.say("상추 온실이에요. <b>이산화 탄소</b>를 얼마나 넣어야 광합성량이 가장 클까요?");
+  f.say("상추가 자라는 온실이에요. 먼저 <b>이산화 탄소 농도</b>를 몇 단계로 맞추면 광합성량이 가장 많아질지 찾아보세요.");
   return lab.cleanup;
 };
 
@@ -365,7 +366,7 @@ function bean(ns: string, g: number, lit: boolean): { svg: string; cot: Pt; up: 
 
 export const g2u5SproutLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-sprout", wait: "산소와 빛을 주고 끊어 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-sprout", wait: "산소와 빛 조건을 바꾸어 가며 관찰해 보세요", tall: true });
   const { f, tm } = lab;
   const A = newNs("sr");
   const ly = g5Layers(lab, "땅속에 심은 강낭콩과 흙 속의 산소, 땅 위의 빛", ["defs", "ground", "sky", "bean", "fx", "marks"]);
@@ -409,7 +410,7 @@ export const g2u5SproutLab: StepRenderer = (host, step, api) => {
     const left = 1 - grow * 0.75;
     fx += `<rect x="262" y="150" width="72" height="14" rx="7" fill="#0E1A2E" stroke="#5A4A2A" stroke-width="1"/><rect x="264" y="152" width="${f1(68 * left)}" height="10" rx="5" fill="${P.sugar}"/>`;
     fx += label(298, 142, "콩 속의 양분", { size: 12.5, fill: P.sugar });
-    fx += label(298, 182, grow >= 1 ? "자라는 데 썼어요" : grow > 0 ? "쓰는 중" : "그대로", { size: 12, fill: "#E8EEF9" });
+    fx += label(298, 182, grow >= 1 ? "자라는 데 씀" : grow > 0 ? "사용 중" : "그대로 남음", { size: 12, fill: "#E8EEF9" });
     ly.set("fx", fx);
     ly.set("marks", mark(40, "빛 없이도 자람", seenDark) + mark(60, "산소 없으면 멈춤", seenLit));
     host.dataset.g5Grow = String(Math.round(grow * 100));
@@ -421,17 +422,20 @@ export const g2u5SproutLab: StepRenderer = (host, step, api) => {
       f.say(!seenDark ? "이번에는 <b>빛을 가린 채</b>로도 자라는지 확인해 보세요." : "이번에는 <b>산소만 끊고</b> 빛을 비춰 보세요. 자랄까요?");
       return;
     }
+    // 산소 없이 빛만: 자란 적이 있으면(산소를 끊은 때) 멈췄다고, 아직 한 번도 자라지 않았으면 산소를 주라고 말한다.
+    // 산소만(빛 없음): 잘 자란다는 말 뒤에 '빛을 비추고 산소를 멈춰 보라'(이 랩은 빛을 비춘 채 산소를 끊어야 '산소 없으면 멈춤'을 센다).
+    // 둘 다 있음: 빛 없이 자라는지 아직 보지 않았으면 그것부터 권한다.
     if (!o2 && !light) f.say("산소도 빛도 없어요. 싹이 <b>자라지 않아요</b>. 하나씩 줘 보세요.");
-    else if (!o2 && light) f.say("빛을 비춰도 <b>자라지 않아요</b>. 산소가 없어 에너지가 나오지 않아요.");
-    else if (o2 && !light) f.say("빛이 없는데도 <b>싹이 자라요</b>. 콩 속의 양분과 산소로 에너지를 얻어요.");
-    else f.say("싹이 자라요. 빛을 가리면, 또 산소를 끊으면 어떻게 될까요?");
+    else if (!o2 && light) f.say(grow > 0 ? "산소가 없자 양분과 빛이 있어도 에너지를 얻지 못해 <b>성장이 멈췄어요</b>. 다시 산소를 공급해 보세요." : "빛을 비춰 주어도 흙 속에 산소가 없으면 싹이 <b>자라지 못해요</b>. <b>흙 속 산소</b> 버튼을 눌러 산소를 공급해 보세요.");
+    else if (o2 && !light) f.say("빛이 없어도 콩 속의 양분과 <b>산소</b>로 에너지를 얻어 잘 자라네요! 이번에는 빛을 비추고 <b>산소 공급을 멈추면</b> 어떻게 되는지 확인해 보세요.");
+    else f.say(!seenDark ? "흙 속에 산소가 공급되자 싹이 자라기 시작해요! <b>빛을 가려도</b> 계속 자라는지 확인해 보세요." : "싹이 자라요. 빛을 가리면, 또 산소를 끊으면 어떻게 될까요?");
   };
 
-  const cO2 = chip("o2", "흙 속 산소", "없음", () => {
+  const cO2 = chip("o2", "흙 속 산소", "없음(물에 잠김)", () => {
     tap();
     o2 = !o2;
     cO2.on(o2);
-    cO2.sub(o2 ? "있음" : "없음");
+    cO2.sub(o2 ? "공급 중" : "없음(물에 잠김)");
     draw();
     tell();
   });
@@ -443,13 +447,13 @@ export const g2u5SproutLab: StepRenderer = (host, step, api) => {
     draw();
     tell();
   });
-  const go = bvBtn("main g2u5x-go", "싹이 자란 까닭 정리하기");
+  const go = bvBtn("main g2u5x-go", "싹이 자란 원리 정리하기");
   go.disabled = true;
   go.addEventListener("click", () => {
     tap();
     stop = true;
-    lab.judge("싹이 자랄 에너지를 얻는 데 <b>없어도 됐던</b> 것은?", [{ t: "빛", ok: true }, { t: "산소" }, { t: "콩 속의 양분" }], "빛을 가려도 산소만 있으면 싹이 자랐어요.", () =>
-      lab.finish("콩은 저장된 <b>양분</b>을 <b>산소</b>로 분해해 에너지를 얻었어요. 빛이 없는 땅속에서도 일어나는 이 과정이 <b>호흡</b>이에요."),
+    lab.judge("콩이 에너지를 얻어 싹을 틔우는 데 <b>꼭 필요하지 않았던</b> 조건은 무엇인가요?", [{ t: "빛", ok: true }, { t: "산소" }, { t: "콩 속에 저장된 양분" }], "빛을 가린 어두운 상태에서도 콩 속의 양분과 <b>산소</b>만 있으면 에너지를 얻어 싹이 자랐어요.", () =>
+      lab.finish("식물은 살아 있는 세포에서 <b>산소</b>를 이용해 양분을 분해하고, 이때 나오는 <b>에너지</b>로 자라고 살아가요. 이 과정을 <b>호흡</b>이라고 해요."),
     );
   });
   let stop = false;
@@ -478,26 +482,28 @@ export const g2u5SproutLab: StepRenderer = (host, step, api) => {
       if (grow >= 1) {
         good();
         go.disabled = false;
-        f.say("싹이 다 자랐어요. 무엇으로 에너지를 얻었는지 <b>정리</b>해요.");
+        f.say("콩 속에 저장된 양분을 분해해 얻은 <b>에너지</b>로 싹이 무사히 자랐어요!");
       } else if (grow >= 0.9) tell();
     }
     tm.later(tick, 100);
   };
   f.slot.setControls(row(cO2.el, cLight.el), go);
   draw();
-  f.say("땅속의 콩이 싹트려면 <b>에너지</b>가 필요해요. 무엇을 주면 자랄까요?");
+  f.say("흙이 물에 잠겨 있어 땅속에 산소가 없는 상태예요. <b>무엇을 공급해 주어야</b> 콩이 에너지를 얻어 싹을 틔울까요?");
   tm.later(tick, 100);
   return lab.cleanup;
 };
 
 // ── 빛의 세기와 잎의 기체 출입 ──────────────────────────────────────
-const LV = ["빛 없음", "약한 빛", "밝은 빛", "강한 빛"];
+// 빛의 세기 이름(괄호는 그때의 하루 시간대). 수 조절의 값 칸은 .g2u5x-st.wide로 넓힌다(가장 긴 '약한 빛(아침·저녁)'이 들게).
+const LV = ["빛 없음(밤)", "약한 빛(아침·저녁)", "밝은 빛(낮)", "강한 빛(한낮)"];
 const KP = [0, 1, 4, 6];
 const RESP = 2;
+// 이 랩에는 광합성량과 호흡량이 같은 단계가 없다(머리말). 그래서 둘째 과제는 '빛 없이 호흡만'이고, 셋째 과제는 '빛이 있는데도 이산화 탄소'다.
 const MISSION = [
-  { say: "<b>산소</b>가 잎 밖으로 나가게 빛의 세기를 맞춰 보세요.", ok: (lv: number): boolean => KP[lv] > RESP },
-  { say: "이번에는 <b>이산화 탄소</b>가 잎 밖으로 나가게 해 보세요.", ok: (lv: number): boolean => KP[lv] < RESP },
-  { say: "<b>빛이 있는데도</b> 이산화 탄소가 나가게 할 수 있을까요?", ok: (lv: number): boolean => lv === 1 },
+  { say: "(1/3) 먼저 광합성량이 호흡량보다 많아서 <b>산소가 잎 밖으로</b> 방출되는 빛의 세기를 찾아보세요.", ok: (lv: number): boolean => KP[lv] > RESP },
+  { say: "(2/3) 이번에는 호흡만 일어나 <b>이산화 탄소가 잎 밖으로</b> 방출되는 때를 찾아보세요.", ok: (lv: number): boolean => KP[lv] < RESP },
+  { say: "(3/3) <b>빛이 있는데도</b> 이산화 탄소가 나가게 할 수 있을까요?", ok: (lv: number): boolean => lv === 1 },
 ];
 // 잎은 바탕일 뿐이다(2026-11-15 사용자 지적: 잎 조직을 자세히 그렸더니 요점이 묻혔다). 조직은 그리지 않고,
 // 잎 안의 두 칸에 광합성과 호흡이 쓰고 내놓는 기체를 분자 개수 그대로 나란히 두어 두 양을 비교하게 한다.
@@ -527,7 +533,7 @@ function stoma(x: number, y: number): string {
 
 export const g2u5LightLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 4, cls: "g2u5x-light", wait: "빛의 세기를 맞춰 확인해 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 4, cls: "g2u5x-light", wait: "세 가지 상황을 차례로 찾아 확인해 보세요", tall: true });
   const { f, tm } = lab;
   const A = newNs("lt");
   const ly = g5Layers(lab, "잎 속의 광합성과 호흡이 쓰고 내놓는 기체, 기공으로 드나드는 기체", ["defs", "leaf", "sky", "cards", "gas", "panel"]);
@@ -602,18 +608,21 @@ export const g2u5LightLab: StepRenderer = (host, step, api) => {
     sL.set(LV[lv]);
     draw();
   });
+  sL.el.classList.add("wide");
   sL.set(LV[0]);
-  const check = bvBtn("main g2u5x-check", "이 빛으로 확인하기");
+  const check = bvBtn("main g2u5x-check", "이 빛의 세기로 확인하기");
   check.addEventListener("click", () => {
     if (busy) return;
     if (!MISSION[m].ok(lv)) {
       bad();
       lab.slip();
-      toast(lab, m === 2 && lv === 0 ? "지금은 빛이 없어요" : KP[lv] > RESP ? "지금은 산소가 나가요" : "지금은 이산화 탄소가 나가요", true);
+      toast(lab, "오른쪽의 '나가는 기체' 칸을 다시 확인해 보세요", true);
+      f.say(`${MISSION[m].say} 무대 오른쪽의 <b>나가는 기체</b>를 보면서 빛의 세기를 조절해 보세요.`);
       return;
     }
     good();
-    toast(lab, m === 0 ? "성공, 산소가 나가요" : m === 1 ? "성공, 이산화 탄소가 나가요" : "성공, 빛이 있어도 나가요");
+    // 둘째 과제는 약한 빛에서도 통과하므로, '빛이 없는 밤' 알림은 빛이 없을 때만 띄운다.
+    toast(lab, m === 0 ? "밝은 낮에는 산소가 잎 밖으로 방출돼요!" : m === 1 ? (lv === 0 ? "빛이 없는 밤에는 이산화 탄소가 방출돼요!" : "성공, 이산화 탄소가 나가요") : "성공, 빛이 있어도 나가요");
     m += 1;
     f.pips(m);
     draw();
@@ -624,10 +633,10 @@ export const g2u5LightLab: StepRenderer = (host, step, api) => {
     busy = true;
     sL.lock(true);
     check.disabled = true;
-    f.say("빛이 약하면 광합성이 <b>호흡보다 적어서</b> 이산화 탄소가 나가요.");
+    f.say("빛의 세기에 따라 잎을 드나드는 기체가 어떻게 달라지는지 모두 확인했어요!");
     tm.later(() => {
-      lab.judge("빛의 세기를 바꾸는 동안 <b>변하지 않은</b> 것은?", [{ t: "호흡으로 쓰는 산소의 양", ok: true }, { t: "광합성으로 만드는 산소의 양" }, { t: "잎 밖으로 나가는 기체" }], "호흡은 빛과 관계없이 늘 <b>2개씩</b>이었어요.", () =>
-        lab.finish("호흡은 빛과 관계없이 <b>늘</b> 일어나요. 광합성이 호흡보다 많으면 <b>산소</b>가, 적으면 <b>이산화 탄소</b>가 잎 밖으로 나가요."),
+      lab.judge("빛의 세기를 바꾸는 동안에도 <b>변하지 않고 일정했던</b> 것은 무엇인가요?", [{ t: "호흡으로 쓰는 산소의 양", ok: true }, { t: "광합성으로 만드는 산소의 양" }, { t: "잎 밖으로 나가는 기체의 종류" }], "광합성량은 빛의 세기에 따라 달라졌지만, 호흡량은 빛과 관계없이 낮이나 밤이나 늘 <b>일정(2개씩)</b>했어요.", () =>
+        lab.finish("식물은 <b>낮과 밤 구분 없이 늘 호흡</b>을 해요. 낮에는 광합성량이 호흡량보다 많아서 <b>산소</b>를 방출하고, 밤에는 광합성을 하지 않고 호흡만 하므로 <b>이산화 탄소</b>를 방출해요."),
       );
     }, 1900);
   });
@@ -640,17 +649,17 @@ export const g2u5LightLab: StepRenderer = (host, step, api) => {
 // ── 붙임딱지로 잇는 광합성과 호흡 ───────────────────────────────────
 type Sticker = "빛에너지" | "포도당" | "산소" | "이산화 탄소" | "물" | "에너지";
 const STAGES: { accept: Sticker[]; say: string; why: string }[] = [
-  { accept: ["빛에너지"], say: "광합성에 들어가는 <b>에너지</b>는 무엇일까요? 붙임딱지를 골라요.", why: "광합성은 <b>빛에너지</b>를 받아야 일어나요." },
-  { accept: ["포도당", "산소"], say: "광합성이 만들어 호흡에 건네는 <b>두 가지</b>를 붙여요.", why: "광합성이 만드는 것은 <b>포도당과 산소</b>예요." },
-  { accept: ["이산화 탄소", "물"], say: "호흡에서 생겨 광합성에 쓰이는 <b>두 가지</b>를 붙여요.", why: "호흡에서 생기는 것은 <b>이산화 탄소와 물</b>이에요." },
-  { accept: ["에너지"], say: "호흡으로 식물이 <b>얻는 것</b>을 붙여요.", why: "호흡은 생명활동에 쓸 <b>에너지</b>를 얻는 과정이에요." },
+  { accept: ["빛에너지"], say: "(1/4) 먼저 엽록체에서 <b>광합성</b>이 일어날 때 필요한 에너지를 골라 붙여 보세요.", why: "광합성은 태양의 <b>빛에너지</b>를 받아서 일어나요." },
+  { accept: ["포도당", "산소"], say: "(2/4) 광합성으로 만들어져 호흡에 쓰이는 <b>두 가지 물질</b>을 위쪽 빈칸에 붙여 보세요.", why: "광합성 결과 <b>포도당</b>과 <b>산소</b>가 만들어져요." },
+  { accept: ["이산화 탄소", "물"], say: "(3/4) 호흡 결과 생겨서 다시 광합성의 재료로 쓰이는 <b>두 가지 물질</b>을 아래쪽 빈칸에 붙여 보세요.", why: "호흡 과정에서 나온 <b>이산화 탄소</b>와 <b>물</b>은 다시 광합성의 재료가 돼요." },
+  { accept: ["에너지"], say: "(4/4) 마지막으로 호흡을 통해 방출되어 식물이 살아가는 데 쓰이는 것을 오른쪽 빈칸에 붙여 보세요.", why: "식물은 호흡으로 양분을 분해해 생활에 필요한 <b>에너지</b>를 얻어요." },
 ];
 const TINT: Record<Sticker, string> = { 빛에너지: P.energy, 포도당: P.sugar, 산소: P.o2, "이산화 탄소": P.co2, 물: P.water, 에너지: "#FF9F5A" };
 const SHELF: Sticker[] = ["물", "에너지", "산소", "빛에너지", "이산화 탄소", "포도당"];
 
 export const g2u5CycleLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 4, cls: "g2u5x-cycle", wait: "빈칸에 붙임딱지를 붙여 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 4, cls: "g2u5x-cycle", wait: "빈칸에 알맞은 붙임딱지를 모두 붙여 보세요" });
   const { f, tm } = lab;
   const A = newNs("cy");
   const ly = g5Layers(lab, "광합성과 호흡을 잇는 그림과 붙임딱지를 붙일 빈칸", ["defs", "base", "slots"]);
@@ -685,7 +694,7 @@ export const g2u5CycleLab: StepRenderer = (host, step, api) => {
     mitochondrion(A, 272, 117, 108, 52, { rot: 6 }) +
     label(272, 112, "호흡", { size: 15 }) +
     label(272, 132, "마이토콘드리아", { size: 12, fill: "#FFE0C8" }) +
-    txt(173, 222, "위: 광합성이 만든 것 · 아래: 호흡에서 생긴 것", { size: 12, fill: P.dim });
+    txt(173, 222, "위쪽 화살표: 광합성 산물 · 아래쪽 화살표: 호흡 산물", { size: 12, fill: P.dim });
 
   const draw = (): void => {
     let slots = "";
@@ -715,7 +724,7 @@ export const g2u5CycleLab: StepRenderer = (host, step, api) => {
         c.el.classList.add("miss");
         tm.later(() => c.el.classList.remove("miss"), 500);
         host.dataset.g5Miss = "1";
-        f.say(`이 칸에는 붙지 않아요. ${st.why}`);
+        f.say(`이 빈칸에 들어갈 알맞은 붙임딱지가 아니에요. ${st.why}`);
         return;
       }
       good();
@@ -729,10 +738,10 @@ export const g2u5CycleLab: StepRenderer = (host, step, api) => {
       }
       draw();
       if (at >= STAGES.length) {
-        f.say("그림이 완성됐어요. 두 과정이 <b>서로 주고받는 것</b>을 따라가 봐요.");
+        f.say("순환 그림이 완성됐어요! 광합성과 호흡이 <b>서로 주고받는 물질</b>을 화살표를 따라 확인해 보세요.");
         tm.later(() => {
-          lab.judge("광합성에서 생긴 <b>포도당과 산소</b>는 어디에 쓰일까요?", [{ t: "호흡에 쓰인다", ok: true }, { t: "다시 광합성에 쓰인다" }, { t: "쓰이지 않고 모두 나간다" }], "위쪽 화살표가 광합성에서 <b>호흡</b>으로 가요.", () =>
-            lab.finish("광합성이 만든 <b>포도당과 산소</b>는 호흡에 쓰이고, 호흡에서 생긴 <b>이산화 탄소와 물</b>은 광합성에 쓰여요. 광합성은 빛에너지를 흡수하고 호흡은 에너지를 내놓아요."),
+          lab.judge("광합성으로 만들어진 <b>포도당과 산소</b>는 식물의 어떤 작용에 쓰이나요?", [{ t: "호흡에 쓰인다", ok: true }, { t: "그대로 다시 광합성에 쓰인다" }, { t: "쓰이지 않고 모두 식물 밖으로 나간다" }], "그림의 위쪽 화살표를 보면 포도당과 산소가 광합성(엽록체)에서 <b>호흡(마이토콘드리아)</b> 쪽으로 이동해요.", () =>
+            lab.finish("광합성으로 만든 <b>포도당과 산소</b>는 호흡에 쓰이고, 호흡 결과 생긴 <b>이산화 탄소와 물</b>은 다시 광합성의 재료로 쓰이며 서로 순환해요. 광합성은 빛에너지를 흡수하고 호흡은 에너지를 내놓아요."),
           );
         }, 2200);
       }

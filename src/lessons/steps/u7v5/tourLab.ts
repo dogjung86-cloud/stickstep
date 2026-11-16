@@ -39,7 +39,7 @@ const BODIES: Body[] = [
     dist: "지구에서 약 1억 5천만 km, 빛으로 8분 20초",
     size: "지름 약 139만 km · 지구의 109배",
     grav: "표면 중력 지구의 약 28배",
-    more: "태양계 전체 질량의 99.8%가 태양 몫이에요. 표면(광구)에는 흑점이, 대기에서는 홍염과 플레어가 나타나요. 태양의 중력이 여덟 행성과 소행성·혜성을 전부 붙잡아 두고 있죠. 태양계의 중심이자 우리와 가장 가까운 별!",
+    more: "태양계 전체 질량의 약 99.8%를 차지해요. 표면(광구)에는 흑점이 나타나고, 대기에서는 홍염과 플레어가 나타나죠. 강한 중력으로 여덟 행성과 소행성, 혜성을 모두 붙잡아 두는 태양계의 중심 별이에요.",
   },
   {
     key: "mercury", kind: "mercury", name: "수성", d: 16, r: 1.0, group: "terra",
@@ -47,118 +47,118 @@ const BODIES: Body[] = [
     dist: "지구와 가장 가까울 때 약 7,700만 km",
     size: "지름 4,880 km · 지구의 0.38배",
     grav: "중력 지구의 0.38배",
-    more: "태양에 가장 가까운 첫 번째 행성. 대기가 거의 없어 낮에는 약 430℃, 밤에는 약 −180℃, 온도 차가 600℃를 넘어요. 88일 만에 태양을 한 바퀴 도는 잰걸음 행성이에요.",
+    more: "태양에서 가장 가까운 첫 번째 행성이에요. 대기가 거의 없어 낮에는 약 430℃까지 오르고 밤에는 약 −180℃까지 내려가, 낮과 밤의 온도 차가 600℃가 넘어요.",
   },
   {
     key: "venus", kind: "venus", name: "금성", d: 22, r: 1.55, group: "terra",
     fact: "<b>이산화 탄소로 이루어진 두꺼운 대기</b>가 있어서 표면 온도가 매우 높아요.",
-    dist: "가장 가까울 때 약 4,100만 km, 행성 중 최단",
+    dist: "지구와 가장 가까울 때 약 4,100만 km",
     size: "지름 12,104 km · 지구의 0.95배",
     grav: "중력 지구의 0.9배",
-    more: "크기는 지구와 쌍둥이지만 환경은 정반대, 두꺼운 이산화 탄소 대기의 온실 효과로 표면이 약 470℃예요. 태양에서 두 번째인데도 수성보다 뜨거운 이유죠. 자전이 아주 느려서 하루가 1년보다 길고, 다른 행성과 반대 방향으로 돌아요.",
+    more: "크기는 지구와 비슷하지만 환경은 정반대예요. 두꺼운 이산화 탄소 대기가 열을 가두어 표면 온도가 약 470℃나 되거든요. 태양에서 두 번째로 가까운데도 수성보다 더 뜨거운 까닭이에요.",
   },
   {
     key: "earth", kind: "earth", name: "지구", d: 29, r: 1.65, group: "terra",
-    fact: "표면에 <b>액체 상태의 물</b>이 있고, 생명체가 살아요. 옆을 도는 달은 지구의 <b>위성</b>!",
-    dist: "우리 집, 태양에서 약 1억 5천만 km",
-    size: "지름 12,756 km · 비교 기준(=1)",
-    grav: "중력 = 1 (기준)",
-    more: "표면에 액체 상태의 물이 넉넉히 있는 유일한 행성이자, 지금까지 생명체가 확인된 유일한 곳이에요. 적당한 태양과의 거리, 적당한 대기가 만든 기적 같은 균형이죠. 커다란 위성인 달이 함께 돌아요.",
+    fact: "표면에 <b>액체 상태의 물</b>이 있고 생명체가 살아가요. 지구 둘레를 도는 달은 지구의 <b>위성</b>이에요.",
+    dist: "태양에서 약 1억 5천만 km",
+    size: "지름 12,756 km · 행성 비교 기준(1)",
+    grav: "중력 비교 기준(1)",
+    more: "태양과의 거리가 알맞고 적절한 대기가 있어, 표면에 액체 상태의 물이 풍부하고 생명체가 살아가요. 위성인 달 한 개를 거느리고 있어요.",
   },
   {
     key: "mars", kind: "mars", name: "화성", d: 36, r: 1.3, group: "terra",
-    fact: "<b>붉은 표면</b>, 과거에 물이 흘렀던 흔적이 있고, 얼음과 드라이아이스로 된 <b>극관</b>이 있어요.",
+    fact: "<b>표면이 붉고</b> 과거에 물이 흘렀던 흔적이 있어요. 양극 지방에는 얼음과 드라이아이스로 된 흰 <b>극관</b>이 보여요.",
     dist: "가장 가까울 때 약 5,500만 km",
     size: "지름 6,792 km · 지구의 0.53배",
     grav: "중력 지구의 0.38배",
-    more: "표면을 덮은 붉은 녹(산화 철) 먼지 때문에 붉게 보여요. 물이 흘렀던 골짜기 흔적, 계절마다 커졌다 작아지는 극관, 그리고 높이 약 22km로 태양계에서 가장 큰 화산까지, 탐사 로봇이 가장 많이 굴러다니는 행성이에요.",
+    more: "표면에 산화 철 성분이 많아 붉게 보여요. 물이 흘렀던 골짜기 흔적과 계절에 따라 크기가 변하는 극관이 있어, 인류가 탐사 로봇을 가장 많이 보낸 행성이에요.",
   },
   {
     key: "jupiter", kind: "jupiter", name: "목성", d: 58, r: 5.2, group: "jovian",
-    fact: "태양계에서 <b>가장 큰 행성</b>. 줄무늬와 <b>대적점</b>(거대한 대기 소용돌이)이 보여요.",
+    fact: "태양계에서 <b>가장 큰 행성</b>이에요. 가로줄 무늬와 거대한 대기 소용돌이인 <b>대적점</b>이 보여요.",
     dist: "가장 가까울 때 약 5억 9천만 km",
     size: "지름 142,984 km · 지구의 11.2배",
     grav: "중력 지구의 약 2.5배",
-    more: "지구 1,300개가 들어가는 태양계 최대 행성. 대적점은 지구보다 큰 대기 소용돌이로 300년 넘게 관측되고 있어요. 위성이 95개가 넘고, 이렇게 큰데도 약 10시간에 한 바퀴 돌 만큼 자전이 빨라요.",
+    more: "부피가 지구의 1,300배나 되는 가장 큰 행성이에요. 지구보다 큰 소용돌이인 대적점이 있고, 빠르게 자전해서 표면에 가로줄 무늬가 나타나요. 수많은 위성과 희미한 고리도 가지고 있어요.",
   },
   {
     key: "saturn", kind: "saturn", name: "토성", d: 72, r: 4.5, group: "jovian",
-    fact: "<b>뚜렷한 고리</b>를 두르고 있어요. 위성도 아주 많답니다.",
+    fact: "암석과 얼음 조각으로 이루어진 <b>뚜렷한 고리</b>가 있어요. 거느린 위성도 매우 많아요.",
     dist: "가장 가까울 때 약 12억 km",
     size: "지름 120,536 km · 지구의 9.4배",
     grav: "중력 지구의 1.07배",
-    more: "고리는 판이 아니라 수많은 얼음 조각과 돌 부스러기의 무리예요. 그리고 토성은 밀도가 물보다 작은 유일한 행성, 토성이 들어갈 만큼 큰 욕조가 있다면 물에 둥둥 뜰 거예요!",
+    more: "넓은 고리는 하나의 단단한 판이 아니라 수많은 얼음과 암석 조각이 모여 돌고 있는 거예요. 태양계 행성 가운데 평균 밀도가 가장 작고, 물의 밀도보다도 작아요.",
   },
   {
     key: "uranus", kind: "uranus", name: "천왕성", d: 84, r: 2.8, group: "jovian",
-    fact: "청록색 행성. <b>자전축이 공전 궤도면과 거의 나란</b>해서 누워서 도는 셈이에요. 고리도 세로로!",
+    fact: "청록색을 띠며, <b>자전축이 공전 궤도면과 거의 나란</b>해서 옆으로 누운 채 자전해요.",
     dist: "가장 가까울 때 약 26억 km",
     size: "지름 51,118 km · 지구의 4배",
     grav: "중력 지구의 0.89배",
-    more: "자전축이 궤도면과 거의 나란해서 옆으로 누운 채 굴러가듯 공전해요. 그래서 고리도 세로로 서 있죠. 태양계에서 가장 추운 대기(약 −224℃)를 가진 얼음 행성이에요.",
+    more: "자전축이 크게 기울어져 옆으로 누운 채 돌기 때문에 희미한 고리도 세로로 서 있어요. 대기에 메테인이 포함되어 있어 청록색으로 보여요.",
   },
   {
     key: "neptune", kind: "neptune", name: "해왕성", d: 94, r: 2.7, group: "jovian",
-    fact: "파란 행성. <b>대흑점</b>이라는 대기의 소용돌이가 나타나요.",
+    fact: "태양에서 가장 먼 파란색 행성이에요. 표면에 대기 소용돌이인 <b>대흑점</b>이 나타나기도 해요.",
     dist: "가장 가까울 때 약 43억 km",
     size: "지름 49,528 km · 지구의 3.9배",
     grav: "중력 지구의 1.14배",
-    more: "태양에서 가장 먼 여덟 번째 행성. 시속 2,000km가 넘는 태양계 최강의 바람이 불고, 대흑점이라는 커다란 소용돌이가 나타났다 사라져요. 망원경 관측이 아니라 계산으로 위치를 먼저 예측해 발견한 첫 행성이기도 해요.",
+    more: "태양에서 여덟 번째 행성이에요. 강한 바람이 불어 표면에 어두운 소용돌이인 대흑점이 생겼다 사라지곤 하며, 천왕성과 마찬가지로 희미한 고리와 많은 위성이 있어요.",
   },
   {
     // 왜소 행성 선경험(레슨 마무리 문제·binSort의 '왜소 행성'을 투어에서 먼저 만난다).
     // BODIES에 있어도 미션(TERRA/JOVIAN/belt)에는 안 잡힘: 목표 로직 불변.
     key: "pluto", kind: "moon", name: "명왕성", d: 104, r: 0.55, group: "etc",
-    fact: "해왕성 바깥을 도는 작은 얼음 천체, <b>왜소 행성</b>이에요. 둥글지만 자기 궤도 주변을 <b>홀로 지배하지 못해서</b> 행성과 달라요.",
+    fact: "태양 주위를 도는 <b>왜소 행성</b>이에요. 모양은 둥글지만 <b>행성보다 크기가 작고 가벼워요</b>.",
     dist: "태양에서 약 59억 km, 지구의 약 40배",
     size: "지름 2,377 km · 달보다 작아요",
     grav: "중력 지구의 약 1/15",
-    more: "2006년까지는 아홉 번째 행성으로 불렸어요. 하지만 명왕성 곁에서 비슷한 얼음 천체들이 잇달아 발견되면서, '둥글지만 궤도 주변을 홀로 지배하지 못하는 천체'는 왜소 행성으로 새로 분류하게 됐죠. 태양계 가장자리엔 이런 얼음 천체가 아주 많답니다.",
+    more: "2006년까지는 아홉 번째 행성으로 불렸어요. 하지만 주변에서 비슷한 천체들이 잇달아 발견되면서, 모양은 둥글지만 궤도 주변의 다른 천체들을 끌어들일 만큼 질량이 크지 않아 왜소 행성으로 다시 분류되었어요.",
   },
 ];
 
 const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav" | "more">> = {
   moon: {
     name: "달",
-    fact: "지구 주위를 도는 <b>위성</b>이에요. 위성은 태양이 아니라 <b>행성</b> 주위를 돌아요!",
+    fact: "지구 둘레를 도는 <b>위성</b>이에요. 위성은 태양이 아니라 <b>행성의 둘레</b>를 도는 천체예요.",
     dist: "지구에서 약 38만 km, 빛으로 1.3초",
     size: "지름 3,475 km · 지구의 0.27배",
     grav: "중력 지구의 1/6",
-    more: "지구의 하나뿐인 위성. 스스로 빛나지 않고 태양 빛을 반사해서 보여요. 중력이 지구의 1/6이라 달에서는 몸무게가 1/6로 줄어요. 우주인이 껑충껑충 뛰어다니는 이유죠.",
+    more: "지구의 하나뿐인 자연 위성이에요. 스스로 빛을 내지 못하고 태양 빛을 반사해서 밝게 보이죠. 대기가 없어 낮과 밤의 온도 차가 크고 표면에 운석 구덩이가 많아요.",
   },
   belt: {
     name: "소행성대",
-    fact: "모양이 불규칙한 소행성들이 잔뜩! 주로 <b>화성과 목성의 공전 궤도 사이</b>에 있어요.",
+    fact: "모양이 울퉁불퉁하고 불규칙한 <b>소행성</b>들이 모여 있어요. 주로 <b>화성과 목성의 궤도 사이</b>에서 태양 둘레를 돌아요.",
     dist: "화성 궤도와 목성 궤도 사이의 띠",
     size: "가장 큰 세레스도 지름 약 940 km",
     grav: "너무 작아 중력이 아주 약해요",
-    more: "행성이 되지 못하고 남은 크고 작은 암석 덩어리 수백만 개가 띠를 이루어 태양 주위를 돌아요. 그림에선 빽빽해 보이지만 실제 소행성 사이는 텅텅 비어 있어서, 탐사선이 그냥 통과할 수 있을 정도랍니다.",
+    more: "크고 작은 암석 천체들이 화성과 목성 궤도 사이에 띠 모양으로 모여 태양 주위를 돌고 있어요. 모양이 둥글지 않고 길쭉하거나 울퉁불퉁한 것이 특징이에요.",
   },
   comet: {
     name: "혜성",
-    fact: "얼음과 먼지 덩어리. 태양에 가까워지면 녹으면서 꼬리가 생기는데, 꼬리는 늘 <b>태양 반대쪽</b>을 향해요!",
+    fact: "<b>얼음과 먼지</b>로 이루어진 천체예요. 태양 둘레를 돌다가 태양에 가까워지면 <b>태양 반대쪽</b>으로 긴 꼬리가 생겨요.",
     dist: "길쭉한 타원 궤도, 가까워졌다 멀어졌다",
     size: "핵의 지름은 보통 수 km",
     grav: "아주 약해요",
-    more: "태양에 가까워지면 얼음이 녹아 가스와 먼지를 뿜고, 그게 태양풍에 밀려 태양 반대쪽으로 긴 꼬리를 만들어요. 유명한 핼리 혜성은 약 76년마다 돌아와요. 다음 방문은 2061년이에요!",
+    more: "납작한 타원이나 포물선 궤도를 그리며 태양 주위를 돌아요. 태양에 가까워지면 얼음이 녹으며 기체와 먼지가 뿜어져 나와 태양 반대 방향으로 긴 꼬리가 만들어져요.",
   },
 };
 
 // 찾을 천체 여섯 가지(교과서 탐구의 여섯 갈래)와 그 갈래에 드는 무대의 천체
 const KINDS: { id: string; name: string; found: string; keys: string[] }[] = [
   { id: "sun", name: "태양", found: "스스로 빛나요", keys: ["sun"] },
-  { id: "planet", name: "행성", found: "태양 둘레를 돌아요", keys: ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"] },
-  { id: "moon", name: "위성", found: "달을 만났어요", keys: ["moon"] },
+  { id: "planet", name: "행성", found: "태양 주위를 돌아요", keys: ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"] },
+  { id: "moon", name: "위성", found: "행성 주위를 돌아요", keys: ["moon"] },
   { id: "belt", name: "소행성", found: "화성과 목성 사이", keys: ["belt"] },
-  { id: "comet", name: "혜성", found: "꼬리가 있어요", keys: ["comet"] },
-  { id: "dwarf", name: "왜소 행성", found: "명왕성을 만났어요", keys: ["pluto"] },
+  { id: "comet", name: "혜성", found: "긴 꼬리가 생겨요", keys: ["comet"] },
+  { id: "dwarf", name: "왜소 행성", found: "행성보다 작아요", keys: ["pluto"] },
 ];
 const DEV_KEYS = ["sun", "earth", "moon", "belt", "comet", "pluto"];
 // 특징 표의 세 칸(교과서 탐구의 표). ok는 그 특징에 해당하는 갈래, hint는 틀렸을 때 가로 화면에서 본 것을 짚는 말
 const FEATURES: { id: string; head: string; q: string; ok: string[]; hint: string }[] = [
-  { id: "shine", head: "스스로 빛남", q: "<b>스스로 빛을 내는</b> 천체를 모두 고르고 <b>표에 적기</b>를 눌러요.", ok: ["sun"], hint: "행성과 달은 태양을 향한 쪽만 밝았어요. 스스로 빛난 것을 다시 골라 보세요." },
-  { id: "sun", head: "태양 둘레", q: "이번에는 <b>태양의 둘레를 도는</b> 천체를 모두 골라요.", ok: ["planet", "belt", "comet", "dwarf"], hint: "달은 지구 곁에서 지구 둘레를 돌았어요. 태양은 가운데에 있었고요. 다시 골라 보세요." },
-  { id: "planet", head: "행성 둘레", q: "마지막으로 <b>행성의 둘레를 도는</b> 천체를 모두 골라요.", ok: ["moon"], hint: "행성 곁에 붙어 그 둘레를 돈 천체는 하나뿐이었어요. 다시 골라 보세요." },
+  { id: "shine", head: "스스로 빛남", q: "여섯 천체 중 <b>스스로 빛을 내는 천체</b>를 모두 고르고 아래 버튼을 눌러 보세요.", ok: ["sun"], hint: "행성과 위성(달)은 태양 빛을 반사해서 반쪽만 밝았어요. 스스로 빛을 내는 천체만 다시 골라 보세요." },
+  { id: "sun", head: "태양 둘레", q: "이번에는 <b>태양 주위를 도는 천체</b>를 모두 골라 보세요.", ok: ["planet", "belt", "comet", "dwarf"], hint: "태양은 중심에 있고, 위성(달)은 행성인 지구 둘레를 돌아요. 태양 둘레를 도는 네 가지를 모두 골라 보세요." },
+  { id: "planet", head: "행성 둘레", q: "마지막으로 <b>행성 주위를 도는 천체</b>를 골라 보세요.", ok: ["moon"], hint: "지구 곁에서 지구 둘레를 돌던 천체 하나만 골라 보세요." },
 ];
 
 // ── 작은 천체의 생김새(코드로 만든 질감과 모양, 2026-11-15 그래픽 손질) ──────────────────────────
@@ -384,11 +384,11 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
 
   const f = u7Frame(host, { title: s.title, steps: 3, cls: "u7x-enter", api });
   const doneCta = s.cta ?? "개념 정리하기";
-  const enterBtn = el("button", { class: "u7x-enterbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 출발하기" })) as HTMLButtonElement;
+  const enterBtn = el("button", { class: "u7x-enterbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 태양계 둘러보기" })) as HTMLButtonElement;
   f.stage.append(el("div", { class: "u7x-enter-art", html: tourArtSvg() }), enterBtn, el("div", { class: "u7x-credit", text: "행성 표면: Solar System Scope(CC BY 4.0) · 사진: NASA" }));
-  const goalsUi = u7Goals(3, KINDS.map((k) => ({ id: k.id, name: k.name, sub: "찾아 누르기" })));
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "여섯 가지 천체를 하나씩 만나요" }), goalsUi.el);
-  f.say("가로 화면에서 태양계를 돌려 보며 아래 <b>여섯 가지 천체</b>를 찾아 눌러 보세요.");
+  const goalsUi = u7Goals(3, KINDS.map((k) => ({ id: k.id, name: k.name, sub: "눌러서 확인" })));
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "태양계를 이루는 여섯 종류의 천체를 찾아보세요" }), goalsUi.el);
+  f.say("가로 화면을 열어 태양계를 둘러보며 <b>여섯 종류의 천체</b>를 모두 찾아 눌러 보세요.");
   f.pips(1);
   host.dataset.u7Phase = "tour";
 
@@ -398,6 +398,7 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
   let missionEl: HTMLElement | null = null;
   let doneBar: HTMLElement | null = null;
   let ratioNote: HTMLElement | null = null;
+  let pillEl: HTMLElement | null = null;
 
   function syncMission(): void {
     for (const k of KINDS) {
@@ -408,9 +409,10 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
       // 가로 화면 안에서 끝을 알린다(세로 화면으로 돌아가야 정리가 이어진다)
       const back = el("button", { class: "u7x-rotdone-btn", attrs: { type: "button" }, text: "돌아가서 정리하기" });
       back.addEventListener("click", () => rot?.leave());
-      doneBar = el("div", { class: "u7x-rotdone" }, el("span", { text: "여섯 가지 천체를 모두 만났어요" }), back);
+      doneBar = el("div", { class: "u7x-rotdone" }, el("span", { text: "여섯 종류의 천체를 모두 확인했어요!" }), back);
       rot.stage.appendChild(doneBar);
       ratioNote?.classList.add("hide"); // 끝 알림과 겹치지 않게
+      pillEl?.classList.add("hide"); // 둘째 줄의 상태 알약도 끝 알림과 겹친다(알림이 같은 말을 한다)
     }
   }
 
@@ -431,7 +433,7 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     asked = true;
     host.dataset.u7Phase = "table";
     f.pips(2);
-    api.setCTA("특징 표를 채워 보세요", { enabled: false });
+    api.setCTA("특징에 맞는 천체를 골라 표를 채워 보세요", { enabled: false });
     const cells = new Map<string, HTMLElement>();
     const grid = el("div", { class: "u7x-ftable" }, el("i"), ...FEATURES.map((ft) => el("b", { text: ft.head })));
     for (const k of KINDS) {
@@ -458,7 +460,7 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
       return b;
     });
     const row = el("div", { class: "u7x-seg three" }, ...chips);
-    const confirm = el("button", { class: "bv-btn main", attrs: { type: "button" }, text: "표에 적기" }) as HTMLButtonElement;
+    const confirm = el("button", { class: "bv-btn main", attrs: { type: "button" }, text: "표에 기록하기" }) as HTMLButtonElement;
     f.slot.setControls(row, confirm);
     let fi = 0;
     let graded = false;
@@ -504,8 +506,8 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
   function conclude(): void {
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("표를 다 채웠어요. 여섯 갈래의 특징이 한눈에 보여요.");
-    f.slot.conclude("태양계에는 스스로 빛나는 <b>태양</b>과, 그 둘레를 도는 <b>행성, 왜소 행성, 소행성, 혜성</b>이 있어요. <b>위성</b>은 행성의 둘레를 돌아요.");
+    f.say("특징 표를 모두 완성했어요! 천체마다 스스로 빛을 내는지, 무엇의 둘레를 도는지 한눈에 비교할 수 있어요.");
+    f.slot.conclude("태양계에서 스스로 빛을 내는 천체는 <b>태양</b>뿐이에요. <b>행성, 왜소 행성, 소행성, 혜성</b>은 태양 주위를 돌고, <b>위성</b>은 행성 주위를 돌아요.");
     api.enableCTA(doneCta);
   }
 
@@ -520,18 +522,20 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     const { enterRotateStage } = await import("../../../ui/rotateStage");
     if (disposed) return;
-    rot = enterRotateStage({ title: "천체 여섯 가지를 찾아 눌러요 · 끌면 돌고, 두 손가락으로 확대", onLeave: () => leave() });
+    rot = enterRotateStage({ title: "화면을 끌어 돌려 보며 여섯 종류의 천체를 찾아 눌러 보세요", onLeave: () => leave() });
     const canvas = el("canvas", { class: "sp3-canvas" }) as HTMLCanvasElement;
-    const pill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#FFB03A" }), el("span", { text: "방문 0곳" }));
+    // 상태 알약은 둘째 줄(u7x-rpill)에 둔다: 글이 길어져 첫 줄의 가운데 제목과 겹치지 않게(폰 가로 폭 660~850px)
+    const pill = el("div", { class: "pill sp3-pill u7x-rpill" }, el("span", { class: "pdot", style: "background:#FFB03A" }), el("span", { text: "천체를 눌러 보세요" }));
+    pillEl = pill;
     missionEl = el("div", { class: "sp3-missions u7x-missions" }, ...KINDS.map((k) => el("span", { dataset: { g: k.id }, text: k.name })));
     // 이름표는 화면 글자(12.5px)로 천체를 따라다닌다. 크기와 거리가 실제 비율이 아님을 한 줄로 알린다.
     const labelLayer = el("div", { class: "u7x-tlabels", attrs: { "aria-hidden": "true" } });
-    ratioNote = el("div", { class: "u7x-ratio", text: "크기와 거리는 실제 비율과 달라요" });
+    ratioNote = el("div", { class: "u7x-ratio", text: "천체의 크기와 거리는 보기 쉽게 조절한 모형이에요" });
     syncMission();
     const zoomIn = el("button", { class: "sp3-zbtn", attrs: { type: "button", "aria-label": "확대" }, text: "+" });
     const zoomOut = el("button", { class: "sp3-zbtn", attrs: { type: "button", "aria-label": "축소" }, text: "−" });
     const zoomCtl = el("div", { class: "sp3-zoomctl" }, zoomIn, zoomOut);
-    const card = el("div", { class: "sp3-card" });
+    const card = el("div", { class: "sp3-card u7x-tcard" });
     rot.stage.append(canvas, labelLayer, pill, ratioNote, missionEl, zoomCtl, card);
     const pillText = pill.querySelectorAll("span")[1] as HTMLElement;
 
@@ -540,13 +544,13 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     const THREE = S.THREE;
     st = S.createSpaceStage(canvas, { fov: 38 });
     if (!st) {
-      pillText.textContent = "이 기기는 3D를 지원하지 않아요";
+      pillText.textContent = "이 기기에서는 3D 화면을 열 수 없어요";
       finished = true;
       asked = true;
       api.recordQuiz(true);
       rot?.leave();
       conclude();
-      f.say("이 기기에서는 입체 무대를 켤 수 없어요. 아래 글로 알아 두세요.");
+      f.say("이 기기에서는 3D 화면을 열 수 없어 핵심 내용으로 바로 정리할게요.");
       return;
     }
     const { scene } = st;
@@ -813,20 +817,20 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
       const stats = el(
         "div",
         { class: "sp3-stats" },
-        statChip("지구와 거리", info.dist),
+        statChip("떨어진 거리", info.dist),
         statChip("크기", info.size),
-        statChip("중력", info.grav),
+        statChip("표면 중력", info.grav),
       );
       card.append(
         el("b", { text: info.name }),
         stats,
         el("p", { html: info.fact }),
         el("p", { class: "sp3-more", html: info.more }),
-        el("button", { class: "sp3-cardclose", attrs: { type: "button" }, text: "계속 순항하기" }),
+        el("button", { class: "sp3-cardclose", attrs: { type: "button" }, text: "계속 둘러보기" }),
       );
       card.classList.add("show");
       (card.querySelector(".sp3-cardclose") as HTMLButtonElement).addEventListener("click", closeCard);
-      pillText.textContent = `방문 ${visited.size}곳, ${info.name}`;
+      pillText.textContent = `${info.name} 살펴보는 중`;
       checkGoals();
     }
     function statChip(k: string, v: string): HTMLElement {
@@ -942,7 +946,7 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
         targetGoal.copy(wp);
       }
       if (!focus) {
-        pillText.textContent = finished ? "모두 만났어요" : visited.size ? `${goalsUi.count()}가지 만남, 다른 천체도 눌러요` : "끌어서 돌리고, 천체를 눌러요";
+        pillText.textContent = finished ? "여섯 종류의 천체를 모두 확인했어요!" : visited.size ? `6가지 중 ${goalsUi.count()}가지 확인! 다른 천체도 눌러 보세요` : "화면을 끌어 돌려 보며 천체를 눌러 보세요";
       }
 
       applyCamera();
@@ -961,19 +965,20 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     missionEl = null;
     doneBar = null;
     ratioNote = null;
+    pillEl = null;
     enterBtn.classList.remove("pulse");
     if (finished) {
       enterBtn.querySelector("span")!.textContent = "다시 둘러보기";
       if (!asked) startTable();
     } else {
-      enterBtn.querySelector("span")!.textContent = "다시 출발하기";
-      f.say("아직 못 만난 천체가 있어요. 다시 출발해서 <b>남은 천체</b>를 찾아 눌러 보세요.");
+      enterBtn.querySelector("span")!.textContent = "가로 화면 다시 열기";
+      f.say("아직 확인하지 않은 천체가 남았어요. 가로 화면을 다시 열어 <b>남은 천체</b>를 찾아 눌러 보세요.");
     }
   }
 
   enterBtn.addEventListener("click", () => void enter());
 
-  api.setCTA("여섯 가지 천체를 찾아요", { enabled: false });
+  api.setCTA("가로 화면에서 여섯 천체를 찾아보세요", { enabled: false });
   return () => {
     disposed = true;
     loop?.stop();

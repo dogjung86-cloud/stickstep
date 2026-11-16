@@ -14,7 +14,7 @@ import { P, arrow, bvBtn, chip, dot, g6Lab, g6Svg, good, row, tag, tap, txt, typ
 // ── 세포호흡 ───────────────────────────────────────────────────────
 export const g2u6RespLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-resp", wait: "포도당과 산소를 주고 끊어 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-resp", wait: "포도당과 산소를 세포에 공급해 보세요", tall: true });
   const { f } = lab;
   const stage = g6Svg(lab, "마이토콘드리아가 있는 세포. 왼쪽에서 포도당과 산소가 들어오고 오른쪽으로 이산화 탄소와 물이 나간다");
   let glu = false;
@@ -37,9 +37,10 @@ export const g2u6RespLab: StepRenderer = (host, step, api) => {
       out += arrow(232, 104, 300, 84, P.co2, 3, "g2u6x-flow") + arrow(232, 120, 300, 142, P.water, 3, "g2u6x-flow");
       out += [0, 1, 2, 3, 4].map((i) => `<path class="g2u6x-blink" d="M${150 + i * 14} 98 l5 -11 l-1 8 l6 -1 l-6 12 l1 -8 z" fill="${P.energy}"/>`).join("");
     }
-    // 에너지의 쓰임
+    // 에너지의 쓰임. "에너지가 나와요"는 그대로 둔다(수정안의 "만들어져요"는 에너지가 새로 생기는 것처럼 읽힌다. 단원은 '얻다'와 '나오다'로 쓴다).
+    // '생장'은 단원 개념 스텝(에너지의 이용)이 쓰는 '성장'으로 맞췄다.
     out += txt(177, 204, on ? "에너지가 나와요" : "에너지가 나오지 않아요", { size: 13, fill: on ? P.energy : P.bad, weight: 800 });
-    out += txt(177, 222, on ? "체온 유지, 근육 운동, 성장에 쓰여요" : glu || o2 ? (glu ? "산소가 없어요" : "포도당이 없어요") : "아직 아무것도 주지 않았어요", { size: 12, fill: P.dim });
+    out += txt(177, 222, on ? "체온 유지, 근육 운동, 성장 등에 쓰여요" : glu || o2 ? (glu ? "산소가 부족해요" : "포도당이 부족해요") : "아직 공급된 물질이 없어요", { size: 12, fill: P.dim });
     stage.set(out);
     host.dataset.g6On = on ? "1" : "0";
     host.dataset.g6Seen = String(seen.size);
@@ -52,31 +53,33 @@ export const g2u6RespLab: StepRenderer = (host, step, api) => {
     draw();
     if (glu && o2) {
       good();
-      f.say("포도당과 산소가 만나 <b>에너지</b>가 나왔어요. 이산화 탄소와 물도 함께 생겼어요.");
-    } else if (glu) f.say("포도당만 있어요. 산소가 없으니 에너지가 <b>나오지 않아요</b>.");
-    else if (o2) f.say("산소만 있어요. 포도당이 없으니 에너지가 <b>나오지 않아요</b>.");
-    else f.say("세포에 <b>포도당</b>과 <b>산소</b>를 주고, 하나씩 끊어도 보세요.");
+      f.say("세포에 <b>포도당</b>과 <b>산소</b>가 함께 공급되자 <b>에너지</b>가 나오고 이산화 탄소와 물이 생겼어요! 이번에는 둘 중 하나를 꺼 볼까요?");
+    } else if (glu) f.say("포도당만으로는 에너지를 꺼낼 수 없어요. <b>산소</b>도 함께 공급해 보세요.");
+    // 수정안의 "에너지를 만들 수 없어요"는 단원의 말(에너지를 얻다)에 맞춰 "얻을 수 없어요"로 썼다
+    else if (o2) f.say("산소만으로는 에너지를 얻을 수 없어요. 분해할 영양소인 <b>포도당</b>도 함께 공급해 보세요.");
+    else f.say("세포가 <b>에너지</b>를 얻으려면 무엇이 필요할까요? 아래 버튼을 눌러 공급해 보세요.");
     f.pips(Math.min(2, seen.size));
     go.disabled = seen.size < 3;
-    if (seen.size === 3 && glu && o2) f.say("둘 다 있을 때만 에너지가 나왔어요. <b>정리</b>해 봐요.");
+    if (seen.size === 3 && glu && o2) f.say("포도당과 산소 두 가지가 모두 있어야 세포가 에너지를 얻을 수 있어요. 아래 버튼을 눌러 정리해 보세요.");
   };
-  const cG = chip("glu", "포도당", "주지 않음", () => {
+  const cG = chip("glu", "포도당(영양소)", "공급 안 함", () => {
     tap();
     glu = !glu;
     cG.on(glu);
-    cG.sub(glu ? "주는 중" : "주지 않음");
+    cG.sub(glu ? "공급 중" : "공급 안 함");
     update();
   });
-  const cO = chip("o2", "산소", "주지 않음", () => {
+  const cO = chip("o2", "산소", "공급 안 함", () => {
     tap();
     o2 = !o2;
     cO.on(o2);
-    cO.sub(o2 ? "주는 중" : "주지 않음");
+    cO.sub(o2 ? "공급 중" : "공급 안 함");
     update();
   });
   go.addEventListener("click", () => {
     tap();
-    lab.judge("세포에서 에너지가 나올 때 <b>함께 생긴</b> 물질은?", [{ t: "이산화 탄소와 물", ok: true }, { t: "산소와 포도당" }, { t: "요소와 산소" }], "포도당과 산소는 <b>쓰이는 것</b>, 이산화 탄소와 물은 <b>생기는 것</b>이에요.", () =>
+    // 이유 글: 세포호흡이라는 이름은 이 랩 바로 뒤의 개념 스텝이 붙이므로 수정안의 "세포 호흡에"는 뺐다
+    lab.judge("세포에서 산소를 이용해 포도당을 분해하고 에너지를 얻을 때 <b>새로 생기는 노폐물</b>은 무엇인가요?", [{ t: "이산화 탄소와 물", ok: true }, { t: "산소와 포도당" }, { t: "요소와 산소" }], "포도당과 산소는 <b>쓰인 재료</b>이고, 분해 결과 새로 만들어진 물질은 <b>이산화 탄소와 물</b>이에요.", () =>
       lab.finish("세포는 <b>포도당</b> 같은 영양소를 <b>산소</b>와 반응시켜 에너지를 얻어요. 이때 이산화 탄소와 물이 생겨요. 이 일은 주로 마이토콘드리아에서 일어나요."),
     );
   });
@@ -93,16 +96,17 @@ const SYS: { key: Sys; name: string }[] = [
   { key: "cir", name: "순환계" },
   { key: "exc", name: "배설계" },
 ];
+// 수정안의 "에너지를 만들지 못해요"는 단원의 말에 맞춰 "얻지 못해요"로, "세포 호흡"은 단원 표기 "세포호흡"으로 썼다
 const OFF_SAY: Record<Sys, string> = {
-  dig: "소화계가 멈추자 <b>영양소</b>가 끊겼어요. 산소가 와도 세포는 에너지를 얻지 못해요.",
-  res: "호흡계가 멈추자 <b>산소</b>가 끊기고 이산화 탄소가 몸에 쌓여요. 에너지를 얻지 못해요.",
-  cir: "순환계가 멈추자 영양소도 산소도 노폐물도 <b>모두</b> 움직이지 못해요.",
-  exc: "배설계가 멈추자 요소 같은 <b>노폐물</b>이 혈액에 쌓여요. 에너지는 나오지만 몸이 위험해져요.",
+  dig: "<b>소화계</b>가 멈추자 음식물 속 영양소가 흡수되지 않아 조직세포가 에너지를 얻지 못해요.",
+  res: "<b>호흡계</b>가 멈추자 세포호흡에 필요한 산소가 들어오지 못하고, 이산화 탄소도 밖으로 나가지 못해 몸속에 쌓여요.",
+  cir: "가운데서 다리 역할을 하던 <b>순환계</b>가 멈추자 영양소, 산소, 노폐물의 운반이 모두 멈추며 모든 연결이 끊어졌어요!",
+  exc: "<b>배설계</b>가 멈추자 세포호흡 결과 생긴 노폐물(요소)이 걸러지지 않고 몸속에 쌓여요.",
 };
 
 export const g2u6TeamLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-team", wait: "기관계를 하나씩 멈춰 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-team", wait: "네 가지 기관계를 하나씩 멈춰 보며 변화를 확인해 보세요", tall: true });
   const { f } = lab;
   const stage = g6Svg(lab, "가운데 조직세포를 순환계가 둘러싸고 소화계, 호흡계, 배설계가 순환계와 이어진 모식도");
   let off: Sys | null = null;
@@ -137,22 +141,22 @@ export const g2u6TeamLab: StepRenderer = (host, step, api) => {
     host.dataset.g6Off = off ?? "";
     host.dataset.g6Seen = String(seen.size);
   };
-  const go = bvBtn("main g2u6x-go", "네 기관계 비교하기");
+  const go = bvBtn("main g2u6x-go", "기관계의 협력 관계 정리하기");
   go.disabled = true;
   const chips = SYS.map((sy) =>
-    chip(sy.key, sy.name, "일하는 중", () => {
+    chip(sy.key, sy.name, "정상 작동 중", () => {
       tap();
       off = off === sy.key ? null : sy.key;
       chips.forEach((c, i) => {
         const dead = off === SYS[i].key;
         c.on(dead);
-        c.sub(dead ? "멈춤" : "일하는 중");
+        c.sub(dead ? "작동 멈춤" : "정상 작동 중");
       });
       if (off) {
         seen.add(off);
         chips[SYS.indexOf(sy)].done();
         f.say(OFF_SAY[off]);
-      } else f.say("네 기관계가 모두 일해요. 세포가 <b>에너지</b>를 얻고 노폐물도 나가요.");
+      } else f.say("네 가지 기관계가 모두 정상적으로 협력하자 다시 조직세포에서 <b>에너지</b>가 나와요!");
       f.pips(Math.min(3, seen.size));
       go.disabled = seen.size < 4;
       draw();
@@ -160,12 +164,12 @@ export const g2u6TeamLab: StepRenderer = (host, step, api) => {
   );
   go.addEventListener("click", () => {
     tap();
-    lab.judge("멈추자 영양소, 산소, 노폐물의 이동이 <b>모두</b> 끊긴 기관계는?", [{ t: "순환계", ok: true }, { t: "소화계" }, { t: "호흡계" }], "기관계 사이에서 물질을 <b>실어 나르는</b> 일은 순환계가 맡아요.", () =>
-      lab.finish("소화계는 <b>영양소</b>를, 호흡계는 <b>산소</b>를 받아들이고 순환계가 세포로 날라요. 세포에서 생긴 이산화 탄소는 호흡계로, 요소 같은 노폐물은 배설계로 실려 나가요."),
+    lab.judge("작동이 멈췄을 때 영양소, 산소, 노폐물의 운반이 <b>모두 한꺼번에 끊긴</b> 기관계는 무엇인가요?", [{ t: "순환계", ok: true }, { t: "소화계" }, { t: "호흡계" }], "소화계, 호흡계, 배설계와 온몸의 조직세포 사이에서 물질을 실어 나르며 이어 주는 것은 <b>순환계</b>예요.", () =>
+      lab.finish("<b>소화계</b>(영양소 소화·흡수), <b>호흡계</b>(산소 흡수·이산화 탄소 배출), <b>순환계</b>(물질 운반), <b>배설계</b>(노폐물 배출)가 서로 긴밀하게 협력해야 조직세포가 세포호흡으로 에너지를 얻고 우리 몸이 건강하게 살아갈 수 있어요."),
     );
   });
   f.slot.setControls(row(chips[0].el, chips[1].el), row(chips[2].el, chips[3].el), go);
   draw();
-  f.say("기관계를 눌러 <b>하나씩 멈춰</b> 봐요. 다시 누르면 되살아나요.");
+  f.say("소화계, 순환계, 호흡계, 배설계가 함께 협력하여 조직세포에 에너지를 공급하고 있어요. 아래 버튼을 눌러 하나씩 <b>멈추면</b> 어떤 일이 일어나는지 확인해 보세요.");
   return lab.cleanup;
 };

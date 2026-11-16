@@ -30,9 +30,11 @@ export async function launch({ width = 390, height = 700, query = "" } = {}) {
   return { browser, page, errors };
 }
 
-/** 샘플 도입으로 레슨을 바로 연다(?u2intro=<레슨>). now=true면 지금 판(토글 꺼짐)으로 연다. */
+/** 도입으로 레슨을 바로 연다. 옛 토글(?u2intro=)은 2026-11-13 새 판이 정본이 되며 없어져, 개발 모드의 레슨 바로 열기(?open=<레슨>)를 쓴다.
+ *  now(옛 훅으로 열기)는 이제 같은 판을 연다(옛 훅이 없다). */
 export async function openSample(page, id, { now = false } = {}) {
-  await page.goto(`${BASE}/?u2intro=${now ? "now:" : ""}${id}`, { waitUntil: "domcontentloaded" });
+  void now;
+  await page.goto(`${BASE}/?open=${id}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => {
     const s = document.querySelector(".screen.active .step");
     return !!s && (!s.classList.contains("opn-step") || (s.dataset.opnPhase && s.dataset.opnPhase !== "load"));

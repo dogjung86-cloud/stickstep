@@ -105,7 +105,7 @@ export const u4DryIceLab: StepRenderer = (host, step, api) => {
     host.dataset.u4Dry = t.toFixed(2);
   };
 
-  const hold = u4Hold(lab, "꾹 눌러 지켜보기", (ms) => {
+  const hold = u4Hold(lab, "꾹 눌러 변화 관찰하기", (ms) => {
     t = Math.min(1, t + ms / NEED);
     paint();
     if (t < 1) return true;
@@ -114,12 +114,12 @@ export const u4DryIceLab: StepRenderer = (host, step, api) => {
     film0.setAttribute("opacity", "1");
     f.pips(2);
     const head = pred.startsWith("드라이아이스") ? "예측대로" : "예측과 달리";
-    f.say(`${head} <b>드라이아이스 컵</b>의 막만 부풀었어요. 두 컵의 바닥도 비교해 보세요.`);
+    f.say(`${head} <b>드라이아이스를 넣은 컵</b>의 비누막만 크게 부풀어 올랐어요! 두 컵의 바닥 모습도 어떻게 다른지 비교해 보세요.`);
     tm.later(judge, 1100);
     return false;
   });
 
-  const cover = bvBtn("main u4x-dry-cover", "비눗물 묻힌 끈으로 두 컵의 입구 훑기");
+  const cover = bvBtn("main u4x-dry-cover", "두 컵 입구에 비누막 씌우기");
   cover.addEventListener("click", () => {
     cover.disabled = true;
     haptic(HAPTIC.tap);
@@ -131,9 +131,10 @@ export const u4DryIceLab: StepRenderer = (host, step, api) => {
     tm.later(() => {
       f.pips(1);
       f.say("두 컵의 입구에 <b>비누막</b>이 생겼어요. 이대로 두면 어떻게 될지 예측해 보세요.");
-      u4Predict(lab, "어느 컵의 <b>비누막</b>이 볼록하게 부풀까요?", ["드라이아이스 컵", "얼음 컵", "두 컵 모두"], (picked) => {
+      // 첫 보기는 "드라이아이스"로 시작해야 한다(관찰 끝의 말머리가 pred.startsWith("드라이아이스")로 가른다)
+      u4Predict(lab, "시간이 지나면 어느 컵의 <b>비누막</b>이 볼록하게 부풀어 오를까요?", ["드라이아이스를 넣은 컵", "얼음을 넣은 컵", "두 컵 모두 부푼다"], (picked) => {
         pred = picked;
-        f.say("버튼을 <b>꾹 눌러</b> 시간을 보내며 두 컵의 비누막과 바닥을 보세요.");
+        f.say("아래 버튼을 <b>꾹 누른 채로</b> 두 컵의 비누막과 컵 바닥에 어떤 변화가 생기는지 관찰해 보세요.");
         f.slot.setControls(hold);
         api.setCTA("꾹 눌러 지켜보세요", { enabled: false });
       });
@@ -142,12 +143,12 @@ export const u4DryIceLab: StepRenderer = (host, step, api) => {
 
   function judge(): void {
     f.slot.ask(
-      "시간이 지난 뒤 두 컵의 <b>바닥</b>은 어떻게 달랐나요?",
-      [{ t: "얼음 컵에만 액체가 고였다", ok: true }, { t: "드라이아이스 컵에만 액체가 고였다" }, { t: "두 컵 모두 액체가 고였다" }],
+      "시간이 지난 뒤 두 컵의 <b>바닥</b> 모습은 어떻게 달랐나요?",
+      [{ t: "얼음 컵 바닥에만 액체(물)가 고였다", ok: true }, { t: "드라이아이스 컵 바닥에만 액체가 고였다" }, { t: "두 컵 바닥에 모두 액체가 고였다" }],
       (ok) => api.recordQuiz(ok),
       {
-        why: "얼음은 녹아 물이 됐어요. 드라이아이스는 녹지 않고 <b>바로 기체</b>가 되어 막을 밀었어요.",
-        onNext: () => lab.finish("드라이아이스는 고체에서 <b>액체를 거치지 않고</b> 바로 기체로 변했어요. 그래서 바닥이 말라 있고 비누막이 부풀었어요."),
+        why: "얼음은 녹아서 물(액체)이 되었지만, 드라이아이스는 액체가 되지 않고 <b>곧바로 기체</b>로 변해 비누막을 밀어 올렸어요.",
+        onNext: () => lab.finish("드라이아이스는 고체에서 <b>액체 상태를 거치지 않고 곧바로 기체</b>로 변해요(승화). 그래서 컵 바닥에 액체가 고이지 않고 비누막만 부풀어 올랐어요."),
       },
     );
   }

@@ -1,4 +1,4 @@
-// u6BoyleLab (u6l2): 「누르면 압력은 어떻게 될까?」
+// u6BoyleLab (u6l2): 「주사기 피스톤을 누르면 기체의 압력은 어떻게 될까?」
 // 나온 곳: 탐구 "기체의 압력과 부피 관계 알아보기"(주사기와 압력 센서. 부피를 맞추고, 센서를 연결해 새지 않는지 보고, 부피를 줄여 가며 압력을 재 그래프로 나타낸다).
 // 학생이 정하는 것: 센서를 언제 연결할지, 어느 부피에서 값을 기록할지(다섯 눈금 가운데 골라 세 번 넘게 기록한다).
 // 실패하는 길: 센서를 연결하기 전에 피스톤을 밀면 열린 끝으로 공기가 빠져나가 압력이 그대로다. 피스톤을 되돌리고 연결해야 한다.
@@ -60,7 +60,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
         if (vol < 24 && !leaked) {
           leaked = true;
           haptic(HAPTIC.wrong);
-          frame.say("끝이 열려 있어 공기가 <b>빠져나가요</b>. 압력은 그대로예요. 피스톤을 되돌리고 센서를 연결해요.");
+          frame.say("끝이 열려 있어 공기가 <b>새어 나가요</b>! 피스톤을 <b>24 mL</b>로 되돌린 뒤 압력 센서를 연결해 보세요.");
         }
       }
       sync();
@@ -91,7 +91,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
       [{ t: "입자의 개수", ok: true }, { t: "입자 사이의 거리" }, { t: "벽에 부딪히는 횟수" }],
       (ok) => lab.grade(ok),
       {
-        why: "끝이 막혀 입자는 그대로예요. 사이만 가까워져요.",
+        why: "주사기 끝이 막혀 있어 <b>입자의 개수</b>는 그대로이고, 입자 사이 거리만 가까워져요.",
         onNext: () => {
           phase = "done";
           lab.phase("done");
@@ -115,7 +115,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
       `부피가 24 mL에서 ${v} mL로 <b>${k}분의 1</b>이 되자 압력은?`,
       [{ t: `${k}배가 됐어요`, ok: true }, { t: `${k}분의 1이 됐어요` }, { t: "변하지 않았어요" }],
       (ok) => lab.grade(ok),
-      { why: `24×1과 ${v}×${k}. 곱이 늘 <b>24</b>로 같아요.`, onNext: askKeep },
+      { why: `부피와 압력을 곱한 값(24×1 = ${v}×${k} = <b>24</b>)이 늘 일정해요!`, onNext: askKeep },
     );
   };
 
@@ -133,7 +133,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
       box.setCount(N, bounds(vol));
       recs.set(24, 1);
       api.setCTA("부피를 줄이며 값을 기록해 보세요", { enabled: false });
-      frame.say("센서가 끝을 막았어요. 24 mL에서 1기압. 피스톤을 밀며 다른 부피에서 <b>세 번</b> 기록해 보세요.");
+      frame.say("센서가 끝을 막아 24 mL(1.0기압)가 기록됐어요! 피스톤을 밀며 다른 부피에서 <b>세 번 더</b> 기록해 보세요.");
       sync();
       return;
     }
@@ -144,14 +144,14 @@ export const boyleLab: StepRenderer = (host, step, api) => {
     const left = NEED + 1 - recs.size;
     if (left <= 0) {
       range.input.disabled = true;
-      api.setCTA("기록을 살펴보고 있어요", { enabled: false });
-      frame.say("점을 이으니 <b>휘어진 선</b>이 됐어요. 압력이 커질수록 부피가 작아요.");
+      api.setCTA("측정 결과를 비교해 볼까요?", { enabled: false });
+      frame.say("기록한 점들을 이으니 <b>휘어진 곡선</b>이 그려졌어요! 부피를 줄일수록 압력이 커졌네요.");
       tm.later(askRatio, 1500);
     } else frame.say(`${vol} mL에서 ${fmtP(vol)}기압이에요. 다른 부피에서 <b>${left}번 더</b> 기록해 보세요.`);
   });
 
   lab.phase("prep");
-  frame.say("주사기 속 공기는 24 mL예요. <b>압력 센서</b>를 연결한 뒤 피스톤을 밀어 압력을 재요.");
+  frame.say("주사기 안에 공기 24 mL가 들어 있어요. 먼저 <b>압력 센서 연결하기</b>를 눌러 주사기 끝을 막아 보세요.");
   sync();
 
   const GX0 = 46;

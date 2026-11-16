@@ -20,9 +20,10 @@ export const HOT = "#FF8A4C";
 export const COLD = "#5AA9FF";
 export const FONT = "Pretendard, system-ui, sans-serif";
 
-export function u3Frame(host: HTMLElement, o: { title: string; steps: number; cls: string; api: Pick<StepAPI, "setCTA"> }): BvFrame {
+/** tall: 세 줄이 되는 도움말이 있는 랩은 처음부터 세 줄 상자를 잡는다(bvFrame의 「글 맞춤」, 랩 도중에 무대가 밀리지 않게). */
+export function u3Frame(host: HTMLElement, o: { title: string; steps: number; cls: string; api: Pick<StepAPI, "setCTA">; tall?: boolean }): BvFrame {
   host.classList.add("u3x-step");
-  return bvFrame(host, { title: o.title, steps: o.steps, cls: `u3x-stage ${o.cls}`, qCls: "u3x-q", api: o.api });
+  return bvFrame(host, { title: o.title, steps: o.steps, cls: `u3x-stage ${o.cls}`, qCls: "u3x-q", api: o.api, tall: o.tall });
 }
 
 export type Ctx = CanvasRenderingContext2D;

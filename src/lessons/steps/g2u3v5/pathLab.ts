@@ -58,7 +58,8 @@ function bendX(a: Pt, w: Pt): number {
 
 export const pathLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 3, api });
+  // 도움말에 세 줄 글이 있어(물체가 보였을 때, 처음 안내) 처음부터 세 줄 칸으로 잡는다(랩 도중에 무대가 밀리지 않게, 2026-11-16)
+  const f = lxFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "path";
@@ -88,13 +89,13 @@ export const pathLab: StepRenderer = (host, step, api) => {
   clearBtn.dataset.k = "clear";
   const sendBtn = bvBtn("main", "빛 보내기");
   sendBtn.dataset.k = "send";
-  f.slot.setControls(el("div", { class: "g2u3x-cap", text: "그린 화살표" }), list, el("div", { class: "g2u3x-row2" }, clearBtn, sendBtn));
+  f.slot.setControls(el("div", { class: "g2u3x-cap", text: "내가 그린 빛의 경로" }), list, el("div", { class: "g2u3x-row2" }, clearBtn, sendBtn));
 
   const paintList = (): void => {
     list.replaceChildren(
       ...(arrows.length
         ? arrows.map((a) => el("span", { class: `g2u3x-chip ${a.st}`, text: `${name(a.a)} → ${name(a.b)}` }))
-        : [el("span", { class: "g2u3x-chip none", text: "아직 없어요" })]),
+        : [el("span", { class: "g2u3x-chip none", text: "아직 그린 화살표가 없어요" })]),
     );
     sendBtn.disabled = arrows.length === 0 || lock;
     clearBtn.disabled = arrows.length === 0 || lock;
@@ -111,13 +112,14 @@ export const pathLab: StepRenderer = (host, step, api) => {
     if (sent) reset();
     if (!sel) {
       sel = n;
-      f.say(`<b>${name(n)}</b>에서 시작해요. 화살표가 닿을 곳을 눌러 보세요.`);
+      // 조사: 전등, 눈, 책은 받침이 있어 '을', 둘째 장면의 물체 '물고기'만 '를'
+      f.say(`출발점으로 <b>${name(n)}</b>${n === "obj" && sc === 1 ? "를" : "을"} 골랐어요. 빛이 향할 도착점을 눌러 보세요.`);
       paintList();
       return;
     }
     if (sel === n) {
       sel = null;
-      f.say("시작할 곳을 다시 골라 보세요.");
+      f.say("선택을 취소했어요. 화살표가 출발할 곳을 다시 눌러 보세요.");
       return;
     }
     // 같은 두 곳 사이의 화살표는 새로 그린 것으로 바꾼다
@@ -125,7 +127,7 @@ export const pathLab: StepRenderer = (host, step, api) => {
     arrows.push({ a: sel, b: n, st: "draw" });
     sel = null;
     paintList();
-    f.say(`화살표를 그렸어요. 더 그리거나 <b>빛 보내기</b>로 ${scene().obj}${sc === 0 ? "이" : "가"} 보이는지 확인해요.`);
+    f.say(`화살표를 그렸어요! 화살표를 더 이어 그리거나, <b>빛 보내기</b>를 눌러 ${scene().obj}${sc === 0 ? "이" : "가"} 보이는지 확인해 보세요.`);
   }
   clearBtn.addEventListener("click", () => {
     if (lock) return;
@@ -133,7 +135,7 @@ export const pathLab: StepRenderer = (host, step, api) => {
     sel = null;
     reset();
     paintList();
-    f.say("화살표를 지웠어요. <b>시작할 곳</b>부터 다시 눌러 보세요.");
+    f.say("화살표를 모두 지웠어요. 빛이 <b>출발할 곳</b>부터 다시 차례대로 눌러 보세요.");
   });
 
   sendBtn.addEventListener("click", () => {
@@ -155,25 +157,25 @@ export const pathLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.correct);
       lock = true;
       paintList();
-      const extra = arrows.some((x) => x.st === "bad") ? " 빨간 화살표에는 빛이 흐르지 않았어요." : "";
+      const extra = arrows.some((x) => x.st === "bad") ? " 빨간 점선 화살표로는 빛이 나아가지 않아요." : "";
       if (sc === 0) {
         f.pips(1);
-        f.say(`전등의 빛이 책에서 <b>반사</b>해 눈에 들어왔어요. 책이 보여요!${extra}`);
+        f.say(`성공이에요! 전등에서 나온 빛이 책에서 <b>반사</b>되어 눈에 들어오니 책이 보여요.${extra}`);
         tm.later(nextScene, 2600);
       } else {
         f.pips(2);
         host.dataset.lx = "bent";
-        f.say(`물고기가 보여요! 빛이 <b>수면</b>을 지날 때의 길을 잘 보세요.${extra}`);
+        f.say(`어항 속 물고기도 보여요! 빛이 <b>수면 경계</b>를 지날 때 어떻게 나아가는지 잘 살펴보세요.${extra}`);
         tm.later(askFinal, 2800);
       }
       return;
     }
     haptic(HAPTIC.wrong);
-    if (arrows.some((x) => x.a === "eye")) f.say("<b>눈</b>은 빛을 내지 못해요. 눈에서 나가는 화살표에는 빛이 흐르지 않아요. 빛이 나오는 곳에서 시작해요.");
-    else if (arrows.some((x) => x.a === "obj" && x.b === "lamp")) f.say(`${o}${eul} 스스로 빛을 내지 못해요. 빛은 <b>전등</b>에서 나와요.`);
-    else if (!lit && has("obj", "eye")) f.say(`${o}${eul} 스스로 빛을 내지 못해요. 눈으로 보낼 빛이 먼저 <b>${o}에 닿아야</b> 해요.`);
-    else if (lit) f.say(`빛이 ${o}에 닿았어요. 하지만 그 빛이 <b>눈</b>까지 와야 ${o}${sc === 0 ? "이" : "가"} 보여요.`);
-    else f.say(`전등의 빛이 눈에 바로 들어와 <b>전등</b>이 보여요. ${o}${eul} 아직 보이지 않아요.`);
+    if (arrows.some((x) => x.a === "eye")) f.say("우리 <b>눈</b>은 스스로 빛을 내지 못해요. 빛을 내는 <b>전등</b>에서 화살표를 출발시켜 보세요.");
+    else if (arrows.some((x) => x.a === "obj" && x.b === "lamp")) f.say(`${o}${eul} 스스로 빛을 내지 못해요. 빛이 나오는 <b>전등</b>에서 출발해 보세요.`);
+    else if (!lit && has("obj", "eye")) f.say(`${o}${eul} 스스로 빛을 내지 못해요. 먼저 전등의 빛이 <b>${o}에 닿도록</b> 화살표를 그려 보세요.`);
+    else if (lit) f.say(`전등의 빛이 ${o}에 닿았어요! 이제 ${o}에서 반사된 빛이 <b>눈</b>으로 들어가도록 화살표를 이어 보세요.`);
+    else f.say(`전등에서 나온 빛이 눈에 바로 들어와 <b>전등</b>만 보일 뿐, ${o}${eul} 아직 보이지 않아요.`);
   });
 
   function nextScene(): void {
@@ -185,23 +187,23 @@ export const pathLab: StepRenderer = (host, step, api) => {
     lock = false;
     host.dataset.lx = "tank";
     paintList();
-    f.say("이번에는 <b>어항 속 물고기</b>예요. 물고기가 보이게 빛의 길을 화살표로 그려 보세요.");
-    api.setCTA("물고기가 보이게 그려 보세요", { enabled: false });
+    f.say("이번에는 물속에 있는 <b>어항 속 물고기</b>예요. 물고기가 눈에 보이도록 빛이 나아가는 길을 화살표로 그려 보세요.");
+    api.setCTA("물고기가 보이도록 빛의 경로를 그려 보세요", { enabled: false });
   }
   function askFinal(): void {
     host.dataset.lx = "ask";
     f.slot.ask(
-      "물고기에서 반사한 빛은 물과 공기의 경계면을 어떻게 지나 눈에 왔나요?",
-      [{ t: "경계면에서 꺾여서 왔어요", ok: true }, { t: "꺾이지 않고 곧게 왔어요" }, { t: "경계면에서 모두 되돌아갔어요" }],
+      "물고기에서 반사된 빛은 물과 공기의 경계면(수면)을 어떻게 지나 우리 눈으로 들어왔나요?",
+      [{ t: "수면 경계에서 꺾여서 들어왔어요", ok: true }, { t: "꺾이지 않고 반듯하게 들어왔어요" }, { t: "수면에서 물속으로 모두 되돌아갔어요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "무대의 빛은 수면에서 방향이 바뀌었어요. 물속 물체를 볼 때는 빛이 <b>굴절</b>해 들어와요.", onNext: finish },
+      { why: "물고기에서 나온 빛은 수면을 지나며 방향이 꺾였어요. 물속 물체를 볼 때는 반사된 빛이 수면에서 <b>굴절</b>하여 눈에 들어와요.", onNext: finish },
     );
   }
   function finish(): void {
     host.dataset.lx = "done";
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("전등에서 나온 빛이 물체에서 <b>반사</b>한 뒤 <b>눈에 들어와야</b> 물체가 보여요. 물속의 물체는 그 빛이 수면에서 굴절해 들어와요.");
+    f.say("실험을 통해 물체가 보이는 조건을 모두 확인했어요! 아래 핵심 정리를 읽어 보세요.");
+    f.slot.conclude("전등에서 나온 빛이 물체에서 <b>반사</b>되어 <b>우리 눈에 들어와야</b> 물체를 볼 수 있어요. 물속 물체에서 반사된 빛은 수면에서 <b>굴절</b>하여 눈으로 들어와요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -430,12 +432,12 @@ export const pathLab: StepRenderer = (host, step, api) => {
         ctx.stroke();
       }
     });
-    if (sent) lxPill(ctx, seen ? `${scn.obj}${sc === 0 ? "이" : "가"} 보여요` : `${scn.obj}${sc === 0 ? "이" : "가"} 안 보여요`, seen ? LX.green : LX.red, true);
+    if (sent) lxPill(ctx, seen ? `${scn.obj}${sc === 0 ? "이" : "가"} 보여요` : `${scn.obj}${sc === 0 ? "이" : "가"} 보이지 않아요`, seen ? LX.green : LX.red, true);
   });
 
   paintList();
-  f.say("전등이 켜진 방이에요. <b>전등, 책, 눈</b> 가운데 둘을 차례로 눌러 빛이 가는 길을 화살표로 그려 보세요.");
-  api.setCTA("책이 보이게 그려 보세요", { enabled: false });
+  f.say("전등이 켜진 방 안이에요. 그림 속 <b>전등, 책, 눈</b> 가운데 두 곳을 차례대로 눌러 빛이 나아가는 길을 화살표로 그려 보세요.");
+  api.setCTA("책이 보이도록 빛의 경로를 그려 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

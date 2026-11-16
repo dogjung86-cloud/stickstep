@@ -28,14 +28,14 @@ export function moonWeek(c: OpenerCtx): void {
   const hold = makeHold(c, {
     cls: "opn-u7-btn hold",
     label: "날짜 넘기기",
-    sub: "꾹 누르고 있어요",
+    sub: "끝까지 꾹 누르세요",
     aria: "꾹 눌러 날짜를 하루씩 넘기기",
     need: 2800,
     onProgress: (p) => show(Math.min(DAYS, Math.floor(p * DAYS + 0.0001))),
-    onLetGo: () => c.say("아직 일주일이 안 됐어요. 끝까지 <b>꾹</b> 눌러 주세요."),
+    onLetGo: () => c.say("아직 일주일이 다 지나지 않았어요! 끝까지 <b>꾹</b> 눌러 일주일 뒤의 달을 확인해 보세요."),
     onDone: () => {
       c.face("surprised");
-      c.say(`${verdict(hit)} 일주일 만에 <b>둥근 달</b>이 됐어요. 달이 정말 부풀어 오른 걸까요? 직접 옮겨 봐요.`);
+      c.say(`${verdict(hit)} 반달이 점점 차올라 일주일 만에 <b>둥근 보름달</b>이 되었어요! 달의 크기가 실제로 변한 걸까요? 달을 직접 움직여 알아봐요.`);
       c.finish();
     },
   });
@@ -44,10 +44,10 @@ export function moonWeek(c: OpenerCtx): void {
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
   show(0);
-  c.ask("오늘 밤 달은 오른쪽 반만 밝은 반달이에요. 일주일 뒤에는 어떤 모양일까요?", {
+  c.ask("오늘 밤하늘에 오른쪽 반만 밝은 반달(상현달)이 떴어요. 약 일주일 뒤에는 달이 어떤 모양으로 보일까요?", {
     choices: PICKS,
     neutral: true,
-    good: "예측 완료! <b>날짜 넘기기</b>를 꾹 눌러 하루씩 넘겨 보세요.",
+    good: "아래 <b>날짜 넘기기</b> 버튼을 끝까지 꾹 눌러 일주일 동안 달의 모양이 어떻게 변하는지 확인해 보세요.",
     onDone: (picked) => {
       hit = picked === PICKS[0];
       c.step.dataset.opnPhase = "play";

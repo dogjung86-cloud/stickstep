@@ -55,7 +55,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
   const hint = el("div", { class: "u5x-sum tall" });
   f.slot.setControls(hint);
   const paintHint = (): void => {
-    hint.innerHTML = SPOTS.map((p, i) => `${p.name} 사과: <b>${doneSpots.includes(i) ? "지구 중심 쪽으로 떨어짐" : i === spot ? "겨누는 중" : "아직"}</b>`).join("<br>");
+    hint.innerHTML = SPOTS.map((p, i) => `${p.name} 사과: <b>${doneSpots.includes(i) ? "지구 중심 쪽으로 떨어짐" : i === spot ? "방향 겨누는 중" : "대기 중"}</b>`).join("<br>");
   };
   const center = (): { x: number; y: number } => ({ x: st.w() / 2, y: st.h() / 2 + 10 });
   const applePos = (i: number, k = 0): { x: number; y: number } => {
@@ -111,12 +111,12 @@ export const gravityLab: StepRenderer = (host, step, api) => {
           spot += 1;
           busy = false;
           paintHint();
-          f.say(`겨눈 대로 떨어졌어요. 이번에는 지구 <b>${SPOTS[spot].name}</b> 사과예요. 떨어질 쪽으로 화살표를 겨눠 보세요.`);
+          f.say(`맞았어요! 이번에는 지구 <b>${SPOTS[spot].name}</b>에 있는 사과예요. 어느 쪽으로 떨어질지 화살표를 그려 보세요.`);
         }
       } else {
         haptic(HAPTIC.wrong);
         failAim = aim;
-        f.say("겨눈 쪽(점선)과 다르게 떨어졌어요. 사과가 <b>어디를 향해</b> 갔는지 보고 다시 겨눠 보세요.");
+        f.say("예상한 방향(점선)과 다르게 떨어졌어요. 사과가 <b>어디를 향했는지</b> 보고 다시 그려 보세요.");
         tm.later(() => {
           fall = 0;
           aim = null;
@@ -160,9 +160,9 @@ export const gravityLab: StepRenderer = (host, step, api) => {
     if (got.size === 4 && !finished) {
       finished = true;
       f.pips(4);
-      f.say("용수철저울의 값은 달에서 줄었는데 양팔저울의 값은 <b>그대로</b>예요. 달라진 것은 <b>무게</b>뿐이에요.");
+      f.say("달에 가니 용수철저울 눈금(<b>무게</b>)은 6분의 1로 줄었지만, 양팔저울 값(<b>질량</b>)은 그대로예요!");
       tm.later(askFinal, 2600);
-    } else if (!finished) f.say(tool === "spring" ? "용수철저울은 당기는 힘의 크기, <b>무게</b>를 재요. 다른 칸도 채워 보세요." : "양팔저울은 추와 비교해 <b>질량</b>을 재요. 다른 칸도 채워 보세요.");
+    } else if (!finished) f.say(tool === "spring" ? "용수철저울은 중력의 크기인 <b>무게(N)</b>를 재요. 다른 칸도 채워 보세요." : "양팔저울은 추와 비교해 고유한 양인 <b>질량(kg)</b>을 재요. 다른 칸도 채워 보세요.");
   };
   const pick = (t: Tool | null, p: Place | null): void => {
     if (finished) return;
@@ -182,7 +182,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
     if (titleEl) titleEl.textContent = "지구와 달에서 재면 어떻게 다를까요?";
     got.add("spring-earth");
     paintTable();
-    f.say("이 당기는 힘을 재 봐요. <b>저울</b>과 <b>곳</b>을 바꿔 가며 같은 상자를 재서 표 네 칸을 채워 보세요.");
+    f.say("이번엔 3 kg 상자를 저울로 재 볼까요? <b>저울</b>과 <b>장소</b>를 바꿔 가며 표 네 칸을 모두 채워 보세요.");
     f.slot.setControls(el("div", { class: "u5x-segs" }, tS, tB), el("div", { class: "u5x-segs" }, pE, pM), table);
     api.setCTA("표 네 칸을 채워 보세요", { enabled: false });
   }
@@ -196,7 +196,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("중력의 방향과, 지구와 달에서 무게·질량의 차이를 모두 확인했어요!");
     f.slot.conclude("<b>중력</b>은 지구 중심 쪽으로 당겨요. <b>무게</b>는 중력의 크기라 달에서 약 6분의 1이 되지만, <b>질량</b>은 어디서나 그대로예요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
@@ -378,7 +378,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
           // 견주기: 지구에서의 중력 화살표(29.4 N)를 같은 높이에서 옅은 점선으로 곁에 둔다. 달의 화살표는 그 6분의 1
           const gx = x + 48;
           u5Arrow(ctx, gx, by - 17, 0, W_EARTH * GPX, { color: "#FF9D9D", width: 3.5, alpha: 0.6, dash: true });
-          u5Text(ctx, "지구에서 중력", gx, by - 17 + W_EARTH * GPX + 13, { px: 12, color: U5.dim });
+          u5Text(ctx, "지구에서의 중력", gx, by - 17 + W_EARTH * GPX + 13, { px: 12, color: U5.dim });
         }
         u5Read(ctx, w, shown.toFixed(1), "N", "용수철저울(무게)");
       } else {
@@ -435,7 +435,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
   });
 
   paintHint();
-  f.say("지구 <b>위쪽</b> 우주에 사과가 있어요. 사과에서 끌어 <b>떨어질 쪽</b>으로 화살표를 겨누고 손을 떼 보세요.");
+  f.say("지구 <b>위쪽</b>의 사과가 어느 쪽으로 떨어질까요? 사과를 끌어 <b>떨어질 방향</b>으로 화살표를 그려 보세요.");
   api.setCTA("세 사과가 떨어질 쪽을 겨눠 보세요", { enabled: false });
   return () => {
     tm.clear();

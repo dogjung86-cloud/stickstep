@@ -15,12 +15,12 @@ import { mBar, mCoil, mCoilEnds, mCompass } from "./magKit";
 import { X, xArrow, xBox, xCanvas, xFrame, xRow, xSegs, xText, type LabStep } from "./kit";
 
 const C = { x: 173, y: 112 };
-const MAG_BUSY = "지금은 막대자석을 놓아 비교하는 중이에요. <b>코일로 돌아가서</b> 바꿔 보세요.";
+const MAG_BUSY = "지금은 막대자석과 비교하는 화면이에요. <b>코일로 돌아가기</b>를 누른 뒤 전류 조건을 바꿔 보세요.";
 const SPOTS: [number, number][] = [[76, 112], [270, 112], [173, 50], [173, 172], [104, 58], [258, 164]];
 
 export const coilLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 5, api });
+  const f = xFrame(host, { title: s.title, steps: 5, api, tall: true });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
 
@@ -48,7 +48,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
       strong = k === "strong";
       if (on && n() >= 3) {
         seen.power = true;
-        f.say(strong ? "전류를 세게 하자 바늘이 <b>더 많이</b> 돌아가요. 코일의 자기장이 세졌어요." : "전류를 약하게 하자 바늘이 <b>북쪽에 가깝게</b> 돌아와요.");
+        f.say(strong ? "전류를 세게 하자 나침반 바늘이 코일 자기장 방향으로 <b>더 크게</b> 돌아가요! 코일 주위의 자기장이 세졌기 때문이에요." : "전류를 약하게 하자 코일의 자기장이 약해져 나침반 바늘이 원래의 <b>북쪽 방향 쪽으로</b> 되돌아와요.");
       } else need();
       after();
     },
@@ -58,12 +58,12 @@ export const coilLab: StepRenderer = (host, step, api) => {
       return false;
     },
   );
-  const cmp = bvBtn("", "막대자석으로 바꿔 비교하기");
+  const cmp = bvBtn("", "막대자석 놓아 비교하기");
   f.slot.setControls(xRow(sw, flip), power.el, cmp);
 
   function need(): void {
-    if (n() < 3) f.say("점선 자리를 눌러 <b>나침반을 세 개 이상</b> 놓아야 자기장을 볼 수 있어요.");
-    else if (!on) f.say("스위치가 열려 있어 바늘이 모두 <b>북쪽</b>만 가리켜요. 스위치를 닫아 보세요.");
+    if (n() < 3) f.say("먼저 무대의 점선 원을 눌러 <b>나침반을 세 개 이상</b> 놓아 보세요.");
+    else if (!on) f.say("아직 스위치가 열려 있어 나침반 바늘이 모두 <b>북쪽</b>만 가리키고 있어요. <b>스위치 닫기</b>를 눌러 전류를 흘려 보세요.");
   }
   function after(): void {
     f.pips((seen.on ? 1 : 0) + (seen.flip ? 1 : 0) + (seen.power ? 1 : 0) + (seen.mag ? 1 : 0));
@@ -87,8 +87,8 @@ export const coilLab: StepRenderer = (host, step, api) => {
     sw.textContent = on ? "스위치 열기" : "스위치 닫기";
     if (on && n() >= 3) {
       seen.on = true;
-      f.say("바늘이 <b>돌아갔어요</b>. 자리마다 가리키는 방향이 달라요. 전류의 방향과 세기도 바꿔 보세요.");
-    } else if (!on) f.say("전류가 끊기자 바늘이 모두 <b>북쪽</b>으로 돌아왔어요.");
+      f.say("코일에 전류가 흐르자 나침반 바늘들이 <b>일제히 돌아갔어요</b>! 놓인 위치에 따라 바늘이 가리키는 방향이 달라요. 이제 전류의 방향과 세기도 바꿔 보세요.");
+    } else if (!on) f.say("스위치를 열어 전류를 끊자 코일의 자기장이 사라져 바늘들이 모두 <b>북쪽</b>으로 돌아왔어요.");
     else need();
     after();
   });
@@ -96,7 +96,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
     dir = dir === 1 ? -1 : 1;
     if (on && n() >= 3) {
       seen.flip = true;
-      f.say("코일의 전류 화살표가 뒤집히자 바늘도 <b>반대쪽으로</b> 돌아가요.");
+      f.say("코일에 흐르는 전류의 방향을 반대로 바꾸자 나침반 바늘도 <b>정반대 방향</b>으로 돌아갔어요!");
     } else need();
     after();
   };
@@ -111,8 +111,8 @@ export const coilLab: StepRenderer = (host, step, api) => {
       // 처음 바꾸기 전에 예측부터
       asking = true;
       f.slot.ask(
-        "전류의 방향을 반대로 바꾸면 나침반 바늘은?",
-        [{ t: "반대쪽으로 돌아가요", ok: true }, { t: "지금 그대로 있어요" }, { t: "북쪽으로 돌아와요" }],
+        "코일에 흐르는 전류의 방향을 반대로 바꾸면 나침반 바늘은 어떻게 될까요?",
+        [{ t: "지금과 반대 방향으로 돌아가요", ok: true }, { t: "방향이 바뀌지 않고 그대로 있어요" }, { t: "모두 북쪽을 가리키며 멈춰요" }],
         () => undefined,
         {
           predict: true,
@@ -136,11 +136,11 @@ export const coilLab: StepRenderer = (host, step, api) => {
       return;
     }
     magnet = !magnet;
-    cmp.textContent = magnet ? "코일로 돌아가기" : "막대자석으로 바꿔 비교하기";
+    cmp.textContent = magnet ? "코일로 돌아가기" : "막대자석 놓아 비교하기";
     if (magnet) {
       seen.mag = true;
-      f.say("코일 자리에 막대자석을 놓아도 바늘이 <b>똑같이</b> 가리켜요. 코일의 한쪽 끝이 N극인 셈이에요.");
-    } else f.say("전류가 흐르는 코일은 <b>막대자석처럼</b> 한쪽 끝이 N극, 반대쪽 끝이 S극이에요.");
+      f.say("코일 자리에 막대자석을 놓아도 주위 나침반 바늘들이 <b>똑같은 방향</b>을 가리켜요! 즉, 전류가 흐르는 코일은 막대자석과 같은 자기장을 만들어요.");
+    } else f.say("전류가 흐르는 코일은 <b>막대자석처럼</b> 한쪽 끝이 N극, 반대쪽 끝이 S극이 돼요.");
     after();
   });
   st.cv.addEventListener("pointerdown", (e) => {
@@ -153,7 +153,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
     placed[i] = !placed[i];
     if (on && n() >= 3 && !seen.on) {
       seen.on = true;
-      f.say("바늘이 <b>돌아갔어요</b>. 자리마다 가리키는 방향이 달라요. 전류의 방향과 세기도 바꿔 보세요.");
+      f.say("코일에 전류가 흐르자 나침반 바늘들이 <b>일제히 돌아갔어요</b>! 놓인 위치에 따라 바늘이 가리키는 방향이 달라요. 이제 전류의 방향과 세기도 바꿔 보세요.");
       after();
     } else if (n() < 3) f.say(`나침반 <b>${n()}개</b>를 놓았어요. 세 개 이상 놓고 스위치를 닫아 보세요.`);
     else if (!on) need();
@@ -161,32 +161,32 @@ export const coilLab: StepRenderer = (host, step, api) => {
 
   function ask1(): void {
     f.slot.ask(
-      "전류의 방향을 바꾸자 나침반 바늘은?",
-      [{ t: "반대쪽으로 돌아갔어요", ok: true }, { t: "그대로였어요" }, { t: "북쪽만 가리켰어요" }],
+      "코일에 흐르는 전류의 방향을 반대로 바꾸었을 때 나침반 바늘은 어떻게 되었나요?",
+      [{ t: "반대 방향으로 돌아갔어요", ok: true }, { t: "그대로였어요" }, { t: "북쪽만 가리켰어요" }],
       (ok) => api.recordQuiz(ok),
       { why: "전류의 방향이 바뀌면 <b>자기장의 방향</b>도 반대가 돼요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.slot.ask(
-      "전류를 세게 하자 바늘이 더 많이 돌아갔어요. 코일 주위의 자기장은?",
-      [{ t: "세졌어요", ok: true }, { t: "약해졌어요" }, { t: "변하지 않았어요" }],
+      "코일에 흐르는 전류를 세게 했을 때 코일 주위의 자기장은 어떻게 변했나요?",
+      [{ t: "더 세졌어요", ok: true }, { t: "더 약해졌어요" }, { t: "변하지 않았어요" }],
       () => undefined,
       { why: "자기장이 셀수록 바늘이 북쪽에서 <b>더 많이</b> 돌아가요.", onNext: ask3 },
     );
   }
   function ask3(): void {
     f.slot.ask(
-      "코일에서 자기장이 나오는 쪽 끝은 막대자석의 어느 극과 같나요?",
-      [{ t: "N극", ok: true }, { t: "S극" }, { t: "어느 극도 아니에요" }],
+      "전류가 흐르는 코일에서 자기장이 나오는 쪽 끝은 막대자석의 어느 극에 해당하나요?",
+      [{ t: "N극", ok: true }, { t: "S극" }, { t: "어느 극에도 해당하지 않아요" }],
       () => undefined,
       { why: "자석 밖의 자기장은 <b>N극</b>에서 나와 S극으로 들어가요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(5);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("전류가 흐르는 코일 주위에는 <b>막대자석과 닮은 자기장</b>이 생겨요. 전류의 방향을 바꾸면 자기장의 방향도 반대가 되고, 전류가 셀수록 자기장도 세져요.");
+    f.say("전류가 흐르는 코일 주위에 막대자석과 같은 모양의 자기장이 생긴다는 것을 확인했어요!");
+    f.slot.conclude("전류가 흐르는 코일 주위에는 <b>막대자석 주위와 같은 모양의 자기장</b>이 생겨요. 전류의 방향이 바뀌면 자기장의 방향도 반대가 되고, 전류의 세기가 셀수록 자기장도 세져요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -281,7 +281,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
     ctx.restore();
   });
 
-  f.say("코일 주위의 <b>점선 자리</b>를 눌러 나침반을 놓아요. 세 개 이상 놓고 스위치를 닫아 보세요.");
+  f.say("코일 주위의 <b>점선 원</b>을 눌러 나침반을 놓아 보세요. 세 개 이상 놓은 뒤 <b>스위치 닫기</b>를 눌러 전류를 흘려 보세요.");
   api.setCTA("나침반을 놓고 전류를 바꿔 보세요", { enabled: false });
   return () => {
     tm.clear();

@@ -1,4 +1,4 @@
-// [도입 샘플 2] u2l9 baskets: 「버섯은 어느 바구니에 넣을까?」
+// [도입 샘플 2] u2l9 baskets: 「버섯은 식물 바구니일까, 동물 바구니일까?」
 // 형식: 자신 있게 놓아 본다 → 뜻밖에 돌려보낸다. 놓는 일이 곧 예측이고, 결과가 그 자리에서 나온다(보기 고르기가 없다).
 //   1 위에 식물 바구니(소나무)와 동물 바구니(박새), 아래 쟁반에 버섯. 버섯을 끌어 올려 넣거나 바구니를 누른다.
 //   2 어느 쪽에 넣어도 바구니가 버섯을 돌려보낸다. 바구니 위에 돌려보낸 까닭이 이름표로 남는다
@@ -70,7 +70,8 @@ export function baskets(c: OpenerCtx): void {
     phase = "done";
     c.stage.classList.add("both");
     c.face("surprised");
-    c.say("식물도 동물도 아니래요! 과학자들은 생물을 다섯 무리로 나누고, 이 무리를 <b>계</b>라고 불러요. 버섯은 어느 계일까요? <b>검색표</b>로 찾아봐요.");
+    // 쌤의 말은 390px 폰에서 세 줄 안쪽(2026-11-16): 수정안의 끝 두 문장을 한 문장으로 줄였다
+    c.say("버섯은 식물도 동물도 아니래요! 과학자들은 모든 생물을 가장 큰 단위인 다섯 무리(<b>5계</b>)로 나누어요. 버섯은 어느 계에 속할지 <b>검색표</b>로 찾아볼까요?");
     c.finish();
   }
 
@@ -100,11 +101,11 @@ export function baskets(c: OpenerCtx): void {
       place(0, 0, 1, 620, "var(--spring)");
       if (!again) tried.push(side);
       mark();
-      if (tried.length >= 2) c.say(`${NAME[side]} 바구니도 돌려보냈어요. ${WHY[side].say}`);
-      else if (again) c.say(`${NAME[side]} 바구니는 이미 돌려보냈어요. <b>${NAME[other]} 바구니</b>에도 넣어 보세요.`);
+      if (tried.length >= 2) c.say(`<b>${NAME[side]} 바구니</b>에서도 버섯이 튕겨 나왔어요! ${WHY[side].say}`);
+      else if (again) c.say(`<b>${NAME[side]} 바구니</b>에는 이미 넣어 봤어요. 반대쪽 <b>${NAME[other]} 바구니</b>에도 넣어 보세요.`);
       else {
         c.face("curious");
-        c.say(`어, ${NAME[side]} 바구니가 돌려보냈어요. ${WHY[side].say} 그럼 ${NAME[other]} 바구니일까요?`);
+        c.say(`어, <b>${NAME[side]} 바구니</b>에서 버섯이 튕겨 나왔어요! ${WHY[side].say} 그렇다면 반대쪽 <b>${NAME[other]} 바구니</b>에 넣어 볼까요?`);
       }
     }, 680);
     c.later(() => c.stage.classList.remove(`shake-${side}`), 1200);
@@ -164,5 +165,5 @@ export function baskets(c: OpenerCtx): void {
 
   c.step.dataset.opnPhase = "play";
   mark();
-  c.say("식물 바구니에는 소나무, 동물 바구니에는 박새가 들어 있어요. <b>버섯</b>은 어디에 넣을까요? 끌어다 넣어 보세요.");
+  c.say("식물 바구니에는 소나무가, 동물 바구니에는 박새가 들어 있어요. 그렇다면 <b>버섯</b>은 어느 바구니에 넣어야 할까요? 버섯을 끌어다 바구니에 넣어 보세요.");
 }

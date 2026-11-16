@@ -1,7 +1,7 @@
 // [중2 Ⅳ v5] 들여다보고 가르는 랩 두 판(같은 틀).
-//   g2u4SortLab (g2u4l1) 「성분이 한 가지인 물질은 어느 것일까요?」
+//   g2u4SortLab (g2u4l1) 「한 가지 성분으로만 이루어진 물질은 무엇일까요?」
 //     책의 해 보기(우리 주변의 물질 구분하기): 다이아몬드, 드라이아이스, 풍선 속 헬륨, 제빵 소다, 알루미늄 캔의 성분을 살펴 가른다.
-//   g2u4CanLab  (g2u4l5) 「캔 음료 속 물질은 어떤 입자일까요?」
+//   g2u4CanLab  (g2u4l5) 「캔 음료 속 물질들은 어떤 형태의 입자로 존재할까요?」
 //     책의 해 보기(원자, 분자, 이온으로 존재하는 물질 알아보기): 알루미늄 캔, 물, 염화 나트륨, 과당을 이루는 입자를 가른다.
 // 학생이 정하는 것: 어느 물질부터 볼지, 그리고 본 것을 어느 쪽으로 가를지. 잘못 가르면 그 자리에서 무엇을 다시 볼지 알려 준다.
 // 판정의 근거(확대한 입자 모형과 성분 목록)는 무대에 남는다. 다 가르면 판정 질문 하나, 결론 한 문장.
@@ -11,7 +11,7 @@
 import { el } from "../../../core/dom";
 import { ELEMS } from "../../../ui/chemKit";
 import type { StepRenderer } from "../../types";
-import { bad, ball, bond, g4Lab, g4Svg, good, row, tap, toast, txt, type G4Step } from "./kit";
+import { bad, ball, bond, eul, eun, g4Lab, g4Svg, good, ida, row, tap, toast, txt, type G4Step } from "./kit";
 
 interface Item {
   key: string;
@@ -30,9 +30,13 @@ interface Config {
   wait: string;
   first: string;
   listTitle: string;
-  bins: { key: string; label: string }[];
+  bins: { key: string; label: string; short?: string }[]; // short: 무대 가운데 알림(토스트)에 쓰는 짧은 이름. 분류 버튼 이름이 길어 알림이 성분 이름표를 덮지 않게
   items: Item[];
   askBin: string; // 물질을 고른 뒤의 도움말
+  /** 바르게 가른 뒤의 도움말(물질 이름과 분류함 이름을 받는다. 조사는 받침에 맞춘다) */
+  right: (name: string, label: string) => string;
+  /** 물질 칩 한 줄의 칸 수(기본 3). 이름이 긴 칩이 있으면 2 */
+  chipCols?: 2 | 3;
   judge: { q: string; choices: { t: string; ok?: boolean }[]; why: string };
   /** 판정이 뜰 때 무대: 질문이 가리키는 물질 하나(item) 또는 직접 그린 장면(art, 무대의 id 접두를 받는다) */
   judgeShow: { item: string } | { art: (ns: string) => string };
@@ -193,28 +197,30 @@ const fructose = (x: number, y: number, rot: number, s = 12.5): string => {
 
 const SORT: Config = {
   cls: "g2u4x-sort",
-  wait: "다섯 물질을 모두 갈라 보세요",
-  first: "물질을 하나 골라 <b>확대</b>해 보세요. 어떤 성분으로 이루어져 있나요?",
-  listTitle: "이루는 성분",
+  wait: "다섯 가지 물질을 모두 분류해 보세요",
+  first: "아래에서 물질을 하나 골라 입자 모형을 <b>확대</b>해 보세요. 몇 가지 성분(원소)으로 이루어져 있나요?",
+  listTitle: "물질을 이루는 성분",
   bins: [
-    { key: "one", label: "성분이 한 가지" },
-    { key: "many", label: "성분이 두 가지 이상" },
+    { key: "one", label: "성분이 한 가지인 물질", short: "성분이 한 가지" },
+    { key: "many", label: "성분이 두 가지 이상인 물질", short: "성분이 두 가지 이상" },
   ],
   items: [
-    { key: "dia", name: "다이아몬드", art: diamond(), comps: [["C", "탄소"]], bin: "one", hint: "입자의 색을 보세요. 탄소 한 가지뿐이에요" },
-    { key: "dry", name: "드라이아이스", art: co2(78, 76, 0.3) + co2(140, 96, -0.5) + co2(84, 140, -0.2) + co2(138, 160, 0.5), comps: [["C", "탄소"], ["O", "산소"]], bin: "many", hint: "두 가지 색의 입자가 결합해 있어요" },
-    { key: "he", name: "풍선 속 헬륨", art: [[70, 80], [130, 64], [160, 118], [96, 126], [60, 160], [134, 168]].map(([x, y]) => ball(x, y, "He", { k: 1.3, label: false })).join(""), comps: [["He", "헬륨"]], bin: "one", hint: "입자가 여러 개여도 종류는 헬륨 하나예요" },
-    { key: "soda", name: "제빵 소다", art: soda(96, 74) + soda(126, 118) + soda(92, 160), comps: [["Na", "나트륨"], ["H", "수소"], ["C", "탄소"], ["O", "산소"]], bin: "many", hint: "네 가지 색의 입자가 섞여 결합해 있어요" },
-    { key: "al", name: "알루미늄 캔", art: grid("Al", 1, 30), comps: [["Al", "알루미늄"]], bin: "one", hint: "입자가 모두 같은 색, 알루미늄 한 가지예요" },
+    { key: "dia", name: "다이아몬드", art: diamond(), comps: [["C", "탄소"]], bin: "one", hint: "입자의 종류를 살펴보세요. 탄소(C) 한 가지 성분으로만 이루어져 있어요" },
+    { key: "dry", name: "드라이아이스", art: co2(78, 76, 0.3) + co2(140, 96, -0.5) + co2(84, 140, -0.2) + co2(138, 160, 0.5), comps: [["C", "탄소"], ["O", "산소"]], bin: "many", hint: "탄소와 산소, 두 가지 성분의 입자가 결합해 있어요" },
+    { key: "he", name: "풍선 속 헬륨", art: [[70, 80], [130, 64], [160, 118], [96, 126], [60, 160], [134, 168]].map(([x, y]) => ball(x, y, "He", { k: 1.3, label: false })).join(""), comps: [["He", "헬륨"]], bin: "one", hint: "입자는 여러 개이지만 성분의 종류는 헬륨(He) 한 가지뿐이에요" },
+    { key: "soda", name: "제빵 소다", art: soda(96, 74) + soda(126, 118) + soda(92, 160), comps: [["Na", "나트륨"], ["H", "수소"], ["C", "탄소"], ["O", "산소"]], bin: "many", hint: "나트륨, 수소, 탄소, 산소의 네 가지 성분이 결합해 있어요" },
+    { key: "al", name: "알루미늄 캔", art: grid("Al", 1, 30), comps: [["Al", "알루미늄"]], bin: "one", hint: "모든 입자가 알루미늄(Al) 한 가지 성분으로만 이루어져 있어요" },
   ],
-  askBin: "성분은 몇 가지인가요? 아래에서 골라 갈라 보세요.",
+  askBin: "이 물질을 이루는 성분은 몇 가지인가요? 아래 분류 버튼에서 알맞은 쪽을 골라 보세요.",
+  right: (name, label) => `맞아요! <b>${name}</b>${eun(name)} <b>${label}</b>${ida(label)}. 다음 물질도 골라 분류해 보세요.`,
   judge: {
-    q: "성분이 탄소 한 가지뿐인 <b>다이아몬드</b>를 다른 성분으로 분해할 수 있을까요?",
-    choices: [{ t: "분해할 수 없다", ok: true }, { t: "탄소와 산소로 분해된다" }, { t: "가열하면 여러 성분이 된다" }],
-    why: "성분이 <b>하나뿐</b>이라 갈라낼 다른 성분이 없어요.",
+    q: "탄소 한 가지 성분으로만 이루어진 <b>다이아몬드</b>를 더 간단한 다른 성분으로 분해할 수 있을까요?",
+    choices: [{ t: "더 이상 다른 성분으로 분해할 수 없다", ok: true }, { t: "탄소와 산소 두 가지 성분으로 분해된다" }, { t: "높은 온도로 가열하면 여러 가지 성분으로 나뉜다" }],
+    why: "이루고 있는 성분이 <b>탄소 한 가지뿐</b>이어서 더 이상 나누어질 다른 성분이 없기 때문이에요.",
   },
   judgeShow: { item: "dia" },
-  done: "성분이 <b>한 가지</b>인 물질과 <b>두 가지 이상</b>인 물질로 가를 수 있어요. 앞의 것은 더 분해되지 않아요.",
+  // 수정안의 "물질은"을 "순물질은"으로: 성분이 두 가지 이상인 물질에는 혼합물도 있어서, 화합물과 같다고 하려면 순물질로 한정해야 한다
+  done: "순물질은 이루는 성분이 <b>한 가지인 물질(원소)</b>과 <b>두 가지 이상인 물질(화합물)</b>로 나눌 수 있으며, 한 가지 성분으로 된 물질은 더 이상 다른 성분으로 분해되지 않아요.",
 };
 
 // 캔 음료 랩의 판정 장면: 왼쪽 알루미늄 캔, 오른쪽 염화 나트륨(소금 알갱이)의 확대 원을 나란히, 원 아래에 다른 점을 한 줄씩.
@@ -230,43 +236,48 @@ const canPair = (ns: string): string => {
     loupe(R, "lpb", salt(R.x, R.y, 25)) +
     txt(L.x, 24, "알루미늄 캔", { size: 13.5, fill: "#fff", weight: 800 }) +
     txt(R.x, 24, "염화 나트륨(소금 알갱이)", { size: 13.5, fill: "#fff", weight: 800 }) +
-    txt(L.x, 197, "전하 없음", { size: 13.5, fill: "#C6D3E6", weight: 800 }) +
-    txt(R.x, 197, "+, − 번갈아", { size: 13.5, fill: "#FFE58A", weight: 800 })
+    txt(L.x, 197, "전하를 띠지 않음", { size: 13.5, fill: "#C6D3E6", weight: 800 }) +
+    txt(R.x, 197, "(+), (−) 이온이 번갈아 배열", { size: 13.5, fill: "#FFE58A", weight: 800 })
   );
 };
 
 const CAN: Config = {
   cls: "g2u4x-can",
-  wait: "네 물질을 모두 갈라 보세요",
-  first: "캔 음료 속 물질을 하나 골라 <b>확대</b>해 보세요. 어떤 입자로 이루어져 있나요?",
-  listTitle: "이루는 성분",
+  wait: "네 가지 물질을 이루는 입자의 형태를 모두 분류해 보세요",
+  first: "캔 음료와 관련된 네 가지 물질을 하나씩 골라 <b>확대</b>해 보세요. 각각 원자, 분자, 이온 중 어떤 형태의 입자로 이루어져 있나요?",
+  listTitle: "물질을 이루는 성분",
   bins: [
     { key: "atom", label: "원자" },
     { key: "mol", label: "분자" },
     { key: "ion", label: "이온" },
   ],
+  // 칩 이름 "염화 나트륨(소금)"이 세 칸 줄(한 칸 95px)에 들지 않아 두 칸 두 줄로 놓는다(칩 넷이라 줄 수는 그대로 둘).
+  chipCols: 2,
   items: [
-    { key: "al", name: "알루미늄 캔", art: grid("Al", 1, 30), comps: [["Al", "알루미늄"]], bin: "atom", hint: "같은 원자가 낱개로 가지런히 늘어서 있어요" },
-    { key: "water", name: "물", art: water(74, 80, 0.4) + water(136, 76, 2.2) + water(100, 122, 4.2) + water(150, 138, 1.0) + water(72, 162, 5.4), comps: [["H", "수소"], ["O", "산소"]], bin: "mol", hint: "원자 셋이 결합한 덩이가 따로따로 떨어져 있어요" },
+    { key: "al", name: "알루미늄 캔", art: grid("Al", 1, 30), comps: [["Al", "알루미늄"]], bin: "atom", hint: "전하를 띠지 않는 알루미늄 원자들이 규칙적으로 배열되어 있어요" },
+    // 수정안의 "따로따로 움직이고 있어요"는 확대 원의 모형이 멈춰 있어 "떨어져 있어요"로 둔다
+    { key: "water", name: "물", art: water(74, 80, 0.4) + water(136, 76, 2.2) + water(100, 122, 4.2) + water(150, 138, 1.0) + water(72, 162, 5.4), comps: [["H", "수소"], ["O", "산소"]], bin: "mol", hint: "원자 3개가 결합한 독립된 입자(분자)들이 따로따로 떨어져 있어요" },
     {
       key: "salt",
-      name: "염화 나트륨",
+      name: "염화 나트륨(소금)",
       title: "염화 나트륨(소금 알갱이)",
       art: salt(),
       comps: [["Na", "나트륨"], ["Cl", "염소"]],
       bin: "ion",
-      hint: "입자마다 (+)와 (−) 전하를 띠고 있어요",
+      hint: "입자마다 (+)전하와 (−)전하를 띤 이온 상태로 결합해 있어요",
     },
-    { key: "fru", name: "과당", art: fructose(82, 84, -0.3) + fructose(136, 150, 0.25), comps: [["C", "탄소"], ["H", "수소"], ["O", "산소"]], bin: "mol", hint: "여러 원자가 결합한 덩이가 따로 떨어져 있어요" },
+    { key: "fru", name: "과당", art: fructose(82, 84, -0.3) + fructose(136, 150, 0.25), comps: [["C", "탄소"], ["H", "수소"], ["O", "산소"]], bin: "mol", hint: "여러 개의 원자가 결합하여 하나의 독립된 입자(분자)를 이루고 있어요" },
   ],
-  askBin: "이 물질을 이루는 입자는 무엇인가요? 아래에서 골라 보세요.",
+  askBin: "확대한 모형에서 이 물질을 이루는 기본 입자는 무엇인가요? 아래에서 골라 분류해 보세요.",
+  right: (name, label) => `맞아요! <b>${name}</b>${eul(name)} 이루는 입자는 <b>${label}</b>${ida(label)}. 다음 물질도 골라 분류해 보세요.`,
   judge: {
-    q: "알루미늄 캔과 염화 나트륨은 입자가 가지런해요. <b>다른 점</b>은?",
-    choices: [{ t: "염화 나트륨의 입자는 전하를 띤다", ok: true }, { t: "염화 나트륨의 입자는 한 종류다" }, { t: "알루미늄의 입자는 전하를 띤다" }],
-    why: "염화 나트륨은 <b>양이온과 음이온</b>이 번갈아 놓여 있어요.",
+    q: "알루미늄 캔과 염화 나트륨은 모두 입자가 규칙적으로 배열되어 있어요. 두 물질을 이루는 입자의 <b>가장 큰 차이점</b>은 무엇인가요?",
+    // 정답 보기는 수정안의 "염화 나트륨을 이루는 입자는"을 "염화 나트륨 입자는"으로 줄였다(오답 카드의 정답 글이 두 줄이 되면 조작 칸 208px를 넘는다)
+    choices: [{ t: "염화 나트륨 입자는 (+)와 (−) 전하를 띤 이온이다", ok: true }, { t: "염화 나트륨을 이루는 입자는 한 가지 종류뿐이다" }, { t: "알루미늄 캔을 이루는 입자만 전하를 띠고 있다" }],
+    why: "염화 나트륨은 (+)전하를 띤 <b>나트륨 이온(Na⁺)</b>과 (−)전하를 띤 <b>염화 이온(Cl⁻)</b>이 번갈아 규칙적으로 배열되어 있기 때문이에요.",
   },
   judgeShow: { art: canPair },
-  done: "물질을 이루는 입자는 <b>원자</b>, <b>분자</b>, <b>이온</b>으로 존재해요.",
+  done: "우리 주변의 물질을 이루는 입자는 물질의 종류에 따라 <b>원자</b>, <b>분자</b>, 또는 <b>이온</b>의 형태로 존재해요.",
 };
 
 const make =
@@ -281,7 +292,7 @@ const make =
 
     const draw = (): void => {
       if (!cur) {
-        stage.set(`<circle cx="${CX}" cy="${CY}" r="88" fill="rgba(10,17,28,.6)" stroke="#2B3F5C" stroke-width="3"/>${txt(CX, CY + 5, "물질을 골라 보세요", { size: 13.5 })}`);
+        stage.set(`<circle cx="${CX}" cy="${CY}" r="88" fill="rgba(10,17,28,.6)" stroke="#2B3F5C" stroke-width="3"/>${txt(CX, CY + 5, "관찰할 물질을 골라 보세요", { size: 13.5 })}`);
         return;
       }
       const list = cur.comps.map(([sym, name], i) => ball(232, 84 + i * 30, sym, { k: 0.72, label: false }) + txt(250, 89 + i * 30, name, { anchor: "start", size: 14, fill: "#E8EEF9" })).join("");
@@ -329,7 +340,7 @@ const make =
         if (cur.bin !== bn.key) {
           bad();
           lab.slip();
-          toast(lab, "다시 살펴보세요", true);
+          toast(lab, "다시 한번 살펴보세요", true);
           f.say(`${cur.hint}.`);
           host.dataset.g4Miss = String(Number(host.dataset.g4Miss ?? 0) + 1);
           return;
@@ -341,11 +352,11 @@ const make =
         chip?.classList.add("done");
         if (chip) chip.disabled = true;
         f.pips(doneKeys.size);
-        toast(lab, `${cur.name}: ${bn.label}`);
+        toast(lab, `${cur.name}: ${bn.short ?? bn.label}`);
         bins.forEach((x) => (x.disabled = true));
         host.dataset.g4Done = String(doneKeys.size);
         if (doneKeys.size < cfg.items.length) {
-          f.say(`맞아요. <b>${cur.name}</b>: ${bn.label}. 다음 물질을 골라 보세요.`);
+          f.say(cfg.right(cur.name, bn.label));
           cur = null;
           return;
         }
@@ -356,7 +367,7 @@ const make =
       });
       return b;
     });
-    const chipBox = el("div", { class: "g2u4x-chipgrid" }, ...chips);
+    const chipBox = el("div", { class: `g2u4x-chipgrid${cfg.chipCols === 2 ? " two" : ""}` }, ...chips);
     if (import.meta.env.DEV) chips.forEach((c, i) => (c.dataset.bin = cfg.items[i].bin));
     f.slot.setControls(chipBox, row(...bins));
     draw();

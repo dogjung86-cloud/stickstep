@@ -114,7 +114,7 @@ export const g2u2SedLab: StepRenderer = (host, step, api) => {
       paint();
       hold.disabled = stack.length < 3;
       f.pips(stack.length >= 3 ? 1 : 0);
-      f.say(stack.length < 3 ? `<b>${SED[s].name}</b>${josa(SED[s].name, "이", "가")} 바닥에 쌓였어요. 세 번 넘게 부어 층을 쌓아 보세요.` : "층이 쌓였어요. 더 붓거나 <b>꾹 눌러</b> 오랫동안 다져 보세요.");
+      f.say(stack.length < 3 ? `<b>${SED[s].name}</b>${josa(SED[s].name, "이", "가")} 바닥에 쌓였어요. 세 층 이상 쌓일 때까지 더 부어 보세요.` : "층이 쌓였어요. 더 붓거나 <b>꾹 눌러</b> 오랫동안 다져 보세요.");
       hintNow();
     });
     return p;
@@ -162,7 +162,7 @@ export const g2u2SedLab: StepRenderer = (host, step, api) => {
     else lab.hint("hold:press");
   }
   function judge(): void {
-    lab.ask("이 암석에 <b>나란한 줄무늬</b>가 생긴 까닭은?", ["다른 퇴적물이 차례로 쌓여서", "위에서 세게 눌러서", "물속에서 쌓여서"], "같은 퇴적물만 쌓이면 다져져도 <b>경계</b>가 없어 줄무늬가 안 보여요.", () => {
+    lab.ask("이 암석에 <b>나란한 줄무늬</b>가 생긴 까닭은?", ["종류가 다른 퇴적물이 차례로 쌓여서", "위에서 세게 눌러서", "물속에서 쌓여서"], "같은 퇴적물만 쌓이면 다져져도 <b>경계</b>가 없어 줄무늬가 안 보여요.", () => {
       f.pips(3);
       const hasG = stack.includes("gravel");
       const s: Sed = hasG ? "gravel" : stack[0];
@@ -174,7 +174,7 @@ export const g2u2SedLab: StepRenderer = (host, step, api) => {
   }
   paint();
   f.slot.setControls(gGrid(2, ...picks), hold);
-  f.say("바닥에 쌓이는 자갈, 모래, 진흙 등이 <b>퇴적물</b>이에요. 차례를 정해 세 번 넘게 부어 보세요.");
+  f.say("바닥에 쌓이는 자갈, 모래, 진흙 등을 <b>퇴적물</b>이라고 해요. 퇴적물을 골라 세 층 이상 쌓아 보세요.");
   api.setCTA("퇴적물을 쌓고 다져 보세요", { enabled: false });
   hintNow();
   return lab.cleanup;
@@ -235,10 +235,10 @@ export const g2u2PressLab: StepRenderer = (host, step, api) => {
       <g class="g2u2x-pr-arrows"></g>
     </g>
     <g class="g2u2x-pr-end"></g>
-    ${label(LX - 20, 22, "해 본 결과", { anchor: "start", size: 12, fill: G.dim, weight: 600 })}
+    ${label(LX - 20, 22, "실험 결과", { anchor: "start", size: 12, fill: G.dim, weight: 600 })}
     ${WAYS.map((w, i) => `<g class="g2u2x-pr-th th-${w}">${emptyMini(LX, rowY(i))}</g>
       ${label(LT, rowY(i) - 6, WAY[w].name, { anchor: "start", size: 12, fill: G.dim, weight: 700 })}
-      ${label(LT, rowY(i) + 12, "아직 안 해 봄", { anchor: "start", size: 12.5, fill: G.dim, weight: 600, cls: `g2u2x-pr-log r-${w}` })}
+      ${label(LT, rowY(i) + 12, "실험 전", { anchor: "start", size: 12.5, fill: G.dim, weight: 600, cls: `g2u2x-pr-log r-${w}` })}
       ${label(LT, rowY(i) + 27, "", { anchor: "start", size: 12.5, fill: G.gold, cls: `r2-${w}` })}`).join("")}
   </svg>`;
   const block = lab.q<SVGRectElement>(".g2u2x-pr-block");
@@ -288,12 +288,14 @@ export const g2u2PressLab: StepRenderer = (host, step, api) => {
       picks.forEach((x) => x.on(x === pk));
       paint();
       hold.disabled = false;
+      // 열만 가하기에는 압력이 없으므로 버튼 글도 고른 조건을 따른다
+      hold.textContent = w === "heat" ? "꾹 눌러 열 가하기" : "꾹 눌러 열과 압력 가하기";
       f.say(`<b>${WAY[w].name}</b>를 골랐어요. 버튼을 꾹 눌러 오랫동안 두어 보세요.`);
       lab.hint("hold:go");
     });
     return pk;
   });
-  const hold = gHold(lab, "go", "꾹 눌러 오랫동안 두기", (ms) => {
+  const hold = gHold(lab, "go", "꾹 눌러 열과 압력 가하기", (ms) => {
     if (!way || p >= 1) return false;
     p = Math.min(1, p + ms / 2000);
     paint();
@@ -337,7 +339,7 @@ export const g2u2PressLab: StepRenderer = (host, step, api) => {
   gPredict(lab, "암석을 <b>위아래에서</b> 세게 누르면 납작한 알갱이들은?", ["옆으로 나란히 눕는다", "위아래로 나란히 선다", "흩어진 그대로다"], (picked) => {
     pred = picked;
     f.slot.setControls(gGrid(2, picks[0], picks[1]), gRow(picks[2].el, hold));
-    f.say("암석에 <b>무엇을 할지</b> 고르고 버튼을 꾹 눌러 보세요. 세 가지를 모두 해 봐요.");
+    f.say("암석에 가할 <b>조건</b>을 고르고 버튼을 꾹 눌러 보세요. 세 가지 조건을 모두 비교해 보세요.");
     api.setCTA("세 가지를 모두 해 보세요", { enabled: false });
     hintNext();
   });
@@ -402,7 +404,7 @@ export const g2u2MetaLab: StepRenderer = (host, step, api) => {
         seen.add(key);
         haptic(HAPTIC.correct);
         f.pips(seen.size >= NEED ? 2 : seen.size >= 2 ? 1 : 0);
-        f.say(`<b>${s.name}</b>이 열과 압력을 받아 <b>${st.name}</b>이 됐어요. ${seen.size < NEED ? "막대를 더 밀거나 다른 암석도 넣어 보세요." : ""}`);
+        f.say(`<b>${s.name}</b>이 열과 압력을 받아 <b>${st.name}</b>이 됐어요. ${seen.size < NEED ? "막대를 오른쪽으로 더 움직이거나 다른 암석도 넣어 보세요." : ""}`);
         if (s.steps.every((x) => seen.has(`${s.k}>${x.name}`))) picks[cur].done();
         if (seen.size >= NEED) {
           range.input.disabled = true;
@@ -438,7 +440,7 @@ export const g2u2MetaLab: StepRenderer = (host, step, api) => {
       range.set(0);
       range.input.disabled = false;
       paint(0);
-      f.say(`<b>${s.name}</b>을 땅속 깊은 곳에 넣었어요. 막대를 밀어 열과 압력을 높여 보세요.`);
+      f.say(`<b>${s.name}</b>을 땅속 깊은 곳에 넣었어요. 막대를 움직여 열과 압력을 높여 보세요.`);
     });
     return p;
   });

@@ -13,7 +13,7 @@ import { hitBtn, holdFill, metaOf } from "./util";
 const EGG0 = 0.9;
 const WATER0 = 0.16;
 const END = 0.36;
-const PICKS = ["달걀만 식는다", "물만 미지근해진다", "달걀은 식고 물은 미지근해진다"];
+const PICKS = ["달걀만 차갑게 식는다", "찬물만 미지근해진다", "달걀은 식고 찬물은 미지근해진다"];
 const TUBE = { top: 136, bottom: 440 }; // 기둥의 꼭대기와 바닥(그림 좌표)
 
 export function egg(c: OpenerCtx): void {
@@ -34,7 +34,7 @@ export function egg(c: OpenerCtx): void {
     onUp: (finished) => {
       if (finished) return;
       c.stage.classList.remove("dip");
-      c.say("손을 떼니 달걀이 물 밖으로 나왔어요. 끝까지 <b>꾹</b> 눌러 주세요.");
+      c.say("손을 떼면 달걀이 다시 올라와요. 온도가 변할 때까지 끝까지 <b>꾹</b> 눌러 주세요.");
     },
     paint: (p) => {
       const e = p * (2 - p); // 처음에 빨리, 갈수록 천천히
@@ -50,16 +50,16 @@ export function egg(c: OpenerCtx): void {
       c.face("surprised");
       haptic(HAPTIC.correct);
       const head = pred === PICKS[2] ? "예측대로" : "예측과 달리";
-      c.say(`${head} 달걀은 식고 물은 미지근해졌어요. 두 온도계가 <b>같은 높이</b>에서 멈췄네요. 왜일까요?`);
+      c.say(`${head} 달걀은 식고 찬물은 미지근해졌어요. 두 온도계의 눈금이 <b>똑같은 높이</b>에서 멈췄네요! 왜 그럴까요?`);
       c.finish();
     },
   });
 
   c.step.dataset.opnPhase = "ask";
-  c.ask("갓 삶은 뜨거운 달걀을 찬물에 담가 두면 어떻게 될까요?", {
+  c.ask("갓 삶은 뜨거운 달걀을 찬물에 담가 두면 두 온도는 어떻게 될까요?", {
     choices: PICKS,
     neutral: true,
-    good: "예측 완료! <b>달걀</b>을 꾹 눌러 찬물에 담가 보세요.",
+    good: "좋아요! 이제 <b>달걀</b>을 꾹 눌러 찬물에 끝까지 담가 보세요.",
     onDone: (picked) => {
       pred = picked;
       phase = "play";

@@ -28,10 +28,10 @@ export const strawLab: StepRenderer = (host, step, api) => {
   let finished = false;
   const seen = { fail: false, fur: false, blue: false };
 
-  const cRub = bvCard("g2u7x-c", { name: "빨간 빨대 문지르기", sub: "털가죽으로 여러 번", key: "rub" });
-  const cFur = bvCard("g2u7x-c", { name: "털가죽 가져가기", sub: "빨대 끝 가까이", key: "fur" });
-  const cBlue = bvCard("g2u7x-c", { name: "파란 빨대 가져가기", sub: "털가죽으로 문지른 것", key: "blue" });
-  const cBack = bvCard("g2u7x-c", { name: "멀리 치우기", sub: "처음 자리로", key: "back" });
+  const cRub = bvCard("g2u7x-c", { name: "빨간 빨대 문지르기", sub: "털가죽으로 마찰하기", key: "rub" });
+  const cFur = bvCard("g2u7x-c", { name: "털가죽 가까이 대기", sub: "빨대 끝에 접근", key: "fur" });
+  const cBlue = bvCard("g2u7x-c", { name: "파란 빨대 가까이 대기", sub: "털가죽으로 문지른 빨대", key: "blue" });
+  const cBack = bvCard("g2u7x-c", { name: "원래대로 치우기", sub: "처음 위치로", key: "back" });
   f.slot.setControls(bvCards(2, cRub, cFur, cBlue, cBack));
 
   const count = (): number => (seen.fur ? 1 : 0) + (seen.blue ? 1 : 0) + (seen.fail || rubbed ? 1 : 0);
@@ -40,7 +40,7 @@ export const strawLab: StepRenderer = (host, step, api) => {
     cFur.el.disabled = busy || finished || bring !== null;
     cBlue.el.disabled = busy || finished || bring !== null || !rubbed;
     cBack.el.disabled = busy || finished || bring === null;
-    cBlue.sub(rubbed ? "털가죽으로 문지른 것" : "빨간 빨대 먼저 문질러요");
+    cBlue.sub(rubbed ? "털가죽으로 문지른 빨대" : "빨간 빨대부터 문지르기");
     f.pips(count());
   };
 
@@ -55,9 +55,9 @@ export const strawLab: StepRenderer = (host, step, api) => {
       rubbed = true;
       busy = false;
       cRub.done();
-      cRub.sub("문질렀어요");
+      cRub.sub("마찰 완료");
       paint();
-      f.say("문지른 빨대를 통 위에 올렸어요. 이제 <b>털가죽</b>이나 <b>파란 빨대</b>를 끝에 가까이 가져가 보세요.");
+      f.say("문지른 빨대를 통 위에 올려놓았어요. 이제 빨대 끝에 <b>털가죽</b>이나 <b>파란 빨대</b>를 가까이 대 보세요.");
     }, 1500);
   });
   const go = (b: Bring): void => {
@@ -71,17 +71,17 @@ export const strawLab: StepRenderer = (host, step, api) => {
       busy = false;
       if (!rubbed) {
         seen.fail = true;
-        f.say("빨대가 <b>움직이지 않아요</b>. 문지르지 않아서예요. 치우고 빨간 빨대를 먼저 문질러 보세요.");
+        f.say("아직 빨대를 문지르지 않아서 <b>움직이지 않아요</b>. 털가죽을 치우고 빨간 빨대부터 먼저 문질러 보세요.");
       } else if (b === "fur") {
         seen.fur = true;
         cFur.done();
         haptic(HAPTIC.correct);
-        f.say("빨대가 털가죽 쪽으로 <b>끌려와요</b>. 치우고 다른 것도 가져가 보세요.");
+        f.say("빨간 빨대가 털가죽 쪽으로 <b>끌려와요</b>. 이제 치우고 다른 물체도 가까이 대 보세요.");
       } else {
         seen.blue = true;
         cBlue.done();
         haptic(HAPTIC.correct);
-        f.say("빨간 빨대가 파란 빨대에게서 <b>밀려나요</b>. 둘 다 같은 털가죽으로 문지른 빨대예요.");
+        f.say("빨간 빨대가 파란 빨대에서 <b>밀려나요</b>. 두 빨대 모두 같은 털가죽으로 문질렀기 때문이에요.");
       }
       paint();
     }, 1300);
@@ -107,18 +107,18 @@ export const strawLab: StepRenderer = (host, step, api) => {
   });
 
   function askFinal(): void {
-    f.say("끌려올 때와 밀려날 때를 모두 봤어요. 아래 질문에 답해 보세요.");
+    f.say("털가죽에는 끌려오고 파란 빨대에서는 밀려나는 모습을 모두 확인했어요!");
     f.slot.ask(
-      "털가죽으로 문지른 빨대 두 개를 서로 가까이 하면?",
-      [{ t: "서로 밀어내요", ok: true }, { t: "서로 끌어당겨요" }, { t: "아무 일도 없어요" }],
+      "털가죽으로 문지른 두 빨대를 서로 가까이 대면 어떻게 되나요?",
+      [{ t: "서로 밀어내요", ok: true }, { t: "서로 끌어당겨요" }, { t: "아무 변화가 없어요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "문지른 <b>파란 빨대</b>를 가져가자 빨간 빨대가 밀려났어요.", onNext: finish },
+      { why: "똑같이 털가죽으로 문지른 <b>파란 빨대</b>를 가까이 대자 빨간 빨대가 밀려났어요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("털가죽으로 문지른 빨대는 털가죽에는 <b>끌려오고</b>, 똑같이 문지른 빨대에게는 <b>밀려나요</b>. 문지르면 물체 사이에 힘이 생겨요.");
+    f.say("문지른 물체 사이에 끌어당기거나 밀어내는 힘이 작용한다는 것을 확인했어요!");
+    f.slot.conclude("털가죽으로 문지른 빨대는 털가죽 쪽으로 <b>끌려오고</b>, 똑같이 문지른 다른 빨대와는 서로 <b>밀어내요</b>. 물체를 마찰하면 전기적인 힘이 생겨요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -243,8 +243,8 @@ export const strawLab: StepRenderer = (host, step, api) => {
   });
 
   paint();
-  f.say("플라스틱 통 위에 빨간 빨대를 올렸어요. 빨대를 <b>문지를지</b>, 무엇을 <b>가까이 가져갈지</b> 정해서 해 보세요.");
-  api.setCTA("털가죽과 파란 빨대를 가져가 보세요", { enabled: false });
+  f.say("플라스틱 통 위에 빨간 빨대를 올려 두었어요. 빨대를 <b>먼저 문지를지</b>, 다른 물체를 <b>바로 가까이 댈지</b> 골라 실험해 보세요.");
+  api.setCTA("털가죽과 파란 빨대를 가까이 대 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

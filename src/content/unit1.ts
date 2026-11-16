@@ -125,9 +125,9 @@ const L2 = {
   doneNote: "배운 탐구 방법을 직접 써봤어요",
   steps: [
     opener({ title: "어느 컵이 가장 뜨거워질까?", scene: "suncups", wait: "해를 꾹 눌러 보세요", cta: "공정하게 다시 실험하기" }),
-    fairLab({ title: "색깔만 달라지게 하려면?", cta: "용어로 정리하기" }),
+    fairLab({ title: "색깔만 다르게 실험하려면?", cta: "탐구 용어로 정리하기" }),
     L2_CONCEPT_CONTROL,
-    graphLab({ title: "표를 그래프로 옮기면?", cta: "용어로 정리하기" }),
+    graphLab({ title: "표를 그래프로 옮기면?", cta: "탐구 용어로 정리하기" }),
     L2_CONCEPT_DATA,
     L2_RECAP,
     multi({
@@ -254,8 +254,8 @@ const L4 = {
   standard: "책 22~25쪽",
   doneNote: "첨단 기술과 미래 사회를 살펴봤어요",
   steps: [
-    opener({ title: "말을 알아듣는 스피커, 비결은?", scene: "speaker", wait: "말을 들려주며 확인해 보세요", cta: "기술 켜 보기" }),
-    techLab({ title: "기술을 켜면 무엇이 달라질까?", cta: "용어로 정리하기" }),
+    opener({ title: "말을 알아듣는 스피커, 비결은?", scene: "speaker", wait: "말을 들려주며 확인해 보세요", cta: "첨단 기술 켜 보기" }),
+    techLab({ title: "첨단 기술을 켜면 무엇이 달라질까?", cta: "첨단 기술 용어 정리하기" }),
     L4_CONCEPT_A,
     L4_CONCEPT_B,
     L4_RECAP,
@@ -322,8 +322,8 @@ const L5 = {
   standard: "책 26~31쪽",
   doneNote: "지속가능한 삶을 위한 실천을 배웠어요",
   steps: [
-    opener({ title: "지구를 덮은 기체, 두꺼워지면?", scene: "blanket", wait: "기체를 늘렸다 줄여 보세요", cta: "온실 기체 줄여 보기" }),
-    cleanLab({ title: "온실 기체를 줄이려면?", cta: "용어로 정리하기" }),
+    opener({ title: "지구를 감싼 기체 층이 두꺼워지면?", scene: "blanket", wait: "기체를 늘렸다 줄여 보세요", cta: "온실 기체 줄여 보기" }),
+    cleanLab({ title: "온실 기체를 줄이려면?", cta: "핵심 내용 정리하기" }),
     L5_CONCEPT,
     binSort({
       title: "지속가능한 실천,<br>어디에 속할까?",

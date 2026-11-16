@@ -27,7 +27,7 @@ const SPREAD = 1.5; // 가장 먼 간격은 가장 가까운 간격의 1.5배를
 
 export const balloonLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = sFrame(host, { title: s.title, steps: 3, api });
+  const f = sFrame(host, { title: s.title, steps: 3, api, tall: true });
   const st = sCanvas(f.stage);
   const tm = bvTimers();
 
@@ -46,10 +46,11 @@ export const balloonLab: StepRenderer = (host, step, api) => {
   };
   const log = sLog(PAIRS.map(([a, b]) => `${NAMES[a]}${NAMES[b]}`), 3, true);
   const bMeas = bvBtn("main", "줄자로 간격 재기");
-  const bBlow = sHold("", "바람 더 넣기 (꾹)", (v) => {
+  // 두 칸 버튼이라 두 줄이 된다. '(길게 누르기)'는 한 덩어리로 둘째 줄에 오게 붙여 둔다
+  const bBlow = sHold("", "바람 더 불어 넣기 (길게\u00a0누르기)", (v) => {
     blowing = v && tags.length === 3 && grow < 1 && !finished;
   });
-  const bReset = bvBtn("", "바람 빼고 처음부터");
+  const bReset = bvBtn("", "바람 빼고 다시 하기");
   f.slot.setControls(sRow(bMeas, bBlow), bReset, log.el);
 
   const paint = (): void => {
@@ -72,13 +73,13 @@ export const balloonLab: StepRenderer = (host, step, api) => {
     const y = (p.y - (st.h() / 2 + 6)) / R0;
     const d = Math.hypot(x, y);
     if (d > 0.86) {
-      f.say("딱지는 <b>풍선 위</b>에 붙여요. 풍선의 가운데 쪽을 눌러 보세요.");
+      f.say("붙임딱지는 <b>풍선 표면 안쪽</b>에 붙여야 해요. 풍선 가운데 쪽을 눌러 보세요.");
       return;
     }
     const v: [number, number, number] = [x, y, Math.sqrt(1 - d * d)];
     if (tags.some((t) => Math.hypot(t[0] - x, t[1] - y) < 0.3)) {
       haptic(HAPTIC.wrong);
-      f.say("딱지가 겹쳐요. 다른 딱지에서 <b>조금 떨어진 곳</b>에 붙여 보세요.");
+      f.say("이미 붙인 딱지와 너무 가까워요. <b>조금 떨어진 곳</b>을 눌러 붙여 보세요.");
       return;
     }
     tags.push(v);
@@ -87,13 +88,13 @@ export const balloonLab: StepRenderer = (host, step, api) => {
       if (Math.max(...d) < SPREAD * Math.min(...d)) {
         tags.pop();
         haptic(HAPTIC.wrong);
-        f.say("세 간격이 비슷해요. 한 간격이 다른 간격의 <b>1.5배</b>를 넘게 딱지 ㄷ을 다시 붙여 보세요.");
+        f.say("세 딱지 사이의 간격이 너무 비슷해요! 가까운 딱지와 먼 딱지를 비교할 수 있도록, 딱지 ㄷ은 다른 간격보다 <b>1.5배 이상</b> 멀리 떨어진 곳에 붙여 보세요.");
         return;
       }
     }
     haptic(HAPTIC.tap);
     paint();
-    f.say(tags.length === 1 ? "딱지 <b>ㄱ</b>을 붙였어요. 이번에는 딱지 ㄴ을 붙여 보세요." : tags.length === 2 ? "딱지 ㄷ은 한 간격이 다른 간격보다 <b>1.5배 넘게</b> 멀어지게 붙여요." : "딱지 셋을 다 붙였어요. 이제 <b>간격을 잴지</b>, <b>바람을 더 넣을지</b> 차례를 정해 보세요.");
+    f.say(tags.length === 1 ? "딱지 <b>ㄱ</b>을 붙였어요. 이번에는 딱지 ㄴ을 붙여 보세요." : tags.length === 2 ? "딱지 ㄷ은 한 간격이 다른 간격보다 <b>1.5배 넘게</b> 멀어지게 붙여요." : "붙임딱지 ㄱ, ㄴ, ㄷ을 모두 붙였어요! 풍선에 바람을 더 넣기 전에 먼저 무엇을 해야 할까요? 아래 버튼에서 골라 보세요.");
   });
   bMeas.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -101,15 +102,15 @@ export const balloonLab: StepRenderer = (host, step, api) => {
     if (grow === 0) {
       before = PAIRS.map(([a, b]) => arc(a, b, CM0));
       f.pips(1);
-      f.say("처음 간격을 쟀어요(단위는 cm). 이제 <b>바람을 더 넣어</b> 풍선을 키워 보세요.");
+      f.say("작은 풍선일 때의 처음 간격(cm)을 모두 기록했어요! 이제 <b>바람 더 불어 넣기</b>를 길게 눌러 풍선을 크게 키워 보세요.");
     } else {
       after = PAIRS.map(([a, b]) => arc(a, b, CM1));
       if (before) {
         finished = true;
         f.pips(2);
-        f.say("풍선이 커진 뒤의 간격을 쟀어요. 처음 간격과 비교해 볼까요?");
+        f.say("풍선이 커진 뒤의 나중 간격까지 모두 측정했어요! 처음 간격과 비교해 볼까요?");
         tm.later(askFinal, 1600);
-      } else f.say("나중 간격만 쟀어요. <b>처음 간격을 재지 않아</b> 얼마나 늘었는지 알 수 없어요. 바람을 빼고 처음부터 다시 해 보세요.");
+      } else f.say("나중 간격만 기록되어 있어요. 바람을 넣기 전의 <b>처음 간격을 재지 않아서</b> 얼마나 늘어났는지 비교할 수 없어요! <b>바람 빼고 다시 하기</b>를 눌러 처음 간격부터 먼저 재 보세요.");
     }
     paint();
   });
@@ -126,17 +127,18 @@ export const balloonLab: StepRenderer = (host, step, api) => {
   function askFinal(): void {
     const far = PAIRS.map((_, i) => after![i] - before![i]);
     const top = far.indexOf(Math.max(...far));
-    f.say("점선은 처음의 작은 풍선이에요. <b>처음 간격과 나중 간격</b>을 비교해 보세요.");
+    f.say("점선은 처음의 작은 풍선이에요. <b>처음 간격과 나중 간격</b>, 그리고 <b>늘어난 길이(+)</b>를 비교해 보세요.");
+    // 보기는 고른 칸과 오답 카드의 정답 줄에 한 줄로 들어가는 길이로 둔다(두 줄이면 오답 화면이 조작 칸 208을 넘는다)
     f.slot.ask(
-      "풍선이 커지자 딱지 사이의 간격은?",
-      [{ t: "세 간격이 모두 늘어났어요", ok: true }, { t: "가까운 딱지끼리만 늘어났어요" }, { t: "세 간격 모두 그대로예요" }],
+      "풍선이 크게 부풀어 오르자 붙임딱지 ㄱ, ㄴ, ㄷ 사이의 간격은 어떻게 변했나요?",
+      [{ t: "모두 늘었고, 멀던 딱지 사이가 가장 많이 늘었어요", ok: true }, { t: "가까운 딱지 사이만 늘고 먼 딱지 사이는 그대로예요" }, { t: "세 간격 모두 변하지 않고 그대로예요" }],
       (ok) => api.recordQuiz(ok),
-      { why: `가장 멀던 <b>${NAMES[PAIRS[top][0]]}과 ${NAMES[PAIRS[top][1]]}</b> 사이가 가장 많이 늘었어요.`, onNext: finish },
+      { why: `풍선 표면이 고르게 늘어나면서 세 간격이 모두 늘어났고, 처음에 가장 멀리 떨어져 있던 <b>${NAMES[PAIRS[top][0]]}과 ${NAMES[PAIRS[top][1]]}</b> 사이가 가장 많이 멀어졌어요.`, onNext: finish },
     );
   }
   function finish(): void {
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("풍선 표면이 팽창하면 딱지 크기는 그대로인 채 딱지 사이의 간격이 모두 멀어진다는 것을 확인했어요!");
     f.slot.conclude("풍선 표면이 늘어나자 딱지 사이의 간격이 <b>모두 늘어났어요</b>. 멀리 떨어진 딱지일수록 더 많이 멀어졌어요. 딱지의 크기는 그대로예요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -151,7 +153,7 @@ export const balloonLab: StepRenderer = (host, step, api) => {
         sRelease(bBlow);
         haptic(HAPTIC.correct);
         paint();
-        f.say(before ? "풍선이 커졌어요. 집게로 막고 <b>간격을 다시</b> 재 보세요." : "풍선이 커졌어요. 그런데 <b>처음 간격</b>을 재 두지 않았네요. 일단 재 볼까요?");
+        f.say(before ? "풍선이 크게 부풀었어요! 이제 <b>줄자로 간격 재기</b>를 눌러 늘어난 간격을 다시 재 보세요." : "풍선이 크게 부풀었어요. 어라, 바람을 넣기 전에 <b>처음 간격</b>을 재지 않았네요! 일단 줄자로 간격을 재 볼까요?");
       }
     }
     const cx = w / 2 - 14;

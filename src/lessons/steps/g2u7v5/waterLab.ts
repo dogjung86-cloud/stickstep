@@ -18,7 +18,7 @@ import type { RotateStage } from "../../../ui/rotateStage";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
 import { C } from "./circuitKit";
-import { X, xArrow, xBox, xCanvas, xFrame, xSegs, xText, type LabStep } from "./kit";
+import { X, xArrow, xBox, xCanvas, xFrame, xJosa, xSegs, xText, type LabStep } from "./kit";
 
 /** 넓은 화면(PC, 태블릿 가로)의 가로 화면: 폰 가로 화면 크기의 설계 판에 그려 창에 맞춰 통째로 키운다(2026-11-15 그래픽 감사 C093).
  *  예전에는 판을 창 크기 그대로 써서 부품은 폰 크기인데 물길과 전선만 길게 늘어났다(1920×1080에서 펌프 26px 남짓).
@@ -402,7 +402,7 @@ export const waterLab: StepRenderer = (host, step, api) => {
     drawPair(ctx, w, h, v, false);
   });
 
-  const go = bvBtn("main", "가로 화면에서 실험하기");
+  const go = bvBtn("main", "가로 화면으로 넓게 실험하기");
   f.slot.setControls(go);
   const missionDone = (): boolean => v.found.size === PAIRS.length && tried.off && tried.strong;
 
@@ -415,14 +415,14 @@ export const waterLab: StepRenderer = (host, step, api) => {
     if (rot) return;
     const { enterRotateStage } = await import("../../../ui/rotateStage");
     if (!tm.alive()) return;
-    rot = enterRotateStage({ title: "빛나는 곳을 눌러 짝을 찾아요", onLeave: leave });
+    rot = enterRotateStage({ title: "빛나는 요소를 눌러 역할이 같은 짝을 찾아보세요", onLeave: leave });
     const cv = el("canvas", { class: "g2u7x-wcv" }) as HTMLCanvasElement;
     const status = el("div", { class: "g2u7x-wsay" });
     const lv = xSegs(
       [
         { k: "0", t: "펌프·전지 없음" },
-        { k: "1", t: "약하게" },
-        { k: "2", t: "세게" },
+        { k: "1", t: "기본(1단)" },
+        { k: "2", t: "세게(2단)" },
       ],
       String(v.level) as "0" | "1" | "2",
       (k) => {
@@ -432,12 +432,12 @@ export const waterLab: StepRenderer = (host, step, api) => {
         say();
       },
     );
-    const tapBtn = el("button", { class: "g2u7x-wtap", text: "수도꼭지·스위치 잠그기", attrs: { type: "button" } }) as HTMLButtonElement;
+    const tapBtn = el("button", { class: "g2u7x-wtap", text: "수도꼭지 잠그기 · 스위치 열기", attrs: { type: "button" } }) as HTMLButtonElement;
     tapBtn.addEventListener("click", () => {
       haptic(HAPTIC.tap);
       v.open = !v.open;
       if (!v.open) tried.off = true;
-      tapBtn.textContent = v.open ? "수도꼭지·스위치 잠그기" : "수도꼭지·스위치 열기";
+      tapBtn.textContent = v.open ? "수도꼭지 잠그기 · 스위치 열기" : "수도꼭지 열기 · 스위치 닫기";
       say();
     });
     const bar = el("div", { class: "g2u7x-wbar" }, lv.el, tapBtn);
@@ -448,8 +448,8 @@ export const waterLab: StepRenderer = (host, step, api) => {
       const on = v.level > 0 && v.open;
       const idle = left ? "빛나는 곳을 눌러 짝을 찾아보세요." : "짝을 모두 찾았어요.";
       const base = msg ?? (!on ? (v.level === 0 ? "펌프도 전지도 없어 물도 전류도 흐르지 않아요." : "수도꼭지를 잠그고 스위치를 열자 물도 전류도 멈췄어요.") : v.level === 2 ? "높이 차가 커지자 물이 세게 흐르고 전구도 더 밝아요." : idle);
-      const todo = [left ? `<b>남은 짝 ${left}개</b>` : "", tried.strong ? "" : "세게 해 보기", tried.off ? "" : "잠가 보기"].filter(Boolean).join(" · ");
-      status.innerHTML = missionDone() ? "다 찾았어요! <b>세로로 돌아가기</b>를 눌러 마무리해요." : `${base} ${todo}`;
+      const todo = [left ? `<b>남은 짝 ${left}개</b>` : "", tried.strong ? "" : "세게(2단) 켜 보기", tried.off ? "" : "흐름 멈춰 보기"].filter(Boolean).join(" · ");
+      status.innerHTML = missionDone() ? "다섯 짝과 조건 변화를 모두 확인했어요! <b>세로로 돌아가기</b>를 눌러 마무리해 보세요." : `${base} ${todo}`;
       status.dataset.done = missionDone() ? "1" : "0";
     };
     cv.addEventListener("pointerdown", (e) => {
@@ -462,7 +462,7 @@ export const waterLab: StepRenderer = (host, step, api) => {
         v.found.add(pair.k);
         v.hot = pair.k;
         v.nudge = null;
-        say(`<b>${pair.a}</b>의 짝은 <b>${pair.b}</b>예요.`);
+        say(`물길의 <b>${pair.a}</b>에 해당하는 전기 회로 요소는 <b>${pair.b}</b>${xJosa(pair.b, "이에요", "예요")}!`);
         return;
       }
       // 빈 곳: 가장 가까운 남은 자리를 잠깐 더 밝게 짚어 준다(짝이 무엇인지는 알려 주지 않는다)
@@ -470,7 +470,7 @@ export const waterLab: StepRenderer = (host, step, api) => {
       if (!near) return;
       haptic(HAPTIC.tap);
       v.nudge = { ...near, t0: performance.now() };
-      say("빛나는 곳을 눌러야 짝을 알 수 있어요.");
+      say("흰 점선으로 빛나는 요소를 눌러야 짝을 확인할 수 있어요.");
     });
     if (import.meta.env.DEV) {
       const dev = cv as unknown as { __hits: () => unknown; __hint: () => unknown };
@@ -524,37 +524,37 @@ export const waterLab: StepRenderer = (host, step, api) => {
       tm.later(ask1, 500);
     } else if (!finished) {
       // 짝이 남았으면 빛나는 곳으로, 짝은 다 찾았으면 아직 안 해 본 조작으로 안내한다
-      const rest = !tried.strong && !tried.off ? "펌프를 세게 해 보고, 수도꼭지도 잠가 봐요" : !tried.strong ? "펌프를 세게 해 봐요" : "수도꼭지를 잠가 봐요";
+      const rest = !tried.strong && !tried.off ? "세게(2단) 켜 보기와 흐름 멈춰 보기를 해 보세요" : !tried.strong ? "세게(2단) 켜 보기를 해 보세요" : "흐름 멈춰 보기를 해 보세요";
       f.say(v.found.size < PAIRS.length ? "아직 찾지 못한 짝이 있어요. <b>가로 화면</b>에서 빛나는 곳을 모두 눌러 보세요." : `짝은 다 찾았어요. <b>가로 화면</b>에서 ${rest}.`);
     }
   }
   function ask1(): void {
-    f.say("두 그림을 비교해 봤어요. 아래 질문에 답해 보세요.");
+    f.say("물길 모형과 전기 회로의 닮은 점을 모두 비교해 보았어요!");
     f.slot.ask(
-      "물길의 펌프와 같은 일을 하는 것은?",
+      "전기 회로에서 물길의 '펌프'와 같은 역할을 하는 것은 무엇인가요?",
       [{ t: "전지", ok: true }, { t: "전구" }, { t: "스위치" }],
       (ok) => api.recordQuiz(ok),
-      { why: "펌프가 물을 퍼 올려 흐르게 하듯 <b>전지</b>가 전류를 흐르게 해요.", onNext: ask2 },
+      { why: "펌프가 높이 차를 만들어 물을 계속 흐르게 하듯, <b>전지</b>는 전압을 만들어 전류를 계속 흐르게 해요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.pips(2);
     f.slot.ask(
-      "펌프를 세게 해 물의 높이 차가 커지자 물의 흐름은?",
-      [{ t: "더 세졌어요", ok: true }, { t: "그대로였어요" }, { t: "더 약해졌어요" }],
+      "펌프를 세게 작동시켜 물의 높이 차가 커졌을 때 물의 흐름은 어떻게 변했나요?",
+      [{ t: "더 세게 흘렀어요", ok: true }, { t: "그대로였어요" }, { t: "더 약하게 흘렀어요" }],
       () => undefined,
-      { why: "전지를 2개로 늘리자 <b>전구도 더 밝아졌어요</b>.", onNext: finish },
+      { why: "높이 차(전압)가 커지면 물의 흐름(전류)이 세져요. 회로에서도 전지를 2개로 늘리자 <b>전구가 더 밝아졌어요</b>.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(3);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("펌프가 물의 <b>높이 차</b>를 만들어 물을 계속 흐르게 하듯, 전지는 <b>전압</b>으로 전류를 계속 흐르게 해요. 전압은 전류를 흐르게 하는 능력이에요.");
+    f.say("물의 높이 차가 물을 흐르게 하듯, 전압이 전류를 흐르게 한다는 것을 확인했어요!");
+    f.slot.conclude("펌프가 물의 <b>높이 차</b>를 유지해 물을 계속 흐르게 하듯, 전지는 <b>전압</b>을 유지해 전류를 계속 흐르게 해요. 이처럼 전류를 흐르게 하는 능력을 <b>전압</b>(단위 V)이라고 해요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
-  f.say("왼쪽은 물길, 오른쪽은 전기 회로예요. <b>가로 화면</b>에서 빛나는 곳을 눌러 닮은 짝을 찾아요.");
-  api.setCTA("가로 화면에서 짝을 찾아보세요", { enabled: false });
+  f.say("왼쪽은 물길 모형, 오른쪽은 전기 회로예요. <b>가로 화면</b>을 열어 빛나는 요소를 누르며 같은 역할을 하는 짝을 찾아보세요.");
+  api.setCTA("가로 화면에서 다섯 짝을 찾아보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

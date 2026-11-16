@@ -47,30 +47,30 @@ export const heaterLab: StepRenderer = (host, step, api) => {
   let peak = -1;
   let finished = false;
   const log = sLog(STAGES.map((v) => v.name), 2, true);
-  const hold = sHold("main", "전원 누르고 있기", (v) => {
+  const hold = sHold("main", "전원 버튼 길게 누르기", (v) => {
     held = v;
     if (finished) return;
-    if (!v && peak >= 0 && peak < 3) f.say("손을 떼자 니크롬선이 <b>식으면서</b> 다시 어두워져요. 더 오래 눌러 온도를 끝까지 올려 보세요.");
+    if (!v && peak >= 0 && peak < 3) f.say("버튼에서 손을 떼자 니크롬선이 <b>식으면서</b> 다시 어두워졌어요. 노란색으로 빛날 때까지 버튼을 끝까지 길게 눌러 보세요.");
     if (!v && peak === 3) {
       finished = true;
       hold.disabled = true;
-      f.say("전원을 끄자 노란색에서 거꾸로 <b>붉어지며</b> 식어 가요.");
+      f.say("전원을 끄자 니크롬선이 식으면서 노란색에서 주황색, <b>붉은색 순으로 거꾸로</b> 변하며 어두워져요!");
       tm.later(askFinal, 2200);
     }
   });
   f.slot.setControls(hold, log.el);
 
   function askFinal(): void {
-    f.say("기록을 보고 아래 질문에 답해 보세요.");
+    f.say("니크롬선이 달궈질 때와 식을 때의 색 변화를 모두 관찰했어요!");
     f.slot.ask(
-      "니크롬선의 온도가 가장 높을 때의 색은?",
+      "전기난로의 니크롬선 온도가 가장 높았을 때 어떤 색으로 빛났나요?",
       [{ t: "노란색", ok: true }, { t: "검붉은색" }, { t: "붉은색" }],
       (ok) => api.recordQuiz(ok),
-      { why: "오래 누를수록 <b>검붉은색, 붉은색, 주황색, 노란색</b>으로 변했어요.", onNext: finish },
+      { why: "온도가 높아질수록 니크롬선의 색이 <b>검붉은색 → 붉은색 → 주황색 → 노란색</b> 순서로 변했어요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("물체의 온도가 높아질수록 검붉은색에서 노란색 쪽으로 빛의 색이 변한다는 것을 확인했어요!");
     f.slot.conclude("물체는 <b>온도가 높아질수록</b> 내는 빛의 색이 달라져요. 니크롬선은 뜨거워질수록 검붉은색에서 붉은색, 주황색, <b>노란색</b>으로 변해요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -82,9 +82,9 @@ export const heaterLab: StepRenderer = (host, step, api) => {
       last = k;
       if (k > peak) {
         peak = k;
-        log.set(k, "봤어요");
+        log.set(k, "관찰 완료");
         f.pips(k + 1);
-        if (!finished) f.say(k < 3 ? `니크롬선이 <b>${STAGES[k].name}</b>으로 빛나요. 계속 누르고 있어요.` : "니크롬선이 <b>노란색</b>으로 빛나요. 이제 손을 떼어 보세요.");
+        if (!finished) f.say(k < 3 ? `니크롬선이 달궈지며 <b>${STAGES[k].name}</b>으로 빛나요! 버튼을 계속 누르고 있어 보세요.` : "온도가 끝까지 올라가 니크롬선이 밝은 <b>노란색</b>으로 빛나요! 이제 버튼에서 손을 떼어 보세요.");
       }
     }
     const c = wireColor(temp);

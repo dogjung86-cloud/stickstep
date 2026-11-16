@@ -21,7 +21,7 @@ const R_GAL = 0.44; // 그림에서 은하 원반의 반지름(그림 폭에 대
 
 export const galaxyLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = sFrame(host, { title: s.title, steps: 3, api });
+  const f = sFrame(host, { title: s.title, steps: 3, api, tall: true });
   f.stage.appendChild(sPhoto("g2u8x-gal", "milkyway-top.webp", "위에서 본 우리은하, 가운데 막대 모양과 나선팔"));
   const view = el("div", { class: "g2u8x-mwview" });
   view.style.backgroundImage = `url(${starPhoto("milkyway-pan.webp")})`;
@@ -35,9 +35,9 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
   let dir: Dir | null = null;
   let finished = false;
   const log = sLog(["은하 중심 쪽", "바깥쪽"], 2, true);
-  const bShow = bvBtn("main", "실제 자리 확인하기");
+  const bShow = bvBtn("main", "실제 태양계 위치 확인하기");
   bShow.disabled = true;
-  f.slot.setControls(sCap("왼쪽 그림은 위에서 본 우리은하의 상상도예요. <b>태양계가 있을 것 같은 곳</b>을 그림에서 눌러 보세요."), bShow);
+  f.slot.setControls(sCap("왼쪽 그림은 위에서 내려다본 우리은하 상상도예요. <b>태양계가 있을 것 같은 위치</b>를 그림 위에서 직접 눌러 보세요."), bShow);
 
   st.cv.addEventListener("pointerdown", (e) => {
     if (shown) return;
@@ -48,7 +48,7 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
     guess = [gx, gy];
     haptic(HAPTIC.tap);
     bShow.disabled = false;
-    f.say("예측한 자리에 표시했어요. 다시 눌러 옮길 수 있어요. 정했으면 <b>실제 자리</b>를 확인해 보세요.");
+    f.say("예측한 자리에 표시했어요. 다시 눌러 옮길 수 있어요. 정했으면 <b>실제 태양계 위치</b>를 확인해 보세요.");
   });
   bShow.addEventListener("click", () => {
     if (!guess) return;
@@ -57,16 +57,16 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     const off = Math.hypot(guess[0] - SUN[0], guess[1] - SUN[1]);
     const mid = Math.hypot(guess[0] - 0.5, guess[1] - 0.5) < 0.08;
-    f.say(`${off < 0.1 ? "아주 가까웠어요! " : mid ? "한가운데가 아니에요. " : ""}태양계는 은하 중심에서 <b>약 8500 pc</b> 떨어진 <b>나선팔</b>에 있어요. 우리은하의 지름은 약 30000 pc이에요.`);
+    f.say(`${off < 0.1 ? "예측이 거의 정확했어요! " : mid ? "태양계는 은하 한가운데에 있지 않아요! " : ""}태양계는 은하 중심에서 <b>약 8500 pc</b> 떨어진 <b>나선팔</b>에 위치해 있어요(우리은하 전체 지름은 약 30000 pc).`);
     tm.later(() => {
       f.slot.setControls(seg.el, log.el);
-      f.say("태양계에서 <b>어느 쪽</b>을 바라볼지 골라 보세요. 오른쪽에 그 방향의 은하수가 보여요.");
+      f.say("이제 태양계에서 <b>어느 방향</b>을 바라볼지 아래 버튼을 눌러 골라 보세요. 오른쪽에 그 방향의 은하수 모습이 나타나요.");
     }, 2600);
   });
   const seg = sSegs<Dir>(
     [
-      { k: "in", t: "은하 중심 쪽 보기" },
-      { k: "out", t: "바깥쪽 보기" },
+      { k: "in", t: "은하 중심 방향 보기" },
+      { k: "out", t: "은하 바깥쪽 방향 보기" },
     ],
     null,
     (k) => {
@@ -75,7 +75,7 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
       view.classList.toggle("out", k === "out");
       log.set(k === "in" ? 0 : 1, k === "in" ? "넓고 뚜렷" : "좁고 희미");
       f.pips(log.has(0) && log.has(1) ? 2 : 1);
-      f.say(k === "in" ? "은하 <b>중심 쪽</b>에는 별이 아주 많아요. 은하수가 <b>넓고 뚜렷하게</b> 보여요." : "<b>바깥쪽</b>에는 별이 적어요. 은하수가 <b>좁고 희미하게</b> 보여요.");
+      f.say(k === "in" ? "은하 <b>중심 방향</b>을 바라보면 시선 방향에 별이 아주 많이 겹쳐 있어서 은하수가 <b>넓고 뚜렷하게</b> 보여요!" : "은하 <b>바깥쪽 방향</b>을 바라보면 별이 상대적으로 적어서 은하수가 <b>좁고 희미하게</b> 보여요.");
       if (log.has(0) && log.has(1) && !finished) {
         finished = true;
         tm.later(() => {
@@ -87,17 +87,17 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
   );
 
   function askFinal(): void {
-    f.say("그림을 보고 아래 질문에 답해 보세요.");
+    f.say("은하 중심 방향과 바깥쪽 방향의 은하수 모습까지 모두 비교했어요!");
     f.slot.ask(
-      "태양계는 우리은하의 어디에 있나요?",
-      [{ t: "중심에서 떨어진 나선팔", ok: true }, { t: "은하의 한가운데" }, { t: "은하 원반의 바깥" }],
+      "태양계는 우리은하의 어디에 위치해 있나요?",
+      [{ t: "은하 중심에서 떨어진 나선팔", ok: true }, { t: "우리은하의 정중앙(중심부)" }, { t: "우리은하 원반 바깥의 빈 공간" }],
       (ok) => api.recordQuiz(ok),
-      { why: "은하 중심에서 <b>약 8500 pc</b> 떨어진 나선팔에 있어요.", onNext: finish },
+      { why: "태양계는 우리은하 중심에서 <b>약 8500 pc</b> 떨어진 나선팔에 자리 잡고 있어요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(3);
-    f.say("탐험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
+    f.say("태양계가 우리은하의 중심에서 벗어난 나선팔에 있어서 바라보는 방향에 따라 은하수의 모습이 다르다는 것을 확인했어요!");
     f.slot.conclude("태양계는 은하 중심에서 약 8500 pc 떨어진 <b>나선팔</b>에 있어요. 그래서 별이 많은 <b>은하 중심 쪽</b>을 볼 때 은하수가 더 넓고 뚜렷해요.");
     api.enableCTA(s.cta ?? "다음");
   }

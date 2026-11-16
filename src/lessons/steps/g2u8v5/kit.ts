@@ -28,10 +28,10 @@ export interface LabStep {
   cta?: string;
 }
 
-/** 랩 틀. 별 단원의 색을 입힌다. */
-export function sFrame(host: HTMLElement, o: { title: string; steps: number; api: Pick<StepAPI, "setCTA"> }): BvFrame {
+/** 랩 틀. 별 단원의 색을 입힌다. tall: 세 줄 도움말이 나오는 랩은 처음부터 세 줄 상자를 잡는다(랩 도중에 무대가 밀리지 않게). */
+export function sFrame(host: HTMLElement, o: { title: string; steps: number; api: Pick<StepAPI, "setCTA">; tall?: boolean }): BvFrame {
   host.classList.add("g2u8x-step");
-  return bvFrame(host, { title: o.title, steps: o.steps, cls: "g2u8x-stage", qCls: "g2u8x-q", api: o.api });
+  return bvFrame(host, { title: o.title, steps: o.steps, cls: "g2u8x-stage", qCls: "g2u8x-q", api: o.api, tall: o.tall });
 }
 
 /** 고르기 버튼 한 줄(48px). 하나만 켜진다. init이 null이면 처음에는 아무것도 켜지지 않는다. */
@@ -122,10 +122,11 @@ export interface SLog {
 }
 export function sLog(rows: string[], cols = 1, tight = false): SLog {
   const items = rows.map((name) => {
-    const v = el("b", { class: "g2u8x-log-v", text: "아직" });
+    const v = el("b", { class: "g2u8x-log-v", text: "관측 전" });
     return { row: el("div", { class: "g2u8x-log-row" }, el("span", { class: "g2u8x-log-n", text: name }), v), v, on: false };
   });
-  const box = el("div", { class: `g2u8x-log${tight ? " tight" : ""}` }, ...items.map((i) => i.row));
+  // 세 칸 이상이면 c3: 칸 안 여백을 줄여 "관측 전"이 별 이름 옆에서 말줄임 되지 않게(390에서 1px, 360에서 11px 모자랐다)
+  const box = el("div", { class: `g2u8x-log${tight ? " tight" : ""}${cols >= 3 ? " c3" : ""}` }, ...items.map((i) => i.row));
   box.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   return {
     el: box,
@@ -136,7 +137,7 @@ export function sLog(rows: string[], cols = 1, tight = false): SLog {
       items[i].on = !bad;
     },
     clear(i) {
-      items[i].v.textContent = "아직";
+      items[i].v.textContent = "관측 전";
       items[i].row.classList.remove("on", "bad");
       items[i].on = false;
     },

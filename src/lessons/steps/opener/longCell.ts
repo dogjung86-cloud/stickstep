@@ -30,7 +30,7 @@ export function longCell(c: OpenerCtx): void {
   const pin = el("div", { class: "opn-lc-pin" }, el("span", { text: "내 예측" }));
   c.stage.append(kid, read, pin);
 
-  const hold = el("button", { class: "opn-lc-hold", type: "button", text: "꾹 눌러서 세포 따라가기" });
+  const hold = el("button", { class: "opn-lc-hold", type: "button", text: "꾹 눌러서 세포 끝까지 따라가기" });
   c.controls.appendChild(hold);
   c.controls.hidden = true;
 
@@ -72,7 +72,7 @@ export function longCell(c: OpenerCtx): void {
     haptic(HAPTIC.correct);
     c.face("surprised");
     const head = pred.cm === 100 ? "예측대로 <b>약 1 m</b>!" : `<b>약 1 m</b>! ${pred.vs}`;
-    c.say(`${head} 이렇게 길쭉한 세포는 무슨 <b>일</b>을 할까요?`);
+    c.say(`${head} 세포 한 개가 이렇게 길쭉하게 뻗어 있는 까닭은 무엇일까요? 이 세포가 우리 몸에서 무슨 <b>일</b>을 하는지 알아볼까요?`);
     c.finish();
   }
 
@@ -83,7 +83,7 @@ export function longCell(c: OpenerCtx): void {
     paint();
     if (!passed && pred.cm < 100 && cm >= pred.cm + 6) {
       passed = true;
-      c.say("내 예측은 <b>벌써 지났어요</b>. 계속 눌러 보세요!");
+      c.say("내가 예측한 길이를 <b>벌써 지나쳤어요</b>! 끝이 어디인지 계속 꾹 눌러 보세요!");
     }
     if (cm >= 100) arrive();
     else timer = c.later(tick, TICK);
@@ -122,10 +122,10 @@ export function longCell(c: OpenerCtx): void {
 
   paint();
   c.step.dataset.opnPhase = "ask";
-  c.ask("허리에서 시작하는 이 <b>신경세포</b>, 얼마나 길까요?", {
+  c.ask("허리에서 시작해 다리 쪽으로 뻗어 나가는 이 <b>신경세포</b> 한 개는 길이가 얼마나 될까요?", {
     choices: PICKS.map((p) => p.t),
     neutral: true,
-    good: "예측 완료! 아래 버튼을 <b>꾹 눌러</b> 확인해 보세요.",
+    good: "예측 완료! 아래 버튼을 <b>끝까지 꾹 눌러</b> 실제 길이를 확인해 보세요.",
     onDone: (picked) => {
       pred = PICKS.find((p) => p.t === picked) ?? PICKS[0];
       phase = "pull";

@@ -94,10 +94,10 @@ export function lxCanvas(stage: HTMLElement): LxStage {
   };
 }
 
-/** 랩 틀. 빛 단원의 색을 입힌다. */
-export function lxFrame(host: HTMLElement, o: { title: string; steps: number; api: Pick<StepAPI, "setCTA"> }): BvFrame {
+/** 랩 틀. 빛 단원의 색을 입힌다. tall: 세 줄짜리 도움말이 있는 랩은 처음부터 세 줄 상자를 잡아 둔다(랩 도중에 무대가 밀리지 않게). */
+export function lxFrame(host: HTMLElement, o: { title: string; steps: number; api: Pick<StepAPI, "setCTA">; tall?: boolean }): BvFrame {
   host.classList.add("g2u3x-step");
-  return bvFrame(host, { title: o.title, steps: o.steps, cls: "g2u3x-stage", qCls: "g2u3x-q", api: o.api });
+  return bvFrame(host, { title: o.title, steps: o.steps, cls: "g2u3x-stage", qCls: "g2u3x-q", api: o.api, tall: o.tall });
 }
 
 /** 무대 안의 글자(12.5px 이상, 어두운 테두리로 어느 바탕에서도 읽힌다). */

@@ -133,18 +133,18 @@ export const swingLab: StepRenderer = (host, step, api) => {
   /** 처음 바꿀 때는 예측부터. 예측을 띄웠으면 true(바꾸는 일은 답한 뒤에 한다). */
   const predictFirst = (which: "cur" | "pole", go: () => void): boolean => {
     if (pending) {
-      f.say("먼저 <b>스위치를 눌러</b> 방금 바꾼 것부터 확인해 보세요.");
+      f.say("다른 조건을 바꾸기 전에 먼저 <b>스위치 누르고 있기</b>를 눌러 방금 바꾼 결과를 확인해 보세요.");
       return true;
     }
     if (guessed[which]) return false;
     if (!seen.press) {
-      f.say("먼저 <b>스위치를 눌러</b> 그네가 어느 쪽으로 움직이는지 봐 두세요.");
+      f.say("조건을 바꾸기 전에 먼저 <b>스위치 누르고 있기</b>를 눌러 처음 상태에서 그네가 어느 쪽으로 움직이는지 확인해 보세요.");
       return true;
     }
     asking = true;
     f.slot.ask(
-      which === "cur" ? "전류의 방향만 반대로 바꾸면 그네는?" : "자석의 두 극만 바꾸면 그네는?",
-      [{ t: "방금과 반대쪽으로 움직여요", ok: true }, { t: "방금과 같은 쪽으로 움직여요" }, { t: "움직이지 않아요" }],
+      which === "cur" ? "자석은 그대로 두고 전류의 방향만 반대로 바꾸면 코일 그네는 어느 쪽으로 움직일까요?" : "전류는 그대로 두고 자석의 N극과 S극 위치만 바꾸면 코일 그네는 어느 쪽으로 움직일까요?",
+      [{ t: "방금과 반대 방향으로 움직여요", ok: true }, { t: "방금과 같은 방향으로 움직여요" }, { t: "힘을 받지 않아 움직이지 않아요" }],
       () => undefined,
       {
         predict: true,
@@ -172,12 +172,12 @@ export const swingLab: StepRenderer = (host, step, api) => {
       if (!nBottom) seen.pole = true;
       if (strong) seen.strong = true;
       const out = fx() > 0;
-      f.say(`그네가 자석 <b>${out ? "바깥쪽" : "안쪽"}</b>으로 ${strong ? "크게 " : ""}움직여요. 하나씩 바꿔 가며 비교해 보세요.`);
+      f.say(`코일 그네가 말굽자석의 <b>${out ? "바깥쪽" : "안쪽"}</b>으로 ${strong ? "더 크게 " : ""}밀려났어요! 전류 방향, 자석의 극, 전류의 세기를 하나씩 바꿔 비교해 보세요.`);
     }
     after();
   });
   const bCur = bvBtn("", "전류 방향 바꾸기");
-  const bPole = bvBtn("", "자석의 극 바꾸기");
+  const bPole = bvBtn("", "자석 극 바꾸기");
   const power = xSegs(
     [
       { k: "weak", t: "약한 전류" },
@@ -186,7 +186,7 @@ export const swingLab: StepRenderer = (host, step, api) => {
     "weak",
     (k) => {
       strong = k === "strong";
-      f.say(strong ? "전류를 <b>세게</b> 했어요. 스위치를 눌러 그네가 얼마나 움직이는지 봐요." : "전류를 약하게 했어요. 스위치를 눌러 보세요.");
+      f.say(strong ? "전류의 세기를 <b>세게</b> 바꿨어요. 스위치를 눌러 그네가 움직이는 폭이 어떻게 달라지는지 확인해 보세요." : "전류의 세기를 <b>약하게</b> 바꿨어요. 스위치를 눌러 확인해 보세요.");
     },
   );
   f.slot.setControls(sw, xRow(bCur, bPole), power.el);
@@ -223,15 +223,15 @@ export const swingLab: StepRenderer = (host, step, api) => {
   }
   function ask(): void {
     f.slot.ask(
-      "전류의 방향과 자석의 극을 둘 다 바꾸면 그네가 움직이는 방향은?",
-      [{ t: "처음과 같은 쪽", ok: true }, { t: "처음과 반대쪽" }, { t: "움직이지 않아요" }],
+      "전류의 방향과 자석의 극을 동시에 둘 다 반대로 바꾸면 코일 그네가 움직이는 방향은 어떻게 될까요?",
+      [{ t: "처음과 같은 방향", ok: true }, { t: "처음과 반대 방향" }, { t: "움직이지 않아요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "하나를 바꾸면 반대가 되고, 하나 더 바꾸면 <b>다시 처음</b>이 돼요.", onNext: finish },
+      { why: "전류 방향을 바꾸면 힘이 반대가 되고, 자석의 극까지 바꾸면 한 번 더 반대가 되어 <b>다시 처음과 같은 방향</b>이 돼요.", onNext: finish },
     );
   }
   function finish(): void {
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("자기장 안의 코일에 전류가 흐르면 코일은 <b>힘</b>을 받아요. 전류나 자기장의 방향을 바꾸면 힘의 방향이 반대가 되고, 전류가 셀수록 힘이 커요.");
+    f.say("자기장 속에서 전류가 흐르는 코일이 받는 힘의 방향과 크기가 무엇에 따라 달라지는지 확인했어요!");
+    f.slot.conclude("자기장 속에 놓인 코일에 전류가 흐르면 코일은 <b>힘</b>을 받아 움직여요. 전류의 방향이나 자기장의 방향 중 하나를 반대로 바꾸면 힘의 방향도 반대가 되고, 전류가 세거나 자석이 셀수록 더 큰 힘을 받아요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -243,7 +243,7 @@ export const swingLab: StepRenderer = (host, step, api) => {
         // 오래 누르면 코일이 뜨거워진다(책의 안전 수칙)
         sw.dispatchEvent(new Event("pointercancel"));
         haptic(HAPTIC.wrong);
-        f.say("코일이 <b>뜨거워져서</b> 전류를 끊었어요. 스위치는 오래 누르지 않아요.");
+        f.say("코일이 과열되는 것을 막기 위해 전류를 자동으로 끊었어요. 실제 실험에서도 스위치는 잠깐씩만 눌러요.");
       }
     }
     const out = fx();
@@ -294,7 +294,7 @@ export const swingLab: StepRenderer = (host, step, api) => {
   } else startFlat();
 
   f.say("말굽자석 사이에 코일 그네를 걸었어요. <b>스위치를 누르고</b>, 전류와 자석을 하나씩 바꿔 보세요.");
-  api.setCTA("네 가지를 모두 해 보세요", { enabled: false });
+  api.setCTA("네 가지 조건을 모두 실험해 보세요", { enabled: false });
   return () => {
     tm.clear();
     loop?.stop();

@@ -1,7 +1,7 @@
 // 중1 Ⅵ 도입 네 장면. 형식은 Ⅰ·Ⅱ단원과 같다: 내기를 걸고(정오를 매기지 않는다) → 손으로 장면을 바꾸고 → 끝에서 예측과 견준다.
-//   u6-ice  (u6l1) 「얇은 얼음판, 어떻게 건널까?」  서서 걷기와 엎드려 기기를 둘 다 해 본다. 원리의 이름(압력)은 말하지 않는다
+//   u6-ice  (u6l1) 「얇은 얼음판, 어떻게 건너야 안 깨질까?」  서서 걷기와 엎드려 기어가기를 둘 다 해 본다. 원리의 이름(압력)은 말하지 않는다
 //   u6-wrap (u6l3) 「뽁뽁이를 눌렀다 떼면?」        공기 방울을 꾹 눌렀다 뗀다(두 번)
-//   u6-foil (u6l4) 「은박 풍선, 밖에 나가면?」      밖으로 나갔다 안으로 들어온다
+//   u6-foil (u6l4) 「은박 풍선, 추운 밖에 들고 나가면?」      밖으로 나갔다 안으로 들어온다
 //   u6-pong (u6l5) 「찌그러진 탁구공, 살릴 수 있을까?」 공을 꾹 눌러 뜨거운 물에 담근다
 // 지금 훅(hookGas.ts)에서 바로잡은 것: 북극곰 장면이 답한 뒤에야 장면을 보여 주고 옳은 예측에 원리를 통째로 적어 두었다.
 // 새 장면은 건너는 방법만 묻고 손으로 두 가지를 다 해 본 뒤에 견준다. 탁구공 장면은 "구멍이 없다"는 조건을 처음에 말한다.
@@ -94,7 +94,7 @@ export function iceBear(c: OpenerCtx): void {
     c.step.dataset.opnPhase = "done";
     c.face("smile");
     haptic(HAPTIC.correct);
-    c.say(`${verdict(picked, RIGHT)} 엎드려야 무사해요. 몸무게는 그대로인데 얼음에 닿는 <b>넓이</b>가 달라졌어요.`);
+    c.say(`${verdict(picked, RIGHT)} 엎드려야 얼음이 깨지지 않아요! 몸무게는 그대로인데 얼음에 닿는 <b>면적</b>이 넓어졌거든요.`);
     c.finish();
   };
   const go = (kind: "stand" | "flat"): void => {
@@ -115,7 +115,7 @@ export function iceBear(c: OpenerCtx): void {
         tried.stand = true;
         busy = false;
         if (tried.flat) wrap();
-        else c.say("쩍! 발밑 얼음에 <b>금</b>이 갔어요. 얼른 물러나 <b>엎드려</b> 건너 보세요.");
+        else c.say("쩍! 발밑에 힘이 몰려 얼음에 <b>금</b>이 갔어요. 이번엔 <b>엎드려 기어가기</b>를 눌러 보세요.");
       }, 800);
     } else {
       c.later(() => move(M.go), 60);
@@ -127,15 +127,15 @@ export function iceBear(c: OpenerCtx): void {
       }, 1500);
     }
   };
-  const standBtn = btn(c, "stand", "서서 걷기", "네 발로 걸어요", () => go("stand"));
-  const flatBtn = btn(c, "flat", "엎드려 기기", "배를 깔고 기어요", () => go("flat"));
+  const standBtn = btn(c, "stand", "서서 걷기", "네 발로 딛고 걸어요", () => go("stand"));
+  const flatBtn = btn(c, "flat", "엎드려 기어가기", "배를 넓게 깔고 기어요", () => go("flat"));
 
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
   c.ask("북극곰이 얇은 얼음판을 건너야 해요. 어떻게 건너야 얼음이 안 깨질까요?", {
     choices: [RIGHT, "서서 살금살금 걸어요", "힘껏 뛰어서 건너요"],
     neutral: true,
-    good: "예측 완료! 아래 버튼으로 곰을 <b>직접</b> 건너게 해 보세요.",
+    good: "예측 완료! <b>서서 걷기</b>와 <b>엎드려 기어가기</b>를 모두 눌러 확인해 보세요.",
     onDone: (p) => {
       picked = p;
       phase = "play";
@@ -178,7 +178,7 @@ export function bubbleWrap(c: OpenerCtx): void {
         c.step.dataset.opnPhase = "done";
         c.face("smile");
         haptic(HAPTIC.correct);
-        c.say(`${verdict(picked, RIGHT)} 눌리면 줄고, 떼면 돌아와요. 속에 갇힌 <b>공기</b>가 손가락을 되밀어요.`);
+        c.say(`${verdict(picked, RIGHT)} 누르면 부피가 줄고 떼면 원래대로 돌아와요! 안에 갇힌 <b>공기</b>가 손가락을 밀어 올렸거든요.`);
         c.finish();
       }
     },
@@ -191,7 +191,7 @@ export function bubbleWrap(c: OpenerCtx): void {
         presses += 2;
         phase = "done";
         c.step.dataset.opnPhase = "done";
-        c.say("눌리면 줄고, 떼면 돌아와요. 속에 갇힌 <b>공기</b>가 손가락을 되밀어요.");
+        c.say(`${verdict(picked, RIGHT)} 누르면 부피가 줄고 떼면 원래대로 돌아와요! 안에 갇힌 <b>공기</b>가 손가락을 밀어 올렸거든요.`);
         c.finish();
       }, 600);
     },

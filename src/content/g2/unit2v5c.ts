@@ -16,7 +16,7 @@ const cycleLab = lab("g2u2CycleLab");
 export const L4: Step[] = lessonSteps(
   [
     opener({ title: "무엇이 먼저 가라앉을까요?", scene: "g2u2-jar", wait: "먼저 예측하고 병을 가만히 두어 보세요", cta: "퇴적물 쌓아 보기" }),
-    sedLab({ title: "줄무늬가 있는 암석을 만들려면?", cta: "이름 붙이기" }),
+    sedLab({ title: "층층이 줄무늬가 있는 암석을 만들려면?", cta: "퇴적암과 층리 정리하기" }),
     words({
       title: "퇴적암,<br>퇴적물이 굳은 암석",
       lead: "퇴적물을 차례로 쌓고 다져서 줄무늬가 있는 암석을 만들었죠? 이 암석과 특징을 알아봐요.",
@@ -104,8 +104,8 @@ export const L4: Step[] = lessonSteps(
 export const L5: Step[] = lessonSteps(
   [
     opener({ title: "눈을 세게 누르면 어떻게 될까요?", scene: "g2u2-snow", wait: "먼저 예측하고 눈을 눌러 보세요", cta: "암석 눌러 보기" }),
-    pressLab({ title: "누르는 방향을 바꾸면 줄무늬는?", cta: "다음, 암석 바꿔 보기" }),
-    metaLab({ title: "열과 압력을 받으면 어떤 암석이 될까요?", cta: "이름 붙이기" }),
+    pressLab({ title: "누르는 방향에 따라 줄무늬는 어떻게 생길까요?", cta: "여러 암석 변성시켜 보기" }),
+    metaLab({ title: "열과 압력을 받으면 어떤 암석이 될까요?", cta: "변성암과 엽리 정리하기" }),
     words({
       title: "변성암,<br>열과 압력이 바꾼 암석",
       lead: "암석을 여러 방향에서 누르고 땅속 깊은 곳에 넣어 봤죠? 이렇게 변한 암석을 알아봐요.",
@@ -199,8 +199,8 @@ export const L5: Step[] = lessonSteps(
 export const L6: Step[] = lessonSteps(
   [
     opener({ title: "강가의 자갈은 어디에서 왔을까요?", scene: "g2u2-pebble", wait: "먼저 예측하고 강을 거슬러 올라가 보세요", cta: "암석 분류하러 가기" }),
-    rockIdLab({ title: "이 암석은 어떻게 만들어졌을까요?", cta: "다음, 암석이 변하는 길" }),
-    cycleLab({ title: "암석은 어떤 길로 다른 암석이 될까요?", cta: "이름 붙이기" }),
+    rockIdLab({ title: "여섯 가지 암석 표본을 어떻게 분류할까요?", cta: "암석의 순환 과정 탐구하기" }),
+    cycleLab({ title: "암석은 어떤 과정을 거쳐 다른 암석이 될까요?", cta: "암석의 순환 정리하기" }),
     words({
       title: "암석의 순환,<br>끊임없이 변하는 암석",
       lead: "표본 여섯 개를 세 갈래로 나누고 암석이 변하는 길을 찾아봤죠? 이 과정을 정리해 볼게요.",

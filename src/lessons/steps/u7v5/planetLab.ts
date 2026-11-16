@@ -31,9 +31,10 @@ const PLANETS: { name: string; img: string }[] = [
 ];
 type MetricKey = "radius" | "mass" | "moons";
 const METRICS: Record<MetricKey, { name: string; unit: string; cap: string; v: number[]; show: string[] }> = {
-  radius: { name: "반지름", unit: "지구 = 1", cap: "반지름(지구를 1로)", v: [0.38, 0.95, 1, 0.53, 11.2, 9.4, 4.0, 3.9], show: ["0.4", "0.9", "1", "0.5", "11.2", "9.4", "4.0", "3.9"] },
-  mass: { name: "질량", unit: "지구 = 1", cap: "질량(지구를 1로, 물결선은 눈금 생략)", v: [0.06, 0.82, 1, 0.11, 318, 95, 15, 17], show: ["0.06", "0.8", "1", "0.1", "318", "95", "15", "17"] },
-  moons: { name: "위성 수", unit: "2023년", cap: "위성 수(2023년에 알려진 수)", v: [0, 0, 1, 2, 95, 146, 27, 14], show: ["0", "0", "1", "2", "95", "146", "27", "14"] },
+  radius: { name: "반지름", unit: "지구 = 1", cap: "적도 반지름 (지구 = 1)", v: [0.38, 0.95, 1, 0.53, 11.2, 9.4, 4.0, 3.9], show: ["0.4", "0.9", "1", "0.5", "11.2", "9.4", "4.0", "3.9"] },
+  mass: { name: "질량", unit: "지구 = 1", cap: "상대적 질량 (지구 = 1, 물결선은 눈금 생략)", v: [0.06, 0.82, 1, 0.11, 318, 95, 15, 17], show: ["0.06", "0.8", "1", "0.1", "318", "95", "15", "17"] },
+  // 값은 2023년까지 알려진 위성 수다(해마다 늘어난다). 그래서 알약에 "지금까지"가 아니라 2023년을 적는다.
+  moons: { name: "위성 수", unit: "발견된 수", cap: "위성 수 (2023년까지 발견된 개수)", v: [0, 0, 1, 2, 95, 146, 27, 14], show: ["0", "0", "1", "2", "95", "146", "27", "14"] },
 };
 const ORDER: MetricKey[] = ["radius", "mass", "moons"];
 const RIGHT = 4; // 화성과 목성 사이
@@ -194,13 +195,13 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
     min: 1,
     max: 7,
     value: cut,
-    label: "가르는 선을 옮겨 보세요",
+    label: "경계선 위치를 옮겨 보세요",
     onInput: (v) => {
       cut = v;
       draw();
     },
   });
-  const cutBtn = bvBtn("main", "여기서 둘로 나누기");
+  const cutBtn = bvBtn("main", "이 위치에서 두 무리로 나누기");
 
   function paintCards(): void {
     cards.forEach((c, i) => {
@@ -221,7 +222,7 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
       host.dataset.u7Seen = String(viewed.size);
       if (phase === "view") {
         if (viewed.size === ORDER.length) toSplit();
-        else if (first) f.say(`${METRICS[metric].name} 그래프예요. 막대가 유난히 <b>높은 행성</b>은 어디인가요? 남은 그래프도 눌러요.`);
+        else if (first) f.say(`여덟 행성의 <b>${METRICS[metric].name}</b> 그래프예요. 막대 높이가 크게 달라지는 곳을 살펴보고 남은 카드도 눌러 보세요.`);
       }
     }),
   );
@@ -230,9 +231,10 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
     phase = "split";
     host.dataset.u7Phase = phase;
     f.pips(2);
-    f.say("여덟 행성을 <b>두 무리</b>로 나눠요. 노란 선을 옮겨 가를 자리를 정해 보세요.");
+    // "아래": 이 랩에서 '막대'는 그래프의 막대이기도 해서, 조작 칸의 막대(가르는 선을 옮기는 막대)를 가리킨다고 밝힌다
+    f.say("세 그래프 모두 비슷한 곳에서 값의 차이가 커져요. 아래 막대를 밀어 <b>두 무리로 나눌 경계선</b>을 맞춰 보세요.");
     f.slot.setControls(cardRow, range.el, cutBtn);
-    api.setCTA("두 무리로 나눠 보세요", { enabled: false });
+    api.setCTA("경계선을 맞춰 두 무리로 나눠 보세요", { enabled: false });
     draw();
   }
 
@@ -245,7 +247,8 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
       f.stage.classList.add("u7x-shake");
       // 선의 양옆 두 행성(조사까지 적어 둔다)
       const pair = ["", "수성과 금성은", "금성과 지구는", "지구와 화성은", "", "목성과 토성은", "토성과 천왕성은", "천왕성과 해왕성은"][cut];
-      f.say(`${pair} 한 무리로 보여요. 막대 높이가 <b>크게 뛰는 자리</b>를 찾아보세요.`);
+      // "값의 차이가 작아"는 토성과 천왕성(위성 수 146과 27) 같은 짝에서 그래프와 어긋나 "둘 다 값이 작아(커서)"로 쓴다
+      f.say(`${pair} 둘 다 값이 ${cut < RIGHT ? "작아" : "커서"} 같은 무리로 묶는 것이 자연스러워요. 막대 높이가 <b>크게 달라지는 경계</b>를 찾아보세요.`);
       return;
     }
     haptic(HAPTIC.correct);
@@ -255,7 +258,7 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
     cutBtn.disabled = true;
     range.input.disabled = true;
     draw();
-    f.say("화성과 목성 사이에서 막대 높이가 크게 뛰어요. 왼쪽 넷과 오른쪽 넷으로 나뉘었어요.");
+    f.say("맞아요! 화성과 목성 사이에서 막대 높이가 크게 달라져, 왼쪽 네 행성과 오른쪽 네 행성으로 뚜렷하게 나뉘어요.");
     tm.later(ask, 1500);
   });
 
@@ -264,12 +267,12 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
     board = true; // 무대를 세 그래프 비교판으로(근거가 한 화면에)
     draw();
     f.pips(3);
-    f.say("세 그래프에서 본 것을 떠올리며 답해 보세요.");
+    f.say("화면의 세 그래프를 한눈에 비교하며 질문에 답해 보세요.");
     f.slot.ask(
-      "오른쪽 네 행성(목성부터 해왕성)의 <b>공통점</b>은?",
-      [{ t: "크고 무겁고 위성이 많아요", ok: true }, { t: "작고 가볍고 위성이 적어요" }, { t: "크지만 위성은 거의 없어요" }],
+      "오른쪽 무리 네 행성(목성, 토성, 천왕성, 해왕성)의 <b>공통적인 특징</b>은 무엇일까요?",
+      [{ t: "반지름과 질량이 크고 위성이 많아요", ok: true }, { t: "반지름과 질량이 작고 위성이 적어요" }, { t: "크기는 크지만 위성이 거의 없어요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "세 그래프 모두 오른쪽 넷의 막대가 훨씬 높았어요.", onNext: conclude },
+      { why: "반지름, 질량, 위성 수 그래프 모두 오른쪽 네 행성의 값이 훨씬 커요.", onNext: conclude },
     );
   }
 
@@ -278,15 +281,15 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
     host.dataset.u7Phase = phase;
     draw(); // 비교판에 두 무리의 이름
     f.pips(4);
-    f.say("두 무리에는 이름이 있어요. 이어서 이름과 특징을 정리해요.");
-    f.slot.conclude("작고 가볍고 위성이 적은 수성, 금성, 지구, 화성은 <b>지구형 행성</b>, 크고 무겁고 위성이 많은 목성, 토성, 천왕성, 해왕성은 <b>목성형 행성</b>이에요.");
+    f.say("그래프에서 나눈 두 무리를 각각 <b>지구형 행성</b>과 <b>목성형 행성</b>이라고 불러요!");
+    f.slot.conclude("반지름과 질량이 작고 위성이 적은 수성·금성·지구·화성은 <b>지구형 행성</b>, 반지름과 질량이 크고 위성이 많은 목성·토성·천왕성·해왕성은 <b>목성형 행성</b>으로 분류해요.");
     api.enableCTA(doneCta);
   }
 
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "그래프 셋을 하나씩 눌러 보세요" }), cardRow);
-  f.say("여덟 행성의 반지름이에요. 막대가 유난히 <b>높은 행성</b>은 어디인가요? 남은 그래프도 눌러요.");
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "세 가지 기준 카드를 차례로 눌러 비교해 보세요" }), cardRow);
+  f.say("여덟 행성의 <b>반지름</b> 그래프예요. 어느 행성부터 막대가 훌쩍 높아지나요? 다른 카드도 눌러 보세요.");
   f.pips(1);
-  api.setCTA("세 그래프를 모두 봐요", { enabled: false });
+  api.setCTA("세 가지 그래프를 모두 확인해 보세요", { enabled: false });
   paintCards();
   draw();
 

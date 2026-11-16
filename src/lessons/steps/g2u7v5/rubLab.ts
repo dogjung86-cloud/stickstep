@@ -23,7 +23,7 @@ const MAX_MOVE = 4;
 
 export const rubLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 4, api });
+  const f = xFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
 
@@ -41,8 +41,8 @@ export const rubLab: StepRenderer = (host, step, api) => {
   let tried = false; // 원자핵을 당겨 봤다
 
   const rub = bvBtn("main", "털가죽으로 문지르기");
-  const pull = bvBtn("", "원자핵 당겨 보기");
-  const sep = bvBtn("", "떼어 놓고 살펴보기");
+  const pull = bvBtn("", "원자핵 옮겨 보기");
+  const sep = bvBtn("", "떼어 놓고 전하 세어 보기");
   f.slot.setControls(rub, xRow(pull, sep));
   const paint = (): void => {
     rub.disabled = busy || apart || moved >= MAX_MOVE;
@@ -78,7 +78,7 @@ export const rubLab: StepRenderer = (host, step, api) => {
       togetherTo = 0;
       busy = false;
       paint();
-      f.say(moved >= MAX_MOVE ? `전자가 <b>${moved}개</b> 건너갔어요. 이제 떼어 놓고 두 물체의 (+)와 (−) 개수를 비교해 보세요.` : `전자가 모두 <b>${moved}개</b> 건너갔어요. 더 문지르거나, 떼어 놓고 살펴보세요.`);
+      f.say(moved >= MAX_MOVE ? `전자가 <b>${moved}개</b> 옮겨 갔어요. 이제 두 물체를 떼어 놓고 (+)와 (−) 개수를 비교해 보세요.` : `지금까지 전자가 <b>${moved}개</b> 옮겨 갔어요. 한 번 더 문지르거나, 떼어 놓고 전하를 비교해 보세요.`);
     }, 1100);
   });
   pull.addEventListener("click", () => {
@@ -86,42 +86,42 @@ export const rubLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.wrong);
     tried = true;
     shake = 1;
-    f.say("원자핵은 <b>옮겨 가지 않아요</b>. 원자의 중심에 자리 잡고 있어서 문질러도 제자리예요.");
+    f.say("원자핵은 <b>움직이지 않아요</b>. 원자 중심에 단단히 자리 잡고 있어서 마찰해도 제자리에 머물러요.");
   });
   sep.addEventListener("click", () => {
     if (busy || apart) return;
     haptic(HAPTIC.tap);
     if (moved === 0) {
-      f.say("문지르지 않아서 두 물체 모두 (+)와 (−)가 <b>6개씩 그대로</b>예요. 먼저 문질러 보세요.");
+      f.say("아직 문지르지 않아서 두 물체 모두 (+)와 (−)가 <b>6개씩 같아</b> 전기를 띠지 않아요. 먼저 털가죽으로 문질러 보세요.");
       return;
     }
     apart = true;
     paint();
-    f.say(`털가죽은 전자가 <b>${count(0)}개</b>, 빨대는 <b>${count(1)}개</b>예요. 원자핵은 둘 다 6개 그대로고요.`);
+    f.say(`털가죽에는 전자가 <b>${count(0)}개</b> 남고, 빨대에는 전자가 <b>${count(1)}개</b>가 되었어요. 원자핵(+)은 둘 다 6개 그대로예요.`);
     tm.later(ask1, 2200);
   });
 
   function ask1(): void {
     f.slot.ask(
-      "문지르는 동안 한 물체에서 다른 물체로 옮겨 간 것은?",
-      [{ t: "전자" }, { t: "원자핵" }, { t: "전자와 원자핵 모두" }].map((c, i) => ({ ...c, ok: i === 0 })),
+      "두 물체를 문지르는 동안 한쪽에서 다른 쪽으로 이동한 입자는 무엇인가요?",
+      [{ t: "전자(−)" }, { t: "원자핵(+)" }, { t: "전자와 원자핵 모두" }].map((c, i) => ({ ...c, ok: i === 0 })),
       (ok) => api.recordQuiz(ok),
-      { why: tried ? "원자핵은 당겨도 제자리였고, <b>전자</b>만 건너갔어요." : "(+)는 6개 그대로였고 <b>전자</b>의 수만 달라졌어요.", onNext: ask2 },
+      { why: tried ? "원자핵은 옮겨 보려 해도 제자리였고, 가벼운 <b>전자(−)</b>만 이동했어요." : "원자핵(+)은 6개 그대로였고 <b>전자(−)</b>의 개수만 달라졌어요.", onNext: ask2 },
     );
   }
   function ask2(): void {
     f.pips(3);
     f.slot.ask(
-      "전자를 잃은 털가죽은 어떤 전기를 띠나요?",
+      "전자를 잃은 털가죽은 어떤 전기를 띠게 되나요?",
       [{ t: "(+)전기", ok: true }, { t: "(−)전기" }, { t: "전기를 띠지 않아요" }],
       () => undefined,
-      { why: `털가죽은 (+) 6개에 (−) ${count(0)}개라 <b>(+)가 더 많아요</b>.`, onNext: finish },
+      { why: `털가죽은 원자핵(+) 6개에 전자(−)가 ${count(0)}개뿐이라 <b>(+)전하가 더 많아졌어요</b>.`, onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("서로 다른 물체를 문지르면 <b>전자</b>가 한쪽에서 다른 쪽으로 옮겨 가요. 전자를 잃은 물체는 <b>(+)전기</b>, 얻은 물체는 <b>(−)전기</b>를 띠어요.");
+    f.say("마찰할 때 전자가 이동하면서 두 물체가 서로 다른 전기를 띤다는 것을 알아냈어요!");
+    f.slot.conclude("서로 다른 두 물체를 마찰하면 한쪽에서 다른 쪽으로 <b>전자(−)</b>가 이동해요. 전자를 잃은 물체는 <b>(+)전기</b>, 전자를 얻은 물체는 <b>(−)전기</b>를 띠어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -169,8 +169,8 @@ export const rubLab: StepRenderer = (host, step, api) => {
   });
 
   paint();
-  f.say("털가죽과 빨대를 크게 들여다봤어요. 붉은 알갱이는 <b>원자핵</b>(+), 파란 알갱이는 <b>전자</b>(−)예요. 문질러 보세요.");
-  api.setCTA("문지르고 떼어 놓아 보세요", { enabled: false });
+  f.say("털가죽과 빨대 내부를 확대한 모습이에요. 붉은 입자는 <b>원자핵(+)</b>, 파란 입자는 <b>전자(−)</b>예요. 두 물체를 문질러 보세요.");
+  api.setCTA("문지른 뒤 떼어 놓아 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

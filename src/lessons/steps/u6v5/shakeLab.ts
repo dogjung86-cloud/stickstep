@@ -57,7 +57,7 @@ export const shakeLab: StepRenderer = (host, step, api) => {
       lv = v;
       if (v > 0 && !shaken) {
         shaken = true;
-        frame.say("쇠구슬이 손바닥에 부딪힐 때마다 톡톡 밀어요. <b>20개</b>를 넣고 <b>세게</b>도 흔들어 보세요.");
+        frame.say("쇠구슬이 손바닥에 부딪히며 밖으로 밀어내요! <b>쇠구슬 20개</b>를 고르고 <b>세게</b> 흔들어 보세요.");
       }
       sync();
     },
@@ -99,7 +99,7 @@ export const shakeLab: StepRenderer = (host, step, api) => {
     blow.disabled = gn >= 38;
     if (blown === 1) {
       api.setCTA("입자가 미는 쪽을 살펴보세요", { enabled: false });
-      frame.say("입자가 늘자 풍선이 <b>사방으로</b> 커졌어요. 벽마다 적힌 수는 부딪힌 횟수예요.");
+      frame.say("입자 수가 늘자 충돌이 잦아져 풍선이 <b>사방으로</b> 부풀었어요! 위·아래·옆의 충돌 횟수를 보세요.");
       tm.later(askSides, 2200);
     }
   });
@@ -144,12 +144,12 @@ export const shakeLab: StepRenderer = (host, step, api) => {
       "손바닥이 받는 힘이 <b>가장 컸을</b> 때는 언제인가요?",
       [{ t: "쇠구슬이 많고 세게 흔들 때", ok: true }, { t: "쇠구슬이 적고 살살 흔들 때" }, { t: "쇠구슬을 가만히 둘 때" }],
       (ok) => lab.grade(ok),
-      { why: "많이, 빠르게 부딪힐수록 손바닥을 세게 밀어요.", onNext: toGas },
+      { why: "쇠구슬이 <b>더 자주, 더 세게 충돌</b>할수록 손바닥이 받는 힘이 커져요.", onNext: toGas },
     );
   };
 
   lab.phase("beads");
-  frame.say("쇠구슬을 넣은 페트병의 입구를 <b>손바닥</b>으로 막았어요. 막대를 밀어 흔들어 보세요.");
+  frame.say("페트병 입구를 <b>손바닥</b>으로 막았어요. 아래 <b>흔드는 세기</b>를 조절해 페트병을 흔들어 보세요.");
   sync();
 
   const palmHits: { y: number; age: number }[] = [];

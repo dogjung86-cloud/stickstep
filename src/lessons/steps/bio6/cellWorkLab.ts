@@ -1,11 +1,11 @@
-// [중1 Ⅱ v5] u2l2 cellWorkLab: 「세포의 구조, 멈추면 어떻게 될까?」(동물) · 「식물세포의 두 구조, 멈추면?」(식물)
+// [중1 Ⅱ v5] u2l2 cellWorkLab: 「세포 속 구조가 멈추면 어떻게 될까?」(동물) · 「식물세포에만 있는 두 구조가 멈추면?」(식물)
 // 한 통찰: 세포의 구조마다 맡은 일이 있어서, 한 구조가 멈추면 그 일이 멈춘다(구조와 기능의 관계).
 // 무대: 살아 움직이는 세포 하나. 결과가 옆의 목록이 아니라 세포 안에서 보인다.
 //   동물: 양분 알갱이가 세포막을 지나 들어온다 → 마이토콘드리아가 에너지 불꽃을 낸다. 핵에서는 조절의 고리가 퍼진다.
 //   식물: 햇빛을 받은 엽록체에서 양분이 나온다 → 마이토콘드리아가 에너지를 낸다. 세포벽이 육각형 모양을 잡고 있다.
 // 조작: 조작 칸의 구조 카드(또는 그림 속 구조)를 누르면 그 구조만 멈춘다. 다시 누르면 일한다. 한 번에 하나만 멈춘다.
 //   세포막이나 엽록체가 멈추면 양분이 끊기고, 조금 뒤 에너지도 꺼진다(양분이 있어야 에너지를 만든다).
-// 다 해 보면 "고장 난 곳 찾아보기"(판정 두 번: 무대의 증상만 보고 멈춘 구조를 고른다. 이때는 멈춘 구조를 회색으로
+// 다 해 보면 "고장 난 구조 찾아보기"(판정 두 번: 무대의 증상만 보고 멈춘 구조를 고른다. 이때는 멈춘 구조를 회색으로
 // 칠하지 않는다. 첫 판정만 채점한다).
 //
 // 무대는 둘이고 진행은 이 파일 하나다(2026-11-11 사용자 판정: "입체 느낌이 좋다. 다만 손으로 돌려 가며 살펴보는 기능은
@@ -34,14 +34,17 @@ type Key = CellKey;
 
 const NAME: Record<Key, string> = { mem: "세포막", nuc: "핵", mito: "마이토콘드리아", chl: "엽록체", wall: "세포벽" };
 /** 해 본 뒤 카드에 남는 말: 그 구조가 맡은 일. */
-const JOB: Record<Key, string> = { mem: "물질 출입 조절", nuc: "생명활동 조절", mito: "에너지 만들기", chl: "양분 만들기", wall: "모양 지키기" };
+const JOB: Record<Key, string> = { mem: "물질 출입 조절", nuc: "생명활동 조절", mito: "에너지 생산", chl: "양분 합성(광합성)", wall: "모양 유지·보호" };
+/** 일하는 구조 카드의 보조 글(처음, 다시 일할 때). */
+const WORKING = "정상 작동 중";
 const SAY: Record<Key, string> = {
-  mem: "세포막을 멈추니 <b>양분</b>이 들어오지 못해요. 양분이 없으니 에너지도 꺼져요.",
-  nuc: "핵을 멈추니 생명활동이 <b>조절</b>되지 않아 움직임이 뒤죽박죽이에요.",
-  mito: "마이토콘드리아를 멈추니 <b>에너지</b>를 만들지 못해 움직임이 멎었어요.",
-  chl: "엽록체를 멈추니 햇빛이 비쳐도 <b>양분</b>이 생기지 않아요. 에너지도 꺼져요.",
-  // 그림과 같은 말로 쓴다: 벽이 멈추면 세포가 각진 모양을 잃고 둥글어진다(처음 글 "축 처졌어요"는 그림과 어긋나게 읽혔다. 2026-11-11 눈검수)
-  wall: "세포벽을 멈추니 세포가 각진 <b>모양</b>을 지키지 못하고 둥글어졌어요.",
+  mem: "세포막이 멈추니 밖에서 <b>양분</b>이 들어오지 못해요. 양분이 없으니 에너지도 만들어지지 않아요.",
+  nuc: "핵이 멈추니 세포의 생명활동이 <b>조절</b>되지 않아 움직임이 뒤죽박죽이 됐어요.",
+  mito: "마이토콘드리아가 멈추니 생명활동에 필요한 <b>에너지</b>를 만들지 못해 움직임이 멈췄어요.",
+  chl: "엽록체가 멈추니 햇빛이 비쳐도 스스로 <b>양분</b>을 만들지 못해요.",
+  // 그림과 같은 말로 쓴다: 벽이 멈추면 세포가 각진 모양을 잃고 둥글어진다(처음 글 "축 처졌어요"는 그림과 어긋나게 읽혔다. 2026-11-11 눈검수).
+  // 2026-11-16 글 다듬기: 수정안의 "흐물흐물해졌어요"도 같은 까닭으로 쓰지 않고 "둥글어졌어요"를 지켰다.
+  wall: "세포벽이 멈추니 식물세포가 단단하고 각진 <b>모양</b>을 유지하지 못하고 둥글어졌어요.",
 };
 
 export const cellWorkLab: StepRenderer = (host, step, api) => {
@@ -90,9 +93,9 @@ export const cellWorkLab: StepRenderer = (host, step, api) => {
 
   const cards = {} as Record<Key, BvCard>;
   keys.forEach((k) => {
-    cards[k] = bvCard(`cwk-card${plant ? "" : " col"}`, { name: NAME[k], sub: "일하는 중", icon: BV_PART[k], key: k });
+    cards[k] = bvCard(`cwk-card${plant ? "" : " col"}`, { name: NAME[k], sub: WORKING, icon: BV_PART[k], key: k });
   });
-  const diagBtn = bvBtn("main cwk-diag", "고장 난 곳 찾아보기");
+  const diagBtn = bvBtn("main cwk-diag", "고장 난 구조 찾아보기");
   diagBtn.hidden = true;
 
   /** 한 구조만 멈춘다(null이면 모두 일한다). mark가 false면 카드 표시는 건드리지 않는다(판정 국면). */
@@ -113,7 +116,7 @@ export const cellWorkLab: StepRenderer = (host, step, api) => {
     push();
     keys.forEach((x) => {
       const stopped = mark && x === k;
-      cards[x].sub(stopped ? "멈춤" : cards[x].isDone() ? JOB[x] : "일하는 중");
+      cards[x].sub(stopped ? "멈춤" : cards[x].isDone() ? JOB[x] : WORKING);
       cards[x].el.classList.toggle("stopped", stopped);
       cards[x].el.setAttribute("aria-pressed", stopped ? "true" : "false");
     });
@@ -126,7 +129,7 @@ export const cellWorkLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     if (off === k) {
       setOff(null);
-      f.say(allTried() ? "다시 모두 일해요. 이제 <b>고장 난 곳</b>을 찾아볼 차례예요." : "다시 일해요. 다른 구조도 <b>멈춰</b> 보세요.");
+      f.say(allTried() ? "모든 구조가 다시 정상으로 일하고 있어요! 이제 아래 버튼을 눌러 <b>고장 난 구조</b>를 찾아볼까요?" : "다시 정상으로 일하고 있어요. 아직 눌러 보지 않은 다른 구조도 <b>멈춰</b> 보세요.");
       return;
     }
     setOff(k);
@@ -138,7 +141,7 @@ export const cellWorkLab: StepRenderer = (host, step, api) => {
         // 마지막 구조의 결과를 볼 시간을 준 뒤 버튼을 띄운다(누르는 것은 학생이다)
         tm.later(() => {
           diagBtn.hidden = false;
-          api.setCTA("'고장 난 곳 찾아보기'를 눌러요", { enabled: false });
+          api.setCTA("'고장 난 구조 찾아보기' 버튼을 눌러 보세요", { enabled: false });
         }, 1500);
       }
     }
@@ -146,7 +149,7 @@ export const cellWorkLab: StepRenderer = (host, step, api) => {
 
   keys.forEach((k) => cards[k].el.addEventListener("click", () => toggle(k)));
 
-  // ── 고장 난 곳 찾기(판정) ─────────────────────────────────────────
+  // ── 고장 난 구조 찾기(판정) ───────────────────────────────────────
   diagBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     phase = "diag";
@@ -158,37 +161,38 @@ export const cellWorkLab: StepRenderer = (host, step, api) => {
 
   function askAnimal1(): void {
     setOff("mito", false);
-    f.say("어딘가 고장 난 세포예요. 세포를 잘 살펴보고 <b>멈춘 구조</b>를 골라요.");
-    f.slot.ask("양분은 들어오는데 에너지가 생기지 않아요. 멈춘 구조는?", namesOf("mito", ["mem", "nuc"]), (ok) => api.recordQuiz(ok), {
-      why: "양분으로 에너지를 만드는 곳은 <b>마이토콘드리아</b>예요.",
+    f.say("어딘가 고장 난 동물세포예요. 세포 안을 잘 살펴보고 <b>멈춘 구조</b>를 찾아보세요.");
+    f.slot.ask("양분은 세포 안으로 들어오는데 에너지가 만들어지지 않아요. 멈춘 구조는 어디일까요?", namesOf("mito", ["mem", "nuc"]), (ok) => api.recordQuiz(ok), {
+      why: "양분을 분해해 세포에 필요한 에너지를 만드는 곳은 <b>마이토콘드리아</b>예요.",
       onNext: askAnimal2,
     });
   }
   function askAnimal2(): void {
     setOff("mem", false);
-    f.say("이번에는 다른 곳이 고장 났어요. 양분 알갱이를 눈으로 따라가 봐요.");
-    f.slot.ask("양분이 세포 안으로 들어오지 못해요. 멈춘 구조는?", namesOf("mem", ["nuc", "mito"]), () => undefined, {
-      why: "물질이 드나드는 것을 조절하는 곳은 <b>세포막</b>이에요.",
+    // 양분 알갱이는 노란색이다(bio6Kit.BV.nutr). 수정안의 "초록색"은 무대와 달라 색을 바로잡았다(2026-11-16)
+    f.say("이번에는 다른 구조가 고장 났어요. 노란색 양분 알갱이가 어디서 막히는지 따라가 보세요.");
+    f.slot.ask("양분이 세포 안으로 들어오지 못하고 튕겨 나가요. 멈춘 구조는 어디일까요?", namesOf("mem", ["nuc", "mito"]), () => undefined, {
+      why: "세포를 감싸고 있으면서 물질이 드나드는 것을 조절하는 곳은 <b>세포막</b>이에요.",
       onNext: finish,
     });
   }
   function askPlant1(): void {
     setOff("chl", false);
-    f.say("어딘가 고장 난 세포예요. 세포를 잘 살펴보고 <b>멈춘 구조</b>를 골라요.");
-    f.slot.ask("햇빛은 비치는데 양분이 생기지 않아요. 멈춘 구조는?", namesOf("chl", ["wall", "mito"]), (ok) => api.recordQuiz(ok), {
-      why: "빛을 받아 양분을 만드는 곳은 <b>엽록체</b>예요.",
+    f.say("어딘가 고장 난 식물세포예요. 세포 안을 잘 살펴보고 <b>멈춘 구조</b>를 찾아보세요.");
+    f.slot.ask("햇빛은 비치는데 세포 안에서 양분이 만들어지지 않아요. 멈춘 구조는 어디일까요?", namesOf("chl", ["wall", "mito"]), (ok) => api.recordQuiz(ok), {
+      why: "빛에너지를 이용해 스스로 양분을 만드는 곳은 <b>엽록체</b>예요.",
       onNext: askPlant2,
     });
   }
   function askPlant2(): void {
     hideTags = true; // 그림의 이름표 둘("엽록체", "세포벽")이 그대로 답이라 가린다(2026-11-11 눈검수)
     setOff(null, false);
-    f.say("다시 모두 일해요. 마지막으로 앞에서 본 동물세포와 비교해 봐요.");
+    f.say("모든 구조가 다시 정상으로 일하고 있어요. 마지막으로 앞에서 본 동물세포와 비교해 볼까요?");
     f.slot.ask(
-      "식물세포에는 있고 동물세포에는 없는 구조는?",
+      "식물세포에는 있지만 동물세포에는 없는 구조끼리 바르게 짝지은 것은 무엇인가요?",
       [{ t: "엽록체와 세포벽", ok: true }, { t: "엽록체와 핵" }, { t: "세포벽과 세포막" }],
       () => undefined,
-      { why: "핵과 세포막은 <b>두 세포 모두</b>에 있어요.", onNext: finish },
+      { why: "핵, 세포막, 마이토콘드리아는 <b>동물세포와 식물세포 모두</b>에 있고, 엽록체와 세포벽은 식물세포에만 있어요.", onNext: finish },
     );
   }
 
@@ -197,11 +201,11 @@ export const cellWorkLab: StepRenderer = (host, step, api) => {
     hideTags = false;
     setOff(null, false);
     f.pips(keys.length + 1);
-    f.say(plant ? "식물세포의 두 구조를 다 살펴봤어요. 아래에서 알게 된 것을 읽어 봐요." : "고장 난 곳을 다 찾았어요. 아래에서 알게 된 것을 읽어 봐요.");
+    f.say(plant ? "식물세포에만 있는 엽록체와 세포벽이 어떤 역할을 하는지 모두 확인했어요!" : "세포막, 핵, 마이토콘드리아가 저마다 어떤 역할을 맡고 있는지 모두 확인했어요!");
     f.slot.conclude(
       plant
-        ? "식물세포는 <b>엽록체</b>로 양분을 만들고, <b>세포벽</b>으로 모양을 지켜요. 동물세포에는 이 둘이 없어요."
-        : "세포의 구조마다 <b>맡은 일</b>이 있어요. 한 구조가 멈추면 그 일도 멈춰요.",
+        ? "식물세포는 <b>엽록체</b>에서 빛을 이용해 양분을 만들고, 단단한 <b>세포벽</b>으로 세포 모양을 유지해요. 동물세포에는 이 두 구조가 없어요."
+        : "세포 속 구조마다 <b>고유한 역할</b>이 있어요. 핵은 생명활동을 조절하고, 세포막은 물질 출입을 조절하며, 마이토콘드리아는 에너지를 만들어요.",
     );
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));

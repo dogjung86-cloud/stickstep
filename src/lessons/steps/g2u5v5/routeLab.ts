@@ -24,16 +24,16 @@ const NODE_LEAF = 121; // 잎이 붙은 마디
 const NODE_FLOWER = 80; // 꽃가지가 붙은 마디
 const LEAF: Pt = [96, 124]; // 잎 속 설탕이 출발하는 곳
 const DEST: Record<Dest, { name: string; path: Pt[]; say: string; note: string }> = {
-  shoot: { name: "새순", path: [LEAF, [146, NODE_LEAF], [PHL, NODE_LEAF - 1], [PHL, TOP + 8], [SX, TOP]], say: "설탕이 <b>위쪽</b> 새순에 닿았어요. 새순이 자라는 데 쓰여요.", note: "자라는 데 씀" },
-  flower: { name: "꽃", path: [LEAF, [146, NODE_LEAF], [PHL, NODE_LEAF - 1], [PHL, NODE_FLOWER + 2], [154, NODE_FLOWER], [128, 63], [116, 55]], say: "설탕이 꽃봉오리에 닿았어요. <b>꽃을 피우는 데</b> 쓰여요.", note: "꽃 피우는 데 씀" },
-  root: { name: "뿌리", path: [LEAF, [146, NODE_LEAF], [PHL, NODE_LEAF - 1], [PHL, GROUND + 2], [168, 196], [169, 208]], say: "설탕이 <b>아래쪽</b> 뿌리에 닿았어요. 녹말로 바뀌어 저장돼요.", note: "녹말로 저장" },
+  shoot: { name: "새순", path: [LEAF, [146, NODE_LEAF], [PHL, NODE_LEAF - 1], [PHL, TOP + 8], [SX, TOP]], say: "<b>새순</b>으로 이동한 양분은 새로운 잎과 줄기가 자라는 데 쓰여요.", note: "자라는 데 씀" },
+  flower: { name: "꽃", path: [LEAF, [146, NODE_LEAF], [PHL, NODE_LEAF - 1], [PHL, NODE_FLOWER + 2], [154, NODE_FLOWER], [128, 63], [116, 55]], say: "<b>꽃</b>으로 이동한 양분은 꽃을 피우고 열매를 맺는 데 쓰여요.", note: "꽃 피우는 데 씀" },
+  root: { name: "뿌리", path: [LEAF, [146, NODE_LEAF], [PHL, NODE_LEAF - 1], [PHL, GROUND + 2], [168, 196], [169, 208]], say: "쓰고 남은 양분은 <b>뿌리</b> 등으로 이동해 다시 <b>녹말</b> 등으로 바뀌어 저장돼요.", note: "녹말로 저장" },
 };
 // 잎 속의 녹말(또는 설탕) 자리
 const GRAINS: Pt[] = [[68, 117], [96, 129], [120, 114], [80, 137], [124, 131]];
 
 export const g2u5RouteLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-route", wait: "양분을 보낼 방법을 정해 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 3, cls: "g2u5x-route", wait: "양분의 형태와 이동 통로를 골라 보내 보세요", tall: true });
   const { f, tm } = lab;
   const A = newNs("rt");
   const ly = g5Layers(lab, "잎, 줄기 속의 물관과 체관, 새순과 꽃과 뿌리가 있는 식물", ["defs", "plant", "parts", "load", "notes", "dot"]);
@@ -145,10 +145,10 @@ export const g2u5RouteLab: StepRenderer = (host, step, api) => {
   };
 
   // 1단계: 형태와 통로를 정해 내보낸다
-  const cStarch = chip("starch", "녹말 그대로", "", () => pickForm("starch"));
+  const cStarch = chip("starch", "녹말 상태 그대로", "", () => pickForm("starch"));
   const cSugar = chip("sugar", "설탕으로 바꿔서", "", () => pickForm("sugar"));
-  const cXylem = chip("xylem", "물관으로", "", () => pickTube("xylem"));
-  const cPhloem = chip("phloem", "체관으로", "", () => pickTube("phloem"));
+  const cXylem = chip("xylem", "물관으로 보내기", "", () => pickTube("xylem"));
+  const cPhloem = chip("phloem", "체관으로 보내기", "", () => pickTube("phloem"));
   const pickForm = (v: "starch" | "sugar"): void => {
     if (busy) return;
     tap();
@@ -167,12 +167,12 @@ export const g2u5RouteLab: StepRenderer = (host, step, api) => {
     cPhloem.on(v === "phloem");
     draw();
   };
-  const send = bvBtn("main g2u5x-send", "잎에서 내보내기");
+  const send = bvBtn("main g2u5x-send", "선택한 방법으로 양분 내보내기");
   send.addEventListener("click", () => {
     if (busy) return;
     if (!form || !tube) {
       tap();
-      f.say("보낼 <b>형태</b>와 지나갈 <b>통로</b>를 하나씩 골라요.");
+      f.say("양분을 <b>어떤 형태로 바꿀지</b>와 <b>어느 관으로 보낼지</b>를 하나씩 골라 주세요.");
       return;
     }
     if (form === "starch") {
@@ -180,8 +180,8 @@ export const g2u5RouteLab: StepRenderer = (host, step, api) => {
       lab.slip();
       fail = "starch";
       draw();
-      toast(lab, "녹말이 잎을 떠나지 못해요", true);
-      f.say("녹말은 <b>물에 녹지 않아</b> 관을 따라 흐르지 못해요. 형태를 바꿔요.");
+      toast(lab, "녹말은 물에 녹지 않아 이동할 수 없어요", true);
+      f.say("녹말은 물에 녹지 않아서 관을 따라 흘러갈 수 없어요. 물에 잘 녹는 <b>설탕으로 바꿔서</b> 보내 보세요.");
       return;
     }
     if (tube === "xylem") {
@@ -189,8 +189,8 @@ export const g2u5RouteLab: StepRenderer = (host, step, api) => {
       lab.slip();
       fail = "xylem";
       draw();
-      toast(lab, "물관에는 실리지 않아요", true);
-      f.say("물관은 뿌리의 <b>물이 올라오는</b> 길이에요. 양분은 다른 관으로 가요.");
+      toast(lab, "물관은 뿌리에서 흡수한 물이 올라오는 통로예요", true);
+      f.say("물관은 뿌리에서 흡수한 물이 잎으로 올라오는 통로예요. 양분이 이동하는 통로인 <b>체관</b>을 골라 보세요.");
       return;
     }
     good();
@@ -199,12 +199,12 @@ export const g2u5RouteLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     draw();
     f.slot.setControls(row(...dests.map((c) => c.el)), go);
-    f.say("녹말이 <b>설탕</b>으로 바뀌어 체관에 실렸어요. 어디로 보낼까요?");
+    f.say("잎의 녹말이 물에 잘 녹는 <b>설탕</b>으로 바뀌어 <b>체관</b>으로 들어갔어요! 이제 아래 버튼을 눌러 세 곳으로 양분을 보내 보세요.");
   });
 
   // 2단계: 보낼 곳
   const dests = (Object.keys(DEST) as Dest[]).map((d) =>
-    chip(d, DEST[d].name, "", () => {
+    chip(d, DEST[d].name, "양분 보내기", () => {
       if (busy || got.has(d)) return;
       busy = true;
       tap();
@@ -222,7 +222,9 @@ export const g2u5RouteLab: StepRenderer = (host, step, api) => {
         dot = null;
         busy = false;
         got.add(d);
-        dests.find((c) => c.el.dataset.k === d)?.done();
+        const mine = dests.find((c) => c.el.dataset.k === d);
+        mine?.done();
+        mine?.sub(DEST[d].note);
         good();
         draw();
         f.say(DEST[d].say);
@@ -233,17 +235,18 @@ export const g2u5RouteLab: StepRenderer = (host, step, api) => {
       });
     }),
   );
-  const go = bvBtn("main g2u5x-go", "양분이 간 길 정리하기");
+  const go = bvBtn("main g2u5x-go", "양분이 이동한 과정 정리하기");
   go.disabled = true;
   go.addEventListener("click", () => {
     tap();
-    lab.judge("잎의 양분은 어떤 모습으로 이동했나요?", [{ t: "설탕으로 바뀌어 체관으로", ok: true }, { t: "녹말 그대로 체관으로" }, { t: "설탕으로 바뀌어 물관으로" }], "물에 녹는 <b>설탕</b>이 되어 <b>체관</b>을 따라 갔어요.", () =>
-      lab.finish("잎의 녹말은 <b>설탕</b>으로 바뀌어 <b>체관</b>을 따라 이동해요. 새순과 꽃이 있는 위로도, 뿌리가 있는 아래로도 가서 쓰이거나 저장돼요."),
+    // 보기 셋은 '…을 따라 이동했다'를 '…으로 이동했다'로 줄였다(정답 글이 오답 카드 한 줄 폭 270px을 넘으면 판정 칸 208px을 넘친다)
+    lab.judge("잎에 있던 녹말은 어떤 형태로 바뀌어 어느 통로를 따라 이동했나요?", [{ t: "물에 녹는 설탕으로 바뀌어 체관으로 이동했다", ok: true }, { t: "녹말 상태 그대로 체관으로 이동했다" }, { t: "물에 녹는 설탕으로 바뀌어 물관으로 이동했다" }], "녹말은 물에 녹지 않으므로 물에 잘 녹는 <b>설탕</b>으로 바뀐 뒤, 양분 이동 통로인 <b>체관</b>을 따라 이동해요.", () =>
+      lab.finish("잎에서 광합성으로 만든 양분(녹말)은 주로 밤에 물에 잘 녹는 <b>설탕</b>으로 바뀌어 <b>체관</b>을 따라 식물의 각 부분으로 이동해요. 새순과 꽃이 있는 위로도, 뿌리가 있는 아래로도 가서 쓰이거나 저장돼요."),
     );
   });
 
   f.slot.setControls(row(cStarch.el, cSugar.el), row(cXylem.el, cPhloem.el), send);
   draw();
-  f.say("잎에 <b>녹말</b>이 쌓여 있어요. 어떤 모습으로, 어느 관으로 내보낼까요?");
+  f.say("낮 동안 광합성을 한 잎에 <b>녹말</b>이 쌓여 있어요. 밤에 이 양분을 어떤 형태로 바꾸어 어느 관으로 내보내야 할까요?");
   return lab.cleanup;
 };

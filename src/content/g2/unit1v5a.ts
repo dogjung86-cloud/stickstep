@@ -7,9 +7,9 @@ import { measureLab, note, problems, sizeLab, term, words } from "./unit1v5kit";
 
 // ══ 1. 물질의 특성과 밀도: 두 반지(도입) → 네 조각의 질량과 부피 재기 → 크기를 바꿔 그래프에 찍기 → 용어 → 정리 → 문제 ══
 export const L1: Step[] = [
-  opener({ title: "똑같은 두 반지, 저울은요?", scene: "g2u1-rings", wait: "먼저 반지를 올려 보세요", cta: "실험실 열기" }),
-  measureLab({ title: "같은 물질끼리 짝지을 수 있을까요?", cta: "다음 실험, 크기 바꾸기" }),
-  sizeLab({ title: "조각을 자르면 밀도가 달라질까요?", cta: "이름 붙이기" }),
+  opener({ title: "생김새가 같은 두 반지, 저울은요?", scene: "g2u1-rings", wait: "먼저 두 반지를 저울에 올려 보세요", cta: "실험실 열기" }),
+  measureLab({ title: "같은 물질끼리 짝지을 수 있을까요?", cta: "크기를 바꿔 실험하기" }),
+  sizeLab({ title: "조각의 크기가 달라지면 질량 ÷ 부피는요?", cta: "밀도 개념 정리하기" }),
   words({
     title: "물질의 특성과 밀도",
     lead: "크기가 달라도 같은 금속이면 질량 ÷ 부피 값이 같았죠? 이 성질과 값의 이름을 알아봐요.",

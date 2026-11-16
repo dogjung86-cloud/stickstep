@@ -1,4 +1,4 @@
-// [도입] u2l3 droplens: 「물방울 속 글자, 어떻게 보일까?」
+// [도입] u2l3 droplens: 「물방울 아래 글자는 어떻게 보일까?」
 // 형식: 내기를 걸고(커진다, 작아진다, 흐려진다), 물방울을 손으로 옮겨 글자 위를 지나가며 확인한다.
 //   1 종이에 글자 여섯 자, 왼쪽 여백에 물방울 하나. 처음 화면에서 바로 예측한다.
 //   2 그림을 옆으로 살짝 끌면 물방울이 따라 움직인다(손가락은 물방울 아래에 두어도 된다). 글자를 누르면 그리로 간다.
@@ -55,7 +55,7 @@ export function dropLens(c: OpenerCtx): void {
     phase = "done";
     c.step.dataset.opnPhase = "end";
     c.face("smile");
-    c.say(`${pick === PICKS[0] ? "예측대로 커 보여요!" : "물방울 아래만 커 보여요!"} 볼록한 물방울이 <b>돋보기</b>가 됐어요. 세포도 이렇게 키워 볼까요?`);
+    c.say(`${pick === PICKS[0] ? "예측대로 글자가 훨씬 크게 보여요!" : "물방울 아래에 있는 글자가 크게 보여요!"} 동그랗게 솟은 물방울이 <b>볼록 렌즈(돋보기)</b> 역할을 했기 때문이에요. 이제 현미경으로 세포도 크게 키워 볼까요?`);
     c.finish();
   }
 
@@ -99,10 +99,10 @@ export function dropLens(c: OpenerCtx): void {
 
   c.step.dataset.opnPhase = "ask";
   setX(M.x0);
-  c.ask("글자 위에 <b>물방울</b>을 올리면 글자가 어떻게 보일까요?", {
+  c.ask("작은 글자 위에 동그란 <b>물방울</b>을 떨어뜨리면 글자가 어떻게 보일까요?", {
     choices: PICKS,
     neutral: true,
-    good: "예측 완료! 그림을 옆으로 밀어 <b>물방울</b>을 글자 위로 옮겨 보세요.",
+    good: "예측 완료! 위 그림에서 <b>물방울</b>을 끌어 글자 위로 옮겨 보세요.",
     onDone: (picked) => {
       pick = PICKS.find((p) => p === picked) ?? PICKS[0];
       phase = "play";

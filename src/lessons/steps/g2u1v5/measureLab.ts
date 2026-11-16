@@ -101,7 +101,7 @@ export const g2u1MeasureLab: StepRenderer = (host, step, api) => {
     read.textContent = where === "scale" && sel >= 0 ? `${fx(PIECES[sel].m)} g` : "0.0 g";
   }
 
-  const cards = PIECES.map((p, i) => bvCard("g2u1x-ms-card", { name: `조각 ${p.name}`, sub: "아직 재지 않았어요", key: String(i) }));
+  const cards = PIECES.map((p, i) => bvCard("g2u1x-ms-card", { name: `조각 ${p.name}`, sub: "측정 전", key: String(i) }));
   const bScale = bvBtn("", "저울에 올리기");
   const bCyl = bvBtn("", "눈금실린더에 넣기");
   bScale.dataset.k = "scale";
@@ -118,7 +118,7 @@ export const g2u1MeasureLab: StepRenderer = (host, step, api) => {
 
   const subOf = (i: number): string => {
     const p = PIECES[i];
-    if (!gotM[i] && !gotV[i]) return "아직 재지 않았어요";
+    if (!gotM[i] && !gotV[i]) return "측정 전";
     return `${gotM[i] ? fx(p.m) + " g" : "질량 ?"} · ${gotV[i] ? fx(p.v) + " mL" : "부피 ?"}`;
   };
   function nextTodo(): void {
@@ -159,7 +159,7 @@ export const g2u1MeasureLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     where = "scale";
     gotM[sel] = true;
-    f.say(`조각 ${PIECES[sel].name}의 질량은 <b>${fx(PIECES[sel].m)} g</b>이에요. 표에 적었어요.`);
+    f.say(`조각 ${PIECES[sel].name}의 질량은 <b>${fx(PIECES[sel].m)} g</b>이에요. 카드에 기록했어요.`);
     main();
   });
   bCyl.addEventListener("click", () => {
@@ -169,9 +169,9 @@ export const g2u1MeasureLab: StepRenderer = (host, step, api) => {
     d = 0;
     paint();
     hold.disabled = false;
-    f.say(`물은 <b>${fx(V0)} mL</b>예요. 실을 내려 조각을 <b>완전히 잠기게</b> 한 뒤 눈금을 읽어요.`);
+    f.say(`처음 물의 부피는 <b>${fx(V0)} mL</b>예요. 조각이 <b>완전히 잠기도록</b> 실을 내린 뒤 눈금을 읽어 보세요.`);
     f.slot.setControls(g1Row(hold, bRead));
-    api.setCTA("실을 내리고 눈금을 읽어 보세요", { enabled: false });
+    api.setCTA("실을 끝까지 내리고 눈금을 읽어 보세요", { enabled: false });
     lab.todo(".g2u1x-hold");
   });
   bRead.addEventListener("click", () => {
@@ -185,13 +185,13 @@ export const g2u1MeasureLab: StepRenderer = (host, step, api) => {
     if (level < V0 + p.v - 0.05) {
       haptic(HAPTIC.wrong);
       host.dataset.g2u1Fail = "1";
-      f.say(`조각이 <b>다 잠기지 않았어요</b>. 이대로면 부피가 ${fx(level - V0)} mL로 작게 나와요. 더 내려 보세요.`);
+      f.say(`조각이 <b>다 잠기지 않았어요</b>. 이대로 읽으면 부피가 ${fx(level - V0)} mL로 작게 측정돼요. 실을 더 내려 보세요.`);
       return;
     }
     haptic(HAPTIC.correct);
     gotV[sel] = true;
     hold.disabled = true;
-    f.say(`물이 ${fx(V0)} mL에서 <b>${fx(level)} mL</b>로 늘었어요. 늘어난 <b>${fx(p.v)} mL</b>가 조각의 부피예요.`);
+    f.say(`물의 부피가 ${fx(V0)} mL에서 <b>${fx(level)} mL</b>로 늘어났어요. 늘어난 <b>${fx(p.v)} mL</b>가 조각의 부피예요.`);
     lab.todo();
     tm.later(main, 1500);
   });
@@ -215,7 +215,7 @@ export const g2u1MeasureLab: StepRenderer = (host, step, api) => {
       PIECES.forEach((p, i) => tm.later(() => cards[i].sub(`${fx(p.m)} ÷ ${fx(p.v)} = ${fx(p.m / p.v)}`), 350 * i));
       tm.later(() => {
         f.pips(2);
-        f.say("질량 ÷ 부피 값이 <b>두 가지</b>로 나뉘었어요. 카드의 값을 보고 답해 보세요.");
+        f.say("질량 ÷ 부피 값이 <b>7.9</b>와 <b>2.7</b> 두 가지로 나뉘었어요. 결과를 보고 답해 보세요.");
         // 판정의 근거(네 조각의 계산값)를 무대에 남긴다
         const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         g.innerHTML = `<rect x="156" y="62" width="50" height="86" rx="8" fill="rgba(11,21,36,.82)" stroke="${P.grid}"/>${PIECES.map(
@@ -223,17 +223,17 @@ export const g2u1MeasureLab: StepRenderer = (host, step, api) => {
         ).join("")}`;
         f.stage.querySelector("svg")?.appendChild(g);
         lab.judge(
-          "<b>조각 가</b>와 같은 물질인 조각은?",
-          [{ t: "조각 다 (크기는 가보다 작다)", ok: true }, { t: "조각 나 (크기가 가와 같다)" }, { t: "조각 라 (가장 크다)" }],
-          "가와 다는 질량 ÷ 부피가 <b>7.9</b>로 같아요. 나는 크기가 같아도 2.7이에요.",
-          () => lab.finish("크기가 달라도 같은 물질이면 <b>질량 ÷ 부피</b>가 같아요. 가와 다는 철(7.9), 나와 라는 알루미늄(2.7)이에요."),
+          "<b>조각 가</b>와 같은 물질로 이루어진 조각은 어느 것인가요?",
+          [{ t: "조각 다 (가보다 작은 조각)", ok: true }, { t: "조각 나 (가와 크기가 같은 조각)" }, { t: "조각 라 (가장 큰 조각)" }],
+          "가와 다는 질량 ÷ 부피가 <b>7.9</b>로 같아요. 나는 가와 부피는 같지만 질량 ÷ 부피가 2.7로 달라요.",
+          () => lab.finish("크기가 달라도 같은 물질이면 <b>질량 ÷ 부피</b> 값이 같아요. 가와 다는 철(7.9), 나와 라는 알루미늄(2.7)이에요."),
         );
       }, 350 * 4 + 500);
     });
   }
 
   paint();
-  f.say("색이 비슷한 금속 조각 네 개예요. <b>조각을 골라</b> 질량과 부피를 재어 보세요.");
+  f.say("색이 비슷한 금속 조각 네 개가 있어요. <b>조각을 골라</b> 질량과 부피를 각각 재어 보세요.");
   main();
   return lab.cleanup;
 };

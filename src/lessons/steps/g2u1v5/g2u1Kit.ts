@@ -39,9 +39,10 @@ export interface G1Lab {
   judge: (q: string, choices: { t: string; ok?: boolean }[], why: string, next: () => void) => void;
 }
 
-export function g1Lab(host: HTMLElement, api: StepAPI, s: G1Step, o: { steps: number; cls: string }): G1Lab {
+/** tall: 도움말 가운데 세 줄이 되는 글이 있는 랩. 처음부터 세 줄 상자를 잡아 랩 도중에 무대가 밀리지 않게 한다(bvFrame의 「글 맞춤」). */
+export function g1Lab(host: HTMLElement, api: StepAPI, s: G1Step, o: { steps: number; cls: string; tall?: boolean }): G1Lab {
   host.classList.add("g2u1x-step");
-  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `g2u1x-stage ${o.cls}`, qCls: "g2u1x-q", api });
+  const f = bvFrame(host, { title: s.title, steps: o.steps, cls: `g2u1x-stage ${o.cls}`, qCls: "g2u1x-q", api, tall: o.tall });
   const tm = bvTimers();
   const fns: Array<() => void> = [];
   let done = false;
@@ -98,7 +99,7 @@ export function g1Predict(lab: G1Lab, question: string, choices: string[], next:
     if (b && !picked) picked = b.textContent?.trim() ?? "";
   };
   lab.f.slot.qBox.addEventListener("click", grab, true);
-  lab.api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
+  lab.api.setCTA("먼저 어떻게 될지 예측해 보세요", { enabled: false });
   lab.todo(".bv-choice");
   lab.f.slot.ask(question, choices.map((t) => ({ t })), () => undefined, {
     predict: true,
@@ -209,6 +210,25 @@ export function g1Strip(): { el: HTMLElement; set: (html: string) => void } {
 }
 
 export const fx = (v: number, d = 1): string => v.toFixed(d);
+
+/** 끝소리의 받침 번호(0이면 받침 없음, 8은 ㄹ). 한글은 끝 글자의 받침, 숫자는 읽는 소리(영, 일, 이, 삼, 사, 오, 육, 칠, 팔, 구),
+ *  단위는 읽는 말로 본다: mL와 L은 '리터', ℃는 '도'(받침 없음), g은 '그램'(ㅁ). 태그와 끝의 닫는 괄호는 빼고 본다. */
+function finalOf(word: string): number {
+  const w = word.replace(/<[^>]*>/g, "").trim().replace(/\)+$/, "");
+  if (/(m?L|℃)$/.test(w)) return 0;
+  if (/g$/.test(w)) return 16;
+  const c = w.charCodeAt(w.length - 1);
+  if (c >= 0xac00 && c <= 0xd7a3) return (c - 0xac00) % 28;
+  const d = /(\d)$/.exec(w);
+  return d ? [21, 8, 0, 16, 0, 0, 1, 8, 8, 0][Number(d[1])] : 0;
+}
+/** 받침에 맞는 조사: josa("철", "으로", "로") → "로", josa("2.70", "으로", "로") → "으로", josa("물 100 mL", "은", "는") → "는".
+ *  '(으)로'는 ㄹ 받침 뒤에서 '로'다. */
+export function josa(word: string, withFinal: string, without: string): string {
+  const t = finalOf(word);
+  if (!t || (withFinal === "으로" && t === 8)) return without;
+  return withFinal;
+}
 export const clamp = (v: number, a = 0, b = 1): number => Math.max(a, Math.min(b, v));
 /** 온도 표기(음수는 U+2212). */
 export const deg = (t: number, d = 0): string => `${t < 0 ? "−" : ""}${Math.abs(t).toFixed(d)} ℃`;

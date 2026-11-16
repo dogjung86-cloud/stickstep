@@ -12,7 +12,7 @@
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvRange, bvTimers } from "../bio6/b6Lab";
-import { X, xBox, xCanvas, xFrame, xSegs, xText, type LabStep } from "./kit";
+import { X, xBox, xCanvas, xFrame, xJosa, xSegs, xText, type LabStep } from "./kit";
 
 type Bulb = "inc" | "flu" | "led";
 const BULB: Record<Bulb, { name: string; eff: number }> = {
@@ -158,7 +158,7 @@ function drawHaze(ctx: CanvasRenderingContext2D, x: number, y: number, a: number
 
 export const effLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = xFrame(host, { title: s.title, steps: 4, api });
+  const f = xFrame(host, { title: s.title, steps: 4, api, tall: true });
   const st = xCanvas(f.stage);
   const tm = bvTimers();
 
@@ -178,7 +178,7 @@ export const effLab: StepRenderer = (host, step, api) => {
       bulb = k;
       supply = 0;
       amount.set(0);
-      f.say(`<b>${BULB[k].name}</b>예요. 빛에너지가 딱 <b>${GOAL} J</b>이 되게 전기 에너지를 맞춰 보세요.`);
+      f.say(`<b>${BULB[k].name}</b>${xJosa(BULB[k].name, "을", "를")} 골랐어요. 전환되는 빛에너지가 정확히 <b>${GOAL} J</b>이 되도록 공급하는 전기 에너지를 조절해 보세요.`);
     },
   );
   const amount = bvRange({
@@ -186,13 +186,13 @@ export const effLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: 50,
     value: 0,
-    label: "넣어 주는 전기 에너지",
+    label: "공급하는 전기 에너지 (J)",
     ticks: ["0", "100", "200", "300", "400", "500 J"],
     onInput: (v) => {
       supply = v * 10;
     },
   });
-  const ok = bvBtn("main", "이만큼 넣고 기록하기");
+  const ok = bvBtn("main", "맞춘 값 기록하기");
   f.slot.setControls(pick.el, amount.el, ok);
 
   ok.addEventListener("click", () => {
@@ -201,7 +201,7 @@ export const effLab: StepRenderer = (host, step, api) => {
     const light = supply * b.eff;
     if (Math.abs(light - GOAL) > 0.01) {
       haptic(HAPTIC.wrong);
-      f.say(light < GOAL ? `빛에너지가 ${light.toFixed(1)} J이라 <b>목표보다 어두워요</b>. 전기 에너지를 더 넣어 보세요.` : `빛에너지가 ${light.toFixed(1)} J이라 <b>목표를 지나쳤어요</b>. 전기 에너지를 줄여 보세요.`);
+      f.say(light < GOAL ? `빛에너지가 ${light.toFixed(1)} J이라 <b>목표(${GOAL} J)보다 부족해요</b>. 전기 에너지를 더 늘려 보세요.` : `빛에너지가 ${light.toFixed(1)} J이라 <b>목표(${GOAL} J)를 넘었어요</b>. 전기 에너지를 조금 줄여 보세요.`);
       return;
     }
     haptic(HAPTIC.correct);
@@ -213,23 +213,23 @@ export const effLab: StepRenderer = (host, step, api) => {
       pick.lock(true);
       amount.input.disabled = true;
       ok.disabled = true;
-      f.say("같은 밝기를 내는 데 백열전구는 <b>400 J</b>, LED 전구는 <b>50 J</b>이 들었어요.");
+      f.say("세 전구 모두 빛에너지 20 J을 내는 데 백열전구는 <b>400 J</b>, 형광등은 <b>100 J</b>, LED 전구는 <b>50 J</b>의 전기 에너지가 쓰였어요!");
       tm.later(ask, 2800);
-    } else f.say(`<b>${supply} J</b>을 넣어야 빛 ${GOAL} J이 나와요. 나머지 ${supply - GOAL} J은 열이 됐어요. 다른 전구도 해 봐요.`);
+    } else f.say(`전기 에너지 <b>${supply} J</b>을 공급해야 빛에너지 ${GOAL} J을 얻을 수 있어요. 나머지 ${supply - GOAL} J은 모두 열에너지로 바뀌었어요. 다른 전구도 맞춰 보세요.`);
   });
 
   function ask(): void {
     f.slot.ask(
-      "LED 전구에 넣은 50 J 가운데 빛이 된 것은 20 J이에요. 나머지 30 J은?",
-      [{ t: "열에너지로 바뀌었어요", ok: true }, { t: "사라져 없어졌어요" }, { t: "전구 속에 남아 있어요" }],
+      "LED 전구에 공급한 전기 에너지 50 J 중 20 J이 빛에너지로 바뀌었어요. 나머지 30 J은 어떻게 되었나요?",
+      [{ t: "열에너지로 전환되었어요", ok: true }, { t: "아무것도 남지 않고 사라졌어요" }, { t: "전구 속에 그대로 고여 있어요" }],
       (v) => api.recordQuiz(v),
-      { why: "막대의 붉은 토막이 <b>열에너지</b>였어요. 에너지는 사라지지 않아요.", onNext: finish },
+      { why: "막대의 붉은색 부분이 <b>열에너지</b>로 전환된 양이에요. 에너지는 새로 생기거나 사라지지 않아요.", onNext: finish },
     );
   }
   function finish(): void {
     f.pips(4);
-    f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("넣어 준 전기 에너지 가운데 <b>필요한 에너지로 바뀌는 비율</b>이 에너지 효율이에요. 효율이 높은 LED 전구는 같은 밝기를 내는 데 전기 에너지가 훨씬 적게 들어요.");
+    f.say("전구의 종류에 따라 전기 에너지가 빛에너지로 전환되는 비율(에너지 효율)이 다르다는 것을 확인했어요!");
+    f.slot.conclude("공급한 전기 에너지 중에서 <b>쓰려는 에너지(빛에너지)로 전환되는 비율</b>을 <b>에너지 효율</b>이라고 해요. 에너지 효율이 높은 LED 전구는 같은 밝기를 내는 데 전기 에너지가 훨씬 적게 들어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -336,7 +336,7 @@ export const effLab: StepRenderer = (host, step, api) => {
     ctx.restore();
   });
 
-  f.say(`세 전구로 <b>같은 밝기</b>(빛에너지 ${GOAL} J)를 내요. 전기 에너지를 얼마나 넣어야 할지 맞춰 보세요.`);
+  f.say(`세 종류의 전구로 <b>같은 밝기(빛에너지 ${GOAL} J)</b>를 내려면 전기 에너지를 각각 얼마나 공급해야 할까요? 슬라이더를 움직여 맞춰 보세요.`);
   api.setCTA("세 전구의 값을 기록해 보세요", { enabled: false });
   return () => {
     tm.clear();
