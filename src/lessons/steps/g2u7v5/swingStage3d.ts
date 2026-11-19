@@ -80,14 +80,35 @@ export async function mountSwing3d(cv: HTMLCanvasElement, box: HTMLElement): Pro
   if (!made) return null;
   const stage = made;
   const { scene, camera } = stage;
-  scene.add(new THREE.AmbientLight(0xffffff, 1.45));
-  const sun = new THREE.DirectionalLight(0xffffff, 2.3);
-  sun.position.set(3, 7, 6);
+  scene.add(new THREE.HemisphereLight(0xeaf3ff, 0x1a2740, 1.15));
+  const sun = new THREE.DirectionalLight(0xfff6ec, 2.35);
+  sun.position.set(3.2, 7.4, 6.2);
   scene.add(sun);
+  const rim = new THREE.DirectionalLight(0x7cc8ff, 1.0);
+  rim.position.set(-4.8, 3.8, -4.2);
+  scene.add(rim);
 
-  const std = (color: number, metal = 0.1, rough = 0.55): T.MeshStandardMaterial => new THREE.MeshStandardMaterial({ color, metalness: metal, roughness: rough });
+  const std = (color: number, metal = 0.14, rough = 0.46): T.MeshStandardMaterial => new THREE.MeshStandardMaterial({ color, metalness: metal, roughness: rough });
+  const paint = (color: number): T.MeshPhysicalMaterial =>
+    new THREE.MeshPhysicalMaterial({ color, roughness: 0.36, metalness: 0.08, clearcoat: 0.2, clearcoatRoughness: 0.4 });
+  const roundBox = (w: number, h: number, d: number, r: number): T.ExtrudeGeometry => {
+    const rr = Math.min(r, w * 0.25, h * 0.25, d * 0.25);
+    const iw = w - rr * 2;
+    const ih = h - rr * 2;
+    const id = d - rr * 2;
+    const sh = new THREE.Shape();
+    sh.moveTo(-iw / 2, -ih / 2);
+    sh.lineTo(iw / 2, -ih / 2);
+    sh.lineTo(iw / 2, ih / 2);
+    sh.lineTo(-iw / 2, ih / 2);
+    sh.closePath();
+    const g = new THREE.ExtrudeGeometry(sh, { depth: id, bevelEnabled: true, bevelThickness: rr, bevelSize: rr, bevelSegments: 3 });
+    g.translate(0, 0, -id / 2);
+    g.computeVertexNormals();
+    return g;
+  };
   const boxAt = (w: number, h: number, d: number, mat: T.Material, x: number, y: number, z: number, parent: T.Object3D = scene): T.Mesh => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    const m = new THREE.Mesh(roundBox(w, h, d, 0.024), mat);
     m.position.set(x, y, z);
     parent.add(m);
     return m;
@@ -152,21 +173,31 @@ export async function mountSwing3d(cv: HTMLCanvasElement, box: HTMLElement): Pro
   const { armY, armT, depth, bendX, tipX, pivotY, wireX, half, baseY } = SW;
   boxAt(4.6, 0.12, 3.0, std(0x26324b), -0.35, baseY - 0.06, 0);
 
-  // ── 말굽자석: 굽은 몸통(회색 쇠)과 두 팔(극의 색) ──
+  // ── 말굽자석: 굽은 몸통(브러시드 강철)과 두 팔(챔퍼 도장 마감) ──
   const ro = armY + armT / 2; // 굽은 몸통의 바깥 반지름
   const ri = armY - armT / 2; // 안쪽 반지름
   const bend = new THREE.Shape();
   bend.absarc(0, 0, ro, Math.PI / 2, (3 * Math.PI) / 2, false);
   bend.absarc(0, 0, ri, (3 * Math.PI) / 2, Math.PI / 2, true);
-  const bendGeo = new THREE.ExtrudeGeometry(bend, { depth, bevelEnabled: false, curveSegments: 28 });
-  const bendMesh = new THREE.Mesh(bendGeo, std(0xa7b2c4, 0.55, 0.38));
-  bendMesh.position.set(bendX, 0, -depth / 2);
+  const bendGeo = new THREE.ExtrudeGeometry(bend, {
+    depth: depth - 0.044,
+    bevelEnabled: true,
+    bevelThickness: 0.022,
+    bevelSize: 0.02,
+    bevelSegments: 3,
+    curveSegments: 32,
+  });
+  const bendMesh = new THREE.Mesh(bendGeo, std(0xa8b8cf, 0.68, 0.3));
+  bendMesh.position.set(bendX, 0, -(depth - 0.044) / 2);
   scene.add(bendMesh);
   const armLen = tipX - bendX;
-  const topMat = std(0x3d8fe8, 0.05, 0.6);
-  const botMat = std(0xe0503a, 0.05, 0.6);
+  const topMat = paint(0x3d8fe8);
+  const botMat = paint(0xe0503a);
   boxAt(armLen, armT, depth, topMat, bendX + armLen / 2, armY, 0);
   boxAt(armLen, armT, depth, botMat, bendX + armLen / 2, -armY, 0);
+  const seamMat = std(0xd2dfef, 0.78, 0.22);
+  boxAt(0.04, armT + 0.01, depth + 0.01, seamMat, bendX + 0.02, armY, 0);
+  boxAt(0.04, armT + 0.01, depth + 0.01, seamMat, bendX + 0.02, -armY, 0);
   const lTop = S.makeLabel("S극", { size: 0.46, color: "#FFFFFF" });
   const lBot = S.makeLabel("N극", { size: 0.46, color: "#FFFFFF" });
   scene.add(lTop, lBot);

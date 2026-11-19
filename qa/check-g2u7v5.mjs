@@ -94,14 +94,15 @@ const LAB = {
     await setRange(page, 85); await W(page, 900);
     await at("can-plain");
     await tapKey(page, "neg"); await W(page, 300);
-    await setRange(page, 100); await W(page, 1200);
+    await setRange(page, 100); await W(page, 1000);
     await at("can-touch");
-    await W(page, 2400);
-    await setRange(page, 85); await W(page, 1500);
-    await at("can-near");
-    await tapKey(page, "R"); await W(page, 300);
+    await W(page, 2300);
     await setRange(page, 85); await W(page, 1200);
-    await at("can-other");
+    await at("can-near");
+    await tapKey(page, "pos"); await W(page, 300);
+    await setRange(page, 85); await W(page, 1200);
+    await at("can-pos");
+    await tapText(page, "확인 문제 풀기"); await W(page, 400);
     await finishLab("can", "용어 알아보기", 2);
   },
   async wire() {
@@ -112,6 +113,7 @@ const LAB = {
     await at("wire-closed");
     await tapText(page, "전지 방향"); await W(page, 1200);
     await at("wire-flip");
+    await tapText(page, "확인 문제 풀기"); await W(page, 400);
     await finishLab("wire", "물길 모형과 비교하기", 2);
   },
   async water() {
@@ -177,6 +179,7 @@ const LAB = {
     await tapKey(page, "short"); await W(page, 300);
     for (const v of [1, 2, 3]) { await setRange(page, v); await W(page, 200); await tapText(page, "그래프에 찍기"); await W(page, 300); }
     await at("ohm-both");
+    await tapText(page, "그래프 결과 확인하기"); await W(page, 400);
     await finishLab("ohm", "그래프에서 규칙 찾기", 2);
   },
   async formula() {
@@ -192,6 +195,7 @@ const LAB = {
     await at("formula-r");
     for (const r of [30, 15, 60]) { await tapKey(page, String(r)); await W(page, 400); }
     await at("formula-curve");
+    await tapText(page, "확인 문제 풀기"); await W(page, 400);
     await finishLab("formula", "용어 알아보기", 1);
   },
   async bulb() {
@@ -221,6 +225,7 @@ const LAB = {
     await at("scur-swapped");
     for (const [x, y] of [[302, 132], [173, 74], [44, 132]]) { await tapStage(page, x, y); await W(page, 2600); }
     await at("scur-slow");
+    await tapText(page, "확인 문제 풀기"); await W(page, 400);
     await finishLab("scur", "직렬 회로의 전압 재러 가기", 2);
   },
   async svolt() {
@@ -316,17 +321,41 @@ const LAB = {
     await at("coil-predict");
     await answer(page, true); await W(page, 2200);
     await at("coil-flip");
-    await tapKey(page, "strong"); await W(page, 900);
+    await tapKey(page, "strong"); await W(page, 700);
+    await tapText(page, "자기장 선"); await W(page, 500);
     await at("coil-strong");
     await tapText(page, "막대자석"); await W(page, 700);
     await at("coil-magnet");
     await tapText(page, "코일로"); await W(page, 700);
     await at("coil-ns");
+    await tapText(page, "확인 문제 풀기"); await W(page, 400);
     await finishLab("coil", "오른손으로 극 찾는 법 알아보기", 3);
   },
   async grip() {
     await at("grip-start");
-    await finishLab("grip", "핵심 정리하기", 3);
+    await tapText(page, "가로 화면"); await W(page, 1000);
+    const tapCid = (cid) => page.evaluate((id) => { const b = document.querySelector(`.g2u7x-r3-btn[data-cid="${id}"]`); b?.click(); return !!b; }, cid);
+    const gState = () => page.evaluate(() => document.querySelector(".g2u7x-r3-cv")?.__grip?.() ?? null);
+    // 라운드 0(앞쪽 위 → 왼쪽 N극): 오답 한 번 눌러 3D 오른손 회전 확인 후 정답
+    ok(await tapCid("g_down"), "grip: 라운드0 g_down 없음"); await W(page, 350);
+    ok(await tapCid("g_up"), "grip: 라운드0 g_up 없음"); await W(page, 450);
+    const s0 = await gState();
+    ok(!!s0 && s0.matched && s0.coilDir === -1, `grip: 라운드0 손 방향 불일치(${JSON.stringify(s0)})`);
+    ok(await tapCid("p_left"), "grip: 라운드0 p_left 없음"); await W(page, 700);
+    await page.screenshot({ path: join(OUT, `${cur}-grip-rot.png`) });
+    seen.push(...(await page.evaluate(() => [...document.querySelectorAll(".rot-stage *")].map((e) => (e.children.length ? "" : e.textContent.trim())).filter(Boolean))).map((t) => `${cur} grip-rot: ${t}`));
+    // 라운드 1(앞쪽 아래 → 오른쪽 N극)
+    ok(await tapCid("go_r1"), "grip: go_r1 없음"); await W(page, 450);
+    ok(await tapCid("g_down"), "grip: 라운드1 g_down 없음"); await W(page, 450);
+    ok(await tapCid("p_right"), "grip: 라운드1 p_right 없음"); await W(page, 600);
+    // 라운드 2(거꾸로 찾기: 나침반 오른쪽 N극 → 앞쪽 아래)
+    ok(await tapCid("go_r2"), "grip: go_r2 없음"); await W(page, 450);
+    ok(await tapCid("t_right"), "grip: 라운드2 t_right 없음"); await W(page, 450);
+    ok(await tapCid("c_down"), "grip: 라운드2 c_down 없음"); await W(page, 600);
+    const s2 = await gState();
+    ok(!!s2 && s2.doneCount === 3, `grip: 3라운드 미완료(${JSON.stringify(s2)})`);
+    ok(await tapCid("finish_all"), "grip: finish_all 없음"); await W(page, 800);
+    await finishLab("grip", "핵심 정리하기", 2);
   },
   async swing() {
     await W(page, 1500);
@@ -396,17 +425,53 @@ const LAB = {
       const m = await m3();
       ok(!!m && same(m.left.force, [0, 1, 0]), `motor: 전류를 바꿨는데 왼쪽 변의 힘이 위가 아님(${JSON.stringify(m?.left)})`);
     }
-    await tapText(page, "자석의 극"); await W(page, 900);
+    await tapText(page, "자석의 극"); await W(page, 700);
     if (mode === "3d") {
       const m = await m3();
       ok(!!m && same(m.field, [-1, 0, 0]) && same(m.left.force, [0, -1, 0]), `motor: 극까지 바꿨는데 왼쪽 변의 힘이 아래가 아님(${JSON.stringify(m?.left)})`);
     }
+    await tapText(page, "천천히 보기"); await W(page, 500);
     await at("motor-flip");
+    await tapText(page, "확인 문제 풀기"); await W(page, 400);
     await finishLab("motor", "용어 알아보기", 1);
   },
   async palm() {
     await at("palm-start");
-    await finishLab("palm", "핵심 정리하기", 3);
+    await tapText(page, "가로 화면"); await W(page, 1000);
+    const tapCid = (cid) => page.evaluate((id) => { const b = document.querySelector(`.g2u7x-r3-btn[data-cid="${id}"]`); b?.click(); return !!b; }, cid);
+    const pState = () => page.evaluate(() => document.querySelector(".g2u7x-r3-cv")?.__palm?.() ?? null);
+    const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+    const same = (a, b) => a.every((x, i) => Math.abs(x - b[i]) < 0.02);
+    // 라운드 0: 말굽자석 코일 그네 ① (B=+Y, I=-Z → F=+X 바깥쪽)
+    ok(await tapCid("b_up"), "palm: r0 b_up 없음"); await W(page, 450);
+    ok(await tapCid("i_back"), "palm: r0 i_back 없음"); await W(page, 500);
+    const p0 = await pState();
+    ok(!!p0 && p0.det === 1 && same(p0.handF, cross(p0.handI, p0.handB)) && same(p0.handF, [1, 0, 0]), `palm: r0 오른손 외적 불일치(${JSON.stringify(p0)})`);
+    ok(await tapCid("f_out"), "palm: r0 f_out 없음"); await W(page, 800);
+    await page.screenshot({ path: join(OUT, `${cur}-palm-swing.png`) });
+    seen.push(...(await page.evaluate(() => [...document.querySelectorAll(".rot-stage *")].map((e) => (e.children.length ? "" : e.textContent.trim())).filter(Boolean))).map((t) => `${cur} palm-swing: ${t}`));
+    // 라운드 1: 말굽자석 코일 그네 ② (B=+Y, I=+Z → F=-X 안쪽)
+    ok(await tapCid("go_r1"), "palm: go_r1 없음"); await W(page, 450);
+    ok(await tapCid("b_up"), "palm: r1 b_up 없음"); await W(page, 400);
+    ok(await tapCid("i_front"), "palm: r1 i_front 없음"); await W(page, 500);
+    const p1 = await pState();
+    ok(!!p1 && p1.det === 1 && same(p1.handF, [-1, 0, 0]), `palm: r1 오른손 외적 불일치(${JSON.stringify(p1)})`);
+    ok(await tapCid("f_in"), "palm: r1 f_in 없음"); await W(page, 600);
+    // 라운드 2: 3D 전동기 코일 (왼쪽 주황 변 아래 + 오른쪽 보라 변 위 → 시계 반대 회전)
+    ok(await tapCid("go_r2"), "palm: go_r2 없음"); await W(page, 500);
+    ok(await tapCid("mi_back"), "palm: r2 mi_back 없음"); await W(page, 450);
+    const p2a = await pState();
+    ok(!!p2a && p2a.det === 1 && same(p2a.handF, [0, -1, 0]), `palm: r2 왼쪽 변 힘 불일치(${JSON.stringify(p2a)})`);
+    ok(await tapCid("mf_down"), "palm: r2 mf_down 없음"); await W(page, 550);
+    const p2b = await pState();
+    ok(!!p2b && p2b.det === 1 && same(p2b.handF, [0, 1, 0]), `palm: r2 오른쪽 변 힘 불일치(${JSON.stringify(p2b)})`);
+    await page.screenshot({ path: join(OUT, `${cur}-palm-motor.png`) });
+    ok(await tapCid("mr_up"), "palm: r2 mr_up 없음"); await W(page, 500);
+    ok(await tapCid("spin_ccw"), "palm: r2 spin_ccw 없음"); await W(page, 800);
+    const pEnd = await pState();
+    ok(!!pEnd && pEnd.doneCount === 3, `palm: 3라운드 미완료(${JSON.stringify(pEnd)})`);
+    ok(await tapCid("finish_all"), "palm: finish_all 없음"); await W(page, 800);
+    await finishLab("palm", "핵심 정리하기", 2);
   },
 };
 const PLAN = {

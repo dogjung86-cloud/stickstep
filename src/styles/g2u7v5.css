@@ -28,7 +28,8 @@
 .g2u7x-seg[hidden] { display: none; }
 .g2u7x-row { display: grid; gap: 8px; }
 .g2u7x-row .bv-btn { font-size: 14.5px; letter-spacing: -.03em; }
-.g2u7x-cap { font-size: 12.5px; font-weight: 700; color: var(--sub); line-height: 18px; }
+.g2u7x-cap { font-size: 12.5px; font-weight: 600; color: var(--sub); line-height: 17px; letter-spacing: -.02em; }
+.g2u7x-cap b { color: var(--x-ink); font-weight: 800; }
 .g2u7x-hold { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .g2u7x-step .bv-btn.g2u7x-hold.on { background: var(--subj-elec); color: #3A2A00; transform: scale(.975); }
 
@@ -72,6 +73,108 @@
 }
 .g2u7x-wbar .g2u7x-seg.on { border-color: var(--subj-elec); background: rgba(239, 184, 0, .22); color: #FFE08A; }
 .g2u7x-wtap:active { transform: scale(.97); }
+
+/* ── 가로 화면 3D 오른손 체험(gripLab · palmLab) ──────── */
+.g2u7x-r3-stage {
+  background: radial-gradient(circle at 50% 44%, #182947 0%, #0d172a 66%, #080f1d 100%);
+  overflow: hidden;
+}
+.g2u7x-r3-cv {
+  position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab;
+}
+.g2u7x-r3-cv:active { cursor: grabbing; }
+.g2u7x-r3-top {
+  position: absolute; left: 16px; right: 16px; top: 50px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  pointer-events: none; z-index: 4;
+}
+.g2u7x-r3-group {
+  display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; pointer-events: auto;
+}
+.g2u7x-r3-pill, .g2u7x-r3-cam {
+  height: 30px; padding: 0 11px; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(11, 21, 38, .72); backdrop-filter: blur(8px);
+  color: rgba(232, 238, 249, .82); font-size: 12px; font-weight: 700;
+  white-space: nowrap; transition: border-color .18s, background .18s, color .18s, transform .12s;
+}
+.g2u7x-r3-pill:active, .g2u7x-r3-cam:active { transform: scale(.96); }
+.g2u7x-r3-pill.on {
+  border-color: var(--subj-elec); background: rgba(239, 184, 0, .24); color: #FFE38F;
+}
+.g2u7x-r3-pill.done { border-color: rgba(127, 227, 196, .72); color: #8FF0DF; }
+.g2u7x-r3-pill.done.on { border-color: #7FE3C4; background: rgba(63, 214, 192, .22); color: #B9FFF0; }
+.g2u7x-r3-cam.on {
+  border-color: #7CC4FF; background: rgba(111, 182, 255, .22); color: #CFE7FF;
+}
+.g2u7x-r3-say {
+  position: absolute; left: 16px; right: 16px; top: 86px; z-index: 4;
+  min-height: 30px; padding: 6px 14px; border-radius: 12px;
+  background: rgba(9, 17, 32, .76); border: 1px solid rgba(178, 204, 238, .22);
+  backdrop-filter: blur(8px); color: #E8EEF9; font-size: 13px; line-height: 18px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none;
+}
+.g2u7x-r3-say b { color: #FFE08A; font-weight: 800; }
+.g2u7x-r3-say[data-done="1"] { border-color: rgba(127, 227, 196, .68); }
+.g2u7x-r3-hint {
+  position: absolute; right: 18px; bottom: 88px; z-index: 3;
+  font-size: 12px; font-weight: 700; color: rgba(220, 232, 249, .58);
+  pointer-events: none; transition: opacity .35s;
+}
+.g2u7x-r3-hint.off { opacity: 0; }
+.g2u7x-r3-dock {
+  position: absolute; left: 16px; right: 16px; bottom: 10px; z-index: 4;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.g2u7x-r3-steps {
+  display: flex; align-items: center; justify-content: center; gap: 8px; pointer-events: none;
+}
+.g2u7x-r3-chip {
+  height: 22px; padding: 0 10px; border-radius: 999px;
+  display: inline-flex; align-items: center;
+  background: rgba(11, 21, 38, .64); border: 1px solid rgba(255, 255, 255, .14);
+  color: rgba(220, 232, 249, .58); font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.g2u7x-r3-chip.on {
+  border-color: rgba(255, 212, 0, .75); background: rgba(255, 212, 0, .18); color: #FFE696;
+}
+.g2u7x-r3-chip.done {
+  border-color: rgba(127, 227, 196, .65); background: rgba(63, 214, 192, .16); color: #8FF0DF;
+}
+.g2u7x-r3-btns {
+  display: grid; gap: 10px;
+}
+.g2u7x-r3-btn {
+  height: 46px; padding: 0 12px; border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, .24);
+  background: rgba(14, 26, 46, .84); backdrop-filter: blur(8px);
+  color: #F0F5FF; font-size: 14px; font-weight: 800; letter-spacing: -.02em;
+  transition: transform .12s, background .18s, border-color .18s, box-shadow .18s;
+}
+.g2u7x-r3-btn:active { transform: scale(.975); }
+.g2u7x-r3-btn.field { border-color: rgba(255, 123, 107, .78); background: rgba(226, 77, 59, .24); color: #FFD3CD; }
+.g2u7x-r3-btn.cur { border-color: rgba(255, 212, 0, .82); background: rgba(239, 184, 0, .24); color: #FFF0B3; }
+.g2u7x-r3-btn.force { border-color: rgba(63, 214, 192, .85); background: rgba(63, 214, 192, .22); color: #BEFFF4; }
+.g2u7x-r3-btn.main {
+  border-color: #FFD400; background: linear-gradient(135deg, #FFD400 0%, #F2B705 100%);
+  color: #2A1E00; box-shadow: 0 6px 20px rgba(239, 184, 0, .34);
+}
+@media (min-width: 900px) and (min-height: 600px) {
+  .g2u7x-r3-top { left: 24px; right: 24px; top: 54px; }
+  .g2u7x-r3-pill, .g2u7x-r3-cam { height: 34px; padding: 0 14px; font-size: 13px; }
+  .g2u7x-r3-say { left: 24px; right: 24px; top: 96px; font-size: 14.5px; padding: 8px 18px; }
+  .g2u7x-r3-dock { left: 24px; right: 24px; bottom: 18px; gap: 8px; max-width: 780px; margin: 0 auto; }
+  .g2u7x-r3-btn { height: 50px; font-size: 15px; }
+  .g2u7x-r3-hint { right: 26px; bottom: 100px; font-size: 13px; }
+}
+/* 회전된 모바일(700×390)에서 상·하단 HUD를 콤팩트하게 압축해 중앙 3D 무대 시야를 극대화한다 */
+.rot-inner:not(.native) .g2u7x-r3-top { top: 44px; left: 12px; right: 12px; }
+.rot-inner:not(.native) .g2u7x-r3-pill,
+.rot-inner:not(.native) .g2u7x-r3-cam { height: 26px; padding: 0 9px; font-size: 12px; }
+.rot-inner:not(.native) .g2u7x-r3-say { top: 74px; left: 12px; right: 12px; min-height: 26px; padding: 4px 12px; font-size: 12.5px; line-height: 17px; }
+.rot-inner:not(.native) .g2u7x-r3-dock { bottom: 8px; left: 12px; right: 12px; gap: 4px; }
+.rot-inner:not(.native) .g2u7x-r3-btn { height: 42px; font-size: 13.5px; }
+.rot-inner:not(.native) .g2u7x-r3-hint { display: none; }
 
 /* ── 도입(opener) 여덟 장면 ────────────────────────
    그림의 묶음: -s0(조작 전에만) · -s1, -s2(첫째, 둘째 조작 뒤) · -mv(움직이는 것). 무대의 on1, on2 클래스가 바꾼다. */

@@ -59,6 +59,8 @@ export const formulaLab: StepRenderer = (host, step, api) => {
     if (phase !== "A") return;
     haptic(HAPTIC.tap);
     phase = "B";
+    const goAsk = bvBtn("main", "확인 문제 풀기");
+    goAsk.disabled = true;
     const seg = xSegs(
       [
         { k: "0", t: "고르기" },
@@ -72,15 +74,21 @@ export const formulaLab: StepRenderer = (host, step, api) => {
         if (rGot.size === RS.length) {
           haptic(HAPTIC.correct);
           f.pips(3);
-          seg.lock(true);
-          f.say("전압이 같을 때 저항이 2배로 커지면 전류는 <b>절반(1/2)</b>으로 줄어들어요. 즉, 전류의 세기는 저항에 반비례해요!");
-          tm.later(ask, 2600);
+          goAsk.disabled = false;
+          f.say("전압이 같을 때 저항이 2배 커지면 전류는 <b>절반(1/2)</b>이 돼요! 확인한 뒤 <b>확인 문제 풀기</b>를 눌러 보세요.");
         } else f.say(`저항 ${rPick} Ω에 6 V를 걸자 전류가 <b>${Math.round(6000 / rPick)} mA</b> 흘러요. 다른 크기의 저항도 연결해 보세요.`);
       },
     );
+    goAsk.addEventListener("click", () => {
+      if (phase !== "B" || rGot.size < RS.length) return;
+      haptic(HAPTIC.tap);
+      seg.lock(true);
+      goAsk.disabled = true;
+      ask();
+    });
     seg.btn("0").hidden = true;
     seg.el.style.gridTemplateColumns = "repeat(3, 1fr)";
-    f.slot.setControls(seg.el);
+    f.slot.setControls(seg.el, goAsk);
     f.say("이번에는 전압을 <b>6 V</b>로 일정하게 유지하고 저항 크기만 바꿔 볼게요. 15 Ω, 30 Ω, 60 Ω을 차례로 연결해 보세요.");
   });
 
@@ -106,18 +114,45 @@ export const formulaLab: StepRenderer = (host, step, api) => {
     ctx.scale(k, k);
     if (phase === "A") {
       viGraph(ctx, G.x0, G.y0, G.gw, G.gh, { long: ALL, short: ALL }, { lines: { long: true, short: true }, pick });
-      xBox(ctx, 216, 40, 120, 132, 14, "rgba(255,255,255,.07)", X.line);
+      // 두 직선을 모두 확인하면 3 V 기준선으로 '기울기가 가파를수록 저항이 작다' 오개념을 바로잡아 준다
+      if (got.long.size >= 2 && got.short.size >= 2) {
+        const x3 = G.x0 + (3 / 6) * G.gw;
+        const y100 = G.y0 - (100 / 400) * G.gh;
+        const y200 = G.y0 - (200 / 400) * G.gh;
+        ctx.save();
+        ctx.setLineDash([4, 3]);
+        ctx.strokeStyle = "rgba(255,212,0,.78)";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(x3, G.y0);
+        ctx.lineTo(x3, y200);
+        ctx.stroke();
+        ctx.restore();
+        xText(ctx, "3 V 비교: 2배", x3 - 8, y200 - 14, { px: 12, color: "#FFE08A", align: "right" });
+        ctx.fillStyle = "#FFE08A";
+        for (const yy of [y100, y200]) {
+          ctx.beginPath();
+          ctx.arc(x3, yy, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      xBox(ctx, 212, 34, 126, 146, 14, "rgba(255,255,255,.07)", X.line);
       if (pick) {
         const v = pick.i * OHM.step;
-        const a = mA(pick.wire, pick.i) / 1000;
-        xText(ctx, pick.wire === "long" ? "긴 니크롬선" : "짧은 니크롬선", 276, 58, { px: 12.5, color: pick.wire === "long" ? "#6FB6FF" : "#FFB25A" });
-        xText(ctx, `${mA(pick.wire, pick.i)} mA = ${a} A`, 276, 84, { px: 12.5, color: X.dim });
-        xText(ctx, `${v} V ÷ ${a} A`, 276, 112, { px: 15, w: 800 });
-        xText(ctx, `= ${OHM[pick.wire]}`, 276, 142, { px: 24, w: 800, color: X.cur });
+        const ma = mA(pick.wire, pick.i);
+        const a = ma / 1000;
+        xText(ctx, pick.wire === "long" ? "긴 니크롬선" : "짧은 니크롬선", 275, 51, { px: 12.5, color: pick.wire === "long" ? "#6FB6FF" : "#FFB25A" });
+        // 단위 변환 강조 배지(mA → A)
+        xBox(ctx, 220, 64, 110, 24, 7, "rgba(255,212,0,.14)", "rgba(255,212,0,.45)", 1.2);
+        xText(ctx, `${ma} mA → ${a} A`, 275, 76.5, { px: 12, w: 800, color: "#FFE08A" });
+        xText(ctx, "÷ 1000 단위 변환", 275, 98, { px: 12, color: X.dim });
+        xText(ctx, `${v} V ÷ ${a} A`, 275, 122, { px: 14.5, w: 800 });
+        xText(ctx, `= ${OHM[pick.wire]} Ω`, 275, 152, { px: 23, w: 800, color: X.cur });
       } else {
-        xText(ctx, "점을 누르면", 276, 92, { px: 13, color: X.dim });
-        xText(ctx, "전압 ÷ 전류를", 276, 112, { px: 13, color: X.dim });
-        xText(ctx, "계산해요", 276, 132, { px: 13, color: X.dim });
+        xText(ctx, "점을 누르면", 275, 86, { px: 13, color: X.dim });
+        xText(ctx, "mA를 A로 바꿔", 275, 108, { px: 12.5, color: "#FFE08A" });
+        xText(ctx, "전압 ÷ 전류를", 275, 128, { px: 13, color: X.dim });
+        xText(ctx, "계산해요", 275, 148, { px: 13, color: X.dim });
       }
     } else {
       // 저항과 전류의 그래프(전압 6 V)

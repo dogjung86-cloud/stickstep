@@ -87,8 +87,10 @@ export const ohmLab: StepRenderer = (host, step, api) => {
 
   let wire: Wire = "long";
   let vi = 0;
+  let ready = false;
   let finished = false;
   let warn = 0;
+  let eFlow = 0;
   const pts: Record<Wire, Set<number>> = { long: new Set(), short: new Set() };
   const lineOk = (w: Wire): boolean => [1, 2, 3, 4].filter((i) => pts[w].has(i)).length >= 3;
 
@@ -127,6 +129,15 @@ export const ohmLab: StepRenderer = (host, step, api) => {
 
   rec.addEventListener("click", () => {
     if (finished) return;
+    if (ready) {
+      haptic(HAPTIC.tap);
+      finished = true;
+      rec.disabled = true;
+      volt.input.disabled = true;
+      pick.lock(true);
+      ask1();
+      return;
+    }
     if (pts[wire].has(vi)) {
       f.say("이미 그래프에 기록한 전압이에요. 슬라이더로 <b>전압을 바꿔서</b> 다른 점을 찍어 보세요.");
       return;
@@ -138,12 +149,9 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     if (lineOk(wire)) {
       haptic(HAPTIC.correct);
       if (done === 2) {
-        finished = true;
-        rec.disabled = true;
-        volt.input.disabled = true;
-        pick.lock(true);
-        f.say("두 니크롬선 모두 측정한 점들이 <b>원점을 지나는 곧은 직선</b>으로 이어졌어요!");
-        tm.later(ask1, 2600);
+        ready = true;
+        rec.textContent = "그래프 결과 확인하기";
+        f.say("두 선 모두 <b>원점을 지나는 직선</b>이 완성됐어요! 비교해 본 뒤 <b>그래프 결과 확인하기</b>를 눌러 보세요.");
       } else f.say(`점들이 <b>원점을 지나는 직선</b>으로 이어졌어요! 이제 전압을 0 V로 낮추고 <b>${wire === "long" ? "짧은" : "긴"} 니크롬선</b>으로 바꿔 실험해 보세요.`);
     } else f.say(`전압이 ${vi * OHM.step} V일 때 전류 <b>${mA(wire, vi)} mA</b>에 점을 찍었어요. 다른 전압에서도 측정해 보세요.`);
   });
@@ -223,7 +231,20 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     line([[154, 110], [154, WY], [wx + len, WY]], lead, 2);
     // (−)단자 → 니크롬선 왼쪽 끝
     line([[16, 58], [16, WY], [wx, WY]], lead, 2);
-    // 니크롬선
+    // 니크롬선(원자핵 방해물 + 이동하는 전자 흐름으로 길이·저항 차이를 직관적으로 보인다)
+    const curMa = mA(wire, vi);
+    eFlow = (eFlow + (dt / 60) * (curMa / 110)) % 1;
+    if (vi > 0) {
+      ctx.save();
+      ctx.strokeStyle = `rgba(255, 168, 92, ${(0.12 + vi * 0.08).toFixed(2)})`;
+      ctx.lineWidth = 9;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(wx, WY);
+      ctx.lineTo(wx + len, WY);
+      ctx.stroke();
+      ctx.restore();
+    }
     ctx.strokeStyle = vi ? `rgba(255,${190 - vi * 22},${120 - vi * 22},1)` : "#C9D1DE";
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -233,6 +254,28 @@ export const ohmLab: StepRenderer = (host, step, api) => {
       ctx.lineTo(wx + i, i === len ? WY : y);
     }
     ctx.stroke();
+    // 원자핵 방해물(긴 선은 7개, 짧은 선은 3개)
+    const cores = wire === "long" ? 7 : 3;
+    for (let c = 0; c < cores; c++) {
+      const cx0 = wx + ((c + 0.5) / cores) * len;
+      ctx.fillStyle = "rgba(255,157,138,.78)";
+      ctx.beginPath();
+      ctx.arc(cx0, WY + (c % 2 ? -2.2 : 2.2), 2.1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // 전류가 흐를 때 니크롬선을 지나는 전자 흐름(전압이 높고 저항이 작을수록 빠르게 이동)
+    if (vi > 0) {
+      const nDot = wire === "long" ? 5 : 3;
+      ctx.fillStyle = "#88CCFF";
+      for (let d = 0; d < nDot; d++) {
+        const u = (d / nDot + eFlow) % 1;
+        const ex = wx + u * len;
+        const ey = WY + Math.sin(u * Math.PI * cores * 2) * 3.8;
+        ctx.beginPath();
+        ctx.arc(ex, ey, 2.3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
     xText(ctx, NAME[wire], 60, WY - 16, { px: 12, color: COLOR[wire] });
     // 전압 센서: 집게 둘을 니크롬선 양 끝에(나란히)
     const volt = "#9BE8C4";

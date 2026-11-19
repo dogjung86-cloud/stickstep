@@ -72,12 +72,19 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
       api.setCTA("큰 저항으로 바꾼 뒤 세 곳을 다시 재 보세요", { enabled: false });
     } else {
       phase = "end";
-      f.say("저항이 커지자 가, 나, 다 세 곳 모두 <b>0.05 A</b>로 똑같이 약해졌어요! 어느 한 곳만 따로 줄어들지 않아요.");
-      api.setCTA("모든 측정 완료", { enabled: false });
-      tm.later(ask1, 2800);
+      swap.disabled = false;
+      swap.textContent = "확인 문제 풀기";
+      f.say("가, 나, 다 세 곳 모두 <b>0.05 A</b>로 똑같이 약해졌어요! 확인한 뒤 <b>확인 문제 풀기</b>를 눌러 보세요.");
+      api.setCTA("확인 문제를 풀어 보세요", { enabled: false });
     }
   }
   swap.addEventListener("click", () => {
+    if (phase === "end") {
+      haptic(HAPTIC.tap);
+      swap.disabled = true;
+      ask1();
+      return;
+    }
     if (phase !== "m1" || !done()) return;
     haptic(HAPTIC.tap);
     phase = "m2";
@@ -183,8 +190,8 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
     ctx.restore();
     drawBattery(ctx, BAT.x, G.By, G.bw, 30, false);
     xText(ctx, "전지 3 V", BAT.x, G.By - 25, { px: 12, color: X.dim });
-    xArrow(ctx, 228, G.By - 14, 258, G.By - 14, X.cur, 2.4, 7);
-    xText(ctx, "전류", 243, G.By - 27, { px: 12, color: X.cur });
+    xArrow(ctx, 224, G.By - 14, 254, G.By - 14, X.cur, 2.4, 7);
+    xText(ctx, "전류 (+)→(−)", 250, G.By - 27, { px: 12, color: X.cur });
     drawBulb(ctx, 228, TOP - 4, 19, big ? 0.1 : 0.3);
     xText(ctx, "15 Ω", 228, TOP + 32, { px: 12, color: X.ink });
     if (big) cRes(ctx, 118, TOP, { ohm: "45 Ω" });

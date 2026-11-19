@@ -85,14 +85,35 @@ export async function mountMotor3d(cv: HTMLCanvasElement, box: HTMLElement): Pro
   if (!made) return null;
   const stage = made;
   const { scene, camera } = stage;
-  scene.add(new THREE.AmbientLight(0xffffff, 1.45));
-  const sun = new THREE.DirectionalLight(0xffffff, 2.3);
+  scene.add(new THREE.HemisphereLight(0xe4efff, 0x22304a, 1.05));
+  const sun = new THREE.DirectionalLight(0xfff7ec, 2.2);
   sun.position.set(3, 7, 6);
   scene.add(sun);
+  const rim = new THREE.DirectionalLight(0x7cc4ff, 0.9);
+  rim.position.set(-4.5, 3.5, -4);
+  scene.add(rim);
 
-  const std = (color: number, metal = 0.1, rough = 0.55): T.MeshStandardMaterial => new THREE.MeshStandardMaterial({ color, metalness: metal, roughness: rough });
+  const std = (color: number, metal = 0.14, rough = 0.48): T.MeshStandardMaterial => new THREE.MeshStandardMaterial({ color, metalness: metal, roughness: rough });
+  const paint = (color: number): T.MeshPhysicalMaterial =>
+    new THREE.MeshPhysicalMaterial({ color, roughness: 0.36, metalness: 0.08, clearcoat: 0.2, clearcoatRoughness: 0.4 });
+  const roundBox = (w: number, h: number, d: number, r = 0.024): T.ExtrudeGeometry => {
+    const rr = Math.min(r, w * 0.25, h * 0.25, d * 0.25);
+    const iw = w - rr * 2;
+    const ih = h - rr * 2;
+    const id = d - rr * 2;
+    const sh = new THREE.Shape();
+    sh.moveTo(-iw / 2, -ih / 2);
+    sh.lineTo(iw / 2, -ih / 2);
+    sh.lineTo(iw / 2, ih / 2);
+    sh.lineTo(-iw / 2, ih / 2);
+    sh.closePath();
+    const g = new THREE.ExtrudeGeometry(sh, { depth: id, bevelEnabled: true, bevelThickness: rr, bevelSize: rr, bevelSegments: 3 });
+    g.translate(0, 0, -id / 2);
+    g.computeVertexNormals();
+    return g;
+  };
   const boxAt = (w: number, h: number, d: number, mat: T.Material, x: number, y: number, z: number, parent: T.Object3D = scene): T.Mesh => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    const m = new THREE.Mesh(roundBox(w, h, d), mat);
     m.position.set(x, y, z);
     parent.add(m);
     return m;
@@ -159,12 +180,12 @@ export async function mountMotor3d(cv: HTMLCanvasElement, box: HTMLElement): Pro
   };
 
   // ── 받침, 자석 ──
-  boxAt(4.9, 0.12, 3.5, std(0x26324b), 0, BASE_Y - 0.06, 0.4);
+  boxAt(4.9, 0.12, 3.5, std(0x223048, 0.25, 0.48), 0, BASE_Y - 0.06, 0.4);
   const magH = 2.1;
   const magY = BASE_Y + magH / 2;
   const magX = GAP + MAG_W / 2;
-  const nMat = std(0xe0503a, 0.05, 0.6);
-  const sMat = std(0x3d8fe8, 0.05, 0.6);
+  const nMat = paint(0xe0503a);
+  const sMat = paint(0x3d8fe8);
   const magL = boxAt(MAG_W, magH, MAG_D, nMat, -magX, magY, 0);
   const magR = boxAt(MAG_W, magH, MAG_D, sMat, magX, magY, 0);
   const lN = S.makeLabel("N극", { size: 0.6, color: "#FFFFFF" });
@@ -172,38 +193,107 @@ export async function mountMotor3d(cv: HTMLCanvasElement, box: HTMLElement): Pro
   scene.add(lN, lS);
 
   // ── 회전축(받침 기둥은 두지 않는다: 코일 한가운데에 겹쳐 보였다) ──
-  const steel = std(0x9aa7bd, 0.6, 0.35);
+  const steel = std(0xa6b6ce, 0.68, 0.28);
   rodBetween(v3(0, 0, -D - 0.45), v3(0, 0, COM_Z0 + COM_LEN + 0.25), 0.05, steel, scene);
 
-  // ── 코일(축을 따라 돈다) ──
+  // ── 코일(축을 따라 돈다: 두 활성 변은 주황/보라로 구분해 수직 통과 뒤 전류·힘 유지를 쉽게 관찰한다) ──
   const coil = new THREE.Group();
   scene.add(coil);
-  const copper = std(0xd9944a, 0.5, 0.4);
-  rodBetween(v3(-R, 0, -D), v3(-R, 0, D), ROD, copper, coil); // 변 a
-  rodBetween(v3(R, 0, -D), v3(R, 0, D), ROD, copper, coil); // 변 b
+  const copper = std(0xe2984c, 0.65, 0.28);
+  const sideAMat = std(0xff922b, 0.44, 0.28); // 변 a: 주황
+  const sideBMat = std(0xb197fc, 0.44, 0.28); // 변 b: 보라
+  rodBetween(v3(-R, 0, -D), v3(-R, 0, D), ROD * 1.18, sideAMat, coil); // 변 a(주황)
+  rodBetween(v3(R, 0, -D), v3(R, 0, D), ROD * 1.18, sideBMat, coil); // 변 b(보라)
   rodBetween(v3(-R, 0, -D), v3(R, 0, -D), ROD, copper, coil); // 뒤 변
   rodBetween(v3(-R, 0, D), v3(-COM_R, 0, D), ROD, copper, coil); // 앞 변(왼쪽 토막)
   rodBetween(v3(R, 0, D), v3(COM_R, 0, D), ROD, copper, coil); // 앞 변(오른쪽 토막)
   rodBetween(v3(-COM_R, 0, D), v3(-COM_R, 0, COM_Z0 + 0.04), ROD * 0.8, copper, coil); // 정류자로 가는 끝
   rodBetween(v3(COM_R, 0, D), v3(COM_R, 0, COM_Z0 + 0.04), ROD * 0.8, copper, coil);
+  const eboniteHub = new THREE.Mesh(new THREE.CylinderGeometry(COM_R * 0.86, COM_R * 0.86, COM_LEN * 1.06, 24), std(0x19202e, 0.1, 0.76));
+  eboniteHub.rotation.x = Math.PI / 2;
+  eboniteHub.position.z = COM_Z0 + COM_LEN / 2;
+  coil.add(eboniteHub);
   for (const c of [Math.PI / 2, (3 * Math.PI) / 2]) {
     // 정류자: 둘로 나뉜 고리(코일과 함께 돈다). 원기둥을 z축으로 눕히면 각 π/2가 +x(오른쪽), 3π/2가 −x(왼쪽)다
-    const half = new THREE.Mesh(new THREE.CylinderGeometry(COM_R, COM_R, COM_LEN, 24, 1, false, c - 1.38, 2.76), std(0xb8732e, 0.6, 0.35));
+    const half = new THREE.Mesh(new THREE.CylinderGeometry(COM_R, COM_R, COM_LEN, 28, 1, false, c - 1.32, 2.64), std(0xcf8438, 0.72, 0.26));
     half.rotation.x = Math.PI / 2;
     half.position.z = COM_Z0 + COM_LEN / 2;
     coil.add(half);
   }
-  // 브러시(돌지 않는다): 정류자의 왼쪽과 오른쪽에 닿아 있다
-  for (const sx of [-1, 1]) boxAt(0.12, 0.12, 0.2, std(0x3a3f4b, 0.1, 0.8), sx * (COM_R + 0.06), 0, COM_Z0 + COM_LEN / 2);
+  // 브러시 + 황동 홀더(돌지 않는다): 정류자의 왼쪽과 오른쪽에 닿아 있다
+  for (const sx of [-1, 1]) {
+    boxAt(0.12, 0.12, 0.2, std(0x363f50, 0.16, 0.76), sx * (COM_R + 0.06), 0, COM_Z0 + COM_LEN / 2);
+    boxAt(0.08, 0.14, 0.22, std(0xe2b454, 0.76, 0.26), sx * (COM_R + 0.14), 0, COM_Z0 + COM_LEN / 2);
+  }
 
-  // ── 화살표: 전류(노랑, 진갈색 테두리), 힘(청록), 자기장(빨강) ──
-  const curA = { color: 0xffd400, body: 0.056, head: 0.12, headLen: 0.24, outline: 0x6e3f16 };
-  const endA = { ...curA, body: 0.05, head: 0.095, headLen: 0.19 };
-  const sideA = fatArrow(curA);
-  const sideB = fatArrow(curA);
-  const backArr = fatArrow(endA);
-  const frontL = fatArrow(endA);
-  const frontR = fatArrow(endA);
+  /** 코일 면 안쪽에 놓이는 얇은 2D 평면 전류 화살표(도선과 겹치거나 Z-fighting 없이 선명하게 읽힌다).
+   *  로컬 XZ 평면에서 +Z를 향해 만들고 set(center, dirOnXZ, len)으로 배치한다. */
+  const flatCurArrow = (shaftW: number, headW: number, headL: number) => {
+    const g = new THREE.Group();
+    const makeShape = (len: number, pad: number): T.Shape => {
+      const halfL = len / 2;
+      const hl = Math.min(headL + pad * 1.4, len * 0.55);
+      const sw = shaftW / 2 + pad;
+      const hw = headW / 2 + pad * 1.35;
+      const neck = halfL - hl;
+      const sh = new THREE.Shape();
+      sh.moveTo(-sw, -halfL - pad);
+      sh.lineTo(sw, -halfL - pad);
+      sh.lineTo(sw, neck);
+      sh.lineTo(hw, neck);
+      sh.lineTo(0, halfL + pad * 1.6);
+      sh.lineTo(-hw, neck);
+      sh.lineTo(-sw, neck);
+      sh.closePath();
+      return sh;
+    };
+    const fillMat = new THREE.MeshBasicMaterial({ color: 0xffd400, side: THREE.DoubleSide });
+    const rimMat = new THREE.MeshBasicMaterial({ color: 0x4e2b0c, side: THREE.DoubleSide });
+    let fillMesh: T.Mesh | null = null;
+    let rimMesh: T.Mesh | null = null;
+    const build = (len: number): void => {
+      if (fillMesh) {
+        fillMesh.geometry.dispose();
+        g.remove(fillMesh);
+      }
+      if (rimMesh) {
+        rimMesh.geometry.dispose();
+        g.remove(rimMesh);
+      }
+      const rimGeo = new THREE.ShapeGeometry(makeShape(len, 0.022));
+      rimGeo.rotateX(Math.PI / 2); // XY 평면(+Y 앞) → XZ 평면(+Z 앞)
+      const fillGeo = new THREE.ShapeGeometry(makeShape(len, 0));
+      fillGeo.rotateX(Math.PI / 2);
+      rimMesh = new THREE.Mesh(rimGeo, rimMat);
+      rimMesh.position.y = -0.004;
+      fillMesh = new THREE.Mesh(fillGeo, fillMat);
+      fillMesh.position.y = 0.004;
+      // 아래쪽 면에서도 노란 몸통이 테두리 위에 보이도록 반대쪽 얇은 면 추가
+      const fillBot = new THREE.Mesh(fillGeo, fillMat);
+      fillBot.position.y = -0.01;
+      g.add(rimMesh, fillMesh, fillBot);
+    };
+    let builtLen = -1;
+    return {
+      g,
+      set(center: T.Vector3, dir: T.Vector3, len: number): void {
+        if (Math.abs(len - builtLen) > 0.001) {
+          build(len);
+          builtLen = len;
+        }
+        g.position.copy(center);
+        // 로컬 +Z를 dir(XZ 평면 단위벡터)로 회전
+        g.rotation.set(0, Math.atan2(dir.x, dir.z), 0);
+      },
+    };
+  };
+
+  // ── 화살표: 전류(코일 안쪽 얇은 2D 화살표), 힘(청록), 자기장(빨강) ──
+  const sideA = flatCurArrow(0.068, 0.21, 0.25);
+  const sideB = flatCurArrow(0.068, 0.21, 0.25);
+  const backArr = flatCurArrow(0.056, 0.17, 0.2);
+  const frontL = flatCurArrow(0.052, 0.15, 0.17);
+  const frontR = flatCurArrow(0.052, 0.15, 0.17);
   coil.add(sideA.g, sideB.g, backArr.g, frontL.g, frontR.g);
   const forceA = { color: 0x3fd6c0, body: 0.06, head: 0.15, headLen: 0.28, outline: 0x0b2a33, onTop: true };
   const fLeft = fatArrow(forceA);
@@ -262,13 +352,13 @@ export async function mountMotor3d(cv: HTMLCanvasElement, box: HTMLElement): Pro
     const Ib = v3(0, 0, -aZ);
     const backX = -aZ; // 뒤 변: 변 a 쪽에서 뒤로 온 전류가 변 b 쪽으로(코일 틀의 x)
     const frontX = aZ;
-    // 코일 틀 안의 전류 화살표(코일과 함께 돈다)
-    const L = 1.1;
-    sideA.set(v3(-R, 0, (-aZ * L) / 2), Ia, L);
-    sideB.set(v3(R, 0, (aZ * L) / 2), Ib, L);
-    backArr.set(v3(0.5 - backX * 0.3, 0, -D), v3(backX, 0, 0), 0.6);
-    frontL.set(v3(-0.58 - frontX * 0.22, 0, D), v3(frontX, 0, 0), 0.44);
-    frontR.set(v3(0.58 - frontX * 0.22, 0, D), v3(frontX, 0, 0), 0.44);
+    // 코일 안쪽의 얇은 2D 전류 화살표(도선과 겹치지 않고 코일 테두리 바로 안쪽을 따라 선명하게 흐른다)
+    const L = 1.08;
+    sideA.set(v3(-R + 0.22, 0, 0), Ia, L);
+    sideB.set(v3(R - 0.22, 0, 0), Ib, L);
+    backArr.set(v3(0.45, 0, -D + 0.2), v3(backX, 0, 0), 0.62);
+    frontL.set(v3(-0.56, 0, D - 0.2), v3(frontX, 0, 0), 0.48);
+    frontR.set(v3(0.56, 0, D - 0.2), v3(frontX, 0, 0), 0.48);
     for (const a of [sideA, sideB, backArr, frontL, frontR]) a.g.visible = v.on;
     // 양쪽 변의 자리(월드)와 힘 = 전류 × 자기장
     const pa = v3(-R * c, -R * s, F_Z);

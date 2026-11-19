@@ -31,6 +31,8 @@ export const motorLab: StepRenderer = (host, step, api) => {
   let on = false;
   let cur: 1 | -1 = 1;
   let nLeft = true;
+  let slow = false;
+  let ready = false;
   let finished = false;
   let th = 0; // 코일이 돈 각
   let hold: "off" | "left" | "both" | "free" = "off"; // 코일을 붙잡고 있는 걸음. free부터 코일이 돈다
@@ -38,10 +40,11 @@ export const motorLab: StepRenderer = (host, step, api) => {
   const seen = { on: false, cur: false, pole: false };
 
   const sw = bvBtn("main", "전류 흘려주기");
+  const slowBtn = bvBtn("", "천천히 보기");
   const bCur = bvBtn("", "전류 방향 바꾸기");
   const bPole = bvBtn("", "자석의 극 바꾸기");
   const log = xLog(["코일이 회전하는 방향 (앞에서 볼 때)"], 1, true);
-  f.slot.setControls(sw, xRow(bCur, bPole), log.el);
+  f.slot.setControls(xRow(sw, slowBtn), xRow(bCur, bPole), log.el);
 
   /** 왼쪽에 온 변이 받는 힘의 방향(+1 위). cur = 1이면 왼쪽 변의 전류가 뒤쪽(먼 쪽)으로 흐른다: (−z) × (+x) = −y */
   const up = (): number => -cur * (nLeft ? 1 : -1);
@@ -50,41 +53,63 @@ export const motorLab: StepRenderer = (host, step, api) => {
   const after = (): void => {
     log.set(0, hold !== "free" ? "회전 전 (고정됨)" : on ? turnName() : "정지");
     f.pips((seen.on ? 1 : 0) + (seen.cur ? 1 : 0) + (seen.pole ? 1 : 0));
-    if (seen.on && seen.cur && seen.pole && !finished) {
-      finished = true;
-      sw.disabled = true;
-      bCur.disabled = true;
-      bPole.disabled = true;
-      tm.later(ask, 3000);
+    if (seen.on && seen.cur && seen.pole && !ready && !finished) {
+      ready = true;
+      sw.disabled = false;
+      sw.classList.add("main");
+      sw.textContent = "확인 문제 풀기";
+      f.say("전류와 자석 극에 따른 회전 방향 변화를 모두 확인했어요! 준비되면 <b>확인 문제 풀기</b>를 눌러 보세요.");
     }
   };
+  slowBtn.disabled = true;
   bCur.disabled = true;
   bPole.disabled = true;
+  slowBtn.addEventListener("click", () => {
+    if (finished || hold !== "free") return;
+    haptic(HAPTIC.tap);
+    slow = !slow;
+    slowBtn.classList.toggle("main", slow);
+    slowBtn.textContent = slow ? "원래 속도로" : "천천히 보기";
+    if (slow) f.say("<b>0.25배속</b>으로 천천히 돌려 봐요. 주황 변과 보라 변이 수직을 지날 때 힘 방향이 어떻게 유지되는지 관찰해 보세요!");
+    else f.say("원래 속도로 돌아왔어요. 양쪽 변이 계속 반대 방향으로 힘을 받아 회전해요.");
+    after();
+  });
   sw.addEventListener("click", () => {
     if (finished) return;
     haptic(HAPTIC.tap);
+    if (ready) {
+      finished = true;
+      sw.disabled = true;
+      slowBtn.disabled = true;
+      bCur.disabled = true;
+      bPole.disabled = true;
+      ask();
+      return;
+    }
     if (hold === "off") {
       hold = "left";
       on = true;
       sw.disabled = true;
-      f.say(`코일을 붙잡아 고정한 채 전류를 흘려주었어요. 코일의 왼쪽 변은 <b>${dirName(up())}</b>로 힘을 받아요.`);
-      tm.later(predict, 2400);
+      f.say(`코일을 붙잡아 고정한 채 전류를 흘려주었어요. 왼쪽 <b>주황 변</b>은 <b>${dirName(up())}</b>로 힘을 받아요.`);
+      tm.later(predict, 2000);
       return;
     }
     if (hold === "both") {
       hold = "free";
       seen.on = true;
+      sw.classList.remove("main");
       sw.textContent = "전류 끊기";
+      slowBtn.disabled = false;
       bCur.disabled = false;
       bPole.disabled = false;
-      f.say("왼쪽 변과 오른쪽 변이 서로 반대 방향으로 힘을 받아 코일이 <b>회전해요</b>! 전류의 방향과 자석의 극도 바꿔 보세요.");
+      f.say("주황 변과 보라 변이 서로 반대 방향으로 힘을 받아 코일이 <b>회전해요</b>! 천천히 보기와 전류·자석 바꾸기도 해 보세요.");
       api.setCTA("전류와 자석을 바꿔 보세요", { enabled: false });
       after();
       return;
     }
     on = !on;
     sw.textContent = on ? "전류 끊기" : "전류 흘려주기";
-    if (on) f.say("코일의 왼쪽 변과 오른쪽 변이 <b>서로 반대 방향</b>으로 힘을 받아 회전해요. 양쪽 힘 화살표를 비교해 보세요.");
+    if (on) f.say("코일의 주황 변과 보라 변이 <b>서로 반대 방향</b>으로 힘을 받아 회전해요. 양쪽 힘 화살표를 비교해 보세요.");
     else f.say("전류를 끊자 코일이 받는 힘이 사라져 <b>서서히 멈춰요</b>.");
     after();
   });
@@ -145,8 +170,9 @@ export const motorLab: StepRenderer = (host, step, api) => {
 
   /** 코일 돌리기(두 무대가 함께 쓴다): 왼쪽 변이 위로 힘을 받으면 시계 방향(각이 줄어든다) */
   const advance = (dt: number): void => {
-    const goal = on && hold === "free" ? -up() * 0.045 : 0;
-    speed += (goal - speed) * Math.min(1, dt * 0.03);
+    const base = slow ? 0.011 : 0.045;
+    const goal = on && hold === "free" ? -up() * base : 0;
+    speed += (goal - speed) * Math.min(1, dt * 0.04);
     th += speed * dt;
   };
   /** 평면 무대(WebGL2가 없는 기기): 비스듬히 내려다본 2D 그림 */
@@ -178,7 +204,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(...P(0, 0, B + 34));
     ctx.stroke();
     ctx.restore();
-    // 코일(네 꼭짓점)
+    // 코일(네 꼭짓점: 변 A는 주황, 변 B는 보라로 구분)
     const c = Math.cos(th);
     const sn = Math.sin(th);
     const q = [P(-A * c, -A * sn, -B), P(-A * c, -A * sn, B), P(A * c, A * sn, B), P(A * c, A * sn, -B)];
@@ -191,6 +217,16 @@ export const motorLab: StepRenderer = (host, step, api) => {
       ctx.closePath();
       ctx.stroke();
     }
+    const seg = (a: [number, number], b: [number, number], col: string): void => {
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(a[0], a[1]);
+      ctx.lineTo(b[0], b[1]);
+      ctx.stroke();
+    };
+    seg(q[0], q[1], "#FF922B");
+    seg(q[3], q[2], "#B197FC");
     if (on) {
       // 지금 왼쪽에 온 변과 오른쪽에 온 변
       const first = -A * c < 0; // q[0]~q[1] 변이 왼쪽에 있나
@@ -243,7 +279,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
         f.stage.dataset.motor = "3d";
         loop = createLoop((dt) => {
           advance(dt);
-          const tag = hold === "left" || hold === "both" ? "코일을 붙잡고 있어요" : on ? "" : "전류가 흐르지 않아요";
+          const tag = hold === "left" || hold === "both" ? "코일을 붙잡고 있어요" : !on ? "전류가 흐르지 않아요" : slow ? "0.25배속 (주황·보라 변 관찰)" : "";
           m.render({ on, cur, nLeft, th, rightForce: hold !== "left", held: hold !== "free", tag });
         }).start();
       });

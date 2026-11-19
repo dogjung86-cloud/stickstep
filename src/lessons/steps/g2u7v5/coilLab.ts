@@ -12,7 +12,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
 import { mBar, mCoil, mCoilEnds, mCompass } from "./magKit";
-import { X, xArrow, xBox, xCanvas, xFrame, xRow, xSegs, xText, type LabStep } from "./kit";
+import { X, xArrow, xBox, xCanvas, xCap, xFrame, xRow, xSegs, xText, type LabStep } from "./kit";
 
 const C = { x: 173, y: 112 };
 const MAG_BUSY = "지금은 막대자석과 비교하는 화면이에요. <b>코일로 돌아가기</b>를 누른 뒤 전류 조건을 바꿔 보세요.";
@@ -26,10 +26,12 @@ export const coilLab: StepRenderer = (host, step, api) => {
 
   let on = false;
   let magnet = false; // 코일 자리에 막대자석을 놓아 견주는 중
+  let showField = false; // 코일·막대자석 주위 자기장 선 보이기
   let guessed = false; // 전류의 방향을 바꾸기 전에 예측을 했는지
   let asking = false;
   let dir: 1 | -1 = 1; // 코일 속 자기장이 오른쪽을 향하는 전류 방향이 1
   let strong = false;
+  let ready = false;
   let finished = false;
   const placed = SPOTS.map(() => false);
   const ang = SPOTS.map(() => -Math.PI / 2);
@@ -58,8 +60,10 @@ export const coilLab: StepRenderer = (host, step, api) => {
       return false;
     },
   );
-  const cmp = bvBtn("", "막대자석 놓아 비교하기");
-  f.slot.setControls(xRow(sw, flip), power.el, cmp);
+  const cmp = bvBtn("", "막대자석 비교");
+  const fieldBtn = bvBtn("", "자기장 선 보기");
+  const noteTip = xCap("<b>더 알아보기</b> 약한 전류는 지구 자기장(북) 영향으로 살짝 기울고, <b>센 전류</b>일 때 막대자석과 똑같이 수평이 돼요.");
+  f.slot.setControls(xRow(sw, flip), power.el, xRow(cmp, fieldBtn), noteTip);
 
   function need(): void {
     if (n() < 3) f.say("먼저 무대의 점선 원을 눌러 <b>나침반을 세 개 이상</b> 놓아 보세요.");
@@ -67,18 +71,42 @@ export const coilLab: StepRenderer = (host, step, api) => {
   }
   function after(): void {
     f.pips((seen.on ? 1 : 0) + (seen.flip ? 1 : 0) + (seen.power ? 1 : 0) + (seen.mag ? 1 : 0));
-    if (seen.on && seen.flip && seen.power && seen.mag && !magnet && !finished) {
+    if (seen.on && seen.flip && seen.power && seen.mag && !magnet && !ready && !finished) {
+      ready = true;
+      sw.classList.add("main");
+      sw.textContent = "확인 문제 풀기";
+      f.say("전류 방향·세기·막대자석 비교를 모두 마쳤어요! 자기장 선도 살펴본 뒤 <b>확인 문제 풀기</b>를 눌러 보세요.");
+    }
+  }
+  fieldBtn.addEventListener("click", () => {
+    if (finished || asking) return;
+    haptic(HAPTIC.tap);
+    if (!on && !magnet) {
+      need();
+      return;
+    }
+    showField = !showField;
+    fieldBtn.classList.toggle("main", showField);
+    fieldBtn.textContent = showField ? "자기장 선 숨기기" : "자기장 선 보기";
+    if (showField) {
+      f.say("<b>자기장 선</b>이 N극에서 나와 S극으로 들어가요. 각 나침반의 빨간 바늘(N극)이 자기장 선 방향과 나란한지 살펴보세요!");
+    } else {
+      f.say("자기장 선을 숨겼어요. 나침반 바늘만으로 자기장 방향을 읽어 보세요.");
+    }
+  });
+  sw.addEventListener("click", () => {
+    if (finished || asking) return;
+    haptic(HAPTIC.tap);
+    if (ready && !magnet) {
       finished = true;
       sw.disabled = true;
       flip.disabled = true;
       cmp.disabled = true;
+      fieldBtn.disabled = true;
       power.lock(true);
-      tm.later(ask1, 2800);
+      ask1();
+      return;
     }
-  }
-  sw.addEventListener("click", () => {
-    if (finished || asking) return;
-    haptic(HAPTIC.tap);
     if (magnet) {
       f.say(MAG_BUSY);
       return;
@@ -136,11 +164,15 @@ export const coilLab: StepRenderer = (host, step, api) => {
       return;
     }
     magnet = !magnet;
-    cmp.textContent = magnet ? "코일로 돌아가기" : "막대자석 놓아 비교하기";
+    cmp.textContent = magnet ? "코일로 돌아가기" : "막대자석 비교";
     if (magnet) {
       seen.mag = true;
       f.say("코일 자리에 막대자석을 놓아도 주위 나침반 바늘들이 <b>똑같은 방향</b>을 가리켜요! 즉, 전류가 흐르는 코일은 막대자석과 같은 자기장을 만들어요.");
-    } else f.say("전류가 흐르는 코일은 <b>막대자석처럼</b> 한쪽 끝이 N극, 반대쪽 끝이 S극이 돼요.");
+    } else if (!strong) {
+      f.say("약한 전류에서는 지구 자기장(북) 영향이 남아 살짝 기울어요. <b>센 전류</b>로 바꾸면 막대자석처럼 완전히 수평으로 정렬해요.");
+    } else {
+      f.say("전류가 흐르는 코일은 <b>막대자석처럼</b> 한쪽 끝이 N극, 반대쪽 끝이 S극이 돼요.");
+    }
     after();
   });
   st.cv.addEventListener("pointerdown", (e) => {
@@ -190,18 +222,35 @@ export const coilLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
+  /** 유한 길이 막대자석/코일의 두 극(N, S)이 만드는 순수 자기장 벡터. */
+  const poleField = (x: number, y: number): [number, number] => {
+    const nx = C.x + dir * 38;
+    const sx = C.x - dir * 38;
+    const ny = C.y;
+    const add = (px: number, py: number, sign: number): [number, number] => {
+      const dx = (x - px) / 55;
+      const dy = (y - py) / 55;
+      const r2 = Math.max(0.22, dx * dx + dy * dy);
+      const r3 = r2 * Math.sqrt(r2);
+      return [(sign * dx) / r3, (sign * dy) / r3];
+    };
+    const [bx1, by1] = add(nx, ny, 1); // N극에서 나가는 방향
+    const [bx2, by2] = add(sx, ny, -1); // S극으로 들어가는 방향
+    return [bx1 + bx2, by1 + by2];
+  };
+
   const field = (x: number, y: number): [number, number] => {
-    // 지구 자기장(북쪽 = 화면 위)
+    // 지구 자기장(북쪽 = 화면 위).
+    // 막대자석과 센 전류는 동일한 순수 쌍극자(by = 0)로 계산해 교과서 그림 VII-12처럼
+    // 0.00° 차이 없이 완전히 똑같은 수평·접선 방향을 가리킨다.
+    // 약한 전류는 지구 자기장(북)의 영향이 살짝 남아 ~11° 기울어져 전류 세기에 따른 차이를 보여 준다.
     let bx = 0;
-    let by = -1;
-    if (on) {
-      const m = dir * (strong ? 10 : 2.2);
-      const rx = (x - C.x) / 60;
-      const ry = (y - C.y) / 60;
-      const r = Math.hypot(rx, ry);
-      const dot = (m * rx) / r;
-      bx += (3 * dot * (rx / r) - m) / r ** 3;
-      by += (3 * dot * (ry / r)) / r ** 3;
+    let by = magnet || (on && strong) ? 0 : on ? -0.36 : -1;
+    if (magnet || on) {
+      const k = magnet || strong ? 16 : 2.6;
+      const [mx, my] = poleField(x, y);
+      bx += mx * k;
+      by += my * k;
     }
     return [bx, by];
   };
@@ -210,11 +259,27 @@ export const coilLab: StepRenderer = (host, step, api) => {
     const k = w / 346;
     ctx.save();
     ctx.scale(k, k);
+    // 자기장 활성 시 은은한 배경 발광 오라
+    if (on || magnet) {
+      const aura = ctx.createRadialGradient(C.x, C.y, 12, C.x, C.y, 128);
+      aura.addColorStop(0, magnet || strong ? "rgba(255,123,107,.13)" : "rgba(255,123,107,.07)");
+      aura.addColorStop(1, "rgba(11,21,36,0)");
+      ctx.fillStyle = aura;
+      ctx.fillRect(0, 0, 346, 230);
+    }
     // 전원 장치와 전선(코일의 두 끝, 왼쪽 아래와 오른쪽 아래에 잇는다)
     const ends = mCoilEnds(C.x, C.y);
     if (!magnet) {
-      xBox(ctx, 12, 192, 84, 28, 8, "rgba(255,255,255,.07)", X.line);
+      xBox(ctx, 12, 192, 84, 28, 8, "rgba(255,255,255,.08)", X.line);
       xText(ctx, "전원 장치", 54, 206.5, { px: 12, color: X.dim });
+      ctx.fillStyle = dir === 1 ? "#E34B39" : "#3487E5";
+      ctx.beginPath();
+      ctx.arc(96, 200, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = dir === 1 ? "#3487E5" : "#E34B39";
+      ctx.beginPath();
+      ctx.arc(96, 212, 3, 0, Math.PI * 2);
+      ctx.fill();
       ctx.strokeStyle = on ? "rgba(255,196,90,.75)" : "rgba(143,164,194,.7)";
       ctx.lineWidth = 2.2;
       ctx.beginPath();
@@ -230,6 +295,60 @@ export const coilLab: StepRenderer = (host, step, api) => {
       const up = dir === 1;
       xArrow(ctx, ends.lx, up ? 186 : 150, ends.lx, up ? 150 : 186, X.cur, 2.4, 8);
       xText(ctx, "전류", ends.lx - 8, 168, { px: 12, color: X.cur, align: "right" });
+    }
+    // 자기장 선(켜져 있고 전류가 흐르거나 막대자석 비교 중일 때):
+    // 나침반 바늘을 돌리는 동일한 두 극 자기장(poleField)을 적분해 그려 바늘과 자기장 선이 정확히 일치하게 한다.
+    if (showField && (on || magnet)) {
+      ctx.save();
+      const alpha = strong || magnet ? 0.56 : 0.4;
+      ctx.strokeStyle = `rgba(255,123,107,${alpha})`;
+      ctx.lineWidth = strong || magnet ? 2.0 : 1.5;
+      ctx.setLineDash([6, 4]);
+      ctx.lineDashOffset = -(t / 34);
+      const nx = C.x + dir * 42;
+      const sx = C.x - dir * 42;
+      const trace = (x0: number, y0: number, signStep: number, maxSteps: number): [number, number][] => {
+        const pts: [number, number][] = [[x0, y0]];
+        let px = x0;
+        let py = y0;
+        for (let step = 0; step < maxSteps; step++) {
+          const [fx, fy] = poleField(px, py);
+          const mag = Math.hypot(fx, fy);
+          if (mag < 1e-4) break;
+          px += (fx / mag) * 4.5 * signStep;
+          py += (fy / mag) * 4.5 * signStep;
+          pts.push([px, py]);
+          if (px < 8 || px > 338 || py < 8 || py > 222) break;
+          if (Math.hypot(px - sx, py - C.y) < 16 && signStep > 0) break;
+          if (Math.hypot(px - nx, py - C.y) < 16 && signStep < 0) break;
+        }
+        return pts;
+      };
+      // 위·아래 중앙을 지나는 실제 자기장 선 3겹(위/아래 나침반 50, 172와 꼭 맞게 통과)
+      for (const dy of [-34, -62, -88, 34, 62, 88]) {
+        const fwd = trace(C.x, C.y + dy, 1, 70);
+        const bwd = trace(C.x, C.y + dy, -1, 70).reverse();
+        const full = [...bwd, ...fwd.slice(1)];
+        ctx.beginPath();
+        full.forEach(([x, y], idx) => (idx ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      // 위·아래 중앙 자기장 방향 화살촉(N극에서 나와 S극으로 향함 = -dir 방향)
+      for (const dy of [-34, -62, 34, 62]) {
+        const ay = C.y + dy;
+        ctx.fillStyle = `rgba(255,123,107,${Math.min(0.92, alpha + 0.3)})`;
+        ctx.beginPath();
+        ctx.moveTo(C.x - dir * 6, ay);
+        ctx.lineTo(C.x + dir * 4, ay - 4.5);
+        ctx.lineTo(C.x + dir * 4, ay + 4.5);
+        ctx.closePath();
+        ctx.fill();
+      }
+      // 양 끝 축 방향 바깥 자기장 선(좌·우 나침반 중심을 지나며 N극에서 나가고 S극으로 들어감)
+      xArrow(ctx, C.x + dir * 50, C.y, C.x + dir * 134, C.y, `rgba(255,123,107,${alpha + 0.18})`, 1.9, 7);
+      xArrow(ctx, C.x - dir * 134, C.y, C.x - dir * 50, C.y, `rgba(255,123,107,${alpha + 0.18})`, 1.9, 7);
+      ctx.restore();
     }
     // 코일(또는 견주려고 놓은 막대자석)
     if (magnet) {
@@ -277,6 +396,18 @@ export const coilLab: StepRenderer = (host, step, api) => {
       ang[i] += d * Math.min(1, dt * 0.08);
       mCompass(ctx, x, y, ang[i]);
     });
+    // 왼쪽 위 상태 표시(약한 전류 vs 센 전류·막대자석의 자기장 세기 차이를 직관적으로 안내)
+    if (magnet) {
+      xText(ctx, "막대자석 자기장", 14, 20, { px: 12, color: "#FFB3A6", align: "left", w: 700 });
+    } else if (on) {
+      xText(
+        ctx,
+        strong ? "센 전류: 코일 자기장 우세" : "약한 전류: 북쪽 영향 살짝 남음",
+        14,
+        20,
+        { px: 12, color: strong ? "#FFE08A" : X.dim, align: "left", w: 700 },
+      );
+    }
     xText(ctx, "빨간 끝이 N극", 284, 212, { px: 12, color: X.dim });
     ctx.restore();
   });

@@ -167,6 +167,7 @@ export const bulbLab: StepRenderer = (host, step, api) => {
       }
     });
     xText(ctx, "전지 3 V", 173, By - 26, { px: 12, color: X.dim });
+    if (live) xText(ctx, "전류 (+)→(−)", 260, By - 14, { px: 12, color: X.cur });
     ctx.restore();
     xRead(ctx, w, stt.amps.toFixed(1), "A", "회로 전체의 전류");
     xPill(ctx, "전구를 눌러 빼거나 끼워요", X.cur);

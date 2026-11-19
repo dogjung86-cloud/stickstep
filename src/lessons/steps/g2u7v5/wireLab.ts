@@ -37,6 +37,7 @@ export const wireLab: StepRenderer = (host, step, api) => {
 
   let closed = false;
   let flip = false; // false: 전지의 왼쪽이 (−)극
+  let ready = false;
   let finished = false;
   let glow = 0;
   const seen = { closed: false, flipped: false };
@@ -49,16 +50,23 @@ export const wireLab: StepRenderer = (host, step, api) => {
 
   const after = (): void => {
     f.pips((seen.closed ? 1 : 0) + (seen.flipped ? 1 : 0));
-    if (seen.closed && seen.flipped && !finished) {
-      finished = true;
-      sw.disabled = true;
-      turn.disabled = true;
-      tm.later(ask1, 2600);
+    if (seen.closed && seen.flipped && !ready && !finished) {
+      ready = true;
+      sw.classList.add("main");
+      sw.textContent = "확인 문제 풀기";
+      f.say("전자와 전류가 서로 반대 방향임을 확인했어요! 더 관찰한 뒤 <b>확인 문제 풀기</b>를 눌러 보세요.");
     }
   };
   sw.addEventListener("click", () => {
     if (finished) return;
     haptic(HAPTIC.tap);
+    if (ready) {
+      finished = true;
+      sw.disabled = true;
+      turn.disabled = true;
+      ask1();
+      return;
+    }
     closed = !closed;
     sw.textContent = closed ? "스위치 열기" : "스위치 닫기";
     if (closed) {

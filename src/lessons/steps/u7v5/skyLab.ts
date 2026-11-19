@@ -50,7 +50,7 @@ const R_EARTH = 2.55;
 const MAXQ = 24; // 15분 단위 × 24 = 6시간(저녁 8시 ~ 새벽 2시, 지구 90° 자전)
 const NEED_EARTH = 12; // 3시간 이상 자전시키면 1단계 완료
 const NEED_SKY = 14; // 3시간 30분 이상 밀면 해당 방위 관측 완료
-const TRAIL_SEGS = 24;
+const TRAIL_SEGS = 48;
 
 // 북두칠성 상대 기하(적위 61°~70°, 북극성에서 20°~29° 거리). 위도 37°N 북쪽 하늘에서 저녁 8시~새벽 2시 내내 화면 안에 선명히 보인다.
 const DIPPER: { dec: number; ha0: number }[] = [
@@ -145,58 +145,174 @@ function timeLabel(q: number): string {
   return `${part} ${h12}시${m ? ` ${m}분` : ""}`;
 }
 
-/** 부드러운 별빛 스프라이트 텍스처. */
-function makeStarSpriteTex(THREE: typeof T, coreHex: string, haloRgba: string): T.CanvasTexture {
-  const cv = document.createElement("canvas");
-  cv.width = 64;
-  cv.height = 64;
-  const ctx = cv.getContext("2d")!;
-  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 30);
-  g.addColorStop(0, "#FFFFFF");
-  g.addColorStop(0.22, coreHex);
-  g.addColorStop(0.52, haloRgba);
-  g.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, 64, 64);
-  const tex = new THREE.CanvasTexture(cv);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-/** 지평선 바닥 원판 텍스처(깊은 밤하늘 지면 + 방위 십자선 + 부드러운 가장자리). */
-function makeGroundTex(THREE: typeof T): T.CanvasTexture {
-  const S = 512;
+/** 부드러운 에어리 원반 + 선택적 4방향 회절 빛살(Diffraction spike) 별빛 스프라이트 텍스처. */
+function makeStarSpriteTex(THREE: typeof T, coreHex: string, haloRgba: string, spikes = false): T.CanvasTexture {
+  const S = 128;
   const cv = document.createElement("canvas");
   cv.width = S;
   cv.height = S;
   const ctx = cv.getContext("2d")!;
   const c = S / 2;
-  const bg = ctx.createRadialGradient(c, c, 12, c, c, c);
-  bg.addColorStop(0, "#1A2C46");
-  bg.addColorStop(0.62, "#101E34");
-  bg.addColorStop(0.92, "#0B1628");
-  bg.addColorStop(1, "#070E1C");
+
+  const g = ctx.createRadialGradient(c, c, 0, c, c, spikes ? 56 : 52);
+  g.addColorStop(0, "#FFFFFF");
+  g.addColorStop(0.16, coreHex);
+  g.addColorStop(0.42, haloRgba);
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, S, S);
+
+  if (spikes) {
+    ctx.save();
+    ctx.translate(c, c);
+    for (const ang of [0, Math.PI / 2]) {
+      ctx.save();
+      ctx.rotate(ang);
+      const sg = ctx.createLinearGradient(-58, 0, 58, 0);
+      sg.addColorStop(0, "rgba(255,255,255,0)");
+      sg.addColorStop(0.42, haloRgba);
+      sg.addColorStop(0.5, "#FFFFFF");
+      sg.addColorStop(0.58, haloRgba);
+      sg.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sg;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 58, 2.2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+/** 행성 대기 / 투명 크리스털 천구 가장자리 프레넬 발광(Fresnel Rim) 셰이더 재질. */
+function makeFresnelRimMat(
+  THREE: typeof T,
+  hexColor: number,
+  power: number,
+  maxOpacity: number,
+  backSide = false,
+): T.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uColor: { value: new THREE.Color(hexColor) },
+      uPower: { value: power },
+      uOpacity: { value: maxOpacity },
+    },
+    vertexShader: `
+      varying vec3 vNormalW;
+      varying vec3 vViewDirW;
+      void main() {
+        vec4 worldPos = modelMatrix * vec4(position, 1.0);
+        vNormalW = normalize(mat3(modelMatrix) * normal);
+        vViewDirW = normalize(cameraPosition - worldPos.xyz);
+        gl_Position = projectionMatrix * viewMatrix * worldPos;
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uColor;
+      uniform float uPower;
+      uniform float uOpacity;
+      varying vec3 vNormalW;
+      varying vec3 vViewDirW;
+      void main() {
+        float ndv = abs(dot(normalize(vNormalW), normalize(vViewDirW)));
+        float rim = pow(clamp(1.0 - ndv, 0.0, 1.0), uPower);
+        gl_FragColor = vec4(uColor, rim * uOpacity);
+        #include <colorspace_fragment>
+      }
+    `,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: backSide ? THREE.BackSide : THREE.FrontSide,
+  });
+}
+
+/** 밤하늘 지평선 박명(Twilight Horizon Glow) 원통 그라데이션 텍스처. */
+function makeHorizonGlowTex(THREE: typeof T): T.CanvasTexture {
+  const cv = document.createElement("canvas");
+  cv.width = 32;
+  cv.height = 128;
+  const ctx = cv.getContext("2d")!;
+  // UV v=1(상단 하늘) → y=0, UV v=0(지평선 바닥) → y=128
+  const g = ctx.createLinearGradient(0, 0, 0, 128);
+  g.addColorStop(0.0, "rgba(18, 42, 92, 0)");
+  g.addColorStop(0.45, "rgba(28, 62, 128, 0.14)");
+  g.addColorStop(0.78, "rgba(46, 94, 178, 0.32)");
+  g.addColorStop(1.0, "rgba(68, 126, 214, 0.44)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 32, 128);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+/** 지평선 바닥 관측 데크 텍스처(1024×1024 정밀 방위 눈금 + 중앙 천문 관측 석판 + 방위 십자선). */
+function makeGroundTex(THREE: typeof T): T.CanvasTexture {
+  const S = 1024;
+  const cv = document.createElement("canvas");
+  cv.width = S;
+  cv.height = S;
+  const ctx = cv.getContext("2d")!;
+  const c = S / 2;
+  const bg = ctx.createRadialGradient(c, c, 18, c, c, c);
+  bg.addColorStop(0, "#213858");
+  bg.addColorStop(0.22, "#182A45");
+  bg.addColorStop(0.62, "#0F1D33");
+  bg.addColorStop(0.92, "#0A1426");
+  bg.addColorStop(1, "#060C18");
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, S, S);
+
+  // 중앙 관측자 원형 데크 패드
+  ctx.fillStyle = "rgba(99, 230, 190, 0.08)";
+  ctx.beginPath();
+  ctx.arc(c, c, c * 0.14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(99, 230, 190, 0.34)";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
   // 동심원 지평 눈금
-  ctx.strokeStyle = "rgba(130,168,230,0.16)";
-  ctx.lineWidth = 2;
-  for (const frac of [0.35, 0.7, 0.96]) {
+  for (const [frac, op] of [[0.34, 0.18], [0.66, 0.16], [0.95, 0.28]] as [number, number][]) {
+    ctx.strokeStyle = `rgba(130, 172, 238, ${op})`;
+    ctx.lineWidth = frac > 0.9 ? 3 : 2;
     ctx.beginPath();
     ctx.arc(c, c, c * frac, 0, Math.PI * 2);
     ctx.stroke();
   }
-  // 동서 · 남북 방위 기준선
-  ctx.strokeStyle = "rgba(145,182,240,0.22)";
-  ctx.lineWidth = 2;
-  ctx.setLineDash([8, 8]);
+
+  // 지평선 둘레 36방위 각도 눈금
+  for (let i = 0; i < 36; i++) {
+    const a = (i / 36) * Math.PI * 2;
+    const major = i % 9 === 0;
+    const r0 = c * (major ? 0.89 : 0.925);
+    const r1 = c * 0.955;
+    ctx.strokeStyle = major ? "rgba(175, 210, 255, 0.55)" : "rgba(130, 170, 235, 0.24)";
+    ctx.lineWidth = major ? 4 : 2;
+    ctx.beginPath();
+    ctx.moveTo(c + Math.cos(a) * r0, c + Math.sin(a) * r0);
+    ctx.moveTo(c + Math.cos(a) * r0, c + Math.sin(a) * r0);
+    ctx.lineTo(c + Math.cos(a) * r1, c + Math.sin(a) * r1);
+    ctx.stroke();
+  }
+
+  // 동서 · 남북 방위 기준선 + 대각 보조선
+  ctx.strokeStyle = "rgba(145, 186, 245, 0.25)";
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([12, 10]);
   ctx.beginPath();
-  ctx.moveTo(20, c);
-  ctx.lineTo(S - 20, c);
-  ctx.moveTo(c, 20);
-  ctx.lineTo(c, S - 20);
+  ctx.moveTo(32, c);
+  ctx.lineTo(S - 32, c);
+  ctx.moveTo(c, 32);
+  ctx.lineTo(c, S - 32);
   ctx.stroke();
   ctx.setLineDash([]);
+
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
@@ -484,27 +600,29 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     }
 
     const { scene, camera } = st;
-    scene.background = new THREE.Color(0x060c1b);
+    scene.background = new THREE.Color(0x050a18);
 
-    // 배경 원거리 별빛(두 장면 공통)
-    scene.add(S.makeStars(600, 160));
+    // 배경 원거리 은하수 + 다층 별빛(두 장면 공통)
+    scene.add(S.makeMilkyWay(230));
+    scene.add(S.makeStars(760, 175));
 
-    // 조명(우주 장면 지구용; 천구 장면은 BasicMaterial이라 조명 영향을 받지 않는다)
-    scene.add(new THREE.AmbientLight(0x88a4d4, 1.05));
-    const keyLight = new THREE.DirectionalLight(0xfff4e0, 2.0);
+    // 조명(우주 장면 지구용; 천구 장면은 자체 발광 재질이라 조명 영향을 받지 않는다)
+    scene.add(new THREE.HemisphereLight(0x9ec0ff, 0x162442, 1.08));
+    const keyLight = new THREE.DirectionalLight(0xfff5e4, 2.15);
     keyLight.position.set(12, 9, 18);
     scene.add(keyLight);
 
-    const starTexBlue = makeStarSpriteTex(THREE, "#DCEAFF", "rgba(145,190,255,0.45)");
-    const starTexGold = makeStarSpriteTex(THREE, "#FFF0BE", "rgba(255,212,110,0.55)");
+    const starTexBlue = makeStarSpriteTex(THREE, "#E2EEFF", "rgba(140,190,255,0.5)", false);
+    const starTexBlueSpike = makeStarSpriteTex(THREE, "#E8F2FF", "rgba(145,196,255,0.56)", true);
+    const starTexGold = makeStarSpriteTex(THREE, "#FFF3C4", "rgba(255,214,112,0.62)", true);
 
     // =========================================================================
-    // 장면 1: 우주에서 보기(고정된 천구 속 서 → 동 자전하는 지구)
+    // 장면 1: 우주에서 보기(고정된 크리스털 천구 속 서 → 동 자전하는 지구)
     // =========================================================================
     const spaceGroup = new THREE.Group();
     scene.add(spaceGroup);
 
-    // 1) 바깥 고정 천구(와이어프레임 경위선 + 밝은 천구 적도)
+    // 1) 바깥 고정 천구(크리스털 유리 프레넬 림 + 와이어프레임 경위선 + 밝은 천구 적도)
     const skyWireGroup = new THREE.Group();
     spaceGroup.add(skyWireGroup);
     const addCircle = (
@@ -514,7 +632,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       color: number,
       opacity: number,
       plane: "xz" | "xy" | "yz" = "xz",
-      segs = 72,
+      segs = 84,
     ): void => {
       const pts: T.Vector3[] = [];
       for (let i = 0; i <= segs; i++) {
@@ -529,29 +647,33 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       );
       parent.add(line);
     };
-    addCircle(skyWireGroup, R_SKY, 0, 0x76a8ff, 0.34, "xz", 96); // 천구 적도
-    for (const latDeg of [-45, 45]) {
+    addCircle(skyWireGroup, R_SKY, 0, 0x82b4ff, 0.42, "xz", 108); // 천구 적도
+    for (const latDeg of [-45, -23.5, 23.5, 45]) {
       const r = R_SKY * Math.cos(latDeg * DEG);
       const y = R_SKY * Math.sin(latDeg * DEG);
-      addCircle(skyWireGroup, r, y, 0x4f74b5, 0.16, "xz", 72);
+      addCircle(skyWireGroup, r, y, Math.abs(latDeg) === 45 ? 0x567ec2 : 0x4568a6, Math.abs(latDeg) === 45 ? 0.19 : 0.11, "xz", 84);
     }
     for (let m = 0; m < 4; m++) {
       const mer = new THREE.Group();
-      addCircle(mer, R_SKY, 0, 0x4f74b5, 0.14, "xy", 72);
+      addCircle(mer, R_SKY, 0, 0x547bc0, 0.16, "xy", 84);
       mer.rotation.y = (m * Math.PI) / 4;
       skyWireGroup.add(mer);
     }
-    // 반투명 천구 유리 껍질
+    // 반투명 천구 유리 속면 + 크리스털 프레넬 테두리 광채
     const skyShell = new THREE.Mesh(
-      new THREE.SphereGeometry(R_SKY, 40, 24),
-      new THREE.MeshBasicMaterial({ color: 0x162b56, transparent: true, opacity: 0.12, side: THREE.BackSide, depthWrite: false }),
+      new THREE.SphereGeometry(R_SKY, 48, 32),
+      new THREE.MeshBasicMaterial({ color: 0x132750, transparent: true, opacity: 0.12, side: THREE.BackSide, depthWrite: false }),
     );
-    skyWireGroup.add(skyShell);
+    const skyFresnel = new THREE.Mesh(
+      new THREE.SphereGeometry(R_SKY, 48, 32),
+      makeFresnelRimMat(THREE, 0x6ea8ff, 3.2, 0.34, false),
+    );
+    skyWireGroup.add(skyShell, skyFresnel);
 
     // 고정된 천구 별들(지구가 돌아도 절대 움직이지 않는다)
     {
       const r = rng(107);
-      const count = 170;
+      const count = 210;
       const pos = new Float32Array(count * 3);
       const col = new Float32Array(count * 3);
       for (let i = 0; i < count; i++) {
@@ -570,47 +692,69 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
       g.setAttribute("color", new THREE.BufferAttribute(col, 3));
       skyWireGroup.add(
-        new THREE.Points(g, new THREE.PointsMaterial({ size: 2.6, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.92 })),
+        new THREE.Points(g, new THREE.PointsMaterial({ size: 2.6, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.94 })),
       );
-      // 천구 적도·중위도 대표 밝은 별(고정됨이 뚜렷하게 보이도록)
-      for (let i = 0; i < 16; i++) {
-        const ang = (i / 16) * Math.PI * 2;
-        const elev = ((i % 3) - 1) * 22 * DEG;
+      // 천구 적도·중위도 대표 밝은 별(고정됨이 뚜렷하게 보이도록 회절 빛살 스프라이트 사용)
+      for (let i = 0; i < 18; i++) {
+        const ang = (i / 18) * Math.PI * 2;
+        const elev = ((i % 3) - 1) * 23 * DEG;
         const sp = new THREE.Sprite(
-          new THREE.SpriteMaterial({ map: i % 4 === 0 ? starTexGold : starTexBlue, transparent: true, depthWrite: false }),
+          new THREE.SpriteMaterial({
+            map: i % 4 === 0 ? starTexGold : starTexBlueSpike,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+          }),
         );
         sp.position.set(
           Math.cos(elev) * Math.cos(ang) * (R_SKY - 0.1),
           Math.sin(elev) * (R_SKY - 0.1),
           Math.cos(elev) * Math.sin(ang) * (R_SKY - 0.1),
         );
-        sp.scale.set(0.62, 0.62, 1);
+        const sc = i % 4 === 0 ? 0.78 : 0.64;
+        sp.scale.set(sc, sc, 1);
         skyWireGroup.add(sp);
       }
-      // 천구 북극(북극성)
-      const poleSp = new THREE.Sprite(new THREE.SpriteMaterial({ map: starTexGold, transparent: true, depthWrite: false }));
+      // 천구 북극(북극성 + 금빛 할로)
+      const poleSp = new THREE.Sprite(
+        new THREE.SpriteMaterial({ map: starTexGold, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }),
+      );
       poleSp.position.set(0, R_SKY, 0);
-      poleSp.scale.set(1.35, 1.35, 1);
+      poleSp.scale.set(1.65, 1.65, 1);
       skyWireGroup.add(poleSp);
     }
 
-    // 자전축 막대(남극 → 북극 → 북극성)
+    // 자전축 막대(남극 → 북극 → 북극성: 은은한 금빛 코어 + 점선)
     {
       const axisPts = [new THREE.Vector3(0, -R_SKY * 0.85, 0), new THREE.Vector3(0, R_SKY, 0)];
       const axisGeo = new THREE.BufferGeometry().setFromPoints(axisPts);
       const axisLine = new THREE.Line(
         axisGeo,
-        new THREE.LineDashedMaterial({ color: 0xffdf8e, dashSize: 0.45, gapSize: 0.3, transparent: true, opacity: 0.72 }),
+        new THREE.LineDashedMaterial({ color: 0xffe49c, dashSize: 0.45, gapSize: 0.28, transparent: true, opacity: 0.82 }),
       );
       axisLine.computeLineDistances();
-      spaceGroup.add(axisLine);
+      const axisGlow = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.028, 0.028, R_SKY * 1.85, 12),
+        new THREE.MeshBasicMaterial({ color: 0xffdf8e, transparent: true, opacity: 0.18, depthWrite: false }),
+      );
+      axisGlow.position.y = R_SKY * 0.075;
+      spaceGroup.add(axisLine, axisGlow);
     }
 
-    // 2) 중심의 자전하는 지구 + 우리나라(북위 37°, 동경 127°) 관측자 + 미니 천구 지평선
+    // 2) 중심의 자전하는 지구 + 푸른 대기권 프레넬 광채 + 우리나라(북위 37°, 동경 127°) 관측자
     const earthGroup = new THREE.Group();
     spaceGroup.add(earthGroup);
-    const earthMesh = S.makePlanet("earth", R_EARTH, 48);
+    const earthMesh = S.makePlanet("earth", R_EARTH, 64);
     earthGroup.add(earthMesh);
+
+    const earthAtmo = new THREE.Mesh(
+      new THREE.SphereGeometry(R_EARTH * 1.055, 48, 32),
+      makeFresnelRimMat(THREE, 0x5cb8ff, 2.8, 0.68, false),
+    );
+    spaceGroup.add(earthAtmo);
+
+    // 지구 적도 얇은 안내선(자전 속도감이 한눈에 읽히도록)
+    addCircle(earthGroup, R_EARTH + 0.02, 0, 0x8fd3ff, 0.28, "xz", 72);
 
     // Three.js SphereGeometry UV 기준: 동경 127° → phi = (127 + 180)° = 307°, 위도 37°N → theta = 53°
     const koreaPhi = 307 * DEG;
@@ -628,10 +772,10 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     observerMount.quaternion.setFromRotationMatrix(koreaBasis);
     earthGroup.add(observerMount);
 
-    // 우리나라 관측자의 작은 지평선 원판 + 미니 천구 반구(2단계 천구와 직접 이어지는 시각 장치!)
+    // 우리나라 관측자의 작은 지평선 원판 + 미니 천구 반구 + 미니 자전축(고도 37°)
     const miniHoriz = new THREE.Mesh(
-      new THREE.CircleGeometry(1.1, 32),
-      new THREE.MeshBasicMaterial({ color: 0x38d9a9, transparent: true, opacity: 0.28, side: THREE.DoubleSide, depthWrite: false }),
+      new THREE.CircleGeometry(1.14, 40),
+      new THREE.MeshBasicMaterial({ color: 0x38d9a9, transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: false }),
     );
     miniHoriz.rotation.x = -Math.PI / 2;
     miniHoriz.position.y = 0.04;
@@ -639,58 +783,71 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
 
     const miniHorizRim = new THREE.LineLoop(
       new THREE.BufferGeometry().setFromPoints(
-        Array.from({ length: 32 }, (_, i) => {
-          const a = (i / 32) * Math.PI * 2;
-          return new THREE.Vector3(Math.cos(a) * 1.1, 0.05, Math.sin(a) * 1.1);
+        Array.from({ length: 40 }, (_, i) => {
+          const a = (i / 40) * Math.PI * 2;
+          return new THREE.Vector3(Math.cos(a) * 1.14, 0.05, Math.sin(a) * 1.14);
         }),
       ),
-      new THREE.LineBasicMaterial({ color: 0x63e6be, transparent: true, opacity: 0.9 }),
+      new THREE.LineBasicMaterial({ color: 0x63e6be, transparent: true, opacity: 0.94 }),
     );
     observerMount.add(miniHorizRim);
 
     const miniDomeShell = new THREE.Mesh(
-      new THREE.SphereGeometry(1.1, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2),
-      new THREE.MeshBasicMaterial({ color: 0x74c0fc, transparent: true, opacity: 0.16, wireframe: true, depthWrite: false }),
+      new THREE.SphereGeometry(1.14, 24, 14, 0, Math.PI * 2, 0, Math.PI / 2),
+      new THREE.MeshBasicMaterial({ color: 0x74c0fc, transparent: true, opacity: 0.18, wireframe: true, depthWrite: false }),
     );
     miniDomeShell.position.y = 0.04;
     observerMount.add(miniDomeShell);
 
+    // 미니 천구 안쪽 북극성 방향 보조선(지구 자전축과 나란한 37° 고도!)
+    const miniPoleLine = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, 0.06, 0),
+        new THREE.Vector3(0, 0.04 + SIN_PHI * 1.35, -COS_PHI * 1.35),
+      ]),
+      new THREE.LineBasicMaterial({ color: 0xffe49c, transparent: true, opacity: 0.85 }),
+    );
+    observerMount.add(miniPoleLine);
+
     // 관측자 핀
     const pinMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.06, 0.09, 0.45, 12),
+      new THREE.CylinderGeometry(0.06, 0.095, 0.46, 16),
       new THREE.MeshBasicMaterial({ color: 0xffd43b }),
     );
-    pinMesh.position.y = 0.24;
+    pinMesh.position.y = 0.25;
     observerMount.add(pinMesh);
     const pinHead = new THREE.Mesh(
-      new THREE.SphereGeometry(0.14, 14, 12),
-      new THREE.MeshBasicMaterial({ color: 0xfff3bf }),
+      new THREE.SphereGeometry(0.145, 16, 14),
+      new THREE.MeshBasicMaterial({ color: 0xfff5cc }),
     );
-    pinHead.position.y = 0.5;
+    pinHead.position.y = 0.52;
     observerMount.add(pinHead);
 
-    // 관측자 위치의 자전축 방향 선(미니 천구의 북극성 방향 표시)
     const koreaWorldPos = new THREE.Vector3();
 
-    // 지구 앞쪽 적도 자전 화살표(서 → 동, 월드 고정)
+    // 지구 앞쪽 적도 자전 화살표(서 → 동, 입체 테두리 + 광채 튜브)
     {
-      const rA = R_EARTH + 0.72;
+      const rA = R_EARTH + 0.74;
       const arcPts: T.Vector3[] = [];
-      for (let i = 0; i <= 32; i++) {
-        const a = (-52 + (104 * i) / 32) * DEG; // 왼쪽(-x, 서) → 앞(+z) → 오른쪽(+x, 동)
+      for (let i = 0; i <= 36; i++) {
+        const a = (-52 + (104 * i) / 36) * DEG;
         arcPts.push(new THREE.Vector3(Math.sin(a) * rA, -0.35, Math.cos(a) * rA));
       }
       const curve = new THREE.CatmullRomCurve3(arcPts);
-      const arrowTube = new THREE.Mesh(
-        new THREE.TubeGeometry(curve, 36, 0.065, 8, false),
-        new THREE.MeshBasicMaterial({ color: 0xffbe3d }),
+      const arrowGlow = new THREE.Mesh(
+        new THREE.TubeGeometry(curve, 40, 0.11, 10, false),
+        new THREE.MeshBasicMaterial({ color: 0xffb82e, transparent: true, opacity: 0.24, depthWrite: false }),
       );
-      spaceGroup.add(arrowTube);
+      const arrowTube = new THREE.Mesh(
+        new THREE.TubeGeometry(curve, 40, 0.064, 12, false),
+        new THREE.MeshBasicMaterial({ color: 0xffcb47 }),
+      );
+      spaceGroup.add(arrowGlow, arrowTube);
       const tipPos = curve.getPoint(1);
       const tipTan = curve.getTangent(1);
       const arrowCone = new THREE.Mesh(
-        new THREE.ConeGeometry(0.22, 0.56, 12),
-        new THREE.MeshBasicMaterial({ color: 0xffd45e }),
+        new THREE.ConeGeometry(0.22, 0.56, 18),
+        new THREE.MeshBasicMaterial({ color: 0xffdf70 }),
       );
       arrowCone.position.copy(tipPos);
       arrowCone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tipTan);
@@ -701,91 +858,145 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     const EARTH_BASE_Y = 101 * DEG;
 
     // =========================================================================
-    // 장면 2: 천구 안에서 보기(위도 37°N 우리나라 3D 천구 반구)
+    // 장면 2: 천구 안에서 보기(위도 37°N 우리나라 플라네타리움 3D 천구 반구)
     // =========================================================================
     const domeGroup = new THREE.Group();
     domeGroup.visible = false;
     scene.add(domeGroup);
 
-    // 1) 지면 원판 + 지평선 고리 + 야간 능선 실루엣
+    // 1) 지면 원판 + 지평선 박명 스커트 + 2중 야간 산 능선 실루엣
     const groundDisc = new THREE.Mesh(
-      new THREE.CircleGeometry(R_DOME, 72),
+      new THREE.CircleGeometry(R_DOME, 96),
       new THREE.MeshBasicMaterial({ map: makeGroundTex(THREE), side: THREE.DoubleSide }),
     );
     groundDisc.rotation.x = -Math.PI / 2;
     domeGroup.add(groundDisc);
 
+    // 밤하늘 지평선 은은한 푸른 박명 띠(산 능선 실루엣을 선명하게 살려 준다)
+    const horizonGlowSkirt = new THREE.Mesh(
+      new THREE.CylinderGeometry(R_DOME - 0.03, R_DOME - 0.03, 2.9, 72, 1, true),
+      new THREE.MeshBasicMaterial({
+        map: makeHorizonGlowTex(THREE),
+        transparent: true,
+        side: THREE.BackSide,
+        depthWrite: false,
+      }),
+    );
+    horizonGlowSkirt.position.y = 1.45;
+    domeGroup.add(horizonGlowSkirt);
+
     const horizonRing = new THREE.LineLoop(
       new THREE.BufferGeometry().setFromPoints(
-        Array.from({ length: 96 }, (_, i) => {
-          const a = (i / 96) * Math.PI * 2;
+        Array.from({ length: 108 }, (_, i) => {
+          const a = (i / 108) * Math.PI * 2;
           return new THREE.Vector3(Math.cos(a) * R_DOME, 0.03, Math.sin(a) * R_DOME);
         }),
       ),
-      new THREE.LineBasicMaterial({ color: 0x6f97d8, transparent: true, opacity: 0.72 }),
+      new THREE.LineBasicMaterial({ color: 0x7aa6ea, transparent: true, opacity: 0.78 }),
     );
     domeGroup.add(horizonRing);
 
-    // 지평선 둘레 낮은 산 능선(관측자 시점에서 밤하늘 지평선 실감)
+    // 2겹 산 능선(먼 남색 산맥 + 가까운 짙은 솔숲 능선)
     {
-      const ridgeVerts: number[] = [];
-      const N = 128;
-      for (let i = 0; i < N; i++) {
-        const a0 = (i / N) * Math.PI * 2;
-        const a1 = ((i + 1) / N) * Math.PI * 2;
-        const hFn = (a: number): number =>
-          0.32 + 0.24 * Math.sin(a * 5 + 0.7) + 0.16 * Math.cos(a * 9 - 0.4) + 0.08 * Math.sin(a * 17);
-        const r0 = R_DOME - 0.06;
-        const x0 = Math.cos(a0) * r0, z0 = Math.sin(a0) * r0, y0 = Math.max(0.08, hFn(a0));
-        const x1 = Math.cos(a1) * r0, z1 = Math.sin(a1) * r0, y1 = Math.max(0.08, hFn(a1));
-        ridgeVerts.push(x0, 0, z0, x1, 0, z1, x1, y1, z1, x0, 0, z0, x1, y1, z1, x0, y0, z0);
-      }
-      const g = new THREE.BufferGeometry();
-      g.setAttribute("position", new THREE.Float32BufferAttribute(ridgeVerts, 3));
-      domeGroup.add(new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0x050a16, side: THREE.DoubleSide })));
+      const buildRidge = (r0: number, fn: (a: number) => number, col: number): T.Mesh => {
+        const verts: number[] = [];
+        const N = 160;
+        for (let i = 0; i < N; i++) {
+          const a0 = (i / N) * Math.PI * 2;
+          const a1 = ((i + 1) / N) * Math.PI * 2;
+          const x0 = Math.cos(a0) * r0, z0 = Math.sin(a0) * r0, y0 = Math.max(0.08, fn(a0));
+          const x1 = Math.cos(a1) * r0, z1 = Math.sin(a1) * r0, y1 = Math.max(0.08, fn(a1));
+          verts.push(x0, 0, z0, x1, 0, z1, x1, y1, z1, x0, 0, z0, x1, y1, z1, x0, y0, z0);
+        }
+        const g = new THREE.BufferGeometry();
+        g.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+        return new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: col, side: THREE.DoubleSide }));
+      };
+      // 먼 산맥
+      domeGroup.add(
+        buildRidge(
+          R_DOME - 0.045,
+          (a) => 0.48 + 0.28 * Math.sin(a * 4 + 1.9) + 0.18 * Math.cos(a * 7 - 0.8),
+          0x0c1934,
+        ),
+      );
+      // 가까운 능선
+      domeGroup.add(
+        buildRidge(
+          R_DOME - 0.08,
+          (a) => 0.31 + 0.22 * Math.sin(a * 5 + 0.7) + 0.15 * Math.cos(a * 9 - 0.4) + 0.07 * Math.sin(a * 17),
+          0x050a16,
+        ),
+      );
     }
 
-    // 중심 관측자 모형(전체 천구 보기에서만 보인다)
+    // 중심 관측자 모형(전체 천구 보기에서만 보인다: 받침 원반 + 다리 + 상체 코트 + 머리)
     const obsFigure = new THREE.Group();
-    const obsBody = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.22, 0.78, 12), new THREE.MeshBasicMaterial({ color: 0x63e6be }));
-    obsBody.position.y = 0.4;
-    const obsHead = new THREE.Mesh(new THREE.SphereGeometry(0.2, 14, 12), new THREE.MeshBasicMaterial({ color: 0xb2f2bb }));
-    obsHead.position.y = 0.96;
-    obsFigure.add(obsBody, obsHead);
+    const obsPad = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.46, 0.5, 0.05, 28),
+      new THREE.MeshBasicMaterial({ color: 0x1e3b56 }),
+    );
+    obsPad.position.y = 0.025;
+    const obsLegs = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.11, 0.14, 0.36, 14),
+      new THREE.MeshBasicMaterial({ color: 0x35587a }),
+    );
+    obsLegs.position.y = 0.22;
+    const obsTorso = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.18, 0.22, 0.46, 16),
+      new THREE.MeshBasicMaterial({ color: 0x63e6be }),
+    );
+    obsTorso.position.y = 0.6;
+    const obsShoulders = new THREE.Mesh(
+      new THREE.SphereGeometry(0.19, 16, 12),
+      new THREE.MeshBasicMaterial({ color: 0x63e6be }),
+    );
+    obsShoulders.scale.set(1.25, 0.55, 0.85);
+    obsShoulders.position.y = 0.82;
+    const obsHead = new THREE.Mesh(
+      new THREE.SphereGeometry(0.18, 18, 14),
+      new THREE.MeshBasicMaterial({ color: 0xd8f5e6 }),
+    );
+    obsHead.position.y = 1.07;
+    obsFigure.add(obsPad, obsLegs, obsTorso, obsShoulders, obsHead);
     domeGroup.add(obsFigure);
 
-    // 2) 투명 천구 반구 껍질 + 자오선 + 기울어진 천구 적도 + 나란한 일주권 안내선(전체 천구에서 핵심!)
+    // 2) 투명 천구 반구 껍질 + 크리스털 림 + 자오선 + 나란한 일주권 안내선(전체 천구에서 핵심!)
     const domeShellMat = new THREE.MeshBasicMaterial({
-      color: 0x1a315e,
+      color: 0x1a3362,
       transparent: true,
       opacity: 0.14,
       side: THREE.DoubleSide,
       depthWrite: false,
     });
-    const domeShell = new THREE.Mesh(new THREE.SphereGeometry(R_DOME, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2), domeShellMat);
-    domeGroup.add(domeShell);
+    const domeShell = new THREE.Mesh(new THREE.SphereGeometry(R_DOME, 56, 28, 0, Math.PI * 2, 0, Math.PI / 2), domeShellMat);
+    const domeRimGlow = new THREE.Mesh(
+      new THREE.SphereGeometry(R_DOME, 56, 28, 0, Math.PI * 2, 0, Math.PI / 2),
+      makeFresnelRimMat(THREE, 0x6ea8ff, 3.4, 0.22, false),
+    );
+    domeGroup.add(domeShell, domeRimGlow);
 
     const guideMats: T.LineBasicMaterial[] = [];
     // 남북 자오선 호
     {
       const pts: T.Vector3[] = [];
-      for (let i = 0; i <= 60; i++) {
-        const a = (i / 60) * Math.PI;
+      for (let i = 0; i <= 72; i++) {
+        const a = (i / 72) * Math.PI;
         pts.push(new THREE.Vector3(0, Math.sin(a) * R_DOME, -Math.cos(a) * R_DOME));
       }
-      const mat = new THREE.LineBasicMaterial({ color: 0x5c7eb8, transparent: true, opacity: 0.28 });
+      const mat = new THREE.LineBasicMaterial({ color: 0x6488c4, transparent: true, opacity: 0.3 });
       guideMats.push(mat);
       domeGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mat));
     }
     // 나란한 일주권 원(적위 65°, 25°, 0° — 모두 자전축에 수직인 나란한 원!)
-    for (const [decDeg, color] of [[65, 0x8cb8ff], [25, 0x6f9ef0], [0, 0x63e6be]] as [number, number][]) {
+    for (const [decDeg, color] of [[65, 0x94beff], [25, 0x74a4f5], [0, 0x63e6be]] as [number, number][]) {
       const segPts: T.Vector3[] = [];
-      for (let i = 0; i <= 96; i++) {
-        const ha = -Math.PI + (i / 96) * Math.PI * 2;
+      for (let i = 0; i <= 108; i++) {
+        const ha = -Math.PI + (i / 108) * Math.PI * 2;
         const [sx, sy, sz] = starDir(decDeg, ha);
         if (sy >= 0) segPts.push(new THREE.Vector3(sx * R_DOME, sy * R_DOME, sz * R_DOME));
         else if (segPts.length > 1) {
-          const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: decDeg === 0 ? 0.34 : 0.24 });
+          const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: decDeg === 0 ? 0.36 : 0.25 });
           guideMats.push(mat);
           domeGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(segPts.slice()), mat));
           segPts.length = 0;
@@ -794,7 +1005,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
         }
       }
       if (segPts.length > 1) {
-        const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: decDeg === 0 ? 0.34 : 0.24 });
+        const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: decDeg === 0 ? 0.36 : 0.25 });
         guideMats.push(mat);
         domeGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(segPts), mat));
       }
@@ -802,7 +1013,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
 
     // 기울어진 자전축 점선(관측자 → 북극성, 지평선과 37°)
     const poleVec = new THREE.Vector3(POLE[0] * R_DOME, POLE[1] * R_DOME, POLE[2] * R_DOME);
-    const domeAxisMat = new THREE.LineDashedMaterial({ color: 0xffdf8e, dashSize: 0.45, gapSize: 0.32, transparent: true, opacity: 0.55 });
+    const domeAxisMat = new THREE.LineDashedMaterial({ color: 0xffe49c, dashSize: 0.45, gapSize: 0.3, transparent: true, opacity: 0.6 });
     const domeAxisLine = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0.1, 0), poleVec]),
       domeAxisMat,
@@ -810,49 +1021,66 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     domeAxisLine.computeLineDistances();
     domeGroup.add(domeAxisLine);
 
-    // 북극성(움직이지 않는 중심 별)
+    // 북극성(움직이지 않는 중심 별: 회절 빛살 황금 별)
     const polarisSprite = new THREE.Sprite(
-      new THREE.SpriteMaterial({ map: starTexGold, transparent: true, depthWrite: false }),
+      new THREE.SpriteMaterial({ map: starTexGold, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }),
     );
     polarisSprite.position.copy(poleVec).multiplyScalar(0.985);
-    polarisSprite.scale.set(0.88, 0.88, 1);
+    polarisSprite.scale.set(1.06, 1.06, 1);
     domeGroup.add(polarisSprite);
 
-    // 3) 배경 별무리(천구 축 P를 중심으로 -dH 만큼 강체 회전, 지평선 위만 보이도록)
+    // 3) 배경 별무리 + 은은한 은하수 별구름 띠(천구 축 P를 중심으로 -dH 만큼 강체 회전, 지평선 위만 표시)
     const bgStarsGroup = new THREE.Group();
     domeGroup.add(bgStarsGroup);
     const poleAxisUnit = new THREE.Vector3(POLE[0], POLE[1], POLE[2]).normalize();
     {
       const r = rng(313);
-      const count = 260;
+      const fieldCount = 310;
+      const milkyCount = 260;
+      const count = fieldCount + milkyCount;
       const pos = new Float32Array(count * 3);
       const col = new Float32Array(count * 3);
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < fieldCount; i++) {
         const u = r() * 2 - 1;
         const th = r() * Math.PI * 2;
         const sr = Math.sqrt(1 - u * u);
         pos[i * 3] = sr * Math.cos(th) * (R_DOME - 0.15);
         pos[i * 3 + 1] = u * (R_DOME - 0.15);
         pos[i * 3 + 2] = sr * Math.sin(th) * (R_DOME - 0.15);
-        const b = 0.45 + r() * 0.48;
+        const b = 0.46 + r() * 0.5;
         col[i * 3] = b * 0.88;
         col[i * 3 + 1] = b * 0.93;
         col[i * 3 + 2] = b;
       }
+      // 천구를 비스듬히 가로지르는 은하수 성운기 미세 별무리
+      const gTilt = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.92, 0.45, -0.35));
+      const vTmp = new THREE.Vector3();
+      for (let j = 0; j < milkyCount; j++) {
+        const idx = (fieldCount + j) * 3;
+        const lon = r() * Math.PI * 2;
+        const lat = (r() + r() + r() - 1.5) * 0.22;
+        vTmp.set(Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon))
+          .applyQuaternion(gTilt)
+          .multiplyScalar(R_DOME - 0.18);
+        pos[idx] = vTmp.x;
+        pos[idx + 1] = vTmp.y;
+        pos[idx + 2] = vTmp.z;
+        const b = 0.24 + r() * 0.34;
+        col[idx] = b * 0.78;
+        col[idx + 1] = b * 0.86;
+        col[idx + 2] = b * 1.05;
+      }
       const g = new THREE.BufferGeometry();
       g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
       g.setAttribute("color", new THREE.BufferAttribute(col, 3));
-      // 지평선 아래(y < 0)를 깔끔히 가리는 클리핑 없이 지면 아래는 지면 원판과 어두운 하반구가 자연스럽게 가려 주지만,
-      // 외부 전체 보기에서는 아래로 삐져나오지 않게 반구 위쪽 점만 그리거나 y<0 가리기용 셰이더/매프레임 가시 처리를 한다.
-      // 여기서는 단순하고 확실하게: 매 시각 갱신 시 별점 y >= 0.08인 점만 그린다(배경 별 좌표는 원본 배열 보관).
       bgStarsGroup.userData.base = pos.slice();
       bgStarsGroup.userData.geo = g;
       bgStarsGroup.add(
-        new THREE.Points(g, new THREE.PointsMaterial({ size: 2.1, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.78 })),
+        new THREE.Points(g, new THREE.PointsMaterial({ size: 2.1, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.82 })),
       );
     }
 
-    // 4) 대표 일주 운동 별 + 실시간 자취 선 + 진행 방향 화살촉
+    // 4) 대표 일주 운동 별 + 실시간 매끄러운 48분할 자취 선 + 진행 방향 화살촉
     interface StarObj {
       spec: TrailStar;
       sprite: T.Sprite;
@@ -861,15 +1089,21 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       colArr: Float32Array;
       arrow: T.Mesh | null;
     }
-    const arrowGeo = new THREE.ConeGeometry(0.14, 0.42, 8);
-    const arrowMatBlue = new THREE.MeshBasicMaterial({ color: 0xbfe0ff });
-    const arrowMatGold = new THREE.MeshBasicMaterial({ color: 0xffe49c });
+    const arrowGeo = new THREE.ConeGeometry(0.145, 0.44, 16);
+    const arrowMatBlue = new THREE.MeshBasicMaterial({ color: 0xcbe6ff });
+    const arrowMatGold = new THREE.MeshBasicMaterial({ color: 0xffe8a3 });
 
     const starObjs: StarObj[] = TRAIL_STARS.map((spec) => {
+      const tex = spec.dipper ? starTexGold : spec.arrow ? starTexBlueSpike : starTexBlue;
       const sprite = new THREE.Sprite(
-        new THREE.SpriteMaterial({ map: spec.dipper ? starTexGold : starTexBlue, transparent: true, depthWrite: false }),
+        new THREE.SpriteMaterial({
+          map: tex,
+          transparent: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        }),
       );
-      const sc = (spec.dipper ? 0.78 : 0.56) * spec.mag;
+      const sc = (spec.dipper ? 0.94 : spec.arrow ? 0.72 : 0.58) * spec.mag;
       sprite.scale.set(sc, sc, 1);
       domeGroup.add(sprite);
 
@@ -880,7 +1114,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       geo.setAttribute("color", new THREE.BufferAttribute(colArr, 3));
       const line = new THREE.Line(
         geo,
-        new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.92 }),
+        new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.95 }),
       );
       domeGroup.add(line);
 
@@ -899,7 +1133,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
     dipperGeo.setAttribute("position", new THREE.BufferAttribute(dipperPosArr, 3));
     const dipperLines = new THREE.LineSegments(
       dipperGeo,
-      new THREE.LineBasicMaterial({ color: 0xffe29a, transparent: true, opacity: 0.65 }),
+      new THREE.LineBasicMaterial({ color: 0xffe5a3, transparent: true, opacity: 0.72 }),
     );
     domeGroup.add(dipperLines);
 
@@ -918,17 +1152,18 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       const h = miniSkyCv.height;
       ctx.clearRect(0, 0, w, h);
       const bg = ctx.createLinearGradient(0, 0, 0, h);
-      bg.addColorStop(0, "#081226");
-      bg.addColorStop(1, "#162A52");
+      bg.addColorStop(0, "#060F22");
+      bg.addColorStop(0.68, "#12264E");
+      bg.addColorStop(1, "#21427A");
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
 
       // 남쪽 하늘을 바라보는 관측자: 왼쪽이 동, 오른쪽이 서. 지구가 서 → 동으로 돌수록 별은 왼쪽(동) → 오른쪽(서)으로 이동!
       const frac = hours / 6;
       const miniStars: [number, number, number][] = [
-        [34, 28, 3.6],
-        [92, 46, 3.0],
-        [146, 24, 3.4],
+        [34, 28, 3.8],
+        [92, 46, 3.2],
+        [146, 24, 3.6],
       ];
       for (const [x0, y0, r] of miniStars) {
         const x1 = x0 + frac * 98;
@@ -936,41 +1171,56 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
         if (frac > 0.02) {
           const grad = ctx.createLinearGradient(x0, y0, x1, y1);
           grad.addColorStop(0, "rgba(150,200,255,0.12)");
-          grad.addColorStop(1, "rgba(215,236,255,0.92)");
+          grad.addColorStop(1, "rgba(225,242,255,0.95)");
           ctx.strokeStyle = grad;
-          ctx.lineWidth = 3;
+          ctx.lineWidth = 3.2;
           ctx.lineCap = "round";
           ctx.beginPath();
           ctx.moveTo(x0, y0);
           ctx.quadraticCurveTo((x0 + x1) / 2, y0 - 6, x1, y1);
           ctx.stroke();
           // 작은 화살촉
-          ctx.fillStyle = "#E6F1FF";
+          ctx.fillStyle = "#EEF6FF";
           ctx.beginPath();
-          ctx.moveTo(x1 + 6, y1);
-          ctx.lineTo(x1 - 3, y1 - 4.5);
-          ctx.lineTo(x1 - 3, y1 + 4.5);
+          ctx.moveTo(x1 + 6.5, y1);
+          ctx.lineTo(x1 - 3, y1 - 4.6);
+          ctx.lineTo(x1 - 3, y1 + 4.6);
           ctx.closePath();
           ctx.fill();
         }
-        ctx.fillStyle = "#FFF4CC";
+        const hg = ctx.createRadialGradient(x1, y1, 0, x1, y1, r * 2.4);
+        hg.addColorStop(0, "rgba(255,244,204,0.85)");
+        hg.addColorStop(1, "rgba(255,244,204,0)");
+        ctx.fillStyle = hg;
+        ctx.beginPath();
+        ctx.arc(x1, y1, r * 2.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#FFF8DE";
         ctx.beginPath();
         ctx.arc(x1, y1, r, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // 땅과 동·서 표식
+      // 능선 실루엣 + 땅과 동·서 표식
       ctx.fillStyle = "#060B18";
-      ctx.fillRect(0, h - 22, w, 22);
+      ctx.beginPath();
+      ctx.moveTo(0, h);
+      ctx.lineTo(0, h - 22);
+      ctx.quadraticCurveTo(w * 0.28, h - 29, w * 0.56, h - 22);
+      ctx.quadraticCurveTo(w * 0.8, h - 27, w, h - 22);
+      ctx.lineTo(w, h);
+      ctx.closePath();
+      ctx.fill();
+
       ctx.font = "800 18px Pretendard, sans-serif";
-      ctx.fillStyle = "#B8D0F8";
+      ctx.fillStyle = "#C2D8FF";
       ctx.textAlign = "left";
-      ctx.fillText("동", 14, h - 6);
+      ctx.fillText("동", 14, h - 5);
       ctx.textAlign = "right";
-      ctx.fillText("서", w - 14, h - 6);
+      ctx.fillText("서", w - 14, h - 5);
       ctx.textAlign = "center";
-      ctx.fillStyle = "#6F8FC0";
-      ctx.fillText("남쪽 하늘", w / 2, h - 6);
+      ctx.fillStyle = "#7C9ED2";
+      ctx.fillText("남쪽 하늘", w / 2, h - 5);
     }
 
     /** 2단계(동·남·서·북 하늘)에서 오른쪽 위에 함께 띄우는 실시간 '전체 천구' 미니 창.
@@ -1085,11 +1335,16 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       ctx.lineTo(ax, ay);
       ctx.stroke();
 
-      // 3) 투명 천구 외곽 반구 호
+      // 3) 투명 천구 외곽 반구 호 + 은은한 유리 광택
+      const domeFill = ctx.createRadialGradient(cx - sc * 0.25, cy - sc * 0.55, 8, cx, cy, sc);
+      domeFill.addColorStop(0, "rgba(120, 175, 255, 0.11)");
+      domeFill.addColorStop(1, "rgba(25, 52, 108, 0.02)");
       ctx.beginPath();
       ctx.arc(cx, cy, sc, Math.PI, 0, false);
-      ctx.strokeStyle = "rgba(128, 170, 240, 0.42)";
-      ctx.lineWidth = 1.8;
+      ctx.fillStyle = domeFill;
+      ctx.fill();
+      ctx.strokeStyle = "rgba(142, 184, 250, 0.5)";
+      ctx.lineWidth = 2;
       ctx.stroke();
 
       // 4) 나란한 일주권 안내선(적위 65°, 25°, 0°)
@@ -1116,7 +1371,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       // 5) 기울어진 자전축(고도 37°) + 북극성 점
       const [ppx, ppy] = proj(POLE[0], POLE[1], POLE[2]);
       ctx.save();
-      ctx.strokeStyle = "rgba(255, 223, 142, 0.6)";
+      ctx.strokeStyle = "rgba(255, 223, 142, 0.65)";
       ctx.lineWidth = 1.6;
       ctx.setLineDash([5, 4]);
       ctx.beginPath();
@@ -1126,11 +1381,25 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       ctx.restore();
       ctx.fillStyle = "#FFF1B8";
       ctx.beginPath();
-      ctx.arc(ppx, ppy, 4.2, 0, Math.PI * 2);
+      ctx.arc(ppx, ppy, 4.4, 0, Math.PI * 2);
       ctx.fill();
 
-      // 6) 실시간 동기화 별 + 자취(현재 보고 있는 방향의 별을 더 밝게 강조!)
+      // 6) 실시간 동기화 북두칠성 선 + 대표 별 자취
       const dH = hours * 15 * DEG;
+      ctx.strokeStyle = activeDir === "N" ? "rgba(255, 232, 162, 0.82)" : "rgba(255, 224, 148, 0.44)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (const [ia, ib] of DIPPER_EDGES) {
+        const [ax2, ay2, az2] = starDir(DIPPER[ia].dec, DIPPER[ia].ha0 * DEG + dH);
+        const [bx2, by2, bz2] = starDir(DIPPER[ib].dec, DIPPER[ib].ha0 * DEG + dH);
+        if (ay2 >= 0.03 && by2 >= 0.03) {
+          const [p1x, p1y] = proj(ax2, ay2, az2);
+          const [p2x, p2y] = proj(bx2, by2, bz2);
+          ctx.moveTo(p1x, p1y);
+          ctx.lineTo(p2x, p2y);
+        }
+      }
+      ctx.stroke();
       const [lx, , lz] = DIR_VEC[activeDir];
       for (let si = 0; si < TRAIL_STARS.length; si++) {
         // 미니 창이 과밀하지 않도록 대표 별 약 22개(북두칠성 주요 별 + 각 방위 화살표 별)를 그린다
@@ -1717,10 +1986,10 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       const showPoleHint = mode === "dome" && domeView === "N" && seenDirs.size === DIRS.length && !poleFound;
       if (showPoleHint) {
         const tw = 0.5 + 0.5 * Math.sin(performance.now() * 0.0062);
-        const sPole = 0.92 + tw * 0.42;
+        const sPole = 1.06 + tw * 0.48;
         polarisSprite.scale.set(sPole, sPole, 1);
       } else {
-        polarisSprite.scale.set(0.88, 0.88, 1);
+        polarisSprite.scale.set(1.04, 1.04, 1);
       }
 
       st.render();
