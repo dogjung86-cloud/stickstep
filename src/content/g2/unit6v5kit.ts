@@ -1,10 +1,12 @@
 // 중2 Ⅵ v5 내용 파일들이 함께 쓰는 저작 도구(랩 팩토리, 개념 스텝, 문제 번호 매기기). dsl.ts를 고치지 않고 여기에 둔다.
 import type { Step } from "../../lessons/types";
+import type { Curio } from "../../ui/curio";
 import { concept } from "../dsl";
 
 interface LabProps {
   title: string;
   cta?: string;
+  curio?: Curio;
 }
 const lab = (type: string) => (o: LabProps): Step => ({ type, ...o }) as unknown as Step;
 export const plateLab = lab("g2u6PlateLab");

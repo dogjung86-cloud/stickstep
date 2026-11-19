@@ -54,7 +54,7 @@ const LIGHTS: Record<Light, { name: string; has: Ch[]; css: string }> = {
 
 export const lampLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = lxFrame(host, { title: s.title, steps: 4, api, tall: true });
+  const f = lxFrame(host, { title: s.title, steps: 5, api, tall: true });
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = "lamp";
@@ -63,8 +63,12 @@ export const lampLab: StepRenderer = (host, step, api) => {
   let light: Light | null = null;
   let asked = false;
   const tried = new Set<Light>();
-  const log = lxLog(["흰색 조명", "빨간색 조명", "초록색 조명"]);
-  const look = (l: Light): string => `${LIGHTS[l].has.includes("r") ? "빨간" : "검은"} 꽃, ${LIGHTS[l].has.includes("g") ? "초록" : "검은"} 잎`;
+  const log = lxLog(["흰색 조명", "빨간색 조명", "초록색 조명"], "wrap");
+  const ribName = (l: Light): string => {
+    const h = LIGHTS[l].has;
+    return h.includes("r") && h.includes("g") ? "노란" : h.includes("r") ? "빨간" : h.includes("g") ? "초록" : "검은";
+  };
+  const look = (l: Light): string => `${LIGHTS[l].has.includes("r") ? "빨간" : "검은"} 꽃 · ${LIGHTS[l].has.includes("g") ? "초록" : "검은"} 잎\n${ribName(l)} 리본`;
   const seg = lxSeg<"w" | "r" | "g">(
     [
       { k: "w", t: "흰색 조명" },
@@ -79,18 +83,33 @@ export const lampLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       log.set(["w", "r", "g"].indexOf(k), look(k));
       f.pips(tried.size);
-      if (k === "w") f.say("흰색 조명에는 여러 색의 빛이 모두 들어 있어요. 그래서 꽃잎은 <b>빨간색 빛</b>을, 잎은 <b>초록색 빛</b>을 반사하여 원래 색으로 보여요.");
-      else if (k === "r") f.say("빨간색 조명 아래에서는 꽃잎만 빨간색 빛을 반사해 빨갛게 보이고, 초록 잎은 반사할 초록색 빛이 없어 <b>검은색</b>으로 보여요.");
-      else f.say("초록색 조명 아래에서는 반대로 초록 잎만 초록색으로 보이고, 빨간 꽃잎은 반사할 빨간색 빛이 없어 <b>검은색</b>으로 보여요.");
+      if (k === "w") f.say("흰색 조명 아래에서는 꽃잎은 <b>빨간 빛</b>, 잎은 <b>초록 빛</b>, 노란 리본은 <b>빨간 빛과 초록 빛</b>을 반사해 원래 색으로 보여요.");
+      else if (k === "r") f.say("빨간색 조명 아래에서는 꽃잎과 <b>노란 리본</b>만 빨간 빛을 반사해 빨갛게 보이고, 초록 잎은 <b>검은색</b>으로 보여요.");
+      else f.say("초록색 조명 아래에서는 초록 잎과 <b>노란 리본</b>만 초록 빛을 반사해 초록색으로 보이고, 꽃잎은 <b>검은색</b>으로 보여요.");
       if (tried.size === 3) {
         asked = true;
         host.dataset.lx = "ask";
         tm.later(() => {
           f.slot.ask(
-            "파란색 조명만 비추면 빨간 장미꽃과 초록 잎은 어떻게 보일까요?",
-            [{ t: "꽃도 잎도 검게 보여요", ok: true }, { t: "꽃도 잎도 파랗게 보여요" }, { t: "꽃은 빨갛게, 잎은 초록으로 보여요" }],
+            "파란색 조명만 비추면 빨간 꽃잎, 초록 잎, 노란 리본은 어떻게 보일까요?",
+            [{ t: "셋 모두 검게 보여요", ok: true }, { t: "셋 모두 파랗게 보여요" }, { t: "노란 리본만 노랗게 보여요" }],
             (ok) => api.recordQuiz(ok),
-            { why: "꽃잎은 빨간색 빛만, 잎은 초록색 빛만 반사해요. 파란색 빛은 둘 다 <b>흡수</b>해요.", onNext: finish },
+            {
+              why: "꽃잎은 빨간 빛, 잎은 초록 빛, 노란 리본은 빨간 빛과 초록 빛만 반사해요. 파란 빛은 셋 모두 <b>흡수</b>해요.",
+              onNext: () => {
+                // 예측한 파란색 조명을 바로 켜서 확인시킨다. 둘째 질문(빨간색 조명 아래의 리본)은 앞에서 본 것을 떠올려 답하는 질문이라,
+                // 무대를 빨간색 조명으로 돌려놓으면 아래 알림 줄의 '빨간 리본'이 답을 그대로 보여 준다(처음에 그랬다).
+                light = "b";
+                f.pips(4);
+                f.say("파란색 조명을 켜니 꽃잎, 잎, 노란 리본이 <b>전부 검은색</b>으로 보여요. 이번에는 앞에서 관찰한 것을 떠올려 봐요.");
+                f.slot.ask(
+                  "빨간 빛과 초록 빛을 반사하는 <b>노란 리본</b>은 <b>빨간색 조명</b> 아래에서 무슨 색으로 보였나요?",
+                  [{ t: "빨간색으로 보여요", ok: true }, { t: "원래대로 노란색으로 보여요" }, { t: "검은색으로 보여요" }],
+                  (ok) => api.recordQuiz(ok),
+                  { why: "빨간색 조명에는 빨간 빛만 있으므로, 노란 리본은 <b>빨간 빛만 반사</b>해 빨갛게 보여요.", onNext: finish },
+                );
+              },
+            },
           );
         }, 2600);
       }
@@ -103,17 +122,17 @@ export const lampLab: StepRenderer = (host, step, api) => {
   function finish(): void {
     light = "b";
     host.dataset.lx = "done";
-    f.pips(4);
-    f.say("파란색 조명 아래에서는 꽃잎과 잎 모두 파란색 빛을 반사하지 못하므로 <b>둘 다 검은색</b>으로 보여요.");
+    f.pips(5);
+    f.say("노란 리본은 <b>빨간 빛과 초록 빛</b>을 반사해요. 그래서 조명에 들어 있는 빛에 따라 빨갛게도, 초록색으로도 보였어요.");
     f.slot.conclude("물체는 그 물체가 <b>반사하여 우리 눈에 들어오는 빛의 색</b>으로 보여요. 반사하는 빛이 전혀 없으면 <b>검은색</b>으로 보여요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
-  // 무대: 조명이 비추는 회색 판 앞에 장미가 서 있다. 판은 모든 색의 빛을 조금씩 반사해 조명의 색으로 어둑하게 물들고,
-  // 반사할 빛이 없는 꽃잎과 잎은 그 앞에 검은 실루엣(밝은 테 한 줄)으로 선다. 남색 무대에 바로 두면 검은 꽃이 사라진 것처럼 읽혔다.
+  // 무대: 조명이 비추는 회색 판 앞에 장미(빨간 꽃잎, 초록 잎, 줄기에 묶인 노란 리본)가 서 있다.
   const LAMP = { x: 128, y: 16 };
-  const PETAL = { x: 118, y: 96 }; // 꽃 가운데
-  const LEAF = { x: 150, y: 160 }; // 오른쪽 잎(빛은 이 점보다 8 위, 잎맥 위에 닿는다)
+  const PETAL = { x: 118, y: 92 }; // 꽃 가운데
+  const RIBBON = { x: 116, y: 144 }; // 줄기에 묶은 노란 리본(빨강+초록 반사)
+  const LEAF = { x: 154, y: 174 }; // 오른쪽 잎
   const EYE = { x: 312, y: 112 };
   const BOARD = { x: 40, y: 38, w: 212, h: 176 };
   type Tone = { base: string; hi: string; lo: string; deep: string; rim: string | null };
@@ -126,6 +145,13 @@ export const lampLab: StepRenderer = (host, step, api) => {
     lit: { base: "#3DAA57", hi: "#6ECB80", lo: "#2A8443", deep: "#B9ECC4", rim: null },
     black: { base: "#151917", hi: "#232927", lo: "#0C0F0D", deep: "#2F3633", rim: "rgba(226,232,242,.42)" },
     off: { base: "#24432D", hi: "#2E5438", lo: "#1A3222", deep: "#3E6148", rim: null },
+  };
+  const RIBBON_TONE: Record<"yellow" | "red" | "green" | "black" | "off", Tone> = {
+    yellow: { base: "#F2C93B", hi: "#FFE885", lo: "#C99A18", deep: "#8E6808", rim: null },
+    red: { base: "#E2362F", hi: "#FF6E5E", lo: "#A8211E", deep: "#741214", rim: null },
+    green: { base: "#3DAA57", hi: "#6ECB80", lo: "#2A8443", deep: "#1B5E2E", rim: null },
+    black: { base: "#1A1816", hi: "#2C2926", lo: "#0E0D0C", deep: "#080706", rim: "rgba(226,232,242,.42)" },
+    off: { base: "#524621", hi: "#6B5B2C", lo: "#3A3116", deep: "#241E0C", rim: null },
   };
   const toneOf = (on: boolean): "lit" | "black" | "off" => (!light ? "off" : on ? "lit" : "black");
   /** 판: 조명 빛의 0.6배(가운데)에서 0.32배(가장자리)로 물든다. 조명이 꺼져 있으면 어두운 회색. */
@@ -292,38 +318,82 @@ export const lampLab: StepRenderer = (host, step, api) => {
     ctx.quadraticCurveTo(PETAL.x + 9, 166, PETAL.x + 3, 210);
     ctx.stroke();
     ctx.restore();
-    drawLeaf(ctx, { x: PETAL.x + 6, y: 166 }, { x: PETAL.x + 60, y: 136 }, 17, lt);
-    drawLeaf(ctx, { x: PETAL.x + 5, y: 188 }, { x: PETAL.x - 44, y: 170 }, 15, lt);
+    drawLeaf(ctx, { x: PETAL.x + 6, y: 174 }, { x: PETAL.x + 62, y: 150 }, 16, lt);
+    drawLeaf(ctx, { x: PETAL.x + 5, y: 188 }, { x: PETAL.x - 44, y: 172 }, 14, lt);
+    // 줄기에 묶인 노란 리본(빨강+초록 빛 반사): 양쪽 고리와 아래 꼬리, 가운데 매듭
+    const rt = !light
+      ? RIBBON_TONE.off
+      : has.includes("r") && has.includes("g")
+        ? RIBBON_TONE.yellow
+        : has.includes("r")
+          ? RIBBON_TONE.red
+          : has.includes("g")
+            ? RIBBON_TONE.green
+            : RIBBON_TONE.black;
+    ctx.save();
+    ctx.lineJoin = "round";
+    for (const sgn of [-1, 1]) {
+      ctx.beginPath();
+      ctx.moveTo(RIBBON.x, RIBBON.y);
+      ctx.lineTo(RIBBON.x + sgn * 10, RIBBON.y + 18);
+      ctx.lineTo(RIBBON.x + sgn * 4, RIBBON.y + 15);
+      ctx.lineTo(RIBBON.x + sgn * 2, RIBBON.y + 4);
+      ctx.closePath();
+      ctx.fillStyle = rt.lo;
+      ctx.fill();
+      if (rt.rim) {
+        ctx.strokeStyle = rt.rim;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.ellipse(RIBBON.x + sgn * 13, RIBBON.y - 1, 12, 7.5, sgn * -0.18, 0, Math.PI * 2);
+      ctx.fillStyle = rt.base;
+      ctx.fill();
+      ctx.strokeStyle = rt.rim ?? rt.deep;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.roundRect(RIBBON.x - 4.5, RIBBON.y - 5, 9, 10, 3);
+    ctx.fillStyle = rt.hi;
+    ctx.fill();
+    ctx.strokeStyle = rt.rim ?? rt.deep;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.restore();
     drawRose(ctx, pt);
     // 빛의 길: 조명에 든 색마다 한 줄기씩. 반사하는 색만 눈으로 간다
     const flow = (t / 900) % 1;
-    const ray = (target: { x: number; y: number }, keep: Ch, off: number): void => {
+    const ray = (target: { x: number; y: number }, keeps: Ch[], off: number, eyeDy: number): void => {
       has.forEach((c, i) => {
         const o = (i - (has.length - 1) / 2) * 5 + off;
-        const hit = { x: target.x + o, y: target.y - 8 };
-        drawBeam(ctx, [{ x: LAMP.x + o * 0.4, y: LAMP.y + 14 }, hit], { rgb: RGB[c], width: 1.6, flow, glow: false, alpha: 0.9 });
-        if (c === keep) drawBeam(ctx, [hit, { x: EYE.x - 16, y: EYE.y + (target === PETAL ? -4 : 6) }], { rgb: RGB[c], width: 1.8, flow, arrow: true });
+        const hit = { x: target.x + o, y: target.y - 6 };
+        drawBeam(ctx, [{ x: LAMP.x + o * 0.4, y: LAMP.y + 14 }, hit], { rgb: RGB[c], width: 1.5, flow, glow: false, alpha: 0.88 });
+        if (keeps.includes(c)) drawBeam(ctx, [hit, { x: EYE.x - 16, y: EYE.y + eyeDy }], { rgb: RGB[c], width: 1.7, flow, arrow: true });
         else {
           ctx.fillStyle = `rgba(${RGB[c]},.9)`;
           ctx.beginPath();
-          ctx.arc(hit.x, hit.y, 3, 0, Math.PI * 2);
+          ctx.arc(hit.x, hit.y, 2.8, 0, Math.PI * 2);
           ctx.fill();
         }
       });
     };
     if (light) {
-      ray(PETAL, "r", 0);
-      ray(LEAF, "g", 0);
+      ray(PETAL, ["r"], 0, -6);
+      ray(RIBBON, ["r", "g"], -2, 0);
+      ray(LEAF, ["g"], 0, 6);
     }
     eyeProp(ctx, EYE.x, EYE.y, Math.PI, 14);
     lxText(ctx, "눈", EYE.x, EYE.y + 24, { color: LX.dim });
-    lxText(ctx, "꽃잎", PETAL.x - 54, PETAL.y - 26, { color: LX.ink });
-    lxText(ctx, "잎", PETAL.x + 76, 130, { color: LX.ink });
-    if (light) lxPill(ctx, `${LIGHTS[light].name}: ${look(light)}`, `rgb(${LIGHTS[light].css})`, true, 196);
-    else lxPill(ctx, "조명이 꺼져 있어요", LX.dim, true, 196);
+    lxText(ctx, "꽃잎", PETAL.x - 54, PETAL.y - 24, { color: LX.ink });
+    lxText(ctx, "노란 리본", RIBBON.x - 54, RIBBON.y - 4, { color: LX.ink });
+    lxText(ctx, "잎", PETAL.x + 76, 144, { color: LX.ink });
+    if (light) lxPill(ctx, `${LIGHTS[light].name}: ${look(light).replace("\n", " · ")}`, `rgb(${LIGHTS[light].css})`, true, 198);
+    else lxPill(ctx, "조명이 꺼져 있어요", LX.dim, true, 198);
   });
 
-  f.say("낮에 볼 때 빨간 꽃잎과 초록 잎을 가진 장미예요. <b>세 가지 조명</b>을 차례로 비추어 보고, 장미의 꽃잎과 잎이 각각 무슨 색으로 보이는지 살펴보세요.");
+  f.say("낮에 볼 때 빨간 꽃잎, 초록 잎, <b>노란 리본</b>이 달린 장미예요. <b>세 가지 조명</b>을 차례로 비추며 색이 어떻게 바뀌는지 살펴보세요.");
   api.setCTA("세 가지 색의 조명을 차례로 모두 켜 보세요", { enabled: false });
   return () => {
     tm.clear();

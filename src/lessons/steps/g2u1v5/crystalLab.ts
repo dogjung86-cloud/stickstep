@@ -51,7 +51,7 @@ const ICE: Array<[number, number, number, number]> = [
 ];
 
 export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
-  const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 3, cls: "g2u1x-cr" });
+  const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 4, cls: "g2u1x-cr" });
   const { f, tm } = lab;
   const pl = plot({ x: 208, y: 34, w: 126, h: 150, x0: 0, x1: 80, y0: 0, y1: 160, xl: "온도(℃)", yl: "용해도(g/물 100 g)", xt: [20, 40, 60, 80], yt: [40, 80, 120, 160] });
   const cv = (fn: (t: number) => number): string => ptsOf(Array.from({ length: 21 }, (_, i) => [pl.px(i * 4), pl.py(fn(i * 4))] as [number, number]));
@@ -66,6 +66,7 @@ export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
     <text x="${pl.px(2)}" y="${pl.py(K * 10) - 5}" font-size="12" font-weight="800" fill="${P.rose}">질산 칼륨 10 g</text>
     <text x="${pl.px(80)}" y="${pl.py(N * 10) + 14}" text-anchor="end" font-size="12" font-weight="800" fill="${P.green}">염화 나트륨 2 g</text>
     <path class="g2u1x-cr-v" d="M0 0" stroke="rgba(255,255,255,.5)" stroke-width="1.4"/>
+    <g class="g2u1x-cr-ex"></g>
     <g class="g2u1x-cr-heat">
       <rect class="g2u1x-cr-glow" x="40" y="168" width="104" height="5" rx="2.5" fill="${P.warm}" opacity="0"/>
       <rect x="34" y="171" width="116" height="6" rx="2" fill="#39455A"/>
@@ -106,6 +107,7 @@ export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
   const strip = g1Strip();
   const q = <T extends Element>(s: string): T => f.stage.querySelector(s) as T;
   const vline = q<SVGPathElement>(".g2u1x-cr-v");
+  const exG = q<SVGGElement>(".g2u1x-cr-ex");
   const heatG = q<SVGGElement>(".g2u1x-cr-heat");
   const iceG = q<SVGGElement>(".g2u1x-cr-ice");
   const beakerG = q<SVGGElement>(".g2u1x-cr-beaker");
@@ -125,7 +127,18 @@ export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
 
   function paint(): void {
     const left = solid();
-    vline.setAttribute("d", `M${fx(pl.px(T))} ${pl.py(0)} V${pl.py(160)}`);
+    const xT = pl.px(T);
+    const yK = pl.py(K * 10);
+    const yS = pl.py(kno3(T));
+    vline.setAttribute("d", `M${fx(xT)} ${pl.py(0)} V${pl.py(160)}`);
+    exG.innerHTML =
+      melted && left > 0.05
+        ? `<path d="M${fx(xT)} ${fx(yK)} V${fx(yS)} M${fx(xT - 3.5)} ${fx(yK)} H${fx(xT + 3.5)} M${fx(xT - 3.5)} ${fx(yS)} H${fx(xT + 3.5)}" stroke="${P.yellow}" stroke-width="3" stroke-linecap="round"/>` +
+          `<circle cx="${fx(xT)}" cy="${fx(yS)}" r="3.6" fill="#fff" stroke="${P.rose}" stroke-width="1.8"/>` +
+          (T <= 30
+            ? `<text x="${fx(xT + 6)}" y="${fx((yK + yS) / 2 + 4)}" font-size="12" font-weight="800" fill="${P.yellow}" stroke="#0E1A2C" stroke-width="3" stroke-linejoin="round" paint-order="stroke">결정으로 나옴</text>`
+            : "")
+        : "";
     tEl.textContent = `${T} ℃`;
     if (phase === "end") {
       // 거른 뒤: 스탠드에 건 깔때기, 거름종이 위 결정 더미, 아래 비커의 거른 용액
@@ -226,7 +239,16 @@ export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
           // 정답 보기: 수정안은 "…2 g은 모두 녹아 있을 수 있어서"인데 오답 카드의 정답 줄(폭 약 274px)을 1px 넘겨 두 줄이 되고 조작 칸(208)을 넘친다. "모두"만 "다"로 둔다.
           [{ t: "식혀도 물 10 g에 2 g은 다 녹아 있을 수 있어서", ok: true }, { t: "염화 나트륨은 물에 녹지 않아서" }, { t: "질산 칼륨보다 먼저 거름종이에 걸려서" }],
           "0 ℃에서도 물 10 g에 염화 나트륨이 약 3.6 g까지 녹으므로 2 g은 <b>모두 녹아</b> 있어요.",
-          () => lab.finish("온도에 따라 용해도가 <b>크게 변하는</b> 질산 칼륨만 식힐 때 결정으로 나왔어요. 이렇게 순수한 고체를 얻는 방법이 <b>재결정</b>이에요."),
+          () => {
+            f.pips(3);
+            f.say("그래프의 노란 구간은 <b>넣은 양에서 식힌 온도의 한계를 뺀 양</b>이에요. 물 100 g 기준으로 계산해 봐요.");
+            lab.judge(
+              "뜨거운 <b>물 100 g</b>에 질산 칼륨 <b>100 g</b>을 녹인 뒤 <b>20 ℃</b>(용해도 약 32)로 식히면 결정으로 나오는 양은?",
+              [{ t: "약 68 g", ok: true }, { t: "약 32 g" }, { t: "약 100 g" }],
+              "넣은 양 100 g에서 20 ℃의 물 100 g에 녹아 있을 수 있는 <b>약 32 g을 뺀 약 68 g</b>이 결정으로 나와요.",
+              () => lab.finish("온도에 따라 용해도가 <b>크게 변하는</b> 질산 칼륨만 식힐 때 결정으로 나왔어요. 이 방법이 <b>재결정</b>이고, 결정의 양은 <b>녹인 양에서 식힌 온도의 한계를 뺀 값</b>이에요."),
+            );
+          },
         ),
       1300,
     );

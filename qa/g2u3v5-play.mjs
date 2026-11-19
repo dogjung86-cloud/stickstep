@@ -226,6 +226,7 @@ export const LABS = {
     await c.shot("lamp-red");
     await L.tapK(page, "g", 400);
     await c.judge("lamp", wrong);
+    await c.judge("lamp2", false);
     await c.done("lamp");
   },
   torch: async (c, wrong) => {

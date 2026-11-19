@@ -103,8 +103,19 @@ export function createSpaceStage(canvas: HTMLCanvasElement, o?: { fov?: number }
       const mat = (mesh as { material?: THREE.Material | THREE.Material[] }).material;
       const mats = Array.isArray(mat) ? mat : mat ? [mat] : [];
       for (const m of mats) {
-        const tex = (m as { map?: THREE.Texture }).map;
-        if (tex) tex.dispose();
+        m.userData.__disposed = true;
+        const mm = m as unknown as Record<string, unknown>;
+        for (const k of ["map", "bumpMap", "normalMap", "emissiveMap", "alphaMap", "roughnessMap"]) {
+          const t = mm[k];
+          if (t && typeof (t as THREE.Texture).dispose === "function") (t as THREE.Texture).dispose();
+        }
+        const uniforms = (m as THREE.ShaderMaterial).uniforms;
+        if (uniforms) {
+          for (const u of Object.values(uniforms)) {
+            const v = u?.value;
+            if (v && typeof (v as THREE.Texture).dispose === "function") (v as THREE.Texture).dispose();
+          }
+        }
         m.dispose();
       }
     });
@@ -397,6 +408,10 @@ export function makePlanet(kind: PlanetKind, radius: number, segments = 48): THR
       : new THREE.MeshLambertMaterial({ map: planetTexture(kind) });
   const mesh = new THREE.Mesh(geo, mat);
   loadPhotoTexture(`${kind}.jpg`, (tex) => {
+    if (mat.userData.__disposed) {
+      tex.dispose();
+      return;
+    }
     const m = mat as THREE.MeshLambertMaterial;
     m.map?.dispose();
     m.map = tex;
@@ -433,6 +448,10 @@ export function makeRing(inner: number, outer: number, tone: "saturn" | "faint")
   if (tone === "saturn") {
     // 실사 고리 스트립(가로축 = 반지름) — UV가 이미 반지름 방향이라 그대로 맞는다
     loadPhotoTexture("saturn_ring.png", (ptex) => {
+      if (mat.userData.__disposed) {
+        ptex.dispose();
+        return;
+      }
       mat.map?.dispose();
       mat.map = ptex;
       mat.needsUpdate = true;
@@ -494,6 +513,10 @@ export function makeMilkyWay(radius: number): THREE.Mesh {
   const mat = new THREE.MeshBasicMaterial({ side: THREE.BackSide, transparent: true, opacity: 0, depthWrite: false });
   const mesh = new THREE.Mesh(geo, mat);
   loadPhotoTexture("stars.jpg", (tex) => {
+    if (mat.userData.__disposed) {
+      tex.dispose();
+      return;
+    }
     mat.map = tex;
     mat.opacity = 0.55;
     mat.needsUpdate = true;

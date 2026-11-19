@@ -56,7 +56,8 @@ const kind = () =>
 //   대신 무대 안의 결정 단추와, 판정이 떠 있으면 남은 보기와 정답 카드가 스크롤 영역 안에 보이는지 본다.
 async function at(id, mark, shot = true, o = {}) {
   const m = await L.measure(page);
-  if (!o.tall) ok(m.content <= m.view && m.scrollTop === 0, `${id} ${mark}: 스크롤 ${m.content}/${m.view}, 밀림 ${m.scrollTop}`);
+  // 결론 뒤에 붙는 궁금증 카드(펼쳐 읽는 덤)는 한 화면 예산 밖이다(중1 Ⅳ 검사와 같은 기준)
+  if (!o.tall) ok(m.content - m.curio <= m.view && m.scrollTop === 0, `${id} ${mark}: 스크롤 ${m.content}/${m.view}, 밀림 ${m.scrollTop}`);
   else {
     const vis = await page.evaluate(() => {
       const sc = document.querySelector(".screen.active .scroll").getBoundingClientRect();

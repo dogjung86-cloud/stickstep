@@ -10,6 +10,7 @@
 //   판정 동안은 큰 추 곁에 작은 추의 윤곽을, 막대에는 작은 추의 몫(6 N)을 점선으로 둔다(두 추의 부피와 물이 미는 힘 비교).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
+import { curioCard, type Curio } from "../../../ui/curio";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvCapture, bvTimers } from "../bio6/b6Lab";
 import { clamp, U5, u5Arrow, u5Canvas, u5Frame, u5Log, u5Pill, u5Read, u5Text } from "./u5Kit";
@@ -17,6 +18,7 @@ import { clamp, U5, u5Arrow, u5Canvas, u5Frame, u5Log, u5Pill, u5Read, u5Text } 
 interface S {
   title: string;
   cta?: string;
+  curio?: Curio;
 }
 const WY = 124; // 물의 겉면
 const TOP = 100; // 추 바닥의 가장 높은 자리
@@ -139,6 +141,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     f.say("물에 잠긴 부피가 클수록 물이 위로 밀어 올리는 힘도 커진다는 것을 확인했어요!");
     f.slot.conclude("물이 물체를 <b>위로 밀어 올리는 힘</b>이 있어요. 그 크기는 줄어든 눈금만큼이고, 물에 <b>잠긴 부피</b>가 클수록 커요.");
     api.enableCTA(s.cta ?? "다음");
+    if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
   st.run((ctx, w, h, t) => {
@@ -212,13 +215,32 @@ export const buoyLab: StepRenderer = (host, step, api) => {
       const top = Math.max(wy, y - Z.h);
       ctx.fillRect(cx - Z.w / 2, top, Z.w, y - top);
     }
-    // 물의 겉면과 비커
+    // 물의 겉면과 비커(추가 잠기면 처음 수면을 점선으로 남겨 물이 오른 만큼을 보이고, 비커 오른쪽 벽에 눈금을 둔다)
+    if (sb > 0.05) {
+      ctx.save();
+      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = "rgba(190,225,255,.45)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(bx0 + 4, WY);
+      ctx.lineTo(bx1 - 4, WY);
+      ctx.stroke();
+      ctx.restore();
+    }
     ctx.strokeStyle = "rgba(190,225,255,.9)";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(bx0 + 2, wy);
     ctx.lineTo(bx1 - 2, wy);
     ctx.stroke();
+    ctx.strokeStyle = "rgba(220,232,250,.55)";
+    ctx.lineWidth = 1.3;
+    for (let gy = 114; gy <= by - 14; gy += 16) {
+      ctx.beginPath();
+      ctx.moveTo(bx1 - (gy % 32 === 18 ? 9 : 5), gy);
+      ctx.lineTo(bx1 - 1, gy);
+      ctx.stroke();
+    }
     ctx.strokeStyle = "rgba(220,232,250,.75)";
     ctx.lineWidth = 2.5;
     ctx.beginPath();

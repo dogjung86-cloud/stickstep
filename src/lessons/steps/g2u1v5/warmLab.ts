@@ -12,7 +12,7 @@ import { P, fx, g1Lab, g1Predict, g1Strip, plot, ptsOf, seeded, svgOpen, type G1
 const PUT = 6; // 병에 넣은 질산 칼륨(g), 물 10 g
 
 export const g2u1WarmLab: StepRenderer = (host, step, api) => {
-  const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 2, cls: "g2u1x-wm" });
+  const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 3, cls: "g2u1x-wm" });
   const { f } = lab;
   const pl = plot({ x: 208, y: 34, w: 126, h: 150, x0: 0, x1: 80, y0: 0, y1: 160, xl: "온도(℃)", yl: "녹는 양(g/물 100 g)", xt: [20, 40, 60, 80], yt: [40, 80, 120, 160] });
   const curve: Array<[number, number]> = [];
@@ -21,8 +21,9 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
     ${pl.svg}
     <polyline points="${ptsOf(curve)}" stroke="${P.rose}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M${pl.px(0)} ${pl.py(PUT * 10)} H${pl.px(80)}" stroke="${P.yellow}" stroke-width="1.4" stroke-dasharray="4 3"/>
-    <text x="${pl.px(80)}" y="${pl.py(PUT * 10) + 14}" text-anchor="end" font-size="12" font-weight="800" fill="${P.yellow}">넣은 양</text>
+    <text x="${pl.px(80) - 2}" y="${pl.py(PUT * 10) - 6}" text-anchor="end" font-size="12" font-weight="800" fill="${P.yellow}" stroke="#0E1A2C" stroke-width="3" stroke-linejoin="round" paint-order="stroke">넣은 양(환산 60 g)</text>
     <path class="g2u1x-wm-v" d="M0 0" stroke="rgba(255,255,255,.4)" stroke-width="1.2"/>
+    <g class="g2u1x-wm-ex"></g>
     <circle class="g2u1x-wm-dot" r="5.5" fill="#fff" stroke="${P.rose}" stroke-width="2.4"/>
     <rect class="g2u1x-wm-bath" x="23" y="112" width="124" height="85" rx="6" fill="${P.cold}" opacity=".35"/>
     <path d="M20 96 V190 a10 10 0 0 0 10 10 h110 a10 10 0 0 0 10 -10 V96 M14 96 h142" stroke="${P.glass}" stroke-width="2.4" stroke-linecap="round"/>
@@ -36,6 +37,7 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
   const tEl = f.stage.querySelector(".g2u1x-wm-t") as SVGTextElement;
   const dot = f.stage.querySelector(".g2u1x-wm-dot") as SVGCircleElement;
   const vline = f.stage.querySelector(".g2u1x-wm-v") as SVGPathElement;
+  const exG = f.stage.querySelector(".g2u1x-wm-ex") as SVGGElement;
   const bath = f.stage.querySelector(".g2u1x-wm-bath") as SVGRectElement;
   const pile = f.stage.querySelector(".g2u1x-wm-pile") as SVGGElement;
 
@@ -47,9 +49,19 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
     const s = kno3(T);
     const dis = Math.min(PUT, s / 10);
     const left = PUT - dis;
-    dot.setAttribute("cx", fx(pl.px(T)));
-    dot.setAttribute("cy", fx(pl.py(s)));
-    vline.setAttribute("d", `M${fx(pl.px(T))} ${pl.py(0)} V${pl.py(160)}`);
+    const xT = pl.px(T);
+    const yS = pl.py(s);
+    const yPut = pl.py(PUT * 10);
+    dot.setAttribute("cx", fx(xT));
+    dot.setAttribute("cy", fx(yS));
+    vline.setAttribute("d", `M${fx(xT)} ${pl.py(0)} V${pl.py(160)}`);
+    exG.innerHTML =
+      left > 0.05
+        ? `<path d="M${fx(xT)} ${fx(yPut)} V${fx(yS)} M${fx(xT - 3.5)} ${fx(yPut)} H${fx(xT + 3.5)} M${fx(xT - 3.5)} ${fx(yS)} H${fx(xT + 3.5)}" stroke="${P.yellow}" stroke-width="2.8" stroke-linecap="round"/>` +
+          (phase === "end"
+            ? `<text x="${fx(xT + 7)}" y="${fx((yPut + yS) / 2 + 5)}" font-size="12" font-weight="800" fill="${P.yellow}" stroke="#0E1A2C" stroke-width="3" stroke-linejoin="round" paint-order="stroke">고체로 나옴</text>`
+            : "")
+        : "";
     const k = (T - 20) / 60;
     bath.setAttribute("fill", k > 0.5 ? P.hot : k > 0.15 ? P.warm : P.cold);
     bath.setAttribute("opacity", (0.3 + 0.25 * k).toFixed(2));
@@ -87,8 +99,9 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
     } else if (phase === "cool" && T <= 24) {
       phase = "end";
       range.input.disabled = true;
+      paint();
       // 수정안의 "고체로 석출되었어요"에서 '석출'은 레슨 8의 개념 스텝에서야 배우는 말이라 이 레슨(3)에서는 쉬운 말로 둔다.
-      f.say("다시 식히자 녹아 있던 질산 칼륨이 <b>고체로</b> 나왔어요. 그래프의 점도 곡선을 따라 내려왔어요.");
+      f.say("다시 식히자 녹아 있던 질산 칼륨이 <b>고체로</b> 나왔어요. 그래프의 노란 세로 구간만큼 고체로 나왔어요.");
       lab.tm.later(ask, 900);
     }
   }
@@ -97,7 +110,16 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
       "분홍 곡선에서 <b>60 ℃</b>의 물 100 g에 질산 칼륨은 최대 얼마나 녹나요?",
       [{ t: "약 110 g", ok: true }, { t: "약 60 g" }, { t: "약 32 g" }],
       "가로축 60 ℃에서 곡선의 세로축 값을 읽으면 80과 120 사이인 약 <b>110 g</b>이에요.",
-      () => lab.finish("질산 칼륨은 온도가 <b>높을수록</b> 물에 더 많이 녹아요. 온도를 낮추면 녹을 수 있는 한계가 줄어들어 남는 양이 다시 고체로 나와요."),
+      () => {
+        f.pips(2);
+        f.say("용해도는 언제나 <b>물 100 g</b> 기준이에요. 물의 양이 절반으로 줄면 최대로 녹는 양은 얼마일까요?");
+        lab.judge(
+          "같은 <b>60 ℃</b>에서 <b>물 50 g</b>에는 질산 칼륨이 최대 얼마나 녹을까요?",
+          [{ t: "약 55 g", ok: true }, { t: "약 110 g" }, { t: "약 220 g" }],
+          "물 100 g에 약 110 g이 녹으므로, 물이 절반인 <b>50 g</b>이면 최대로 녹는 양도 절반인 <b>약 55 g</b>이에요.",
+          () => lab.finish("고체는 대부분 온도가 <b>높을수록</b> 용해도가 커져요. 용해도는 <b>물 100 g</b> 기준이므로 물이 50 g이면 절반, 200 g이면 2배만큼 녹아요."),
+        );
+      },
     );
   }
 

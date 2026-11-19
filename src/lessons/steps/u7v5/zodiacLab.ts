@@ -94,8 +94,13 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
   // ---- 3D(동적 로드) ----
   let st: SpaceStage | null = null;
   let THREE: typeof T | null = null;
+  let earthGroup: T.Group | null = null;
   let earth: T.Mesh | null = null;
   let halo: T.Sprite | null = null;
+  let orbitArrow: T.Group | null = null;
+  let bandUniforms: { uSunA: { value: number }; uNightA: { value: number } } | null = null;
+  let sunFan: T.Mesh | null = null;
+  let nightFan: T.Mesh | null = null;
   let loop: Loop | null = null;
   const figures: T.Sprite[] = [];
   let sunLine: T.Line | null = null;
@@ -116,35 +121,163 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
       return;
     }
     const { scene, camera } = st;
-    scene.add(S.makeStars(500, 150));
-    scene.add(S.makePlanet("sun", 1.5, 40));
-    scene.add(S.makeGlow(8, "rgba(255,190,80,.85)", 0.14));
-    scene.add(new T3.PointLight(0xfff2dc, 2.6, 0, 0));
-    scene.add(new T3.AmbientLight(0x3c4c6c, 0.75));
-    scene.add(S.makeOrbitLine(ORBIT_R, "#7C98C4", 0.6, 128));
-    earth = S.makePlanet("earth", 1.05, 48);
-    scene.add(earth);
-    halo = S.makeGlow(3.6, "rgba(150,190,255,.5)", 0.34);
+    scene.add(S.makeMilkyWay(220));
+    scene.add(S.makeStars(650, 155));
+
+    // 태양과 다층 코로나 광채
+    scene.add(S.makePlanet("sun", 1.52, 48));
+    scene.add(S.makeGlow(5.2, "rgba(255,228,138,.95)", 0.22));
+    scene.add(S.makeGlow(9.4, "rgba(255,180,68,.78)", 0.14));
+    scene.add(new T3.PointLight(0xfff2dc, 2.8, 0, 0));
+    scene.add(new T3.AmbientLight(0x3e5074, 0.78));
+
+    // 황도 12궁 입체 천구 띠(12칸 구획선 + 태양 쪽 금빛 글레어 + 한밤중 남쪽 청록 하이라이트)
+    bandUniforms = { uSunA: { value: 0 }, uNightA: { value: Math.PI } };
+    const bandGeo = new T3.CylinderGeometry(RING_R + 0.35, RING_R + 0.35, 3.2, 96, 1, true);
+    const bandMat = new T3.ShaderMaterial({
+      uniforms: bandUniforms,
+      transparent: true,
+      depthWrite: false,
+      side: T3.DoubleSide,
+      vertexShader: `
+        varying vec3 vPos;
+        void main() {
+          vPos = position;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vPos;
+        uniform float uSunA;
+        uniform float uNightA;
+        void main() {
+          float ang = atan(-vPos.z, vPos.x);
+          float vFade = 1.0 - smoothstep(0.55, 1.6, abs(vPos.y));
+          float sector = abs(fract((ang / 6.2831853) * 12.0 + 0.5) - 0.5);
+          float tick = 1.0 - smoothstep(0.0, 0.018, sector);
+          float dSun = abs(atan(sin(ang - uSunA), cos(ang - uSunA)));
+          float dNight = abs(atan(sin(ang - uNightA), cos(ang - uNightA)));
+          float wSun = 1.0 - smoothstep(0.04, 0.34, dSun);
+          float wNight = 1.0 - smoothstep(0.04, 0.36, dNight);
+          vec3 base = vec3(0.16, 0.27, 0.48);
+          vec3 col = mix(base, vec3(1.0, 0.72, 0.28), wSun * 0.75);
+          col = mix(col, vec3(0.42, 0.84, 1.0), wNight * 0.85);
+          col += vec3(0.42, 0.58, 0.85) * tick * 0.42;
+          float alpha = (0.13 + wSun * 0.16 + wNight * 0.22 + tick * 0.18) * vFade;
+          gl_FragColor = vec4(col, alpha);
+          #include <colorspace_fragment>
+        }
+      `,
+    });
+    const bandMesh = new T3.Mesh(bandGeo, bandMat);
+    bandMesh.position.y = 0.55;
+    scene.add(bandMesh);
+    for (const ry of [-0.85, 1.95]) {
+      const rim = S.makeOrbitLine(RING_R + 0.34, "#6D8EC4", 0.28, 128);
+      rim.position.y = ry;
+      scene.add(rim);
+    }
+
+    // 지구 공전 궤도와 서→동(반시계) 공전 방향 곡선 화살표
+    scene.add(S.makeOrbitLine(ORBIT_R, "#86A8DC", 0.68, 144));
+    orbitArrow = new T3.Group();
+    {
+      const arcPts: T.Vector3[] = [];
+      const a0 = -0.52;
+      const a1 = -0.18;
+      for (let i = 0; i <= 18; i++) {
+        const a = a0 + ((a1 - a0) * i) / 18;
+        arcPts.push(new T3.Vector3(Math.cos(a) * (ORBIT_R + 0.55), 0.04, -Math.sin(a) * (ORBIT_R + 0.55)));
+      }
+      const arcLine = new T3.Line(
+        new T3.BufferGeometry().setFromPoints(arcPts),
+        new T3.LineBasicMaterial({ color: 0x9fd0ff, transparent: true, opacity: 0.82 }),
+      );
+      const tip = arcPts[arcPts.length - 1];
+      const prev = arcPts[arcPts.length - 2];
+      const dir = tip.clone().sub(prev).normalize();
+      const head = new T3.Mesh(
+        new T3.ConeGeometry(0.18, 0.44, 14),
+        new T3.MeshBasicMaterial({ color: 0x9fd0ff, transparent: true, opacity: 0.9 }),
+      );
+      head.position.copy(tip);
+      head.quaternion.setFromUnitVectors(new T3.Vector3(0, 1, 0), dir);
+      orbitArrow.add(arcLine, head);
+      scene.add(orbitArrow);
+    }
+
+    // 지구 본체(자전축 기울기 + 프레넬 대기권 테두리)
+    earthGroup = new T3.Group();
+    earth = S.makePlanet("earth", 1.06, 48);
+    // 자전축 기울기(23.5도)는 지구를 감싼 묶음에 준다. 지구 자신에 기울기(z)와 자전(y)을 함께 주면 회전 차례(XYZ) 때문에
+    // 자전할 때마다 축이 원뿔을 그리며 흔들린다. 묶음을 기울이고 지구는 제 축으로만 돌려야 축의 방향이 그대로다.
+    const earthTilt = new T3.Group();
+    earthTilt.rotation.z = 0.41;
+    earthTilt.add(earth);
+    const atmo = new T3.Mesh(
+      new T3.SphereGeometry(1.16, 40, 28),
+      new T3.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: T3.AdditiveBlending,
+        vertexShader: `
+          varying vec3 vN;
+          varying vec3 vV;
+          void main() {
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            vN = normalize(normalMatrix * normal);
+            vV = normalize(-mv.xyz);
+            gl_Position = projectionMatrix * mv;
+          }
+        `,
+        fragmentShader: `
+          varying vec3 vN;
+          varying vec3 vV;
+          void main() {
+            float rim = pow(1.0 - max(0.0, dot(vN, vV)), 2.6);
+            gl_FragColor = vec4(0.42, 0.74, 1.0, rim * 0.72);
+            #include <colorspace_fragment>
+          }
+        `,
+      }),
+    );
+    earthGroup.add(earthTilt, atmo);
+    scene.add(earthGroup);
+    halo = S.makeGlow(3.5, "rgba(135,190,255,.52)", 0.34);
     scene.add(halo);
+
+    // 지구에서 바라보는 시야 부채꼴(낮 햇빛 쪽 vs 한밤중 남쪽 밤하늘)
+    const mkFan = (col: number, op: number): T.Mesh => {
+      const g = new T3.BufferGeometry();
+      g.setAttribute("position", new T3.BufferAttribute(new Float32Array(9), 3));
+      const m = new T3.MeshBasicMaterial({ color: col, transparent: true, opacity: op, side: T3.DoubleSide, depthWrite: false });
+      const mesh = new T3.Mesh(g, m);
+      scene.add(mesh);
+      return mesh;
+    };
+    sunFan = mkFan(0xffb44c, 0.12);
+    nightFan = mkFan(0x66c4ff, 0.16);
+
     for (let k = 0; k < 12; k++) {
       const [cx, , cz] = posOf((k / 12) * Math.PI * 2, RING_R);
       const tex = new T3.CanvasTexture(constellationTexture(ZODIAC[k]));
       tex.colorSpace = T3.SRGBColorSpace;
-      const fig = new T3.Sprite(new T3.SpriteMaterial({ map: tex, color: 0xbfd2f0, transparent: true, opacity: 0.95, depthWrite: false }));
-      fig.position.set(cx, 0.6, cz);
-      fig.scale.setScalar(3.2);
+      tex.anisotropy = 4;
+      const fig = new T3.Sprite(new T3.SpriteMaterial({ map: tex, color: 0xc6daf8, transparent: true, opacity: 0.95, depthWrite: false }));
+      fig.position.set(cx, 0.65, cz);
+      fig.scale.setScalar(3.25);
       scene.add(fig);
       figures.push(fig);
     }
     const mkLine = (color: number): T.Line => {
       const geo = new T3.BufferGeometry().setFromPoints([new T3.Vector3(), new T3.Vector3()]);
-      const line = new T3.Line(geo, new T3.LineBasicMaterial({ color, transparent: true, opacity: 0.7 }));
+      const line = new T3.Line(geo, new T3.LineBasicMaterial({ color, transparent: true, opacity: 0.84 }));
       scene.add(line);
       return line;
     };
-    sunLine = mkLine(0xffaa50);
-    nightLine = mkLine(0x8cbeff);
-    // 구도(가로 346, 세로 230): 고리의 가로 반폭 11 + 그림 반폭 1.6 = 12.6. 가로 시야 반각 32.5°에서 필요한 거리 19.8.
+    sunLine = mkLine(0xffb357);
+    nightLine = mkLine(0x7fd4ff);
+    // 구도(가로 346, 세로 230): 고리의 가로 반폭 11 + 그림 반폭(한밤중 별자리가 가장 커서 1.85) = 12.85. 가로 시야 반각 32.5°에서 필요한 거리 20.2.
     // 세로는 내려다보는 각을 44°로 낮춰 고리가 납작하게 들어오게 한다. 거리 24. 가까운 쪽 별자리와 이름표가 아래로 잘리지 않게 보는 점을 앞으로 당겼다.
     camera.position.set(0, 16.9, 19.0);
     camera.lookAt(0, -0.6, 2.7);
@@ -198,7 +331,7 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
   });
 
   function frame(dt: number): void {
-    if (!st || !THREE || !earth || !halo || !sunLine || !nightLine) return;
+    if (!st || !THREE || !earthGroup || !earth || !halo || !sunLine || !nightLine) return;
     const w = canvas.clientWidth || 346;
     const h = canvas.clientHeight || 230;
     st.resize(w, h);
@@ -212,18 +345,25 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
     nightRow.textContent = `${ZODIAC[nightK]}자리`;
     host.dataset.u7Month = String(month + 1);
 
+    if (bandUniforms) {
+      bandUniforms.uSunA.value = (month / 12) * Math.PI * 2;
+      bandUniforms.uNightA.value = (nightK / 12) * Math.PI * 2;
+    }
+
     const [ex, , ez] = posOf(norm, ORBIT_R);
-    earth.position.set(ex, 0, ez);
+    earthGroup.position.set(ex, 0, ez);
     earth.rotation.y += 0.02 * dt;
     halo.position.set(ex, 0, ez);
-    halo.material.opacity = dragging ? 0.95 : 0.6;
+    halo.material.opacity = dragging ? 0.95 : 0.62;
+    if (orbitArrow) orbitArrow.rotation.y = norm;
 
     const v = new THREE.Vector3();
     for (let k = 0; k < 12; k++) {
       const fm = figures[k].material as T.SpriteMaterial;
       const cls = k === month ? "sun" : k === nightK ? "night" : "";
-      fm.color.set(k === month ? 0x7a6a58 : k === nightK ? 0xffe08c : 0xbfd2f0);
-      fm.opacity = k === month ? 0.55 : 1;
+      fm.color.set(k === month ? 0xa58968 : k === nightK ? 0xffe896 : 0xc6daf8);
+      fm.opacity = k === month ? 0.58 : k === nightK ? 1 : 0.88;
+      figures[k].scale.setScalar(k === nightK ? 3.7 : k === month ? 3.35 : 3.08);
       // 이름표는 화면 글자로 따라붙는다(그림 바로 아래)
       v.copy(figures[k].position).project(st.camera);
       const tag = names[k];
@@ -241,14 +381,26 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
     tagAt(sunTag, 0, 0, 30);
     tagAt(earthTag, ex, ez, 22);
     const setLine = (line: T.Line, a: number): void => {
-      const [x2, , z2] = posOf(a, RING_R - 1.4);
+      const [x2, , z2] = posOf(a, RING_R - 1.35);
       const pos = line.geometry.attributes.position as T.BufferAttribute;
       pos.setXYZ(0, ex, 0, ez);
       pos.setXYZ(1, x2, 0, z2);
       pos.needsUpdate = true;
     };
+    const setFan = (fan: T.Mesh | null, a: number, halfSpan: number): void => {
+      if (!fan) return;
+      const [lx, , lz] = posOf(a - halfSpan, RING_R - 0.9);
+      const [rx, , rz] = posOf(a + halfSpan, RING_R - 0.9);
+      const pos = fan.geometry.attributes.position as T.BufferAttribute;
+      pos.setXYZ(0, ex, -0.02, ez);
+      pos.setXYZ(1, lx, -0.02, lz);
+      pos.setXYZ(2, rx, -0.02, rz);
+      pos.needsUpdate = true;
+    };
     setLine(sunLine, sunSideA);
     setLine(nightLine, norm);
+    setFan(sunFan, sunSideA, 0.13);
+    setFan(nightFan, norm, 0.16);
 
     // 차례: 자유롭게 돌려 보기 → 궁수자리가 한밤중인 달 → 궁수자리가 태양 쪽인 달
     if (phase === "free" && moved > 50) {

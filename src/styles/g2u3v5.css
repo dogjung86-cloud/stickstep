@@ -25,6 +25,8 @@
 .g2u3x-log-n { font-size: 12px; line-height: 16px; font-weight: 700; color: var(--sub); white-space: nowrap; }
 .g2u3x-log-v { font-size: 14px; line-height: 19px; font-weight: 800; color: var(--subj-light-press); white-space: nowrap; min-height: 19px; }
 .g2u3x-log.slim .g2u3x-log-c { height: 40px; }
+.g2u3x-log.wrap .g2u3x-log-c { height: auto; min-height: 56px; padding: 6px 4px; }
+.g2u3x-log.wrap .g2u3x-log-v { font-size: 12px; line-height: 15px; white-space: pre-line; min-height: 30px; }
 .g2u3x-segs { display: grid; gap: 8px; }
 .g2u3x-seg {
   position: relative; height: 50px; padding: 0 4px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; box-shadow: var(--sh-card);

@@ -19,8 +19,9 @@ import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { eyeProp } from "../../../ui/lightKit";
 import type { StepRenderer } from "../../types";
-import { bvRange, bvTimers } from "../bio6/b6Lab";
+import { bvCapture, bvRange, bvTimers } from "../bio6/b6Lab";
 import { LX, lxCanvas, lxFrame, lxLog, lxPill, lxSeg, lxText, rad } from "./lxKit";
+import type { OpticStage3D } from "./opticStage3d";
 
 interface S {
   title: string;
@@ -90,11 +91,24 @@ export const curveLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
   const lens = s.mode === "lens";
   const f = lxFrame(host, { title: s.title, steps: 4, api });
+  const glCv = el("canvas", { class: "g2u3x-cv", attrs: { "aria-hidden": "true" } }) as HTMLCanvasElement;
+  f.stage.appendChild(glCv);
   const st = lxCanvas(f.stage);
   const tm = bvTimers();
   host.dataset.lxLab = lens ? "lens" : "mirror";
   host.dataset.lx = "watch";
   const word = lens ? "렌즈" : "거울";
+
+  let optic3d: OpticStage3D | null = null;
+  let portalRect = { x: 198, y: 44, w: 136, h: 132, cx: 266, cy: 110 };
+  let ghostH = 69; // 점선 인형(실제 물체 크기)의 키. 3D 인형의 기준 크기에서 계산한 값을 모듈에서 받는다
+  let disposed = false;
+  void import("./opticStage3d").then((mod) => {
+    if (disposed) return;
+    portalRect = mod.PORTAL_RECT;
+    ghostH = mod.REF_DOLL_PX;
+    optic3d = mod.createOpticStage3D(glCv);
+  });
 
   let dev: Dev = "cvx";
   let v = 3;
@@ -305,9 +319,70 @@ export const curveLab: StepRenderer = (host, step, api) => {
     lxText(ctx, "물체", objX(), GY + 15, { color: LX.dim });
   };
 
+  // 왼쪽 3D 실험대를 가로로 살짝 끌어 거울·렌즈의 볼록/오목 곡면을 여러 각도에서 볼 수 있다(화면 안내는 없는 덤 조작).
+  let benchDrag: { x: number } | null = null;
+  st.cv.addEventListener("pointerdown", (e) => {
+    if (!optic3d) return;
+    const p = st.pt(e);
+    if (p.x > 194) return;
+    bvCapture(st.cv, e.pointerId);
+    benchDrag = { x: p.x };
+  });
+  st.cv.addEventListener("pointermove", (e) => {
+    if (!benchDrag || !optic3d) return;
+    const p = st.pt(e);
+    optic3d.nudgeYaw(((p.x - benchDrag.x) / 160) * 0.55);
+    benchDrag.x = p.x;
+  });
+  const endBenchDrag = (): void => {
+    benchDrag = null;
+  };
+  st.cv.addEventListener("pointerup", endBenchDrag);
+  st.cv.addEventListener("pointercancel", endBenchDrag);
+
   st.run((ctx) => {
+    const cw = st.cv.clientWidth || 346;
+    const ch = st.cv.clientHeight || 230;
+    if (optic3d) {
+      const m = mag();
+      const bl = blurry();
+      const anc = optic3d.render(cw, ch, { lens, dev, v, mag: m, blurry: bl });
+      // 왼쪽 3D 실험대 이름표(투영 좌표)
+      lxText(ctx, "눈", Math.max(18, anc.eye[0]), Math.max(46, anc.eye[1] - 10), { color: LX.dim });
+      lxText(ctx, name(), clampX(anc.optic[0], 34, 166), Math.max(46, anc.optic[1] - 6), { color: LX.ink });
+      lxText(ctx, "물체", clampX(anc.doll[0], 24, 174), Math.min(218, anc.doll[1] + 10), { color: LX.dim });
+
+      // 오른쪽 3D 칸 위에: 은빛 테두리 + 실제 크기 기준 점선 인형(둥근 모서리는 3D 쪽에서 깎는다)
+      const P = portalRect;
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(P.x, P.y, P.w, P.h, 14);
+      ctx.clip();
+      if (bl) {
+        const bg = ctx.createRadialGradient(P.cx, P.cy, 6, P.cx, P.cy, P.w * 0.6);
+        bg.addColorStop(0, "rgba(240,120,110,.38)");
+        bg.addColorStop(1, "rgba(38,54,88,.48)");
+        ctx.fillStyle = bg;
+        ctx.fillRect(P.x, P.y, P.w, P.h);
+      }
+      // 점선 인형은 3D 인형과 가운데를 맞추고, 키는 배율 1일 때의 3D 인형과 같다(그래야 상이 점선보다 큰지 작은지가 배율대로 읽힌다)
+      doll(ctx, P.cx, P.cy, ghostH, { ghost: true, alpha: 0.62 });
+      ctx.restore();
+
+      ctx.strokeStyle = "rgba(214,230,250,.88)";
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      ctx.roundRect(P.x, P.y, P.w, P.h, 14);
+      ctx.stroke();
+
+      lxText(ctx, `${word}${lens ? "로" : "에"} 보이는 상`, P.cx, P.y + P.h + 15, { color: LX.ink });
+      lxText(ctx, "점선: 실제 물체 크기", P.cx, P.y + P.h + 31, { color: LX.dim });
+      lxPill(ctx, look(), bl ? LX.red : LX.gold);
+      return;
+    }
+
     drawSide(ctx);
-    // 보이는 모습(둥근 창)
+    // 보이는 모습(둥근 창 — 2D 폴백)
     ctx.save();
     ctx.beginPath();
     ctx.arc(VIEW.x, VIEW.y, VIEW.r, 0, Math.PI * 2);
@@ -346,10 +421,15 @@ export const curveLab: StepRenderer = (host, step, api) => {
   f.say(`<b>볼록 ${word}</b>${lens ? "로" : "에"} 인형을 ${lens ? "볼 거예요" : "비추어 볼 거예요"}. 물체를 가까이 두었다가 멀리 옮기며, 눈에 보이는 상의 모습을 <b>두 칸</b>에 기록해 보세요.`);
   api.setCTA("가까울 때와 멀 때의 모습을 네 칸에 모두 기록해 보세요", { enabled: false });
   return () => {
+    disposed = true;
     tm.clear();
     st.stop();
+    optic3d?.dispose();
+    optic3d = null;
   };
 };
+
+const clampX = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
 
 // ══════════════════════════════════════════════════════════
 // 2) 세 갈래 길의 거울

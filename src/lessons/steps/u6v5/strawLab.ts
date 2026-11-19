@@ -22,25 +22,27 @@ const ZX = 262; // 오른쪽 확대 동그라미
 const ZY = 88;
 const ZR = 56;
 const GOLD = "#FFD68A";
-/** 누르는 힘(1~5)의 화살 길이 */
-const forceLen = (f: number): number => 8 + f * 7;
+/** 누르는 힘(1~5)의 화살 길이(상수 오프셋 없이 힘에 정비례) */
+const forceLen = (f: number): number => f * 9;
 /** 숫자 뒤의 '(으)로': 영, 삼, 육, 십처럼 ㄹ이 아닌 받침이면 '으로', 받침이 없거나 ㄹ받침(일, 칠, 팔)이면 '로' */
 const ro = (n: number): string => ([0, 3, 6].includes(n % 10) ? "으로" : "로");
-/** 한 칸이 받는 힘의 화살 길이 */
-const perLen = (per: number): number => 6 + per * 10;
+/** 한 칸이 받는 힘의 화살 길이(상수 오프셋 없이 1:6 비율 그대로) */
+const perLen = (per: number): number => per * 12;
 
 function arrowDown(ctx: CanvasRenderingContext2D, x: number, y0: number, y1: number, w: number, head: number, color: string): void {
+  const span = Math.max(0.5, y1 - y0);
+  const hd = Math.min(head, span * 0.72);
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
-  ctx.lineWidth = w;
+  ctx.lineWidth = Math.min(w, Math.max(1.4, hd * 0.52));
   ctx.lineCap = "round";
   ctx.beginPath();
   ctx.moveTo(x, y0);
-  ctx.lineTo(x, y1 - head * 0.8);
+  ctx.lineTo(x, y1 - hd * 0.78);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(x - head * 0.75, y1 - head);
-  ctx.lineTo(x + head * 0.75, y1 - head);
+  ctx.moveTo(x - hd * 0.75, y1 - hd);
+  ctx.lineTo(x + hd * 0.75, y1 - hd);
   ctx.lineTo(x, y1);
   ctx.closePath();
   ctx.fill();

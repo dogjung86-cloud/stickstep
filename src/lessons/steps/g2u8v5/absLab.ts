@@ -23,7 +23,7 @@ const distText = (d: number): string => (d < 10 ? `약 ${d.toFixed(1)} pc` : `�
 
 export const absLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
-  const f = sFrame(host, { title: s.title, steps: 3, api });
+  const f = sFrame(host, { title: s.title, steps: 4, api });
   const st = sCanvas(f.stage);
   const tm = bvTimers();
 
@@ -69,12 +69,27 @@ export const absLab: StepRenderer = (host, step, api) => {
       "10 pc 위치로 옮겼을 때 처음보다 어두워진 시리우스는 원래 어디에 있던 별인가요?",
       [{ t: "10 pc보다 가까운 곳", ok: true }, { t: "10 pc보다 먼 곳" }, { t: "정확히 10 pc 거리" }],
       (ok) => api.recordQuiz(ok),
-      { why: "시리우스는 약 2.6 pc에 있던 가까운 별이라, 10 pc으로 <b>멀어지면서</b> 겉보기 등급(−1.5)보다 절대 등급(1.4)이 커졌어요(어두워졌어요).", onNext: finish },
+      {
+        why: "시리우스는 약 2.6 pc에 있던 가까운 별이라, 10 pc으로 <b>멀어지면서</b> 겉보기 등급(−1.5)보다 절대 등급(1.4)이 커졌어요.",
+        onNext: () => {
+          f.say("이번엔 두 등급 숫자의 크기를 비교해 별까지의 거리를 판정해 봐요.");
+          f.slot.ask(
+            "어떤 별의 <b>겉보기 등급이 3등급, 절대 등급이 −2등급</b>이에요. 이 별까지의 거리는?",
+            [{ t: "10 pc보다 멀리 있다", ok: true }, { t: "10 pc보다 가까이 있다" }, { t: "정확히 10 pc 거리에 있다" }],
+            (ok) => api.recordQuiz(ok),
+            {
+              why: "10 pc에 놓았을 때(−2등급)보다 지금 더 어둡게(3등급, 숫자가 크게) 보이므로 <b>10 pc보다 멀리</b> 있는 별이에요.",
+              onNext: finish,
+            },
+          );
+        },
+      },
     );
   }
   function finish(): void {
-    f.say("별들을 모두 같은 거리(10 pc)에 놓아야 실제 밝기(절대 등급)를 비교할 수 있다는 것을 확인했어요!");
-    f.slot.conclude("별을 모두 <b>같은 거리(10 pc)</b>에 놓고 비교해야 실제 밝기를 알 수 있어요. 가까워서 밝게 보이던 시리우스보다 북극성과 데네브가 실제로는 더 밝아요.");
+    f.pips(4);
+    f.say("별들을 모두 같은 거리(10 pc)에 놓아야 실제 밝기를 비교할 수 있고, 두 등급으로 거리도 알 수 있어요!");
+    f.slot.conclude("별을 모두 <b>10 pc</b>에 놓은 <b>절대 등급</b>으로 실제 밝기를 비교해요. <b>겉보기 &lt; 절대</b>이면 10 pc보다 가깝고, <b>겉보기 &gt; 절대</b>이면 10 pc보다 멀어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -83,6 +98,7 @@ export const absLab: StepRenderer = (host, step, api) => {
     const per = (w - x0 - 26) / 3; // 거리가 10배 될 때마다의 간격
     const X = (d: number): number => x0 + Math.log10(d) * per;
     const axisY = h - 26;
+    const allMoved = stars.every((v) => v.moved);
     // 지구와 거리 눈금
     sDisk(ctx, 22, axisY - 82, 9, S.earth, "#fff", 1.5);
     sText(ctx, "지구", 22, axisY - 62, { color: S.ink, px: 12 });
@@ -92,22 +108,28 @@ export const absLab: StepRenderer = (host, step, api) => {
       sText(ctx, `${d} pc`, X(d), axisY + 15, { color: d === 10 ? S.ok : S.dim, px: 12, w: d === 10 ? 800 : 700 });
     });
     sLine(ctx, X(10), 12, X(10), axisY - 6, "rgba(127,227,196,.7)", 1.6, [5, 5]);
+    if (allMoved) {
+      sText(ctx, "겉보기 < 절대", (x0 + X(10)) / 2, 13, { color: "#9CC2FF", px: 12, w: 800 });
+      sText(ctx, "10 pc보다 먼 곳: 겉보기 > 절대", (X(10) + w - 10) / 2, 13, { color: S.gold, px: 12, w: 800 });
+    } else if (started) {
+      sText(ctx, "별이 클수록 밝게 보여요", w - 10, 12, { color: S.dim, px: 12, align: "right" });
+    }
     // 별 셋
     stars.forEach((x, i) => {
-      const y = 36 + i * 52;
+      const y = 40 + i * 51;
       const d0 = distOf(x);
       const px = X(d0) + (X(10) - X(d0)) * x.t;
       const m = x.m + (x.M - x.m) * x.t;
       if (x.t > 0) {
-        sDisk(ctx, X(d0), y, 3, "rgba(255,255,255,.25)");
+        sDisk(ctx, X(d0), y, 3.2, "rgba(255,255,255,.32)");
         sLine(ctx, X(d0), y, px, y, "rgba(255,255,255,.22)", 1.2, [3, 4]);
+        if (x.moved) sText(ctx, `겉보기 ${mag(x.m)}`, X(d0), y + 14, { color: "rgba(220,232,250,.7)", px: 12, align: d0 > 200 ? "right" : "center" });
       }
       sGlow(ctx, px, y, Math.max(5, 15 - 1.5 * m), x.color, 0.3);
       const right = px > w - 96;
       sText(ctx, x.name, px + (right ? -18 : 18), y - 9, { color: S.ink, px: 12.5, align: right ? "right" : "left" });
       sText(ctx, `${mag(m)}등급`, px + (right ? -18 : 18), y + 8, { color: x.moved ? S.ok : S.gold, px: 12.5, align: right ? "right" : "left", w: 800 });
     });
-    if (started) sText(ctx, "별이 클수록 밝게 보여요", w - 10, 12, { color: S.dim, px: 12, align: "right" });
   });
 
   paint();
