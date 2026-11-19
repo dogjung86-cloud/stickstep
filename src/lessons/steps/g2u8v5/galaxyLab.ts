@@ -1,9 +1,15 @@
 // [중2 Ⅷ v5] g2u8l5 galaxyLab: 「태양계는 우리은하의 어디에 있을까요?」
+// 책의 어디에서: 그림 '우리은하의 모양'(위에서 보면 은하 중심을 가로지르는 막대 모양의 구조와 나선팔, 옆에서 보면 중심부가 약간 볼록한 원반.
+//   지름 약 30000 pc, 태양계는 중심에서 약 8500 pc 떨어진 나선팔), 그림 '은하수의 모양'(은하 중심 쪽을 볼 때 은하수가 넓고 뚜렷하다).
 // 가로 3D 우리은하 관측실(rotateStage + galaxyStage3d.ts)에서
-//   1) 위에서 본 막대나선 원반 위 태양계의 자리를 예측·확인(중심에서 약 8500 pc 나선팔, 전체 지름 약 30000 pc),
-//   2) 위에서 본 모습(막대나선 모양)과 옆에서 본 모습(중심부가 볼록한 원반 모양)을 입체로 돌려 비교,
+//   1) 위에서 본 원반 위 태양계의 자리를 예측하고 확인(중심에서 약 8500 pc 나선팔, 전체 지름 약 30000 pc),
+//   2) 위에서 본 모습(막대 모양과 나선팔)과 옆에서 본 모습(중심부가 볼록한 원반)을 입체로 돌려 비교,
 //   3) 태양계에서 은하 중심 방향과 바깥쪽 방향을 바라볼 때 지구 밤하늘 은하수(넓고 뚜렷 vs 좁고 희미)를 비교한다.
-// WebGL을 쓸 수 없는 기기에서는 즉시 세로 요약 판정으로 안전하게 이어진다.
+// 지킬 것:
+//  - 위에서 본 그림은 사진처럼 보여 밖에서 찍은 사진으로 여기기 쉽다. 세로 무대와 가로 화면 모두 늘 '상상도' 꼬리표를 단다(책 그림도 '(상상도)'를 붙인다).
+//  - 화면 글은 책의 말만 쓴다('막대 모양', '나선팔'. 책에 없는 '막대나선'은 쓰지 않는다).
+//  - 들어가기 전의 세로 무대에는 옆모습을 그리지 않는다(판정의 답 '중심부가 볼록한 원반'이 먼저 보였다). 옆에서 보기를 한 뒤에 채운다.
+//  - WebGL을 쓸 수 없는 기기에서는 세로 무대의 요약 그림을 보고 같은 두 판정에 답한다(판정을 건너뛰고 맞은 것으로 적지 않는다).
 
 import { el } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
@@ -42,9 +48,13 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
   f.stage.appendChild(enterBtn);
 
   const log = sLog(["태양계의 위치", "위·옆에서 본 모양", "방향별 은하수"], 1, true);
-  f.slot.setControls(sCap("가로 3D 화면을 열어 우리은하를 위와 옆에서 돌려 보고 세 가지 탐구를 완료해 보세요."), log.el);
+  // 도움말과 큰 버튼이 이미 할 일을 말하므로 여기에는 기록 칸의 이름만 둔다(같은 안내가 세 번 나왔다)
+  f.slot.setControls(sCap("3D 화면에서 확인할 세 가지"), log.el);
 
   let disposed = false;
+  let entering = false; // 가로 화면 모듈을 받는 동안 다시 눌려 화면이 두 겹으로 열리지 않게
+  let no3d = false; // 이 기기에서 3D를 열지 못했다
+  let asking = false; // 마지막 판정이 떠 있는 동안에는 세로 무대의 옆모습 설명 글을 가린다
   let rot: RotateStage | null = null;
   let loop: Loop | null = null;
   let g3d: GalaxyStage3D | null = null;
@@ -63,7 +73,7 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
 
   function syncProgress(): void {
     if (sunRevealed) log.set(0, "약 8500 pc 나선팔");
-    if (seenSide) log.set(1, "막대나선 · 볼록한 원반");
+    if (seenSide) log.set(1, "막대와 나선팔 · 볼록한 원반");
     if (seenDirs.size === 2) log.set(2, "중심 쪽이 넓고 뚜렷");
     f.pips(doneCount());
     host.dataset.g2u8GalDone = String(doneCount());
@@ -97,6 +107,13 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
     sText(ctx, "옆에서 본 모습", bx + bw / 2, by + 15, { color: "#DCE7FB", px: 12, w: 800 });
     const mcx = bx + bw / 2;
     const mcy = by + 43;
+    if (!seenSide) {
+      // 아직 옆에서 보지 않았다: 그림과 설명을 미리 보이지 않는다
+      sText(ctx, "?", mcx, mcy - 3, { color: "rgba(220,231,251,.55)", px: 20, w: 800 });
+      sText(ctx, "3D에서 확인해요", mcx, by + bh - 8, { color: S.dim, px: 12, w: 700 });
+      void h;
+      return;
+    }
     // 원반과 볼록한 중심부
     ctx.save();
     const dg = ctx.createRadialGradient(mcx, mcy, 2, mcx, mcy, bw * 0.42);
@@ -112,16 +129,18 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
     ctx.fill();
     ctx.restore();
     if (sunRevealed) {
-      sDisk(ctx, mcx + bw * 0.22, mcy, 3.4, S.sun, "#fff", 1.1);
+      sDisk(ctx, mcx - bw * 0.22, mcy, 3.4, S.sun, "#fff", 1.1); // 3D 옆모습과 같은 쪽(중심의 왼쪽)
     }
-    sText(ctx, "중심부가 볼록한 원반", mcx, by + bh - 8, { color: S.gold, px: 12, w: 700 });
+    if (!asking) sText(ctx, "중심부가 볼록한 원반", mcx, by + bh - 8, { color: S.gold, px: 12, w: 700 });
     void h;
   });
 
   async function enter(): Promise<void> {
-    if (rot) return;
+    if (rot || entering || no3d) return;
+    entering = true;
     haptic(HAPTIC.select);
     const { enterRotateStage } = await import("../../../ui/rotateStage");
+    entering = false;
     if (disposed) return;
     rot = enterRotateStage({
       title: "우리은하 3D 탐사 (끌어서 기울이기)",
@@ -162,16 +181,14 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
     if (disposed || !rot) return;
     g3d = mod.createGalaxyStage3D(canvas);
     if (!g3d) {
+      // 3D를 열 수 없다: 세 가지를 세로 무대의 요약 그림으로 보이고, 같은 두 판정에 답하게 한다(leave가 askFinal을 부른다)
+      no3d = true;
       sunRevealed = true;
       seenSide = true;
       seenDirs.add("in");
       seenDirs.add("out");
       syncProgress();
-      asked = true;
-      api.recordQuiz(true);
       rot.leave();
-      finish();
-      f.say("이 기기에서는 3D 화면을 열 수 없어 핵심 내용으로 바로 정리할게요.");
       return;
     }
 
@@ -354,8 +371,11 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
       pin(lblGuess, !!guessXZ && !sunRevealed, guessXZ?.[0] ?? 0, 0.2, guessXZ?.[1] ?? 0, -18);
       pin(lblCenter, sunRevealed, 0, curView === "side" ? 1.55 : 0.2, 0, -16);
       pin(lblSun, sunRevealed, 0, 0.2, mod.SUN_Z, 20);
-      pin(lblDist, sunRevealed && curView === "top", 2.4, 0.2, mod.SUN_Z * 0.5, 0);
-      pin(lblDiam, sunRevealed, curView === "side" ? -mod.GAL_R * 0.52 : -mod.GAL_R * 0.48, curView === "side" ? -1.15 : 0.2, curView === "side" ? 0 : -1.2, 16);
+      const dAt = g3d.rightOf(0, 0.2, mod.SUN_Z * 0.5, 2.4);
+      pin(lblDist, sunRevealed && curView === "top", dAt[0], dAt[1], dAt[2], 0);
+      const side = curView === "side";
+      const rAt = g3d.rightOf(0, side ? -1.15 : 0.2, 0, mod.GAL_R * (side ? 0.5 : -0.62));
+      pin(lblDiam, sunRevealed, rAt[0], rAt[1], rAt[2], 16);
     });
     loop.start();
   }
@@ -369,6 +389,7 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
     rot = null;
     doneBar = null;
     enterBtn.classList.remove("pulse");
+    if (no3d) enterBtn.hidden = true;
     if (allDone()) {
       enterBtn.textContent = "우리은하 3D 다시 보기";
       if (!asked) {
@@ -382,7 +403,12 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
   }
 
   function askFinal(): void {
-    f.say("우리은하를 위와 옆에서 입체로 살펴보고, 방향에 따른 은하수 모습까지 모두 비교했어요!");
+    asking = true;
+    f.say(
+      no3d
+        ? "이 기기에서는 3D 화면을 열 수 없어요. 위 그림에서 <b>태양계의 자리</b>와 <b>옆에서 본 모습</b>을 살펴보고 질문에 답해 보세요."
+        : "우리은하를 위와 옆에서 입체로 살펴보고, 방향에 따른 은하수 모습까지 모두 비교했어요!",
+    );
     f.slot.ask(
       "태양계는 우리은하의 어디에 위치해 있나요?",
       [{ t: "은하 중심에서 떨어진 나선팔", ok: true }, { t: "우리은하의 정중앙(중심부)" }, { t: "우리은하 원반 바깥의 빈 공간" }],
@@ -406,9 +432,10 @@ export const galaxyLab: StepRenderer = (host, step, api) => {
   }
 
   function finish(): void {
+    asking = false;
     f.pips(4);
-    f.say("위에서 보면 막대나선 모양, 옆에서 보면 중심부가 볼록한 원반 모양인 우리은하의 구조를 완성했어요!");
-    f.slot.conclude("우리은하는 위에서 보면 <b>막대나선</b> 모양, 옆에서 보면 <b>중심부가 볼록한 원반</b> 모양이에요. 태양계는 중심에서 약 8500 pc 떨어진 <b>나선팔</b>에 있어 중심 쪽 은하수가 넓고 뚜렷해요.");
+    f.say("위에서 본 모습과 옆에서 본 모습, 태양계의 자리까지 우리은하의 모양을 모두 확인했어요!");
+    f.slot.conclude("우리은하는 위에서 보면 <b>막대 모양</b>을 <b>나선팔</b>이 감싼 모양, 옆에서 보면 <b>중심부가 볼록한 원반</b> 모양이에요. 태양계는 중심에서 약 8500 pc 떨어진 나선팔에 있어 중심 쪽 은하수가 넓고 뚜렷해요.");
     api.enableCTA(s.cta ?? "다음");
   }
 

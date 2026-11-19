@@ -2,6 +2,11 @@
 // 위에서 본 막대나선 모양(실사 상상도 + 입체 나선팔 입자)과 옆에서 본 중심부가 볼록한 원반 모양을
 // 한 3D 모형에서 자유롭게 돌려 보며, 태양계의 위치(중심에서 약 8500 pc 나선팔, 전체 지름 약 30000 pc)와
 // 바라보는 방향(은하 중심 방향 vs 바깥쪽 방향)에 따른 은하수 밝기 차이를 탐구한다.
+// 지킬 것(2026-11-19 검토에서 고친 것):
+//  - 옆에서 보기는 태양계와 은하 중심을 잇는 선이 화면에 가로로 눕는 방향(방위각 90도)에서 본다. 그래야 태양계가 중심에서 반지름의 57%만큼
+//    떨어져 보인다. 처음에는 방위각 0.22라 태양계가 카메라와 중심 사이에 놓여, 옆모습에서 중심의 볼록한 부분 안에 있는 것처럼 보였다.
+//  - 지름 자는 보는 방위각을 따라 돌아 늘 화면에 가로로 놓인다(원반은 어느 쪽에서 봐도 폭이 지름이라, 자가 비스듬하면 지름보다 짧아 보인다).
+//  - 오른쪽 작은 카드 자리를 비우느라 보는 점을 화면 오른쪽으로 미는데, 이 밂도 화면 기준(rightOf)으로 한다.
 
 import { clamp } from "../../../core/dom";
 import * as S3 from "../../../ui/space3d";
@@ -20,6 +25,8 @@ export interface GalaxyStage3D {
   revealSun(on: boolean): void;
   setDir(d: GalDir): void;
   pickDisc(nx: number, ny: number): [number, number] | null;
+  /** (x, y, z)에서 지금 화면의 오른쪽으로 off만큼 옮긴 자리(이름표를 자와 선 옆에 붙일 때 쓴다). */
+  rightOf(x: number, y: number, z: number, off: number): [number, number, number];
   nudgeOrbit(dAz: number, dEl: number): GalView | null;
   project(x: number, y: number, z: number, w: number, h: number): { x: number; y: number; ok: boolean };
   step(dt: number, tMs: number): void;
@@ -349,7 +356,8 @@ export function createGalaxyStage3D(canvas: HTMLCanvasElement): GalaxyStage3D | 
   let curAz = 0;
   let curEl = 1.44;
   let camDist = 31;
-  const lookTarget = new THREE.Vector3(1.5, 0, 0.6); // 오른쪽 미니 카드 여백 확보를 위해 살짝 오른쪽을 바라봄
+  let shift = 1.5; // 오른쪽 미니 카드 여백 확보를 위해 보는 점을 화면 오른쪽으로 미는 양(은하는 그만큼 왼쪽에 놓인다)
+  const lookTarget = new THREE.Vector3(shift, 0, 0.4);
 
   function updateCamDist(w: number, h: number): void {
     const aspect = Math.max(1, w / Math.max(1, h));
@@ -357,7 +365,7 @@ export function createGalaxyStage3D(canvas: HTMLCanvasElement): GalaxyStage3D | 
     const needW = 14.2 / (tanV * aspect);
     const needH = 12.6 / tanV;
     camDist = Math.max(26, needW, needH);
-    lookTarget.set(aspect > 1.65 ? 2.1 : 1.2, 0, 0.4);
+    shift = aspect > 1.65 ? 2.1 : 1.2;
   }
 
   return {
@@ -370,7 +378,8 @@ export function createGalaxyStage3D(canvas: HTMLCanvasElement): GalaxyStage3D | 
         targetAz = 0;
         targetEl = 1.45;
       } else {
-        targetAz = 0.22; // 태양계(0, 0, +6)가 중심에서 오른쪽으로 떨어져 한눈에 보이도록 옆에서 살짝 비스듬히 본다
+        // 태양계(0, 0, +6)와 은하 중심을 잇는 선이 화면에 가로로 눕는 방향. 태양계가 중심의 왼쪽, 반지름의 57% 자리에 보인다
+        targetAz = Math.PI / 2;
         targetEl = 0.06;
       }
     },
@@ -404,8 +413,11 @@ export function createGalaxyStage3D(canvas: HTMLCanvasElement): GalaxyStage3D | 
       if (Math.hypot(hit.x, hit.z) > GAL_R) return null;
       return [hit.x, hit.z];
     },
+    rightOf(x, y, z, off) {
+      return [x + Math.cos(curAz) * off, y, z - Math.sin(curAz) * off];
+    },
     nudgeOrbit(dAz, dEl) {
-      targetAz = clamp(targetAz + dAz, -1.2, 1.2);
+      targetAz = clamp(targetAz + dAz, -1.9, 1.9);
       targetEl = clamp(targetEl + dEl, 0.03, 1.5);
       return targetEl < 0.35 ? "side" : targetEl > 1.05 ? "top" : null;
     },
@@ -418,6 +430,10 @@ export function createGalaxyStage3D(canvas: HTMLCanvasElement): GalaxyStage3D | 
       curAz += (targetAz - curAz) * k;
       curEl += (targetEl - curEl) * k;
       const ce = Math.cos(curEl);
+      // 보는 점: 화면 오른쪽으로 shift, 위에서 볼 때는 카메라 쪽(화면 아래)으로 조금 더
+      const topness = clamp((curEl - 0.3) / 1.0, 0, 1);
+      lookTarget.set(Math.cos(curAz) * shift + Math.sin(curAz) * 0.4 * topness, 0, -Math.sin(curAz) * shift + Math.cos(curAz) * 0.4 * topness);
+      diamGroup.rotation.y = curAz; // 지름 자는 늘 화면에 가로로
       camera.position.set(
         lookTarget.x + Math.sin(curAz) * ce * camDist,
         lookTarget.y + Math.sin(curEl) * camDist,

@@ -134,8 +134,8 @@
 
 /* ── 우리은하 가로 3D 탐사(.g2u8x-gal3d-*) ── */
 .g2u8x-enterbtn {
-  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 4;
-  height: 48px; padding: 0 18px; border-radius: 999px; border: 1.5px solid rgba(168, 188, 255, .75);
+  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 4;
+  height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid rgba(168, 188, 255, .75);
   background: linear-gradient(180deg, #4B5BE6, #3240B8); color: #fff; font-size: 14px; font-weight: 800;
   white-space: nowrap; box-shadow: 0 8px 22px rgba(26, 36, 112, .65); transition: transform .14s;
 }

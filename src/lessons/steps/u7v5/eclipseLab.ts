@@ -369,7 +369,9 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     scene.add(S.makeMilkyWay(260));
     scene.add(S.makeStars(900, 220));
 
-    // 태양(왼쪽): 광구 + 내부 광채 + 외부 글레어 + 지상 개기일식용 고해상도 스트리머 코로나
+    // 태양(왼쪽): 교과서 그림 VII-10과 같은 배치. 광구 + 안쪽 광채 + 바깥 빛 + 지상 개기일식용 코로나.
+    // 크기 위계(사용자 확정 2026-07-26): 태양은 "제일 크다"만 읽히면 충분하다. 조작 대상인 지구와 달이 화면의 주인공이 되도록
+    // 태양 구체와 빛을 줄이고 카메라를 당긴다(아래 spaceCamPos). 빛을 더 키우지 않는다.
     const sunBall = S.makePlanet("sun", SUN_R, 52);
     sunBall.position.set(SUN_X, 0, 0);
     scene.add(sunBall);
@@ -379,6 +381,8 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     const sunGlow = S.makeGlow(13.5, "rgba(255,180,70,.9)", 0.16);
     sunGlow.position.set(SUN_X, 0, 0);
     scene.add(sunGlow);
+    // 코로나: 검은 해 테두리를 감싸는 흰 빛(지상 뷰 전용). 그림 안에서 해 가장자리의 반지름이 0.195라, 지름 16.2면 가장자리가 태양 반지름(3.04)
+    // 바로 바깥(3.16)에 온다. 가려진 원반의 가장자리에서 가장 밝게 빛난다.
     const corona = makeCoronaSprite(THREE, 16.2);
     corona.position.set(SUN_X, 0, 0);
     corona.material.opacity = 0;
@@ -417,7 +421,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
           varying vec3 vW;
           void main() {
             float rim = pow(1.0 - max(0.0, dot(vN, vV)), 2.8);
-            float day = smoothstep(0.25, -0.45, vW.x);
+            float day = 1.0 - smoothstep(-0.45, 0.25, vW.x);
             float term = exp(-pow(vW.x * 3.2, 2.0));
             vec3 col = mix(vec3(0.18, 0.36, 0.68), vec3(0.42, 0.76, 1.0), day);
             col = mix(col, vec3(1.0, 0.45, 0.2), term * 0.72);
@@ -457,8 +461,9 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     const moonMat = moon.material as T.MeshLambertMaterial;
     const moonHalo = S.makeGlow(3.6, "rgba(140,180,255,.44)", 0.3);
     scene.add(moonHalo);
+    // 부분월식: 달의 일부에 지구 그림자(둥근 경계, 붉은 기 도는 어둠). 부분일식: 지구의 낮 쪽에 달의 옅은 그림자.
     const moonBite = viewBite(THREE, moonMat, [0.3, 0.15, 0.13], 0.05);
-    const BITE_R = 2.1;
+    const BITE_R = 2.1; // 그림자 원의 반지름(달 반지름 0.9의 2.3배쯤, 책 그림처럼 경계가 완만하게 둥글다)
     const earthShade = axisShadow(THREE, earth.material as T.MeshLambertMaterial, [0.32, 0.34, 0.44], 0.25);
     earthShade.side.set(EARTH_X, -1);
     earthShade.ax.z = 1.0;
@@ -781,7 +786,10 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
       // 카메라 + 개기일식 지상 뷰
       if (groundView && solarAligned) {
         groundMs += dt * 16.7;
+        // 스냅 보정: 지상에서 보는 동안 달이 태양 정중앙으로 스르륵 정렬.
         phi += wrapDeg(180 - deg) * 0.0022 * Math.PI * dt;
+        // 개기일식의 실제 모습(2026-07-26 사용자 피드백): 달이 태양과 같은 겉보기 크기로 정확히 겹치고(ECLIPSE_SCALE),
+        // 역광이라 새까만 실루엣이 되며, 그 테두리로 코로나가 빛난다.
         moon.scale.lerp(new THREE.Vector3(ECLIPSE_SCALE, ECLIPSE_SCALE, ECLIPSE_SCALE), Math.min(1, 0.08 * dt));
         moonMat.color.lerp(new THREE.Color(0x05070c), Math.min(1, 0.09 * dt));
         orbit.visible = false;
@@ -794,6 +802,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
         (st.camera as T.PerspectiveCamera).fov = 32;
         st.camera.updateProjectionMatrix();
         corona.material.opacity = Math.min(0.98, corona.material.opacity + 0.05 * dt);
+        // 개기 순간엔 하늘이 어두워진다: 코로나가 주인공
         sunInnerGlow.material.opacity = 0.08;
         sunGlow.material.opacity = 0.08;
         pillText.textContent = "개기일식! 달 너머로 밝은 코로나가 보여요";
@@ -830,7 +839,13 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
         pin(lblEarth, EARTH_X, -2.1, 0, 18);
         pin(lblMoon, mx, my - MOON_R, mz, 16);
 
-        // 오른쪽 위 실시간 하늘 미니 창: 지구에서 본 태양(삭 근처) 또는 지구에서 본 달(망 근처)
+        // 오른쪽 위 작은 창: 지구에서 북쪽을 위로 두고 본 태양(달이 태양 쪽 반 바퀴에 있을 때) 또는 달(반대쪽 반 바퀴에 있을 때).
+        // 사실에 맞게 그린다(2026-11-19 검토에서 고친 것):
+        //  - 낮 하늘의 달(삭 무렵)은 보이지 않는다. 태양과 겹친 부분만 검게 그리고, 겹치지 않은 달의 자리는 가는 점선 원으로만 알린다
+        //    (처음에는 파란 하늘에 검은 원반이 떠 있었다).
+        //  - 반대쪽에서는 달의 위상을 그린다. 밝은 면의 넓이는 (1 + cos phi) / 2, 밝은 쪽은 태양 쪽(보름달이 되기 전에는 오른쪽).
+        //    처음에는 반달 자리에서도 보름달을 그리고 '보름달 부근'이라고 적었다.
+        //  - 그림과 글이 같은 기준을 쓴다: 한 줄에서 벗어난 각이 14도일 때 두 원반이 막 닿고(부분의 시작), 7도 안쪽은 개기다.
         if (miniCtx) {
           const mw = miniCv.width;
           const mh = miniCv.height;
@@ -840,11 +855,17 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
           const solarSide = Math.cos(phi) < 0;
           miniCtx.fillStyle = solarSide ? (solarAligned ? "#070E20" : partialSolar ? "#163058" : "#244D85") : "#080E1E";
           miniCtx.fillRect(0, 0, mw, mh);
+          // 궤도가 기울어 달이 위아래로 벗어난 만큼(원반 반지름의 배수). 한 줄로 설 수 있는 높이(0.45) 안에서는 조금만, 그 밖에서는 원반이 닿지 않게.
+          const up = Math.abs(my) <= 0.45 ? (Math.abs(my) / 0.45) * 0.5 : 2.1 + (Math.abs(my) - 0.45) * 0.15; // 비껴갈 때도 달의 자리(점선)가 창 안에 반쯤 보이게
           if (solarSide) {
             miniKind.textContent = "지구에서 본 태양";
             const sr = 26;
-            const dx = (wrapDeg(deg - 180) / 14) * (sr * 1.95);
-            const dy = -(my / 1.4) * (sr * 1.6);
+            const off = wrapDeg(deg - 180); // +면 달이 지구에서 볼 때 태양의 왼쪽
+            const a = Math.abs(off);
+            // 좌우로 벗어난 만큼: 14도에서 두 원반이 막 닿고(2.02), 7도에서 거의 다 가린다(0.6)
+            const sep = a <= 7 ? 0.6 * (a / 7) : a <= 14 ? 0.6 + ((a - 7) / 7) * 1.42 : 2.02 + (a - 14) * 0.14;
+            const dx = solarAligned ? 0 : -Math.sign(off) * sep * sr;
+            const dy = solarAligned ? 0 : -Math.sign(my) * up * sr;
             if (solarAligned) {
               const cg = miniCtx.createRadialGradient(mcx, mcy, sr * 0.9, mcx, mcy, sr * 2.1);
               cg.addColorStop(0, "rgba(255,255,255,.95)");
@@ -867,35 +888,73 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
             miniCtx.beginPath();
             miniCtx.arc(mcx, mcy, sr, 0, Math.PI * 2);
             miniCtx.fill();
+            // 달: 태양과 겹친 부분만 검게
+            miniCtx.save();
+            miniCtx.beginPath();
+            miniCtx.arc(mcx, mcy, solarAligned ? sr * 1.04 : sr, 0, Math.PI * 2);
+            miniCtx.clip();
             miniCtx.fillStyle = "#080E1E";
             miniCtx.beginPath();
             miniCtx.arc(mcx + dx, mcy + dy, sr * 1.02, 0, Math.PI * 2);
             miniCtx.fill();
+            miniCtx.restore();
+            if (!solarAligned) {
+              // 보이지 않는 달의 자리
+              miniCtx.save();
+              miniCtx.setLineDash([5, 5]);
+              miniCtx.strokeStyle = "rgba(226,236,252,.5)";
+              miniCtx.lineWidth = 2;
+              miniCtx.beginPath();
+              miniCtx.arc(mcx + dx, mcy + dy, sr * 1.02, 0, Math.PI * 2);
+              miniCtx.stroke();
+              miniCtx.restore();
+            }
             miniSub.textContent = solarAligned ? "개기일식 (코로나)" : partialSolar ? "부분일식" : nearMiss ? "달이 위아래로 비껴감" : "가려지지 않은 태양";
           } else {
             miniKind.textContent = "지구에서 본 달";
             const mr = 24;
-            // 보름달 바탕
+            const lit = Math.max(0, Math.cos(phi)); // 보름달 자리에서 1, 반달 자리에서 0
+            const litRight = Math.sin(phi) < 0; // 보름달이 되기 전에는 오른쪽이 밝다
+            // 어두운 면
+            miniCtx.fillStyle = "#1B2436";
+            miniCtx.beginPath();
+            miniCtx.arc(mcx, mcy, mr, 0, Math.PI * 2);
+            miniCtx.fill();
+            // 밝은 면: 밝은 쪽 반원에 가운데로 불룩한 타원 반쪽을 더한다
             const mg = miniCtx.createRadialGradient(mcx - 6, mcy - 6, 3, mcx, mcy, mr);
             mg.addColorStop(0, lunarAligned ? "#E46B48" : "#F3F6FC");
             mg.addColorStop(1, lunarAligned ? "#8C2C1B" : "#B8C2D4");
             miniCtx.fillStyle = mg;
             miniCtx.beginPath();
-            miniCtx.arc(mcx, mcy, mr, 0, Math.PI * 2);
+            miniCtx.arc(mcx, mcy, mr, -Math.PI / 2, Math.PI / 2, !litRight);
+            miniCtx.ellipse(mcx, mcy, Math.max(0.01, mr * lit), mr, 0, Math.PI / 2, -Math.PI / 2, !litRight);
+            miniCtx.closePath();
             miniCtx.fill();
             if (partialLunar) {
+              // 지구 그림자: 달이 그림자 한가운데에서 벗어난 반대쪽에서 들어온다. 14도에서 막 닿고(2.8), 7도에서 거의 다 덮는다(1.0)
               miniCtx.save();
               miniCtx.beginPath();
               miniCtx.arc(mcx, mcy, mr, 0, Math.PI * 2);
               miniCtx.clip();
-              const sx = ((wrapDeg(deg) >= 0 ? -1 : 1) * (dLunar - 5) * mr) / 5;
+              const sepL = 1.0 + ((Math.min(14, Math.max(7, dLunar)) - 7) / 7) * 1.8;
+              const sx = (wrapDeg(deg) >= 0 ? 1 : -1) * sepL * mr;
               miniCtx.fillStyle = "rgba(42, 18, 22, 0.82)";
               miniCtx.beginPath();
-              miniCtx.arc(mcx + sx, mcy - (my / 1.4) * mr, mr * 1.8, 0, Math.PI * 2);
+              miniCtx.arc(mcx + sx, mcy + Math.sign(my) * up * mr, mr * 1.8, 0, Math.PI * 2);
               miniCtx.fill();
               miniCtx.restore();
             }
-            miniSub.textContent = lunarAligned ? "개기월식 (붉은 달)" : partialLunar ? "부분월식" : nearMiss ? "지구 그림자를 비껴감" : "보름달 부근";
+            miniSub.textContent = lunarAligned
+              ? "개기월식 (붉은 달)"
+              : partialLunar
+                ? "부분월식"
+                : nearMiss
+                  ? "지구 그림자를 비껴감"
+                  : dLunar < 20
+                    ? "보름달 부근"
+                    : litRight
+                      ? "보름달이 되기 전"
+                      : "보름달이 지난 뒤";
           }
         }
       }

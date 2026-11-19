@@ -157,8 +157,8 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
           float tick = 1.0 - smoothstep(0.0, 0.018, sector);
           float dSun = abs(atan(sin(ang - uSunA), cos(ang - uSunA)));
           float dNight = abs(atan(sin(ang - uNightA), cos(ang - uNightA)));
-          float wSun = smoothstep(0.34, 0.04, dSun);
-          float wNight = smoothstep(0.36, 0.04, dNight);
+          float wSun = 1.0 - smoothstep(0.04, 0.34, dSun);
+          float wNight = 1.0 - smoothstep(0.04, 0.36, dNight);
           vec3 base = vec3(0.16, 0.27, 0.48);
           vec3 col = mix(base, vec3(1.0, 0.72, 0.28), wSun * 0.75);
           col = mix(col, vec3(0.42, 0.84, 1.0), wNight * 0.85);
@@ -209,7 +209,11 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
     // 지구 본체(자전축 기울기 + 프레넬 대기권 테두리)
     earthGroup = new T3.Group();
     earth = S.makePlanet("earth", 1.06, 48);
-    earth.rotation.z = 0.41;
+    // 자전축 기울기(23.5도)는 지구를 감싼 묶음에 준다. 지구 자신에 기울기(z)와 자전(y)을 함께 주면 회전 차례(XYZ) 때문에
+    // 자전할 때마다 축이 원뿔을 그리며 흔들린다. 묶음을 기울이고 지구는 제 축으로만 돌려야 축의 방향이 그대로다.
+    const earthTilt = new T3.Group();
+    earthTilt.rotation.z = 0.41;
+    earthTilt.add(earth);
     const atmo = new T3.Mesh(
       new T3.SphereGeometry(1.16, 40, 28),
       new T3.ShaderMaterial({
@@ -237,7 +241,7 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
         `,
       }),
     );
-    earthGroup.add(earth, atmo);
+    earthGroup.add(earthTilt, atmo);
     scene.add(earthGroup);
     halo = S.makeGlow(3.5, "rgba(135,190,255,.52)", 0.34);
     scene.add(halo);
@@ -273,6 +277,8 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
     };
     sunLine = mkLine(0xffb357);
     nightLine = mkLine(0x7fd4ff);
+    // 구도(가로 346, 세로 230): 고리의 가로 반폭 11 + 그림 반폭(한밤중 별자리가 가장 커서 1.85) = 12.85. 가로 시야 반각 32.5°에서 필요한 거리 20.2.
+    // 세로는 내려다보는 각을 44°로 낮춰 고리가 납작하게 들어오게 한다. 거리 24. 가까운 쪽 별자리와 이름표가 아래로 잘리지 않게 보는 점을 앞으로 당겼다.
     camera.position.set(0, 16.9, 19.0);
     camera.lookAt(0, -0.6, 2.7);
     loop = createLoop((dt) => frame(dt));

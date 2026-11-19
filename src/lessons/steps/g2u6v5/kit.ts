@@ -7,6 +7,7 @@
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
+import { curioCard, type Curio } from "../../../ui/curio";
 import type { StepAPI } from "../../types";
 import { bvBtn, bvFrame, bvTimers, bvTween, type BvChoice, type BvFrame, type BvTimers } from "../bio6/b6Lab";
 import { glue } from "../glue";
@@ -45,6 +46,7 @@ export const P = {
 export interface G6Step {
   title: string;
   cta?: string;
+  curio?: Curio;
 }
 
 export interface G6Lab {
@@ -107,6 +109,7 @@ export function g6Lab(host: HTMLElement, api: StepAPI, s: G6Step, o: { steps: nu
       haptic(HAPTIC.ctaUnlock);
       api.recordQuiz(wrong === 0);
       api.enableCTA(s.cta ?? "다음");
+      if (s.curio) host.appendChild(curioCard(s.curio));
     },
     finished: () => done,
   };

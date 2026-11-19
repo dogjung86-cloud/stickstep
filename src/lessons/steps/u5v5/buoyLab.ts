@@ -10,6 +10,7 @@
 //   판정 동안은 큰 추 곁에 작은 추의 윤곽을, 막대에는 작은 추의 몫(6 N)을 점선으로 둔다(두 추의 부피와 물이 미는 힘 비교).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
+import { curioCard, type Curio } from "../../../ui/curio";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvCapture, bvTimers } from "../bio6/b6Lab";
 import { clamp, U5, u5Arrow, u5Canvas, u5Frame, u5Log, u5Pill, u5Read, u5Text } from "./u5Kit";
@@ -17,6 +18,7 @@ import { clamp, U5, u5Arrow, u5Canvas, u5Frame, u5Log, u5Pill, u5Read, u5Text } 
 interface S {
   title: string;
   cta?: string;
+  curio?: Curio;
 }
 const WY = 124; // 물의 겉면
 const TOP = 100; // 추 바닥의 가장 높은 자리
@@ -32,22 +34,20 @@ const BB = 202;
 
 export const buoyLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
-  const f = u5Frame(host, { title: s.title, steps: 5, api });
+  const f = u5Frame(host, { title: s.title, steps: 4, api });
   const st = u5Canvas(f.stage);
   const tm = bvTimers();
-  const logSmall = u5Log([{ name: "잠기기 전" }, { name: "절반 잠김" }, { name: "다 잠김(얕은 곳)" }, { name: "다 잠김(깊은 곳)" }]);
-  logSmall.el.classList.add("mini");
-  const logBig = u5Log([{ name: "작은 추, 절반 잠김" }, { name: "작은 추, 얕은 곳" }, { name: "작은 추, 깊은 곳" }, { name: "큰 추, 완전히 잠김" }]);
-  logBig.el.classList.add("mini");
+  const log = u5Log([{ name: "작은 추, 잠기기 전" }, { name: "작은 추, 절반 잠김" }, { name: "작은 추, 완전히 잠김" }, { name: "큰 추, 완전히 잠김" }]);
+  log.el.classList.add("mini");
   const rec = bvBtn("main u5x-rec", "기록하기");
-  f.slot.setControls(logSmall.el, rec);
+  f.slot.setControls(log.el, rec);
 
   let kind: "small" | "big" = "small";
   let y = TOP;
   let drag: { dy: number } | null = null;
   let lock = false;
   let asking = false; // 마지막 판정이 떠 있는 동안에는 무대의 값(물이 미는 힘)을 가린다
-  const done = [false, false, false, false, false];
+  const done = [false, false, false, false];
 
   const sub = (): number => clamp((y - WY) / SIZE[kind].h, 0, 1);
   const read = (): number => AIR - SIZE[kind].lift * sub();
@@ -66,10 +66,9 @@ export const buoyLab: StepRenderer = (host, step, api) => {
   const up = (): void => {
     if (!drag) return;
     drag = null;
-    // 절반 근처에서 놓으면 딱 절반에 맞춘다. 작은 추가 다 잠긴 뒤에는 얕은 곳과 깊은 곳 사이 어중간한 틈을 가까운 쪽으로 붙인다.
+    // 절반 근처에서 놓으면 딱 절반에 맞춘다
     const sb = sub();
     if (sb > 0.38 && sb < 0.62) y = WY + SIZE[kind].h / 2;
-    else if (kind === "small" && sb === 1 && y > 188 && y < 194) y = !done[2] ? 178 : 202;
   };
   st.cv.addEventListener("pointerup", up);
   st.cv.addEventListener("pointercancel", up);
@@ -77,20 +76,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
   rec.addEventListener("click", () => {
     if (lock || drag) return;
     const sb = sub();
-    const row =
-      kind === "big"
-        ? sb === 1
-          ? 4
-          : -1
-        : sb === 0
-          ? 0
-          : sb === 0.5
-            ? 1
-            : sb === 1
-              ? y >= 194
-                ? 3
-                : 2
-              : -1;
+    const row = kind === "big" ? (sb === 1 ? 3 : -1) : sb === 0 ? 0 : sb === 0.5 ? 1 : sb === 1 ? 2 : -1;
     if (row < 0) {
       haptic(HAPTIC.wrong);
       f.say(kind === "big" ? "큰 추가 <b>완전히</b> 잠기게 내린 뒤에 기록해요." : "어중간하게 잠겼어요. 추가 <b>절반</b>이나 <b>완전히</b> 잠긴 자리에 맞춘 뒤 기록해요.");
@@ -98,39 +84,27 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     }
     if (done[row]) {
       haptic(HAPTIC.wrong);
-      f.say(
-        row === 2 && !done[3]
-          ? "얕은 곳은 기록했어요! 이번엔 추를 <b>비커 바닥 가까이 깊은 곳</b>으로 내려 기록해 보세요."
-          : row === 3 && !done[2]
-            ? "깊은 곳은 기록했어요! 추를 물 표면 바로 아래 <b>얕은 곳</b>으로 올려 기록해 보세요."
-            : "이미 기록한 자리예요. 추를 <b>다른 자리</b>로 옮겨 기록해 보세요.",
-      );
+      f.say("이미 기록한 자리예요. 추를 <b>다른 자리</b>로 옮겨 기록해 보세요.");
       return;
     }
     done[row] = true;
     haptic(HAPTIC.correct);
     const v = read();
-    if (row < 4) logSmall.set(row, `${v.toFixed(1)} N`, row === 0 ? undefined : `${(AIR - v).toFixed(0)} N 줄어듦`);
-    else logBig.set(3, `${v.toFixed(1)} N`, `${(AIR - v).toFixed(0)} N 줄어듦`);
+    log.set(row, `${v.toFixed(1)} N`, row === 0 ? undefined : `${(AIR - v).toFixed(0)} N 줄어듦`);
     f.pips(count());
-    if (row === 4) {
+    if (row === 3) {
       lock = true;
       f.say(`무게는 똑같이 ${AIR} N인데, 부피가 2배인 큰 추는 눈금이 <b>${SIZE.big.lift} N</b>이나 줄어 <b>${AIR - SIZE.big.lift} N</b>이 됐어요!`);
       tm.later(askFinal, 2400);
       return;
     }
-    if (count() === 4) {
+    if (count() === 3) {
       lock = true;
-      f.say("완전히 잠긴 뒤엔 <b>더 깊은 곳으로 내려도 눈금(14.0 N)이 똑같아요</b>! 이제 부피가 2배인 큰 추로 바꿔 볼까요?");
-      tm.later(askBig, 2100);
+      f.say("많이 잠길수록 눈금이 줄고, 다 잠긴 뒤엔 일정해요! 이제 부피가 2배인 <b>큰 추</b>로 바꿔 볼까요?");
+      tm.later(askBig, 2000);
       return;
     }
-    if (row === 2 && !done[3]) {
-      logSmall.mark(3);
-      f.say("다 잠기자 <b>14.0 N</b>이 됐어요! 다 잠긴 채 <b>바닥 가까이 깊은 곳</b>으로 더 내리면 눈금이 또 줄어들지 기록해 보세요.");
-      return;
-    }
-    const left = [!done[0] && "잠기기 전", !done[1] && "절반 잠김", !done[2] && "다 잠김(얕은 곳)", !done[3] && "다 잠김(깊은 곳)"].filter(Boolean).join(", ");
+    const left = [!done[0] && "잠기기 전", !done[1] && "절반 잠긴 자리", !done[2] && "완전히 잠긴 자리"].filter(Boolean).join(", ");
     f.say(`기록 완료! 남은 위치(<b>${left}</b>)에서도 기록해 보세요.`);
   });
 
@@ -142,14 +116,11 @@ export const buoyLab: StepRenderer = (host, step, api) => {
       {
         predict: true,
         onNext: () => {
-          logBig.set(0, "17.0 N", "3 N 줄어듦");
-          logBig.set(1, "14.0 N", "6 N 줄어듦");
-          logBig.set(2, "14.0 N", "6 N 줄어듦");
-          logBig.mark(3);
-          f.slot.setControls(logBig.el, rec);
+          f.slot.showControls();
           kind = "big";
           y = TOP;
           lock = false;
+          log.mark(3);
           f.say("직접 확인해 봐요! <b>큰 추</b>를 물속에 끝까지 내려 완전히 잠기게 한 뒤 <b>기록하기</b>를 눌러 보세요.");
           api.setCTA("큰 추를 완전히 잠가 기록해 보세요", { enabled: false });
         },
@@ -162,14 +133,15 @@ export const buoyLab: StepRenderer = (host, step, api) => {
       "두 추의 무게는 같아요. 큰 추의 눈금이 더 많이 줄어든 까닭은?",
       [{ t: "물에 잠긴 부피가 더 커서", ok: true }, { t: "더 깊이 들어가서" }, { t: "물속에서 더 무거워져서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "완전히 잠긴 뒤엔 깊이가 깊어져도 눈금(14 N)이 같았죠? 물이 미는 힘은 깊이가 아니라 <b>잠긴 부피</b>가 클수록 커져요.", onNext: finish },
+      { why: "물이 밀어 올리는 힘은 무게가 아니라 물에 <b>잠긴 부피</b>가 클수록 커져요.", onNext: finish },
     );
   }
   function finish(): void {
     asking = false;
-    f.say("물에 잠긴 부피가 클수록 물이 미는 힘이 커지고, 다 잠긴 뒤에는 깊이와 관계없이 일정해요!");
-    f.slot.conclude("물이 물체를 <b>위로 밀어 올리는 힘</b>의 크기는 줄어든 눈금만큼이에요. 물에 <b>잠긴 부피</b>가 클수록 크고, 완전히 잠긴 뒤에는 깊이와 관계없이 일정해요.");
+    f.say("물에 잠긴 부피가 클수록 물이 위로 밀어 올리는 힘도 커진다는 것을 확인했어요!");
+    f.slot.conclude("물이 물체를 <b>위로 밀어 올리는 힘</b>이 있어요. 그 크기는 줄어든 눈금만큼이고, 물에 <b>잠긴 부피</b>가 클수록 커요.");
     api.enableCTA(s.cta ?? "다음");
+    if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
   st.run((ctx, w, h, t) => {
@@ -243,7 +215,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
       const top = Math.max(wy, y - Z.h);
       ctx.fillRect(cx - Z.w / 2, top, Z.w, y - top);
     }
-    // 물의 겉면과 비커(처음 수면 점선과 눈금 포함)
+    // 물의 겉면과 비커(추가 잠기면 처음 수면을 점선으로 남겨 물이 오른 만큼을 보이고, 비커 오른쪽 벽에 눈금을 둔다)
     if (sb > 0.05) {
       ctx.save();
       ctx.setLineDash([3, 3]);
@@ -360,15 +332,11 @@ export const buoyLab: StepRenderer = (host, step, api) => {
       ctx.stroke();
     }
     u5Read(ctx, w, read().toFixed(1), "N", "힘 센서 눈금");
-    u5Pill(
-      ctx,
-      sb === 0 ? "물 밖" : sb < 1 ? (sb === 0.5 ? "절반 잠김" : `${Math.round(sb * 100)}% 잠김`) : kind === "small" ? (y >= 194 ? "다 잠김(깊은 곳)" : "다 잠김(얕은 곳)") : "완전히 잠김",
-      U5.push,
-    );
+    u5Pill(ctx, sb === 0 ? "물 밖" : sb < 1 ? (sb === 0.5 ? "절반 잠김" : `${Math.round(sb * 100)}% 잠김`) : "완전히 잠김", U5.push);
   });
 
-  f.say("<b>추</b>를 위아래로 끌어 <b>물 밖</b>, <b>절반 잠김</b>, <b>얕은 곳·깊은 곳</b>에서 <b>기록하기</b>를 눌러 보세요.");
-  api.setCTA("네 자리에서 눈금을 기록해 보세요", { enabled: false });
+  f.say("<b>추</b>를 위아래로 끌어 <b>물 밖</b>, <b>절반 잠김</b>, <b>완전히 잠김</b> 세 위치에서 <b>기록하기</b>를 눌러 보세요.");
+  api.setCTA("세 자리에서 눈금을 기록해 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

@@ -101,10 +101,12 @@ export const curveLab: StepRenderer = (host, step, api) => {
 
   let optic3d: OpticStage3D | null = null;
   let portalRect = { x: 198, y: 44, w: 136, h: 132, cx: 266, cy: 110 };
+  let ghostH = 69; // 점선 인형(실제 물체 크기)의 키. 3D 인형의 기준 크기에서 계산한 값을 모듈에서 받는다
   let disposed = false;
   void import("./opticStage3d").then((mod) => {
     if (disposed) return;
     portalRect = mod.PORTAL_RECT;
+    ghostH = mod.REF_DOLL_PX;
     optic3d = mod.createOpticStage3D(glCv);
   });
 
@@ -317,7 +319,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
     lxText(ctx, "물체", objX(), GY + 15, { color: LX.dim });
   };
 
-  // 왼쪽 3D 실험대를 가로로 살짝 끌어 거울·렌즈의 볼록/오목 곡면을 여러 각도에서 볼 수 있다.
+  // 왼쪽 3D 실험대를 가로로 살짝 끌어 거울·렌즈의 볼록/오목 곡면을 여러 각도에서 볼 수 있다(화면 안내는 없는 덤 조작).
   let benchDrag: { x: number } | null = null;
   st.cv.addEventListener("pointerdown", (e) => {
     if (!optic3d) return;
@@ -350,16 +352,8 @@ export const curveLab: StepRenderer = (host, step, api) => {
       lxText(ctx, name(), clampX(anc.optic[0], 34, 166), Math.max(46, anc.optic[1] - 6), { color: LX.ink });
       lxText(ctx, "물체", clampX(anc.doll[0], 24, 174), Math.min(218, anc.doll[1] + 10), { color: LX.dim });
 
-      // 오른쪽 3D 포털 모서리 마스크 + 은빛 테두리 + 실제 크기 기준 점선 인형
+      // 오른쪽 3D 칸 위에: 은빛 테두리 + 실제 크기 기준 점선 인형(둥근 모서리는 3D 쪽에서 깎는다)
       const P = portalRect;
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(P.x - 2, P.y - 2, P.w + 4, P.h + 4);
-      ctx.roundRect(P.x, P.y, P.w, P.h, 14);
-      ctx.fillStyle = "#0F192C";
-      ctx.fill("evenodd");
-      ctx.restore();
-
       ctx.save();
       ctx.beginPath();
       ctx.roundRect(P.x, P.y, P.w, P.h, 14);
@@ -371,7 +365,8 @@ export const curveLab: StepRenderer = (host, step, api) => {
         ctx.fillStyle = bg;
         ctx.fillRect(P.x, P.y, P.w, P.h);
       }
-      doll(ctx, P.cx, P.cy + 8, 54, { ghost: true, alpha: 0.62 });
+      // 점선 인형은 3D 인형과 가운데를 맞추고, 키는 배율 1일 때의 3D 인형과 같다(그래야 상이 점선보다 큰지 작은지가 배율대로 읽힌다)
+      doll(ctx, P.cx, P.cy, ghostH, { ghost: true, alpha: 0.62 });
       ctx.restore();
 
       ctx.strokeStyle = "rgba(214,230,250,.88)";

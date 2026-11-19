@@ -202,13 +202,13 @@ export function villiWallLabels(level: number): string {
   return s;
 }
 
-/** 확대 칸 "융털 속": 겉 세포 한 겹, 모세혈관 그물(빨강은 들어오는 쪽, 파랑은 나가는 쪽), 가운데 암죽관. 오른쪽 위(228~342, 42~124). */
-export function villiInset(showPath = false): string {
-  const bx = 228;
+/** 확대 칸 "융털 속": 겉 세포 한 겹, 모세혈관 그물(빨강은 들어오는 쪽, 파랑은 나가는 쪽), 가운데 암죽관. 오른쪽 위(234~342, 42~124). */
+export function villiInset(): string {
+  const bx = 234;
   const by = 42;
-  const W = 114;
+  const W = 108;
   const H = 82;
-  const vx = bx + 28; // 융털 가운데
+  const vx = bx + 30; // 융털 가운데
   const top = by + 10;
   const bot = by + H;
   const w = 32;
@@ -235,40 +235,19 @@ export function villiInset(showPath = false): string {
   });
   // 암죽관(가운데, 끝이 막힌 관)
   s += `<path d="M${vx - 3} ${bot} L${vx - 3} ${top + 20} A3 3 0 0 1 ${vx + 3} ${top + 20} L${vx + 3} ${bot} Z" fill="${C.lacteal}" stroke="#B8901F" stroke-width=".8"/>`;
-  if (showPath) {
-    // 물에 잘 녹는 영양소(하늘색 점) → 모세혈관, 물에 잘 녹지 않는 영양소(노란 방울) → 암죽관
-    [[lx, top + 20], [rx, top + 34], [lx, top + 48]].forEach(([px, py]) => {
-      s += `<circle cx="${px}" cy="${py}" r="2.6" fill="#74C0FC" stroke="#0E1A2E" stroke-width=".8"/>`;
-    });
-    [[vx, top + 27], [vx, top + 42], [vx, top + 57]].forEach(([px, py]) => {
-      s += `<circle cx="${px}" cy="${py}" r="2.7" fill="#FFE066" stroke="#7A5600" stroke-width=".8"/>`;
-    });
-  }
   s += `</g>`;
   // 이름표와 가리키는 선
-  s += `<line x1="${rx + 1}" y1="${top + 30}" x2="${bx + 60}" y2="${by + 28}" stroke="#FF9AA5" stroke-width="1"/>` + label(bx + 62, by + 32, "모세혈관", "#FFB3BB", "start");
-  s += `<line x1="${vx + 3}" y1="${top + 50}" x2="${bx + 60}" y2="${by + 60}" stroke="${C.lacteal}" stroke-width="1"/>` + label(bx + 62, by + 64, "암죽관", "#F5DA70", "start");
+  s += `<line x1="${rx + 1}" y1="${top + 30}" x2="${bx + 64}" y2="${by + 28}" stroke="#FF9AA5" stroke-width="1"/>` + label(bx + 66, by + 32, "모세혈관", "#FFB3BB", "start");
+  s += `<line x1="${vx + 3}" y1="${top + 50}" x2="${bx + 64}" y2="${by + 60}" stroke="${C.lacteal}" stroke-width="1"/>` + label(bx + 66, by + 64, "암죽관", "#F5DA70", "start");
   s += label(bx + W - 8, by + 16, "융털 속", "#C6D3E6", "end");
   return s;
-}
-
-/** 융털 속 두 흡수 통로 안내 판(왼쪽 위 빈 곳, 10~220, 44~110). 질문 중에는 통로 정답을 가리고 알갱이 종류만 보여 준다. */
-export function villiPathLegend(revealed = false): string {
-  const card = (y: number, stroke: string, dotFill: string, dotStroke: string, text: string, textColor: string): string =>
-    `<rect x="10" y="${y}" width="210" height="28" rx="9" fill="rgba(14,26,46,.92)" stroke="${stroke}" stroke-width="1.2"/>` +
-    `<circle cx="22" cy="${y + 14}" r="4.2" fill="${dotFill}" stroke="${dotStroke}" stroke-width="1"/>` +
-    label(32, y + 18.5, text, textColor, "start");
-  return (
-    card(44, "#74C0FC", "#74C0FC", "#1B4E80", revealed ? "포도당·아미노산 → 모세혈관" : "포도당·아미노산 (하늘색 점)", "#E7F5FF") +
-    card(78, "#F5D36A", "#FFE066", "#7A5600", revealed ? "지방산·모노글리세라이드 → 암죽관" : "지방산·모노글리세라이드 (노란 점)", "#FFF3BF")
-  );
 }
 
 /** 확대 칸과 벽의 융털 하나를 잇는 점선(돋보기 선). */
 export function villiInsetLink(): string {
   const r = ROOTS[Math.round(ROOTS.length * 0.66)];
   const tip: Pt = [r.at[0] + r.n[0] * V_H * 0.6, r.at[1] + r.n[1] * V_H * 0.6];
-  return `<rect x="${(tip[0] - 5).toFixed(1)}" y="${(tip[1] - 7).toFixed(1)}" width="10" height="14" fill="none" stroke="#9CC2FF" stroke-width="1"/><path d="M${(tip[0] - 5).toFixed(1)} ${(tip[1] - 7).toFixed(1)} L228 124 M${(tip[0] + 5).toFixed(1)} ${(tip[1] - 7).toFixed(1)} L342 124" stroke="#9CC2FF" stroke-width="1" stroke-dasharray="3 3" opacity=".75"/>`;
+  return `<rect x="${(tip[0] - 5).toFixed(1)}" y="${(tip[1] - 7).toFixed(1)}" width="10" height="14" fill="none" stroke="#9CC2FF" stroke-width="1"/><path d="M${(tip[0] - 5).toFixed(1)} ${(tip[1] - 7).toFixed(1)} L234 124 M${(tip[0] + 5).toFixed(1)} ${(tip[1] - 7).toFixed(1)} L342 124" stroke="#9CC2FF" stroke-width="1" stroke-dasharray="3 3" opacity=".75"/>`;
 }
 
 export const VILLI_DOT = P.glucose;

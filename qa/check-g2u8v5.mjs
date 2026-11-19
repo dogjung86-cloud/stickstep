@@ -284,7 +284,8 @@ const LAB = {
       await W(page, 700);
       await finishLab("galaxy", "용어 알아보기", 2);
     } else {
-      await finishLab("galaxy", "용어 알아보기", 0);
+      // 3D를 열 수 없는 기기: 세로 무대의 요약 그림을 보고 같은 두 판정에 답한다
+      await finishLab("galaxy", "용어 알아보기", 2);
     }
   },
   async observe() {

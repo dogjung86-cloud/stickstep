@@ -19,6 +19,7 @@ import { bvBtn } from "../bio6/b6Lab";
 import { A, beaker, bottle, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type Pt, type U4Step } from "./u4Kit";
 
 const MASS = "12.60 g";
+const MASS_W = "13.80 g"; // 같은 병에 같은 높이까지 담은 물의 질량(올리브유보다 조금 무겁다). 얼기 전과 뒤가 같다는 것만 보인다
 const WET = "12.74 g"; // 닦지 않고 쟀을 때(겉에 맺힌 물방울의 질량이 더해진다)
 const ZERO = "0.00 g";
 const NEED = 3000;
@@ -360,7 +361,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     waterMode = true;
     t = 0;
     inBath(false);
-    read.textContent = MASS;
+    read.textContent = MASS_W;
     oil.setAttribute("fill", `url(#${ns}wat)`);
     ice.setAttribute("fill", `url(#${ns}wfrz)`);
     [...pB, ...pC].forEach((c) => {
@@ -387,7 +388,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.correct);
       holdWater.disabled = true;
       inBath(false);
-      read.textContent = MASS;
+      read.textContent = MASS_W;
       tape2.setAttribute("opacity", "1");
       waterMark.setAttribute("opacity", "1");
       cmp.setAttribute("opacity", "1");
@@ -397,24 +398,24 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
       ttl.textContent = "얼린 뒤(얼음)";
       cnt.setAttribute("opacity", "1");
       f.pips(3);
-      f.say(`물을 얼리고 물기를 닦아 재니 질량은 그대로 <b>${MASS}</b>인데, 파란 테이프가 빨간 테이프보다 <b>위로 올라갔어요</b>!`);
+      f.say(`물을 얼리고 물기를 닦아 재니 질량은 그대로 <b>${MASS_W}</b>인데, 파란 테이프가 빨간 테이프보다 <b>위로 올라갔어요</b>!`);
       tm.later(judgeWater, 1100);
       return false;
     });
-    f.say("대부분의 액체는 얼 때 부피가 줄어들지만, <b>물</b>은 예외예요! 같은 병에 <b>물(${MASS})</b>을 담아 얼려 비교해 보세요.".replace("${MASS}", MASS));
+    f.say(`대부분의 액체는 얼 때 부피가 줄어들지만, <b>물</b>은 예외예요! 같은 병에 물을 <b>같은 높이</b>까지 담아(<b>${MASS_W}</b>) 얼려 보세요.`);
     f.slot.setControls(holdWater);
     api.setCTA("꾹 눌러 물을 얼려 보세요", { enabled: false });
   }
 
   function judgeWater(): void {
     f.slot.ask(
-      "물이 얼어 얼음이 될 때 올리브유와 반대로 <b>부피가 늘어난</b> 까닭은?",
-      [{ t: "빈틈이 많은 육각형 모양으로 배열되어서", ok: true }, { t: "얼면서 물 입자의 개수가 더 많아져서" }, { t: "물 입자 하나하나의 크기가 부풀어서" }],
+      "물이 얼어 얼음이 될 때 올리브유와 <b>달랐던 점</b>은 무엇인가요?",
+      [{ t: "질량은 그대로인데 부피가 늘어났어요", ok: true }, { t: "질량과 부피가 모두 늘어났어요" }, { t: "올리브유처럼 부피가 줄어들었어요" }],
       (ok) => api.recordQuiz(ok),
       {
-        why: "물도 얼 때 입자 수와 질량은 그대로예요. 다만 입자들이 <b>빈틈이 큰 육각형</b>으로 배열되어 부피만 늘어나요.",
+        why: "물도 얼 때 입자 수가 그대로라 <b>질량은 변하지 않아요</b>. 다만 대부분의 물질과 달리 <b>부피가 늘어나요</b>.",
         onNext: () =>
-          lab.finish("액체가 응고할 때 입자 수는 그대로라 <b>질량은 일정해요</b>. 대부분의 물질은 입자 사이가 가까워져 부피가 줄지만, <b>물</b>은 빈틈 많은 육각형으로 배열되어 <b>부피가 늘어나요</b>."),
+          lab.finish("액체가 응고할 때 입자 수는 그대로라 <b>질량은 일정해요</b>. 대부분의 물질은 입자 사이가 가까워져 부피가 줄지만, <b>물</b>은 예외로 <b>부피가 늘어나요</b>."),
       },
     );
   }

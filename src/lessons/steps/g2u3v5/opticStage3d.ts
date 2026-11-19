@@ -1,7 +1,14 @@
 // [중2 Ⅲ v5] g2u3l5 거울과 렌즈 입체 무대(curveLabs.ts가 동적 import).
-// 왼쪽 칸(x 0..194)에는 입체 광학 실험대(레일, 3D 인형, 곡면 거울/유리 렌즈의 실제 두께와 곡률, 눈 모형, 빛줄기)를,
+// 왼쪽 칸(x 0..194)에는 입체 광학 실험대(레일, 3D 인형, 곡면 거울/유리 렌즈의 실제 두께와 곡률, 눈 모형)를,
 // 오른쪽 칸(x 198..334, y 44..176)에는 거울에 비친 방 안 모습 / 렌즈로 들여다본 방 안 모습(배율·화각·상하 반전 반영)을
 // 단일 WebGLRenderer의 이중 시저 뷰포트로 그린다. '초점·실상·허상' 용어는 일절 쓰지 않는다.
+// 지킬 것(2026-11-19 검토에서 고친 것):
+//  - 오른쪽 칸의 인형 크기는 배율 그대로다. 배율 1일 때의 키가 REF_DOLL_PX이고, 2D 겹침 그림의 점선 인형(실제 물체 크기)이 이 값을 쓴다.
+//    기준 거리나 화각, 인형 모형의 키를 바꾸면 이 식도 함께 바뀌어야 한다(처음에는 점선 54px, 인형 69px이라 '작은 상'이 점선보다 크게 보였다).
+//  - 왼쪽 실험대에 빛줄기를 그리지 않는다. 이 단원의 광학은 계산으로만 그리는데(SCI_GUIDE), 눈대중으로 그은 두 줄은 볼록 렌즈에 가까이 둔 물체에서도
+//    엇갈려 옆 칸의 '바로 선 상'과 어긋났다. 이 랩은 상의 모습만 관찰한다.
+//  - 두 칸의 자리는 2D 캔버스(lxCanvas)와 같은 한 배율과 여백으로 잡는다. 폭 360px 폰처럼 무대가 346×230보다 좁으면 가로와 세로 배율이 달라
+//    3D 칸이 2D 테두리 밖으로 나왔다.
 
 import { clamp } from "../../../core/dom";
 import * as S3 from "../../../ui/space3d";
@@ -12,6 +19,15 @@ export type OpticMode = "mirror" | "lens";
 export type OpticDev = "cvx" | "ccv";
 
 export const PORTAL_RECT = { x: 198, y: 44, w: 136, h: 132, cx: 266, cy: 110 };
+const PORTAL_RADIUS = 14; // 오른쪽 칸의 둥근 모서리(설계 px, 2D 테두리와 같다)
+const DW = 346; // 무대의 설계 크기
+const DH = 230;
+const DOLL_H = 1.655; // 인형 모형의 키: 받침 바닥(0)에서 모자 방울 꼭대기(1.59 + 0.065)까지
+const REF_FOV = 40; // 배율 1일 때의 화각
+const REF_CAM_Z = 4.35; // 배율 1일 때 인형까지의 거리
+const tanHalf = (deg: number): number => Math.tan(((deg / 2) * Math.PI) / 180);
+/** 배율 1일 때 오른쪽 칸에 보이는 인형의 키(설계 px). 점선 인형(실제 물체 크기)은 이 키로 그린다. */
+export const REF_DOLL_PX = (DOLL_H / (2 * REF_CAM_Z * tanHalf(REF_FOV))) * PORTAL_RECT.h;
 
 export interface OpticStage3D {
   nudgeYaw(delta: number): void;
@@ -253,7 +269,7 @@ function makeCheckerTexture(): S3.THREE.CanvasTexture {
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(3, 3);
+  tex.repeat.set(9.43, 9.43); // 바닥 44 × 44에 깔아도 한 칸의 크기는 처음(14 × 14에 세 번)과 같다
   return tex;
 }
 
@@ -309,14 +325,6 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
   opticAnchor.add(mirrorCvx, mirrorCcv, lensCvx, lensCcv);
   benchScene.add(opticAnchor);
 
-  // 입체 빛줄기 2가닥(위·아래 나란히 출발해 거울/렌즈에서 퍼지거나 모인다)
-  const rayLines: S3.THREE.Line[] = [-0.42, 0.42].map(() => {
-    const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]);
-    const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffdf7a, transparent: true, opacity: 0.72 }));
-    benchScene.add(line);
-    return line;
-  });
-
   // ── 2. 오른쪽 거울·렌즈 시점 포털 씬(미니어처 실험실 방 + 인형) ──
   const portalScene = new THREE.Scene();
   portalScene.background = new THREE.Color(0x1b2d4e);
@@ -329,7 +337,7 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
 
   const checkerTex = makeCheckerTexture();
   const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(14, 14),
+    new THREE.PlaneGeometry(44, 44), // 상이 작아 멀리서 볼 때에도 바닥과 벽이 칸을 채우게 넉넉히 깐다(작으면 방이 떠 있는 네모로 보였다)
     new THREE.MeshStandardMaterial({ map: checkerTex, roughness: 0.75 }),
   );
   floor.rotation.x = -Math.PI / 2;
@@ -337,10 +345,10 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
   portalScene.add(floor);
 
   const backWall = new THREE.Mesh(
-    new THREE.PlaneGeometry(14, 9),
+    new THREE.PlaneGeometry(44, 24),
     new THREE.MeshStandardMaterial({ color: 0x263c63, roughness: 0.85 }),
   );
-  backWall.position.set(0, 3.8, -4.2);
+  backWall.position.set(0, 10, -4.2);
   portalScene.add(backWall);
 
   // 배경 소품(왼쪽 창문 격자 + 오른쪽 초록 화분: 볼록 거울/오목 렌즈에서 넓은 시야가 들어오는 것을 직관적으로 보여 줌)
@@ -375,6 +383,45 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
   const dollBlurB = buildDoll3D();
   portalScene.add(dollBlurA, dollBlurB);
 
+  // 오른쪽 칸의 네모난 모서리를 둥글게 깎는 지우개 판. 칸을 그린 뒤 같은 자리에 겹쳐 그려 둥근 네모 바깥의 색과 알파를 0으로 만든다
+  // (전에는 2D 캔버스가 모서리를 남색으로 덧칠했는데, 무대 바탕이 그러데이션이라 네모난 자국이 보였다).
+  const maskScene = new THREE.Scene();
+  const maskCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const maskMat = new THREE.ShaderMaterial({
+    uniforms: { uSize: { value: new THREE.Vector2(PORTAL_RECT.w, PORTAL_RECT.h) }, uRad: { value: PORTAL_RADIUS } },
+    depthTest: false,
+    depthWrite: false,
+    transparent: true,
+    blending: THREE.CustomBlending,
+    blendEquation: THREE.AddEquation,
+    blendSrc: THREE.ZeroFactor,
+    blendDst: THREE.SrcAlphaFactor,
+    blendSrcAlpha: THREE.ZeroFactor,
+    blendDstAlpha: THREE.SrcAlphaFactor,
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = vec4(position.xy, 0.0, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec2 uSize;
+      uniform float uRad;
+      varying vec2 vUv;
+      void main() {
+        vec2 p = (vUv - 0.5) * uSize;
+        vec2 q = abs(p) - (uSize * 0.5 - vec2(uRad));
+        float d = length(max(q, 0.0)) - uRad;
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0 - smoothstep(-0.6, 0.6, d));
+      }
+    `,
+  });
+  maskScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), maskMat));
+
+  const portalBg = new THREE.Color(0x243856);
+  portalScene.background = portalBg;
+  const tmpV = new THREE.Vector3();
   let yawOffset = 0;
 
   return {
@@ -389,14 +436,16 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
       }
 
       const { lens, dev, v, mag, blurry } = state;
-      const sx = w / 346;
-      const sy = h / 230;
+      // 2D 캔버스(lxCanvas)와 같은 배치: 설계 346×230을 한 배율 k로 줄이고 남는 쪽은 가운데로 민다
+      const k = Math.min(w / DW, h / DH);
+      const ox = (w - DW * k) / 2;
+      const oy = (h - DH * k) / 2;
 
       // ── Viewport A: 왼쪽 3D 광학 실험대 (설계 x: 2..194, y: 24..226) ──
-      const bx = Math.round(2 * sx);
-      const bw = Math.max(1, Math.round(192 * sx));
-      const bh = Math.max(1, Math.round(202 * sy));
-      const by = Math.round(h - (24 + 202) * sy); // WebGL y는 아래에서 위로
+      const bx = Math.round(ox + 2 * k);
+      const bw = Math.max(1, Math.round(192 * k));
+      const bh = Math.max(1, Math.round(202 * k));
+      const by = Math.round(h - (oy + (24 + 202) * k)); // WebGL y는 아래에서 위로
 
       mirrorCvx.visible = !lens && dev === "cvx";
       mirrorCcv.visible = !lens && dev === "ccv";
@@ -416,27 +465,8 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
       // 인형이 거울(오른쪽)이나 렌즈/눈(왼쪽)을 자연스럽게 바라보게 살짝 비스듬히 배치
       dollBench.rotation.y = lens ? -0.55 : 0.55;
 
-      // 입체 빛줄기 갱신
+      // 모이게 하는 쪽(오목 거울, 볼록 렌즈)인가
       const gather = lens ? dev === "cvx" : dev === "ccv";
-      [-0.36, 0.36].forEach((ry, idx) => {
-        const posAttr = rayLines[idx].geometry.attributes.position as S3.THREE.BufferAttribute;
-        const startX = dollX + (lens ? -0.18 : 0.18);
-        const startY = -0.35 + ry * 0.65;
-        const hitY = -0.22 + ry;
-        let endX: number;
-        let endY: number;
-        if (lens) {
-          endX = eyeX + 0.3;
-          endY = gather ? -0.22 - ry * 0.65 : -0.22 + ry * 1.65;
-        } else {
-          endX = eyeX + 0.45;
-          endY = gather ? -0.22 - ry * 0.85 : -0.22 + ry * 1.75;
-        }
-        posAttr.setXYZ(0, startX, startY, 0);
-        posAttr.setXYZ(1, opticX, hitY, 0);
-        posAttr.setXYZ(2, endX, endY, 0);
-        posAttr.needsUpdate = true;
-      });
 
       const baseAz = 0.28 + yawOffset;
       const benchDist = 9.2;
@@ -452,7 +482,7 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
       renderer.render(benchScene, benchCam);
 
       const projBench = (wx: number, wy: number, wz: number): [number, number] => {
-        const p = new THREE.Vector3(wx, wy, wz).project(benchCam);
+        const p = tmpV.set(wx, wy, wz).project(benchCam);
         const px = 2 + ((p.x + 1) * 0.5) * 192;
         const py = 24 + ((1 - p.y) * 0.5) * 202;
         return [px, py];
@@ -464,30 +494,29 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
       };
 
       // ── Viewport B: 오른쪽 거울·렌즈 시점 포털 (설계 PORTAL_RECT) ──
-      const px = Math.round(PORTAL_RECT.x * sx);
-      const pw = Math.max(1, Math.round(PORTAL_RECT.w * sx));
-      const ph = Math.max(1, Math.round(PORTAL_RECT.h * sy));
-      const py = Math.round(h - (PORTAL_RECT.y + PORTAL_RECT.h) * sy);
+      const px = Math.round(ox + PORTAL_RECT.x * k);
+      const pw = Math.max(1, Math.round(PORTAL_RECT.w * k));
+      const ph = Math.max(1, Math.round(PORTAL_RECT.h * k));
+      const py = Math.round(h - (oy + (PORTAL_RECT.y + PORTAL_RECT.h) * k));
 
-      portalScene.background = new THREE.Color(blurry ? 0x3b3552 : lens ? 0x1e3358 : 0x243856);
+      portalBg.set(blurry ? 0x3b3552 : lens ? 0x1e3358 : 0x243856);
       portalCam.aspect = pw / ph;
 
-      // 기준 크기(m = 1)일 때 인형이 포털 높이의 약 48%를 차지하도록 기준 거리를 맞춘다.
+      // 배율 1일 때(화각 REF_FOV, 거리 REF_CAM_Z) 인형의 키가 REF_DOLL_PX다. 거리를 배율로 나누면 보이는 키가 배율만큼 달라진다.
       const absM = clamp(Math.abs(mag), 0.22, 2.45);
-      // 볼록 거울/오목 렌즈(!gather)는 화각도 넓어져 창문과 화분이 함께 들어온다.
-      const wideFov = !gather ? 40 + (1 - absM) * 26 : 40;
+      // 볼록 거울/오목 렌즈(!gather)는 화각도 넓어져 창문과 화분이 함께 들어온다(넓어진 만큼 거리를 당겨 인형의 크기는 배율 그대로 둔다).
+      const wideFov = !gather ? REF_FOV + (1 - absM) * 26 : REF_FOV;
       portalCam.fov = wideFov;
       portalCam.updateProjectionMatrix();
 
-      const refTan = Math.tan((40 / 2) * (Math.PI / 180));
-      const curTan = Math.tan((wideFov / 2) * (Math.PI / 180));
-      const baseCamZ = 4.35 * (refTan / curTan);
-      const camZ = clamp(baseCamZ / absM, 1.65, 13.5);
+      const baseCamZ = REF_CAM_Z * (tanHalf(REF_FOV) / tanHalf(wideFov));
+      const camZ = baseCamZ / absM; // 배율 0.22에서 가장 멀다(기준 화각에서 19.8). 카메라의 먼 쪽 한계(60) 안이다
 
+      // 인형의 한가운데(DOLL_H / 2)를 칸의 한가운데에 둔다. 2D 점선 인형도 칸 한가운데에 서므로 두 인형의 가운데가 겹친다
       const inv = !blurry && mag < 0;
       portalCam.up.set(0, inv ? -1 : 1, 0);
-      portalCam.position.set(0, 0.82, camZ);
-      portalCam.lookAt(0, 0.82, 0);
+      portalCam.position.set(0, DOLL_H / 2, camZ);
+      portalCam.lookAt(0, DOLL_H / 2, 0);
 
       dollPortal.visible = !blurry;
       dollPortal.rotation.y = lens ? 0 : Math.PI * 0.04;
@@ -495,8 +524,8 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
       dollBlurB.visible = blurry;
       if (blurry) {
         portalCam.up.set(0, 1, 0);
-        portalCam.position.set(0, 0.82, 2.5);
-        portalCam.lookAt(0, 0.82, 0);
+        portalCam.position.set(0, DOLL_H / 2, 2.5);
+        portalCam.lookAt(0, DOLL_H / 2, 0);
         dollBlurA.position.set(-0.22, 0.08, 0);
         dollBlurB.position.set(0.22, -0.08, 0.15);
       }
@@ -504,6 +533,10 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
       renderer.setViewport(px, py, pw, ph);
       renderer.setScissor(px, py, pw, ph);
       renderer.render(portalScene, portalCam);
+      // 둥근 모서리 깎기(지우지 않고 겹쳐 그린다)
+      renderer.autoClear = false;
+      renderer.render(maskScene, maskCam);
+      renderer.autoClear = true;
 
       return anchors;
     },
@@ -524,6 +557,7 @@ export function createOpticStage3D(canvas: HTMLCanvasElement): OpticStage3D | nu
       };
       cleanScene(benchScene);
       cleanScene(portalScene);
+      cleanScene(maskScene);
       renderer.dispose();
       renderer.forceContextLoss();
     },
