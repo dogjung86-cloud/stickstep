@@ -1,7 +1,9 @@
 // u2l2f2 · 식물세포의 구조: 육각기둥 세포의 윗부분을 수평으로 잘라 속을 보인 입체 단면.
 // 검산 메모: u2l2f2.md. 색은 세포 랩의 BV(세포막 앰버, 핵 보라, 마이토콘드리아 빨강, 엽록체 초록, 세포벽 갈색)를 명암 있는 재질로 옮긴다.
 // 표현 관례(책 그림과 같은 약속): 잘린 면(세포질)은 크림색 평면, 엽록체와 마이토콘드리아는 그 면에서 잘려 속(그라나, 주름)이 보이고,
-// 핵은 쐐기를 떼어 속을 보인다. 엽록체 하나는 위 절반을 걷어 입체 그라나를 보인다. 세포벽 앞쪽에 홈을 파서 벽 바로 안쪽의 세포막을 드러낸다.
+// 핵은 위 앞쪽 쐐기를 떼어 속을 보인다. 엽록체 하나는 위 절반을 걷어 입체 그라나를 보인다. 세포벽 앞쪽에 홈을 파서 벽 바로 안쪽의 세포막을 드러낸다.
+import { wedgeNucleus } from "../lib/cell.js";
+
 export const meta = { key: "u2l2f2", w: 340, h: 276, scale: 3, quality: 86 };
 
 export async function draw(root, kit) {
@@ -302,26 +304,10 @@ export async function draw(root, kit) {
   });
   console.log("placed", JSON.stringify(placed.map((p) => [p.name, +p.x.toFixed(2), +p.z.toFixed(2), p.moved])));
 
-  // 핵: 앞쪽 약 110°의 쐐기를 떼어 속을 보인 공. 아래쪽은 세포질 속에 묻힌다.
+  // 핵: 위 앞쪽 약 110°의 쐐기를 떼어 속을 보인 공(공용 wedgeNucleus). 아래쪽은 온전한 구로 세포질 속에 묻힌다.
   const NR = 0.62, NP = [-0.3, YC + 0.1, -0.12];
-  const prof = [];
-  for (let i = 0; i <= 48; i++) { const t = (i / 48) * Math.PI; prof.push([NR * Math.sin(t), NR * Math.cos(t)]); }
   const W0 = (-45 * Math.PI) / 180, W1 = (65 * Math.PI) / 180; // 떼어 낸 쐐기의 범위(+Z가 0, +X 쪽이 +)
-  const nuc = kit.latheCut(T, prof, { phiStart: W1, phiLength: Math.PI * 2 - (W1 - W0), mat: nucShellMat, capMat: capMat(nucCap) });
-  for (const cp of nuc.caps) { const uv = cp.geometry.attributes.uv, pp = cp.geometry.attributes.position; for (let i = 0; i < uv.count; i++) uv.setXY(i, pp.getX(i) / (2 * NR) + 0.5, pp.getY(i) / (2 * NR) + 0.5); }
-  nuc.group.position.set(...NP);
-  scene.add(nuc.group);
-  // 핵막 두 겹: 잘린 면 둘레에 얇은 띠 두 줄(바깥 막, 안쪽 막)
-  for (const cp of nuc.caps) {
-    for (const rr of [NR * 0.985, NR * 0.935]) {
-      const arc = new T.Mesh(new T.TorusGeometry(rr, 0.012, 8, 96, Math.PI), new T.MeshStandardMaterial({ color: 0x4a2fa8, roughness: 0.5 }));
-      arc.rotation.z = -Math.PI / 2;
-      const holder = new T.Group(); holder.add(arc); holder.rotation.y = cp.rotation.y; holder.position.copy(nuc.group.position);
-      const nrm = new T.Vector3(0, 0, 1).applyAxisAngle(new T.Vector3(0, 1, 0), cp.rotation.y);
-      holder.position.addScaledVector(nrm, cp === nuc.caps[0] ? -0.004 : 0.004);
-      scene.add(holder);
-    }
-  }
+  const nuc = wedgeNucleus(kit, T, scene, { nucShell: nucShellMat, nucCap, capMat }, { pos: NP, R: NR, w0: W0, w1: W1 });
 
   kit.shadowCatcher(T, scene, { y: -0.005, opacity: 0.15 });
   await kit.renderIllus(st, { radius: 0.3, thickness: 0.7, edgeK: 0.36 });
@@ -330,8 +316,7 @@ export async function draw(root, kit) {
   // ── 라벨 ──
   const svg = kit.layer(root, W, H);
   const P = (p) => st.project(p);
-  const mid = (W0 + W1) / 2;
-  const nucIn = P([NP[0] + 0.3 * Math.sin(mid), NP[1] + 0.12, NP[2] + 0.3 * Math.cos(mid)]);
+  const nucIn = P(nuc.inside);
   const chlP = P(open.top), mitoP = P(mitos[0].top);
   const memP = P([(NX0 + NX1) / 2, YC - 0.2, zFrontI + 0.002]);
   const wallP = P([0.75, YC - 0.25, zFrontO]);

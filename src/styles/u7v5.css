@@ -145,6 +145,171 @@
 /* 일식의 지상 보기: 알림을 아래 두 단추 사이로 내린다(검은 해와 코로나를 덮지 않게) */
 .sp3-toast.u7x-toast.low { bottom: 12px; max-width: min(46%, 360px); }
 
+/* ── 하루 동안 별의 움직임 가로 3D 천구 HUD(.u7x-sky-*) ── */
+.u7x-sky-tabs {
+  position: absolute; left: 10px; top: 8px; z-index: 5; display: flex; gap: 4px; padding: 2px;
+  border-radius: 999px; background: rgba(14, 24, 46, .84); border: 1px solid rgba(130, 158, 215, .34);
+}
+.u7x-sky-tab {
+  position: relative; height: 40px; padding: 0 14px; border-radius: 999px;
+  font-size: 13px; font-weight: 800; color: #BFD0F0; white-space: nowrap;
+  transition: background .2s, color .2s, transform .12s;
+}
+.u7x-sky-tab:active { transform: scale(.96); }
+.u7x-sky-tab.on { background: var(--subj-space); color: #fff; box-shadow: 0 3px 10px rgba(74, 84, 225, .52); }
+.u7x-sky-tab.pulse { animation: u7xPulse 1.7s ease-in-out infinite; }
+.u7x-sky-tab.done::after {
+  content: ""; position: absolute; top: -2px; right: -1px; width: 15px; height: 15px; border-radius: 50%;
+  background: #20C997 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.3l2.3 2.2 4.5-4.9' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 9px no-repeat;
+  box-shadow: 0 0 0 2px #0E182E;
+}
+.sp3-pill.u7x-rpill.u7x-sky-guide {
+  top: 56px; max-width: calc(100% - 182px); padding: 6px 12px; border-radius: 14px;
+  font-size: 12.5px; line-height: 1.38; white-space: normal; word-break: keep-all;
+}
+.u7x-sky-mini {
+  position: absolute; top: 56px; right: 12px; z-index: 4; width: 154px; padding: 7px 8px 6px;
+  border-radius: 14px; background: rgba(11, 20, 40, .88); border: 1px solid rgba(130, 165, 225, .36);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .4); pointer-events: none;
+}
+.u7x-sky-mini[hidden] { display: none; }
+.u7x-sky-mini-k { font-size: 12px; font-weight: 800; color: #DCE7FB; text-align: center; margin-bottom: 4px; white-space: nowrap; }
+.u7x-sky-minicv { display: block; width: 136px; height: 48px; margin: 0 auto; border-radius: 8px; border: 1px solid rgba(130, 165, 225, .24); }
+.u7x-sky-mini-s { font-size: 12px; font-weight: 700; color: #FFE19C; text-align: center; margin-top: 4px; white-space: nowrap; }
+
+.u7x-sky-minidome {
+  position: absolute; top: 54px; right: 12px; z-index: 4; width: 164px; padding: 7px 8px 6px;
+  border-radius: 14px; background: rgba(11, 20, 40, .88); border: 1px solid rgba(130, 165, 225, .4);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .44); cursor: pointer; text-align: center;
+  transition: transform .12s, border-color .2s, opacity .25s;
+}
+.u7x-sky-minidome:hover { border-color: rgba(155, 195, 255, .75); }
+.u7x-sky-minidome:active { transform: scale(.97); }
+.u7x-sky-minidome[hidden] { display: none; }
+.u7x-sky-minidome.hide { opacity: 0; pointer-events: none; }
+.u7x-sky-minidomecv {
+  display: block; width: 148px; height: 92px; margin: 0 auto; border-radius: 9px;
+  border: 1px solid rgba(130, 165, 225, .24);
+}
+@media (min-width: 960px) and (min-height: 560px) {
+  .u7x-sky-minidome { width: 212px; padding: 8px 9px 7px; }
+  .u7x-sky-minidomecv { width: 192px; height: 120px; }
+}
+
+.u7x-sky-labels { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+.u7x-sky-lbl {
+  position: absolute; left: 0; top: 0; padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+  font-size: 12.5px; line-height: 17px; font-weight: 800; color: #E4EDFF; letter-spacing: -.02em;
+  background: rgba(10, 18, 36, .74); border: 1px solid rgba(140, 170, 225, .36);
+  opacity: 0; will-change: transform, opacity; transition: opacity .18s;
+}
+.u7x-sky-lbl.on { opacity: 1; }
+.u7x-sky-lbl.gold { color: #FFF1B8; border-color: rgba(255, 214, 110, .65); background: rgba(48, 34, 8, .8); }
+.u7x-sky-lbl.amber { color: #FFD88A; border-color: rgba(255, 190, 61, .58); }
+.u7x-sky-lbl.cyan { color: #B8F5E3; border-color: rgba(99, 230, 190, .58); background: rgba(9, 40, 36, .8); }
+.u7x-sky-lbl.dim { color: #C2D4F2; background: rgba(10, 18, 36, .6); }
+.u7x-sky-lbl.cardinal { font-size: 13px; padding: 2px 9px; color: #fff; background: rgba(16, 30, 60, .88); border-color: rgba(135, 178, 245, .6); }
+.u7x-sky-side {
+  position: absolute; bottom: 76px; padding: 2px 9px; border-radius: 999px;
+  font-size: 12.5px; line-height: 17px; font-weight: 800; color: #A9C2EB;
+  background: rgba(10, 18, 36, .74); border: 1px solid rgba(130, 160, 215, .36);
+  opacity: 0; transition: opacity .2s;
+}
+.u7x-sky-side.on { opacity: 1; }
+.u7x-sky-side.left { left: 16px; }
+.u7x-sky-side.right { right: 16px; }
+.u7x-sky-polering {
+  position: absolute; left: 0; top: 0; width: 32px; height: 32px; border-radius: 50%; pointer-events: none;
+  border: 2px solid #FFE08A; box-shadow: 0 0 12px rgba(255, 216, 110, .65); opacity: 0; transition: opacity .25s;
+}
+.u7x-sky-polering.on { opacity: 1; }
+.u7x-sky-polehint {
+  position: absolute; left: 0; top: 0; width: 52px; height: 52px; pointer-events: none;
+  opacity: 0; transition: opacity .25s;
+}
+.u7x-sky-polehint.on { opacity: 1; }
+.u7x-sky-polehint i {
+  position: absolute; left: 50%; top: 50%; border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #FFF7D6 50%, transparent);
+  animation: u7xTwinkle 1.15s ease-in-out infinite;
+}
+.u7x-sky-polehint i.h1 { width: 42px; height: 2.5px; transform: translate(-50%, -50%); }
+.u7x-sky-polehint i.h2 {
+  width: 2.5px; height: 42px; transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, transparent, #FFF7D6 50%, transparent);
+}
+.u7x-sky-polehint b {
+  position: absolute; inset: 9px; border-radius: 50%;
+  border: 2px solid rgba(255, 232, 150, .88);
+  box-shadow: 0 0 14px rgba(255, 220, 110, .7);
+  animation: u7xPolePulse 1.4s ease-out infinite;
+}
+@keyframes u7xTwinkle {
+  0%, 100% { opacity: .45; filter: brightness(.95); }
+  50% { opacity: 1; filter: brightness(1.35); }
+}
+@keyframes u7xPolePulse {
+  0% { transform: scale(.65); opacity: .95; }
+  100% { transform: scale(1.65); opacity: 0; }
+}
+
+.u7x-sky-dock {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 5;
+  display: flex; align-items: center; gap: 12px; padding: 7px 12px; border-radius: 18px;
+  background: rgba(12, 22, 44, .9); border: 1px solid rgba(130, 158, 215, .34);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .44);
+}
+.u7x-sky-dockl { display: flex; align-items: center; gap: 8px; flex: none; }
+.u7x-sky-dockl[hidden], .u7x-sky-views[hidden] { display: none; }
+.u7x-sky-spbadge { display: flex; flex-direction: column; padding: 0 4px; line-height: 1.28; }
+.u7x-sky-spbadge b { font-size: 12.5px; font-weight: 800; color: #FFD88A; white-space: nowrap; }
+.u7x-sky-spbadge span { font-size: 12px; font-weight: 700; color: #A9C2EB; white-space: nowrap; }
+.u7x-sky-go {
+  height: 44px; padding: 0 14px; border-radius: 12px; border: 1.5px solid rgba(145, 165, 240, .45);
+  background: rgba(45, 58, 128, .68); color: #EAF1FF; font-size: 13px; font-weight: 800; white-space: nowrap;
+  transition: transform .12s, background .2s, border-color .2s;
+}
+.u7x-sky-go:active { transform: scale(.96); }
+.u7x-sky-go.hot {
+  border-color: #FFD25E; background: linear-gradient(180deg, #FFD25E, #F5A928); color: #221604;
+  box-shadow: 0 4px 14px rgba(245, 169, 40, .45);
+}
+.u7x-sky-views { display: flex; align-items: center; gap: 5px; flex: none; }
+.u7x-sky-vbtn {
+  position: relative; min-width: 44px; height: 44px; padding: 0 10px; border-radius: 12px;
+  border: 1.5px solid rgba(135, 160, 215, .36); background: rgba(24, 38, 68, .8); color: #D8E6FF;
+  font-size: 13.5px; font-weight: 800; white-space: nowrap; transition: transform .12s, background .2s, border-color .2s;
+}
+.u7x-sky-vbtn:active { transform: scale(.95); }
+.u7x-sky-vbtn.wide { padding: 0 12px; }
+.u7x-sky-vbtn.on { border-color: #8B96FF; background: var(--subj-space); color: #fff; box-shadow: 0 3px 12px rgba(74, 84, 225, .52); }
+.u7x-sky-vbtn.done::after {
+  content: ""; position: absolute; top: -5px; right: -4px; width: 16px; height: 16px; border-radius: 50%;
+  background: #20C997 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.3l2.3 2.2 4.5-4.9' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px no-repeat;
+  box-shadow: 0 0 0 2px #0C162C;
+}
+.u7x-sky-time { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
+.u7x-sky-clock {
+  flex: none; min-width: 74px; padding: 6px 8px; border-radius: 10px;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(160, 185, 235, .24);
+  color: #FFE6A8; font-size: 13px; font-weight: 800; text-align: center; white-space: nowrap;
+}
+.u7x-sky-slider {
+  flex: 1; min-width: 110px; height: 44px; padding: 6px 10px 0; display: flex; flex-direction: column;
+  justify-content: center; gap: 5px; cursor: pointer; touch-action: none; user-select: none;
+}
+.u7x-sky-rail { position: relative; height: 10px; border-radius: 999px; background: rgba(255, 255, 255, .18); }
+.u7x-sky-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #6E7BFF, #FFD25E); }
+.u7x-sky-thumb {
+  position: absolute; top: 50%; left: 0%; width: 26px; height: 26px; border-radius: 50%;
+  transform: translate(-50%, -50%); background: #fff; border: 3px solid #6E7BFF;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .48);
+}
+.u7x-sky-ticks { display: flex; justify-content: space-between; font-size: 12px; line-height: 14px; font-weight: 700; color: #A6BCE4; }
+@media (prefers-reduced-motion: reduce) {
+  .u7x-sky-tab.pulse, .u7x-sky-polehint i, .u7x-sky-polehint b { animation: none; }
+}
+
 /* ── 조작 칸 안 ──────────────────────────────────────── */
 .u7x-cap { font-size: 12.5px; line-height: 18px; font-weight: 800; color: var(--n700); padding: 0 2px; }
 

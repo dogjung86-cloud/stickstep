@@ -161,6 +161,8 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
   const yesBtn = bvBtn("kpl-yes", "예");
   const noBtn = bvBtn("kpl-no", "아니요");
   const answers = el("div", { class: "kpl-answers" }, yesBtn, noBtn);
+  const passBtn = bvBtn("main kpl-pass", "");
+  passBtn.hidden = true;
   const nextBtn = bvBtn("main kpl-next", "다음 생물 분류하기");
   nextBtn.hidden = true;
 
@@ -196,10 +198,12 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     qNum.textContent = String(g);
     qText.textContent = QUESTION[g];
     question.hidden = false;
-    answers.hidden = false;
+    answers.hidden = auto;
+    passBtn.hidden = !auto;
     nextBtn.hidden = true;
     yesBtn.disabled = auto;
     noBtn.disabled = auto;
+    passBtn.disabled = !auto;
     yesBtn.classList.remove("pick", "no");
     noBtn.classList.remove("pick", "no");
     factEls.forEach((li) => li.classList.remove("hot"));
@@ -254,6 +258,7 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
         f.say(o.land);
         question.hidden = true;
         answers.hidden = true;
+        passBtn.hidden = true;
         nextBtn.textContent = oi < ORGS.length - 1 ? "다음 생물 분류하기" : "버섯이 분류된 길 확인하기";
         nextBtn.hidden = false;
         busy = false;
@@ -280,7 +285,7 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     mark();
     place(GX[g], LINE_Y);
     tm.later(() => {
-      if (g + 1 === 2) autoGate2();
+      if (g + 1 === 2) openGate2();
       else {
         busy = false;
         showQuestion(g + 1, false);
@@ -289,21 +294,21 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     }, 500);
   }
 
-  /** ②는 특징만으로 답할 수 없어서 랩이 까닭을 말하며 대신 답한다. */
-  function autoGate2(): void {
+  /** ②는 특징만으로 답할 수 없어서 까닭을 안내하고, 학생이 아래 버튼을 눌러 직접 다음 단계로 넘어가게 한다. */
+  function openGate2(): void {
     const o = ORGS[oi];
     const yes = truth(o, 2);
     showQuestion(2, true);
-    busy = true;
+    busy = false;
+    passBtn.disabled = false;
+    passBtn.textContent = yes ? "예 · 원생생물계로 보내기" : "아니요 · 3번 질문으로 넘어가기";
     mark();
     f.say(
       yes
-        ? `두 번째 질문은 특징 카드에 적힌 대로 바로 지나갈게요. ${o.name}${o.eun} 균계, 식물계, 동물계 어디에도 <b>속하지 않는 무리</b>예요.`
-        : `두 번째 질문은 바로 지나갈게요. ${o.name}${o.eun} 균계, 식물계, 동물계 <b>가운데 하나</b>에 속해요. 이제 세 번째 질문에 답해 보세요!`,
+        ? `2번 질문은 특징만으로 가르기 어려워요. <b>${o.name}</b>${o.eun} 세 계 어디에도 속하지 않으므로 아래 버튼을 눌러 분류해 보세요.`
+        : `2번 질문은 특징만으로 가르기 어려워요. <b>${o.name}</b>${o.eun} 균계, 식물계, 동물계 가운데 하나예요. 아래 버튼을 눌러 넘어가세요.`,
     );
     if (o.hot[2] !== undefined) factEls[o.hot[2]].classList.add("hot");
-    tm.later(() => (yes ? yesBtn : noBtn).classList.add("pick"), 500);
-    tm.later(() => go(yes), 1700);
   }
 
   function answer(yes: boolean): void {
@@ -331,6 +336,12 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
   }
   yesBtn.addEventListener("click", () => answer(true));
   noBtn.addEventListener("click", () => answer(false));
+  passBtn.addEventListener("click", () => {
+    if (phase !== "play" || busy || gate !== 2) return;
+    haptic(HAPTIC.tap);
+    passBtn.disabled = true;
+    go(truth(ORGS[oi], 2));
+  });
   nextBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     if (oi < ORGS.length - 1) startOrg(oi + 1);
@@ -362,7 +373,7 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
-  f.slot.setControls(card, question, answers, nextBtn);
+  f.slot.setControls(card, question, answers, passBtn, nextBtn);
   startOrg(0);
   api.setCTA("다섯 생물을 모두 알맞은 계로 분류해 보세요", { enabled: false });
   return () => {

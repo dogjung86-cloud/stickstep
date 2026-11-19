@@ -1,6 +1,6 @@
 // u2l4f1 · 모양이 다른 세포들: 신경세포, 적혈구, 상피세포의 실제 생김새(칸마다 자기 눈금).
 // 검산 메모: u2l4f1.md. 색은 세포 맡기기 랩(cellFitLab)과 같다(신경 주황, 적혈구 빨강, 상피 분홍, 핵 보라).
-// 정사영. 신경세포 칸 1 µm = 1.15px(긴 돌기는 끊김 표시로 줄였다), 적혈구 칸 1 µm = 6px, 상피세포 칸 1 µm = 0.35px(세포 하나 약 50 µm).
+// 정사영. 신경세포 칸 1 µm = 1.15px(긴 돌기를 끊김 없이 이어 그렸다), 적혈구 칸 1 µm = 6px, 상피세포 칸 1 µm = 0.35px(세포 하나 약 50 µm).
 export const meta = { key: "u2l4f1", w: 340, h: 300, scale: 3, quality: 86 };
 
 export async function draw(root, kit) {
@@ -13,7 +13,7 @@ export async function draw(root, kit) {
   const phys = (color, extra = {}) => new T.MeshPhysicalMaterial({ color, roughness: 0.42, clearcoat: 0.5, clearcoatRoughness: 0.3, sheen: 0.35, sheenColor: 0xffffff, ...extra });
   const r = kit.rng(7);
 
-  // ── 신경세포(윗줄): 세포체(핵 하나), 짧게 갈라진 돌기 여럿, 한쪽으로 아주 긴 돌기 하나(가운데 끊김), 끝은 잘게 갈라짐 ──
+  // ── 신경세포(윗줄): 세포체(핵 하나), 짧게 갈라진 돌기 여럿, 한쪽으로 아주 긴 돌기 하나(끊김 없이 이어짐), 끝은 잘게 갈라짐 ──
   const SOMA = [64, 74];
   const nerveM = phys(C.nerve);
   const soma = new T.Mesh(new T.SphereGeometry(13, 48, 32), nerveM);
@@ -40,10 +40,8 @@ export async function draw(root, kit) {
     if (depth > 0) { branch(cx, cy, a - 0.5, len * 0.62, rad * 0.55, depth - 1); branch(cx, cy, a + 0.45, len * 0.6, rad * 0.55, depth - 1); }
   };
   for (const a of [2.3, 2.9, 3.6, 4.2, 1.6, 4.9]) branch(SOMA[0] + Math.cos(a) * 11, SOMA[1] + Math.sin(a) * 9, a, 22 + r() * 6, 3.0, 1);
-  // 긴 돌기: 세포체 오른쪽에서 끊김 표시 앞까지, 끊김 뒤부터 끝 갈래까지
-  const BREAK = [196, 214];
-  tube([[SOMA[0] + 13, SOMA[1]], [110, SOMA[1] - 3], [150, SOMA[1] + 2], [BREAK[0], SOMA[1]]], 2.6, 2.2, nerveM);
-  tube([[BREAK[1], SOMA[1]], [250, SOMA[1] - 2], [278, SOMA[1] + 1]], 2.2, 2.0, nerveM);
+  // 긴 돌기: 세포체 오른쪽에서 끝 갈래까지 끊김 없이 길게 이어진다
+  tube([[SOMA[0] + 13, SOMA[1]], [115, SOMA[1] - 3], [165, SOMA[1] + 2], [220, SOMA[1] - 2], [278, SOMA[1] + 1]], 2.6, 2.0, nerveM);
   for (const a of [-0.7, -0.25, 0.2, 0.65]) {
     const sx = 278, sy = SOMA[1] + 1, ex = sx + Math.cos(a) * 22, ey = sy + Math.sin(a) * 22;
     tube([[sx, sy], [(sx + ex) / 2, (sy + ey) / 2 + (r() - 0.5) * 4], [ex, ey]], 1.6, 0.9, nerveM);
@@ -93,15 +91,12 @@ export async function draw(root, kit) {
   await kit.renderIllus(st, { ao: false, edgeK: 0.34 });
   await kit.frame();
 
-  // ── 끊김 표시, 칸 나눔, 이름과 눈금 ──
+  // ── 칸 나눔, 이름과 눈금 ──
   const svg = kit.layer(root, W, H);
-  const brk = (x) => svg.appendChild(kit.s("path", { d: `M${x - 5} ${SOMA[1] + 8} q4 -8 0 -16 M${x + 3} ${SOMA[1] + 8} q4 -8 0 -16`, fill: "none", stroke: "#5B6475", "stroke-width": 1.4, "stroke-linecap": "round" }));
-  brk((BREAK[0] + BREAK[1]) / 2 - 2);
   svg.appendChild(kit.s("path", { d: `M10 138 H${W - 10} M170 150 V${H - 8}`, stroke: "#E3E7EE", "stroke-width": 1.2 }));
   kit.text(svg, 12, 16, "신경세포", { size: 14, weight: 800, anchor: "start" });
   kit.text(svg, 12, 33, "긴 돌기는 1 m가 넘기도 해요", { size: 12, weight: 600, color: "#5B6475", anchor: "start" });
   kit.label(svg, { at: [SOMA[0] - 1, SOMA[1] - 1], via: [SOMA[0] + 26, 106], to: [SOMA[0] + 30, 106], text: "핵", side: "r", size: 13 });
-  kit.text(svg, (BREAK[0] + BREAK[1]) / 2, SOMA[1] - 18, "끊어 줄임", { size: 12, weight: 600, color: "#5B6475" });
   kit.text(svg, 12, 158, "적혈구", { size: 14, weight: 800, anchor: "start" });
   kit.text(svg, 12, 175, "핵이 없어요", { size: 12, weight: 600, color: "#5B6475", anchor: "start" });
   kit.text(svg, 118, 232, "옆에서 본 모습", { size: 12, weight: 600, color: "#5B6475" });
@@ -111,7 +106,6 @@ export async function draw(root, kit) {
     svg.appendChild(kit.s("path", { d: `M${x} ${y - 3.5} V${y + 3.5} M${x} ${y} H${x + len} M${x + len} ${y - 3.5} V${y + 3.5}`, stroke: "#2B3445", "stroke-width": 1.4, fill: "none" }));
     kit.text(svg, x + len + 5, y, txt, { size: 12, weight: 700, anchor: "start" });
   };
-  bar(232, 33, 20 * 1.15, "20 µm");
   bar(14, H - 14, 8 * RS, "8 µm");
   bar(182, H - 14, 50 * ES, "50 µm");
 }

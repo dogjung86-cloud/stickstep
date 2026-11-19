@@ -2,7 +2,7 @@
    접두: 뼈대 .bv- · 확대 랩 .mgf- · 세포 구조 랩 .cwk-(입체 무대는 .cwm-) · 표본 만들기 랩 .sbd- · 현미경 비교 랩 .scp-
    4~10번 레슨: 세포 모양 .cft- · 구성 단계 .blv- · 생물다양성 .emp- · 두 섬의 새 .bki- · 가까운 사이 .knl- · 무리 넓히기 .rkw- · 검색표 .kpl- · 먹이 관계 .fwb-
    (.b6-은 중2 Ⅵ v3 body3.css가 쓰고 있어 쓰지 않는다.)
-   한 화면 예산(390×700, 스크롤 영역 554px): 위 6 + 제목 30 + 도움말 50 + 무대 240 + 조작 칸 218 + 아래 10 = 554 */
+   한 화면 예산(390×700, 스크롤 영역 554px): 위 6 + 제목 30 + 무대 236(6+230) + 안내문 56(8+48) + 조작 칸 216(8+208) + 아래 10 = 554 */
 
 /* ── 뼈대 ───────────────────────────────────────────── */
 .step.bv-step { padding: 6px 22px 10px; }
@@ -15,19 +15,28 @@
 .bv-pips i { width: 8px; height: 8px; border-radius: 50%; background: var(--n300); transition: background .3s, transform .3s var(--spring); }
 .bv-pips i.on { background: var(--subj-bio); transform: scale(1.15); }
 
-.bv-helper {
-  margin-top: 8px; height: 42px; overflow: hidden;
-  padding-left: 11px; border-left: 3px solid var(--subj-bio); border-radius: 2px;
-  font-size: 14px; line-height: 21px; color: var(--sub); word-break: keep-all;
-}
-.bv-helper b { color: var(--ink); font-weight: 700; }
-
 .bv-stage {
-  position: relative; margin-top: 10px; height: 230px; border-radius: 20px; overflow: hidden;
+  position: relative; margin-top: 6px; height: 230px; border-radius: 20px; overflow: hidden;
   background: radial-gradient(130% 100% at 50% -10%, #182B4D 0%, #0B1524 64%);
   outline: 1px solid #20334F; outline-offset: -1px; user-select: none; -webkit-user-select: none;
 }
 .bv-stage > svg { display: block; width: 100%; height: 100%; }
+
+.bv-helper {
+  margin-top: 8px; height: 48px; overflow: hidden;
+  padding: 3px 6px 3px 10px; border-left: 3.5px solid var(--subj-bio); border-radius: 4px 10px 10px 4px;
+  background: #F4F7FB;
+  font-size: 14px; line-height: 20.5px; color: var(--n700); word-break: keep-all;
+}
+.bv-helper b { color: var(--ink); font-weight: 800; }
+.bv-helper.pop { animation: bvSayPop .65s var(--ease-out); }
+@keyframes bvSayPop {
+  0% { background-color: #FFF3CC; }
+  100% { background-color: #F4F7FB; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bv-helper.pop { animation: none; }
+}
 /* 346×230 고정 설계 판. 무대 폭이 달라도 통째로 비율을 맞춘다(bio6Kit.bvCanvas). */
 .bv-canvas { position: absolute; left: 50%; top: 50%; width: 346px; height: 230px; transform: translate(-50%, -50%); transform-origin: 50% 50%; }
 .bv-pill {
@@ -38,7 +47,7 @@
 .bv-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--pc, #63E6BE); }
 
 /* ── 조작 칸(높이 고정) ───────────────────────────── */
-.bv-slot { position: relative; margin-top: 10px; height: 208px; }
+.bv-slot { position: relative; margin-top: 8px; height: 208px; }
 .bv-ctl { display: grid; gap: 8px; align-content: start; }
 .bv-ctl[hidden] { display: none; }
 @keyframes bvIn { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: none; } }
@@ -180,29 +189,31 @@
 
 /* ── 글 맞춤(2026-11-16, b6Lab.ts 「글 맞춤」) ───────────────────────
    글이 길어지면 상자가 글에 맞춘다. 맞춤 클래스가 없는 랩은 위의 예전 모양 그대로다.
-   한 화면 예산 554 = 위 6 + 제목 30 + 8 + 도움말 42 + 10 + 무대 230 + 10 + 조작 칸 208 + 아래 10.
-   두 줄 제목(bv-t2, +14)이나 세 줄 도움말(bv-tall, +21)이 생기면 여백 22px를 줄여 예산 안에 둔다.
-     두 줄 제목만: 2 + 44 + 4 + 42 + 6 + 230 + 6 + 208 + 4 = 546
-     세 줄 도움말만: 2 + 30 + 4 + 63 + 6 + 230 + 6 + 208 + 4 = 553
-     둘 다(17px 제목, 13.5px 도움말): 2 + 40 + 4 + 59 + 4 + 230 + 4 + 208 + 2 = 553
-   제목과 도움말 맞춤은 폰 모양에서만(넓은 화면은 wide.css가 두 상자를 이미 풀어 둔다). */
+   한 화면 예산 554 = 위 6 + 제목 30 + 6 + 무대 230 + 8 + 안내문 48 + 8 + 조작 칸 208 + 아래 10.
+   두 줄 제목(bv-t2, +14)이나 세 줄 안내문(bv-tall, +19)이 생기면 여백을 줄여 예산 안에 둔다.
+     두 줄 제목만: 2 + 44 + 4 + 230 + 6 + 48 + 6 + 208 + 4 = 552
+     세 줄 안내문만: 2 + 30 + 4 + 230 + 5 + 67 + 5 + 208 + 3 = 554
+     둘 다(17px 제목, 13.5px 안내문): 2 + 40 + 3 + 230 + 4 + 61 + 4 + 208 + 2 = 554
+   제목과 안내문 맞춤은 폰 모양에서만(넓은 화면은 wide.css가 두 상자를 이미 풀어 둔다). */
 html:not(.wide) .bv-title.fs18 { font-size: 18px; }
 html:not(.wide) .bv-title.two {
   font-size: 18px; line-height: 22px; white-space: normal; text-overflow: clip; word-break: keep-all; text-wrap: balance; /* 둘째 줄에 낱말 하나만 떨어지지 않게(줄 수는 그대로) */
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 html:not(.wide) .step.bv-step:is(.bv-t2, .bv-tall) { padding-top: 2px; padding-bottom: 4px; }
-html:not(.wide) .bv-step:is(.bv-t2, .bv-tall) .bv-helper { margin-top: 4px; }
-html:not(.wide) .bv-step:is(.bv-t2, .bv-tall) .bv-stage { margin-top: 6px; }
+html:not(.wide) .bv-step:is(.bv-t2, .bv-tall) .bv-stage { margin-top: 4px; }
+html:not(.wide) .bv-step:is(.bv-t2, .bv-tall) .bv-helper { margin-top: 6px; }
 html:not(.wide) .bv-step:is(.bv-t2, .bv-tall) .bv-slot { margin-top: 6px; }
 html:not(.wide) .bv-step.bv-t2 .bv-head { height: 44px; }
-html:not(.wide) .bv-step.bv-tall .bv-helper { height: 63px; }
+html:not(.wide) .step.bv-step.bv-tall { padding-bottom: 3px; }
+html:not(.wide) .bv-step.bv-tall .bv-helper { margin-top: 5px; height: 67px; padding-top: 2px; padding-bottom: 2px; }
+html:not(.wide) .bv-step.bv-tall .bv-slot { margin-top: 5px; }
 html:not(.wide) .bv-step.bv-tall .bv-helper.dense { font-size: 13px; }
 html:not(.wide) .bv-step.bv-t2.bv-tall .bv-head { height: 40px; }
 html:not(.wide) .bv-step.bv-t2.bv-tall .bv-title.two { font-size: 17px; line-height: 20px; }
-html:not(.wide) .bv-step.bv-t2.bv-tall .bv-helper { height: 59px; font-size: 13.5px; line-height: 19.5px; }
+html:not(.wide) .bv-step.bv-t2.bv-tall .bv-stage { margin-top: 3px; }
+html:not(.wide) .bv-step.bv-t2.bv-tall .bv-helper { margin-top: 4px; height: 61px; padding-top: 2px; padding-bottom: 2px; font-size: 13.5px; line-height: 19px; }
 html:not(.wide) .bv-step.bv-t2.bv-tall .bv-helper.dense { font-size: 12.5px; }
-html:not(.wide) .bv-step.bv-t2.bv-tall .bv-stage { margin-top: 4px; }
 html:not(.wide) .bv-step.bv-t2.bv-tall .bv-slot { margin-top: 4px; }
 html:not(.wide) .step.bv-step.bv-t2.bv-tall { padding-bottom: 2px; }
 /* 판정 질문이 두 줄을 넘으면 조금 작게(보기 셋과 함께 조작 칸 208에 들게) */

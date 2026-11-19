@@ -86,26 +86,152 @@ export function cutCapsule(T, scene, M, { x, z, rotY, r, len, yc, cut }) {
   return { top: [x, cut, z] };
 }
 
-/** 핵: 쐐기(w0~w1, +Z가 0, +X 쪽이 +)를 떼어 속을 보인 공. 두 겹 핵막은 잘린 둘레의 두 줄. */
-export function wedgeNucleus(kit, T, scene, M, { pos, R, w0, w1 }) {
-  const prof = [];
-  for (let i = 0; i <= 48; i++) { const t = (i / 48) * Math.PI; prof.push([R * Math.sin(t), R * Math.cos(t)]); }
-  const nuc = kit.latheCut(T, prof, { phiStart: w1, phiLength: Math.PI * 2 - (w1 - w0), mat: M.nucShell, capMat: M.capMat(M.nucCap) });
-  for (const cp of nuc.caps) { const uv = cp.geometry.attributes.uv, pp = cp.geometry.attributes.position; for (let i = 0; i < uv.count; i++) uv.setXY(i, pp.getX(i) / (2 * R) + 0.5, pp.getY(i) / (2 * R) + 0.5); }
-  nuc.group.position.set(...pos);
-  scene.add(nuc.group);
-  for (const cp of nuc.caps) {
-    for (const rr of [R * 0.985, R * 0.935]) {
-      const arc = new T.Mesh(new T.TorusGeometry(rr, R * 0.019, 8, 96, Math.PI), new T.MeshStandardMaterial({ color: 0x4a2fa8, roughness: 0.5 }));
-      arc.rotation.z = -Math.PI / 2;
-      const holder = new T.Group(); holder.add(arc); holder.rotation.y = cp.rotation.y; holder.position.copy(nuc.group.position);
-      const nrm = new T.Vector3(0, 0, 1).applyAxisAngle(new T.Vector3(0, 1, 0), cp.rotation.y);
-      holder.position.addScaledVector(nrm, cp === nuc.caps[0] ? -0.004 : 0.004);
-      scene.add(holder);
+/** 핵: 위 앞쪽 쐐기(w0~w1, +Z가 0, +X 쪽이 +, 높이 yCut 이상)를 떼어 속을 보인 공.
+ *  아래쪽은 빈틈없는 360° 구로 세포질에 묻히고, 잘린 세 면(양옆 수직 부채꼴 + 바닥 수평 부채꼴)에 유전물질 질감과 두 겹 핵막을 올린다.
+ *  (LatheGeometry는 프로파일이 아래→위로 올라가야 바깥 법선이 나온다. 예전 위→아래 프로파일은 앞면이 컬링돼 안쪽 면과 세포질이 비쳤다.) */
+export function wedgeNucleus(kit, T, scene, M, { pos, R, w0, w1, yCut = 0 }) {
+  const tCut = Math.acos(Math.max(-0.98, Math.min(0.98, yCut / R)));
+  const rCut = R * Math.sin(tCut);
+  const phiKeepStart = w1;
+  const phiKeepLen = Math.PI * 2 - (w1 - w0);
+  const group = new T.Group();
+  group.position.set(...pos);
+
+  // 구면 패치(바깥 법선 + 연속 UV) — LatheGeometry를 아래→위(t 감소)로 감아 앞면 법선을 바깥으로 보장한다.
+  const makeShell = (tFrom, tTo, phiStart, phiLen, segU, segV) => {
+    const pts = [];
+    for (let i = 0; i <= segV; i++) {
+      const t = tFrom + (tTo - tFrom) * (i / segV);
+      pts.push(new T.Vector2(R * Math.sin(t), R * Math.cos(t)));
     }
+    const g = new T.LatheGeometry(pts, segU, phiStart, phiLen);
+    const p = g.attributes.position;
+    const n = g.attributes.normal;
+    const uv = g.attributes.uv;
+    const v = new T.Vector3();
+    for (let iu = 0; iu <= segU; iu++) {
+      const phi = phiStart + (iu / segU) * phiLen;
+      const uVal = (((phi % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)) / (Math.PI * 2);
+      for (let iv = 0; iv <= segV; iv++) {
+        const k = iu * (segV + 1) + iv;
+        v.fromBufferAttribute(p, k);
+        const len = v.length() || 1;
+        n.setXYZ(k, v.x / len, v.y / len, v.z / len);
+        const t = tFrom + (tTo - tFrom) * (iv / segV);
+        uv.setXY(k, uVal, 1 - t / Math.PI);
+      }
+    }
+    n.needsUpdate = true;
+    uv.needsUpdate = true;
+    const mesh = new T.Mesh(g, M.nucShell);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    return mesh;
+  };
+
+  // 1) 아래쪽 온전한 구(남극 → yCut, 360°) + 2) 위쪽 잘린 구(yCut → 북극, 쐐기 제외)
+  group.add(makeShell(Math.PI, tCut, 0, Math.PI * 2, 128, 28));
+  group.add(makeShell(tCut, 0, phiKeepStart, phiKeepLen, 96, 32));
+
+  // 3) 수직 절단면 둘(w0 왼쪽 벽, w1 오른쪽 벽) — 쐐기 안쪽(카메라 쪽)을 향하는 정확한 법선
+  const capMat = M.capMat(M.nucCap);
+  const makeVertWall = (phi, flipNormal) => {
+    const seg = 40;
+    const positions = [0, yCut, 0];
+    const uvs = [0.5, 0.5];
+    const s = Math.sin(phi), c = Math.cos(phi);
+    for (let i = 0; i <= seg; i++) {
+      const t = tCut * (1 - i / seg); // yCut(tCut) → 북극(0)
+      const r = R * Math.sin(t), y = R * Math.cos(t);
+      positions.push(r * s, y, r * c);
+      uvs.push(0.5 + (r / R) * 0.45, 0.5 + ((y - yCut) / (R - yCut)) * 0.45);
+    }
+    const indices = [];
+    for (let i = 1; i <= seg; i++) {
+      if (flipNormal) indices.push(0, i + 1, i);
+      else indices.push(0, i, i + 1);
+    }
+    const g = new T.BufferGeometry();
+    g.setAttribute("position", new T.Float32BufferAttribute(positions, 3));
+    g.setAttribute("uv", new T.Float32BufferAttribute(uvs, 2));
+    g.setIndex(indices);
+    g.computeVertexNormals();
+    const m = new T.Mesh(g, capMat);
+    m.receiveShadow = true;
+    return m;
+  };
+  // w0(왼쪽): 법선이 +phi 쪽(쐐기 안쪽), w1(오른쪽): 법선이 -phi 쪽(쐐기 안쪽)
+  group.add(makeVertWall(w0, true));
+  group.add(makeVertWall(w1, false));
+
+  // 4) 수평 바닥 절단면(y = yCut, phi ∈ [w0, w1], 법선 +Y)
+  {
+    const seg = 48;
+    const positions = [0, yCut, 0];
+    const normals = [0, 1, 0];
+    const uvs = [0.5, 0.5];
+    for (let i = 0; i <= seg; i++) {
+      const phi = w0 + (w1 - w0) * (i / seg);
+      const s = Math.sin(phi), c = Math.cos(phi);
+      positions.push(rCut * s, yCut, rCut * c);
+      normals.push(0, 1, 0);
+      uvs.push(0.5 + 0.45 * s, 0.5 + 0.45 * c);
+    }
+    const indices = [];
+    for (let i = 1; i <= seg; i++) indices.push(0, i, i + 1);
+    const g = new T.BufferGeometry();
+    g.setAttribute("position", new T.Float32BufferAttribute(positions, 3));
+    g.setAttribute("normal", new T.Float32BufferAttribute(normals, 3));
+    g.setAttribute("uv", new T.Float32BufferAttribute(uvs, 2));
+    g.setIndex(indices);
+    const floor = new T.Mesh(g, capMat);
+    floor.receiveShadow = true;
+    group.add(floor);
   }
+
+  // 5) 두 겹 핵막: 잘린 세 호(왼쪽 세로, 오른쪽 세로, 바닥 가로)의 둘레에 두 줄
+  const rimMat = new T.MeshStandardMaterial({ color: 0x4a2fa8, roughness: 0.48 });
+  const tubeR = R * 0.017;
+  const addArc = (pts) => {
+    const curve = new T.CatmullRomCurve3(pts);
+    const m = new T.Mesh(new T.TubeGeometry(curve, 48, tubeR, 8, false), rimMat);
+    group.add(m);
+  };
+  for (const frac of [0.992, 0.942]) {
+    // 왼쪽 세로 호(w0, 쐐기 안쪽으로 살짝 +nrm)
+    const n0 = new T.Vector3(Math.cos(w0), 0, -Math.sin(w0)).multiplyScalar(0.003);
+    const v0 = [];
+    for (let i = 0; i <= 32; i++) {
+      const t = tCut * (1 - i / 32);
+      const rr = R * frac;
+      v0.push(new T.Vector3(rr * Math.sin(t) * Math.sin(w0), rr * Math.cos(t), rr * Math.sin(t) * Math.cos(w0)).add(n0));
+    }
+    addArc(v0);
+    // 오른쪽 세로 호(w1, 쐐기 안쪽으로 살짝 -nrm)
+    const n1 = new T.Vector3(-Math.cos(w1), 0, Math.sin(w1)).multiplyScalar(0.003);
+    const v1 = [];
+    for (let i = 0; i <= 32; i++) {
+      const t = tCut * (1 - i / 32);
+      const rr = R * frac;
+      v1.push(new T.Vector3(rr * Math.sin(t) * Math.sin(w1), rr * Math.cos(t), rr * Math.sin(t) * Math.cos(w1)).add(n1));
+    }
+    addArc(v1);
+    // 수평 바닥 호(y = yCut, 위로 살짝 +Y)
+    const vh = [];
+    for (let i = 0; i <= 40; i++) {
+      const phi = w0 + (w1 - w0) * (i / 40);
+      const rr = rCut * frac;
+      vh.push(new T.Vector3(rr * Math.sin(phi), yCut + 0.003, rr * Math.cos(phi)));
+    }
+    addArc(vh);
+  }
+
+  scene.add(group);
   const mid = (w0 + w1) / 2;
-  return { inside: [pos[0] + R * 0.48 * Math.sin(mid), pos[1] + R * 0.2, pos[2] + R * 0.48 * Math.cos(mid)] };
+  return {
+    group,
+    inside: [pos[0] + rCut * 0.42 * Math.sin(mid), pos[1] + yCut + 0.01, pos[2] + rCut * 0.42 * Math.cos(mid)],
+  };
 }
 
 /** 소기관 자리 고르기: 세포 안(볼록 다각형 safe) + 서로 gap 이상 떨어진 자리를 처음 자리 둘레에서 찾는다. 못 찾으면 멈춘다. */

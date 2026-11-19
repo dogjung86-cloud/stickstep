@@ -385,7 +385,8 @@ export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cl
   const helper = el("div", { class: "bv-helper" });
   const stage = el("div", { class: `bv-stage ${o.cls}` });
   const slot = makeSlot(o.qCls, o.api);
-  host.append(head, helper, stage, slot.el);
+  // 폰 화면 차례: 제목 → 무대 → 안내문(.bv-helper) → 조작 칸 (무대를 보고 바로 안내를 읽은 뒤 조작한다. 넓은 화면은 wide.ts가 노트로 옮긴다)
+  host.append(head, stage, helper, slot.el);
   let lastSay = "";
   // 세 줄 도움말: 랩이 처음부터 잡아 두었거나(o.tall), 넘치는 글이 한 번 나온 뒤로는 랩이 끝날 때까지 그대로 둔다(되돌리면 무대가 오르내린다).
   let tall = !!o.tall;
@@ -451,8 +452,14 @@ export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cl
     slot,
     say(html) {
       if (html === lastSay) return;
+      const changed = lastSay !== "";
       lastSay = html;
       helper.innerHTML = glue(html);
+      if (changed) {
+        helper.classList.remove("pop");
+        void helper.offsetWidth;
+        helper.classList.add("pop");
+      }
       if (helper.isConnected) fitHelper();
     },
     pips(n) {

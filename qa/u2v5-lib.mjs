@@ -679,27 +679,35 @@ export async function playKingdomPath(page, { wrong = false, miss = false, on = 
     await waitDs(page, "kplBusy", "0");
     await W(page, 220);
   };
-  // 생물마다 답할 차례: [물음, 답(예 = true)]. 둘째 물음은 랩이 대신 답한다.
-  const PLAN = [[[1, false]], [[1, true]], [[1, true], [3, true]], [[1, true], [3, false], [4, true]], [[1, true], [3, false], [4, false]]];
+  // 생물마다 답할 차례: [물음, 답(예 = true, 둘째 물음은 "pass" 버튼)].
+  const PLAN = [
+    [[1, false]],
+    [[1, true], [2, "pass"]],
+    [[1, true], [2, "pass"], [3, true]],
+    [[1, true], [2, "pass"], [3, false], [4, true]],
+    [[1, true], [2, "pass"], [3, false], [4, false]],
+  ];
   await idle();
   await on("mount");
   for (let i = 0; i < PLAN.length; i++) {
-    for (const [g, yes] of PLAN[i]) {
+    for (const [g, ans] of PLAN[i]) {
       await waitDs(page, "kplGate", String(g));
       await idle();
+      if (ans === "pass") {
+        if (i === 1) await on("org2-gate2-pass");
+        else if (i === 2) await on("org3-gate2-pass");
+        await tap(page, ".kpl-pass");
+        await W(page, 300);
+        continue;
+      }
       if (miss && ((i === 0 && g === 1) || (i === 4 && g === 3))) {
-        await tap(page, yes ? ".kpl-no" : ".kpl-yes");
+        await tap(page, ans ? ".kpl-no" : ".kpl-yes");
         await W(page, 400);
         await on(`org${i + 1}-gate${g}-miss`);
       }
       if (g > 1) await on(`org${i + 1}-gate${g}`);
-      await tap(page, yes ? ".kpl-yes" : ".kpl-no");
+      await tap(page, ans ? ".kpl-yes" : ".kpl-no");
       await W(page, 300);
-      if (g === 1 && i === 1) {
-        await waitDs(page, "kplGate", "2");
-        await W(page, 700);
-        await on("org2-gate2-auto");
-      }
     }
     await waitDs(page, "kplLanded", String(i + 1));
     await W(page, 300);

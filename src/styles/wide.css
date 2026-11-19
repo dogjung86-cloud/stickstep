@@ -41,7 +41,18 @@
   html.wide .wd-note .bv-head { height: auto; align-items: flex-start; padding-left: 8px; }
   html.wide .wd-note .bv-title { font-size: 22px; line-height: 30px; }
   html.wide .wd-note .bv-pips { margin-top: 11px; }
-  html.wide .wd-note .bv-helper { margin: 10px 0 16px 8px; min-height: 48px; font-size: 15.5px; line-height: 24px; }
+  html.wide .wd-note .bv-helper {
+    margin: 10px 0 16px 8px; min-height: 48px; padding: 0 0 0 11px;
+    background: none; border-radius: 2px; color: var(--sub); font-size: 15.5px; line-height: 24px;
+  }
+  html.wide .wd-note .bv-helper.pop { animation: bvSayPopWide .65s var(--ease-out); }
+  @keyframes bvSayPopWide {
+    0% { background-color: #FFF0C2; }
+    100% { background-color: transparent; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html.wide .wd-note .bv-helper.pop { animation: none; }
+  }
   html.wide .wd-note .bv-q, html.wide .wd-note .bv-done { margin-left: 8px; }
   html.wide .wd-logwrap { display: none; margin: 18px 0 0 8px; min-height: 0; flex: 1; flex-direction: column; }
   html.wide .wd-logwrap.on { display: flex; }

@@ -160,9 +160,9 @@ function restoreLabs(): void {
   regrouped.forEach((r, step) => {
     r.watch.disconnect();
     if (step.isConnected) {
-      // 원래 차례: 제목, 도움말, 무대, 조작 칸(조작부, 판정 상자, 결론). 랩이 뒤에 붙인 것(궁금증 카드 등)은 그 뒤에 그대로 남는다.
+      // 원래 차례: 제목, 무대, 안내문, 조작 칸(조작부, 판정 상자, 결론). 랩이 뒤에 붙인 것(궁금증 카드 등)은 그 뒤에 그대로 남는다.
       r.slot.append(r.qBox, r.done);
-      step.prepend(r.head, r.helper, r.stage, r.slot);
+      step.prepend(r.head, r.stage, r.helper, r.slot);
     }
     r.main.remove();
     r.note.remove();

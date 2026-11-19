@@ -200,26 +200,48 @@ const LABS = {
     await finish(id, "실제 사진에서 확인하기", { curio: true });
     await newQuiz(id, 3, 0);
   },
-  // u7l4: 별의 움직임, 계절과 별자리
+  // u7l4: 별의 움직임(가로 3D 천구), 계절과 별자리
   async u7l4(id) {
     await isLab(id);
     await W(page, 300);
     await at(id + "a", "1first");
-    for (const d of ["E", "S", "W", "N"]) {
-      await tap(page, `.u7x-segbtn[data-d="${d}"]`);
-      await W(page, 200);
-      for (const v of [6, 12, 20]) { await setRange(page, ".u7x-range", v, false); await W(page, 80); }
-      if (d === "S") await at(id + "a", "2south");
+    await tap(page, ".u7x-enterbtn");
+    ok(await waitFor(page, () => !!document.querySelector(".rot-overlay.in .sp3-canvas"), null, 80), `${id}a: 가로 화면이 열리지 않음`);
+    await W(page, 1800);
+    const has3d = await page.evaluate(() => !!document.querySelector(".rot-overlay .u7x-sky-dock")) && (await ds(page, "u7Phase")) === "play";
+    if (!has3d) {
+      console.log(`  ${id}a: 3D를 켜지 못해 가로 화면 조작은 건너뜀`);
+      ok(await waitDone(page), `${id}a: 3D가 없을 때의 결론이 뜨지 않음`);
+    } else {
+      await dev(page, "time", 16);
+      ok(await waitDs(page, "u7Found", "1", 40), `${id}a: 1단계 지구 자전 탐구가 완료되지 않음`);
+      await W(page, 350);
+      await shot(`${id}a-2space`);
+      texts.push(await stepText(page));
+      await page.evaluate(() => document.querySelector('.rot-overlay .u7x-sky-tab[data-m="dome"]')?.click());
+      await W(page, 500);
+      await shot(`${id}a-2all`);
+      for (const d of ["E", "S", "W", "N"]) {
+        await page.evaluate((dir) => document.querySelector(`.rot-overlay .u7x-sky-vbtn[data-v="${dir}"]`)?.click(), d);
+        await W(page, 350);
+        for (const v of [6, 12, 18]) { await dev(page, "time", v); await W(page, 80); }
+        if (d === "S") await shot(`${id}a-2south`);
+      }
+      ok(await waitDs(page, "u7Seen", "4", 40), `${id}a: 네 하늘을 모두 관측하지 못함`);
+      await W(page, 950);
+      await dev(page, "time", 24);
+      await W(page, 450);
+      await shot(`${id}a-2north`);
+      await dev(page, "pickPole");
+      ok(await waitDs(page, "u7Found", "3", 40), `${id}a: 북극성 찾기 탐구가 완료되지 않음`);
+      await W(page, 350);
+      ok(await page.evaluate(() => !!document.querySelector(".rot-overlay .u7x-rotdone")), `${id}a: 가로 화면에 끝 알림이 없음`);
+      await shot(`${id}a-2pole`);
+      texts.push(await stepText(page));
+      await page.evaluate(() => document.querySelector(".rot-overlay .u7x-rotdone-btn")?.click());
+      await W(page, 700);
+      await judge(id + "a");
     }
-    ok(await waitDs(page, "u7Phase", "pole"), `${id}a: 북극성 찾기로 가지 않음`);
-    await W(page, 300);
-    const off = await stagePt(page, 90, 60);
-    await page.mouse.click(off.x, off.y);
-    await W(page, 200);
-    await at(id + "a", "2pole");
-    const pole = await stagePt(page, 173, 96);
-    await page.mouse.click(pole.x, pole.y);
-    await judge(id + "a");
     await finish(id + "a", "자전과 일주 운동 정리하기");
 
     await goStep(page, 2); // 개념과 그림 문제를 건너 별자리 랩으로
