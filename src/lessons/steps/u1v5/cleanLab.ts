@@ -26,7 +26,7 @@ interface CleanStep {
 }
 
 type Key = "plant" | "car" | "fac";
-const KEYS: Key[] = ["plant", "car", "fac"];
+const KEYS: Key[] = ["car", "plant", "fac"];
 const INFO: Record<Key, { name: string; old: string; neo: string }> = {
   plant: { name: "발전소", old: "석탄 발전", neo: "태양광 발전" },
   car: { name: "자동차", old: "휘발유 자동차", neo: "전기 자동차" },
@@ -244,11 +244,11 @@ export const cleanLab: StepRenderer = (host, step, api) => {
   }
 
   // 둘째 안내는 폰 폭에서 한 줄을 넘어 두 줄로 내린다(u1v5.css .u1x-cap. 조작 칸: 카드 84 + 8 + 20 + 8 + 40 = 160 ≤ 208)
-  f.slot.setControls(bvCards(3, cards.plant, cards.car, cards.fac), el("div", { class: "u1x-cap center", text: "카드를 누르면 기술이 바뀌고, 다시 누르면 원래대로 돌아가요." }), el("div", { class: "u1x-cap center", text: "실제 온실 기체는 눈에 보이지 않지만, 알아보기 쉽게 색깔 층으로 나타냈어요." }));
+  f.slot.setControls(bvCards(3, cards.car, cards.plant, cards.fac), el("div", { class: "u1x-cap center", text: "카드를 누르면 기술이 바뀌고, 다시 누르면 원래대로 돌아가요." }), el("div", { class: "u1x-cap center", text: "실제 온실 기체는 눈에 보이지 않지만, 알아보기 쉽게 색깔 층으로 나타냈어요." }));
   paint();
   showLayer();
   tm.later(tick, TICK);
-  f.say("아래 카드를 눌러 <b>발전소, 자동차, 공장 굴뚝</b>을 하나씩 바꿔 보세요. 하늘의 온실 기체 층이 어떻게 달라지는지 지켜보세요.");
+  f.say("아래 카드를 눌러 <b>자동차, 발전소, 공장 굴뚝</b>을 하나씩 바꿔 보세요. 하늘의 온실 기체 층이 어떻게 달라지는지 지켜보세요.");
   api.setCTA("세 가지 기술을 모두 바꿔 보세요", { enabled: false });
   return () => tm.clear();
 };

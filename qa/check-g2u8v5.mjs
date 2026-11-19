@@ -217,7 +217,7 @@ const LAB = {
     await tapText(page, "북극성"); await W(page, 1900);
     await tapText(page, "데네브"); await W(page, 1900);
     await at("abs-all");
-    await finishLab("abs", "용어 알아보기", 1);
+    await finishLab("abs", "용어 알아보기", 2);
   },
   async heater() {
     await at("heater-start");
@@ -258,15 +258,34 @@ const LAB = {
   },
   async galaxy() {
     await at("galaxy-start");
-    await tapStage(page, 113, 115); await W(page, 400);
-    await at("galaxy-guess");
-    await tapText(page, "실제 태양계"); await W(page, 3100);
-    await at("galaxy-real");
-    await tapKey(page, "in"); await W(page, 900);
-    await at("galaxy-in");
-    await tapKey(page, "out"); await W(page, 900);
-    await at("galaxy-out");
-    await finishLab("galaxy", "용어 알아보기", 1);
+    await click(page, ".g2u8x-enterbtn");
+    ok(await waitFor(page, () => !!document.querySelector(".rot-overlay.in .sp3-canvas"), null, 80), "galaxy: 가로 3D 화면이 열리지 않음");
+    await W(page, 1800);
+    const has3d = await page.evaluate(() => !!document.querySelector(".rot-overlay .g2u8x-gal3d-dock"));
+    if (has3d) {
+      await page.evaluate(() => document.querySelector(".screen.active .step")?.__galDev?.guess?.(-2.0, 4.2));
+      await W(page, 350);
+      await page.screenshot({ path: join(OUT, `${cur}-galaxy-3d-guess.png`) });
+      await page.evaluate(() => document.querySelector('.rot-overlay [data-k="reveal"]')?.click());
+      await W(page, 550);
+      await page.screenshot({ path: join(OUT, `${cur}-galaxy-3d-top.png`) });
+      await page.evaluate(() => document.querySelector('.rot-overlay [data-v="side"]')?.click());
+      await W(page, 650);
+      await page.screenshot({ path: join(OUT, `${cur}-galaxy-3d-side.png`) });
+      await page.evaluate(() => document.querySelector('.rot-overlay [data-v="top"]')?.click());
+      await W(page, 450);
+      await page.evaluate(() => document.querySelector('.rot-overlay [data-k="in"]')?.click());
+      await W(page, 500);
+      await page.screenshot({ path: join(OUT, `${cur}-galaxy-3d-in.png`) });
+      await page.evaluate(() => document.querySelector('.rot-overlay [data-k="out"]')?.click());
+      await W(page, 500);
+      ok(await page.evaluate(() => !!document.querySelector(".rot-overlay .g2u8x-rotdone")), "galaxy: 가로 3D 완료 바가 뜨지 않음");
+      await page.evaluate(() => document.querySelector(".rot-overlay .g2u8x-rotdone-btn")?.click());
+      await W(page, 700);
+      await finishLab("galaxy", "용어 알아보기", 2);
+    } else {
+      await finishLab("galaxy", "용어 알아보기", 0);
+    }
   },
   async observe() {
     await at("observe-start");

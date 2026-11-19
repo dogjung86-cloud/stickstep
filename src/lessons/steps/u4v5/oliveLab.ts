@@ -32,8 +32,10 @@ const BODY = 36; // 병 몸통의 위(그 위로 목 9px)
 const OIL_BOT = BOT - 4.4; // 기름 바닥(유리의 두꺼운 바닥 띠 위)
 const LIQ = 112; // 얼리기 전 올리브유 기둥의 높이
 const DROP = 14; // 얼어서 내려간 높이(기둥의 약 12%)
+const RISE = 13; // 물이 얼어서 올라간 높이(물의 응고 부피 팽창 예외)
 const L0 = OIL_BOT - LIQ; // 얼리기 전 액면(빨간 테이프)
 const L1 = L0 + DROP; // 얼린 뒤 액면(파란 테이프)
+const LW1 = L0 - RISE; // 물이 얼어 높아진 액면(파란 테이프)
 // 얼리는 동안 병을 넣는 얼음과 소금 비커(저울 옆)
 const BATH = { x: 152, w: 66, top: 122, bot: 206 };
 const MOVE = { dx: BATH.x + BATH.w / 2 - BX, dy: BATH.bot - 3 - BOT };
@@ -88,6 +90,18 @@ function solidPts(cx: number): Pt[] {
   for (let k = 0; k < 3; k++) for (let c = 0; c < 4; c++) pts.push({ x: cx + (c - 1.5) * 14.6, y: FLOOR - R - k * 14.6 });
   return pts;
 }
+/** 얼음(물의 응고 예외): 가운데 빈틈이 큰 육각형 고리 두 개(6개씩 12개). */
+function hexIcePts(cx: number): Pt[] {
+  const pts: Pt[] = [];
+  const rad = 14.8;
+  for (const cy of [FLOOR - R - rad, FLOOR - R - rad - 30.2]) {
+    for (let k = 0; k < 6; k++) {
+      const a = (Math.PI / 6) + (Math.PI / 3) * k;
+      pts.push({ x: cx + Math.cos(a) * rad, y: cy + Math.sin(a) * rad });
+    }
+  }
+  return pts;
+}
 const topOf = (ps: Pt[]): number => Math.min(...ps.map((p) => p.y)) - R - 1.5;
 
 /** to를 from의 차례에 맞게 다시 늘어놓는다. 짝 사이 거리의 합이 줄어드는 동안 두 짝을 맞바꾼다
@@ -109,7 +123,7 @@ function pairUp(from: Pt[], to: Pt[]): Pt[] {
 
 export const u4OliveLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as U4Step;
-  const lab = u4Lab(host, api, s, { steps: 3, cls: "u4x-olive", tall: true });
+  const lab = u4Lab(host, api, s, { steps: 4, cls: "u4x-olive", tall: true });
   const { f, tm } = lab;
   const rnd = seeded(77);
   const ns = `u4o${Math.random().toString(36).slice(2, 7)}`; // 그라데이션 id(같은 id가 다른 화면에 남아 있으면 색이 빠진다)
@@ -119,8 +133,10 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
   const liqB = liquidPts(cB, rnd);
   const liqC = liqB.map((p) => ({ x: p.x - cB + cC, y: p.y }));
   const solC = pairUp(liqC, solidPts(cC));
+  const hexC = pairUp(liqC, hexIcePts(cC));
   const lvl0 = topOf(liqC); // 창 안의 액면: 얼리기 전
-  const lvl1 = topOf(solC); // 얼린 뒤
+  const lvl1 = topOf(solC); // 얼린 뒤(올리브유)
+  const lvlW = topOf(hexC); // 얼린 뒤(물 → 얼음, 높아짐)
 
   const dot = (p: Pt, cls: string): string =>
     `<circle class="${cls}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${R}" fill="url(#${ns}p)" stroke="${A.partEdge}" stroke-width="1.1"/>`;
@@ -146,9 +162,12 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     <defs>
       <linearGradient id="${ns}oil" x1="0" x2="1"><stop offset="0" stop-color="#FFD24D"/><stop offset=".5" stop-color="${A.oil}"/><stop offset="1" stop-color="#D99500"/></linearGradient>
       <linearGradient id="${ns}frz" x1="0" x2="1"><stop offset="0" stop-color="#FFF8DC"/><stop offset=".5" stop-color="${A.oilFrozen}"/><stop offset="1" stop-color="#E9D58C"/></linearGradient>
+      <linearGradient id="${ns}wat" x1="0" x2="1"><stop offset="0" stop-color="#8FD4FF"/><stop offset=".5" stop-color="#4FA8EE"/><stop offset="1" stop-color="#2E86D0"/></linearGradient>
+      <linearGradient id="${ns}wfrz" x1="0" x2="1"><stop offset="0" stop-color="#F2FBFF"/><stop offset=".5" stop-color="#CBEBFA"/><stop offset="1" stop-color="#9BD3F0"/></linearGradient>
       <linearGradient id="${ns}lid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B7C4D4"/><stop offset=".5" stop-color="#8B9BB0"/><stop offset="1" stop-color="#6B7B90"/></linearGradient>
       <linearGradient id="${ns}ice" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2FAFF" stop-opacity=".9"/><stop offset=".55" stop-color="#CBE6FA" stop-opacity=".62"/><stop offset="1" stop-color="#A7D0EE" stop-opacity=".55"/></linearGradient>
       <radialGradient id="${ns}p" cx=".35" cy=".32" r=".75"><stop offset="0" stop-color="#D9D2FF"/><stop offset=".55" stop-color="${A.part}"/><stop offset="1" stop-color="#7464E0"/></radialGradient>
+      <radialGradient id="${ns}pw" cx=".35" cy=".32" r=".75"><stop offset="0" stop-color="#DFF4FF"/><stop offset=".55" stop-color="#66BCFF"/><stop offset="1" stop-color="#2B7ED6"/></radialGradient>
     </defs>
     ${scale(SC.x, SC.y, SC.w, "u4x-olive", ZERO)}
     <g class="u4x-olive-jar">
@@ -174,6 +193,12 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
       <text x="${BX + BW + 18}" y="${L0 + 4}" font-size="12.5" font-weight="800" fill="#FFE58A">줄어든</text>
       <text x="${BX + BW + 18}" y="${L0 + 19}" font-size="12.5" font-weight="800" fill="#FFE58A">높이</text>
     </g>
+    <g class="u4x-water-mark" opacity="0">
+      <rect x="${BX - BW + 2.6}" y="${LW1 + 2}" width="${BW * 2 - 5.2}" height="${RISE - 2}" fill="#7CF0B5" opacity="0.28"/>
+      <path d="M${BX + BW + 7} ${LW1} h6 V${L0} h-6" stroke="#7CF0B5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="${BX + BW + 18}" y="${LW1 + 5}" font-size="12.5" font-weight="800" fill="#7CF0B5">늘어난</text>
+      <text x="${BX + BW + 18}" y="${LW1 + 20}" font-size="12.5" font-weight="800" fill="#7CF0B5">높이</text>
+    </g>
     <g class="u4x-olive-cmp" opacity="0">
       ${winRect(WB.x, WB.w)}
       <text x="${cB}" y="${WIN_Y + 21}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9BEFF">얼리기 전</text>
@@ -188,6 +213,11 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
       <path class="u4x-olive-ghost" d="M${cC - SEC} ${lvl0.toFixed(1)} h${SEC * 2}" stroke="#F0705E" stroke-width="1.6" stroke-dasharray="4 3" opacity="0"/>
       ${section(cC, lvl0, "u4x-olive-c", "rgba(255,255,255,.6)")}
       <path class="u4x-olive-wmark" d="M${cC + SEC + 3} ${lvl0.toFixed(1)} h5 V${lvl1.toFixed(1)} h-5" stroke="#FFE58A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>
+      <g class="u4x-hex-ring" opacity="0">${(() => {
+        const raw = hexIcePts(cC);
+        const poly = (pts: Pt[]): string => `<polygon points="${pts.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ")}" fill="none" stroke="rgba(160,225,255,.55)" stroke-width="1.5" stroke-dasharray="2.5 2"/>`;
+        return poly(raw.slice(0, 6)) + poly(raw.slice(6, 12));
+      })()}</g>
       ${liqC.map((p) => dot(p, "u4x-olive-p u4x-olive-pc")).join("")}
     </g>
   </svg>`;
@@ -200,6 +230,8 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
   const tape1 = q<SVGRectElement>(".u4x-olive-tape1");
   const tape2 = q<SVGRectElement>(".u4x-olive-tape2");
   const mark = q<SVGGElement>(".u4x-olive-mark");
+  const waterMark = q<SVGGElement>(".u4x-water-mark");
+  const hexRing = q<SVGGElement>(".u4x-hex-ring");
   const cmp = q<SVGGElement>(".u4x-olive-cmp");
   const ttl = q<SVGTextElement>(".u4x-olive-ttl");
   const cnt = q<SVGTextElement>(".u4x-olive-cnt");
@@ -212,6 +244,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
 
   let pred = "";
   let t = 0;
+  let waterMode = false;
   let bathOn = false;
   /** 병의 자리: 저울 위(false) 또는 얼음과 소금 비커 속(true). */
   const inBath = (on: boolean): void => {
@@ -222,23 +255,25 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     if (on) read.textContent = ZERO;
   };
   const paint = (): void => {
-    const y = L0 + DROP * t;
+    const y = waterMode ? L0 - RISE * t : L0 + DROP * t;
     for (const r of [oil, ice]) {
       r.setAttribute("y", y.toFixed(1));
       r.setAttribute("height", (OIL_BOT - y).toFixed(1));
     }
     const k = Math.min(1, Math.max(0, (t - 0.3) / 0.55)); // 하얗게 굳는 정도
     ice.setAttribute("opacity", k.toFixed(2));
-    const lv = lvl0 + (lvl1 - lvl0) * t;
+    const lv = lvl0 + ((waterMode ? lvlW : lvl1) - lvl0) * t;
     cFill.setAttribute("y", lv.toFixed(1));
     cFill.setAttribute("height", (FLOOR + 1 - lv).toFixed(1));
     cLine.setAttribute("d", `M${cC - SEC} ${lv.toFixed(1)} h${SEC * 2}`);
-    // 짝지은 자리 사이를 곧게 가되, 가다가 맞닿는 입자는 서로 밀어 겹치지 않게 한다(액체 넉 줄이 고체 석 줄로 바뀌는 길)
-    const ps = relax(liqC.map((p, i) => ({ x: p.x + (solC[i].x - p.x) * t, y: p.y + (solC[i].y - p.y) * t })), cC, 12);
+    // 짝지은 자리 사이를 곧게 가되, 가다가 맞닿는 입자는 서로 밀어 겹치지 않게 한다
+    const targetPts = waterMode ? hexC : solC;
+    const ps = relax(liqC.map((p, i) => ({ x: p.x + (targetPts[i].x - p.x) * t, y: p.y + (targetPts[i].y - p.y) * t })), cC, waterMode && t > 0.9 ? 2 : 12);
     pC.forEach((c, i) => {
       c.setAttribute("cx", ps[i].x.toFixed(1));
       c.setAttribute("cy", ps[i].y.toFixed(1));
     });
+    hexRing.setAttribute("opacity", waterMode && t > 0.75 ? ((t - 0.75) * 4).toFixed(2) : "0");
     host.dataset.u4Olive = t.toFixed(2);
   };
   // 액체일 때는 입자가 조금씩 자리를 옮긴다(얼수록 잦아든다). '얼리기 전' 칸의 입자는 늘 액체다.
@@ -321,6 +356,69 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     tm.later(judge, 1100);
   });
 
+  function toWater(): void {
+    waterMode = true;
+    t = 0;
+    inBath(false);
+    read.textContent = MASS;
+    oil.setAttribute("fill", `url(#${ns}wat)`);
+    ice.setAttribute("fill", `url(#${ns}wfrz)`);
+    [...pB, ...pC].forEach((c) => {
+      c.setAttribute("fill", `url(#${ns}pw)`);
+      c.setAttribute("stroke", "#2B7ED6");
+    });
+    mark.setAttribute("opacity", "0");
+    cmp.setAttribute("opacity", "0");
+    tape2.setAttribute("opacity", "0");
+    tape2.setAttribute("y", (LW1 - 2).toFixed(1));
+    cLine.setAttribute("stroke", "rgba(255,255,255,.6)");
+    ghost.setAttribute("opacity", "0");
+    wmark.setAttribute("opacity", "0");
+    wmark.setAttribute("d", `M${cC + SEC + 3} ${lvlW.toFixed(1)} h5 V${lvl0.toFixed(1)} h-5`);
+    wmark.setAttribute("stroke", "#7CF0B5");
+    ttl.textContent = "물의 입자 모형";
+    cnt.setAttribute("opacity", "0");
+    paint();
+    const holdWater = u4Hold(lab, "꾹 눌러 물 얼리기", (ms) => {
+      inBath(true);
+      t = Math.min(1, t + ms / 2200);
+      paint();
+      if (t < 1) return true;
+      haptic(HAPTIC.correct);
+      holdWater.disabled = true;
+      inBath(false);
+      read.textContent = MASS;
+      tape2.setAttribute("opacity", "1");
+      waterMark.setAttribute("opacity", "1");
+      cmp.setAttribute("opacity", "1");
+      cLine.setAttribute("stroke", "#6C8CFF");
+      ghost.setAttribute("opacity", "0.85");
+      wmark.setAttribute("opacity", "1");
+      ttl.textContent = "얼린 뒤(얼음)";
+      cnt.setAttribute("opacity", "1");
+      f.pips(3);
+      f.say(`물을 얼리고 물기를 닦아 재니 질량은 그대로 <b>${MASS}</b>인데, 파란 테이프가 빨간 테이프보다 <b>위로 올라갔어요</b>!`);
+      tm.later(judgeWater, 1100);
+      return false;
+    });
+    f.say("대부분의 액체는 얼 때 부피가 줄어들지만, <b>물</b>은 예외예요! 같은 병에 <b>물(${MASS})</b>을 담아 얼려 비교해 보세요.".replace("${MASS}", MASS));
+    f.slot.setControls(holdWater);
+    api.setCTA("꾹 눌러 물을 얼려 보세요", { enabled: false });
+  }
+
+  function judgeWater(): void {
+    f.slot.ask(
+      "물이 얼어 얼음이 될 때 올리브유와 반대로 <b>부피가 늘어난</b> 까닭은?",
+      [{ t: "빈틈이 많은 육각형 모양으로 배열되어서", ok: true }, { t: "얼면서 물 입자의 개수가 더 많아져서" }, { t: "물 입자 하나하나의 크기가 부풀어서" }],
+      (ok) => api.recordQuiz(ok),
+      {
+        why: "물도 얼 때 입자 수와 질량은 그대로예요. 다만 입자들이 <b>빈틈이 큰 육각형</b>으로 배열되어 부피만 늘어나요.",
+        onNext: () =>
+          lab.finish("액체가 응고할 때 입자 수는 그대로라 <b>질량은 일정해요</b>. 대부분의 물질은 입자 사이가 가까워져 부피가 줄지만, <b>물</b>은 빈틈 많은 육각형으로 배열되어 <b>부피가 늘어나요</b>."),
+      },
+    );
+  }
+
   function judge(): void {
     f.slot.ask(
       "액체 올리브유가 얼었을 때 <b>부피가 줄어든</b> 까닭은 무엇인가요?",
@@ -329,7 +427,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
       (ok) => api.recordQuiz(ok),
       {
         why: "상태가 변해도 입자의 크기와 개수는 변하지 않아요. 액체가 고체로 응고할 때 <b>입자 사이의 거리</b>가 가까워지기 때문에 부피가 줄어들어요.",
-        onNext: () => lab.finish("액체가 고체로 응고할 때 입자의 종류와 개수는 변하지 않으므로 <b>질량은 일정해요</b>. 하지만 입자 사이의 거리가 가까워지면서 <b>부피는 줄어들어요</b>(물 제외)."),
+        onNext: toWater,
       },
     );
   }

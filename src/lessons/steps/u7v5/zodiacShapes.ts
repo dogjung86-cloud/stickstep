@@ -55,32 +55,76 @@ const SHAPES: Record<string, { p: [number, number][]; l: [number, number][] }> =
   },
 };
 
-/** 별자리 스틱 그림 스프라이트(흰색으로 그려 material.color로 틴트). */
+/** 별자리 스틱 그림 스프라이트(고해상도 성좌 원판 + 빛번짐 별 + 주성 십자 빛살, material.color로 틴트). */
 export function constellationTexture(name: string): HTMLCanvasElement {
-  const S = 112;
-  const pad = 10;
+  const S = 256;
+  const pad = 28;
   const cv = document.createElement("canvas");
   cv.width = S;
   cv.height = S;
   const ctx = cv.getContext("2d")!;
   const shape = SHAPES[name] ?? SHAPES["게"];
   const px = (f: number): number => pad + f * (S - pad * 2);
-  ctx.strokeStyle = "rgba(255,255,255,.55)";
-  ctx.lineWidth = 2.2;
+
+  // 은은한 천구 성좌 메달 배경
+  const bg = ctx.createRadialGradient(S / 2, S / 2, 12, S / 2, S / 2, S * 0.47);
+  bg.addColorStop(0, "rgba(32, 54, 98, 0.34)");
+  bg.addColorStop(0.76, "rgba(18, 32, 64, 0.22)");
+  bg.addColorStop(1, "rgba(12, 22, 46, 0)");
+  ctx.fillStyle = bg;
+  ctx.beginPath();
+  ctx.arc(S / 2, S / 2, S * 0.47, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = "rgba(185, 215, 255, 0.22)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(S / 2, S / 2, S * 0.43, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // 성좌선: 바깥 은은한 광채 + 안쪽 또렷한 선
   ctx.lineCap = "round";
-  for (const [a, b] of shape.l) {
-    ctx.beginPath();
-    ctx.moveTo(px(shape.p[a][0]), px(shape.p[a][1]));
-    ctx.lineTo(px(shape.p[b][0]), px(shape.p[b][1]));
-    ctx.stroke();
+  ctx.lineJoin = "round";
+  for (const [w, al] of [[8.5, 0.22], [3.4, 0.78]] as const) {
+    ctx.strokeStyle = `rgba(235, 245, 255, ${al})`;
+    ctx.lineWidth = w;
+    for (const [a, b] of shape.l) {
+      ctx.beginPath();
+      ctx.moveTo(px(shape.p[a][0]), px(shape.p[a][1]));
+      ctx.lineTo(px(shape.p[b][0]), px(shape.p[b][1]));
+      ctx.stroke();
+    }
   }
-  ctx.fillStyle = "#FFFFFF";
-  ctx.shadowColor = "rgba(255,255,255,.9)";
-  ctx.shadowBlur = 5;
-  for (const [fx, fy] of shape.p) {
+
+  // 별: 다단 방사형 글로우 + 주성(0, 1번)은 4방향 빛살
+  shape.p.forEach(([fx, fy], i) => {
+    const x = px(fx);
+    const y = px(fy);
+    const bright = i < 2;
+    const gr = bright ? 18 : 13;
+    const g = ctx.createRadialGradient(x, y, 1, x, y, gr);
+    g.addColorStop(0, "rgba(255, 255, 255, 1)");
+    g.addColorStop(0.32, "rgba(235, 245, 255, 0.85)");
+    g.addColorStop(1, "rgba(180, 215, 255, 0)");
+    ctx.fillStyle = g;
     ctx.beginPath();
-    ctx.arc(px(fx), px(fy), 3.1, 0, Math.PI * 2);
+    ctx.arc(x, y, gr, 0, Math.PI * 2);
     ctx.fill();
-  }
+
+    if (bright) {
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.78)";
+      ctx.lineWidth = 1.8;
+      for (const [dx, dy] of [[14, 0], [0, 14]] as const) {
+        ctx.beginPath();
+        ctx.moveTo(x - dx, y - dy);
+        ctx.lineTo(x + dx, y + dy);
+        ctx.stroke();
+      }
+    }
+    ctx.fillStyle = "#FFFFFF";
+    ctx.beginPath();
+    ctx.arc(x, y, bright ? 5.6 : 4.4, 0, Math.PI * 2);
+    ctx.fill();
+  });
   return cv;
 }

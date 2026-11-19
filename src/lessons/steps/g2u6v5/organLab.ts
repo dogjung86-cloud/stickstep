@@ -217,7 +217,11 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
       st.tags.forEach((g, i) => {
         if (!g) return;
         const left = cx(i) - pillW(g) / 2;
-        if (xe >= left - 2 || t >= 1) out += lanePill(cx(i), st.y, g, st.color, st.key === "bile");
+        if (xe >= left - 2 || t >= 1) {
+          const py = st.key === "stomach" ? st.y - 5 : st.y;
+          out += lanePill(cx(i), py, g, st.color, st.key === "bile");
+          if (st.key === "stomach") out += txt(cx(i), py + 21, "염산 도움", { size: 12, fill: "#DCC6FA", weight: 700 });
+        }
       });
     });
     // 지금 모습 상자
@@ -295,7 +299,7 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
   // 섞은 뒤에는 단추를 다시 고를 수 없다(ro). 그래서 "없음을 골라 보세요", "남은 영양소도 눌러 보세요" 같은 다시 고르라는 말은 뺐다.
   const WRONG: Record<StopKey, string> = {
     mouth: "침을 섞었을 때 사슬이 끊어진 영양소 칸을 다시 살펴보세요. 입에서는 <b>녹말</b>만 엿당으로 분해돼요.",
-    stomach: "위에서는 <b>단백질</b> 사슬만 끊어졌어요. 녹말과 지방은 위에서 분해되지 않고 그대로 지나가요.",
+    stomach: "위에서는 위액 속 <b>펩신</b>이 <b>염산</b>의 도움을 받아 <b>단백질</b>만 분해해요. 녹말과 지방은 그대로 지나가요.",
     bile: "쓸개즙에는 <b>소화효소가 없어요</b>. 지방이 작은 방울로 흩어졌을 뿐 다른 물질로 분해된 것은 아니에요.",
     pancreas: "이자액에는 세 가지 영양소를 분해하는 효소가 모두 들어 있어서 <b>녹말·단백질·지방</b>이 모두 분해돼요.",
   };

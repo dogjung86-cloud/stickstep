@@ -347,6 +347,10 @@ const PLAYS = {
     await at(id, "olive-wet");
     await L.click(page, ".u4x-olive-again");
     await wrongOnce(id, "olive");
+    ok(await L.waitVisible(page, ".u4x-hold"), `${id} water: 물 얼리기 버튼이 뜨지 않음`);
+    await at(id, "water-ready");
+    await L.hold(page, ".u4x-hold", 2500);
+    await wrongOnce(id, "water");
     await endLab(id, "olive", "다음 실험: 아세톤과 풍선");
     // 풍선 랩
     await predict(id, "balloon", "그대로다");

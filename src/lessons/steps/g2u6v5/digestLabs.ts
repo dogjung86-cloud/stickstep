@@ -20,7 +20,7 @@
 
 import type { StepRenderer } from "../../types";
 import { P, bad, bvBtn, bvTween, chip, dot, g6Lab, g6Svg, good, row, tag, tap, toast, tube, txt, type G6Step } from "./kit";
-import { VILLI_ABSORBED, VILLI_TOTAL, villiInset, villiInsetLink, villiWall, villiWallLabels } from "./villiArt";
+import { VILLI_ABSORBED, VILLI_TOTAL, villiInset, villiInsetLink, villiPathLegend, villiWall, villiWallLabels } from "./villiArt";
 
 // ── 침의 소화 작용 ─────────────────────────────────────────────────
 // fail: 침이 일을 못 한 까닭의 말(실패 안내). 얼음물에서도 아주 조금은 작용하므로 "활발히 작용하지 못해"로 쓴다(레슨 문제의 "잘 작용하지 못해서"와 맞춘다).
@@ -189,18 +189,20 @@ const WALL_NAMES = ["매끈한 벽", "주름진 벽", "주름 + 융털 벽"];
 
 export const g2u6VilliLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 2, cls: "g2u6x-villi", wait: "세 가지 벽 모양에 영양소를 모두 흘려보내 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-villi", wait: "세 가지 벽 모양에 영양소를 모두 흘려보내 보세요" });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "작은창자 안쪽 벽의 단면과 그 위를 지나는 영양소");
   let level = 0;
   let run = -1; // 0~1 진행, -1은 대기
+  let showPath = false;
+  let pathRevealed = false;
   const result: (number | null)[] = [null, null, null];
   let busy = false;
 
   const draw = (): void => {
     const wall = villiWall(level);
     let out = wall.svg + villiWallLabels(level);
-    out += txt(16, 56, "작은창자 안", { anchor: "start", size: 12, fill: P.dim });
+    if (!showPath) out += txt(16, 56, "작은창자 안", { anchor: "start", size: 12, fill: P.dim });
     if (level === 2) out += villiInsetLink();
     const got = VILLI_ABSORBED[level];
     const tg = wall.targets;
@@ -212,11 +214,14 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
       const spread = [-3, 2, -1, 3, -2, 1][i % 6]; // 주름 꼭대기에만 모이지 않게 조금씩 비킨다
       const target = tg[Math.max(0, Math.min(tg.length - 1, Math.floor(((i + 0.5) / got) * tg.length) + (level === 2 ? 0 : spread)))] ?? tg[0];
       const tx = Math.max(9, target[0]);
-      if (run < 0) out += dot(sx, sy, 4.6, P.glucose, "#8A5A0A");
-      else if (absorbed) out += dot(sx + (tx - sx) * run, sy + (target[1] - sy) * run, 4.6, P.glucose, "#8A5A0A");
-      else out += `<g opacity="${(1 - run * 0.85).toFixed(2)}">${dot(sx + 70 * run, sy, 4.6, P.glucose, "#8A5A0A")}</g>`;
+      const col = showPath && i % 3 === 2 ? "#FFE066" : P.glucose;
+      const stk = showPath && i % 3 === 2 ? "#7A5600" : "#8A5A0A";
+      if (run < 0) out += dot(sx, sy, 4.6, col, stk);
+      else if (absorbed) out += dot(sx + (tx - sx) * run, sy + (target[1] - sy) * run, 4.6, col, stk);
+      else out += `<g opacity="${(1 - run * 0.85).toFixed(2)}">${dot(sx + 70 * run, sy, 4.6, col, stk)}</g>`;
     }
-    if (level === 2) out += villiInset();
+    if (level === 2) out += villiInset(showPath);
+    if (showPath) out += villiPathLegend(pathRevealed);
     out += `<g>${result.map((r, i) => tag([46, 130, 266][i], 26, `${["매끈", "주름", "주름과 융털"][i]} ${r === null ? "?" : `${r}개`}`, { size: 12, fill: i === level ? "#fff" : P.dim, stroke: i === level ? "#9CC2FF" : "#3A4D6E" })).join("")}</g>`;
     stage.set(out);
     host.dataset.g6Level = String(level);
@@ -261,9 +266,24 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
   sum.addEventListener("click", () => {
     if (busy) return;
     tap();
-    lab.judge("작은창자 안쪽 벽에 주름과 융털이 많을 때 영양소가 <b>훨씬 더 많이</b> 흡수된 까닭은 무엇인가요?", [{ t: "영양소와 닿는 표면적이 매우 넓어져서", ok: true }, { t: "융털이 영양소의 크기를 더 작게 분해해서" }, { t: "작은창자의 근육층이 더 두꺼워져서" }], "주름과 융털은 작은창자 안쪽 벽이 영양소와 닿는 <b>표면적</b>을 크게 넓혀 주어 영양소를 효율적으로 흡수하게 해 줘요.", () =>
-      lab.finish("작은창자 안쪽 벽에는 수많은 주름과 작은 돌기인 <b>융털</b>이 빽빽하게 나 있어 영양소와 닿는 <b>표면적</b>이 매우 넓어요. 덕분에 소화된 영양소를 효율적으로 흡수할 수 있어요."),
-    );
+    lab.judge("작은창자 안쪽 벽에 주름과 융털이 많을 때 영양소가 <b>훨씬 더 많이</b> 흡수된 까닭은 무엇인가요?", [{ t: "영양소와 닿는 표면적이 매우 넓어져서", ok: true }, { t: "융털이 영양소의 크기를 더 작게 분해해서" }, { t: "작은창자의 근육층이 더 두꺼워져서" }], "주름과 융털은 작은창자 안쪽 벽이 영양소와 닿는 <b>표면적</b>을 크게 넓혀 주어 영양소를 효율적으로 흡수하게 해 줘요.", () => {
+      level = 2;
+      run = 1;
+      showPath = true;
+      f.pips(2);
+      draw();
+      f.say("융털 속에는 <b>모세혈관</b>과 <b>암죽관</b>이 있어요. 무대에서 영양소가 들어가는 통로를 살펴보세요.");
+      lab.judge(
+        "지방이 분해된 <b>지방산과 모노글리세라이드</b>는 융털 속 어디로 흡수되나요?",
+        [{ t: "가운데의 암죽관", ok: true }, { t: "그물 모양의 모세혈관" }, { t: "아래쪽의 근육층" }],
+        "물에 잘 녹는 포도당과 아미노산은 <b>모세혈관</b>으로, 물에 잘 녹지 않는 지방산과 모노글리세라이드는 <b>암죽관</b>으로 흡수돼요.",
+        () => {
+          pathRevealed = true;
+          draw();
+          lab.finish("작은창자 안쪽 벽의 주름과 <b>융털</b>은 <b>표면적</b>을 넓혀 영양소를 효율적으로 흡수해요. 융털 속 <b>모세혈관</b>과 <b>암죽관</b>으로 영양소가 나뉘어 흡수돼요.");
+        },
+      );
+    });
   });
   f.slot.setControls(row(...chips.map((c) => c.el)), flow, sum);
   chips[0].on(true);

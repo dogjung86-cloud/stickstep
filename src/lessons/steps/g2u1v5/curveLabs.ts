@@ -464,13 +464,14 @@ export const g2u1BoilLab = curveLab({
 });
 
 // 3. 물과 소금물
-const saltRun = (key: string, name: string, sub: string, color: string, bp: number, drift: number, liq: string): Run => ({
+const saltRun = (key: string, name: string, sub: string, color: string, bp: number, drift: number, liq: string, tag: Tag): Run => ({
   key,
   name,
   sub,
   color,
   f: heat(90, 5, bp, 99, drift),
   mark: drift ? undefined : bp,
+  tag,
   done: drift ? "계속 오름" : "100 ℃ 멈춤",
   say: drift ? `${name}은 <b>${fx(bp)} ℃</b>쯤에서 끓기 시작했는데, 끓는 동안에도 온도가 <b>계속 올랐어요</b>.` : "물은 <b>100 ℃</b>에서 끓기 시작해 온도가 더 오르지 않았어요.",
   state: (t) => (t < (bp - 90) / 5 ? "액체" : "끓는 중"),
@@ -480,13 +481,18 @@ const saltRun = (key: string, name: string, sub: string, color: string, bp: numb
 export const g2u1SaltLab = curveLab({
   cls: "g2u1x-cv-salt",
   tall: true, // 소금물의 가열 결과와 남은 액체 안내가 이어지면 세 줄(약 690px)
+  markSkipTicks: true,
   y0: 90,
   y1: 110,
   yt: [90, 95, 100, 105, 110],
   tMax: 10,
   xt: [5, 10],
   cols: 3,
-  runs: [saltRun("w", "물", "물 100 g", "#74C0FC", 100, 0, P.water), saltRun("s1", "묽은 소금물", "소금 10 g", "#FFD43B", 101.8, 0.16, "#8FC4F2"), saltRun("s2", "진한 소금물", "소금 30 g", "#FFA94D", 105.3, 0.42, "#B5D3EE")],
+  runs: [
+    saltRun("w", "물", "물 100 g", "#74C0FC", 100, 0, P.water, { text: "물", t: 9.8, v: 100, dx: -2, dy: 14, anchor: "end" }),
+    saltRun("s1", "묽은 소금물", "소금 10 g", "#FFD43B", 101.8, 0.16, "#8FC4F2", { text: "묽은 소금물", t: 9.8, v: 103.0, dx: -2, dy: -5, anchor: "end" }),
+    saltRun("s2", "진한 소금물", "소금 30 g", "#FFA94D", 105.3, 0.42, "#B5D3EE", { text: "진한 소금물", t: 9.8, v: 108.2, dx: -2, dy: -5, anchor: "end" }),
+  ],
   need: (d) => d.size === 3,
   path: ["w", "s1", "s2"],
   intro: "순수한 <b>물</b>과 농도가 다른 <b>소금물</b> 두 가지를 90 ℃부터 가열해 비교해 보세요.",

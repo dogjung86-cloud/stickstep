@@ -81,6 +81,32 @@ export const tapeLab: StepRenderer = (host, step, api) => {
     }
     ctx.stroke();
   }
+  /** 두 겹을 가로지르는 등간격 눈금(8칸). 가열해 휠수록 바깥쪽 호의 눈금 간격이 넓어지고 안쪽은 좁아진다. */
+  function stripTicks(ctx: Ctx, kappa: number): void {
+    ctx.save();
+    ctx.strokeStyle = "rgba(18,28,45,.55)";
+    ctx.lineWidth = 1.4;
+    for (let i = 1; i < 8; i++) {
+      const sLen = (LEN * i) / 8;
+      const th = kappa * sLen;
+      const px = Math.abs(kappa) < 1e-5 ? sLen : Math.sin(th) / kappa;
+      const py = Math.abs(kappa) < 1e-5 ? 0 : -(1 - Math.cos(th)) / kappa;
+      const cx = X0 + px;
+      const cy = Y0 + py;
+      ctx.beginPath();
+      ctx.moveTo(cx - Math.sin(th) * (THICK - 0.8), cy - Math.cos(th) * (THICK - 0.8));
+      ctx.lineTo(cx + Math.sin(th) * (THICK - 0.8), cy + Math.cos(th) * (THICK - 0.8));
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  const arcPt = (kappa: number, u: number, off: number): { x: number; y: number } => {
+    const sLen = LEN * u;
+    const th = kappa * sLen;
+    const px = Math.abs(kappa) < 1e-5 ? sLen : Math.sin(th) / kappa;
+    const py = Math.abs(kappa) < 1e-5 ? 0 : -(1 - Math.cos(th)) / kappa;
+    return { x: X0 + px - Math.sin(th) * off, y: Y0 + py - Math.cos(th) * off };
+  };
   const swatch = (ctx: Ctx, x: number, y: number, color: string, label: string): void => {
     rr(ctx, x, y - 5, 16, 10, 3);
     ctx.fillStyle = color;
@@ -236,6 +262,26 @@ export const tapeLab: StepRenderer = (host, step, api) => {
     const hot = iron ? Math.min(1, heat * 1.8) : 0;
     layer(ctx, kappa, THICK / 2, hot ? mix(topC, "#FFB07A", 0.35 * hot) : topC);
     layer(ctx, kappa, -THICK / 2, hot ? mix(botC, "#FF9A50", 0.3 * hot) : botC);
+    stripTicks(ctx, kappa);
+    if (!iron && heat > 0.55) {
+      const outP = arcPt(kappa, 0.5, -dir * (THICK + 19));
+      const inP = arcPt(kappa, 0.3, dir * (THICK + 23));
+      const haloTxt = (t: string, x: number, y: number, color: string, weight: number): void => {
+        ctx.save();
+        ctx.font = `${weight} 12px Pretendard, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.strokeStyle = "#0B1524";
+        ctx.lineWidth = 3.6;
+        ctx.lineJoin = "round";
+        ctx.strokeText(t, x, y);
+        ctx.fillStyle = color;
+        ctx.fillText(t, x, y);
+        ctx.restore();
+      };
+      haloTxt("더 많이 늘어남(바깥쪽)", Math.min(266, Math.max(120, outP.x)), outP.y, "#FFB878", 800);
+      haloTxt("덜 늘어남(안쪽)", Math.min(266, Math.max(114, inP.x)), inP.y, "#DCE6F5", 700);
+    }
     if (gapRing) {
       // 접점에서 떨어진 틈: 무대에서 가장 진하게
       const pulse = 1 + 0.08 * Math.sin(tMs / 160);

@@ -316,6 +316,7 @@ const LABS = {
     await at(id, "villi-all");
     await must(id, ".g2u6x-go", 400);
     await wrongOnce(id, "villi");
+    await wrongOnce(id, "villi2");
     await done(id, "villi");
   },
   async heart(id) {

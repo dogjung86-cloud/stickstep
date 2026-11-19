@@ -13,7 +13,6 @@
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
-import { drawForceArrow } from "../../../ui/forceProps";
 import type { StepRenderer } from "../../types";
 import { bvCapture, bvCard, bvCards, bvTimers } from "../bio6/b6Lab";
 import { clamp, U5, u5Arrow, u5Canvas, u5Frame, u5Hold, u5Pill, u5Read, u5Text } from "./u5Kit";
@@ -66,7 +65,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
       ? `<b>${SLIP[face]}도</b>에서 도막이 미끄러졌어요.`
       : ang < 1
         ? "나무판의 <b>오른쪽 끝</b>(동그란 손잡이)을 위로 끌어 올려요.<br>도막이 미끄러지기 시작하는 기울기를 찾아요."
-        : `기울기 <b>${Math.round(ang)}도</b>. 도막이 아직 버텨요.<br>빨간 화살표가 미끄러짐을 방해하는 힘이에요.`;
+        : `기울기 <b>${Math.round(ang)}도</b>. 두 힘이 비겨 아직 버텨요.<br>빨간 화살표가 미끄러짐을 방해하는 힘이에요.`;
   };
   const setFace = (k: Face): void => {
     if (busy || sliding || dragging || k === face || !ready) return;
@@ -317,9 +316,16 @@ export const slopeLab: StepRenderer = (host, step, api) => {
       ctx.fill();
       const bx = 176 - slide * 130;
       block(ctx, bx, -9, 46, 28, face);
-      // 방해하는 힘: 맞닿은 면(도막 아랫면 가운데)에서 빗면 위쪽으로. 0에서 자라 기울기의 sin에 비례한다
-      if (!sliding) u5Arrow(ctx, bx, -9, TPX * Math.sin(r), 0, { color: U5.back, width: 4 });
-      if (sliding) drawForceArrow(ctx, bx - 23, -24, -30, 0, { color: U5.dim, width: 3 });
+      // 미끄러지려는 힘(파랑, 빗면 아래쪽)과 방해하는 힘(빨강, 맞닿은 면에서 빗면 위쪽)
+      if (ang > 1) {
+        const L = TPX * Math.sin(r);
+        u5Arrow(ctx, bx - 23, -23, -L, 0, { color: U5.push, width: 4 });
+        u5Arrow(ctx, bx, -9, sliding ? L * 0.76 : L, 0, { color: U5.back, width: 4 });
+        if (!sliding && ang >= 8) {
+          u5Text(ctx, "미끄러지려는 힘", bx - 23 - L / 2, -40, { color: "#B5D4FF", px: 12 });
+          u5Text(ctx, "방해하는 힘", bx + L / 2, 13, { color: "#FFD9D9", px: 12 });
+        }
+      }
       ctx.restore();
       // 손잡이
       const pulse = 0.5 + 0.5 * Math.sin(t / 300);

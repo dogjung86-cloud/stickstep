@@ -47,10 +47,11 @@ export function u6Lab(host: HTMLElement, api: StepAPI, o: { title: string; steps
     const w = cv.clientWidth;
     const h = cv.clientHeight;
     if (!w || !h) return null;
-    if (w !== cw || h !== ch) {
+    const d = stageDpr();
+    if (w !== cw || h !== ch || d !== dpr) {
       cw = w;
       ch = h;
-      dpr = stageDpr();
+      dpr = d;
       cv.width = Math.round(w * dpr);
       cv.height = Math.round(h * dpr);
       k = Math.min(w / SW, h / SH);

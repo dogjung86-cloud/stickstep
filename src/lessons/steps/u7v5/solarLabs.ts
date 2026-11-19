@@ -35,8 +35,9 @@ function solarScene(stage: HTMLElement, p: string, drag: "moon" | "person", extr
     <circle cx="${S.x}" cy="${S.y}" r="${Rs}" fill="url(#${p}sun)"/>
     <polygon class="u7x-ec-faint" fill="#AFC3EA" opacity=".17"/>
     <polygon class="u7x-ec-dark" fill="#070B16" opacity=".94"/>
+    <clipPath id="${p}ec"><circle cx="${E.x}" cy="${E.y}" r="${Re}"/></clipPath>
     <circle cx="${E.x}" cy="${E.y}" r="${Re}" fill="url(#${p}earth)"/>
-    <rect x="${E.x}" y="0" width="30" height="230" fill="#06101f" opacity=".6"/>
+    <rect x="${E.x}" y="0" width="${Re + 4}" height="230" fill="#06101f" opacity=".6" clip-path="url(#${p}ec)"/>
     <path class="u7x-ec-zp" fill="none" stroke="#0A1730" stroke-width="7" opacity=".62"/>
     <path class="u7x-ec-zt" fill="none" stroke="#02040A" stroke-width="7" stroke-linecap="round"/>
     ${extra}
