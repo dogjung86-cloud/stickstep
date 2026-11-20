@@ -1,5 +1,7 @@
 // 단원 종합 평가(u2 생물의 구성과 다양성) E2E — 응시 → 일괄 채점 → 10파트 진단 → 리뷰 →
-// 레슨 바로가기 → 재응시 페이월 → (정복+프리미엄) 재응시 → 정복 인증 + 신기록 XP + 사진 로드까지 실플레이.
+// 레슨 바로가기 → 재응시 페이월 → (정복+프리미엄) 재응시 → 정복 인증 + 신기록 XP까지 실플레이.
+// [2026-11 v3] 풀은 v3(160제 · 16×10 · 여덟 시험지 · 코드 그림만 · 숫자 입력 없음)다. 사진 로드 검사를 그림 검사로 바꾸고,
+//   해설 길이는 정답 풀이와 보기별 이유를 합쳐 잰다(g2u7 v3와 같다). 여덟 번 응시 검사는 qa/e2e-exam-u2-forms.mjs.
 // v2 재출제(160제 · 16×10 · num 0 · word 0)에 맞춘 47검증 표준판(정본 = qa/e2e-exam-u1.mjs 300줄판).
 // PORT=<전용 포트> node qa/e2e-exam-u2.mjs — dev 서버 필수(보기 선택이 dev 전용 data-oi/data-ans를 쓴다).
 // u1판과의 차이:
@@ -124,37 +126,20 @@ async function playExam(pattern) {
   return seen;
 }
 
-// ═══════════ 0. 시험 사진 로드(exam/u2 18장 + bio3 13장 = 31종) ═══════════
-console.log("0. 시험 사진 로드");
+// ═══════════ 0. 그림(v3는 코드 그림만, 사진 없음) ═══════════
+console.log("0. 그림");
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
-const PHOTOS = [
-  "exam/u2/beetle-species-pair.webp", "exam/u2/cell-roles-triptych.webp",
-  "exam/u2/cell-shapes-observation.webp", "exam/u2/cell-shapes-observation-epithelial.webp",
-  "exam/u2/cheek-cells.webp", "exam/u2/coverslip-bubble.webp", "exam/u2/coverslip-clean.webp",
-  "exam/u2/elodea-cells.webp", "exam/u2/five-kingdom-specimens.webp", "exam/u2/forest-corridor.webp",
-  "exam/u2/forest-road.webp", "exam/u2/fungi-trio.webp", "exam/u2/ladybug-variation.webp",
-  "exam/u2/moth-variation.webp", "exam/u2/protist-trio.webp", "exam/u2/seed-bank.webp",
-  "exam/u2/wetland-degraded.webp", "exam/u2/wetland-restored.webp",
-  "bio3/eco/desert.webp", "bio3/eco/sea.webp",
-  "bio3/figs/animal-cell.webp", "bio3/figs/plant-cell.webp", "bio3/figs/microscope.webp",
-  "bio3/figs/cell-ball.webp", "bio3/figs/cell-brick.webp", "bio3/figs/cell-epithelial.webp",
-  "bio3/figs/cell-nerve.webp", "bio3/figs/cell-rbc.webp",
-  "bio3/micro/epithelial.webp", "bio3/micro/onion.webp",
-];
-const photoRes = await page.evaluate(async (paths) => {
-  const out = [];
-  for (const p of paths) {
-    const r = await new Promise((res) => {
-      const im = new Image();
-      im.onload = () => res(im.naturalWidth);
-      im.onerror = () => res(0);
-      im.src = `/${p}`;
-    });
-    out.push({ p, w: r });
-  }
-  return out;
-}, PHOTOS);
-ok(photoRes.every((p) => p.w > 0), "시험 사진 30종 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
+const figAudit = await page.evaluate(async () => {
+  const { U2_EXAM } = await import("/src/content/exams/u2.ts");
+  const pool = U2_EXAM.pool;
+  return {
+    figs: pool.filter((q) => q.figure || (q.options ?? []).some((o) => o.includes("<svg"))).length,
+    imgs: pool.filter((q) => /<img/.test(String(q.figure ?? ""))).length,
+    forms: U2_EXAM.forms?.length ?? 0,
+  };
+});
+ok(figAudit.figs >= 130 && figAudit.imgs === 0, "그림이나 표가 있는 문항 130개 이상, 사진은 없음", JSON.stringify(figAudit));
+ok(figAudit.forms === 8, "여덟 시험지(forms)", String(figAudit.forms));
 
 // ═══════════ 0b. 풀 규격 · 추출 균형(브라우저 모듈 직접 검사) ═══════════
 console.log("0b. 풀 규격·추출 균형");
@@ -251,7 +236,8 @@ const reviewA = await page.evaluate(() => {
   const b = row?.querySelector(".xr-body");
   return {
     open: !!row,
-    expl: (b?.querySelector(".xr-expl-body")?.textContent?.length ?? 0) > 150,
+    // v3 풀의 해설은 정답 풀이(.xr-expl-body)와 보기별 이유(.xr-why)로 나뉜다. 둘을 합쳐 잰다.
+    expl: (b?.querySelector(".xr-expl-body")?.textContent?.length ?? 0) + [...(b?.querySelectorAll(".xr-why") ?? [])].reduce((n, w) => n + w.textContent.length, 0) > 150,
     core: !!b?.querySelector(".xr-core"),
     lessonBtn: b?.querySelector(".xr-lesson-btn")?.textContent ?? "",
     marksOrPair: !!b?.querySelector(".opt.ok, .xr-pair-cell.ok"),
