@@ -1,3 +1,5 @@
+// [2026-11] u2 풀은 v3로 바뀌었다(EXAM_GUIDE "u2 v3"). 이 스크립트는 레슨 파일을 옛 v2로 덮어쓰므로 돌리지 않는다.
+if (!process.env.FORCE_U2_V2) { console.log("u2 풀은 v3다. 이 스크립트는 쓰지 않는다(EXAM_GUIDE의 u2 v3 소단락)."); process.exit(1); }
 // u2 v2 이식 생성기(u1 v2판 계승 · 과학 재출제 13호 · 마지막 단원): 스테이징 qa/u2v2-{pilot,rest-a~f}.ts의
 // 문항 블록을 슬롯 순으로 재조립해 src/content/exams/u2l1~l10.ts + u2.ts를 생성하고,
 // 신작 헬퍼 12종을 ui/examFigures.ts 말미 "u2 v2" 섹션으로 승격한다. 재실행 가능(멱등).
