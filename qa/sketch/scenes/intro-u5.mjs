@@ -1,10 +1,10 @@
 // 중1 과학 Ⅴ 힘의 작용 도입(opener) 여섯 장면의 그림(손그림 코드 그림). intro-u1.mjs와 같은 엔진, 같은 무대(960×544).
 // 그림 속에 글자와 숫자는 넣지 않는다(기호만). 움직일 부분은 <g class>로 묶고 앱의 CSS와 코드가 움직인다.
-//   balloon (u5l1) 쌤이 잡은 헬륨 풍선(줄을 당기면 내려오고 놓으면 올라간다)
+//   sponge  (u5l1) 탁자 위의 스펀지 공과 누르는 손(누르면 납작해지고 떼면 톡 튀어 오른다)
 //   tug     (u5l2) 줄다리기 하는 두 사람, 가운데 리본, 힘쓰는 표시 세 단계
 //   bow     (u5l4) 활을 든 학생, 활시위(앱이 그린다), 화살, 과녁
 //   sled    (u5l5) 흙길과 빙판길 두 줄, 줄마다 썰매 하나
-//   bottle  (u5l6) 수조와 물, 떠 있는 빈 페트병, 누르는 손
+//   float   (u5l6) 수조와 물, 떠 있는 비치볼, 누르는 손
 //   roll    (u5l7) 잔디밭, 공을 찬 학생, 굴러가는 공, 멀리 있는 깃발
 // build-intro.mjs u5 가 build(add)를 불러 src/ui/introArt.u5.generated.ts에 싣는다.
 import { Sk, C, curve, dense, circ, ell, arc, poly, rrect, arrow, drop, rays } from "../lib/sk.mjs";
@@ -15,25 +15,47 @@ const W = 960, H = 544;
 const g = (sk, cls, fn) => { sk.raw(`<g class="${cls}">`); fn(); sk.raw("</g>"); };
 const ground = (sk, y = 506, color = C.grayLight, sd = 3) => sk.ink(dense([[40, y], [920, y + 2]], 8), { w: 9, color, wob: 1.2, seed: sd });
 
-/* ══════════ 1. 헬륨 풍선 (u5l1) ══════════ */
-export const BAL = { hand: [368, 279], top: 190, pull: 84, hit: [248, 16, 240, 290] };
-export function balloonBase() {
+/* ══════════ 1. 탁자 위의 스펀지 공 (u5l1) ══════════
+   손이 위에서 공을 누른다. 앱이 공 묶음(opn-u5-sp)을 바닥 기준으로 세로로 줄이고 옆으로 조금 넓히며 손(opn-u5-hand)을 그만큼 내린다.
+   손을 떼면 바깥 묶음(opn-u5-sp-hop)이 위로 톡 튀었다가 내려앉는다(CSS). 공의 바닥은 탁자 윗면(top)에 닿아 있다. */
+export const SPG = { cx: 560, top: 404, r: 76, squash: 0.36, hit: [440, 140, 240, 272] };
+export function spongeBase() {
   const sk = new Sk(W, H, { id: "u5b" });
   ground(sk);
-  cloud(sk, 700, 120, 190, 70, { seed: 5 });
-  cloud(sk, 560, 250, 120, 46, { seed: 9 });
-  // 줄(앱이 끝점을 옮긴다)
-  sk.raw(`<line class="opn-u5-str" x1="${BAL.hand[0]}" y1="${BAL.hand[1]}" x2="${BAL.hand[0]}" y2="${BAL.top}" stroke="${C.ink}" stroke-width="5" stroke-linecap="round"/>`);
-  drawFigure(sk, 250, 502, 0.62, pose({ elR: [110, -310], haR: [190, -360] }), { ...TEACHER });
-  g(sk, "opn-u5-bal", () => {
-    const cx = BAL.hand[0], cy = 112;
-    const b = ell(cx, cy, 62, 74);
-    sk.fill(b, C.red, { dx: 1, dy: 1.2, wob: 0.8, seed: 11, tex: true });
-    sk.ink(b, { w: 9, wob: 0.8, seed: 12 });
-    sk.ink(arc(cx - 8, cy - 10, 40, -2.5, -1.7), { w: 7, color: "#FFFFFF", wob: 0.3, seed: 13 });
-    const k = poly([[cx - 9, cy + 73], [cx + 9, cy + 73], [cx, cy + 86]], 3);
-    sk.fill(k, C.red, { dx: 0, dy: 0, wob: 0.3, seed: 14 });
-    sk.ink(k, { w: 5, wob: 0.3, seed: 15 });
+  const { cx, top, r } = SPG;
+  const cy = top - r;
+  // 탁자: 윗판과 다리 둘
+  const board = poly([[300, top], [850, top], [850, top + 18], [300, top + 18]], 6);
+  sk.fill(board, C.wood, { dx: 0.6, dy: 0.8, wob: 0.5, seed: 3, tex: true });
+  sk.ink(board, { w: 8, wob: 0.6, seed: 4 });
+  for (const [x, i] of [[332, 0], [818, 1]]) sk.ink(dense([[x, top + 18], [x, 504]], 6), { w: 11, color: C.woodDark, wob: 0.5, seed: 5 + i });
+  // 탁자에 닿은 공의 그림자
+  sk.fill(ell(cx, top + 2, 62, 7), "#2A3A5E", { dx: 0, dy: 0, wob: 0.2, seed: 7, alpha: 0.12, tex: false });
+  drawFigure(sk, 170, 502, 0.56, pose({ elR: [80, -290], haR: [170, -330] }), { ...TEACHER });
+  // 공: 바깥 묶음은 튀어 오를 때, 안쪽 묶음은 눌릴 때 움직인다
+  g(sk, "opn-u5-sp-hop", () => g(sk, "opn-u5-sp", () => {
+    const b = circ(cx, cy, r, { over: 0.12, seed: 11 });
+    sk.fill(b, C.lemon, { dx: 1, dy: 1.2, wob: 0.7, seed: 12, tex: true });
+    // 스펀지 구멍: 크기와 자리가 고르지 않은 작은 타원(같은 그림이 매번 같게 정해진 수열로)
+    for (let i = 0; i < 15; i++) {
+      const a = i * 2.39996, d = r * 0.78 * Math.sqrt((i + 0.6) / 15.6);
+      const x = cx + d * Math.cos(a), y = cy + d * Math.sin(a), rx = 5 + ((i * 7) % 5);
+      sk.fill(ell(x, y, rx, rx * 0.72), "#E0A92A", { dx: 0, dy: 0, wob: 0.3, seed: 20 + i, tex: false });
+    }
+    sk.ink(b, { w: 9, wob: 0.8, seed: 13 });
+    sk.ink(arc(cx - 6, cy - 8, r * 0.66, -2.6, -1.8), { w: 7, color: "#FFFFFF", wob: 0.3, seed: 14 });
+  }));
+  // 튀어 오를 때 탁자 위의 짧은 표시
+  g(sk, "opn-u5-sp-mark", () => {
+    for (const [sg, i] of [[-1, 0], [1, 1]]) sk.ink(curve([[cx + sg * 74, top - 10], [cx + sg * 92, top - 26], [cx + sg * 104, top - 48]]), { w: 6, color: C.orange, wob: 0.3, seed: 41 + i });
+  });
+  // 누르는 손(앱이 공을 따라 옮긴다)
+  g(sk, "opn-u5-hand", () => {
+    const py = cy - r - 16;
+    sk.ink(dense([[cx, -30], [cx, py - 10]], 5), { w: 13, wob: 0.6, seed: 51 });
+    const palm = ell(cx, py, 36, 17);
+    sk.fill(palm, C.skin, { dx: 0.8, dy: 1, wob: 0.6, seed: 52 });
+    sk.ink(palm, { w: 8, wob: 0.6, seed: 53 });
   });
   return { sk };
 }
@@ -121,42 +143,54 @@ export function sledBase() {
   return { sk };
 }
 
-/* ══════════ 5. 빈 페트병 (u5l6) ══════════ */
-// 빈 페트병은 아주 가벼워 거의 다 물 위로 뜬다(바닥 쪽 12px만 잠김, 2026-11-15 그래픽 손질: 예전에는 3분의 1쯤 잠겨 있었다).
-// down: 꾹 눌렀을 때 내려가는 거리(뚜껑까지 물에 잠기게). Y: 병을 그리는 높이를 예전보다 올린 양.
-export const BTL = { water: 300, down: 178, hit: [380, 96, 220, 262] }; // hit: 누르는 자리(병이 올라온 만큼 위로)
-export function bottleBase() {
+/* ══════════ 5. 수조 속 비치볼 (u5l6) ══════════
+   공기를 넣은 비치볼은 아주 가벼워 대부분 물 위로 떠 있다(바닥 쪽 4분의 1쯤만 잠김).
+   down: 꾹 눌렀을 때 내려가는 거리(공 전체가 물에 잠기게). 물은 공 앞에 반투명하게 덮어 잠긴 부분이 물속처럼 보인다. */
+export const FLT = { cx: 490, water: 300, r: 72, down: 150, hit: [370, 100, 240, 280] };
+function beachBall(sk, cx, cy, r) {
+  const side = (a, t0, t1) => { const out = []; for (let i = 0; i <= 24; i++) { const t = t0 + (t1 - t0) * i / 24; out.push([cx + a * Math.cos(t), cy + r * Math.sin(t)]); } return out; };
+  const band = (aOut, aIn, left) => left
+    ? [...side(aOut, Math.PI / 2, Math.PI * 1.5), ...side(aIn, Math.PI * 1.5, Math.PI / 2)]
+    : [...side(aOut, -Math.PI / 2, Math.PI / 2), ...side(aIn, Math.PI / 2, -Math.PI / 2)];
+  const body = circ(cx, cy, r, { over: 0.1, seed: 141 });
+  sk.fill(body, C.white, { dx: 0, dy: 0, wob: 0.4, seed: 142 });
+  sk.fill(band(r, r * 0.7, true), C.blue, { dx: 0, dy: 0, wob: 0.3, seed: 143 });
+  sk.fill(band(r * 0.7, r * 0.3, false), C.yellow, { dx: 0, dy: 0, wob: 0.3, seed: 144 });
+  sk.fill(side(r * 0.3, 0, Math.PI * 2), C.red, { dx: 0, dy: 0, wob: 0.3, seed: 145 });
+  for (const [a, i] of [[0.7, 0], [0.3, 1]]) { sk.ink(side(r * a, Math.PI / 2, Math.PI * 1.5), { w: 4, wob: 0.2, seed: 146 + i }); sk.ink(side(r * a, -Math.PI / 2, Math.PI / 2), { w: 4, wob: 0.2, seed: 148 + i }); }
+  const cap = ell(cx, cy - r + 7, 13, 6);
+  sk.fill(cap, C.white, { dx: 0, dy: 0, wob: 0.2, seed: 150 });
+  sk.ink(cap, { w: 4, wob: 0.2, seed: 151 });
+  sk.ink(body, { w: 9, wob: 0.7, seed: 152 });
+  sk.ink(arc(cx - 6, cy - 6, r * 0.7, -2.7, -1.9), { w: 7, color: "#FFFFFF", wob: 0.3, seed: 153 });
+}
+export function floatBase() {
   const sk = new Sk(W, H, { id: "u5p" });
   ground(sk, 510);
   drawFigure(sk, 170, 506, 0.56, pose({ elR: [80, -290], haR: [170, -330] }), { ...TEACHER });
-  // 병(앱이 위아래로 옮긴다): 바닥만 조금 잠긴 채 물 위에 떠 있다
-  const Y = -50;
-  g(sk, "opn-u5-btl", () => {
-    const cx = 490;
-    const body = [...curve([[cx - 18, 196 + Y], [cx - 20, 214 + Y], [cx - 46, 240 + Y], [cx - 46, 352 + Y], [cx - 36, 362 + Y], [cx + 36, 362 + Y], [cx + 46, 352 + Y], [cx + 46, 240 + Y], [cx + 20, 214 + Y], [cx + 18, 196 + Y]], false, 4), ...dense([[cx + 18, 196 + Y], [cx - 18, 196 + Y]], 4)];
-    sk.fill(body, "#EAF6FF", { dx: 0, dy: 0, wob: 0.5, seed: 141 });
-    sk.ink(body, { w: 8, wob: 0.7, seed: 142 });
-    const cap = rrect(cx - 22, 176 + Y, 44, 22, 6);
-    sk.fill(cap, C.blue, { dx: 0, dy: 0, wob: 0.3, seed: 143 });
-    sk.ink(cap, { w: 6, wob: 0.4, seed: 144 });
-    sk.ink(dense([[cx - 30, 252 + Y], [cx - 30, 330 + Y]]), { w: 6, color: "#FFFFFF", wob: 0.3, seed: 145 });
-  });
-  // 물(병 앞에 반투명하게 덮는다)과 수조
-  const water = poly([[306, BTL.water], [674, BTL.water], [674, 498], [306, 498]], 6);
-  sk.fill(water, C.sea, { dx: 0, dy: 0, wob: 0.6, seed: 151, alpha: 0.62, tex: false });
-  sk.ink(dense([[306, BTL.water], [674, BTL.water]], 6), { w: 7, color: C.seaDeep, wob: 1.4, seed: 152 });
-  sk.ink(dense([[300, 170], [300, 504], [680, 504], [680, 170]], 6), { w: 10, wob: 0.8, seed: 153 });
-  // 누르는 손(앱이 병을 따라 옮긴다)
+  const { cx, water, r } = FLT;
+  const cy = water + r * 0.5 - r; // 바닥 쪽 4분의 1만 잠긴다
+  // 공(앱이 위아래로 옮긴다)
+  g(sk, "opn-u5-fb", () => beachBall(sk, cx, cy, r));
+  // 물(공 앞에 반투명하게 덮는다)과 수조
+  const wat = poly([[306, water], [674, water], [674, 498], [306, 498]], 6);
+  sk.fill(wat, C.sea, { dx: 0, dy: 0, wob: 0.6, seed: 161, alpha: 0.62, tex: false });
+  sk.ink(dense([[306, water], [674, water]], 6), { w: 7, color: C.seaDeep, wob: 1.4, seed: 162 });
+  sk.ink(dense([[300, 170], [300, 504], [680, 504], [680, 170]], 6), { w: 10, wob: 0.8, seed: 163 });
+  // 누르는 손(앱이 공을 따라 옮긴다)
   g(sk, "opn-u5-hand", () => {
-    sk.ink(dense([[490, 60 + Y], [490, 150 + Y]], 5), { w: 13, wob: 0.6, seed: 161 });
-    handDot(sk, [490, 158 + Y], C.skin, 162, 20);
+    const py = cy - r - 14;
+    sk.ink(dense([[cx, -30], [cx, py - 10]], 5), { w: 13, wob: 0.6, seed: 171 });
+    const palm = ell(cx, py, 34, 16);
+    sk.fill(palm, C.skin, { dx: 0.8, dy: 1, wob: 0.6, seed: 172 });
+    sk.ink(palm, { w: 8, wob: 0.6, seed: 173 });
   });
-  // 튀어 오를 때의 물방울
+  // 솟아오를 때의 물방울
   g(sk, "opn-u5-splash", () => {
-    drop(sk, 420, 262, 1.1, { seed: 171 });
-    drop(sk, 560, 256, 1.2, { seed: 173 });
-    drop(sk, 386, 286, 0.9, { seed: 175 });
-    drop(sk, 598, 284, 0.9, { seed: 177 });
+    drop(sk, 420, 262, 1.1, { seed: 181 });
+    drop(sk, 560, 256, 1.2, { seed: 183 });
+    drop(sk, 386, 286, 0.9, { seed: 185 });
+    drop(sk, 598, 284, 0.9, { seed: 187 });
   });
   return { sk };
 }
@@ -186,11 +220,11 @@ export function rollBase() {
 /** build-intro.mjs가 부른다: 그림을 싣고 장면별 좌표를 돌려준다. */
 export function build(add) {
   return {
-    balloon: { ...BAL, ...add("balloonBase", balloonBase()) },
+    sponge: { ...SPG, ...add("spongeBase", spongeBase()) },
     tug: { ...TUG, ...add("tugBase", tugBase()) },
     bow: { ...BOW, ...add("bowBase", bowBase()) },
     sled: { ...SLED, ...add("sledBase", sledBase()) },
-    bottle: { ...BTL, ...add("bottleBase", bottleBase()) },
+    float: { ...FLT, ...add("floatBase", floatBase()) },
     roll: { ...ROLL, ...add("rollBase", rollBase()) },
   };
 }

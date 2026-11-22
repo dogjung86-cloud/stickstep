@@ -1,14 +1,14 @@
-// bio4Figures — 중1 Ⅱ v3 문제·recap 그림(SVG)과 미니아트.
+// bio4Figures: 중1 Ⅱ v3 문제·recap 그림(SVG)과 미니아트.
 // 파운드리 문법(3스톱 그라데이션·좌상단 키라이트·접촉 그림자·재질별 최암색 외곽선)을 지킨다.
 // 퀴즈용 그림은 정답 유출 가림 인자를 받고, concept·recap용은 무인자 완성본을 쓴다.
 
 import { B4 } from "./bio4Kit";
 
-/** 공통 SVG 래퍼 — 루트에 fill="none"(사진·rect 검정 채움 사고 방지). */
+/** 공통 SVG 래퍼. 루트에 fill="none"(사진·rect 검정 채움 사고 방지). */
 const svg = (vb: string, body: string, aria = ""): string =>
   `<svg viewBox="${vb}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${aria}">${body}</svg>`;
 
-// ── recap 미니아트(64×64 플랫 문법 — 과학 *Figures 관례) ─────────────────
+// ── recap 미니아트(64×64 플랫 문법, 과학 *Figures 관례) ─────────────────
 const MINI: Record<string, () => string> = {
   cellUnit: () =>
     svg("0 0 64 64", `
@@ -17,7 +17,7 @@ const MINI: Record<string, () => string> = {
       <circle cx="21" cy="26" r="2.4" fill="${B4.mito}"/>
       <circle cx="43" cy="41" r="2.4" fill="${B4.mito}"/>
     `, "세포 미니 도해"),
-  // L1: 사람 실루엣이 세포 칸으로 채워짐 — "모든 생물은 세포로"
+  // L1: 사람 실루엣이 세포 칸으로 채워짐("모든 생물은 세포로")
   bodyCells: () => {
     const rows: string[] = [];
     for (let y = 0; y < 5; y++)
@@ -29,7 +29,7 @@ const MINI: Record<string, () => string> = {
       ${rows.join("")}
     `, "세포로 채워진 사람 실루엣");
   },
-  // L1: 돋보기 + 아주 작은 점 — "세포는 아주 작다"
+  // L1: 돋보기 + 아주 작은 점("세포는 아주 작다")
   microSize: () => svg("0 0 64 64", `
       <line x1="8" y1="52" x2="56" y2="52" stroke="#A9B6A9" stroke-width="2.6" stroke-linecap="round"/>
       <line x1="8" y1="46" x2="8" y2="52" stroke="#A9B6A9" stroke-width="2.6" stroke-linecap="round"/>
@@ -38,14 +38,14 @@ const MINI: Record<string, () => string> = {
       <line x1="38" y1="36" x2="48" y2="46" stroke="${B4.water}" stroke-width="4.6" stroke-linecap="round"/>
       <circle cx="28" cy="26" r="4.6" fill="${B4.membrane}"/>
     `, "돋보기 속 작은 세포와 눈금"),
-  // L2: 공통 3종 세트 — 막(테두리)·핵·마이토콘드리아
+  // L2: 공통 3종 세트: 막(테두리)·핵·마이토콘드리아
   coreTrio: () => svg("0 0 64 64", `
       <circle cx="32" cy="32" r="24" fill="${B4.cytoAnimal}" stroke="${B4.membrane}" stroke-width="4"/>
       <circle cx="32" cy="30" r="9.5" fill="${B4.nucleus}"/>
       <rect x="17" y="42" width="15" height="8" rx="4" fill="${B4.mito}" transform="rotate(-18 24 46)"/>
       <rect x="36" y="17" width="13" height="7" rx="3.5" fill="${B4.mito}" transform="rotate(22 42 20)"/>
     `, "세포막·핵·마이토콘드리아 3종 세트"),
-  // L2: 식물의 +2 — 육각 벽 + 엽록체
+  // L2: 식물의 +2: 육각 벽 + 엽록체
   plantPlus: () => svg("0 0 64 64", `
       <path d="M20 10 L44 10 L56 32 L44 54 L20 54 L8 32 Z" fill="${B4.cytoPlant}" stroke="${B4.wall}" stroke-width="4.6" stroke-linejoin="round"/>
       <path d="M22.5 14 L41.5 14 L51.5 32 L41.5 50 L22.5 50 L12.5 32 Z" fill="none" stroke="${B4.membrane}" stroke-width="2" stroke-linejoin="round"/>
@@ -105,7 +105,7 @@ const MINI: Record<string, () => string> = {
       <circle cx="54" cy="12" r="6.5" fill="none" stroke="${B4.ink}" stroke-width="2.4"/>
       <path d="M54 18 v9 M54 21 l-5 4 M54 21 l5 4" stroke="${B4.ink}" stroke-width="2.4" stroke-linecap="round"/>
     `, "세포에서 개체까지 오르는 계단"),
-  // L5: 두 갈래 경로 — 식물(조직계)·동물(기관계)
+  // L5: 두 갈래 경로: 식물(조직계)·동물(기관계)
   twoPath: () => svg("0 0 64 64", `
       <path d="M32 56 v-14 M32 42 C32 32 18 32 18 20 M32 42 C32 32 46 32 46 20" stroke="#8B95A1" stroke-width="3" fill="none" stroke-linecap="round"/>
       <path d="M12 16 h12 v10 h-12 Z" fill="#8CE99A" stroke="#2B8A3E" stroke-width="2.4" stroke-linejoin="round"/>
@@ -120,7 +120,7 @@ const MINI: Record<string, () => string> = {
       <rect x="42" y="16" width="9" height="38" rx="2.5" fill="#F08C00"/>
       <path d="M14 10 l4 4 8 -8" stroke="${B4.bioDeep}" stroke-width="3" stroke-linecap="round" fill="none"/>
     `, "세 개의 다양성 눈금 막대"),
-  // L6: 풍요로운 땅 — 여러 환경과 생물
+  // L6: 풍요로운 땅: 여러 환경과 생물
   richLand: () => svg("0 0 64 64", `
       <path d="M4 44 q14 -10 28 0 t28 0 v16 h-56 Z" fill="#C8E6C0" stroke="#8FBE85" stroke-width="2.2"/>
       <ellipse cx="20" cy="52" rx="10" ry="5" fill="#A5D8FF" stroke="#4DABF7" stroke-width="2"/>
@@ -130,13 +130,13 @@ const MINI: Record<string, () => string> = {
       <circle cx="50" cy="44" r="3.4" fill="#FAA2C1"/>
       <circle cx="36" cy="50" r="2.6" fill="#FFD43B"/>
     `, "여러 생태계와 생물이 어울린 땅"),
-  // L7: 무당벌레 세 마리 — 무늬가 제각각(변이)
+  // L7: 무당벌레 세 마리, 무늬가 제각각(변이)
   variDots: () => svg("0 0 64 64", `
       <g transform="translate(18 20)"><circle r="10" fill="#F03E3E" stroke="#A61E1E" stroke-width="2"/><circle cx="-3.4" cy="-2" r="2.2" fill="#1A1A1A"/><circle cx="4" cy="2.4" r="2.2" fill="#1A1A1A"/></g>
       <g transform="translate(46 26)"><circle r="10" fill="#F03E3E" stroke="#A61E1E" stroke-width="2"/><circle cx="0" cy="-3" r="2.2" fill="#1A1A1A"/><circle cx="-4" cy="3" r="2.2" fill="#1A1A1A"/><circle cx="4" cy="3" r="2.2" fill="#1A1A1A"/></g>
       <g transform="translate(30 47)"><circle r="10" fill="#FFB020" stroke="#B57808" stroke-width="2"/><circle cx="-3.4" cy="0" r="2" fill="#1A1A1A"/><circle cx="3.4" cy="-2.6" r="2" fill="#1A1A1A"/><circle cx="2.8" cy="3.4" r="2" fill="#1A1A1A"/><circle cx="-2.4" cy="-3.8" r="2" fill="#1A1A1A"/></g>
     `, "무늬가 서로 다른 무당벌레들"),
-  // L7: 한 갈래가 둘로 — 종류의 다양화
+  // L7: 한 갈래가 둘로(종류의 다양화)
   splitBranch: () => svg("0 0 64 64", `
       <path d="M32 58 v-16 M32 42 C32 30 18 32 16 16 M32 42 C32 30 46 32 48 16" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
       <path d="M8 12 l9 3 -9 4 Z" fill="#E8590C"/>
@@ -189,7 +189,7 @@ const MINI: Record<string, () => string> = {
     `, "지구를 받치는 두 손"),
 };
 
-/** recap 카드 미니아트 — 키가 없으면 세포 기본 도해로 폴백(신규 키는 레슨 저작 때 추가). */
+/** recap 카드 미니아트. 키가 없으면 세포 기본 도해로 폴백(신규 키는 레슨 저작 때 추가). */
 export function b4MiniArt(key: string): string {
   return (MINI[key] ?? MINI.cellUnit)();
 }
@@ -217,14 +217,14 @@ const CELL_DEFS = `
     </linearGradient>
   </defs>`;
 
-/** 마이토콘드리아(강낭콩 + 속 주름 한 줄) — 회전·위치 파라미터. */
+/** 마이토콘드리아(강낭콩 + 속 주름 한 줄). 회전·위치 파라미터. */
 const mito = (x: number, y: number, rot: number, sc = 1): string => `
   <g transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})">
     <rect x="-17" y="-9.5" width="34" height="19" rx="9.5" fill="url(#b4Mito)" stroke="#C92A2A" stroke-width="2.2"/>
     <path d="M-10 -3 C-6 3 -2 -6 2 0 C5 5 9 -3 12 1" stroke="#FFE3E3" stroke-width="2" fill="none" stroke-linecap="round"/>
   </g>`;
 
-/** 엽록체(타원 + 속 알갱이) — 식물 전용. */
+/** 엽록체(타원 + 속 알갱이). 식물 전용. */
 const chloro = (x: number, y: number, rot: number): string => `
   <g transform="translate(${x} ${y}) rotate(${rot})">
     <ellipse rx="19" ry="11.5" fill="url(#b4Chl)" stroke="#2B8A3E" stroke-width="2.2"/>
@@ -237,7 +237,7 @@ const nucleus = (x: number, y: number, r: number): string => `
   <circle cx="${x}" cy="${y}" r="${r}" fill="url(#b4Nuc)" stroke="#5F3DC4" stroke-width="2.6"/>
   <ellipse cx="${x - r * 0.32}" cy="${y - r * 0.38}" rx="${r * 0.34}" ry="${r * 0.2}" fill="#FFFFFF" opacity="0.35"/>`;
 
-/** 동물세포 도해 — 둥근 세포막(앰버) 안에 핵·마이토콘드리아.
+/** 동물세포 도해: 둥근 세포막(앰버) 안에 핵·마이토콘드리아.
  *  hotspot(pad0) 좌표: 세포막 (246,124)=(76.9%,51.7%) · 핵 (160,118)=(50%,49.2%) · 미토 (215,160)=(67.2%,66.7%). */
 export function cellFigAnimal(): string {
   return svg("0 0 320 240", `${CELL_DEFS}
@@ -252,7 +252,7 @@ export function cellFigAnimal(): string {
   `, "동물세포 도해, 세포막 속에 핵과 마이토콘드리아");
 }
 
-/** 식물세포 도해 — 육각형 세포벽(브라운) + 안쪽 세포막(앰버) + 핵·마이토콘드리아·엽록체.
+/** 식물세포 도해: 육각형 세포벽(브라운) + 안쪽 세포막(앰버) + 핵·마이토콘드리아·엽록체.
  *  hotspot(pad0) 좌표: 세포벽 (268,78)=(83.8%,32.5%) · 세포막 (61,157)=(19.1%,65.4%) ·
  *  핵 (150,120)=(46.9%,50%) · 엽록체 (218,90)=(68.1%,37.5%) · 미토 (238,142)=(74.4%,59.2%). */
 export function cellFigPlant(): string {
@@ -272,7 +272,7 @@ export function cellFigPlant(): string {
   `, "식물세포 도해, 육각형 세포벽 안에 세포막·핵·엽록체·마이토콘드리아");
 }
 
-/** 퀴즈용 — 식물세포에 (가)~(마) 태그만(이름 비표시, 정답 유출 차단).
+/** 퀴즈용: 식물세포에 (가)~(마) 태그만(이름 비표시, 정답 유출 차단).
  *  (가)엽록체(좌상)·(나)세포벽(우상)·(다)핵(중앙→아래)·(라)세포막(좌하)·(마)마이토콘드리아(우하). */
 export function cellPartsQuizFig(): string {
   const tag = (x: number, y: number, t: string): string => `
@@ -301,9 +301,9 @@ export function cellPartsQuizFig(): string {
   `, "식물세포 도해, 다섯 구조에 (가)~(마) 표시");
 }
 
-// ── L4 다양한 세포 도해(카드 크기에서 사진풍은 뭉개짐 — 도해가 정답이라는 확정 관행) ──
+// ── L4 다양한 세포 도해(카드 크기에서 사진풍은 뭉개져 도해를 쓰는 것이 확정 관행) ──
 
-/** 세포 유형 아트 — 랩 카드·recap 공용. kind: nerve(신경)·rbc(적혈구)·epi(상피). */
+/** 세포 유형 아트. 랩 카드·recap 공용. kind: nerve(신경)·rbc(적혈구)·epi(상피). */
 export function cellTypeArt(kind: "nerve" | "rbc" | "epi"): string {
   if (kind === "nerve")
     return svg("0 0 120 120", `
@@ -331,9 +331,9 @@ export function cellTypeArt(kind: "nerve" | "rbc" | "epi"): string {
   `, "납작하고 편평한 상피세포, 표면을 덮어 보호해요");
 }
 
-// ── L8 분류체계 사다리(종속과목강문계 — 들고양이 예시, 교과서 그림 Ⅱ-9 구도) ──
+// ── L8 분류체계 사다리(종속과목강문계, 들고양이가 속한 무리를 계단으로) ──
 
-/** blanks: 가릴 단계 인덱스(0=종 … 6=계) — 퀴즈용. 무인자는 concept·recap 완성본. */
+/** blanks: 가릴 단계 인덱스(0=종 … 6=계), 퀴즈용. 무인자는 concept·recap 완성본. */
 export function rankLadderFig(blanks?: number[]): string {
   // 2026-11-15 그래픽 손질: 예시 이름이 그림 밖으로 잘려("척삭동물문"이 "척삭동물", "동물계"가 "동물") 보였고 "큰 단위"가 계 알약에 가렸다.
   // 알약 폭을 줄여 이름 자리를 확보하고, 예시와 축 글자를 13.5px로(개념 그림 칸에서 0.92배로 줄어 폰 표시 12.5px), 축 글자는 알약과 겹치지 않는 왼쪽 위아래에.
@@ -365,8 +365,8 @@ export function rankLadderFig(blanks?: number[]): string {
 
 // ── 문제 그림 ──────────────────────────────────────────────────
 
-/** L1 크기 눈금 사다리 — (가)1 m·(나)1 cm·(다)0.1 mm·(라)현미경의 세계.
- *  퀴즈용: 세포는 그리지 않는다(정답 유출 차단) — 기준 물체만 보여 주고 자리를 고르게 한다. */
+/** L1 크기 눈금 사다리: (가)1 m·(나)1 cm·(다)0.1 mm·(라)현미경의 세계.
+ *  퀴즈용: 세포는 그리지 않는다(정답 유출 차단). 기준 물체만 보여 주고 자리를 고르게 한다. */
 export function sizeLadderFig(): string {
   const box = (x: number, lab: string, size: string, art: string): string => `
     <g>

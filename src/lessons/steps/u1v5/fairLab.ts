@@ -2,9 +2,9 @@
 // 한 통찰: 알아보려는 조건(색깔) 하나만 다르게 하고 나머지를 같게 맞춰야 온도 차이의 원인을 말할 수 있다(변인 통제).
 // 조작: 조건 카드 셋(색종이 색깔, 물의 양, 놓는 곳)을 눌러 같게 또는 다르게 정하고 실험을 시작한다.
 //       처음에는 도입 장면처럼 어긋나 있다(왼쪽 컵만 그늘, 왼쪽 컵만 물이 두 배). 틀린 채로 돌려도 된다. 결과가 실패를 보여 준다.
-// 흐름: 조건 정하기 ↔ 실험(2시간을 2.4초로) → 공정한 실험이 나오면 판정 → 결론.
-// 값: 처음 20 ℃. 2시간 동안 오르는 폭은 검은색 19, 파란색 14, 흰색 9(정본의 자체 제작 값. 뒤의 문제 해설이 39 ℃를 쓴다).
-//     물이 두 배면 오르는 폭이 0.55배, 그늘이면 0.3배(방향만 맞춘 어림).
+// 흐름: 조건 정하기 ↔ 실험(60분을 2.4초로) → 공정한 실험이 나오면 판정 → 결론.
+// 값: 처음 18 ℃, 물 150 mL. 60분 동안 오르는 폭은 검은색 10, 노란색 5, 흰색 2(자체 제작 값. 뒤의 정리 글이 28 ℃를 쓴다).
+//     물이 두 배(300 mL)면 오르는 폭이 0.55배, 그늘이면 0.1배(방향만 맞춘 어림. 그늘의 검은 컵 19 ℃가 흰 컵 20 ℃보다 낮아야 판정 글과 맞는다).
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -17,25 +17,26 @@ interface FairStep {
 }
 
 type Key = "color" | "water" | "place";
-const T0 = 20;
-const RISE = [19, 14, 9]; // 검은색, 파란색, 흰색
+const T0 = 18;
+const RISE = [10, 5, 2]; // 검은색, 노란색, 흰색
+const SPAN = 10; // 온도계 기둥이 다 차는 오름 폭(℃)
 const CX = [92, 176, 260];
-const PAPER = ["#2A2F38", "#3B82F6", "#F1F4F8"];
+const PAPER = ["#2A2F38", "#FFD84A", "#F1F4F8"];
 // 검은 색종이는 어두운 무대에 묻히지 않게 밝은 테두리를 둔다(2026-11-15 그래픽 감사)
-const PAPER_LINE = ["#B9C6D8", "#8DB8FF", "#FFFFFF"];
-// 햇빛: 왼쪽 위에서 내려오는 나란한 빛줄기(높이 72에 가로 30). 해에서 퍼지게 그리면 파란 컵으로 가는 빛이 파라솔 끝을 스쳐
-// 파란 컵도 그늘처럼 읽혔다(2026-11-15 그래픽 감사). 왼쪽 컵을 그늘에 두면 그 빛줄기는 파라솔 윗면에서 멈춘다.
+const PAPER_LINE = ["#B9C6D8", "#FFF0A6", "#FFFFFF"];
+// 햇빛: 왼쪽 위에서 내려오는 나란한 빛줄기(높이 72에 가로 30). 해에서 퍼지게 그리면 가운데 컵으로 가는 빛이 파라솔 끝을 스쳐
+// 가운데 컵도 그늘처럼 읽혔다(2026-11-15 그래픽 감사). 왼쪽 컵을 그늘에 두면 그 빛줄기는 파라솔 윗면에서 멈춘다.
 const RAY_TOP = 40;
 const RAY_END = 112;
 const RAY_DX = 30.2;
 const STOP = { x: 66.1, y: 59.8 }; // 왼쪽 컵으로 가는 빛줄기가 파라솔 윗면에 닿는 곳(파라솔 곡선과의 교점)
-const NAMES = ["검은 컵", "파란 컵", "흰 컵"];
+const NAMES = ["검은 컵", "노란 컵", "흰 컵"];
 
 // 물의 양과 놓는 곳을 다르게 하면 늘 왼쪽 컵만 달라진다. 그 컵은 색종이가 세 가지 색일 때만 검은 컵이라,
 // 색깔을 모두 흰색으로 맞춘 동안에는 "왼쪽 컵만"(diffPlain)으로 부른다(무대에 검은 컵이 없는데 "검은 컵만"이라 쓰지 않게).
 const COND: Record<Key, { name: string; same: string; diff: string; diffPlain?: string }> = {
   color: { name: "색종이 색깔", same: "모두 흰색", diff: "세 가지 색" },
-  water: { name: "물의 양", same: "모두 100 mL", diff: "검은 컵만 200 mL", diffPlain: "왼쪽 컵만 200 mL" },
+  water: { name: "물의 양", same: "모두 150 mL", diff: "검은 컵만 300 mL", diffPlain: "왼쪽 컵만 300 mL" },
   place: { name: "놓는 곳", same: "모두 햇빛", diff: "검은 컵만 그늘", diffPlain: "왼쪽 컵만 그늘" },
 };
 
@@ -49,8 +50,8 @@ function stageSvg(): string {
       <rect class="u1f-paper" x="${cx - 25.5}" y="154" width="51" height="38" rx="2" fill="${PAPER[i]}" stroke="${PAPER_LINE[i]}" stroke-width="1.5"/>
       <rect x="${cx + 9}" y="104" width="7" height="82" rx="3.5" fill="#0E1A2E" stroke="#C9D5E8" stroke-width="1.1"/>
       <rect class="u1f-merc" x="${cx + 10.6}" y="170" width="3.8" height="14" rx="1.9" fill="#FF6B6B"/>
-      <text class="u1f-temp" x="${cx}" y="98" text-anchor="middle">20 ℃</text>
-      <text class="u1f-ml" x="${cx}" y="217" text-anchor="middle">100 mL</text>
+      <text class="u1f-temp" x="${cx}" y="98" text-anchor="middle">18 ℃</text>
+      <text class="u1f-ml" x="${cx}" y="217" text-anchor="middle">150 mL</text>
     </g>`,
   ).join("");
   return `<svg viewBox="0 0 346 230" role="img" aria-label="햇빛 아래 색종이로 감싼 컵 세 개와 온도계">
@@ -106,14 +107,14 @@ export const fairLab: StepRenderer = (host, step, api) => {
     RISE.map((r, i) => {
       let rise = diff.color ? r : RISE[2];
       if (i === 0 && diff.water) rise *= 0.55;
-      if (i === 0 && diff.place) rise *= 0.3;
+      if (i === 0 && diff.place) rise *= 0.1;
       return T0 + rise;
     });
 
   function showTemps(v: number[]): void {
     v.forEach((t, i) => {
       temps[i].textContent = `${Math.round(t)} ℃`;
-      const h = 14 + ((t - T0) / 20) * 62;
+      const h = 14 + ((t - T0) / SPAN) * 62;
       mercs[i].setAttribute("y", (184 - h).toFixed(1));
       mercs[i].setAttribute("height", h.toFixed(1));
     });
@@ -127,7 +128,7 @@ export const fairLab: StepRenderer = (host, step, api) => {
     const big = diff.water;
     waters[0].setAttribute("y", big ? "124" : "146");
     waters[0].setAttribute("height", big ? "68" : "46");
-    mls[0].textContent = big ? "200 mL" : "100 mL";
+    mls[0].textContent = big ? "300 mL" : "150 mL";
     mls[0].classList.toggle("odd", big);
     shade.style.display = diff.place ? "" : "none";
     rays[0].style.display = diff.place ? "none" : "";
@@ -160,7 +161,7 @@ export const fairLab: StepRenderer = (host, step, api) => {
       c.el.setAttribute("aria-label", `${COND[k].name}: ${diff[k] ? "다르게" : "같게"}, ${c.sub.textContent}`);
     });
   }
-  const RUN = "실험 시작하기 (햇빛에 2시간)";
+  const RUN = "실험 시작하기 (햇빛에 60분)";
   const runBtn = bvBtn("main u1f-run", RUN);
 
   function reset(): void {
@@ -199,14 +200,14 @@ export const fairLab: StepRenderer = (host, step, api) => {
     runs += 1;
     haptic(HAPTIC.tap);
     runBtn.disabled = true;
-    f.say("햇빛 아래에 두고 1시간마다 물의 온도를 재고 있어요. 온도계가 올라가는 모습을 지켜보세요.");
+    f.say("햇빛 아래에 두고 30분마다 물의 온도를 재고 있어요. 온도계가 올라가는 모습을 지켜보세요.");
     const target = finalTemps();
     bvTween(
       tm,
       2400,
       (t) => {
         showTemps(target.map((x) => T0 + (x - T0) * t));
-        timeEl.textContent = t < 0.12 ? "처음" : t < 0.6 ? "1시간 뒤" : "2시간 뒤";
+        timeEl.textContent = t < 0.12 ? "처음" : t < 0.6 ? "30분 뒤" : "60분 뒤";
       },
       () => {
         const r = resultSay(target);
@@ -259,7 +260,7 @@ export const fairLab: StepRenderer = (host, step, api) => {
   function finish(): void {
     setPhase("done");
     f.pips(3);
-    // 결론 무대는 공정한 실험으로 되돌린다(셋 다 햇빛, 모두 100 mL, 색깔만 다름). 판정에 쓴 '검은 컵만 그늘' 실험이 남으면 결론과 반대 장면이 된다(2026-11-15 그래픽 감사).
+    // 결론 무대는 공정한 실험으로 되돌린다(셋 다 햇빛, 모두 150 mL, 색깔만 다름). 판정에 쓴 '검은 컵만 그늘' 실험이 남으면 결론과 반대 장면이 된다(2026-11-15 그래픽 감사).
     diff.color = true;
     diff.water = false;
     diff.place = false;
@@ -269,7 +270,7 @@ export const fairLab: StepRenderer = (host, step, api) => {
     showTemps(v);
     temps.forEach((t) => t.classList.remove("top"));
     temps[v.indexOf(Math.max(...v))].classList.add("top");
-    timeEl.textContent = "2시간 뒤";
+    timeEl.textContent = "60분 뒤";
     verdictEl.textContent = "공정한 실험이에요";
     verdictEl.className = "u1x-verdict show ok";
     f.say("조건을 공평하게 맞추니 온도가 달라진 진짜 원인이 또렷하게 드러났어요!");

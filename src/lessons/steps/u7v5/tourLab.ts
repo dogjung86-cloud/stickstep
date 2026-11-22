@@ -1,12 +1,14 @@
-// u7TourLab: 태양계 구성 천체(u7l1). 교과서 탐구 "태양계 구성 천체 자료 수집 및 분석하기"(228~229쪽)의 여섯 갈래
-// (태양, 행성, 왜소 행성, 소행성, 혜성, 위성)를 가로 화면의 3D 태양계에서 하나씩 찾아 만난다.
+// u7TourLab: 태양계 구성 천체(u7l1). 태양계를 이루는 여섯 갈래의 천체(태양, 행성, 왜소 행성, 소행성, 혜성, 위성)를
+// 가로 화면의 3D 태양계에서 하나씩 찾아 만나고, 돌아와서 단서 카드 여섯 장을 알맞은 천체 바구니에 담는다.
 // 3D 무대의 뼈대는 정본 steps/solarTour.ts에서 왔다(qa/u7v5-port-landscape.py가 옮겨 적었다). 2026-11-15 그래픽 손질부터는 이 파일이 정본이다
-// (작은 천체의 생김새, 화면 글자 이름표, 비율 알림, 특징 표의 작은 그림, 입구 그림을 이 파일에서 고쳤다. 옮겨 적기 도구를 다시 돌리지 않는다).
+// (작은 천체의 생김새, 화면 글자 이름표, 비율 알림, 바구니의 작은 그림, 입구 그림을 이 파일에서 고쳤다. 옮겨 적기 도구를 다시 돌리지 않는다).
 // 바꾼 것: 세로 화면의 틀(한 화면, 찾을 것 여섯 가지, 판정, 결론은 조작 칸에) · 찾을 것(안쪽 2곳, 바깥 2곳, 소행성대 → 천체의 갈래 여섯)
 //          · 가로 화면에서 다 찾으면 그 자리에서 알리고 돌아가는 버튼을 준다.
+//          · 돌아온 뒤의 정리(2026-11-22): 여섯 천체에 세 특징을 O, X로 채우던 표를 걷고, 단서 카드를 한 장씩 읽어 천체 바구니에 담는다.
 import { el, clamp } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
 import { haptic, HAPTIC } from "../../../core/haptics";
+import { icon } from "../../../core/icons";
 import type { StepRenderer } from "../../types";
 import type { SpaceStage, THREE as T, PlanetKind } from "../../../ui/space3d";
 import type { RotateStage } from "../../../ui/rotateStage";
@@ -35,7 +37,7 @@ interface Body {
 const BODIES: Body[] = [
   {
     key: "sun", kind: "sun", name: "태양", d: 0, r: 9, group: "star",
-    fact: "태양계에서 <b>유일하게 스스로 빛을 내는</b> 천체예요. 주로 수소와 헬륨으로 이루어져 있어요.",
+    fact: "수소와 헬륨 기체로 이루어진 거대한 별로, 태양계에서 <b>유일하게 스스로 빛과 열을 내요</b>.",
     dist: "지구에서 약 1억 5천만 km, 빛으로 8분 20초",
     size: "지름 약 139만 km · 지구의 109배",
     grav: "표면 중력 지구의 약 28배",
@@ -106,10 +108,10 @@ const BODIES: Body[] = [
     more: "태양에서 여덟 번째 행성이에요. 강한 바람이 불어 표면에 어두운 소용돌이인 대흑점이 생겼다 사라지곤 하며, 천왕성과 마찬가지로 희미한 고리와 많은 위성이 있어요.",
   },
   {
-    // 왜소 행성 선경험(레슨 마무리 문제·binSort의 '왜소 행성'을 투어에서 먼저 만난다).
+    // 왜소 행성 선경험(레슨 끝 문제와 분류 스텝의 '왜소 행성'을 투어에서 먼저 만난다).
     // BODIES에 있어도 미션(TERRA/JOVIAN/belt)에는 안 잡힘: 목표 로직 불변.
     key: "pluto", kind: "moon", name: "명왕성", d: 104, r: 0.55, group: "etc",
-    fact: "태양 주위를 도는 <b>왜소 행성</b>이에요. 모양은 둥글지만 <b>행성보다 크기가 작고 가벼워요</b>.",
+    fact: "공처럼 둥글지만 <b>행성보다 훨씬 작고 가벼워서</b> <b>왜소 행성</b>으로 분류하는 천체예요.",
     dist: "태양에서 약 59억 km, 지구의 약 40배",
     size: "지름 2,377 km · 달보다 작아요",
     grav: "중력 지구의 약 1/15",
@@ -120,7 +122,7 @@ const BODIES: Body[] = [
 const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav" | "more">> = {
   moon: {
     name: "달",
-    fact: "지구 둘레를 도는 <b>위성</b>이에요. 위성은 태양이 아니라 <b>행성의 둘레</b>를 도는 천체예요.",
+    fact: "<b>행성인 지구의 둘레</b>를 도는 천체라서 지구의 <b>위성</b>이라고 불러요.",
     dist: "지구에서 약 38만 km, 빛으로 1.3초",
     size: "지름 3,475 km · 지구의 0.27배",
     grav: "중력 지구의 1/6",
@@ -128,7 +130,7 @@ const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav
   },
   belt: {
     name: "소행성대",
-    fact: "모양이 울퉁불퉁하고 불규칙한 <b>소행성</b>들이 모여 있어요. 주로 <b>화성과 목성의 궤도 사이</b>에서 태양 둘레를 돌아요.",
+    fact: "크기도 모양도 제각각인 울퉁불퉁한 <b>소행성</b>들이 <b>대부분 화성과 목성 궤도 사이</b>에 띠처럼 모여 태양 둘레를 돌아요.",
     dist: "화성 궤도와 목성 궤도 사이의 띠",
     size: "가장 큰 세레스도 지름 약 940 km",
     grav: "너무 작아 중력이 아주 약해요",
@@ -136,7 +138,7 @@ const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav
   },
   comet: {
     name: "혜성",
-    fact: "<b>얼음과 먼지</b>로 이루어진 천체예요. 태양 둘레를 돌다가 태양에 가까워지면 <b>태양 반대쪽</b>으로 긴 꼬리가 생겨요.",
+    fact: "<b>얼음과 먼지</b>로 이루어진 작은 천체로, 태양 가까이를 지날 때 <b>태양 반대쪽으로 긴 꼬리</b>가 생겨요.",
     dist: "길쭉한 타원 궤도, 가까워졌다 멀어졌다",
     size: "핵의 지름은 보통 수 km",
     grav: "아주 약해요",
@@ -144,7 +146,7 @@ const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav
   },
 };
 
-// 찾을 천체 여섯 가지(교과서 탐구의 여섯 갈래)와 그 갈래에 드는 무대의 천체
+// 찾을 천체 여섯 가지(태양계 구성 천체의 여섯 갈래)와 그 갈래에 드는 무대의 천체. 돌아온 뒤에는 이 차례로 바구니가 놓인다
 const KINDS: { id: string; name: string; found: string; keys: string[] }[] = [
   { id: "sun", name: "태양", found: "스스로 빛나요", keys: ["sun"] },
   { id: "planet", name: "행성", found: "태양 주위를 돌아요", keys: ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"] },
@@ -154,11 +156,16 @@ const KINDS: { id: string; name: string; found: string; keys: string[] }[] = [
   { id: "dwarf", name: "왜소 행성", found: "행성보다 작아요", keys: ["pluto"] },
 ];
 const DEV_KEYS = ["sun", "earth", "moon", "belt", "comet", "pluto"];
-// 특징 표의 세 칸(교과서 탐구의 표). ok는 그 특징에 해당하는 갈래, hint는 틀렸을 때 가로 화면에서 본 것을 짚는 말
-const FEATURES: { id: string; head: string; q: string; ok: string[]; hint: string }[] = [
-  { id: "shine", head: "스스로 빛남", q: "여섯 천체 중 <b>스스로 빛을 내는 천체</b>를 모두 고르고 아래 버튼을 눌러 보세요.", ok: ["sun"], hint: "행성과 위성(달)은 태양 빛을 반사해서 반쪽만 밝았어요. 스스로 빛을 내는 천체만 다시 골라 보세요." },
-  { id: "sun", head: "태양 둘레", q: "이번에는 <b>태양 주위를 도는 천체</b>를 모두 골라 보세요.", ok: ["planet", "belt", "comet", "dwarf"], hint: "태양은 중심에 있고, 위성(달)은 행성인 지구 둘레를 돌아요. 태양 둘레를 도는 네 가지를 모두 골라 보세요." },
-  { id: "planet", head: "행성 둘레", q: "마지막으로 <b>행성 주위를 도는 천체</b>를 골라 보세요.", ok: ["moon"], hint: "지구 곁에서 지구 둘레를 돌던 천체 하나만 골라 보세요." },
+// 돌아온 뒤 천체 바구니에 담는 단서 카드 여섯 장. kind는 알맞은 바구니, note는 담긴 뒤 바구니에 남는 짧은 말,
+// hint는 틀렸을 때 가로 화면에서 본 것을 짚는 말(도움말 두 줄 안쪽). 차례는 고정이고, 채점은 첫 카드의 첫 답 한 번이다.
+// 첫 카드는 위성이다(위성을 행성이나 왜소 행성과 헷갈리는지가 이 레슨에서 가장 많이 틀리는 곳이다).
+const CLUES: { kind: string; t: string; note: string; hint: string }[] = [
+  { kind: "moon", t: "태양이 아니라 <b>행성의 둘레</b>를 도는 짝꿍 천체예요.", note: "행성 둘레를 돌아요", hint: "달은 지구 곁에서 지구 둘레를 돌았어요. 다시 골라 보세요." },
+  { kind: "comet", t: "태양 곁을 지날 때 <b>태양 반대쪽으로 긴 꼬리</b>를 늘어뜨리는 얼음과 먼지 덩어리예요.", note: "태양 반대쪽 꼬리", hint: "가로 화면에서 꼬리는 늘 태양 반대쪽을 향했어요." },
+  { kind: "dwarf", t: "공처럼 둥근 모양인데 <b>크기와 질량이 행성에 한참 못 미치는</b> 천체예요.", note: "둥글지만 작아요", hint: "명왕성은 둥글지만 행성보다 훨씬 작았어요." },
+  { kind: "sun", t: "태양계 한가운데에서 <b>스스로 빛을 내는 단 하나</b>의 천체예요.", note: "스스로 빛나요", hint: "행성과 달은 태양 쪽 절반만 밝았어요. 스스로 빛나는 건 하나뿐이에요." },
+  { kind: "belt", t: "울퉁불퉁한 모양으로, <b>대부분 화성과 목성 궤도 사이</b>에서 태양 둘레를 돌아요.", note: "대부분 화성과 목성 사이", hint: "화성과 목성 궤도 사이에 울퉁불퉁한 바위가 띠처럼 모여 있었어요." },
+  { kind: "planet", t: "태양 둘레를 도는 크고 둥근 천체로, <b>수성부터 해왕성까지 여덟 개</b>예요.", note: "태양 둘레를 돌아요", hint: "수성부터 해왕성까지 태양 둘레를 도는 여덟 개를 떠올려 보세요." },
 ];
 
 // ── 작은 천체의 생김새(코드로 만든 질감과 모양, 2026-11-15 그래픽 손질) ──────────────────────────
@@ -363,7 +370,7 @@ function tailCanvas(): HTMLCanvasElement {
   return cv;
 }
 
-// ── 특징 표의 작은 그림(줄 이름 앞, 3D에서 본 천체) ───────────────────────────────
+// ── 바구니의 작은 그림(3D에서 본 천체) ───────────────────────────────
 const P_URL = (f: string): string => `${import.meta.env.BASE_URL}photos/${f}`;
 /** 사진 속 원판(가운데 cx, cy, 반지름 r, 사진 크기 w×h)을 지름 24px 원에 담는다. */
 function photoDot(id: string, f: string, cx: number, cy: number, r: number, w: number, h: number): string {
@@ -428,85 +435,111 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     syncMission();
   }
 
-  // 돌아온 뒤: 교과서 탐구의 특징 표를 채운다(특징마다 해당하는 천체를 모두 고른다. 틀리면 본 것을 짚어 주고 다시 고르게 한다)
-  function startTable(): void {
+  // 돌아온 뒤: 단서 카드를 한 장씩 읽고 알맞은 천체 바구니를 고른다. 바구니는 무대(그림과 이름, 담긴 단서)와 조작 칸(누르는 버튼)에
+  // 같은 차례로 놓인다. 맞으면 누른 버튼에 체크, 무대 바구니에 단서의 짧은 말이 남고 다음 카드로 넘어간다.
+  // 틀리면 누른 버튼에 가위표가 남고(그 카드 동안 다시 누를 수 없다), 도움말이 가로 화면에서 본 것을 짚어 다시 고르게 한다.
+  // 태양 카드에서 틀리면 근거를 그림으로: 바구니의 행성, 위성, 왜소 행성 그림은 태양 반대쪽 절반이 어두워지고 태양만 빛난다.
+  function startClues(): void {
     asked = true;
-    host.dataset.u7Phase = "table";
+    host.dataset.u7Phase = "clues";
     f.pips(2);
-    api.setCTA("특징에 맞는 천체를 골라 표를 채워 보세요", { enabled: false });
-    const cells = new Map<string, HTMLElement>();
-    const grid = el("div", { class: "u7x-ftable" }, el("i"), ...FEATURES.map((ft) => el("b", { text: ft.head })));
+    api.setCTA("단서에 맞는 천체 바구니를 골라 보세요", { enabled: false });
+    const notes = new Map<string, HTMLElement>();
+    const baskets = new Map<string, HTMLElement>();
+    const board = el("div", { class: "u7x-bk-board" });
     for (const k of KINDS) {
-      // 줄 이름 앞에 가로 화면에서 본 천체의 작은 그림(태양, 행성, 위성, 왜소 행성은 사진)
-      grid.appendChild(el("span", { class: "u7x-frow", dataset: { k: k.id } }, el("i", { class: "u7x-ficon", html: KIND_ICON[k.id] ?? "" }), el("span", { text: k.name })));
-      for (const ft of FEATURES) {
-        const c = el("em", { dataset: { f: ft.id, k: k.id } });
-        cells.set(`${ft.id}:${k.id}`, c);
-        grid.appendChild(c);
-      }
+      const note = el("i", { class: "u7x-bk-note" });
+      const b = el("div", { class: "u7x-bk", dataset: { k: k.id } }, el("span", { class: "u7x-ficon", html: KIND_ICON[k.id] ?? "" }), el("b", { text: k.name }), note);
+      notes.set(k.id, note);
+      baskets.set(k.id, b);
+      board.appendChild(b);
     }
-    f.stage.replaceChildren(grid);
-    f.stage.classList.add("u7x-tablestage");
-    const picked = new Set<string>();
-    const chips = KINDS.map((k) => {
-      const b = el("button", { class: "u7x-segbtn", attrs: { type: "button", "aria-pressed": "false" }, dataset: { k: k.id } }, el("span", { text: k.name })) as HTMLButtonElement;
-      b.addEventListener("click", () => {
-        if (picked.has(k.id)) picked.delete(k.id);
-        else picked.add(k.id);
-        b.classList.toggle("on", picked.has(k.id));
-        b.setAttribute("aria-pressed", String(picked.has(k.id)));
-        haptic(HAPTIC.tap);
-      });
+    f.stage.replaceChildren(board);
+    f.stage.classList.add("u7x-bkstage");
+    const num = el("span", { class: "u7x-clue-n" });
+    const txt = el("span", { class: "u7x-clue-t" });
+    const card = el("div", { class: "u7x-clue", attrs: { role: "status" } }, num, txt);
+    const btns = KINDS.map((k) => {
+      const b = el("button", { class: "u7x-segbtn u7x-bkbtn", attrs: { type: "button" }, dataset: { k: k.id } }, el("span", { class: "u7x-bk-ic", attrs: { "aria-hidden": "true" } }), el("span", { text: k.name })) as HTMLButtonElement;
+      b.addEventListener("click", () => pick(k.id, b));
       return b;
     });
-    const row = el("div", { class: "u7x-seg three" }, ...chips);
-    const confirm = el("button", { class: "bv-btn main", attrs: { type: "button" }, text: "표에 기록하기" }) as HTMLButtonElement;
-    f.slot.setControls(row, confirm);
-    let fi = 0;
+    f.slot.setControls(card, el("div", { class: "u7x-seg three" }, ...btns));
+    let ci = 0;
+    let busy = false;
     let graded = false;
-    const show = (): void => {
-      picked.clear();
-      chips.forEach((b) => {
-        b.classList.remove("on");
-        b.setAttribute("aria-pressed", "false");
-      });
-      host.dataset.u7Feature = String(fi);
-      f.say(FEATURES[fi].q);
+    const mark = (): void => {
+      host.dataset.u7Clue = String(ci);
+      host.dataset.u7Busy = busy ? "1" : "0";
+      if (import.meta.env.DEV) host.dataset.u7Want = CLUES[ci]?.kind ?? "";
     };
-    confirm.addEventListener("click", () => {
-      const ft = FEATURES[fi];
-      const right = picked.size === ft.ok.length && ft.ok.every((x) => picked.has(x));
+    const show = (): void => {
+      const c = CLUES[ci];
+      num.textContent = `단서 ${ci + 1} / ${CLUES.length}`;
+      txt.innerHTML = c.t;
+      btns.forEach((b) => {
+        b.classList.remove("ok", "miss");
+        b.disabled = false;
+        (b.firstElementChild as HTMLElement).innerHTML = "";
+      });
+      card.classList.remove("in");
+      void card.offsetWidth;
+      card.classList.add("in");
+      f.say(ci === 0 ? "가로 화면에서 만난 천체를 떠올리며 <b>단서</b>에 맞는 바구니를 골라 보세요." : "다음 단서예요. 알맞은 천체 바구니를 골라 보세요.");
+      busy = false;
+      mark();
+    };
+    function pick(kind: string, b: HTMLButtonElement): void {
+      if (busy || b.disabled) return;
+      const c = CLUES[ci];
+      const right = kind === c.kind;
       if (!graded) {
         graded = true;
-        api.recordQuiz(right); // 채점은 첫 특징의 첫 답 한 번
+        api.recordQuiz(right); // 채점은 첫 카드의 첫 답 한 번
       }
+      const ic = b.firstElementChild as HTMLElement;
       if (!right) {
         haptic(HAPTIC.wrong);
-        f.stage.classList.remove("u7x-shake");
-        void f.stage.offsetWidth;
-        f.stage.classList.add("u7x-shake");
-        f.say(ft.hint);
-        // 첫 칸을 틀리면 근거를 그림으로: 행성과 위성의 작은 그림은 태양 반대쪽 절반이 어두워지고, 태양만 빛난다
-        if (ft.id === "shine") grid.classList.add("u7x-lit");
+        b.classList.add("miss");
+        b.disabled = true;
+        ic.innerHTML = icon("xThick", 11);
+        const bk = baskets.get(kind);
+        bk?.classList.remove("no");
+        void bk?.offsetWidth;
+        bk?.classList.add("no");
+        if (c.kind === "sun") board.classList.add("u7x-lit");
+        f.say(`아니에요. ${c.hint}`);
         host.dataset.u7Miss = String(Number(host.dataset.u7Miss ?? "0") + 1);
+        mark();
         return;
       }
       haptic(HAPTIC.correct);
-      for (const k of KINDS) cells.get(`${ft.id}:${k.id}`)?.classList.add(ft.ok.includes(k.id) ? "yes" : "no");
-      fi += 1;
-      if (fi < FEATURES.length) show();
-      else {
-        confirm.disabled = true;
-        window.setTimeout(() => !disposed && conclude(), 900);
-      }
-    });
+      busy = true;
+      btns.forEach((x) => (x.disabled = true));
+      b.classList.add("ok");
+      ic.innerHTML = icon("check", 11);
+      const bk = baskets.get(kind);
+      bk?.classList.remove("no");
+      bk?.classList.add("full");
+      const note = notes.get(kind);
+      if (note) note.textContent = c.note;
+      const name = KINDS.find((k) => k.id === kind)?.name ?? "";
+      f.say(`맞아요! 단서를 <b>${name}</b> 바구니에 담았어요.`);
+      ci += 1;
+      mark();
+      window.setTimeout(() => {
+        if (disposed) return;
+        if (ci < CLUES.length) show();
+        else conclude();
+      }, 900);
+    }
     show();
   }
 
   function conclude(): void {
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("특징 표를 모두 완성했어요! 천체마다 스스로 빛을 내는지, 무엇의 둘레를 도는지 한눈에 비교할 수 있어요.");
+    f.say("단서 여섯 장을 모두 알맞은 천체 바구니에 담았어요!");
     f.slot.conclude("태양계에서 스스로 빛을 내는 천체는 <b>태양</b>뿐이에요. <b>행성, 왜소 행성, 소행성, 혜성</b>은 태양 주위를 돌고, <b>위성</b>은 행성 주위를 돌아요.");
     api.enableCTA(doneCta);
   }
@@ -969,7 +1002,7 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     enterBtn.classList.remove("pulse");
     if (finished) {
       enterBtn.querySelector("span")!.textContent = "다시 둘러보기";
-      if (!asked) startTable();
+      if (!asked) startClues();
     } else {
       enterBtn.querySelector("span")!.textContent = "가로 화면 다시 열기";
       f.say("아직 확인하지 않은 천체가 남았어요. 가로 화면을 다시 열어 <b>남은 천체</b>를 찾아 눌러 보세요.");

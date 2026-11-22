@@ -4,7 +4,7 @@
 // 겨울 장면의 학생은 노란 털모자(노란 모자 학생의 겨울옷). 움직임 표시는 청록, 열은 주황 물결 화살표(Ⅲ단원 문법).
 import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, drop, squiggle, arrow, hash, sparkle } from "../../lib/sk.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT } from "../../lib/figure.mjs";
-import { ball, cloud } from "../../lib/props.mjs";
+import { ball, cloud, orange } from "../../lib/props.mjs";
 import { W, H, lerpx, lerp2, thin, ray } from "./common.mjs";
 
 const WKID = { hair: "knit", capColor: "#F2B632", seed: 31 };
@@ -13,56 +13,56 @@ function snowflake(sk, x, y, r, sd) { for (let i = 0; i < 3; i++) { const a = i 
 // 화면 좌표로 잡은 관절을 인물 좌표(발 사이 원점, 배율 s)로 바꾼다
 const local = (ox, oy, s, j) => Object.fromEntries(Object.entries(j).map(([k, v]) => [k, Array.isArray(v) ? [(v[0] - ox) / s, (v[1] - oy) / s] : v]));
 
-/* ---------- u6l1: 운동화는 푹, 눈신발은 사뿐 ---------- */
-// 눈신발(비스듬히 내려다본 모습): 나무 테 + 그물 끈. (cx, cy) = 가운데
-function snowshoe(sk, cx, cy, sd) {
-  const rx = 72, ry = 18;
-  const rim = ell(cx, cy, rx, ry);
-  sk.fill(rim, "#F1E4C8", { dx: 0, dy: 0, wob: 0.3, seed: sd });
-  for (let i = -3; i <= 3; i++) { const x = cx + i * 18, h = ry * Math.sqrt(Math.max(0, 1 - ((i * 18) / rx) ** 2)) - 2; sk.ink(dense([[x - 5, cy - h], [x + 5, cy + h]]), { w: 3, color: "#B08A5A", seed: sd + 2 + i, wob: 0.1 }); }
-  sk.ink(dense([[cx - rx + 8, cy], [cx + rx - 8, cy]]), { w: 3, color: "#B08A5A", seed: sd + 10, wob: 0.1 });
-  sk.ink(rim, { w: 8, color: "#8A5A33", seed: sd + 11, wob: 0.3 });
+/* ---------- u6l1: 같은 무게의 장바구니, 가는 끈과 넓은 끈 ---------- */
+// 도입(u6-snow)이 눈밭의 운동화와 설피를 쓰므로 개념 컷은 다른 생활 장면으로 잡았다(같은 소재를 다시 쓰지 않는다).
+// 두 아이가 똑같이 무거운 장바구니(대파와 오렌지)를 한쪽 어깨에 멨다. 왼쪽은 가는 끈이 어깨를 파고들고(빨간 느낌표, 땀), 오른쪽은 넓은 끈이 편하다(반짝임).
+function groceryBag(sk, bx, by, sd) {
+  // (bx, by) = 가방 윗변 가운데. 대파와 오렌지가 위로 삐져나온다
+  sk.ink(dense([[bx - 30, by + 4], [bx - 64, by - 96]]), { w: 14, color: C.green, seed: sd, wob: 0.3 });
+  sk.ink(dense([[bx - 30, by + 4], [bx - 44, by - 36]]), { w: 14, color: "#F3F1E6", seed: sd + 1, wob: 0.2 });
+  orange(sk, bx + 24, by - 14, 24, { seed: sd + 2, leaf: false });
+  const b = rrect(bx - 66, by - 6, 132, 116, 16);
+  sk.fill(b, "#E6D3AE", { dx: 0.6, dy: 0.8, wob: 0.5, seed: sd + 3, tex: 0.7 });
+  sk.ink(b, { w: 9, seed: sd + 4, wob: 0.5 });
+  sk.ink(dense([[bx - 50, by + 22], [bx + 50, by + 22]]), { w: 5, color: "#C2A878", seed: sd + 5, wob: 0.3 });
 }
 function cutU6l1() {
   const sk = new Sk(W, H, { id: "a" });
-  const SY = 596, SNOW = "#F2F7FB";
-  const surf = x => SY + 6 * Math.sin(x / 90) + 3 * Math.sin(x / 31);
-  [[90, 110], [230, 60], [400, 130], [600, 64], [780, 120], [900, 60], [60, 300], [880, 300], [420, 300]].forEach(([x, y], i) => snowflake(sk, x, y, 12, 20 + i * 3));
-  // 눈
-  const top = []; for (let x = 14; x <= 946; x += 6) top.push([x, surf(x)]);
-  sk.fill([...top, [946, 712], [14, 712], top[0]], SNOW, { dx: 0, dy: 0, wob: 0, seed: 51 });
-  // 지나온 발자국: 아이 뒤는 깊은 구멍, 쌤 뒤는 얕고 넓은 자국
-  const hole = (x, y, rx, ry, sd) => { const h = ell(x, y, rx, ry); sk.fill(h, "#C3D7E5", { dx: 0, dy: 0, wob: 0.2, seed: sd }); sk.ink(h, { w: 5, color: "#6F8FA6", seed: sd + 1, wob: 0.2 }); };
-  hole(86, surf(86) + 20, 18, 7, 55); hole(160, surf(160) + 24, 18, 7, 57);
-  for (const [x, i] of [[850, 0], [930, 1]]) sk.ink(ell(x, surf(x) + 26, 50, 9), { w: 5, color: "#B9CFDC", seed: 59 + i, wob: 0.3 });
-  sk.ink(top, { w: 9, seed: 61 });
-  // 아이: 운동화 발이 눈에 푹 빠져 무릎까지 잠겼다(정강이는 구멍 속). 쌤 쪽으로 손을 뻗는다
-  const kx = 290, ks = 0.8, ky = surf(kx) + 8;
-  hole(kx, ky, 50, 13, 63);
-  // 눈 속에 묻힌 정강이와 운동화(숨은 선은 점선)
-  const deep = ks * 106;
-  for (const [dx, sg, i] of [[-22, -1, 0], [22, 1, 1]]) {
-    const kn = [kx + dx * ks, ky + 4], ft = [kx + dx * ks + sg * 8, ky + deep];
-    sk.ink(dense([kn, ft]), { w: 8, color: "#9DB6C8", dash: [10, 9], seed: 81 + i, wob: 0.2 });
-    sk.ink(rrect(ft[0] - 14 + sg * 10, ft[1] - 4, 40, 18, 8), { w: 6, color: "#9DB6C8", dash: [9, 8], seed: 83 + i, wob: 0.2 });
+  const GY = 680, s = 0.86;
+  ground(sk, GY, 11);
+  // 두 아이: 끈을 멘 쪽 손으로 끈을 잡았다. 왼쪽 아이는 무게에 눌려 끈 쪽으로 기울었다
+  const kids = [
+    { x: 250, o: { ...STUDENT, name: "a" }, tilt: 0.12, thin: true, sd: 200 },
+    { x: 650, o: { hair: "bob", hairColor: "#8A5A33", seed: 151, name: "b" }, tilt: 0, thin: false, sd: 300 },
+  ];
+  for (const k of kids) {
+    const P = pose({ tilt: k.tilt, head: [k.thin ? 12 : 0, -436], elR: [52, -236], haR: [86, -282], elL: [-40, -258], haL: [-58, -186] });
+    const L = (p) => [k.x + s * p[0], GY + s * p[1]]; // 인물 좌표 → 그림 좌표
+    const nk = L([4, -338]); // 끈이 어깨를 지나는 자리
+    const bag = L([178, -206]); // 가방 윗변 가운데
+    groceryBag(sk, bag[0], bag[1], k.sd);
+    if (k.thin) {
+      // 가는 끈 두 가닥이 어깨 한 점에 모인다
+      for (const [dx, i] of [[-46, 0], [46, 1]]) sk.ink(dense([nk, [bag[0] + dx, bag[1] - 2]]), { w: 5, color: "#6B4A32", seed: k.sd + 11 + i, wob: 0.2 });
+    } else {
+      // 넓은 끈이 어깨를 넓게 덮는다
+      const band = [[nk[0] - 24, nk[1] - 4], [nk[0] + 24, nk[1] - 8], [bag[0] + 56, bag[1] - 2], [bag[0] - 56, bag[1] - 2]];
+      sk.fill(poly(band, 4), "#F2B632", { dx: 0, dy: 0, wob: 0.3, seed: k.sd + 11 });
+      sk.ink(poly(band, 4), { w: 6, seed: k.sd + 12, wob: 0.3 });
+    }
+    drawFigure(sk, k.x, GY, s, P, k.o);
+    if (k.thin) {
+      // 어깨에 파고든 자리: 빨간 눌림 표시, 머리 옆의 느낌표와 땀
+      for (const [dx, i] of [[-18, 0], [18, 1]]) sk.ink(curve([[nk[0] + dx, nk[1] - 14], [nk[0] + dx * 0.55, nk[1] - 2], [nk[0] + dx, nk[1] + 10]]), { w: 5, color: C.red, seed: k.sd + 13 + i, wob: 0.2 });
+      const ex = L([170, -560]);
+      emark(sk, ex[0], ex[1], 0.8, { color: C.red, w: 13, seed: k.sd + 15 });
+      const dp = L([-128, -520]);
+      drop(sk, dp[0], dp[1], 0.95, { rot: -0.3 });
+    } else {
+      const sp = L([150, -520]);
+      sparkle(sk, sp[0], sp[1], 24, { seed: k.sd + 13 });
+    }
   }
-  const K = pose({ hip: [0, -110], neck: [12, -238], head: [20, -330], tilt: 0.14,
-    elR: [104, -236], haR: [196, -290], elL: [-84, -264], haL: [-128, -350],
-    knL: [-22, 0], ftL: [-22, 0], knR: [22, 0], ftR: [22, 0] });
-  drawFigure(sk, kx, ky, ks, K, { ...WKID, name: "student" });
-  // 구멍 앞쪽 눈 턱이 다리 끝을 가린다
-  sk.fill([...ell(kx, ky, 47, 11, 0.12, Math.PI - 0.12), [kx - 46, ky + 2]], SNOW, { dx: 0, dy: 0, wob: 0.2, seed: 65 });
-  sk.ink(ell(kx, ky, 50, 13, 0.1, Math.PI - 0.1), { w: 5, color: "#6F8FA6", seed: 66, wob: 0.2 });
-  for (const [x, i] of [[kx - 62, 0], [kx + 62, 1]]) sk.ink(curve([[x - 16, surf(x) + 1], [x, surf(x) - 10], [x + 16, surf(x) + 1]]), { w: 6, seed: 67 + i, wob: 0.2 });
-  // 쌤: 눈신발을 신고 눈 위에 서서 손을 내민다(왼쪽을 본다). 뒤쪽 발의 눈신발 → 쌤 → 앞쪽 발의 눈신발
-  const tx = 676, ts = 0.8, tfy = surf(tx) - 10;
-  const T = pose({ hip: [0, -212], neck: [22, -340], head: [36, -432], tilt: 0.1,
-    elR: [112, -322], haR: [200, -326], elL: [-52, -262], haL: [-30, -216],
-    knL: [-44, -106], ftL: [-74, 0], knR: [40, -106], ftR: [66, 0] });
-  snowshoe(sk, tx + ts * 74, surf(tx + ts * 74) - 2, 41);
-  drawFigure(sk, tx, tfy, ts, T, { ...TEACHER, name: "teacher", mirror: true });
-  snowshoe(sk, tx - ts * 66, surf(tx - ts * 66) + 2, 71);
-  drop(sk, kx - 50, ky - 372, 0.95, { rot: -0.3 });
   return sk;
 }
 
@@ -309,7 +309,7 @@ function cutU6l4() {
 
 export function cuts() {
   return [
-    { name: "u6l1", theme: "gas6", orig: null, sk: cutU6l1(), alt: "눈밭에서 운동화를 신은 아이는 무릎까지 빠져 있고, 넓적한 눈신발을 신은 쌤은 눈 위에 서서 손을 내미는 장면", cap: "같은 눈인데 누구는 푹, 누구는 사뿐. 닿는 넓이가 달라서예요" },
+    { name: "u6l1", theme: "gas6", orig: null, sk: cutU6l1(), alt: "똑같이 무거운 장바구니를 한 아이는 가는 끈으로, 다른 아이는 넓은 끈으로 어깨에 멘 장면. 가는 끈을 멘 아이의 어깨 위에 빨간 느낌표", cap: "가방 무게는 같은데 가는 끈이 어깨를 더 아프게 해요. 닿는 넓이가 좁아서예요" },
     { name: "u6l2", theme: "gas6", orig: null, sk: cutU6l2(), alt: "같은 크기의 피자 한 판을 왼쪽에서는 쌤과 아이 둘이 반쪽씩, 오른쪽에서는 넷이 4분의 1쪽씩 나눠 든 장면", cap: "피자 한 판을 둘이 나누면 반쪽, 넷이 나누면 4분의 1쪽이에요" },
     { name: "u6l3", theme: "gas6", orig: null, sk: cutU6l3(), alt: "산꼭대기에서 배낭을 연 아이가 빵빵해진 과자 봉지를 꺼내 들고 놀라는 장면, 산 아래에 작은 마을", cap: "산꼭대기에서 과자 봉지가 빵빵해졌어요" },
     { name: "u6l4", theme: "gas6", orig: null, sk: cutU6l4(), alt: "겨울 운동장에서 찌그러진 축구공을 든 아이와, 난로 옆에서 다시 탱탱해진 공을 든 쌤", cap: "찬 바깥에선 쭈글, 따뜻한 난로 옆에선 탱탱" },

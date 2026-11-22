@@ -1,10 +1,11 @@
 // 중1 Ⅵ 도입 네 장면. 형식은 Ⅰ·Ⅱ단원과 같다: 내기를 걸고(정오를 매기지 않는다) → 손으로 장면을 바꾸고 → 끝에서 예측과 견준다.
-//   u6-ice  (u6l1) 「얇은 얼음판, 어떻게 건너야 안 깨질까?」  서서 걷기와 엎드려 기어가기를 둘 다 해 본다. 원리의 이름(압력)은 말하지 않는다
-//   u6-wrap (u6l3) 「뽁뽁이를 눌렀다 떼면?」        공기 방울을 꾹 눌렀다 뗀다(두 번)
+//   u6-snow (u6l1) 「깊은 눈밭, 무엇을 신어야 덜 빠질까?」  운동화로 걷기와 설피 신고 걷기를 둘 다 해 본다. 원리의 이름(압력)은 말하지 않는다
+//   u6-gym  (u6l3) 「공기 짐볼을 눌렀다 떼면?」      짐볼을 두 손으로 꾹 눌렀다 뗀다(두 번)
 //   u6-foil (u6l4) 「은박 풍선, 추운 밖에 들고 나가면?」      밖으로 나갔다 안으로 들어온다
 //   u6-pong (u6l5) 「찌그러진 탁구공, 살릴 수 있을까?」 공을 꾹 눌러 뜨거운 물에 담근다
-// 지금 훅(hookGas.ts)에서 바로잡은 것: 북극곰 장면이 답한 뒤에야 장면을 보여 주고 옳은 예측에 원리를 통째로 적어 두었다.
-// 새 장면은 건너는 방법만 묻고 손으로 두 가지를 다 해 본 뒤에 견준다. 탁구공 장면은 "구멍이 없다"는 조건을 처음에 말한다.
+// 옛 훅(hookGas.ts)에서 바로잡은 것: 답한 뒤에야 장면을 보여 주고 옳은 예측에 원리를 통째로 적어 두었다.
+// 새 장면은 무엇을 신을지만 묻고 손으로 두 가지를 다 해 본 뒤에 견준다. 탁구공 장면은 "구멍이 없다"는 조건을 처음에 말한다.
+// 2026-11-22: u6l1은 얼음판 위 동물 장면 대신 눈밭의 운동화와 설피, u6l3은 포장용 공기 방울 대신 공기 짐볼로 바꿨다(같은 사람, 같은 몸무게, 닿는 넓이만 다르다).
 import { el } from "../../../../core/dom";
 import { haptic, HAPTIC } from "../../../../core/haptics";
 import type { OpenerCtx } from "../opener";
@@ -72,70 +73,72 @@ function frames(c: OpenerCtx, fn: (dt: number) => void): void {
   c.onCleanup(() => cancelAnimationFrame(raf));
 }
 
-/* ══════════ u6-ice: 얇은 얼음판 위의 북극곰 ══════════ */
-export function iceBear(c: OpenerCtx): void {
-  const M = metaOf(c).ice;
-  c.stage.append(el("div", { class: "opn-layer", html: c.art.bearBase }));
-  const bear = c.stage.querySelector<SVGElement>(".opn-u6-ice-bear");
-  const RIGHT = "엎드려서 기어가요";
+/* ══════════ u6-snow: 눈밭의 운동화와 설피 ══════════ */
+export function snowWalk(c: OpenerCtx): void {
+  const M = metaOf(c).snow;
+  c.stage.append(el("div", { class: "opn-layer", html: c.art.snowBase }));
+  const kid = c.stage.querySelector<SVGElement>(".opn-u6-snow-kid");
+  const RIGHT = "설피를 신어요";
   let phase: "ask" | "play" | "done" = "ask";
   let busy = false;
   let picked = RIGHT;
-  const tried = { stand: false, flat: false };
+  const tried = { shoe: false, wide: false };
   const move = (x: number, instant = false): void => {
-    if (!bear) return;
-    bear.style.transition = instant ? "none" : "";
-    bear.style.transform = `translateX(${x}px)`;
-    if (instant) void bear.getBoundingClientRect();
+    if (!kid) return;
+    kid.style.transition = instant ? "none" : "";
+    kid.style.transform = `translateX(${x}px)`;
+    if (instant) void kid.getBoundingClientRect();
   };
   const wrap = (): void => {
-    if (!(tried.stand && tried.flat) || phase === "done") return;
+    if (!(tried.shoe && tried.wide) || phase === "done") return;
     phase = "done";
     c.step.dataset.opnPhase = "done";
     c.face("smile");
     haptic(HAPTIC.correct);
-    c.say(`${verdict(picked, RIGHT)} 엎드려야 얼음이 깨지지 않아요! 몸무게는 그대로인데 얼음에 닿는 <b>면적</b>이 넓어졌거든요.`);
+    c.say(`${verdict(picked, RIGHT)} 설피를 신으면 덜 빠져요! 몸무게는 그대로인데 눈에 닿는 <b>면적</b>이 넓어졌거든요.`);
     c.finish();
   };
-  const go = (kind: "stand" | "flat"): void => {
+  const go = (kind: "shoe" | "wide"): void => {
     if (phase !== "play" || busy) return;
     busy = true;
     haptic(HAPTIC.tap);
-    c.stage.classList.remove("cracked");
-    c.stage.classList.toggle("flat", kind === "flat");
+    c.stage.classList.remove("sink", "wide");
     move(0, true);
     c.step.dataset.opnTry = kind;
-    (kind === "stand" ? standBtn : flatBtn).classList.add("tried");
-    if (kind === "stand") {
+    (kind === "shoe" ? shoeBtn : wideBtn).classList.add("tried");
+    if (kind === "shoe") {
+      // 디딤판에서 눈밭으로 몇 걸음 나가자 무릎까지 푹 빠진다
       c.later(() => move(M.step), 60);
       c.later(() => {
-        c.stage.classList.add("cracked");
+        c.stage.classList.add("sink", "deep");
         c.face("surprised");
         haptic(HAPTIC.wrong);
-        tried.stand = true;
+        tried.shoe = true;
         busy = false;
-        if (tried.flat) wrap();
-        else c.say("쩍! 발밑에 힘이 몰려 얼음에 <b>금</b>이 갔어요. 이번엔 <b>엎드려 기어가기</b>를 눌러 보세요.");
+        if (tried.wide) wrap();
+        else c.say("푹! 발이 무릎까지 빠졌어요. 이번엔 <b>설피 신고 걷기</b>를 눌러 보세요.");
       }, 800);
     } else {
+      c.stage.classList.add("wide");
       c.later(() => move(M.go), 60);
       c.later(() => {
-        tried.flat = true;
+        c.stage.classList.add("flat");
+        tried.wide = true;
         busy = false;
-        if (tried.stand) wrap();
-        else c.say("얼음이 멀쩡해요. 이번에는 <b>서서 걷기</b>도 눌러 비교해 보세요.");
+        if (tried.shoe) wrap();
+        else c.say("눈 위를 사뿐사뿐 걸어요. 이번엔 <b>운동화로 걷기</b>도 눌러 비교해 보세요.");
       }, 1500);
     }
   };
-  const standBtn = btn(c, "stand", "서서 걷기", "네 발로 딛고 걸어요", () => go("stand"));
-  const flatBtn = btn(c, "flat", "엎드려 기어가기", "배를 넓게 깔고 기어요", () => go("flat"));
+  const shoeBtn = btn(c, "shoe", "운동화로 걷기", "발바닥만 눈에 닿아요", () => go("shoe"));
+  const wideBtn = btn(c, "wide", "설피 신고 걷기", "넓은 판이 눈에 닿아요", () => go("wide"));
 
   c.controls.hidden = true;
   c.step.dataset.opnPhase = "ask";
-  c.ask("북극곰이 얇은 얼음판을 건너야 해요. 어떻게 건너야 얼음이 안 깨질까요?", {
-    choices: [RIGHT, "서서 살금살금 걸어요", "힘껏 뛰어서 건너요"],
+  c.ask("깊게 쌓인 눈밭을 건너야 해요. 운동화와 넓적한 눈신발인 설피 가운데 무엇을 신어야 덜 빠질까요?", {
+    choices: [RIGHT, "운동화를 신어요", "둘 다 똑같이 빠져요"],
     neutral: true,
-    good: "예측 완료! <b>서서 걷기</b>와 <b>엎드려 기어가기</b>를 모두 눌러 확인해 보세요.",
+    good: "예측 완료! <b>운동화로 걷기</b>와 <b>설피 신고 걷기</b>를 모두 눌러 확인해 보세요.",
     onDone: (p) => {
       picked = p;
       phase = "play";
@@ -147,14 +150,15 @@ export function iceBear(c: OpenerCtx): void {
   });
 }
 
-/* ══════════ u6-wrap: 뽁뽁이의 공기 방울 ══════════ */
-export function bubbleWrap(c: OpenerCtx): void {
-  const M = metaOf(c).wrap;
-  c.stage.append(el("div", { class: "opn-layer", html: c.art.wrapBase }));
-  const cap = c.stage.querySelector<SVGElement>(".opn-u6-wrap-cap");
-  const finger = c.stage.querySelector<SVGElement>(".opn-u6-wrap-finger");
-  const RIGHT = "납작해졌다가 다시 볼록해져요";
-  const MIN = 0.42; // 다 눌렸을 때의 높이(처음의 몇 배)
+/* ══════════ u6-gym: 공기 짐볼 ══════════ */
+export function gymBall(c: OpenerCtx): void {
+  const M = metaOf(c).gym;
+  c.stage.append(el("div", { class: "opn-layer", html: c.art.gymBase }));
+  const ball = c.stage.querySelector<SVGElement>(".opn-u6-gym-ball");
+  const hands = c.stage.querySelector<SVGElement>(".opn-u6-gym-hands");
+  if (ball) ball.style.transformOrigin = `${M.cx}px ${M.baseY}px`; // 공이 바닥에 닿은 자리(무대 px)
+  const RIGHT = "눌렸다가 다시 둥글게 부풀어요";
+  const MIN = 0.7; // 다 눌렸을 때의 높이(처음의 몇 배)
   let phase: "ask" | "play" | "done" = "ask";
   let picked = RIGHT;
   let k = 1;
@@ -162,23 +166,24 @@ export function bubbleWrap(c: OpenerCtx): void {
   let deep = false; // 이번 누르기에서 끝까지 눌렀는가
   let presses = 0;
   const paint = (): void => {
-    if (cap) cap.style.transform = `scaleY(${k})`;
-    if (finger) finger.style.transform = `translateY(${M.ry * (1 - k) - 6 * (k >= 0.999 ? 1 : 0)}px)`;
+    if (ball) ball.style.transform = `scale(${1 + (1 - k) * 0.4}, ${k})`;
+    if (hands) hands.style.transform = `translateY(${M.reach * (1 - k) - 6 * (k >= 0.999 ? 1 : 0)}px)`;
     c.step.dataset.opnSquash = k.toFixed(2);
   };
-  const spot = holdSpot(c, M.hit, "공기 방울을 꾹 눌렀다 떼기", {
+  const ending = (): string => `${verdict(picked, RIGHT)} 누르면 부피가 줄고 떼면 원래대로 돌아와요! 안에 갇힌 <b>공기</b>가 손을 밀어 올렸거든요.`;
+  const spot = holdSpot(c, M.hit, "짐볼을 꾹 눌렀다 떼기", {
     up: () => {
       if (phase !== "play" || !deep) return;
       deep = false;
       presses += 1;
       haptic(HAPTIC.select);
-      if (presses === 1) c.say("손을 떼니 다시 <b>볼록</b>해졌어요. 한 번 더 눌렀다 떼 보세요.");
+      if (presses === 1) c.say("손을 떼니 다시 <b>둥글게</b> 부풀었어요. 한 번 더 눌렀다 떼 보세요.");
       else {
         phase = "done";
         c.step.dataset.opnPhase = "done";
         c.face("smile");
         haptic(HAPTIC.correct);
-        c.say(`${verdict(picked, RIGHT)} 누르면 부피가 줄고 떼면 원래대로 돌아와요! 안에 갇힌 <b>공기</b>가 손가락을 밀어 올렸거든요.`);
+        c.say(ending());
         c.finish();
       }
     },
@@ -191,7 +196,7 @@ export function bubbleWrap(c: OpenerCtx): void {
         presses += 2;
         phase = "done";
         c.step.dataset.opnPhase = "done";
-        c.say(`${verdict(picked, RIGHT)} 누르면 부피가 줄고 떼면 원래대로 돌아와요! 안에 갇힌 <b>공기</b>가 손가락을 밀어 올렸거든요.`);
+        c.say(ending());
         c.finish();
       }, 600);
     },
@@ -203,9 +208,9 @@ export function bubbleWrap(c: OpenerCtx): void {
       // 누를수록 버틴다: 처음엔 쑥 들어가고 갈수록 덜 들어간다
       k += (MIN - k) * 0.09 * f;
       v = 0;
-      if (k < MIN + 0.06) deep = true;
+      if (k < MIN + 0.04) deep = true;
     } else {
-      // 떼면 용수철처럼 돌아온다
+      // 떼면 통통 튀듯 돌아온다
       v += (1 - k) * 0.12 * f;
       v *= 0.78;
       k = Math.min(1.04, k + v * f);
@@ -215,10 +220,10 @@ export function bubbleWrap(c: OpenerCtx): void {
 
   c.step.dataset.opnPhase = "ask";
   paint();
-  c.ask("택배 상자 속 뽁뽁이의 공기 방울이에요. 손가락으로 꾹 눌렀다 떼면 어떻게 될까요?", {
-    choices: [RIGHT, "납작해진 채로 있어요", "단단해서 안 눌려요"],
+  c.ask("공기를 빵빵하게 넣은 짐볼이에요. 두 손으로 꾹 눌렀다 떼면 어떻게 될까요?", {
+    choices: [RIGHT, "납작해진 채로 있어요", "단단해서 전혀 안 눌려요"],
     neutral: true,
-    good: "예측 완료! 그림의 <b>공기 방울</b>을 꾹 눌렀다 떼 보세요.",
+    good: "예측 완료! 그림의 <b>짐볼</b>을 꾹 눌렀다 떼 보세요.",
     onDone: (p) => {
       picked = p;
       phase = "play";

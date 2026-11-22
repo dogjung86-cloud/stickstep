@@ -89,18 +89,26 @@
 .opn-u5-btn span { font-size: 12.5px; line-height: 17px; font-weight: 600; color: var(--sub); }
 .opn-u5-btn.tried { border-color: var(--subj-force); background: var(--subj-force-tint); }
 .opn-u5-btn:disabled { opacity: .5; }
-.opn-u5-bal.rise { transition: transform .7s cubic-bezier(.3, 1.5, .5, 1); }
+/* 스펀지 공(u5l1): 누르면 바닥 기준으로 납작해지고, 떼면 탄력 있게 돌아오며(back) 바깥 묶음이 톡 튄다(hop) */
+/* 결 무늬(tex)의 그림이 공보다 넓어 fill-box는 공의 바닥과 어긋난다. 기준점은 view-box의 px로 장면 코드가 넣는다(탁자 위 공의 바닥) */
+.opn-u5-sp { transform-box: view-box; }
+.opn-u5-sp.back { transition: transform .4s cubic-bezier(.3, 1.6, .5, 1); }
+.opn-stage.hop .opn-u5-sp-hop { animation: opnU5Hop .8s cubic-bezier(.25, .8, .35, 1) both; }
+@keyframes opnU5Hop { 0% { transform: translateY(0); } 38% { transform: translateY(-78px); } 70% { transform: translateY(0); } 84% { transform: translateY(-14px); } 100% { transform: translateY(0); } }
+.opn-u5-sp-mark { opacity: 0; }
+.opn-stage.hop .opn-u5-sp-mark { animation: opnU5Mark .5s ease-out both; }
+@keyframes opnU5Mark { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
 .opn-u5-eff { opacity: 0; transition: opacity .25s; }
 .opn-stage.lv-1 .opn-u5-eff.e1, .opn-stage.lv-2 .opn-u5-eff.e1, .opn-stage.lv-2 .opn-u5-eff.e2, .opn-stage.lv-3 .opn-u5-eff { opacity: 1; }
 .opn-stage.shake .opn-u5-rib { animation: opnU5Shake .7s ease-in-out; }
 @keyframes opnU5Shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 45% { transform: translateX(6px); } 70% { transform: translateX(-4px); } 88% { transform: translateX(2px); } }
-.opn-u5-btl.pop { transition: transform .55s cubic-bezier(.3, 1.9, .5, 1); }
+.opn-u5-fb.pop { transition: transform .55s cubic-bezier(.3, 1.9, .5, 1); }
 .opn-u5-hand { opacity: 0; transition: opacity .15s; }
 .opn-stage.press .opn-u5-hand { opacity: 1; }
 .opn-u5-splash { opacity: 0; }
 .opn-stage.splash .opn-u5-splash { animation: opnU5Splash .9s ease-out both; }
 @keyframes opnU5Splash { 0% { opacity: 0; transform: translateY(20px); } 30% { opacity: 1; transform: translateY(-14px); } 100% { opacity: 0; transform: translateY(6px); } }
-@media (prefers-reduced-motion: reduce) { .opn-stage.play .opn-u5-hit::after, .opn-stage.shake .opn-u5-rib { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .opn-stage.play .opn-u5-hit::after, .opn-stage.shake .opn-u5-rib, .opn-stage.hop .opn-u5-sp-hop { animation: none; } }
 
 /* ── u5l2 두 힘 합치기 ─────────────────────────────── */
 .u5x-frow { display: grid; grid-template-columns: 30px 1fr 48px 54px 48px; gap: 6px; align-items: center; height: 52px; }

@@ -1,53 +1,65 @@
-// [Ⅳ단원 도입] u4l4 wrap: 「뜨거운 국그릇에 씌운 랩은 어떻게 될까요?」
-// 내기: 뜨거운 국그릇에 랩을 씌우고 기다리면 랩은 어떻게 될까(정오를 매기지 않는다).
-// 손으로 하는 일: 꾹 눌러 시간을 보내면 랩이 볼록해지고, 식을 때까지 더 누르면 오목해진다.
-// 도입은 까닭(기화하면 부피가 늘어난다)을 말하지 않는다. 뒤의 올리브유 랩과 풍선 랩이 받는다.
+// [Ⅳ단원 도입] u4l4 wrap: 「따뜻한 물을 조금 넣고 닫은 페트병은 어떻게 될까요?」
+// 내기: 따뜻한 물을 조금 넣고 뚜껑을 꼭 닫은 얇은 페트병을 뜨거운 물에 담갔다가 얼음물로 옮기면 병은 어떻게 될까(정오를 매기지 않는다).
+// 손으로 하는 일: 꾹 눌러 병을 뜨거운 물 대야에 담그면 병이 볼록해지고, 다시 꾹 눌러 얼음물 대야로 옮기면 찌그러지며 안쪽에 물방울이 맺힌다.
+// 데우는 단계를 넣은 까닭: 닫은 병을 식히기만 하면 찌그러지기만 한다. 부풀었다가 찌그러지는 두 방향을 모두 보이려고 먼저 데운다.
+// 도입은 까닭(기화하면 부피가 늘고 액화하면 준다)을 말하지 않는다. 뒤의 식용유 랩과 풍선 랩이 받는다.
 import { haptic, HAPTIC } from "../../../../core/haptics";
 import type { OpenerCtx } from "../opener";
-import { ctlBtn, hold, layer } from "./common";
+import { ctlBtn, hold, layer, metaOf } from "./common";
 
-const FLAT = 0.05;
+const BULGE = 0.16; // 뜨거운 물에서 병이 가로로 부푸는 정도
 
 export function wrap(c: OpenerCtx): void {
+  const M = metaOf(c).wrap;
   layer(c, "wrapBase");
-  const dome = c.stage.querySelector<SVGGElement>(".opn-u4-wr-wrap");
-  const dent = c.stage.querySelector<SVGGElement>(".opn-u4-wr-dent");
-  const set = (k: number): void => {
-    if (dome) dome.style.transform = `scaleY(${k.toFixed(3)})`;
+  const move = c.stage.querySelector<SVGGElement>(".opn-u4-bt-move");
+  const body = c.stage.querySelector<SVGGElement>(".opn-u4-bt-body");
+  const dent = c.stage.querySelector<SVGGElement>(".opn-u4-bt-dent");
+  const dew = c.stage.querySelector<SVGGElement>(".opn-u4-bt-dew");
+  const at = (p: readonly number[]): void => {
+    if (move) move.style.transform = `translate(${p[0] - M.start[0]}px, ${p[1] - M.start[1]}px)`;
+  };
+  const lerp = (a: readonly number[], b: readonly number[], k: number): number[] => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k];
+  const puff = (k: number): void => {
+    if (body) body.style.transform = `scaleX(${(1 + BULGE * k).toFixed(3)})`;
     c.step.dataset.opnWrap = k.toFixed(2);
   };
-  set(FLAT);
+  puff(0);
   c.step.dataset.opnPhase = "ask";
-  // 보기 앞에 '위로', '아래로'가 붙어 끝의 말머리는 startsWith가 아니라 includes("볼록"), includes("오목")로 가른다
-  c.ask("갓 끓인 뜨거운 국그릇에 랩을 씌웠어요. 잠시 뒤 랩은 어떻게 변할까요?", {
-    choices: ["위로 볼록하게 부풀어 오른다", "처음 그대로 평평하다", "아래로 오목하게 들어간다"],
+  // 보기의 앞말이 겹치지 않아 끝의 말머리는 startsWith로 가른다
+  c.ask("따뜻한 물을 조금 넣고 뚜껑을 꼭 닫은 얇은 페트병이에요. 뜨거운 물에 담갔다가 얼음물로 옮기면 병은 어떻게 될까요?", {
+    choices: ["볼록해졌다가 찌그러진다", "처음 모양 그대로다", "찌그러졌다가 볼록해진다"],
     neutral: true,
-    good: "좋아요! 아래 버튼을 <b>꾹 눌러</b> 랩이 어떻게 변하는지 살펴보세요.",
+    good: "좋아요! 아래 버튼을 <b>꾹 눌러</b> 병을 뜨거운 물에 담가 보세요.",
     onDone: (picked) => {
       c.step.dataset.opnPhase = "hot";
-      c.stage.classList.add("hot");
       c.face("curious");
-      const b1 = ctlBtn(c, "꾹 눌러 변화 관찰하기");
-      hold(c, b1, 2600, (p) => set(FLAT + (1 - FLAT) * p), () => {
+      const b1 = ctlBtn(c, "꾹 눌러 뜨거운 물에 담그기");
+      hold(c, b1, 2600, (p) => {
+        // 앞의 3할은 대야로 옮기고, 그 뒤는 병이 차차 부푼다
+        at(lerp(M.start, M.hot, Math.min(1, p / 0.3)));
+        puff(Math.max(0, (p - 0.3) / 0.7));
+      }, () => {
         haptic(HAPTIC.correct);
         c.step.dataset.opnPhase = "cool";
-        c.say("랩이 위로 <b>볼록하게</b> 부풀어 올랐어요! 이제 국이 식으면 어떻게 될지 한 번 더 꾹 눌러 보세요.");
-        const b2 = ctlBtn(c, "꾹 눌러 국 식히기");
+        c.stage.classList.add("hot");
+        c.say("병이 <b>볼록하게</b> 부풀었어요! 이번에는 병을 얼음물로 옮겨 볼까요? 한 번 더 꾹 눌러 보세요.");
+        const b2 = ctlBtn(c, "꾹 눌러 얼음물로 옮기기");
         hold(c, b2, 2600, (p) => {
-          // 앞의 절반은 볼록한 랩이 내려앉고, 뒤의 절반은 그릇 안쪽으로 오목하게 처진다
-          set(Math.max(FLAT, 1 - 2 * p));
-          if (dent) {
-            dent.style.opacity = p > 0.5 ? "1" : "0";
-            dent.style.transform = `scaleY(${Math.max(0, (p - 0.5) * 2).toFixed(3)})`;
-          }
-          if (dome) dome.style.opacity = p > 0.5 ? "0" : "1";
-          if (p > 0.3) c.stage.classList.remove("hot");
+          // 앞의 3할은 얼음물 대야로 옮기고, 뒤의 절반부터 부푼 병이 찌그러진 병으로 바뀐다
+          at(lerp(M.hot, M.cold, Math.min(1, p / 0.3)));
+          const k = Math.max(0, (p - 0.45) / 0.55);
+          puff(1 - k);
+          if (body) body.style.opacity = k > 0.5 ? "0" : "1";
+          if (dent) dent.style.opacity = k > 0.5 ? "1" : "0";
+          if (dew) dew.style.opacity = k > 0.7 ? "1" : "0";
         }, () => {
           haptic(HAPTIC.correct);
           c.face("surprised");
+          c.stage.classList.remove("hot");
           c.stage.classList.add("done");
-          const head = picked.includes("볼록") ? "예측대로 볼록해졌다가" : picked.includes("오목") ? "먼저 볼록해졌다가" : "예측과 달리 볼록해졌다가";
-          c.say(`${head} 국이 식으니 다시 <b>오목하게</b> 들어갔어요! 그릇 안에서 무엇이 변했기에 랩을 밀어 올렸다가 다시 들어가게 했을까요?`);
+          const head = picked.startsWith("볼록해졌다가") ? "예측대로" : "예측과 달리";
+          c.say(`${head} 뜨거운 물에서 볼록해졌던 병이 얼음물에서 <b>찌그러졌어요</b>! 병 안의 물은 어떻게 변했기에 병의 모양이 바뀌었을까요?`);
           c.finish();
         });
       });

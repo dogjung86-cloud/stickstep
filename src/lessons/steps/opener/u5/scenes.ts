@@ -1,13 +1,14 @@
 // [중1 Ⅴ 도입] 여섯 장면. 형식은 Ⅰ·Ⅱ단원과 같다: 내기(예측)를 먼저 걸고 → 손으로 한 일이 장면을 바꾸고 → 끝에서 예측과 견준다.
 // 예측은 모두 neutral(답이 조작으로 드러난다). 원리의 답은 말하지 않고 물음으로 맺어 바로 뒤의 랩에 넘긴다.
-//   u5-balloon (u5l1) 풍선을 꾹 눌러 줄을 당겼다 놓는다          → 랩: 힘을 화살표로 나타내기
+//   u5-sponge  (u5l1) 탁자 위 스펀지 공을 꾹 눌렀다 뗀다          → 랩: 힘을 화살표로 나타내기
 //   u5-tug     (u5l2) "더 세게 당기기!" 버튼 세 번, 리본은 제자리  → 랩: 줄다리기의 남는 힘
 //   u5-bow     (u5l4) 조금 당겨 쏘기와 많이 당겨 쏘기              → 랩: 용수철을 늘인 길이와 힘
 //   u5-sled    (u5l5) 흙길과 빙판길에서 같은 세기로 썰매 밀기       → 랩: 바닥과 무게를 바꿔 상자 밀기
-//   u5-bottle  (u5l6) 빈 페트병을 꾹 눌러 넣었다 놓는다             → 랩: 추를 물에 담그며 눈금 읽기
+//   u5-float   (u5l6) 물에 뜬 비치볼을 꾹 눌러 넣었다 놓는다         → 랩: 추를 물에 담그며 눈금 읽기
 //   u5-roll    (u5l7) 공을 차고 지켜본다                          → 랩: 굴러가는 공에 바람 보내기
 // 그림은 qa/sketch/scenes/intro-u5.mjs(손그림). 좌표는 c.meta에서 읽는다. 그림 속에 글자와 숫자는 없다.
-// 옛 훅(hookForce.ts)과 달라진 사실: 없음(소재와 결과는 같다). 예측이 결과 앞으로 왔고, 답을 말하던 끝말을 물음으로 바꿨다.
+// 옛 훅(hookForce.ts)과 달라진 것: 예측이 결과 앞으로 왔고, 답을 말하던 끝말을 물음으로 바꿨다.
+// 2026-11-22: u5l1은 헬륨 풍선 대신 스펀지 공(누르면 모양이, 떼면 운동 상태가 바뀐다), u5l6은 빈 페트병 대신 비치볼로 바꿨다.
 
 import { el } from "../../../../core/dom";
 import { haptic, HAPTIC } from "../../../../core/haptics";
@@ -107,37 +108,46 @@ function holdFill(c: OpenerCtx, b: HTMLButtonElement, ms: number, canPress: () =
   c.onCleanup(() => cancelAnimationFrame(raf));
 }
 
-// ── 1. 헬륨 풍선 ────────────────────────────────────────────────
-const balloon: OpenerScene = (c) => {
-  const M = meta(c).balloon;
-  art(c, "balloonBase");
-  const bal = c.stage.querySelector<SVGElement>(".opn-u5-bal");
-  const str = c.stage.querySelector<SVGElement>(".opn-u5-str");
-  const b = hit(c, M.hit, "풍선을 꾹 눌러 줄 당기기");
+// ── 1. 스펀지 공 ───────────────────────────────────────────────
+// 누르는 동안 공이 바닥(탁자) 기준으로 납작해지고(모양), 다 눌렀다 떼면 원래 모양으로 돌아오며 톡 튀어 오른다(운동 상태).
+const sponge: OpenerScene = (c) => {
+  const M = meta(c).sponge;
+  art(c, "spongeBase");
+  const sp = c.stage.querySelector<SVGElement>(".opn-u5-sp");
+  const hand = c.stage.querySelector<SVGElement>(".opn-u5-hand");
+  const b = hit(c, M.hit, "스펀지 공을 꾹 눌렀다 떼기");
+  const drop = 2 * M.r * M.squash; // 다 눌렀을 때 공 윗면이 내려가는 거리
+  if (sp) sp.style.transformOrigin = `${M.cx}px ${M.top}px`; // 공이 탁자에 닿은 자리(무대 px)
   let done = false;
   const paint = (v: number): void => {
-    if (bal) bal.style.transform = `translateY(${v * M.pull}px)`;
-    str?.setAttribute("y2", String(M.top + v * M.pull));
+    if (sp) sp.style.transform = `scale(${1 + 0.22 * v}, ${1 - M.squash * v})`;
+    if (hand) hand.style.transform = `translateY(${v * drop}px)`;
   };
-  const verdict = bet(c, "헬륨 풍선의 줄을 아래로 당겼다가 놓으면 어떻게 될까요?", ["다시 위로 올라가요", "내려온 자리에 멈춰요", "바닥으로 가라앉아요"], "예측 완료! <b>풍선</b>을 꾹 눌러 끝까지 당겼다가 놓아 보세요.", () => undefined);
+  const verdict = bet(c, "탁자 위 스펀지 공을 손으로 꾹 눌렀다가 떼면 어떻게 될까요?", ["납작해졌다가 톡 튀어 올라요", "납작해진 채 그대로 있어요", "모양이 전혀 안 변해요"], "예측 완료! <b>스펀지 공</b>을 꾹 눌렀다가 손을 떼 보세요.", () => undefined);
   holdFill(
     c,
     b,
     900,
     () => c.step.dataset.opnPhase === "play" && !done,
     (v) => {
-      bal?.classList.remove("rise");
+      sp?.classList.remove("back");
+      c.stage.classList.remove("hop");
+      c.stage.classList.add("press");
       paint(v);
     },
     (v) => {
-      bal?.classList.add("rise");
+      c.stage.classList.remove("press");
+      sp?.classList.add("back");
       paint(0);
+      if (hand) hand.style.transform = "translateY(-40px)";
       if (v < 0.8) {
-        c.say("조금 더 길게 <b>꾹</b> 눌러 줄을 끝까지 당겨 보세요.");
+        c.say("조금 더 길게 <b>꾹</b> 눌러 공을 납작하게 만들어 보세요.");
         return;
       }
       done = true;
-      c.later(() => end(c, `${verdict()} 손을 놓자 풍선이 위로 솟아올랐어요. 무엇이 풍선의 움직임을 바꿨을까요?`), 800);
+      void c.stage.offsetWidth;
+      c.stage.classList.add("hop");
+      c.later(() => end(c, `${verdict()} 공이 납작해졌다가 톡 튀어 올랐어요. 무엇이 공의 모양과 움직임을 바꿨을까요?`), 900);
     },
   );
 };
@@ -251,39 +261,39 @@ const sled: OpenerScene = (c) => {
   const verdict = bet(c, "흙길과 빙판길에서 썰매를 같은 세기로 밀면 어디서 더 멀리 갈까요?", ["빙판길", "흙길", "똑같이 가요"], "예측 완료! 두 길에서 한 번씩 밀어 보세요.", () => undefined);
 };
 
-// ── 5. 빈 페트병 ────────────────────────────────────────────────
-const bottle: OpenerScene = (c) => {
-  const M = meta(c).bottle;
-  art(c, "bottleBase");
-  const btl = c.stage.querySelector<SVGElement>(".opn-u5-btl");
+// ── 5. 수조 속 비치볼 ───────────────────────────────────────────
+const floatBall: OpenerScene = (c) => {
+  const M = meta(c).float;
+  art(c, "floatBase");
+  const ball = c.stage.querySelector<SVGElement>(".opn-u5-fb");
   const hand = c.stage.querySelector<SVGElement>(".opn-u5-hand");
-  const b = hit(c, M.hit, "페트병을 꾹 눌러 물속에 넣기");
+  const b = hit(c, M.hit, "비치볼을 꾹 눌러 물속에 넣기");
   let done = false;
-  const verdict = bet(c, "물에 떠 있는 빈 페트병을 물속에 꾹 눌렀다가 손을 떼면?", ["위로 튀어 올라요", "물속에 그대로 있어요", "바닥으로 가라앉아요"], "예측 완료! <b>페트병</b>을 꾹 눌러 넣었다가 손을 떼 보세요.", () => undefined);
+  const verdict = bet(c, "물에 떠 있는 비치볼을 물속으로 꾹 눌렀다가 손을 떼면?", ["위로 솟아올라요", "물속에 그대로 있어요", "바닥으로 가라앉아요"], "예측 완료! <b>비치볼</b>을 꾹 눌러 넣었다가 손을 떼 보세요.", () => undefined);
   holdFill(
     c,
     b,
     1000,
     () => c.step.dataset.opnPhase === "play" && !done,
     (v) => {
-      btl?.classList.remove("pop");
+      ball?.classList.remove("pop");
       c.stage.classList.remove("splash");
       c.stage.classList.add("press");
-      if (btl) btl.style.transform = `translateY(${v * M.down}px)`;
+      if (ball) ball.style.transform = `translateY(${v * M.down}px)`;
       if (hand) hand.style.transform = `translateY(${v * M.down}px)`;
     },
     (v) => {
       c.stage.classList.remove("press");
-      btl?.classList.add("pop");
-      if (btl) btl.style.transform = "translateY(0)";
+      ball?.classList.add("pop");
+      if (ball) ball.style.transform = "translateY(0)";
       if (hand) hand.style.transform = "translateY(-40px)";
       if (v < 0.8) {
-        c.say("조금 더 길게 <b>꾹</b> 눌러 병을 물속 깊이 넣어 보세요.");
+        c.say("조금 더 길게 <b>꾹</b> 눌러 공을 물속 깊이 넣어 보세요.");
         return;
       }
       done = true;
       c.stage.classList.add("splash");
-      c.later(() => end(c, `${verdict()} 페트병이 물 위로 퐁 솟아올랐어요! 물속에서 병을 위로 밀어 올린 것은 무엇일까요?`), 700);
+      c.later(() => end(c, `${verdict()} 비치볼이 물 위로 퐁 솟아올랐어요! 물속에서 공을 위로 밀어 올린 것은 무엇일까요?`), 700);
     },
   );
 };
@@ -309,4 +319,4 @@ const roll: OpenerScene = (c) => {
   });
 };
 
-export const U5_SCENES: Record<string, OpenerScene> = { "u5-balloon": balloon, "u5-tug": tug, "u5-bow": bow, "u5-sled": sled, "u5-bottle": bottle, "u5-roll": roll };
+export const U5_SCENES: Record<string, OpenerScene> = { "u5-sponge": sponge, "u5-tug": tug, "u5-bow": bow, "u5-sled": sled, "u5-float": floatBall, "u5-roll": roll };

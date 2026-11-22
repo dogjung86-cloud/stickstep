@@ -27,9 +27,9 @@ function tube(sk, cx, y0, y1, hw, cls, sd) {
 export const SC = {
   sun: [150, 126, 62], // 해의 가운데와 반지름
   hit: [44, 20, 212, 212], // 해를 누르는 자리(x, y, w, h)
-  cups: { white: 330, blue: 560, black: 800 },
+  cups: { white: 330, yellow: 560, black: 800 },
 };
-const CUP = { white: ["#FDFDFB", 11], blue: ["#3F8FE8", 21], black: ["#3B4048", 31] };
+const CUP = { white: ["#FDFDFB", 11], yellow: ["#FFD84A", 21], black: ["#3B4048", 31] };
 const RIM = 344, FOOT = 480;
 
 function cup(sk, cx, key) {
@@ -67,7 +67,7 @@ export function suncupsBase() {
   sk.ink(top, { w: 9, wob: 0.9, seed: 63 });
   sk.ink(curve([[775, 150], [790, 108], [815, 84]]), { w: 5, color: "#9E3324", wob: 0.4, seed: 64 });
   sk.ink(curve([[855, 150], [840, 108], [815, 84]]), { w: 5, color: "#9E3324", wob: 0.4, seed: 65 });
-  for (const key of ["white", "blue", "black"]) cup(sk, SC.cups[key], key);
+  for (const key of ["white", "yellow", "black"]) cup(sk, SC.cups[key], key);
   // 끝에서 검은 컵과 파라솔을 가리키는 점선 테두리
   g(sk, "opn-sc-mark", () => sk.ink(ell(808, 292, 142, 214), { w: 8, color: C.orange, wob: 1.2, seed: 71, dash: [22, 20] }));
   // 해

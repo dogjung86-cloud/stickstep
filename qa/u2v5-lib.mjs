@@ -624,7 +624,7 @@ export async function playKin(page, { wrong = false, miss = false, on = noop } =
   await waitAsk(page);
   await W(page, 250);
   await on("mount");
-  await pickText(page, miss ? "갈매기" : "다람쥐");
+  await pickText(page, miss ? "참새" : "강아지");
   await waitDs(page, "knlPhase", "look");
   await W(page, 300);
   await on("look");
@@ -672,20 +672,20 @@ export async function playRankWiden(page, { wrong = false, miss = false, on = no
   await on("done");
 }
 
-/** u2l9 검색표 랩. miss이면 대장균과 버섯에서 한 번씩 틀린 길을 고른다. */
+/** u2l9 검색표 랩. miss이면 대장균과 아메바에서 한 번씩 틀린 길을 고른다. */
 export async function playKingdomPath(page, { wrong = false, miss = false, on = noop } = {}) {
   const idle = async () => {
     await W(page, 120);
     await waitDs(page, "kplBusy", "0");
     await W(page, 220);
   };
-  // 생물마다 답할 차례: [물음, 답(예 = true, 둘째 물음은 "pass" 버튼)].
+  // 생물마다 답할 차례: [물음, 답(예 = true)]. 생물은 대장균, 소나무, 박새, 아메바, 버섯 차례다.
   const PLAN = [
     [[1, false]],
-    [[1, true], [2, "pass"]],
-    [[1, true], [2, "pass"], [3, true]],
-    [[1, true], [2, "pass"], [3, false], [4, true]],
-    [[1, true], [2, "pass"], [3, false], [4, false]],
+    [[1, true], [2, true]],
+    [[1, true], [2, false], [3, true]],
+    [[1, true], [2, false], [3, false], [4, false]],
+    [[1, true], [2, false], [3, false], [4, true]],
   ];
   await idle();
   await on("mount");
@@ -693,14 +693,8 @@ export async function playKingdomPath(page, { wrong = false, miss = false, on = 
     for (const [g, ans] of PLAN[i]) {
       await waitDs(page, "kplGate", String(g));
       await idle();
-      if (ans === "pass") {
-        if (i === 1) await on("org2-gate2-pass");
-        else if (i === 2) await on("org3-gate2-pass");
-        await tap(page, ".kpl-pass");
-        await W(page, 300);
-        continue;
-      }
-      if (miss && ((i === 0 && g === 1) || (i === 4 && g === 3))) {
+      // miss이면 대장균(①)과 아메바(③, 세포 하나라 '아니요')에서 한 번씩 틀린 길을 고른다
+      if (miss && ((i === 0 && g === 1) || (i === 3 && g === 3))) {
         await tap(page, ans ? ".kpl-no" : ".kpl-yes");
         await W(page, 400);
         await on(`org${i + 1}-gate${g}-miss`);
@@ -723,32 +717,32 @@ export async function playKingdomPath(page, { wrong = false, miss = false, on = 
   await on("done");
 }
 
-/** u2l10 먹이 관계 랩. miss이면 개구리를 되돌려 놓아 본다. */
+/** u2l10 먹이 관계 랩. miss이면 족제비를 되돌려 놓아 본다. */
 export async function playFoodWeb(page, { wrong = false, miss = false, on = noop } = {}) {
   await on("mount");
-  await tap(page, '.bv-card[data-k="frog"]');
+  await tap(page, '.bv-card[data-k="weasel"]');
   await waitAsk(page);
   await W(page, 300);
   await on("predict");
   await pickText(page, miss ? "(나) 생태계" : "(가) 생태계");
   await askGone(page);
-  await waitDs(page, "fwbOff", "frog");
+  await waitDs(page, "fwbOff", "weasel");
   await W(page, 1500);
-  await on("frog-off");
+  await on("weasel-off");
   if (miss) {
-    await tap(page, '.bv-card[data-k="frog"]');
+    await tap(page, '.bv-card[data-k="weasel"]');
     await waitDs(page, "fwbOff", "");
     await W(page, 500);
-    await on("frog-back");
+    await on("weasel-back");
   }
-  await tap(page, '.bv-card[data-k="hopper"]');
-  await waitDs(page, "fwbOff", "hopper");
+  await tap(page, '.bv-card[data-k="mouse"]');
+  await waitDs(page, "fwbOff", "mouse");
   await W(page, 2000);
-  await on("hopper-off");
-  await tap(page, '.bv-card[data-k="rice"]');
-  await waitDs(page, "fwbOff", "rice");
+  await on("mouse-off");
+  await tap(page, '.bv-card[data-k="clover"]');
+  await waitDs(page, "fwbOff", "clover");
   await W(page, 2300);
-  await on("rice-off");
+  await on("clover-off");
   await btnShown(page, ".fwb-cmp");
   await W(page, 250);
   await on("tried");

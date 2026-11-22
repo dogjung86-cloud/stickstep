@@ -212,7 +212,7 @@ const graphPoint = (temp) =>
   page.evaluate((t) => {
     const svg = document.querySelector(".screen.active .u1g-stage svg");
     const m = svg.getScreenCTM();
-    const p = new DOMPoint(190, 186 - (t - 20) * 8.2).matrixTransform(m);
+    const p = new DOMPoint(190, 186 - (t - 18) * (164 / 12)).matrixTransform(m); // graphLab: 18 ℃ = y 186, 30 ℃ = y 22
     return { x: p.x, y: p.y };
   }, temp);
 async function plot(temp, from) {

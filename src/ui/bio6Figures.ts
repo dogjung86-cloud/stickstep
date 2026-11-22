@@ -236,7 +236,7 @@ export function onionRulerFig(): string {
 }
 
 // ── 시험 문제의 세포 그림(2026-11-15 그래픽 손질) ─────────────────────────────
-// 시험 풀의 발주 세포 그림(bio3/figs/plant-cell, animal-cell)에는 이 책에서 배우지 않는 구조(큰 물주머니, 막 주름 덩어리)가 함께 그려져 있었다.
+// 시험 풀의 발주 세포 그림(bio3/figs/plant-cell, animal-cell)에는 이 단원에서 배우지 않는 구조(큰 물주머니, 막 주름 덩어리)가 함께 그려져 있었다.
 // 레슨 그림(u2l2f2, 문제 도해)과 같은 다섯 구조(세포벽, 세포막, 핵, 마이토콘드리아, 엽록체)만 코드로 그린다.
 // 색은 시험 글과 맞춘다: 핵은 보라색 덩어리, 마이토콘드리아는 주황빛 알갱이, 엽록체는 초록색 알갱이, 세포벽은 두꺼운 갈색 띠.
 // 표시(㉠~㉢)는 그림 좌표로 준다: (bx, by)는 기호 동그라미, (tx, ty)는 가리키는 자리. 이름은 쓰지 않는다(정답이 드러난다).
@@ -437,7 +437,7 @@ export function slideBubbleScopeFig(alt: string): string {
 }
 
 // ── 순환계(심장과 혈관) 그림(u2l5 문제 2, 2026-11-15 그래픽 손질) ──────────────────
-// 고치기 전 그림은 사람 몸 윤곽 전체 안에 심장과 혈관을 그려 보기 "(나) 개체"와 헷갈렸다. 책의 기관계 그림(소화계)처럼 기관만 그린다:
+// 고치기 전 그림은 사람 몸 윤곽 전체 안에 심장과 혈관을 그려 보기 "(나) 개체"와 헷갈렸다. 기관계 그림답게(소화계 그림처럼) 기관만 그린다:
 // 가슴 높이에서 본 심장과 거기서 뻗어 나가는 큰 혈관 줄기(동맥 빨강, 정맥 파랑). 혈관은 그림 테두리 밖으로 이어진다(몸 윤곽, 팔다리 끝은 없다).
 // 이름표는 달지 않는다(답이 된다). 방향: 그림의 왼쪽이 몸의 오른쪽(대정맥), 대동맥 활은 그림의 오른쪽으로 넘어가 내려간다.
 let circN = 0;
@@ -495,7 +495,7 @@ export function tissueVsCirculatoryFig(): string {
 
 // ── 같은 종류 무당벌레 다섯 마리(u2l6 랩의 셋째 눈금, u2l7 시험, 2026-11-15 그래픽 손질) ─────────────────
 // 고치기 전 512px 사진은 다섯 마리가 거의 같은 빨강 바탕에 점 몇 개라 "같은 종류 안의 차이"가 약했고 넓은 화면에서 흐렸다.
-// 책 51쪽 그림처럼 겉날개의 색과 무늬가 뚜렷이 다르게: 실제 무당벌레(한 종)에서 볼 수 있는 다섯 무늬.
+// 겉날개의 색과 무늬가 뚜렷이 다르게: 실제 무당벌레(한 종)에서 볼 수 있는 다섯 무늬.
 //   ① 노란빛 주황 바탕에 점이 없음  ② 붉은 바탕에 점 19개  ③ 주황 바탕에 점 9개  ④ 검정 바탕에 붉은 점 2개  ⑤ 검정 바탕에 붉은 점 4개
 // 몸의 모양(머리, 앞가슴등판의 흰 무늬, 다리, 더듬이)은 다섯 마리가 같다(같은 종류라는 단서).
 export const LADYBUG_FORMS = [
@@ -573,9 +573,9 @@ export function ladybugExamFig(alt: string): string {
   return `<div style="border-radius:14px;overflow:hidden">${ladybugRowSvg(340, 120, alt)}</div>`;
 }
 
-// ── 짝 잇기 "생물이 주는 것"의 작은 그림(u2l10, 2026-11-15 그래픽 손질) ──────────────────
-// 생물 다섯과 얻는 것이 글뿐이라 고양이의 눈과 발명의 아이디어(도로 반사판) 같은 짝이 낯설었다. 카드마다 작은 코드 그림을 붙인다.
-// 왼쪽은 생물(벼 이삭, 푸른곰팡이, 누에고치, 편백나무, 고양이의 눈), 오른쪽은 얻는 것(밥, 약, 실과 천, 판재, 도로의 반사판).
+// ── 짝 잇기 "생물이 주는 것"의 작은 그림(u2l10, 2026-11-15 그래픽 손질, 2026-11-22 생물 셋을 바꿈) ──────────────────
+// 생물과 얻는 것이 글뿐이면 도꼬마리 열매와 발명의 아이디어(찍찍이) 같은 짝이 낯설다. 카드마다 작은 코드 그림을 붙인다.
+// 왼쪽은 생물(벼 이삭, 버드나무, 목화, 편백나무, 도꼬마리 열매), 오른쪽은 얻는 것(밥, 약, 실과 천, 판재, 찍찍이).
 const pa = (bg: string, body: string): string => `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="40" height="40" rx="11" fill="${bg}"/>${body}</svg>`;
 export const PAIR_ART: Record<string, string> = {
   rice: pa("#F3F9E3", `
@@ -585,24 +585,37 @@ export const PAIR_ART: Record<string, string> = {
     ${[[23, 10.5, -20], [27.5, 10.2, 10], [31, 12.6, 40], [33, 16.6, 70], [33.4, 21, 85], [32, 25.2, 105], [21, 13.5, -50], [25.4, 13.6, 0], [29.4, 15.6, 50], [30.4, 19.8, 80], [29.6, 24, 100]]
       .map(([x, y, a]) => `<ellipse cx="${x}" cy="${y}" rx="2.4" ry="1.5" transform="rotate(${a} ${x} ${y})" fill="#F2C744" stroke="#B5891C" stroke-width=".7"/>`)
       .join("")}`),
-  mold: pa("#EAF5F4", `
-    <ellipse cx="20" cy="22" rx="16" ry="13.5" fill="#FBF6E8" stroke="#C9B98E" stroke-width="1.2"/>
-    ${[[15, 19, 6.5], [24, 23, 7], [17, 27, 4.6]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r + 1.6}" fill="#9AD6CD" opacity=".7"/><circle cx="${x}" cy="${y}" r="${r}" fill="#3E9C93"/><circle cx="${x - r * 0.3}" cy="${y - r * 0.3}" r="${r * 0.45}" fill="#5FB8AE"/>`).join("")}
-    ${[[12, 17], [16, 21], [22, 20], [26, 25], [23, 26], [18, 29]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".9" fill="#E8F7F4"/>`).join("")}`),
-  cocoon: pa("#F2F6EA", `
-    <path d="M6 32C12 25 22 24 34 27C28 33 16 35 6 32Z" fill="#7BB661" stroke="#4E8A3A" stroke-width="1.2"/>
-    <path d="M10 31L30 28" stroke="#4E8A3A" stroke-width=".9"/>
-    ${[[15, 19, -24], [27, 16, 18]].map(([x, y, a]) => `<g transform="rotate(${a} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="9" ry="6" fill="#FFFDF6" stroke="#B8AE96" stroke-width="1.2"/><path d="M${x - 6} ${y - 2}c3 2 9 2 12 0M${x - 6.5} ${y + 1.6}c3 2 10 2 13 0M${x - 2} ${y - 5}c-1 3 -1 7 0 10M${x + 3} ${y - 5}c1 3 1 7 0 10" stroke="#D6CDB5" stroke-width=".8"/></g>`).join("")}`),
+  willow: pa("#EDF7E6", `
+    <path d="M19.4 37C19.8 30 20 22 20.4 13" stroke="#7A5232" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M20.4 20C17.6 18.4 16.4 16.2 16 14M20.2 25C23 23.2 24.6 21 25 18.6" stroke="#7A5232" stroke-width="1.5" stroke-linecap="round"/>
+    ${["M20 9C13.6 9.4 9.6 14.6 8.6 25", "M20 9C15.6 11.4 13.4 17.4 13.2 28", "M20 9C19 15 18.6 21 19 27", "M20 9C24.4 11.4 26.6 17.4 26.8 28", "M20 9C26.4 9.4 30.4 14.6 31.4 25"]
+      .map((d) => `<path d="${d}" stroke="#4F9A35" stroke-width="1.3" stroke-linecap="round"/><path d="${d}" stroke="#8FD16A" stroke-width="3" stroke-linecap="round" stroke-dasharray="2.6 1.8"/>`)
+      .join("")}
+    <path d="M31.6 31.4l3.6 -1.4 .8 2.2 -3.6 1.4z" fill="#B7864E" stroke="#7A5232" stroke-width=".9" stroke-linejoin="round"/>`),
+  cotton: pa("#F6F1EA", `
+    <path d="M20 37V27" stroke="#6B8F3A" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M9.6 24.4L15.6 22.6L20 26.4L24.4 22.6L30.4 24.4L27.2 29.4H12.8Z" fill="#9C6B3C" stroke="#6E4824" stroke-width="1.1" stroke-linejoin="round"/>
+    ${[[13.8, 18.2, 6], [26.2, 18.2, 6], [20, 12.4, 6.4], [20, 20.6, 5.6]]
+      .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFFFFF" stroke="#C9C0B4" stroke-width="1"/><path d="M${x - r * 0.45} ${y - r * 0.1}c${r * 0.3} ${-r * 0.35} ${r * 0.6} ${-r * 0.35} ${r * 0.9} 0" stroke="#E7E1D8" stroke-width=".9" stroke-linecap="round"/>`)
+      .join("")}`),
+  cocklebur: pa("#F4F1E6", `
+    <g transform="rotate(-24 20 21)">
+      ${Array.from({ length: 14 }, (_, i) => {
+        const a = (i / 14) * Math.PI * 2;
+        const x1 = 20 + Math.cos(a) * 8.2;
+        const y1 = 21 + Math.sin(a) * 11.2;
+        const x2 = 20 + Math.cos(a) * 11.4;
+        const y2 = 21 + Math.sin(a) * 14.6;
+        return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}q${(Math.cos(a + 1.6) * 1.8).toFixed(1)} ${(Math.sin(a + 1.6) * 1.8).toFixed(1)} ${(Math.cos(a + 2.6) * 1.4).toFixed(1)} ${(Math.sin(a + 2.6) * 1.4).toFixed(1)}" stroke="#6E5A2A" stroke-width="1.1" stroke-linecap="round"/>`;
+      }).join("")}
+      <ellipse cx="20" cy="21" rx="8.6" ry="11.6" fill="#B49D5E" stroke="#6E5A2A" stroke-width="1.3"/>
+      <ellipse cx="17.6" cy="16.6" rx="2.6" ry="4.6" fill="#D2BF85" opacity=".7"/>
+      <path d="M17.4 9.8L15.6 5.6M22.4 9.8L24.6 5.8" stroke="#6E5A2A" stroke-width="1.8" stroke-linecap="round"/>
+    </g>`),
   hinoki: pa("#EBF6EC", `
     <path d="M18.6 31h2.8v6h-2.8z" fill="#8A5A34"/>
     <path d="M20 4L28 15H24L31 24H26L33 32H7L14 24H9L16 15H12Z" fill="#2F8A4C" stroke="#1E5E33" stroke-width="1.3" stroke-linejoin="round"/>
     <path d="M20 8L16.5 13.5M20 16L14 22.5M20 25L12 31" stroke="#4DB06A" stroke-width="1.2" stroke-linecap="round" opacity=".8"/>`),
-  catEye: pa("#FFF6DD", `
-    <path d="M4 20C10 10 30 10 36 20C30 30 10 30 4 20Z" fill="#fff" stroke="#3B3024" stroke-width="1.6" stroke-linejoin="round"/>
-    <circle cx="20" cy="20" r="8.6" fill="#B9D64A" stroke="#6E8A1E" stroke-width="1.2"/>
-    <circle cx="20" cy="20" r="5.6" fill="#D9EC76" opacity=".7"/>
-    <path d="M20 12.2C21.8 15 21.8 25 20 27.8C18.2 25 18.2 15 20 12.2Z" fill="#1B1B1B"/>
-    <circle cx="23.6" cy="16.4" r="1.8" fill="#fff"/>`),
   bowl: pa("#FFF3E4", `
     <path d="M9 21C9 15 14 11 20 11C26 11 31 15 31 21Z" fill="#FFFFFF" stroke="#CDBFA8" stroke-width="1.1"/>
     ${[[14, 17], [18, 14.5], [22, 15], [26, 17.5], [17, 19], [21.5, 18.6], [25, 20]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="1.6" ry="1" fill="#F2EDE2" stroke="#D8CDB6" stroke-width=".5"/>`).join("")}
@@ -622,17 +635,11 @@ export const PAIR_ART: Record<string, string> = {
     <path d="M25.5 15C30 15 31 19 28 22" stroke="#D6CDB8" stroke-width="1.2" stroke-linecap="round"/>`),
   timber: pa("#F7EEE3", `
     ${[[6, 25], [9, 18.5], [12, 12]].map(([x, y]) => `<g><path d="M${x} ${y}h22l4 4h-22z" fill="#E8C08A" stroke="#9A6A36" stroke-width="1.1" stroke-linejoin="round"/><path d="M${x + 4} ${y + 4}h22v4.4h-22z" fill="#D4A469" stroke="#9A6A36" stroke-width="1.1"/><path d="M${x} ${y}v4.4l4 4v-4.4z" fill="#F1D4A6" stroke="#9A6A36" stroke-width="1.1" stroke-linejoin="round"/><path d="M${x + 8} ${y + 6.2}h12M${x + 7} ${y + 1.6}h14" stroke="#B88449" stroke-width=".7" opacity=".8"/></g>`).join("")}`),
-  reflector: pa("#EAF0FA", `
-    <path d="M2 30L13 14H27L38 30Z" fill="#46505E"/>
-    <path d="M20 16v3M20 22v3.4M20 28.6v1.4" stroke="#F8F9FA" stroke-width="1.6" stroke-linecap="round"/>
-    ${[[11.5, 25], [28.5, 25]].map(([x, y]) => {
-      // 반사판이 빛을 되비추는 모습: 둘레의 노란 빛무리와 바깥으로 퍼지는 짧은 빛살(반사판 쪽으로 모이는 화살처럼 보이지 않게 떨어뜨려 그린다)
-      const rays = [-155, -120, -90, -60, -25].map((d) => {
-        const a = (d * Math.PI) / 180;
-        return `M${(x + Math.cos(a) * 5.4).toFixed(1)} ${(y + Math.sin(a) * 5.4).toFixed(1)}L${(x + Math.cos(a) * 8.6).toFixed(1)} ${(y + Math.sin(a) * 8.6).toFixed(1)}`;
-      }).join("");
-      return `<g><path d="${rays}" stroke="#FFD43B" stroke-width="1.4" stroke-linecap="round"/><rect x="${x - 3.6}" y="${y - 2}" width="7.2" height="4.2" rx="1" fill="#E9ECEF" stroke="#868E96" stroke-width=".8"/><circle cx="${x - 1.5}" cy="${y + 0.1}" r="1.2" fill="#FFD43B"/><circle cx="${x + 1.5}" cy="${y + 0.1}" r="1.2" fill="#FFD43B"/></g>`;
-    }).join("")}`),
+  velcro: pa("#EEF3FB", `
+    <rect x="5" y="8" width="30" height="7" rx="2.4" fill="#4C7BD0" stroke="#2F57A3" stroke-width="1.1"/>
+    ${[9, 14, 19, 24, 29].map((x) => `<path d="M${x} 15V19.6c0 1.6 2.4 1.6 2.4 0" stroke="#2F57A3" stroke-width="1.2" stroke-linecap="round"/>`).join("")}
+    ${[10.4, 15.4, 20.4, 25.4, 30.4].map((x) => `<ellipse cx="${x}" cy="23.6" rx="1.9" ry="2.4" stroke="#C2410C" stroke-width="1.1"/>`).join("")}
+    <rect x="5" y="25.6" width="30" height="7" rx="2.4" fill="#F08C00" stroke="#C2410C" stroke-width="1.1"/>`),
 };
 
 /** (나) 생태계의 먹이 관계 그림(u2l10 문제). 랩의 무대와 같은 자리, 같은 화살표를 밝은 바탕에 그린다.

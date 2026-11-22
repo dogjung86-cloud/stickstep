@@ -1,4 +1,4 @@
-// civFigures — I 단원(과학과 인류의 지속가능한 삶) recap 미니아트.
+// civFigures: I 단원(과학과 인류의 지속가능한 삶) recap 미니아트.
 // 파운드리 문법의 다크 미니 패널(다른 단원 recap 아트와 같은 결).
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;

@@ -1,13 +1,14 @@
 // [중1 Ⅱ v5] u2l7 beakIslesLab: 「두 섬의 새 무리는 어떻게 달라질까?」
 // 한 통찰: 변이가 있는 무리가 서로 다른 환경에 살면, 그 환경에 알맞은 변이를 가진 생물이 더 많이 살아남아 자손을 남긴다.
 //   그래서 무리의 구성이 달라진다(새 한 마리의 부리가 변하는 것이 아니다).
-// 무대: 섬 (가)(크고 단단한 씨앗)와 섬 (나)(나무 속 작은 곤충). 두 섬에 같은 무리(두꺼운 부리 3, 긴 부리 3, 짧은 부리 3)가 내려앉아 있다.
+// 무대: 섬 (가)(크고 단단한 씨앗)와 섬 (나)(가시 돋친 선인장의 꽃과 열매). 두 섬에 같은 무리(두꺼운 부리 3, 긴 부리 3, 짧은 부리 3)가 내려앉아 있다.
 // 조작: 시간 막대 하나(처음 → 오랜 시간 뒤, 네 눈금). 한 눈금 지날 때마다 먹이를 잘 먹지 못하는 새의 자리가 비고,
 //   그 자리를 살아남은 새의 새끼(어미와 같은 부리)가 채운다. 섬마다 아홉 자리는 그대로다(섬이 먹여 살릴 수 있는 수).
 //   막대를 되돌리면 그때의 무리로 돌아간다(시간의 함수).
 // 흐름: 예측(채점하지 않음) → 막대 → 판정 둘(첫 판정만 채점).
 // 과학 가드: '자연선택', '진화'라는 말을 쓰지 않는다. 새 한 마리의 부리는 처음부터 끝까지 그대로다(자리의 주인이 바뀔 뿐이다).
-//   결과의 부리 이름은 원전 그대로: (가) 크고 두꺼운 부리, (나) 길고 단단한 부리. 무대의 짧은 이름은 두꺼운, 긴, 짧은 부리.
+//   결과의 부리: (가) 크고 두꺼운 부리(단단한 씨앗을 깨기 알맞다), (나) 길고 뾰족한 부리(가시를 피해 선인장의 꽃과 열매를 쪼기 알맞다).
+//   무대의 짧은 이름은 두꺼운, 긴, 짧은 부리.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
@@ -42,7 +43,7 @@ function flockAt(isle: "A" | "B", step: number): Beak[] {
 // ── 그림(2026-11-15 그래픽 손질: 바뀌는 결과인 부리가 무대에서 가장 크게) ──────────────────────
 // 고치기 전에는 새 몸이 약 18px, 부리가 7~16px라 결과(무리의 부리)가 작았고, 섬 위쪽 하늘은 비고 먹이도 작았다.
 // 판의 폭(164px, 한 줄에 세 마리)은 그대로 두고 비율만 바꾼다: 몸은 작고 옅게, 머리와 부리를 1.5배쯤 키워 부리가 가장 진하다.
-// 섬 이름과 먹이는 위쪽 하늘 띠로 올려 키운다(씨앗 더미, 나무 속 애벌레를 확대한 원). 구성 막대는 굵게(14px) 하고 칸마다 수를 쓴다.
+// 섬 이름과 먹이는 위쪽 하늘 띠로 올려 키운다(씨앗 더미, 꽃과 열매가 달린 선인장). 구성 막대는 굵게(14px) 하고 칸마다 수를 쓴다.
 const BEAK_PATH: Record<Beak, string> = {
   T: "M13.4 -15.6l20.5 8.2 -20.5 9.6Z",
   L: "M14.2 -10.4l29.6 3.4 -29.6 4Z",
@@ -73,22 +74,38 @@ const SEEDS = `
   ${[[108, 76, -12], [127, 78, 8], [146, 75, -4], [117, 64, 18], [137, 63, -14], [127, 52, 4]]
     .map(([x, y, a]) => `<path d="M${x - 5} ${y - 2}q5 -4 10 0" transform="rotate(${a} ${x} ${y})" fill="none" stroke="#F3D9B0" stroke-width="1.6" stroke-linecap="round" opacity=".85"/>`)
     .join("")}`;
-/** 섬 (나)의 먹이: 나무줄기 속 작은 곤충(애벌레). 줄기의 구멍과 그 속을 확대한 원. */
-const TREE = `
-  <path d="M96 92V34q0 -5 5 -5h10q5 0 5 5v58Z" fill="#A9743F" stroke="#6E4520" stroke-width="1.5" stroke-linejoin="round"/>
-  <path d="M100 40v9M110 58v10M101 74v8" stroke="#6E4520" stroke-width="1.1" stroke-linecap="round" opacity=".7"/>
-  <ellipse cx="106" cy="62" rx="4.4" ry="5.8" fill="#3E240E"/>
-  <path d="M110.5 58.5L128 46M110.5 65.5L128 78" stroke="#FFF2CC" stroke-width="1.4" stroke-dasharray="3 3"/>
-  <circle cx="141" cy="62" r="19" fill="#5A3516" stroke="#FFF2CC" stroke-width="2.2"/>
-  <path d="M130 66c3 -8 9 -10 14 -8s9 2 11 -3" fill="none" stroke="#8BD44A" stroke-width="7" stroke-linecap="round"/>
-  <path d="M130 66c3 -8 9 -10 14 -8s9 2 11 -3" fill="none" stroke="#C6F28E" stroke-width="3" stroke-linecap="round"/>
-  <path d="M136 59.6l1 4M141.5 58.4l.4 4M147 58.6l-.4 4" stroke="#5C9A23" stroke-width="1.2" stroke-linecap="round"/>
-  <circle cx="155.5" cy="55" r="1.5" fill="#2B2B2B"/>`;
+/** 섬 (나)의 먹이: 가시 돋친 선인장(잎이 넓적한 마디가 이어진 모양)과 그 위의 노란 꽃, 붉은 열매.
+ *  부리가 길고 뾰족한 새가 가시 사이로 꽃과 열매를 쪼아 먹는다. 마디의 점과 짧은 선은 가시다. */
+const PAD = (cx: number, cy: number, rx: number, ry: number, a: number): string => `
+  <g transform="rotate(${a} ${cx} ${cy})">
+    <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#5DAA47" stroke="#2F6E24" stroke-width="1.5"/>
+    <ellipse cx="${cx - rx * 0.35}" cy="${cy - ry * 0.3}" rx="${rx * 0.3}" ry="${ry * 0.45}" fill="#8FD16A" opacity=".55"/>
+    ${[[-0.45, -0.45], [0.35, -0.25], [-0.2, 0.15], [0.45, 0.35], [-0.4, 0.55], [0.1, -0.7]]
+      .map(([u, v]) => {
+        const x = cx + u * rx;
+        const y = cy + v * ry;
+        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1" fill="#F4F1DC"/><path d="M${(x - 2.2).toFixed(1)} ${(y - 1.6).toFixed(1)}l-2 -1.4M${(x + 2.2).toFixed(1)} ${(y - 1.6).toFixed(1)}l2 -1.4" stroke="#F4F1DC" stroke-width=".8" stroke-linecap="round"/>`;
+      })
+      .join("")}
+  </g>`;
+const FLOWER = (x: number, y: number): string => `
+  <g>
+    ${[0, 72, 144, 216, 288].map((d) => `<ellipse cx="${x}" cy="${y - 4.2}" rx="2.7" ry="4.4" transform="rotate(${d} ${x} ${y})" fill="#FFD43B" stroke="#C99700" stroke-width=".9"/>`).join("")}
+    <circle cx="${x}" cy="${y}" r="2.3" fill="#F08C00"/>
+  </g>`;
+const CACTUS = `
+  <path d="M121 92V84h8v8Z" fill="#7A8F3A" stroke="#2F6E24" stroke-width="1.2"/>
+  ${PAD(125, 70, 13, 17, 0)}
+  ${PAD(110, 49, 9.6, 12.6, -26)}
+  ${PAD(141, 47, 9.6, 12.6, 24)}
+  <ellipse cx="151.5" cy="61" rx="3.6" ry="4.6" transform="rotate(30 151.5 61)" fill="#D6336C" stroke="#8C1D46" stroke-width="1.1"/>
+  <ellipse cx="98.6" cy="61" rx="3.4" ry="4.4" transform="rotate(-30 98.6 61)" fill="#D6336C" stroke="#8C1D46" stroke-width="1.1"/>
+  ${FLOWER(105, 37)}${FLOWER(146.5, 35)}`;
 
 function panel(isle: "A" | "B"): string {
   const x = PANEL[isle];
   const name = isle === "A" ? "섬 (가)" : "섬 (나)";
-  const food = isle === "A" ? ["크고 단단한", "씨앗"] : ["나무 속", "작은 곤충"];
+  const food = isle === "A" ? ["크고 단단한", "씨앗"] : ["선인장의", "꽃과 열매"];
   const slots = SLOT_XY.map(([sx, sy], i) => `<g transform="translate(${sx} ${sy}) scale(${SLOT_K})"><g class="bki-slot" data-i="${i}"></g></g>`).join("");
   const blocks = (["T", "L", "S"] as Beak[])
     .map((k) => `<g class="bki-blk" data-k="${k}"><rect class="bki-seg" y="179" height="14" rx="4" fill="${COLOR[k]}"/><text class="bki-n" y="190.4" text-anchor="middle" font-size="12.5" font-weight="800" fill="${k === "S" ? "#13233D" : "#fff"}"></text></g>`)
@@ -107,7 +124,7 @@ function panel(isle: "A" | "B"): string {
     <text x="10" y="47" font-size="12.5" font-weight="700" fill="#234A75">먹이</text>
     <text x="10" y="63" font-size="13" font-weight="800" fill="#0B2545">${food[0]}</text>
     <text x="10" y="79" font-size="13" font-weight="800" fill="#0B2545">${food[1]}</text>
-    ${isle === "A" ? SEEDS : TREE}
+    ${isle === "A" ? SEEDS : CACTUS}
     ${slots}
     ${blocks}
   </g>`;
@@ -177,7 +194,7 @@ export const beakIslesLab: StepRenderer = (host, step, api) => {
   const SAY = [
     "처음 모습이에요. 두 섬에 날아온 새 무리에는 세 가지 부리 모양의 새가 <b>비슷하게 섞여 있었어요</b>.",
     "각 섬의 먹이를 먹기에 알맞은 부리를 가진 새가 더 많이 살아남아 <b>자손(새끼)</b>을 남겼어요. 새끼의 부리는 어미를 닮아요.",
-    "세대를 거듭할수록 씨앗이 많은 섬 (가)에는 <b>두꺼운 부리</b>의 새가, 곤충이 많은 섬 (나)에는 <b>긴 부리</b>의 새가 점점 늘어나요.",
+    "세대를 거듭할수록 씨앗이 많은 섬 (가)에는 <b>두꺼운 부리</b>의 새가, 선인장이 많은 섬 (나)에는 <b>긴 부리</b>의 새가 점점 늘어나요.",
     "오랜 세월이 흐른 뒤, 두 섬에 사는 새 무리의 부리 모양이 <b>서로 뚜렷하게 달라졌어요</b>!",
   ];
 

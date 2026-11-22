@@ -1,11 +1,11 @@
-// u7PlanetLab: 행성을 두 무리로 나누기(u7l2). 교과서 "태양계 행성 분류하기"(234쪽)를 손으로 한다.
-//   교과서: 여덟 행성의 반지름, 질량, 위성 수 그래프를 견주어 두 집단으로 나누고 집단마다 공통점을 정리한다.
-//   랩   : 세 그래프를 바꿔 가며 보고, 가르는 선을 직접 옮겨 두 무리로 나눈다. 엉뚱한 자리에서 가르면 왜 안 되는지 그래프가 보여 준다.
-// 정본에는 이 레슨에 손으로 하는 랩이 없었다(표 읽기뿐). 이 랩 뒤에 정본의 표가 그대로 이어져 표면과 고리를 보탠다.
+// u7PlanetLab: 행성을 두 무리로 나누기(u7l2). 여덟 행성의 반지름, 질량, 위성 수 그래프를 손으로 비교해 두 무리로 나눈다.
+//   랩: 세 그래프를 바꿔 가며 보고, 가르는 선을 직접 옮겨 두 무리로 나눈다. 엉뚱한 자리에서 가르면 왜 안 되는지 그래프가 보여 준다.
+// 이 랩 뒤에 개념 스텝의 표가 이어져 표면과 고리를 보탠다.
 // 값은 지구를 1로 한 자연값이다(반지름, 질량). 위성 수는 2023년에 알려진 수다(해마다 새로 발견되어 늘어난다).
 // 행성 그림은 실사 사진이다(public/photos). 무대는 SVG 하나로 그린다.
-// 질량 그래프는 책처럼 눈금을 끊어 그린다(2026-11-15 그래픽 손질): 0~1, 10~20, 50~350의 세 토막과 그 사이의 물결선.
-//   고른 눈금이면 천왕성(15)과 해왕성(17) 막대가 지구(1)만큼 낮아 보여 '크게 뛰는 자리'가 토성과 천왕성 사이에도 생겼다.
+// 세 그래프 모두 고른 눈금이다. 목성형 막대에 견주면 지구형 네 막대가 바닥에 붙어 보이므로, 그 네 막대를 같은 열 위의
+//   '돋보기' 창에 크게 다시 그린다(2026-11-22). 창의 끝값은 반지름과 질량이 지구(1), 위성 수가 화성(2)이다.
+//   창과 바닥의 작은 막대는 점선 테두리와 세로 점선 둘로 잇는다. 작은 막대의 값 글자는 창 안에만 쓴다(바닥에서 겹치지 않게).
 // 판정과 결론 때는 무대가 세 그래프를 작게 나란히 보인다(질문이 "세 그래프에서 본 것"이라서).
 
 import { el } from "../../../core/dom";
@@ -32,7 +32,7 @@ const PLANETS: { name: string; img: string }[] = [
 type MetricKey = "radius" | "mass" | "moons";
 const METRICS: Record<MetricKey, { name: string; unit: string; cap: string; v: number[]; show: string[] }> = {
   radius: { name: "반지름", unit: "지구 = 1", cap: "적도 반지름 (지구 = 1)", v: [0.38, 0.95, 1, 0.53, 11.2, 9.4, 4.0, 3.9], show: ["0.4", "0.9", "1", "0.5", "11.2", "9.4", "4.0", "3.9"] },
-  mass: { name: "질량", unit: "지구 = 1", cap: "상대적 질량 (지구 = 1, 물결선은 눈금 생략)", v: [0.06, 0.82, 1, 0.11, 318, 95, 15, 17], show: ["0.06", "0.8", "1", "0.1", "318", "95", "15", "17"] },
+  mass: { name: "질량", unit: "지구 = 1", cap: "상대적 질량 (지구 = 1)", v: [0.06, 0.82, 1, 0.11, 318, 95, 15, 17], show: ["0.06", "0.8", "1", "0.1", "318", "95", "15", "17"] },
   // 값은 2023년까지 알려진 위성 수다(해마다 늘어난다). 그래서 알약에 "지금까지"가 아니라 2023년을 적는다.
   moons: { name: "위성 수", unit: "발견된 수", cap: "위성 수 (2023년까지 발견된 개수)", v: [0, 0, 1, 2, 95, 146, 27, 14], show: ["0", "0", "1", "2", "95", "146", "27", "14"] },
 };
@@ -44,55 +44,19 @@ const COL = 40;
 const BASE = 170;
 const TOP = 58;
 
-// 질량의 끊은 눈금: [값 구간, 그 구간이 차지하는 높이 비율 구간]. 구간 사이(1~10, 20~50)는 물결선 자리다.
-const MASS_SEG: [number, number, number, number][] = [
-  [0, 1, 0, 0.2],
-  [10, 20, 0.31, 0.545],
-  [50, 350, 0.655, 1],
-];
-/** 막대 높이(px). ph = 그래프 높이. 질량만 끊은 눈금, 나머지는 고른 눈금. */
+/** 막대 높이(px). ph = 그래프 높이. 세 그래프 모두 고른 눈금(가장 큰 값이 ph)이다. */
 function barH(k: MetricKey, v: number, ph: number): number {
   const m = METRICS[k];
-  if (k !== "mass") return Math.max(2, (v / Math.max(...m.v)) * ph);
-  for (let i = 0; i < MASS_SEG.length; i++) {
-    const [a, b, f0, f1] = MASS_SEG[i];
-    if (v <= b) {
-      if (v >= a) return Math.max(2, (f0 + ((v - a) / (b - a)) * (f1 - f0)) * ph);
-      const [, pb, , pf1] = MASS_SEG[i - 1]; // 물결선 자리(이 값들에는 없다)
-      return (pf1 + ((v - pb) / (a - pb)) * (f0 - pf1)) * ph;
-    }
-  }
-  return ph;
+  return Math.max(2, (v / Math.max(...m.v)) * ph);
 }
-/** 물결선 띠 둘(아래 높이, 위 높이), 그래프 높이 비율. 토막 끝과 띠 사이에 물결 높이(1.7px)보다 넉넉한 틈을 둔다(지구 막대 끝이 물결에 먹히지 않게). */
-const MASS_BREAKS: [number, number][] = [
-  [0.235, 0.29],
-  [0.58, 0.635],
-];
-/** 물결 한 줄(x0→x1, 높이 y 둘레로 출렁인다). */
-function wavePts(x0: number, x1: number, y: number, rev = false): string {
-  const pts: string[] = [];
-  for (let x = x0; x <= x1 + 0.01; x += 1) pts.push(`${x.toFixed(1)} ${(y + Math.sin(((x - x0) / 7) * Math.PI * 2) * 1.7).toFixed(2)}`);
-  if (rev) pts.reverse();
-  return pts.join(" L");
-}
-/** 막대를 끊는 물결 띠(가림막 구멍) + 그 띠를 지나는 막대 위의 물결 두 줄. bars = 막대마다 [가운데 x, 높이 px]. */
-function massBreaks(x0: number, x1: number, base: number, ph: number, bars: [number, number][], halfW: number, id: string): { mask: string; lines: string } {
-  let holes = "";
-  let lines = "";
-  for (const [lo, hi] of MASS_BREAKS) {
-    const yb = base - lo * ph;
-    const yt = base - hi * ph;
-    holes += `<path d="M${wavePts(x0, x1, yb)} L${wavePts(x0, x1, yt, true)} Z" fill="#000"/>`;
-    for (const [cx, h] of bars) {
-      if (h <= hi * ph + 2) continue; // 이 띠까지 닿지 않는 막대
-      lines += `<path d="M${wavePts(cx - halfW, cx + halfW, yb)}" stroke="#DCE6F8" stroke-width="1.3" stroke-linecap="round" opacity=".9"/>`;
-      lines += `<path d="M${wavePts(cx - halfW, cx + halfW, yt)}" stroke="#DCE6F8" stroke-width="1.3" stroke-linecap="round" opacity=".9"/>`;
-    }
-  }
-  const mask = `<mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="346" height="230"><rect width="346" height="230" fill="#fff"/>${holes}</mask>`;
-  return { mask, lines };
-}
+// 돋보기 창(설계 판 좌표): 지구형 네 행성의 열(x 13~173) 위, 알약 아래. 창 안 막대 바닥 LB, 가장 큰 값이 닿는 높이 LH.
+const LENS = { x: 15, y: 40, w: 156, h: 90 };
+const LB = 106;
+const LH = 44;
+/** 창의 끝값: 반지름과 질량은 지구(1), 위성 수는 화성(2). */
+const LENS_MAX: Record<MetricKey, number> = { radius: 1, mass: 1, moons: 2 };
+/** 바닥의 작은 막대를 두르는 점선 테두리(창과 같은 폭). */
+const SPOT = { y: 148, h: 26 };
 const SHORT = ["수", "금", "지", "화", "목", "토", "천", "해"];
 
 export const u7PlanetLab: StepRenderer = (host, step, api) => {
@@ -111,6 +75,25 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
 
   let board = false; // 판정과 결론: 세 그래프를 나란히
 
+  /** 돋보기 창: 지구형 네 행성의 막대를 같은 열 위에 크게 다시 그리고, 바닥의 작은 막대와 점선으로 잇는다. */
+  function lensSvg(m: (typeof METRICS)[MetricKey]): string {
+    const top = LENS_MAX[metric];
+    const x1 = LENS.x + LENS.w;
+    let g = `<rect x="${LENS.x}" y="${SPOT.y}" width="${LENS.w}" height="${SPOT.h}" rx="9" stroke="#FFE08A" stroke-width="1.3" stroke-dasharray="4 4" opacity=".85"/>`;
+    g += `<path d="M${LENS.x + 0.5} ${LENS.y + LENS.h}V${SPOT.y}M${x1 - 0.5} ${LENS.y + LENS.h}V${SPOT.y}" stroke="#FFE08A" stroke-width="1.3" stroke-dasharray="3 4" opacity=".7"/>`;
+    g += `<rect class="u7x-lens" x="${LENS.x}" y="${LENS.y}" width="${LENS.w}" height="${LENS.h}" rx="10" fill="#142440" stroke="#FFE08A" stroke-width="1.4"/>`;
+    g += `<text x="${LENS.x + 5}" y="${LENS.y + 15}" class="u7x-lens-t">돋보기</text>`;
+    g += `<path d="M${LENS.x + 4} ${LB + 0.5}H${x1 - 4}" stroke="#4A5F86" stroke-width="1.1"/>`;
+    for (let i = 0; i < RIGHT; i++) {
+      const cx = X0 + COL * i + COL / 2;
+      const h = (m.v[i] / top) * LH;
+      if (h > 0) g += `<rect x="${cx - 10}" y="${(LB - h).toFixed(1)}" width="20" height="${h.toFixed(1)}" rx="4" fill="#7FB2FF"/>`;
+      g += `<text x="${cx}" y="${(LB - h - 5).toFixed(1)}" class="u7x-val">${m.show[i]}</text>`;
+      g += `<text x="${cx}" y="${LB + 15}" class="u7x-pname">${SHORT[i]}</text>`;
+    }
+    return g;
+  }
+
   function draw(): void {
     if (board) return drawBoard();
     const m = METRICS[metric];
@@ -122,21 +105,19 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
       g += `<rect x="${X0 + COL * RIGHT + 2}" y="${TOP - 22}" width="${COL * (8 - RIGHT) + 3}" height="${230 - TOP + 16}" rx="12" fill="rgba(255,190,90,.14)"/>`;
     }
     g += `<path d="M${X0 - 3} ${BASE + 0.5}H${X0 + COL * 8 + 3}" stroke="#4A5F86" stroke-width="1.2"/>`;
-    // 질량은 끊은 눈금: 물결 띠를 지나는 막대에 물결선 두 줄
-    const brk = metric === "mass" ? massBreaks(X0 - 3, X0 + COL * 8 + 3, BASE, ph, PLANETS.map((_, i) => [X0 + COL * i + COL / 2, barH(metric, m.v[i], ph)]), 15, "u7pbrk") : null;
-    let bars = "";
+    g += lensSvg(m);
     PLANETS.forEach((p, i) => {
       const cx = X0 + COL * i + COL / 2;
       const h = barH(metric, m.v[i], ph);
       const warm = split && i >= RIGHT;
-      bars += `<rect class="u7x-bar" x="${cx - 12}" y="${(BASE - h).toFixed(1)}" width="24" height="${h.toFixed(1)}" rx="5" fill="${warm ? "#FFC062" : "#7FB2FF"}"/>`;
-      g += `<text x="${cx}" y="${(BASE - h - 6).toFixed(1)}" class="u7x-val">${m.show[i]}</text>`;
+      g += `<rect class="u7x-bar" x="${cx - 12}" y="${(BASE - h).toFixed(1)}" width="24" height="${h.toFixed(1)}" rx="5" fill="${warm ? "#FFC062" : "#7FB2FF"}"/>`;
+      // 지구형 네 막대의 값은 돋보기 창 안에만 쓴다(바닥의 점선 테두리 안에서 글자가 겹치지 않게)
+      if (i >= RIGHT) g += `<text x="${cx}" y="${(BASE - h - 6).toFixed(1)}" class="u7x-val">${m.show[i]}</text>`;
       g += `<clipPath id="u7pc${i}"><circle cx="${cx}" cy="${BASE + 19}" r="12.5"/></clipPath>`;
       g += `<image href="${photo(p.img)}" x="${cx - 12.5}" y="${BASE + 6.5}" width="25" height="25" preserveAspectRatio="xMidYMid slice" clip-path="url(#u7pc${i})"/>`;
       g += `<circle cx="${cx}" cy="${BASE + 19}" r="12.5" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="1"/>`;
       g += `<text x="${cx}" y="${BASE + 49}" class="u7x-pname">${p.name}</text>`;
     });
-    g += brk ? `${brk.mask}<g mask="url(#u7pbrk)">${bars}</g>${brk.lines}` : bars;
     if (showCut) {
       const x = X0 + COL * cut;
       g += `<path d="M${x} ${TOP - 20}V${BASE + 54}" stroke="${split ? "#FFFFFF" : "#FFE08A"}" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>`;
@@ -165,19 +146,12 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
       g += `<rect x="${x0 + 3}" y="${T - 8}" width="${slot * RIGHT - 4}" height="${B - T + 12}" rx="7" fill="rgba(110,170,255,.14)"/>`;
       g += `<rect x="${x0 + slot * RIGHT + 1}" y="${T - 8}" width="${slot * (8 - RIGHT) - 4}" height="${B - T + 12}" rx="7" fill="rgba(255,190,90,.15)"/>`;
       g += txt(x0 + PW / 2, 33, m.name, 13.5, 800, "#FFE9B8");
-      let bars = "";
-      const marks: [number, number][] = [];
       m.v.forEach((v, i) => {
         const cx = x0 + slot * i + slot / 2;
         const h = barH(k, v, ph);
-        marks.push([cx, h]);
-        bars += `<rect x="${(cx - 4.5).toFixed(1)}" y="${(B - h).toFixed(1)}" width="9" height="${h.toFixed(1)}" rx="2.5" fill="${i >= RIGHT ? "#FFC062" : "#7FB2FF"}"/>`;
+        g += `<rect x="${(cx - 4.5).toFixed(1)}" y="${(B - h).toFixed(1)}" width="9" height="${h.toFixed(1)}" rx="2.5" fill="${i >= RIGHT ? "#FFC062" : "#7FB2FF"}"/>`;
         g += txt(cx, B + 17, SHORT[i], 12, 700, "#C6D3EA");
       });
-      if (k === "mass") {
-        const brk = massBreaks(x0 + 2, x0 + PW - 2, B, ph, marks, 6.5, "u7pbrk3");
-        g += `${brk.mask}<g mask="url(#u7pbrk3)">${bars}</g>${brk.lines}`;
-      } else g += bars;
       g += `<path d="M${x0 + 3} ${B + 0.5}H${x0 + PW - 3}" stroke="#4A5F86" stroke-width="1.2"/>`;
       g += `<path d="M${(x0 + slot * RIGHT).toFixed(1)} ${T - 12}V${B + 5}" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="4 4" stroke-linecap="round"/>`;
       if (phase === "done") {

@@ -1,15 +1,15 @@
 // [중1 Ⅴ v5] u5l5 slopeLab: 「어느 때 더 잘 버틸까요?」
-// 책의 어디에서: 해 보기 '마찰력 알아보기'(긴 나무판 위에 나무 도막을 나무 면, 사포 면이 아래로 가게 놓고 나무판을 기울인다)와
-//               '무거운 물체를 움직이게 할 때 마찰력이 크다'는 그림.
+// 실험: 나무 도막은 그대로 두고 바닥 판의 재질을 바꿔(매끈한 아크릴판, 거친 고무 매트) 판을 기울인다. 이어서 무거운 물체일수록 마찰력이 큰지 끌어서 확인한다.
 // 한 통찰: 맞닿은 면에서 미끄러짐을 방해하는 힘(마찰력)은 면이 거칠수록, 물체가 무거울수록 크다. 방향은 움직이려는 쪽과 반대다.
-// 학생이 정하는 것: (1) 아래로 가는 면을 고르고 나무판의 끝을 들어 올린다. (2) 도막 수를 고르고 힘 센서로 끈다.
+// 학생이 정하는 것: (1) 바닥 판을 고르고 판의 끝을 들어 올린다. (2) 도막 수를 고르고 힘 센서로 끈다.
 // 실패하는 길: 덜 기울이면 도막이 버틴다(방해하는 힘의 화살표가 보인다). 끄는 버튼을 일찍 떼면 도막이 움직이지 않는다.
-// 흐름: 예상(어느 면이 더 버틸까) → 나무 면 기울이기 → 사포 면 기울이기 → 도막 1개 끌기 → 2개 끌기 → 판정 → 결론.
-// 옛 랩(frictionPush)은 얼음, 나무, 모래 바닥에서 상자를 밀었다. 여기서는 책의 기울이기 실험을 그대로 한다.
-// 값(자체 제작): 미끄러지기 시작하는 기울기는 나무 면 20도, 사포 면 35도. 수평에서 끌 때 도막 1개 3 N, 2개 6 N.
+// 흐름: 예상(어느 판에서 더 버틸까) → 아크릴판 기울이기 → 고무 매트 기울이기 → 도막 1개 끌기 → 2개 끌기 → 판정 → 결론.
+// 옛 랩(frictionPush)은 얼음, 나무, 모래 바닥에서 상자를 밀었다. 2026-11-22에 도막의 면을 뒤집던 판을 바닥 판을 바꾸는 판으로 바꿨다.
+// 값(자체 제작): 미끄러지기 시작하는 기울기는 아크릴판 20도, 고무 매트 35도. 수평으로 눕힌 아크릴판에서 끌 때 도막 1개 3 N, 2개 6 N.
 // 화살표(2026-11-15 그래픽 손질): 끌기 장면의 끄는 힘(줄을 맨 아래 도막 오른쪽 면에서)과 방해하는 힘(맞닿은 면에서)은 같은 식(1 N에 PPX px)이라
 //   꼼짝 않는 동안 늘 같은 길이다. 기울이기 장면의 방해하는 힘은 0에서 자라 기울기의 sin에 비례한다(빗면 아래로 미끄러지려는 힘과 같은 크기).
-//   첫 면이 미끄러진 기울기는 옅은 판 그림자와 이름표로 남아 둘째 면을 기울일 때 두 기울기를 한 무대에서 비교한다. 사포 면은 두껍게, 결을 크게.
+//   첫 판이 미끄러진 기울기는 옅은 판 그림자와 이름표로 남아 둘째 판을 기울일 때 두 기울기를 한 무대에서 비교한다.
+//   고무 매트는 짙은 회색 판에 오돌토돌한 돌기, 아크릴판은 밝고 투명한 판에 흰 광택 줄로 그린다(한눈에 거친 판과 매끈한 판으로 보이게).
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -21,9 +21,10 @@ interface S {
   title: string;
   cta?: string;
 }
-type Face = "wood" | "sand";
-const SLIP: Record<Face, number> = { wood: 20, sand: 35 };
-const LEN = 250; // 나무판의 길이(px)
+type Face = "acrylic" | "rubber";
+const SLIP: Record<Face, number> = { acrylic: 20, rubber: 35 };
+const NAME: Record<Face, string> = { acrylic: "아크릴판", rubber: "고무 매트" };
+const LEN = 250; // 바닥 판의 길이(px)
 const PULL = [0, 3, 6]; // 도막 수에 따라 움직이기 시작하는 힘(N)
 const PPX = 9; // 끌기 장면의 두 화살표: 1 N에 9px(덧붙이는 길이 없이)
 const TPX = 100; // 기울이기 장면의 방해하는 힘: 길이 = TPX × sin(기울기)(20도 34px, 35도 57px)
@@ -37,7 +38,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
   let scene: "tilt" | "pull" = "tilt";
   let ready = false;
   // 기울이기
-  let face: Face = "wood";
+  let face: Face = "acrylic";
   let ang = 0; // 도
   let dragging = false;
   let slide = 0; // 0 제자리 ~ 1 끝까지 미끄러짐
@@ -53,18 +54,18 @@ export const slopeLab: StepRenderer = (host, step, api) => {
   let busy = false;
   let finished = false;
 
-  const cWood = bvCard("u5x-f", { name: "나무 면을 아래로", sub: "매끈한 면", key: "wood" });
-  const cSand = bvCard("u5x-f", { name: "사포 면을 아래로", sub: "거친 면", key: "sand" });
+  const cAcr = bvCard("u5x-f", { name: "아크릴판", sub: "매끈한 판", key: "acrylic" });
+  const cRub = bvCard("u5x-f", { name: "고무 매트", sub: "거친 판", key: "rubber" });
   const note = el("div", { class: "u5x-sum tall" });
   const paintTilt = (): void => {
-    cWood.on(face === "wood");
-    cSand.on(face === "sand");
-    if (tilt.wood !== undefined) cWood.sub(`${tilt.wood}도에서 미끄러짐`);
-    if (tilt.sand !== undefined) cSand.sub(`${tilt.sand}도에서 미끄러짐`);
+    cAcr.on(face === "acrylic");
+    cRub.on(face === "rubber");
+    if (tilt.acrylic !== undefined) cAcr.sub(`${tilt.acrylic}도에서 미끄러짐`);
+    if (tilt.rubber !== undefined) cRub.sub(`${tilt.rubber}도에서 미끄러짐`);
     note.innerHTML = sliding
       ? `<b>${SLIP[face]}도</b>에서 도막이 미끄러졌어요.`
       : ang < 1
-        ? "나무판의 <b>오른쪽 끝</b>(동그란 손잡이)을 위로 끌어 올려요.<br>도막이 미끄러지기 시작하는 기울기를 찾아요."
+        ? "판의 <b>오른쪽 끝</b>(동그란 손잡이)을 위로 끌어 올려요.<br>도막이 미끄러지기 시작하는 기울기를 찾아요."
         : `기울기 <b>${Math.round(ang)}도</b>. 두 힘이 비겨 아직 버텨요.<br>빨간 화살표가 미끄러짐을 방해하는 힘이에요.`;
   };
   const setFace = (k: Face): void => {
@@ -75,8 +76,8 @@ export const slopeLab: StepRenderer = (host, step, api) => {
     slide = 0;
     paintTilt();
   };
-  cWood.el.addEventListener("click", () => setFace("wood"));
-  cSand.el.addEventListener("click", () => setFace("sand"));
+  cAcr.el.addEventListener("click", () => setFace("acrylic"));
+  cRub.el.addEventListener("click", () => setFace("rubber"));
 
   const pivot = (): { x: number; y: number } => ({ x: 34, y: st.h() - 30 });
   st.cv.addEventListener("pointerdown", (e) => {
@@ -101,7 +102,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
       sliding = true;
       haptic(HAPTIC.correct);
       tilt[face] = SLIP[face];
-      (face === "wood" ? cWood : cSand).done();
+      (face === "acrylic" ? cAcr : cRub).done();
       paintTilt();
       const t0 = performance.now();
       const tick = (): void => {
@@ -125,14 +126,14 @@ export const slopeLab: StepRenderer = (host, step, api) => {
     sliding = false;
     slide = 0;
     ang = 0;
-    const n = Number(tilt.wood !== undefined) + Number(tilt.sand !== undefined);
+    const n = Number(tilt.acrylic !== undefined) + Number(tilt.rubber !== undefined);
     f.pips(n);
     if (n === 2) {
       busy = true;
-      f.say(`거친 <b>사포 면(${SLIP.sand}도)</b>이 매끈한 <b>나무 면(${SLIP.wood}도)</b>보다 훨씬 더 잘 버텼어요!`);
+      f.say(`거친 <b>고무 매트(${SLIP.rubber}도)</b> 위에서 매끈한 <b>아크릴판(${SLIP.acrylic}도)</b>보다 훨씬 더 잘 버텼어요!`);
       tm.later(toPull, 2400);
     } else {
-      f.say(`기록 완료! 이번에는 <b>${tilt.wood === undefined ? "나무 면" : "사포 면"}을 아래로</b> 카드를 고른 뒤 다시 기울여 보세요.`);
+      f.say(`기록 완료! 이번에는 <b>${tilt.acrylic === undefined ? NAME.acrylic : NAME.rubber}</b> 카드를 고른 뒤 다시 기울여 보세요.`);
     }
     paintTilt();
   }
@@ -167,7 +168,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
   function toPull(): void {
     scene = "pull";
     busy = false;
-    f.say("이번엔 평평한 판 위에서 <b>도막 1개</b>와 <b>2개</b>를 끌어 봐요. <b>꾹 눌러 끌기</b>를 움직일 때까지 눌러 보세요.");
+    f.say("이번엔 평평하게 눕힌 <b>아크릴판</b> 위에서 <b>도막 1개</b>와 <b>2개</b>를 끌어 봐요. <b>꾹 눌러 끌기</b>를 움직일 때까지 눌러 보세요.");
     paintPull();
     f.slot.setControls(el("div", { class: "u5x-segs" }, seg1, seg2), pullBtn, note2);
     api.setCTA("도막 1개와 2개를 끌어 보세요", { enabled: false });
@@ -195,9 +196,9 @@ export const slopeLab: StepRenderer = (host, step, api) => {
   function askFinal(): void {
     f.slot.ask(
       "도막을 끌 때 힘이 가장 많이 드는 경우는?",
-      [{ t: "사포 면을 아래로, 도막 2개", ok: true }, { t: "나무 면을 아래로, 도막 2개" }, { t: "사포 면을 아래로, 도막 1개" }],
+      [{ t: "고무 매트 위에서, 도막 2개", ok: true }, { t: "아크릴판 위에서, 도막 2개" }, { t: "고무 매트 위에서, 도막 1개" }],
       (ok) => api.recordQuiz(ok),
-      { why: "면이 <b>거칠수록</b>, 도막이 <b>무거울수록</b> 방해하는 힘이 컸어요.", onNext: finish },
+      { why: "바닥 판이 <b>거칠수록</b>, 도막이 <b>무거울수록</b> 방해하는 힘이 컸어요.", onNext: finish },
     );
   }
   function finish(): void {
@@ -206,7 +207,8 @@ export const slopeLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
-  const block = (ctx: CanvasRenderingContext2D, x: number, y: number, bw: number, bh: number, bottom: Face): void => {
+  // 나무 도막(어느 장면에서나 같은 도막, 아랫면은 나무 면)
+  const block = (ctx: CanvasRenderingContext2D, x: number, y: number, bw: number, bh: number): void => {
     const g = ctx.createLinearGradient(0, y - bh, 0, y);
     g.addColorStop(0, "#E7C08C");
     g.addColorStop(1, "#B98753");
@@ -220,31 +222,51 @@ export const slopeLab: StepRenderer = (host, step, api) => {
     ctx.moveTo(x - bw / 2 + 5, y - bh * 0.62);
     ctx.lineTo(x + bw / 2 - 5, y - bh * 0.56);
     ctx.stroke();
-    // 아래로 간 면: 사포는 두꺼운 어두운 띠에 굵고 오돌토돌한 결(한눈에 거친 면으로 보이게), 나무 면은 얇은 밝은 띠
-    if (bottom === "sand") {
-      const bh2 = 8;
-      ctx.fillStyle = "#3F362C";
-      ctx.fillRect(x - bw / 2, y - bh2, bw, bh2);
-      // 결: 크기와 자리가 고르지 않은 알갱이(같은 그림이 매번 같게 정해진 수열로)
-      for (let i = 0; i < 22; i++) {
-        const gx = x - bw / 2 + 1.5 + ((i * 37) % 97) / 97 * (bw - 3);
-        const gy2 = y - bh2 + 1.2 + ((i * 53) % 89) / 89 * (bh2 - 2.4);
-        const r = 0.9 + ((i * 29) % 7) / 7 * 1.3;
-        ctx.fillStyle = i % 3 === 0 ? "#D9C6A4" : "#A8946F";
+    ctx.fillStyle = "#F0D6AE";
+    ctx.fillRect(x - bw / 2, y - 5, bw, 5);
+  };
+  // 바닥 판(두께 9, 윗면이 y = -9). 아크릴판은 밝고 투명한 판에 흰 광택 줄, 고무 매트는 짙은 판에 오돌토돌한 돌기
+  const plank = (ctx: CanvasRenderingContext2D, x0: number, len: number, kind: Face, ghost = false): void => {
+    if (ghost) {
+      ctx.fillStyle = kind === "rubber" ? "rgba(120,128,140,.18)" : "rgba(190,226,244,.16)";
+      ctx.strokeStyle = kind === "rubber" ? "rgba(170,178,190,.6)" : "rgba(200,232,248,.6)";
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.roundRect(x0, -9, len, 9, 3);
+      ctx.fill();
+      ctx.stroke();
+      ctx.setLineDash([]);
+      return;
+    }
+    const g = ctx.createLinearGradient(0, -9, 0, 0);
+    if (kind === "rubber") {
+      g.addColorStop(0, "#4A505A");
+      g.addColorStop(1, "#24282E");
+    } else {
+      g.addColorStop(0, "#E4F3FB");
+      g.addColorStop(1, "#9CC7DE");
+    }
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.roundRect(x0, -9, len, 9, 3);
+    ctx.fill();
+    if (kind === "rubber") {
+      // 윗면의 돌기(같은 간격, 한눈에 거친 면으로 보이게)
+      ctx.fillStyle = "#5C636E";
+      for (let x = x0 + 4; x < x0 + len - 2; x += 7) {
         ctx.beginPath();
-        ctx.arc(gx, gy2, r, 0, Math.PI * 2);
+        ctx.arc(x, -9, 2, Math.PI, 0);
         ctx.fill();
       }
     } else {
-      ctx.fillStyle = "#F0D6AE";
-      ctx.fillRect(x - bw / 2, y - 5, bw, 5);
+      ctx.strokeStyle = "rgba(255,255,255,.85)";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(x0 + 6, -6.5);
+      ctx.lineTo(x0 + len - 6, -6.5);
+      ctx.stroke();
     }
-  };
-  const boardGrad = (ctx: CanvasRenderingContext2D): CanvasGradient => {
-    const g = ctx.createLinearGradient(0, -9, 0, 0);
-    g.addColorStop(0, "#D6A66E");
-    g.addColorStop(1, "#8C5F36");
-    return g;
   };
 
   st.run((ctx, w, h, t, dt) => {
@@ -268,14 +290,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
         ctx.save();
         ctx.translate(P.x, P.y);
         ctx.rotate(-rg);
-        ctx.fillStyle = "rgba(214,166,110,.15)";
-        ctx.strokeStyle = "rgba(240,200,140,.55)";
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([4, 4]);
-        ctx.beginPath();
-        ctx.roundRect(-6, -9, LEN + 12, 9, 3);
-        ctx.fill();
-        ctx.stroke();
+        plank(ctx, -6, LEN + 12, k, true);
         ctx.restore();
         ctx.save();
         ctx.setLineDash([3, 4]);
@@ -288,7 +303,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
         const gx = P.x + Math.cos(rg) * LEN;
         const gy2 = P.y - Math.sin(rg) * LEN;
         // 이름표는 옅은 판의 끝 아래(지금 기울이는 판과 겹치지 않게)
-        u5Text(ctx, `${k === "wood" ? "나무 면" : "사포 면"} ${a}도`, gx - 2, gy2 + 22, { color: "#F5C76E", px: 12.5 });
+        u5Text(ctx, `${NAME[k]} ${a}도`, gx - 2, gy2 + 22, { color: "#F5C76E", px: 12.5 });
       });
       // 들어 올린 끝을 받치는 점선과 기울기 호
       ctx.setLineDash([4, 5]);
@@ -310,12 +325,9 @@ export const slopeLab: StepRenderer = (host, step, api) => {
       ctx.save();
       ctx.translate(P.x, P.y);
       ctx.rotate(-r);
-      ctx.fillStyle = boardGrad(ctx);
-      ctx.beginPath();
-      ctx.roundRect(-6, -9, LEN + 12, 9, 3);
-      ctx.fill();
+      plank(ctx, -6, LEN + 12, face);
       const bx = 176 - slide * 130;
-      block(ctx, bx, -9, 46, 28, face);
+      block(ctx, bx, -9, 46, 28);
       // 미끄러지려는 힘(파랑, 빗면 아래쪽)과 방해하는 힘(빨강, 맞닿은 면에서 빗면 위쪽)
       if (ang > 1) {
         const L = TPX * Math.sin(r);
@@ -346,9 +358,9 @@ export const slopeLab: StepRenderer = (host, step, api) => {
         if (ang < 1) u5Text(ctx, "위로 끌기", ex - 6, ey - 30, { color: U5.dim, px: 12 });
       }
       u5Read(ctx, w, String(Math.round(ang)), "도", "기울기");
-      u5Pill(ctx, sliding ? "미끄러져요" : face === "wood" ? "나무 면이 아래" : "사포 면이 아래", sliding ? U5.up : U5.gold);
+      u5Pill(ctx, sliding ? "미끄러져요" : `${NAME[face]} 위`, sliding ? U5.up : U5.gold);
     } else {
-      // 눕힌 나무판 위에서 힘 센서로 끈다
+      // 눕힌 아크릴판 위에서 힘 센서로 끈다
       const need = PULL[blocks];
       if (held && !pulling) {
         force = Math.min(need, force + (2.4 * dt) / 60);
@@ -360,13 +372,10 @@ export const slopeLab: StepRenderer = (host, step, api) => {
       if (pulling && moved < 60) moved = Math.min(60, moved + 1.6 * dt);
       ctx.save();
       ctx.translate(20, gy);
-      ctx.fillStyle = boardGrad(ctx);
-      ctx.beginPath();
-      ctx.roundRect(0, -9, w - 40, 9, 3);
-      ctx.fill();
+      plank(ctx, 0, w - 40, "acrylic");
       ctx.restore();
       const bx = 96 + moved;
-      for (let i = 0; i < blocks; i++) block(ctx, bx, gy - 9 - i * 28, 46, 28, "wood");
+      for (let i = 0; i < blocks; i++) block(ctx, bx, gy - 9 - i * 28, 46, 28);
       const shown = pulling ? need : force;
       // 줄과 힘 센서(끄는 만큼 줄이 팽팽해진다)
       const sx = bx + 23 + 46 + shown * 3;
@@ -403,22 +412,22 @@ export const slopeLab: StepRenderer = (host, step, api) => {
 
   // 시작: 예상부터(정오를 매기지 않는다)
   paintTilt();
-  f.slot.setControls(bvCards(2, cWood, cSand), note);
-  f.say("한 면에 <b>사포</b>를 붙인 나무 도막이에요. 나무판을 기울이기 전에 먼저 예상해 볼까요?");
+  f.slot.setControls(bvCards(2, cAcr, cRub), note);
+  f.say("나무 도막은 그대로 두고 <b>바닥 판</b>만 바꿔 기울여 볼게요. 판을 기울이기 전에 먼저 예상해 볼까요?");
   f.slot.ask(
-    "어느 면을 아래로 놓았을 때 나무판을 더 많이 기울여야 미끄러질까요?",
-    [{ t: "거친 사포 면" }, { t: "매끈한 나무 면" }, { t: "둘이 똑같아요" }],
+    "어느 판 위에서 판을 더 많이 기울여야 도막이 미끄러질까요?",
+    [{ t: "거친 고무 매트" }, { t: "매끈한 아크릴판" }, { t: "둘이 똑같아요" }],
     () => undefined,
     {
       predict: true,
       onNext: () => {
         f.slot.showControls();
         ready = true;
-        f.say("직접 확인해 봐요! 나무판의 <b>오른쪽 끝 손잡이</b>를 위로 끌어 올려 미끄러지는 각도를 찾아보세요.");
+        f.say("직접 확인해 봐요! 판의 <b>오른쪽 끝 손잡이</b>를 위로 끌어 올려 미끄러지는 각도를 찾아보세요.");
       },
     },
   );
-  api.setCTA("두 면에서 기울기를 재 보세요", { enabled: false });
+  api.setCTA("두 판에서 기울기를 재 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

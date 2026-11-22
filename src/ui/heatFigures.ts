@@ -1,11 +1,11 @@
-// 열 단원(III) 퀴즈·개념 그림 — 손코딩 교육용 SVG.
+// 열 단원(III) 퀴즈·개념 그림: 손코딩 교육용 SVG.
 // 색은 답의 단서가 되지 않도록 설계한다(예: 입자 상자 3개는 전부 같은 색,
 // 오직 운동 잔상과 입자 간격만 온도의 단서).
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
-/** 온도가 서로 다른 물 (가)(나)(다) — 입자 운동 비교 (다크 그림)
- *  움직임은 입자 한쪽의 호 무늬로 그린다(활발할수록 겹을 늘림, 책 그림 Ⅲ-1). 2026-11-15 그래픽 감사: 입자를 꿰뚫는 곧은 줄은
+/** 온도가 서로 다른 물 (가)(나)(다): 입자 운동 비교 (다크 그림)
+ *  움직임은 입자 한쪽의 호 무늬로 그린다(활발할수록 겹을 늘림). 2026-11-15 그래픽 감사: 입자를 꿰뚫는 곧은 줄은
  *  막대에 꽂힌 공처럼 보였고 한 줄은 상자 밖으로 나갔다. 호가 상자 밖으로 나가면 반대쪽에 둔다. */
 export function particleTrio(showMotionLines = true): string {
   // 상자 하나를 그리는 도우미: 입자 배치 + 움직임 호(활발할수록 겹이 많다)
@@ -56,7 +56,7 @@ export function particleTrio(showMotionLines = true): string {
   </svg>`;
 }
 
-/** 뜨거운 물 (가) + 찬물 (나)의 시간-온도 그래프 — 4분에 40℃로 열평형 (라이트 그림)
+/** 뜨거운 물 (가) + 찬물 (나)의 시간-온도 그래프: 4분에 40℃로 열평형 (라이트 그림)
  *  2026-11-15 그래픽 감사: 두 곡선이 4분에 꺾이며 만났다. 이제 곡선이 매끈하게 다가가 4분에 만나고(기울기 0으로 닿는다) 그 뒤로 함께 간다.
  *  만나기 전 3분에도 두 곡선이 떨어져 보이게 (4 − t)^1.5 꼴로 줄인다. 대체 글에서 답(4분, 40도)을 뺐다.
  *  뜨거운 물은 주황(빨강은 오답 색), 글자는 폰에서 12px 이상(설계 13). */
@@ -128,7 +128,7 @@ export function thermalRods(): string {
   </svg>`;
 }
 
-/** recap 카드용 미니 일러스트(64x64) — 열 단원 공용 */
+/** recap 카드용 미니 일러스트(64x64): 열 단원 공용 */
 const MINI: Record<string, string> = {
   // 온도계 + 입자
   thermo: `<path d="M26 12a5 5 0 0 1 10 0v22a10 10 0 1 1-10 0z" fill="#FFF" stroke="#4E5968" stroke-width="3"/>
@@ -167,7 +167,7 @@ const MINI: Record<string, string> = {
     <path d="M56 36l3-2" stroke="#8FB3E8" stroke-width="2.4"/>
     <path d="M30 22c8-2 14 2 18 8" stroke="#FF9F43" stroke-width="3"/>
     <path d="M45 27l4 4-6 1z" fill="#FF9F43" stroke="none"/>`,
-  // 전도 — 진동 릴레이
+  // 전도: 진동 릴레이
   conduct: `<circle cx="12" cy="36" r="5" fill="#FF9F43" stroke="none"/>
     <circle cx="24" cy="36" r="5" fill="#F9BC7B" stroke="none"/>
     <circle cx="36" cy="36" r="5" fill="#B9AFD4" stroke="none"/>
@@ -175,26 +175,26 @@ const MINI: Record<string, string> = {
     <path d="M8 26c2-2 6-2 8 0M20 26c2-2 6-2 8 0" stroke="#FF6B4A" stroke-width="2.6"/>
     <path d="M33 27c1.6-1.4 4.4-1.4 6 0" stroke="#8FA0CF" stroke-width="2.2"/>
     <path d="M12 54c5-2.5 3.5-6.5 0-10.5-3.5 4-5 8 0 10.5z" fill="#FF9F43" stroke="none"/>`,
-  // 대류 — 순환
+  // 대류: 순환
   convect: `<rect x="12" y="14" width="40" height="38" rx="9" fill="none" stroke="#4E5968" stroke-width="3"/>
     <path d="M32 44c-7 0-11-4-11-10s4-10 11-10 11 4 11 10" stroke="#0CA6C0" stroke-width="3.2"/>
     <path d="M43 28l3 6-7-1z" fill="#0CA6C0" stroke="none"/>
     <path d="M26 60c4-2 3-5 0-8-3 3-4 6 0 8z" fill="#FF9F43" stroke="none"/>
     <path d="M38 60c4-2 3-5 0-8-3 3-4 6 0 8z" fill="#FF9F43" stroke="none"/>`,
-  // 복사 — 직진(빨강은 오답 색이라 주황 계열로. 정리 카드와 분류 통의 '복사'도 같은 색 #E67700)
+  // 복사: 직진(빨강은 오답 색이라 주황 계열로. 정리 카드와 분류 통의 '복사'도 같은 색 #E67700)
   radiate: `<path d="M14 44c7-3.5 5-9 0-14.5C9 35 7 40.5 14 44z" fill="#FF9F43" stroke="none"/>
     <path d="M26 22a18 18 0 0 1 0 26" stroke="#E67700" stroke-width="3"/>
     <path d="M34 16a26 26 0 0 1 0 38" stroke="#E67700" stroke-width="3" opacity=".65"/>
     <path d="M42 10a34 34 0 0 1 0 50" stroke="#E67700" stroke-width="3" opacity=".35"/>
     <circle cx="56" cy="35" r="4" fill="#FFB03A" stroke="none"/>`,
-  // 비열 — 1kg 블록 + 온도계 + 열
+  // 비열: 1kg 블록 + 온도계 + 열
   specHeat: `<rect x="10" y="26" width="26" height="22" rx="5" fill="#FFE4B0" stroke="#C9A96A" stroke-width="3"/>
     <path d="M17 26v-5h12v5" fill="none" stroke="#C9A96A" stroke-width="3"/>
     <path d="M23 62c5-2.5 3.5-6.5 0-10.5-3.5 4-5 8 0 10.5z" fill="#FF9F43" stroke="none"/>
     <path d="M50 14a3 3 0 0 1 6 0v22a6 6 0 1 1-6 0z" fill="#FFF" stroke="#4E5968" stroke-width="3"/>
     <path d="M53 26v14" stroke="#F25C54" stroke-width="3.6"/>
     <circle cx="53" cy="42" r="3.4" fill="#F25C54" stroke="none"/>`,
-  // 온도 관성 — 같은 불, 다른 온도계
+  // 온도 관성: 같은 불, 다른 온도계
   inertia: `<path d="M16 60c4.5-2.2 3-6 0-9.5-3 3.5-4.5 7.3 0 9.5z" fill="#FF9F43" stroke="none"/>
     <path d="M48 60c4.5-2.2 3-6 0-9.5-3 3.5-4.5 7.3 0 9.5z" fill="#FF9F43" stroke="none"/>
     <path d="M13 8a3 3 0 0 1 6 0v26a6 6 0 1 1-6 0z" fill="#FFF" stroke="#4E5968" stroke-width="2.8"/>
@@ -203,11 +203,11 @@ const MINI: Record<string, string> = {
     <path d="M45 8a3 3 0 0 1 6 0v26a6 6 0 1 1-6 0z" fill="#FFF" stroke="#4E5968" stroke-width="2.8"/>
     <path d="M48 14v26" stroke="#F25C54" stroke-width="3.4"/>
     <circle cx="48" cy="42" r="3.2" fill="#F25C54" stroke="none"/>`,
-  // 물의 큰 비열 — 물방울은 느긋
+  // 물의 큰 비열: 물방울은 느긋
   waterBig: `<path d="M26 8C34 20 44 28 44 40a18 18 0 1 1-36 0C8 28 18 20 26 8z" fill="#CFE4FF" stroke="#3D8DFF" stroke-width="3"/>
     <path d="M18 40a8.5 8.5 0 0 0 8 9" stroke="#8FBBF2" stroke-width="2.6"/>
     <path d="M54 20l6-3M54 32l7 0M54 44l6 3" stroke="#FF9F43" stroke-width="2.8"/>`,
-  // 열팽창 — 입자 간격이 벌어진다(크기는 그대로)
+  // 열팽창: 입자 간격이 벌어진다(크기는 그대로)
   expandArt: `<path d="M6 20v24M58 20v24" stroke="#C4CAD2" stroke-width="2.4" stroke-dasharray="3 4"/>
     <circle cx="20" cy="32" r="5.5" fill="#F25C54" stroke="none"/>
     <circle cx="32" cy="32" r="5.5" fill="#F25C54" stroke="none"/>
@@ -222,7 +222,7 @@ const MINI: Record<string, string> = {
     <rect x="6" y="38" width="34" height="9" rx="4.5" fill="#5E6B7E" stroke="none"/>
     <path d="M42 42.5h4" stroke="#C4CAD2" stroke-width="2.8"/>
     <path d="M14 60c4-2 3-5 0-8-3 3-4 6 0 8zM30 60c4-2 3-5 0-8-3 3-4 6 0 8z" fill="#FF9F43" stroke="none"/>`,
-  // 바이메탈 — 열팽창 작은 쪽으로 휜다(바깥: 많이 늘어나는 구리색, 안쪽: 적게 늘어나는 짙은 회색)
+  // 바이메탈: 열팽창 작은 쪽으로 휜다(바깥: 많이 늘어나는 구리색, 안쪽: 적게 늘어나는 짙은 회색)
   bimetalArt: `<rect x="4" y="18" width="8" height="24" rx="2" fill="#C4CAD2" stroke="none"/>
     <path d="M12 26c14-2 26 2 34 14" stroke="#C8794A" stroke-width="7" stroke-linecap="round"/>
     <path d="M12 33c12-1.5 22 2 29 12" stroke="#5E6B7E" stroke-width="7" stroke-linecap="round"/>
@@ -264,7 +264,7 @@ export function heatingCurves3(): string {
   </svg>`;
 }
 
-/** 종이+알루미늄박 테이프 — 가열 전/후 (라이트 그림) */
+/** 종이+알루미늄박 테이프: 가열 전/후 (라이트 그림) */
 export function tapeBend(): string {
   // 알루미늄박은 은백색(랩과 같은 뜻의 색. 2026-11-15 그래픽 감사). 글자는 폰에서 12px 이상(설계 13).
   return `<svg viewBox="0 0 344 170" ${NS} role="img" aria-label="종이와 알루미늄박을 붙인 테이프의 가열 전과 가열 후 모습">
@@ -287,7 +287,7 @@ export function tapeBend(): string {
   </svg>`;
 }
 
-/** 온돌의 구조 — 아궁이·구들장·방 (라이트 그림)
+/** 온돌의 구조: 아궁이·구들장·방 (라이트 그림)
  *  2026-11-15 그래픽 감사: 문제가 묻는 ㉠(구들장에서 방바닥으로), ㉡(방 안 공기가 퍼지는 것)의 자리를 그림에 표시한다.
  *  ㉠은 구들장 윗면에서 방바닥으로 가는 짧은 화살, ㉡은 방 안의 도는 고리. 표시는 답의 색 단서가 되지 않게 같은 짙은 회색.
  *  이름표는 선 밖에(오른쪽 칸과 아래), 글자는 폰에서 12px 이상(설계 13). 물결선이 '구들장' 글자를 가로지르던 것을 걷었다. */

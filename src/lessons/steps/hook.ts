@@ -7,14 +7,14 @@
 //   "wire"  — 전깃줄: 여름/겨울을 오가며 늘어짐·팽팽함을 관찰하고 까닭을 예측
 //   ── IV 물질의 상태 변화 ──
 //   "smell" — 급식실: 뚜껑을 열면 냄새가 교실 끝까지 — 어떻게 왔는지 예측
-//   "juice" — 쏟아진 주스와 얼음: 얼음은 집히고 주스는 흐른다 — 두 가지 다 시도
-//   "wrap"  — 배달 음식 랩: 뜨거운 그릇에 랩을 씌우면 볼록 — 까닭을 예측
+//   "juice" (옛 Ⅳ 훅 이름. 지금 중1 Ⅳ 도입은 opener의 u4-spill 장면이다)
+//   "wrap"  (옛 Ⅳ 훅 이름. 지금 중1 Ⅳ 도입은 opener의 u4-wrap 장면이다)
 //   "ramen" — 끓는 라면 물: 불을 최대로 올리면 온도가 더 오를지 예측
 //   ── V 힘의 작용 (렌더러는 hookForce.ts) ──
 //   "balloon" 풍선 줄 · "tugrope" 멈춘 줄다리기+예측 · "bow" 활쏘기 ·
 //   "iceslip" 빙판vs자갈길+예측 · "bottle" 페트병 밀어넣기 · "rollstop" 멈추는 공+예측
 //   ── VI 기체의 성질 (렌더러는 hookGas.ts) ──
-//   "polar" 북극곰 얼음판+예측 · "bubblewrap" 뽁뽁이 · "foilballoon" 은박 풍선 안↔밖 ·
+//   "polar" · "bubblewrap" (옛 Ⅵ 훅 이름. 지금 중1 Ⅵ 도입은 opener의 u6-snow, u6-gym 장면이다) · "foilballoon" 은박 풍선 안↔밖 ·
 //   "pingpong" 찌그러진 탁구공+예측
 //   ── VII 태양계 (렌더러는 hookSpace.ts) ──
 //   "stargaze" 밤하늘 밝은 점 · "planetsize" 지구 11개=목성+예측 · "shadowclock" 시계탑 그림자+예측 ·

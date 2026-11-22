@@ -800,6 +800,7 @@ circle.cwk-hit { pointer-events: all; }
   box-shadow: 0 0 0 2px rgba(255, 255, 255, .28), 0 4px 12px rgba(0, 0, 0, .35);
 }
 .knl-face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.knl-face svg { display: block; width: 100%; height: 100%; }
 .knl-tok b { font-size: 13px; line-height: 17px; font-weight: 800; color: #fff; }
 .knl-tok.bat { z-index: 2; }
 .knl-tok.bat .knl-face { box-shadow: 0 0 0 2.5px #FFD43B, 0 4px 12px rgba(0, 0, 0, .35); }

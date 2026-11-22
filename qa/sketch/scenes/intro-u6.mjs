@@ -1,108 +1,125 @@
 // 중1 과학 Ⅵ 도입(opener) 네 장면의 그림(손그림 코드 그림). intro-u1.mjs와 같은 엔진, 같은 무대(960×544)를 쓴다.
 // 그림 속에 글자와 숫자는 넣지 않는다(기호만). 움직일 부분은 <g class>로 묶고 앱의 CSS와 코드가 움직인다.
-//   bear (u6l1) 얇은 얼음판 위의 북극곰: 네 발로 선 모습과 엎드린 모습, 발밑의 금
-//   wrap (u6l3) 뽁뽁이의 공기 방울 하나(크게)와 누르는 손가락
+//   snow (u6l1) 깊게 쌓인 눈밭과 나무 디딤판, 아이 한 명: 운동화로 걸으면 무릎까지 빠지고 설피를 신으면 눈 위에 선다
+//   gym  (u6l3) 바닥에 놓인 공기 짐볼과 위에서 누르는 두 손
 //   foil (u6l4) 따뜻한 방과 눈 오는 밖, 은박 풍선을 든 아이
 //   pong (u6l5) 찌그러진 탁구공과 뜨거운 물이 담긴 그릇
 // node qa/sketch/build-intro.mjs u6 이 build(add)를 불러 src/ui/introArt.u6.generated.ts 에 싣는다.
 import { Sk, C, curve, dense, circ, ell, poly, rrect, squiggle, sparkle, emark } from "../lib/sk.mjs";
-import { drawFigure, pose, STUDENT } from "../lib/figure.mjs";
+import { drawFigure, handDot, pose, STUDENT } from "../lib/figure.mjs";
 
 const W = 960, H = 544;
 const g = (sk, cls, fn) => { sk.raw(`<g class="${cls}">`); fn(); sk.raw("</g>"); };
 const rect = (x, y, w, h) => poly([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], 8);
 const flat = { dx: 0, dy: 0, wob: 0.5, tex: false };
 
-/* ══════════ 1. 얼음판 위의 북극곰 (u6l1) ══════════
-   곰은 왼쪽에서 출발한다. 앱이 곰 묶음을 오른쪽으로 옮긴다(GO). 선 곰이 한 걸음 내디딘 자리에 금이 간다. */
-export const BR = { go: 380, step: 110, iceY: 396 };
-const ICE = BR.iceY;
+/* ══════════ 1. 눈밭과 설피 (u6l1) ══════════
+   같은 아이가 같은 몸무게로 두 번 걷는다. 아이는 왼쪽 나무 디딤판(눈에 빠지지 않는 자리)에서 출발하고, 앱이 아이 묶음을 오른쪽으로 옮긴다.
+   운동화: 조금(step) 가다가 무릎까지 빠진다(sink 그림으로 바뀌고 뒤에 깊은 발자국이 남는다).
+   설피: 멀리(go) 걸어가도 눈 위에 서 있다(up 그림, 뒤에 얕고 넓은 자국). 두 그림의 아이는 같은 x0에 그려 두고 묶음째 옮긴다. */
+export const SN = { go: 540, step: 180, sy: 420, x0: 98 };
+const SY = SN.sy;
+const SNOW = "#F4F9FC";
+const WKID = { hair: "knit", capColor: "#F2B632", seed: 31 };
+// 설피(비스듬히 내려다본 모습): 나무 테와 그물 끈. (cx, cy) = 가운데
+function snowshoe(sk, cx, cy, sd) {
+  const rx = 62, ry = 15;
+  const rim = ell(cx, cy, rx, ry);
+  sk.fill(rim, "#F1E4C8", { ...flat, seed: sd });
+  for (let i = -3; i <= 3; i++) { const x = cx + i * 15, h = ry * Math.sqrt(Math.max(0, 1 - ((i * 15) / rx) ** 2)) - 2; sk.ink(dense([[x - 4, cy - h], [x + 4, cy + h]]), { w: 3, color: "#B08A5A", seed: sd + 2 + i, wob: 0.1 }); }
+  sk.ink(dense([[cx - rx + 8, cy], [cx + rx - 8, cy]]), { w: 3, color: "#B08A5A", seed: sd + 10, wob: 0.1 });
+  sk.ink(rim, { w: 7, color: "#8A5A33", seed: sd + 11, wob: 0.3 });
+}
+const hole = (sk, x, y, rx, ry, sd) => { const h = ell(x, y, rx, ry); sk.fill(h, "#C3D7E5", { ...flat, wob: 0.2, seed: sd }); sk.ink(h, { w: 5, color: "#6F8FA6", seed: sd + 1, wob: 0.2 }); };
 
-function bearHead(sk, x, y, sd) {
-  for (const dx of [-30, 26]) {
-    const ear = circ(x + dx, y - 44, 17, { over: 0.1, seed: sd + dx });
-    sk.fill(ear, "#FFFFFF", { ...flat, seed: sd + 1 }); sk.ink(ear, { w: 7, wob: 0.5, seed: sd + 2 });
-  }
-  const head = circ(x, y, 54, { over: 0.1, seed: sd + 3 });
-  sk.fill(head, "#FFFFFF", { ...flat, seed: sd + 4 }); sk.ink(head, { w: 9, wob: 0.7, seed: sd + 5 });
-  const snout = ell(x + 34, y + 14, 30, 22);
-  sk.fill(snout, "#F3F6F8", { ...flat, seed: sd + 6 }); sk.ink(snout, { w: 7, wob: 0.5, seed: sd + 7 });
-  sk.fill(circ(x + 56, y + 6, 9, { seed: sd + 8 }), C.ink, { ...flat, seed: sd + 9 });
-  sk.fill(circ(x + 6, y - 10, 6, { seed: sd + 10 }), C.ink, { ...flat, seed: sd + 11 });
-}
-function leg(sk, pts, sd) {
-  const p = poly(pts, 4);
-  sk.fill(p, "#FFFFFF", { ...flat, seed: sd }); sk.ink(p, { w: 8, wob: 0.6, seed: sd + 1 });
-}
-function bearStand(sk, cx) {
-  for (const [x, i] of [[cx - 108, 0], [cx - 62, 1], [cx + 56, 2], [cx + 102, 3]]) leg(sk, [[x - 19, ICE - 120], [x + 19, ICE - 120], [x + 17, ICE - 2], [x - 17, ICE - 2]], 110 + i * 3);
-  const body = ell(cx, ICE - 158, 150, 70);
-  sk.fill(body, "#FFFFFF", { ...flat, seed: 131 }); sk.ink(body, { w: 9, wob: 0.9, seed: 132 });
-  bearHead(sk, cx + 168, ICE - 196, 140);
-}
-function bearFlat(sk, cx) {
-  leg(sk, [[cx + 110, ICE - 34], [cx + 236, ICE - 30], [cx + 240, ICE - 3], [cx + 110, ICE - 3]], 160);
-  leg(sk, [[cx - 236, ICE - 30], [cx - 110, ICE - 34], [cx - 110, ICE - 3], [cx - 240, ICE - 3]], 164);
-  const body = ell(cx, ICE - 56, 168, 56);
-  sk.fill(body, "#FFFFFF", { ...flat, seed: 171 }); sk.ink(body, { w: 9, wob: 0.9, seed: 172 });
-  bearHead(sk, cx + 176, ICE - 104, 180);
-}
-
-export function bearBase() {
-  const sk = new Sk(W, H, { id: "br" });
+export function snowBase() {
+  const sk = new Sk(W, H, { id: "sn" });
+  const { x0 } = SN;
   sk.fill(rect(0, 0, W, H), "#E4F1FA", { ...flat, wob: 0, seed: 1 });
-  // 바다와 얇은 얼음판
-  sk.fill(rect(0, ICE + 20, W, H - ICE - 20), C.sea, { ...flat, wob: 0, seed: 2 });
-  for (const [x, y, i] of [[90, 470, 0], [420, 500, 1], [760, 466, 2]]) sk.ink(curve([[x, y], [x + 24, y - 7], [x + 48, y], [x + 72, y - 7], [x + 96, y]]), { w: 5, color: "#FFFFFF", wob: 0.3, seed: 5 + i });
-  const ice = poly([[24, ICE], [936, ICE], [926, ICE + 34], [34, ICE + 34]], 8);
-  sk.fill(ice, "#FBFEFF", { ...flat, seed: 11 });
-  sk.ink(ice, { w: 8, wob: 0.9, seed: 12 });
-  // 금(선 곰이 한 걸음 내디딘 자리의 발밑)
-  g(sk, "opn-u6-ice-crack", () => {
-    const cx = 250 + BR.step;
-    for (const [x, i] of [[cx - 85, 0], [cx + 79, 1]]) {
-      sk.ink(dense([[x - 34, ICE + 3], [x - 12, ICE + 14], [x - 20, ICE + 24], [x, ICE + 33]], 3), { w: 6, wob: 0.3, seed: 21 + i });
-      sk.ink(dense([[x + 30, ICE + 3], [x + 14, ICE + 12], [x + 24, ICE + 22], [x + 10, ICE + 33]], 3), { w: 6, wob: 0.3, seed: 25 + i });
-      sk.ink(dense([[x - 2, ICE + 2], [x + 4, ICE + 16]], 3), { w: 5, wob: 0.3, seed: 29 + i });
-    }
-    emark(sk, cx + 268, ICE - 282, 1, { color: C.red, w: 15, seed: 33 });
+  for (const [x, y, i] of [[300, 70, 0], [470, 130, 1], [640, 60, 2], [820, 120, 3], [900, 250, 4], [560, 250, 5]]) {
+    for (let k = 0; k < 3; k++) { const a = (k * Math.PI) / 3 + 0.3; sk.ink(dense([[x - 13 * Math.cos(a), y - 13 * Math.sin(a)], [x + 13 * Math.cos(a), y + 13 * Math.sin(a)]], 4), { w: 4, color: "#8FC3E8", wob: 0.1, seed: 5 + i * 3 + k }); }
+  }
+  // 깊게 쌓인 눈
+  sk.fill(rect(0, SY, W, H - SY), SNOW, { ...flat, wob: 0, seed: 21 });
+  sk.ink(dense([[0, SY], [W, SY]], 8), { w: 9, wob: 0.9, seed: 22 });
+  // 나무 디딤판(출발하는 곳. 눈 위로 조금 솟아 있다)
+  const deck = rrect(18, SY - 10, 160, 40, 6);
+  sk.fill(deck, C.wood, { dx: 0.6, dy: 0.8, wob: 0.5, seed: 23, tex: true });
+  sk.ink(deck, { w: 8, wob: 0.6, seed: 24 });
+  // 지나온 자국: 운동화는 깊은 구멍, 설피는 얕고 넓은 자국(앱이 걸은 뒤에 켠다)
+  g(sk, "opn-u6-snow-deep", () => hole(sk, x0 + SN.step * 0.55, SY + 9, 30, 10, 31));
+  g(sk, "opn-u6-snow-flat", () => {
+    for (const [f, i] of [[0.32, 0], [0.55, 1], [0.78, 2]]) sk.ink(ell(x0 + SN.go * f, SY + 10, 50, 8), { w: 5, color: "#B9CFDC", seed: 35 + i, wob: 0.3 });
   });
-  g(sk, "opn-u6-ice-bear", () => {
-    g(sk, "opn-u6-ice-stand", () => bearStand(sk, 250));
-    g(sk, "opn-u6-ice-flat", () => bearFlat(sk, 250));
+  g(sk, "opn-u6-snow-kid", () => {
+    // 처음: 디딤판 위에 운동화를 신고 서 있다
+    g(sk, "opn-u6-snow-idle", () => {
+      drawFigure(sk, x0, SY - 10, 0.58, pose({ elR: [56, -264], haR: [84, -216], elL: [-56, -264], haL: [-84, -216] }), { ...WKID });
+    });
+    // 운동화: 무릎까지 빠졌다(정강이와 운동화는 눈 속이라 점선)
+    g(sk, "opn-u6-snow-sink", () => {
+      const ks = 0.58, ky = SY + 8;
+      hole(sk, x0, ky, 46, 12, 41);
+      const deep = ks * 106;
+      for (const [dx, sg, i] of [[-22, -1, 0], [22, 1, 1]]) {
+        const kn = [x0 + dx * ks, ky + 4], ft = [x0 + dx * ks + sg * 8, ky + deep];
+        sk.ink(dense([kn, ft]), { w: 7, color: "#9DB6C8", dash: [10, 9], seed: 43 + i, wob: 0.2 });
+        sk.ink(rrect(ft[0] - 12 + sg * 8, ft[1] - 4, 34, 16, 7), { w: 5, color: "#9DB6C8", dash: [9, 8], seed: 45 + i, wob: 0.2 });
+      }
+      const K = pose({ hip: [0, -110], neck: [12, -238], head: [20, -330], tilt: 0.12,
+        elR: [90, -250], haR: [150, -300], elL: [-84, -262], haL: [-128, -330],
+        knL: [-22, 0], ftL: [-22, 0], knR: [22, 0], ftR: [22, 0] });
+      drawFigure(sk, x0, ky, ks, K, { ...WKID });
+      sk.fill([...ell(x0, ky, 43, 10, 0.12, Math.PI - 0.12), [x0 - 42, ky + 2]], SNOW, { ...flat, wob: 0.2, seed: 47 });
+      sk.ink(ell(x0, ky, 46, 12, 0.1, Math.PI - 0.1), { w: 5, color: "#6F8FA6", seed: 48, wob: 0.2 });
+      emark(sk, x0 + 92, SY - 300, 0.9, { color: C.red, w: 13, seed: 49 });
+    });
+    // 설피: 눈 위에 서서 걷는다(뒤쪽 발의 설피 → 아이 → 앞쪽 발의 설피)
+    g(sk, "opn-u6-snow-up", () => {
+      const ts = 0.58, ty = SY - 12;
+      const T = pose({ hip: [0, -212], neck: [20, -340], head: [32, -432], tilt: 0.08,
+        elR: [70, -270], haR: [104, -222], elL: [-60, -262], haL: [-86, -214],
+        knL: [-40, -106], ftL: [-64, 0], knR: [36, -106], ftR: [58, 0] });
+      snowshoe(sk, x0 - ts * 64, SY - 4, 51);
+      drawFigure(sk, x0, ty, ts, T, { ...WKID });
+      snowshoe(sk, x0 + ts * 58, SY - 2, 61);
+    });
   });
   return { sk };
 }
 
-/* ══════════ 2. 뽁뽁이의 공기 방울 (u6l3) ══════════
-   가운데의 큰 방울 하나를 손가락이 누른다. 앱이 방울을 세로로 줄이고 손가락을 그만큼 내린다. */
-export const WR = { cx: 480, baseY: 446, ry: 176, hit: [250, 40, 460, 420] };
+/* ══════════ 2. 공기 짐볼 (u6l3) ══════════
+   바닥에 놓인 큰 짐볼을 위에서 두 손이 누른다. 앱이 공을 바닥 기준으로 세로로 줄이고(옆으로 조금 넓힌다) 손을 그만큼 내린다.
+   reach: 공이 처음 높이의 몇 분의 1만큼 눌렸을 때 손이 내려가는 거리의 기준(손바닥 바닥에서 바닥까지의 높이). */
+export const GYM = { cx: 480, baseY: 470, r: 150, reach: 296, hit: [290, 30, 380, 450] };
 
-export function wrapBase() {
-  const sk = new Sk(W, H, { id: "wr" });
-  const { cx, baseY, ry } = WR;
-  const dome = (x, rx, r2, sd, cls) => {
-    const d = [...ell(x, baseY, rx, r2, Math.PI, Math.PI * 2), ...dense([[x + rx, baseY], [x - rx, baseY]], 6)];
-    const draw = () => {
-      sk.fill(d, "#DDF0FA", { ...flat, seed: sd });
-      sk.ink(d, { w: 9, wob: 0.8, seed: sd + 1 });
-      sk.ink(ell(x - rx * 0.1, baseY - r2 * 0.1, rx * 0.72, r2 * 0.74, Math.PI * 1.12, Math.PI * 1.4), { w: 7, color: "#FFFFFF", wob: 0.4, seed: sd + 2 });
-    };
-    if (cls) g(sk, cls, draw); else draw();
-  };
-  // 바닥의 비닐 한 장과 양옆의 작은 방울
-  const sheet = poly([[40, baseY], [920, baseY], [920, baseY + 22], [40, baseY + 22]], 8);
-  sk.fill(sheet, "#C9E4F2", { ...flat, seed: 3 });
-  sk.ink(sheet, { w: 8, wob: 0.8, seed: 4 });
-  dome(140, 74, 62, 11);
-  dome(820, 74, 62, 15);
-  dome(cx, 196, ry, 21, "opn-u6-wrap-cap");
-  // 손가락(위에서 내려온다)
-  g(sk, "opn-u6-wrap-finger", () => {
-    const f = rrect(cx - 40, -70, 80, baseY - ry + 60, 40);
-    sk.fill(f, C.skin, { ...flat, seed: 31 });
-    sk.ink(f, { w: 9, wob: 0.7, seed: 32 });
-    sk.ink(ell(cx, baseY - ry - 34, 24, 20, Math.PI, Math.PI * 2), { w: 6, color: "#D9A98C", wob: 0.3, seed: 33 });
+export function gymBase() {
+  const sk = new Sk(W, H, { id: "gy" });
+  const { cx, baseY, r } = GYM;
+  const cy = baseY - r;
+  // 바닥과 그림자
+  sk.ink(dense([[40, baseY], [920, baseY + 2]], 8), { w: 9, color: C.grayLight, wob: 1.2, seed: 3 });
+  sk.fill(ell(cx, baseY, r * 0.78, 13), "#2A3A5E", { ...flat, wob: 0.2, seed: 5, alpha: 0.12 });
+  g(sk, "opn-u6-gym-ball", () => {
+    const b = circ(cx, cy, r, { over: 0.1, seed: 11 });
+    sk.fill(b, "#4C9BE8", { dx: 0.8, dy: 1, wob: 0.6, seed: 12, tex: true });
+    // 공기 마개와 이음 줄
+    sk.ink(ell(cx, cy, r * 0.42, r, -Math.PI / 2, Math.PI / 2), { w: 5, color: "#2F6FB8", wob: 0.3, seed: 13 });
+    const plug = circ(cx + r * 0.62, cy + r * 0.32, 9, { seed: 14 });
+    sk.fill(plug, "#E9EEF5", { ...flat, seed: 15 });
+    sk.ink(plug, { w: 5, wob: 0.2, seed: 16 });
+    sk.ink(b, { w: 9, wob: 0.8, seed: 17 });
+    sk.ink(ell(cx - 10, cy - 10, r * 0.74, r * 0.76, Math.PI * 1.12, Math.PI * 1.4), { w: 8, color: "#FFFFFF", wob: 0.4, seed: 18 });
+  });
+  // 위에서 누르는 두 손(앱이 공의 눌린 만큼 내린다)
+  g(sk, "opn-u6-gym-hands", () => {
+    for (const [x, i] of [[cx - 50, 0], [cx + 50, 1]]) {
+      const top = cy - Math.sqrt(r * r - (x - cx) ** 2);
+      sk.ink(dense([[x + (i ? 26 : -26), -40], [x, top - 26]], 5), { w: 13, wob: 0.6, seed: 31 + i });
+      const palm = ell(x, top - 13, 32, 14);
+      sk.fill(palm, C.skin, { dx: 0.8, dy: 1, wob: 0.6, seed: 33 + i });
+      sk.ink(palm, { w: 8, wob: 0.6, seed: 35 + i });
+    }
   });
   return { sk };
 }
@@ -223,8 +240,8 @@ export function pongBase() {
 /** build-intro.mjs가 부른다: 그림을 싣고 장면별 좌표를 돌려준다. */
 export function build(add) {
   return {
-    ice: { ...BR, ...add("bearBase", bearBase()) },
-    wrap: { ...WR, ...add("wrapBase", wrapBase()) },
+    snow: { ...SN, ...add("snowBase", snowBase()) },
+    gym: { ...GYM, ...add("gymBase", gymBase()) },
     foil: { ...FO, ...add("foilBase", foilBase()) },
     pong: { ...PG, ...add("pongBase", pongBase()) },
   };

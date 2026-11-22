@@ -1,4 +1,4 @@
-// 힘의 작용 단원(V) 퀴즈·개념 그림 — 손코딩 교육용 SVG.
+// 힘의 작용 단원(V) 퀴즈·개념 그림. 손코딩 교육용 SVG.
 // 색이 정답의 단서가 되지 않게 설계. 라이트 그림(흰 카드 위) 기준.
 // 화살표의 약속(단원 전체, 2026-11-15 그래픽 손질): 시작점 = 작용점(물체에 닿은 자리나 물체 가운데), 길이 = 값에 비례.
 // 정리 미니아트의 색은 랩과 정리 그림(qa/scifig-g1)의 약속을 따른다: 가한 힘 파랑, 중력과 방해하는 힘과 되당기는 힘 빨강,
@@ -90,7 +90,7 @@ export function twoForceItem(a: number, b: number, text: string): string {
   return `<span style="display:flex;flex-direction:column;align-items:center;gap:2px">${svg}<span style="font-size:12.5px;line-height:16px">${text}</span></span>`;
 }
 
-/** 중력 방향 고르기 — 지구 왼쪽 (가)·아래쪽 (나) 물체와 A~F 화살표 (라이트) */
+/** 중력 방향 고르기: 지구 왼쪽 (가)·아래쪽 (나) 물체와 A~F 화살표 (라이트) */
 export function gravityDirFig(): string {
   return `<svg viewBox="0 0 344 210" ${NS} role="img" aria-label="지구 주위 두 물체에서 뻗은 화살표 후보들">
     <circle cx="172" cy="88" r="52" fill="#EAF2FD" stroke="#8FB3E8" stroke-width="2.4"/>
@@ -119,7 +119,7 @@ export function gravityDirFig(): string {
   </svg>`;
 }
 
-/** 용수철 탄성력 그래프 — 늘어난 길이∝힘 (자체 수치 0.5 N/cm, 라이트) */
+/** 용수철 탄성력 그래프: 늘어난 길이∝힘 (자체 수치 0.5 N/cm, 라이트) */
 export function springGraphFig(): string {
   const gx = (cm: number): number => 48 + cm * 20;
   const gy = (n: number): number => 168 - (n / 7) * 132;
@@ -135,7 +135,7 @@ export function springGraphFig(): string {
   </svg>`;
 }
 
-/** 책상 위 책에 작용하는 두 힘 (V-18, 라이트). 두 힘 모두 책 가운데 점(작용점)에서 위아래로, 같은 길이. 책과 책상판 위를 지나는 곳은 흰 테 */
+/** 책상 위 책에 작용하는 두 힘 (라이트). 두 힘 모두 책 가운데 점(작용점)에서 위아래로, 같은 길이. 책과 책상판 위를 지나는 곳은 흰 테 */
 export function bookForcesFig(): string {
   return `<svg viewBox="0 0 344 190" ${NS} role="img" aria-label="책상 위에 놓인 책과, 책 가운데 점에서 위아래로 뻗은 두 힘 화살표">
     <!-- 책상 -->

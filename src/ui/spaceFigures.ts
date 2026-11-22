@@ -1,6 +1,6 @@
-// spaceFigures — VII 태양계 단원 퀴즈 SVG + recap 미니아트.
-// 파운드리 재질 문법: 근-동조 그라데이션 면 + 키라이트 + 발광(우주는 접촉 그림자 대신 글로우).
-// 태양 관련 그림은 실제 관측 사진(public/photos/, NASA·NOIRLab — CREDITS.md)을 SVG <image>로 임베드한다.
+// spaceFigures: VII 태양계 단원 퀴즈 SVG와 정리 카드 미니아트.
+// 파운드리 재질 문법: 근동조 그라데이션 면, 키라이트, 발광(우주는 접촉 그림자 대신 글로우).
+// 태양 관련 그림은 실제 관측 사진(public/photos/, NASA·NOIRLab, 출처는 CREDITS.md)을 SVG <image>로 임베드한다.
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -22,8 +22,8 @@ const star = (x: number, y: number, r = 1.2, o = 0.8): string =>
 
 // ── L3 태양 ──────────────────────────────────────────────────
 
-/** 흑점 확대 — 실제 관측 사진(Hinode G-band, 흑점+쌀알 무늬). 콜아웃은 좌하단 태그에서
- *  점선 리더로 흑점을 가리킨다(자체 구도 — 발문 "어두운 부분 (가)"와 짝). */
+/** 흑점 확대: 실제 관측 사진(Hinode G-band, 흑점과 쌀알 무늬). 콜아웃은 좌하단 태그에서
+ *  점선 리더로 흑점을 가리킨다(자체 구도, 발문 "어두운 부분 (가)"와 짝). */
 export function sunspotFig(): string {
   return `<svg viewBox="0 0 280 180" ${NS} fill="none" aria-hidden="true">
     <defs>
@@ -40,7 +40,7 @@ export function sunspotFig(): string {
   </svg>`;
 }
 
-/** 흑점 수 그래프(마무리 13) — 실관측 1990~2010 창.
+/** 흑점 수 그래프: 실관측 1990~2010 창.
  *  1990 부근은 22주기 극대(1989.9) 직후라 높고, 1996 무렵 극소(가), 2000 무렵 23주기 극대(나),
  *  2002 이중 봉우리 어깨, 2008~2009 깊은 극소 뒤 살짝 회복. 극대→극대 약 11년. */
 export function sunspotGraphFig(): string {
@@ -97,7 +97,7 @@ export function uranusTiltFig(): string {
 
 // ── L2 행성 분류 ─────────────────────────────────────────────
 
-/** 행성 두 무리 산점도 — 자체 구도: 가로축 질량·세로축 반지름(지구=1, NASA 공개 자료 기반).
+/** 행성 두 무리 산점도(자체 구도): 가로축 질량, 세로축 반지름(지구=1, NASA 공개 자료 기반).
  *  무리 안 상대 위치는 실제 대소 관계를 따른다(질량 수<화<금<지 / 천<해<토<목,
  *  반지름 수<화<금≈지 / 해≈천<토<목). */
 export function planetGroupsFig(): string {
@@ -131,7 +131,7 @@ export function planetGroupsFig(): string {
 
 // ── L4 일주·공전 ─────────────────────────────────────────────
 
-/** 북쪽 하늘 일주(동심원, 마무리 6) — 자체 구도.
+/** 북쪽 하늘 일주(동심원, 자체 구도).
  *  회전 화살표는 반드시 시계 반대 방향(오른쪽 옆구리에서 위로 감아 올라감):
  *  t=+50°(180,117.5) → t=−30°(193.7,39), sweep 0 = 화면 기준 반시계. 화살촉은 진행 방향(좌상). */
 export function northSkyFig(): string {
@@ -153,7 +153,7 @@ export function northSkyFig(): string {
   );
 }
 
-/** 남쪽 하늘 일주(수평 궤적 — "어느 하늘일까?" 퀴즈). */
+/** 남쪽 하늘 일주(수평 궤적, "어느 하늘일까?" 퀴즈). */
 export function southTrailFig(): string {
   let lines = "";
   let sd = 13;
@@ -181,8 +181,8 @@ export function southTrailFig(): string {
   );
 }
 
-/** 황도 12궁 미니(마무리 7 — 지구 ㉠ = 5월 위치, 그림 VII-8 기준).
- *  지구는 궤도 위쪽(천칭자리 앞) — 태양 너머(아래) 별자리 = 양자리(태양 쪽, 못 봄),
+/** 황도 12궁 미니(지구 ㉠ = 5월 위치).
+ *  지구는 궤도 위쪽(천칭자리 앞). 태양 너머(아래) 별자리 = 양자리(태양 쪽, 못 봄),
  *  지구 등 뒤(위) = 천칭자리(한밤 남쪽 하늘). 양(90°)↔천칭(270°)은 실제로도 마주 보는 짝. */
 export function zodiacQuizFig(): string {
   const names: [string, number][] = [
@@ -199,7 +199,7 @@ export function zodiacQuizFig(): string {
     const a = (deg * Math.PI) / 180;
     const x = cx + Math.cos(a) * R;
     const y = cy + Math.sin(a) * RY;
-    // 정답 유추 방지 — 모든 별자리를 같은 스타일로(강조 금지)
+    // 정답 유추 방지: 모든 별자리를 같은 스타일로(강조 금지)
     ring += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.3" fill="#9FB6DC"/>
       <text x="${x.toFixed(1)}" y="${(y - 7).toFixed(1)}" fill="#B4C7E6" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">${n}</text>`;
   }
@@ -249,7 +249,7 @@ function phaseMoon(id: string, cx: number, cy: number, r: number, e: number): st
     <circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" stroke="#5A6C8E" stroke-width="1" opacity=".8"/>`;
 }
 
-/** 달 공전 8위치(마무리 9 — 태양 빛 오른쪽).
+/** 달 공전 8위치(태양 빛은 오른쪽에서).
  *  라벨 배치는 자체 구도: (라)=오른쪽(삭)·(가)=위(상현)·(나)=왼쪽(망)·(다)=아래(하현).
  *  발문의 좌우 반전 함정((다) 하현을 "오른쪽이 밝다"로)과 짝.
  *  달은 실사 위에 햇빛 쪽(오른쪽) 반만 밝게, 궤도에는 도는 방향(시계 반대) 화살 둘(보기 "(라)에서 (가)를 지나…"가 방향을 전제한다).
@@ -315,7 +315,7 @@ export function moonOrbitFig(): string {
   );
 }
 
-/** 위상 5모양(①~⑤) — 상현 찾기 퀴즈. 실사 달 위에 어두운 부분을 덮는다(②는 초승달: 오른쪽 가장자리만 밝다).
+/** 위상 5모양(①~⑤): 상현 찾기 퀴즈. 실사 달 위에 어두운 부분을 덮는다(②는 초승달: 오른쪽 가장자리만 밝다).
  *  예전에는 ②의 안쪽 호를 반지름 15의 원호로 써서 브라우저가 반지름을 20으로 키웠고, 두 호가 같은 반원을 지나 ①과 같은 빈 원이었다. */
 export function fivePhasesFig(): string {
   const kinds = [0, 50, 90, 180, 270]; // 삭, 초승달, 상현달, 망, 하현달
@@ -335,10 +335,10 @@ export function fivePhasesFig(): string {
 
 // ── L6 일식·월식 ─────────────────────────────────────────────
 
-/** 손전등—큰 공—작은 공 모형(마무리 10) — 월식형 배치(자체 구도).
+/** 손전등, 큰 공, 작은 공 모형: 월식형 배치(자체 구도).
  *  광축(y=62) 위에 세 물체가 정확히 일직선. 빛은 큰 공까지만 닿고,
  *  큰 공 뒤로 그림자가 길게 이어져 그 속의 작은 공 (가)가 통째로 어두워진다.
- *  그림자 경계: y = 62 ± (17 − 17(x−128)/292) — x=205에서 반높이 12.5 > 작은 공 r9(완전히 안). */
+ *  그림자 경계: y = 62 ± (17 − 17(x−128)/292). x=205에서 반높이 12.5 > 작은 공 r9(완전히 안). */
 export function eclipseModelFig(): string {
   return panel(
     280,
@@ -385,9 +385,9 @@ export function eclipseModelFig(): string {
   );
 }
 
-/** 지구 그림자 속 달(마무리 12 — (가) 경계 걸치기 / (나) 깊숙이. 자체 구도).
- *  기하 규칙: 그림자 반높이 h(x) = 17 − 0.0554(x−112) (꼭짓점 x≈419) — 경계선 y = 74 ± h(x).
- *  달의 이동 경로는 (196,74)를 지나는 +24.6° 직선(원본과 반대 기울기) —
+/** 지구 그림자 속 달((가) 경계 걸치기, (나) 깊숙이. 자체 구도).
+ *  기하 규칙: 그림자 반높이 h(x) = 17 − 0.0554(x−112) (꼭짓점 x≈419), 경계선 y = 74 ± h(x).
+ *  달의 이동 경로는 (196,74)를 지나는 +24.6° 직선이다.
  *  (나)는 경로 위·본그림자 중심(깊숙이), (가)는 경로 위·아래쪽 경계에 정확히 걸친다:
  *  0.417t = 12.35 − 0.0504t → t=26.4 → (220,85), h(220)=11.0 = |y−74| 검산 일치(절반만 가려짐). */
 export function lunarPathFig(): string {
@@ -403,8 +403,8 @@ export function lunarPathUpFig(): string {
 function lunarPathSvg(sy: 1 | -1): string {
   // 경로 위 점: P(t) = (196 + 0.909t, 74 ± 0.417t)
   const P = (t: number): [number, number] => [196 + 0.909 * t, 74 + sy * 0.417 * t];
-  const [nx, ny] = P(0); // (나) — 본그림자 깊숙이
-  const [gx, gy] = P(26.4); // (가) — 본그림자 아래 경계 위(절반 노출)
+  const [nx, ny] = P(0); // (나): 그림자 깊숙이
+  const [gx, gy] = P(26.4); // (가): 그림자 아래 경계 위(절반 노출)
   const [p0x, p0y] = P(-36);
   const [p1x, p1y] = P(56);
   return panel(
@@ -637,7 +637,7 @@ export function spaceMiniArt(key: string): string {
         sunG + earthG + moonG,
       );
     case "clockmap": {
-      // 위상 지도(그림 Ⅶ-9의 두 고리): 안쪽 궤도 위의 달은 어느 자리에서나 햇빛 쪽(오른쪽) 반이 밝고,
+      // 위상 지도(두 고리): 안쪽 궤도 위의 달은 어느 자리에서나 햇빛 쪽(오른쪽) 반이 밝고,
       // 바깥의 작은 원이 그 자리에서 지구에서 보이는 모양이다(삭은 안 보임, 위 상현은 오른쪽, 왼쪽 망은 둥글게, 아래 하현은 왼쪽).
       // 예전에는 궤도 위에 보이는 모양을 그대로 얹어 망 자리 달이 통째로, 하현 자리 달이 태양 반대쪽이 밝았다(2026-11-15 그래픽 감사).
       const half = (x: number, y: number, side: "R" | "L"): string =>

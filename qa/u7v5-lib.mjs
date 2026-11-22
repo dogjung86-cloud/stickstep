@@ -27,6 +27,14 @@ export async function launch({ width = 390, height = 700 } = {}) {
       premium: true, reviewMode: true, goalMin: 10, streak: 1, totalXp: 800, lessons: {}, minigame: {},
     }));
   });
+  // 개발 서버를 쓸 때는 HMR을 막는다(함께 쓰는 서버에서 다른 세션이 파일을 저장하면 검사 중인 페이지가 통째로 다시 열린다)
+  if (process.env.PORT)
+    await page.route("**/@vite/client", (r) =>
+      r.fulfill({
+        contentType: "application/javascript",
+        body: "export const createHotContext=()=>({accept(){},dispose(){},prune(){},on(){},send(){}});export function updateStyle(id,css){let s=document.querySelector(`style[data-vite-dev-id=\"${id}\"]`);if(!s){s=document.createElement('style');s.setAttribute('data-vite-dev-id',id);document.head.appendChild(s)}s.textContent=css}export function removeStyle(){}export function injectQuery(u){return u}",
+      }),
+    );
   if (!process.env.PORT) {
     if (!existsSync(join(DIST, "index.html"))) throw new Error(`${DIST}/index.html 이 없다. 먼저 개발 모드 번들을 만든다`);
     await page.route(BASE + "/**", (route) => {

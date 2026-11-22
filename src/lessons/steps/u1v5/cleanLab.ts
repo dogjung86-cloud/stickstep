@@ -240,7 +240,7 @@ export const cleanLab: StepRenderer = (host, step, api) => {
   function finish(): void {
     f.pips(4);
     f.say("친환경 과학기술을 활용하면 편리한 생활을 유지하면서도 온실 기체를 크게 줄일 수 있어요!");
-    f.slot.conclude("과학기술은 에너지와 환경 문제를 해결하는 데 중요한 역할을 해요. <b>태양광 발전</b>, <b>전기 자동차</b>, <b>탄소 포집 장치</b>는 모두 온실 기체 배출을 줄이는 기술이에요.");
+    f.slot.conclude("친환경 과학기술은 필요한 에너지를 얻으면서도 지구 온난화를 늦추는 든든한 해법이에요. <b>태양광 발전</b>, <b>전기 자동차</b>, <b>탄소 포집 장치</b>는 모두 온실 기체 배출을 줄이는 기술이에요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
