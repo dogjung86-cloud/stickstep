@@ -1,6 +1,8 @@
-// u4l4f1 · 상태 변화와 입자 배열: 한 물질의 세 상태를 입자 창 셋으로, 여섯 가지 상태 변화를 화살표로.
-// 검산 메모: u4l4f1.md. 창의 넓이가 곧 부피(같은 입자 19개가 차지하는 자리). 입자 수와 크기는 세 창이 같다.
-export const meta = { key: "u4l4f1", w: 340, h: 346, scale: 3, quality: 86 };
+// u4l4f1 · 상태 변화와 입자 배열: 크기가 같은 밀폐 유리그릇 셋에 같은 물질의 고체, 액체, 기체를 담고(입자 수가 같다),
+// 여섯 가지 상태 변화를 그릇 사이의 화살표로 잇는다. 그릇은 정삼각형 자리(위 가운데 기체, 왼쪽 아래 고체, 오른쪽 아래 액체).
+// 검산 메모: u4l4f1.md. 부피는 입자들이 차지한 자리: 고체는 바닥에 놓인 덩어리, 액체는 바닥을 덮은 낮은 층, 기체는 그릇 전체.
+// 화살표 색은 Ⅳ 정리 카드와 u4l3f1의 짝 색(융해·응고 파랑, 기화·액화 산호, 승화 보라). 흡수와 방출의 뜻은 색에 싣지 않는다.
+export const meta = { key: "u4l4f1", w: 340, h: 352, scale: 3, quality: 86 };
 
 export async function draw(root, kit) {
   const W = meta.w, H = meta.h;
@@ -8,138 +10,147 @@ export async function draw(root, kit) {
   const { THREE: T, scene, renderer } = st;
   const at = (x, y, z = 0) => new T.Vector3(x, -y, z);
 
-  const PR = 6.4; // 입자 반지름(px)
-  const N = 19;
-  const COL = 0x8f80f5; // Ⅳ 입자 색(#9B8CFF 계열)을 조금 짙게: 흰 창 위에서 또렷하게
+  const PR = 4.6;   // 입자 반지름(px)
+  const N = 18;     // 그릇마다 입자 수
+  const COL = 0x1fa99c; // 청록(입자). 세 그릇이 같은 색, 같은 크기
+  const JW = 110, JH = 108, JR = 14; // 그릇 몸통(바깥) 크기와 모서리 둥글기
+  const WALL = 5; // 유리 두께(안쪽 여유)
 
-  // ── 세 창(중심, 반지름) ──
-  const SOL = { x: 192, y: 296, R: 37 }, LIQ = { x: 54, y: 214, R: 42 }, GAS = { x: 243, y: 105, R: 94 };
+  // ── 그릇 자리: 정삼각형(한 변 S). 위 가운데 기체, 왼쪽 아래 고체, 오른쪽 아래 액체 ──
+  const S = 214, CX = W / 2, TOPY = 88;
+  const GAS = { x: CX, y: TOPY }, SOL = { x: CX - S / 2, y: TOPY + S * Math.sqrt(3) / 2 }, LIQ = { x: CX + S / 2, y: TOPY + S * Math.sqrt(3) / 2 };
+  const inner = (j) => ({ x0: j.x - JW / 2 + WALL, x1: j.x + JW / 2 - WALL, y0: j.y - JH / 2 + WALL, y1: j.y + JH / 2 - WALL });
 
-  // 고체: 육각 촘촘 쌓기 3, 4, 5, 4, 3 (가지런한 배열, 이웃과 거의 닿음)
+  // 고체: 바닥에 놓인 가지런한 덩어리(육각 촘촘 쌓기 5, 4, 5, 4줄), 이웃과 거의 닿는다
   const d = PR * 2 * 1.03;
   const solid = [];
-  [3, 4, 5, 4, 3].forEach((n, row) => {
-    for (let i = 0; i < n; i++) solid.push([SOL.x + (i - (n - 1) / 2) * d, SOL.y + (row - 2) * d * Math.sqrt(3) / 2]);
-  });
-  // 액체: 이웃과 닿을 만큼 가깝지만 줄이 없다. 새 입자를 이미 놓인 입자 둘레에 닿게 무작위로 붙이며 키운다
-  // (후보 여럿 가운데 가운데에 가까운 것을 고르되 조금씩 흔들어 육각 격자로 굳지 않게 한다).
-  const r1 = kit.rng(17);
-  const liquid = [[LIQ.x + 1.5, LIQ.y - 1]];
-  const touch = PR * 2 * 1.03;
-  for (let guard = 0; liquid.length < N && guard < 5000; guard++) {
-    let best = null, bestD = 1e9;
-    for (let c = 0; c < 26; c++) {
-      const base = liquid[Math.floor(r1() * liquid.length)], ang = r1() * Math.PI * 2;
-      const p = [base[0] + Math.cos(ang) * touch, base[1] + Math.sin(ang) * touch];
-      if (Math.hypot(p[0] - LIQ.x, p[1] - LIQ.y) > LIQ.R - PR - 2) continue;
-      if (!liquid.every((q) => Math.hypot(q[0] - p[0], q[1] - p[1]) >= touch - 0.01)) continue;
-      const dc = Math.hypot(p[0] - LIQ.x, p[1] - LIQ.y) + r1() * 9;
-      if (dc < bestD) { bestD = dc; best = p; }
-    }
-    if (best) liquid.push(best);
-  }
-  // 기체: 서로 멀리, 닿지 않게(최소 간격 29px)
-  const r2 = kit.rng(29);
+  { const b = inner(SOL), rows = [5, 4, 5, 4];
+    rows.forEach((n, row) => { const y = b.y1 - PR - 0.5 - row * d * Math.sqrt(3) / 2; for (let i = 0; i < n; i++) solid.push([SOL.x + (i - (n - 1) / 2) * d, y]); }); }
+  // 액체: 하나씩 떨어뜨려 바닥이나 다른 입자에 닿는 자리에 둔다(가장 낮은 자리를 고르되 조금 흔들어 줄이 생기지 않게).
+  // 그래서 이웃과 닿을 만큼 가깝지만 배열이 불규칙하고, 그릇 바닥 모양을 따라 낮은 층이 된다.
+  const liquid = [];
+  { const b = inner(LIQ), r1 = kit.rng(23), touch = PR * 2 * 1.04;
+    for (let k = 0; k < N; k++) {
+      let best = null;
+      for (let c = 0; c < 60; c++) {
+        const x = b.x0 + PR + 0.6 + r1() * (b.x1 - b.x0 - 2 * PR - 1.2);
+        let y = b.y1 - PR - 0.5; // 바닥에 닿는 자리
+        for (const [qx, qy] of liquid) { const dx = Math.abs(x - qx); if (dx < touch) y = Math.min(y, qy - Math.sqrt(touch * touch - dx * dx)); }
+        const score = y + r1() * 3.2;
+        if (!best || score > best.score) best = { x, y, score };
+      }
+      liquid.push([best.x, best.y]);
+    } }
+  // 기체: 그릇 안 전체에 고르게, 서로 멀리(후보 여럿 가운데 이미 놓인 입자에서 가장 먼 자리를 고른다). 벽에 닿지 않게
   const gas = [];
-  for (let t = 0; t < 20000 && gas.length < N; t++) {
-    const a = r2() * Math.PI * 2, rr = Math.sqrt(r2()) * (GAS.R - 14), p = [GAS.x + Math.cos(a) * rr, GAS.y + Math.sin(a) * rr];
-    if (gas.every((q) => Math.hypot(q[0] - p[0], q[1] - p[1]) > 29)) gas.push(p);
-  }
+  { const b = inner(GAS), r2 = kit.rng(31);
+    const rnd = () => [b.x0 + PR + 3 + r2() * (b.x1 - b.x0 - 2 * PR - 6), b.y0 + PR + 3 + r2() * (b.y1 - b.y0 - 2 * PR - 6)];
+    gas.push(rnd());
+    while (gas.length < N) {
+      let best = null, bestD = -1;
+      for (let c = 0; c < 40; c++) { const p = rnd(), dmin = Math.min(...gas.map((q) => Math.hypot(q[0] - p[0], q[1] - p[1]))); if (dmin > bestD) { bestD = dmin; best = p; } }
+      gas.push(best);
+    }
+    // 서로 너무 가까운 짝을 조금씩 밀어 간격을 고르게(벽 안에서)
+    const D = 19.5, lo = [b.x0 + PR + 3, b.y0 + PR + 3], hi = [b.x1 - PR - 3, b.y1 - PR - 3];
+    for (let it = 0; it < 300; it++) {
+      for (let i = 0; i < gas.length; i++) for (let k = i + 1; k < gas.length; k++) {
+        const dx = gas[k][0] - gas[i][0], dy = gas[k][1] - gas[i][1], dd = Math.hypot(dx, dy) || 1e-6;
+        if (dd < D) { const m = (D - dd) * 0.25; gas[i][0] -= (dx / dd) * m; gas[i][1] -= (dy / dd) * m; gas[k][0] += (dx / dd) * m; gas[k][1] += (dy / dd) * m; }
+      }
+      for (const q of gas) { q[0] = Math.min(hi[0], Math.max(lo[0], q[0])); q[1] = Math.min(hi[1], Math.max(lo[1], q[1])); }
+    } }
+  const gasMin = Math.min(...gas.flatMap((p, i) => gas.slice(i + 1).map((q) => Math.hypot(q[0] - p[0], q[1] - p[1]))));
+  if (gasMin < PR * 2 * 1.8) throw new Error(`기체 입자가 너무 가깝다: ${gasMin.toFixed(1)}`);
   if (gas.length !== N || solid.length !== N || liquid.length !== N) throw new Error(`입자 수 ${solid.length}/${liquid.length}/${gas.length}`);
+  // 고체와 액체가 차지한 높이(부피 검산용): 고체 덩어리, 액체 층
+  const hOf = (arr, j) => inner(j).y1 - Math.min(...arr.map((p) => p[1])) + PR;
+  const wOf = (arr) => Math.max(...arr.map((p) => p[0])) - Math.min(...arr.map((p) => p[0])) + 2 * PR;
+  console.log("placed", JSON.stringify({ N, gasMin: +gasMin.toFixed(1), solid: { w: +wOf(solid).toFixed(1), h: +hOf(solid, SOL).toFixed(1) }, liquid: { w: +wOf(liquid).toFixed(1), h: +hOf(liquid, LIQ).toFixed(1) }, gasInnerArea: (JW - 2 * WALL) * (JH - 2 * WALL) }));
 
-  // ── 창: 옅은 바탕(가운데가 밝고 테두리로 갈수록 살짝 짙음) + 유리 테 ──
-  const winTex = kit.canvasTex(T, renderer, kit.canvas(512, 512, (c, w, h) => {
-    const g = c.createRadialGradient(w * 0.42, h * 0.38, 8, w / 2, h / 2, w / 2);
-    g.addColorStop(0, "#FFFFFF"); g.addColorStop(0.62, "#F4F2FF"); g.addColorStop(0.9, "#E4E0FA"); g.addColorStop(1, "#D9D3F6");
-    c.fillStyle = g; c.beginPath(); c.arc(w / 2, h / 2, w / 2, 0, Math.PI * 2); c.fill();
+  // ── 그릇 안쪽 바탕(옅은 유리빛 판, 둥근 직사각형) ──
+  const rrect = (w, h, r) => { const s = new T.Shape(); s.moveTo(-w / 2 + r, -h / 2); s.lineTo(w / 2 - r, -h / 2); s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r); s.lineTo(w / 2, h / 2 - r); s.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2); s.lineTo(-w / 2 + r, h / 2); s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r); s.lineTo(-w / 2, -h / 2 + r); s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2); return s; };
+  const backTex = kit.canvasTex(T, renderer, kit.canvas(256, 256, (c, w, h) => {
+    const g = c.createLinearGradient(0, 0, w, 0); g.addColorStop(0, "#EEF4FA"); g.addColorStop(0.35, "#FBFDFF"); g.addColorStop(1, "#E7EEF6");
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
   }));
-  const winMat = new T.MeshBasicMaterial({ map: winTex, transparent: true });
-  const rimMat = new T.MeshPhysicalMaterial({ color: 0xe9e6ff, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.1, metalness: 0.0, sheen: 0.5, sheenColor: 0xffffff });
-  for (const w of [SOL, LIQ, GAS]) {
-    const disc = new T.Mesh(new T.CircleGeometry(w.R, 128), winMat);
-    disc.position.copy(at(w.x, w.y, -20)); disc.userData.noEdge = true; scene.add(disc);
-    const rim = new T.Mesh(new T.TorusGeometry(w.R, w === GAS ? 2.2 : 1.8, 24, 160), rimMat);
-    rim.position.copy(at(w.x, w.y, -4)); scene.add(rim);
+  const backMat = new T.MeshBasicMaterial({ map: backTex });
+  for (const j of [GAS, SOL, LIQ]) {
+    const g = new T.ShapeGeometry(rrect(JW - 2, JH - 2, JR - 1), 8);
+    const p = g.attributes.position, uv = g.attributes.uv; for (let i = 0; i < p.count; i++) uv.setXY(i, p.getX(i) / JW + 0.5, p.getY(i) / JH + 0.5);
+    const m = new T.Mesh(g, backMat); m.position.copy(at(j.x, j.y, -20)); m.userData.noEdge = true; scene.add(m);
   }
 
   // ── 입자 ──
-  const pMat = new T.MeshPhysicalMaterial({ color: COL, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.12, sheen: 0.4, sheenColor: 0xe8e2ff });
+  const pMat = new T.MeshPhysicalMaterial({ color: COL, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.12, sheen: 0.4, sheenColor: 0xdcfff8 });
   const sph = new T.SphereGeometry(PR, 48, 32);
   for (const [x, y] of [...solid, ...liquid, ...gas]) { const m = new T.Mesh(sph, pMat); m.position.copy(at(x, y, 0)); scene.add(m); }
-
-  // ── 기체 입자의 움직임 꼬리(지나온 쪽으로 옅어지는 띠) ──
+  // 기체 입자의 움직임 꼬리(지나온 쪽으로 옅어지는 띠). 꼬리가 그릇 벽을 넘지 않는 방향만 고른다
   const trailTex = kit.canvasTex(T, renderer, kit.canvas(256, 64, (c, w, h) => {
-    const g = c.createLinearGradient(0, 0, w, 0); g.addColorStop(0, "rgba(143,128,245,0)"); g.addColorStop(1, "rgba(143,128,245,0.42)");
+    const g = c.createLinearGradient(0, 0, w, 0); g.addColorStop(0, "rgba(31,169,156,0)"); g.addColorStop(1, "rgba(31,169,156,0.42)");
     c.fillStyle = g; c.beginPath(); c.moveTo(0, h / 2); c.quadraticCurveTo(w * 0.7, 2, w, 4); c.lineTo(w, h - 4); c.quadraticCurveTo(w * 0.7, h - 2, 0, h / 2); c.fill();
   }));
-  const r3 = kit.rng(41);
   const trailMat = new T.MeshBasicMaterial({ map: trailTex, transparent: true, depthWrite: false });
-  // 꼬리가 창 밖으로 나가지 않는 방향만 고른다(꼬리 끝이 테두리 안쪽 8px 안에)
-  const motion = gas.map(([x, y]) => {
-    for (let t = 0; t < 60; t++) {
-      const a = r3() * Math.PI * 2, tx = x - Math.cos(a) * 30, ty = y - Math.sin(a) * 30;
-      if (Math.hypot(tx - GAS.x, ty - GAS.y) < GAS.R - 8) return a;
-    }
-    return Math.atan2(y - GAS.y, x - GAS.x) + Math.PI; // 가운데 쪽을 향해 움직이는 중(꼬리는 바깥 반대편이 아니라 안쪽)
-  });
-  gas.forEach(([x, y], i) => {
-    const a = motion[i], len = 19 + r3() * 8;
-    const pl = new T.Mesh(new T.PlaneGeometry(len, PR * 1.7), trailMat);
-    // 꼬리는 움직이는 쪽의 반대편으로
+  const r3 = kit.rng(41), gb = inner(GAS);
+  gas.forEach(([x, y]) => {
+    const len = 13 + r3() * 5;
+    let a = 0;
+    for (let t = 0; t < 80; t++) { a = r3() * Math.PI * 2; const tx = x - Math.cos(a) * (len + PR), ty = y - Math.sin(a) * (len + PR); if (tx > gb.x0 + 2 && tx < gb.x1 - 2 && ty > gb.y0 + 2 && ty < gb.y1 - 2) break; }
+    const pl = new T.Mesh(new T.PlaneGeometry(len, PR * 1.6), trailMat);
     pl.position.copy(at(x - Math.cos(a) * (len / 2 + PR * 0.2), y - Math.sin(a) * (len / 2 + PR * 0.2), -2));
     pl.rotation.z = -a; pl.userData.noEdge = true; scene.add(pl);
   });
 
-  await kit.renderIllus(st, { radius: 9, thickness: 6, distanceExponent: 1.2, edgeK: 0.32, nT: 0.5, dT: 0.02 });
+  await kit.renderIllus(st, { radius: 8, thickness: 6, distanceExponent: 1.2, edgeK: 0.3, nT: 0.5, dT: 0.02 });
   await kit.frame();
 
-  // ── 화살표와 이름 ──
+  // ── 유리그릇 앞면(테두리, 반짝임, 뚜껑), 화살표, 이름 ──
   const svg = kit.layer(root, W, H);
-  const ARW = "#7E8AA0";
-  const grad = kit.lin(svg, 0, 0, 1, 0, [[0, ARW, 0.55], [1, ARW, 1]]);
-  void grad;
-  // 두 창 사이에 나란히 휘는 화살표 한 쌍. a, b = 두 창, bend = 휘는 정도, sep = 두 화살표 사이
-  function pair(a, b, { bend, sep, t0 = 0.0, t1 = 1.0, names, nameOff }) {
-    const ax = a.x, ay = a.y, bx = b.x, by = b.y;
-    const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
+  for (const j of [GAS, SOL, LIQ]) {
+    const x = j.x - JW / 2, y = j.y - JH / 2;
+    svg.appendChild(kit.s("rect", { x, y, width: JW, height: JH, rx: JR, fill: "none", stroke: "#9FB3CC", "stroke-width": 2.2 }));
+    svg.appendChild(kit.s("rect", { x: x + 2.4, y: y + 2.4, width: JW - 4.8, height: JH - 4.8, rx: JR - 2, fill: "none", stroke: "#FFFFFF", "stroke-width": 1, opacity: 0.8 }));
+    svg.appendChild(kit.s("path", { d: `M${x + 8} ${y + 18} V${y + JH - 22}`, stroke: "#FFFFFF", "stroke-width": 3, "stroke-linecap": "round", opacity: 0.75 }));
+    svg.appendChild(kit.s("path", { d: `M${x + JW - 9} ${y + 16} V${y + 30}`, stroke: "#FFFFFF", "stroke-width": 2, "stroke-linecap": "round", opacity: 0.7 }));
+    // 뚜껑(닫힌 그릇: 기체도 빠져나가지 않는다)
+    svg.appendChild(kit.s("rect", { x: j.x - 34, y: y - 9, width: 68, height: 11, rx: 3.5, fill: kit.lin(svg, 0, 0, 0, 1, [[0, "#8796AB"], [1, "#5E6C80"]]), stroke: "#4C5869", "stroke-width": 0.9 }));
+    for (let k = 1; k < 8; k++) svg.appendChild(kit.s("path", { d: `M${j.x - 34 + k * 8.5} ${y - 7} v7`, stroke: "#4C5869", "stroke-width": 0.7, opacity: 0.6 }));
+  }
+
+  // 화살표: 두 그릇 사이에 나란한 한 쌍(가는 쪽이 서로 반대). 이름은 그 화살표의 바깥쪽(쌍의 가운데선에서 먼 쪽)에
+  const edgeHit = (j, ux, uy, pad) => { // 그릇 가운데에서 (ux, uy) 방향으로 나가 몸통(+뚜껑) 가장자리를 지나 pad만큼 더 간 점까지의 거리
+    const hx = JW / 2 + pad, hy = JH / 2 + pad + (uy < 0 ? 10 : 0);
+    return Math.min(Math.abs(ux) > 1e-6 ? hx / Math.abs(ux) : 1e9, Math.abs(uy) > 1e-6 ? hy / Math.abs(uy) : 1e9);
+  };
+  function pair(a, b, { sep = 14, bend = 0, colors, names, nameGap = 15 }) {
+    const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
+    const ta = edgeHit(a, ux, uy, 7), tb = edgeHit(b, -ux, -uy, 9);
     const out = [];
     [[a, b, 1], [b, a, -1]].forEach(([p, q, s], k) => {
       const off = (k === 0 ? 1 : -1) * sep / 2;
-      const sx = p.x + (q.x - p.x) * 0 + nx * off, sy = p.y + ny * off;
-      // 출발과 도착은 창 테두리 바깥 6px
-      const dirx = (q.x - p.x) / L, diry = (q.y - p.y) / L;
-      const P0 = [p.x + dirx * (p.R + 7) + nx * off, p.y + diry * (p.R + 7) + ny * off];
-      const P1 = [q.x - dirx * (q.R + 9) + nx * off, q.y - diry * (q.R + 9) + ny * off];
-      const mx = (P0[0] + P1[0]) / 2 + nx * bend, my = (P0[1] + P1[1]) / 2 + ny * bend;
-      kit.flowArrow(svg, `M${P0[0]} ${P0[1]} Q${mx} ${my} ${P1[0]} ${P1[1]}`, { w: 3.6, head: 9, hw: 2.4, fill: ARW });
-      const ptAt = (t) => [(1 - t) * (1 - t) * P0[0] + 2 * (1 - t) * t * mx + t * t * P1[0], (1 - t) * (1 - t) * P0[1] + 2 * (1 - t) * t * my + t * t * P1[1]];
-      out.push({ mid: ptAt(0.5), ptAt, side: k === 0 ? 1 : -1, nx, ny });
+      const sx = s > 0 ? a.x + ux * ta : b.x - ux * tb, sy = s > 0 ? a.y + uy * ta : b.y - uy * tb;
+      const ex = s > 0 ? b.x - ux * tb : a.x + ux * ta, ey = s > 0 ? b.y - uy * tb : a.y + uy * ta;
+      const P0 = [sx + nx * off, sy + ny * off], P1 = [ex + nx * off, ey + ny * off];
+      const mx = (P0[0] + P1[0]) / 2 + nx * bend * (k === 0 ? 1 : -1), my = (P0[1] + P1[1]) / 2 + ny * bend * (k === 0 ? 1 : -1);
+      kit.flowArrow(svg, `M${P0[0]} ${P0[1]} Q${mx} ${my} ${P1[0]} ${P1[1]}`, { w: 3.4, head: 9, hw: 2.4, fill: colors[0] });
+      const mid = [0.25 * P0[0] + 0.5 * mx + 0.25 * P1[0], 0.25 * P0[1] + 0.5 * my + 0.25 * P1[1]];
+      const ox = nx * (k === 0 ? 1 : -1), oy = ny * (k === 0 ? 1 : -1);
+      const anchor = Math.abs(ox) < 0.35 ? "middle" : ox > 0 ? "start" : "end";
+      kit.text(svg, mid[0] + ox * nameGap, mid[1] + oy * nameGap, names[k], { size: 13.5, weight: 800, anchor, color: colors[1] });
+      out.push({ P0, P1, mid });
     });
     return out;
   }
-  const lg = pair(LIQ, GAS, { bend: -14, sep: 13 });   // [0] 액체→기체 기화, [1] 기체→액체 액화
-  const sl = pair(SOL, LIQ, { bend: 10, sep: 13 });     // [0] 고체→액체 융해, [1] 액체→고체 응고
-  const sg = pair(SOL, GAS, { bend: -8, sep: 13 });     // [0] 고체→기체 승화, [1] 기체→고체 승화
-  // 이름은 그 화살표의 바깥쪽(한 쌍의 가운데선에서 먼 쪽)에 둔다. 글자 시작점은 법선이 가리키는 쪽에 맞춰 왼쪽 또는 오른쪽 정렬.
-  const name = (arrow, t, gap = 15, along = 0.5) => {
-    const ox = arrow.nx * arrow.side, oy = arrow.ny * arrow.side;
-    const m = arrow.ptAt(along);
-    const x = m[0] + ox * gap, y = m[1] + oy * gap;
-    const anchor = Math.abs(ox) < 0.35 ? "middle" : ox > 0 ? "start" : "end";
-    kit.text(svg, x, y, t, { size: 13, weight: 700, anchor, color: "#3B4456" });
-  };
-  name(lg[0], "기화"); name(lg[1], "액화");
-  name(sl[0], "융해"); name(sl[1], "응고");
-  name(sg[0], "승화"); name(sg[1], "승화", 14, 0.28); // 왼쪽 승화는 기체 쪽 위로 올려 융해와 떨어뜨린다
-  console.log("proj", JSON.stringify({ lg: lg.map((a) => [a.mid.map(Math.round), a.side]), sl: sl.map((a) => [a.mid.map(Math.round), a.side]), sg: sg.map((a) => [a.mid.map(Math.round), a.side]) }));
+  const BLUE = ["#4E9BF5", "#2E7AD6"], CORAL = ["#F0705E", "#D9503D"], VIOLET = ["#8A6BFF", "#6E4FE0"];
+  const sl = pair(SOL, LIQ, { colors: BLUE, names: ["융해", "응고"] });      // 고체→액체 융해, 액체→고체 응고
+  const lg = pair(LIQ, GAS, { colors: CORAL, names: ["기화", "액화"] });     // 액체→기체 기화, 기체→액체 액화
+  const sg = pair(SOL, GAS, { colors: VIOLET, names: ["승화", "승화"] });    // 고체→기체 승화, 기체→고체 승화
+  console.log("proj", JSON.stringify({ GAS, SOL, LIQ, sl: sl.map((a) => a.mid.map(Math.round)), lg: lg.map((a) => a.mid.map(Math.round)), sg: sg.map((a) => a.mid.map(Math.round)) }));
 
-  // 상태 이름
-  const stateName = (x, y, t) => kit.text(svg, x, y, t, { size: 14.5, weight: 800, color: "#4B3FB8" });
-  stateName(LIQ.x, LIQ.y - LIQ.R - 13, "액체");
-  stateName(SOL.x - SOL.R - 22, SOL.y + 18, "고체");
-  stateName(GAS.x - 30, GAS.y - GAS.R + 22, "기체");
-  // 덧말
-  kit.text(svg, 333, 236, "실제 기체는", { size: 12, weight: 600, color: "#5B6475", anchor: "end" });
-  kit.text(svg, 333, 252, "훨씬 더 커요", { size: 12, weight: 600, color: "#5B6475", anchor: "end" });
-  kit.text(svg, 8, H - 12, "입자 수는 셋 다 같아요(19개)", { size: 12, weight: 600, color: "#5B6475", anchor: "start" });
+  // 상태 이름(그릇 아래), 덧말
+  const stateName = (j, t) => kit.text(svg, j.x, j.y + JH / 2 + 15, t, { size: 14.5, weight: 800, color: "#0E7C70" });
+  stateName(GAS, "기체"); stateName(SOL, "고체"); stateName(LIQ, "액체");
+  kit.text(svg, CX, SOL.y + JH / 2 + 15, "입자 수는 셋 다 18개", { size: 12.5, weight: 600, color: "#5B6475" });
+  kit.text(svg, W - 6, GAS.y - 18, "실제 기체는", { size: 12, weight: 600, color: "#5B6475", anchor: "end" });
+  kit.text(svg, W - 6, GAS.y - 2, "훨씬 더 커요", { size: 12, weight: 600, color: "#5B6475", anchor: "end" });
 }
