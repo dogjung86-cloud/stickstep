@@ -1,4 +1,4 @@
-// 중2 대단원 VIII. 별과 우주 (책 278~309쪽). 이 파일이 정본이다.
+// 중2 대단원 VIII. 별과 우주. 이 파일이 정본이다.
 // 중단원 1 '별의 특성': 별까지의 거리(282~283), 별의 밝기와 등급(284~287), 별의 색과 표면 온도(288~289)
 // 중단원 2 '우리은하와 우주': 우리은하(294~295), 성단과 성운(296~299), 팽창하는 우주(300~303), 우주 탐사(304~305)
 // 8레슨(무료 3 + 프리미엄 5). 레슨마다 도입(opener) → 랩 → 용어 → 정리 → 문제. g2u8l7만 허블 만화로 연다.
@@ -27,7 +27,6 @@ export const G2_UNIT8: Unit = {
       label: "연주 시차",
       icon: "sparkle",
       minutes: 14,
-      standard: "책 282~283쪽",
       doneNote: "시차와 연주 시차로 별까지의 거리를 비교할 수 있어요",
       // 도입 > 연필 랩 > 용어 > 지구 공전 랩 > 거리와 시차 랩 > 용어 > 연주 시차와 pc 랩 > 정리 > 문제
       steps: [...L1],
@@ -40,7 +39,6 @@ export const G2_UNIT8: Unit = {
       label: "밝기와 거리",
       icon: "sparkle",
       minutes: 10,
-      standard: "책 284~285쪽",
       doneNote: "밝기가 거리 제곱에 반비례함을 체험했어요",
       // 도입 > 조도 랩 > 퍼짐 랩 > 용어 > 정리 > 문제
       steps: [...L2],
@@ -53,7 +51,6 @@ export const G2_UNIT8: Unit = {
       label: "별의 등급",
       icon: "sparkle",
       minutes: 12,
-      standard: "책 286~287쪽",
       doneNote: "겉보기 등급과 절대 등급으로 별을 비교할 수 있어요",
       // 도입 > 등급 랩 > 용어 > 절대 등급 랩 > 용어 > 정리 > 문제
       steps: [...L3],
@@ -67,7 +64,6 @@ export const G2_UNIT8: Unit = {
       label: "색과 표면 온도",
       icon: "sparkle",
       minutes: 10,
-      standard: "책 288~289쪽",
       doneNote: "별의 색으로 표면 온도를 비교할 수 있어요",
       // 도입 > 전열기 랩 > 별의 온도 랩 > 용어 > 정리 > 문제
       steps: [...L4],
@@ -81,7 +77,6 @@ export const G2_UNIT8: Unit = {
       label: "우리은하",
       icon: "sparkle",
       minutes: 10,
-      standard: "책 294~295쪽",
       doneNote: "우리은하의 구조와 태양계의 위치를 배웠어요",
       // 도입 > 모형 랩 > 우리은하 랩 > 용어 > 정리 > 문제
       steps: [...L5],
@@ -95,7 +90,6 @@ export const G2_UNIT8: Unit = {
       label: "성단과 성운",
       icon: "sparkle",
       minutes: 11,
-      standard: "책 296~299쪽",
       doneNote: "성단·성운의 종류를 실사로 구분할 수 있어요",
       // 도입 > 관측 랩 > 용어 > 성운 랩 > 용어 > 정리 > 문제
       steps: [...L6],
@@ -109,7 +103,6 @@ export const G2_UNIT8: Unit = {
       label: "팽창하는 우주",
       icon: "sparkle",
       minutes: 12,
-      standard: "책 300~303쪽",
       doneNote: "우주 팽창과 '중심 없음'을 이해했어요",
       // 만화 > 풍선 랩 > 중심 랩 > 용어 > 정리 > 문제
       steps: [comic(comicStory("g2u8l7")), ...L7],
@@ -123,7 +116,6 @@ export const G2_UNIT8: Unit = {
       label: "우주 탐사",
       icon: "sparkle",
       minutes: 10,
-      standard: "책 304~305쪽",
       doneNote: "우주 탐사의 역사와 의의를 배웠어요",
       // 도입 > 탐사 랩 > 계획 랩 > 용어 > 정리 > 문제
       steps: [...L8],

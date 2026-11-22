@@ -1,15 +1,26 @@
 // [중1 Ⅱ v5] u2l9 kingdomPathLab: 「다섯 생물은 각각 어느 계에 속할까?」
-// 한 통찰: 생물은 핵막, 광합성, 세포벽과 움직임을 차례로 따져 다섯 계로 나눈다(버섯은 광합성을 하지 못해 식물계가 아니다).
-//   화면 글은 '운동성'이 아니라 '움직임'으로 쓴다(이 레슨의 개념 글이 쓰는 말).
-// 무대: 검색표. 물음 넷이 한 줄로 놓이고, 물음마다 아래로 갈리는 길 끝에 계가 있다(마지막 물음의 '아니요'는 균계).
-//   ① 유전물질이 핵막으로 싸여 있는가: 아니요 → 원핵생물계      ② 균계, 식물계, 동물계 어디에도 속하지 않는가: 예 → 원생생물계
-//   ③ 광합성을 하는가: 예 → 식물계      ④ 세포벽이 없고 운동성이 있는가: 예 → 동물계, 아니요 → 균계
-// 조작: 생물 다섯(대장균, 아메바, 소나무, 박새, 버섯)을 차례로 보낸다. 조작 칸의 특징 카드를 보고 예, 아니요로 답하면
+// 한 통찰: 생물은 핵막, 광합성과 뿌리·줄기·잎, 세포벽과 양분을 얻는 방법을 차례로 따져 다섯 계로 나눈다
+//   (버섯은 광합성을 하지 못해 식물계가 아니다).
+// 무대: 검색표. 물음 넷이 한 줄로 놓이고, 물음마다 아래로 갈리는 길 끝에 계가 있다(마지막 물음의 '아니요'는 원생생물계).
+//   ① 세포에 핵막으로 싸인 핵이 있는가: 아니요 → 원핵생물계
+//   ② 엽록체가 있어 광합성을 하고 뿌리·줄기·잎이 있는가: 예 → 식물계
+//   ③ 여러 세포로 된 몸에 세포벽이 없고 먹이를 섭취하는가: 예 → 동물계
+//   ④ 세포벽이 있고 죽은 생물이나 배설물을 분해해 양분을 얻는가: 예 → 균계, 아니요 → 원생생물계
+//   물음은 모두 생물이 가진 특징으로 답한다(어느 계에 속하지 않는지를 묻는 물음은 두지 않는다).
+// 검산(이 레슨에 나오는 생물 모두, 2026-11-22):
+//   대장균, 젖산균, 포도상구균은 핵막이 없어 ①에서 원핵생물계.
+//   소나무, 고사리, 진달래, 무궁화는 광합성을 하고 뿌리, 줄기, 잎이 있어 ②에서 식물계.
+//   박새, 참새, 붕어, 꿀벌, 나비, 지렁이, 해파리, 말미잘은 여러 세포로 된 몸에 세포벽이 없고 먹이를 먹어 ③에서 동물계.
+//   버섯, 곰팡이, 효모는 세포벽이 있고 분해해 양분을 얻어 ④에서 균계(효모는 세포 하나지만 ③은 아니요, ④는 예).
+//   아메바, 짚신벌레는 세포 하나이고 세포벽이 없어 ③과 ④가 모두 아니요라 원생생물계.
+//   해캄, 다시마는 광합성을 하지만 뿌리, 줄기, 잎이 없어 ②가 아니요, 세포벽이 있어 ③이 아니요, 분해하지 않아 ④가 아니요라 원생생물계.
+//   뿌리, 줄기, 잎의 구분이 뚜렷하지 않은 이끼는 ②에서 식물계에 닿지 않으므로 이 레슨의 예로 쓰지 않는다.
+// 조작: 생물 다섯(대장균, 소나무, 박새, 아메바, 버섯)을 차례로 보낸다. 조작 칸의 특징 카드를 보고 예, 아니요로 답하면
 //   생물이 그 길로 움직인다. 틀리면 특징 카드의 해당 줄이 짚이고 다시 고른다(채점하지 않는다).
-//   ②는 특징만으로 답할 수 없는 물음이라 랩이 까닭을 말하며 대신 답한다.
 //   '핵막'은 이 랩에서 처음 만나는 말이라 첫 물음에 뜻을 괄호로 붙였다(개념 글은 랩 뒤에 있다).
-// 다섯을 다 보내면 판정(채점): 버섯이 식물계가 아니라 균계인 까닭. 판정 때 버섯이 지나간 길이 무대에 표시된다.
-// 그림: 구작 생물 그림(public/bio). 움직임은 CSS 전환과 타이머.
+// 다섯을 다 보내면 판정(채점): 버섯이 식물계가 아니라 균계인 까닭. 판정 때 버섯이 지나간 길이 무대에 표시되고
+//   소나무와 갈린 ② 물음이 밝아진다.
+// 그림: 생물 그림(public/bio). 움직임은 CSS 전환과 타이머.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -24,80 +35,107 @@ interface KplStep {
   curio?: Curio;
 }
 
-const KINGDOMS = ["원핵생물계", "원생생물계", "식물계", "동물계", "균계"];
+/** 계의 칸(왼쪽부터). 칸 k는 물음 k+1에서 아래로 갈리는 길의 끝이고, 마지막 칸은 ④의 '아니요' 길 끝이다. */
+const KINGDOMS = ["원핵생물계", "식물계", "동물계", "균계", "원생생물계"];
 interface Org {
   name: string;
   img: string;
+  /** KINGDOMS의 칸 번호 */
   kingdom: number;
   facts: [string, string, string];
   /** 물음(1~4)마다 봐야 할 특징 줄 */
   hot: Record<number, number>;
+  /** 물음마다 틀렸을 때 따로 짚어 줄 말(없으면 특징 줄을 그대로 읽어 준다) */
+  miss?: Partial<Record<number, string>>;
   land: string;
   /** 이름 뒤에 붙는 조사(을/를, 은/는) */
   eul: string;
   eun: string;
 }
+// 특징 줄은 카드 글 자리(360 폭 폰에서 212px)에 한 줄로 든다. 가장 긴 줄은 한글 열다섯 자에 띄어쓰기 셋이다.
 const ORGS: Org[] = [
   {
     name: "대장균",
     img: "bio/bacteria.webp",
     kingdom: 0,
-    facts: ["핵막이 없어요", "광합성을 하지 못해요", "세포벽이 있어요"],
+    facts: ["핵막이 없어요", "세포 하나로 된 몸이에요", "세포벽이 있어요"],
     hot: { 1: 0 },
     land: "대장균은 <b>원핵생물계</b>에 속해요. 세포에 핵막이 없는 생물은 첫 번째 질문에서 바로 나뉘어요.",
     eul: "을",
     eun: "은",
   },
   {
-    name: "아메바",
-    img: "bio/amoeba.webp",
-    kingdom: 1,
-    facts: ["핵막이 있어요", "세포 하나로 된 몸이에요", "균계, 식물계, 동물계 어디에도 속하지 않아요"],
-    hot: { 1: 0, 2: 2 },
-    land: "아메바는 <b>원생생물계</b>예요. 핵막이 있지만 균계, 식물계, 동물계 어디에도 속하지 않는 생물 무리예요.",
-    eul: "를",
-    eun: "는",
-  },
-  {
     name: "소나무",
     img: "bio/pine.webp",
-    kingdom: 2,
-    facts: ["핵막이 있어요", "광합성을 해요", "세포벽이 있어요"],
-    hot: { 1: 0, 3: 1 },
-    land: "소나무는 <b>식물계</b>예요. 광합성을 해서 스스로 양분을 만들어요.",
+    kingdom: 1,
+    facts: ["핵막이 있어요", "광합성을 하고 뿌리·줄기·잎이 있어요", "세포벽이 있어요"],
+    hot: { 1: 0, 2: 1 },
+    land: "소나무는 <b>식물계</b>예요. 엽록체로 광합성을 해 스스로 양분을 만들고, 뿌리와 줄기와 잎이 있어요.",
     eul: "를",
     eun: "는",
   },
   {
     name: "박새",
     img: "bio/bird.webp",
-    kingdom: 3,
-    facts: ["핵막이 있어요", "광합성을 하지 못해요", "세포벽이 없고 스스로 움직여요"],
-    hot: { 1: 0, 3: 1, 4: 2 },
-    land: "박새는 <b>동물계</b>예요. 세포벽이 없고 스스로 움직여요.",
+    kingdom: 2,
+    facts: ["핵막이 있어요", "광합성을 하지 못해요", "세포벽 없이 먹이를 먹어요"],
+    hot: { 1: 0, 2: 1, 3: 2 },
+    land: "박새는 <b>동물계</b>예요. 여러 세포로 된 몸에 세포벽이 없고, 먹이를 섭취해 양분을 얻어요.",
+    eul: "를",
+    eun: "는",
+  },
+  {
+    name: "아메바",
+    img: "bio/amoeba.webp",
+    kingdom: 4,
+    facts: ["핵막이 있어요", "광합성을 하지 못해요", "세포 하나이고 세포벽이 없어요"],
+    hot: { 1: 0, 2: 1, 3: 2, 4: 2 },
+    miss: {
+      3: "아메바는 <b>세포 하나로 된 몸</b>이에요. 세포벽 없이 먹이를 먹지만, 이 질문은 여러 세포로 된 몸인지도 함께 물어요.",
+      4: "아메바는 <b>세포벽이 없어요</b>. 이 질문은 세포벽이 있는 생물에게만 '예'예요.",
+    },
+    land: "아메바는 <b>원생생물계</b>예요. 핵막은 있지만 몸이 세포 하나이고 세포벽이 없어, 식물계, 동물계, 균계 어느 쪽으로도 가지 않았어요.",
     eul: "를",
     eun: "는",
   },
   {
     name: "버섯",
     img: "bio/mushroom.webp",
-    kingdom: 4,
-    facts: ["핵막이 있어요", "광합성을 하지 못해요", "세포벽이 있고 움직이지 못해요"],
-    hot: { 1: 0, 3: 1, 4: 2 },
-    land: "버섯은 <b>균계</b>예요. 광합성을 하지 못하고, 세포벽이 있으며 움직이지 못해요.",
+    kingdom: 3,
+    facts: ["핵막이 있어요", "광합성을 하지 못해요", "세포벽이 있고 죽은 생물을 분해해요"],
+    hot: { 1: 0, 2: 1, 3: 2, 4: 2 },
+    miss: {
+      3: "버섯은 <b>세포벽이 있어요</b>. 이 질문은 세포벽 없이 먹이를 섭취하는 생물에게만 '예'예요.",
+    },
+    land: "버섯은 <b>균계</b>예요. 광합성을 하지 못하고, 세포벽이 있으며 죽은 생물을 분해해 양분을 얻어요.",
     eul: "을",
     eun: "은",
   },
 ];
 
-// 갈림길 이름표는 폭 60px 안에 든다(번호 동그라미 뒤 글자 자리 약 37px). ②의 수정안 "다른 계 포함"(56px)과 대안 "3계 외 무리"(53px)는 들지 않아
-// 대안을 줄여 "3계 외"로 쓴다(2026-11-16)
-const GATE_KEY = ["", "핵막", "3계 외", "광합성", "세포벽"];
-const QUESTION = ["", "유전물질이 핵막(핵을 둘러싼 막)으로 싸여 있나요?", "균계, 식물계, 동물계 어디에도 속하지 않나요?", "광합성을 하나요?", "세포벽이 없고 스스로 움직이나요?"];
-/** 물음 g에 대한 옳은 답(예 = true). */
-const truth = (o: Org, g: number): boolean => (g === 1 ? o.kingdom !== 0 : g === 2 ? o.kingdom === 1 : g === 3 ? o.kingdom === 2 : o.kingdom === 3);
+// 갈림길 이름표는 폭 60px 안에 든다(번호 동그라미 뒤 글자 자리 약 37px, 세 글자까지)
+const GATE_KEY = ["", "핵막", "광합성", "섭취", "분해"];
+const QUESTION = [
+  "",
+  "세포에 핵막(핵을 둘러싼 막)으로 싸인 핵이 있나요?",
+  "엽록체가 있어 광합성을 하고, 뿌리·줄기·잎이 있나요?",
+  "여러 세포로 된 몸에 세포벽이 없고, 먹이를 섭취하나요?",
+  "세포벽이 있고, 죽은 생물이나 배설물을 분해해 양분을 얻나요?",
+];
+/** 다음 물음으로 넘어갈 때 도움말(어느 특징 줄을 볼지) */
+const NEXT_SAY = [
+  "",
+  "",
+  "두 번째 질문이에요. 특징 카드에서 <b>광합성</b>과 뿌리·줄기·잎을 확인해 보세요.",
+  "세 번째 질문이에요. 특징 카드에서 <b>세포벽</b>과 먹이를 먹는지를 확인해 보세요.",
+  "마지막 질문이에요. 특징 카드에서 <b>세포벽</b>과 양분을 얻는 방법을 확인해 보세요.",
+];
+/** 물음 g에 대한 옳은 답(예 = true). ①은 핵막이 있으면 예, ②~④는 그 물음의 칸(식물계, 동물계, 균계)에 드는 생물만 예. */
+const truth = (o: Org, g: number): boolean => (g === 1 ? o.kingdom !== 0 : o.kingdom === g - 1);
 /** 아래로 갈리는 답(예 = true). ①만 '아니요'가 아래다. */
 const DOWN_IS_YES = [false, false, true, true, true];
+/** 판정에서 버섯이 지나간 길의 끝(균계 칸) */
+const MUSH_BOX = 3;
 
 // 좌표(346×230 설계 판)
 const GX = [37, 105, 173, 241, 309]; // 물음 넷과 균계 길목의 x
@@ -114,7 +152,7 @@ function pathSvg(): string {
       ${[0, 1, 2, 3].map((i) => `<path d="M${GX[i]} 44V${LINE_Y}" />`).join("")}
       ${downs}
     </g>
-    <path class="kpl-trail" d="M${START[0]} ${LINE_Y}H${GX[4]}V${BOX_Y - 9}" fill="none" stroke="#FFD43B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <path class="kpl-trail" d="M${START[0]} ${LINE_Y}H${GX[MUSH_BOX]}V${BOX_Y - 9}" fill="none" stroke="#FFD43B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
     ${[0, 1, 2, 3].map((i) => `<circle cx="${GX[i]}" cy="${LINE_Y}" r="4.5" fill="#0B1524" stroke="#6F8FC9" stroke-width="2"/>`).join("")}
   </svg>`;
 }
@@ -122,7 +160,7 @@ function pathSvg(): string {
 export const kingdomPathLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as KplStep;
   const tm = bvTimers();
-  // 세 줄 도움말을 처음부터 잡아 둔다(둘째 질문을 대신 답하는 글이 세 줄이다. 랩 도중에 무대가 밀리지 않게)
+  // 세 줄 도움말을 처음부터 잡아 둔다(아메바가 원생생물계에 닿을 때의 글과 틀린 답을 짚는 글이 세 줄이다. 랩 도중에 무대가 밀리지 않게)
   const f = bvFrame(host, { title: s.title, steps: ORGS.length + 1, cls: "kpl-stage", qCls: "kpl-q", api, tall: true });
   const canvas = bvCanvas(f.stage);
 
@@ -161,8 +199,6 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
   const yesBtn = bvBtn("kpl-yes", "예");
   const noBtn = bvBtn("kpl-no", "아니요");
   const answers = el("div", { class: "kpl-answers" }, yesBtn, noBtn);
-  const passBtn = bvBtn("main kpl-pass", "");
-  passBtn.hidden = true;
   const nextBtn = bvBtn("main kpl-next", "다음 생물 분류하기");
   nextBtn.hidden = true;
 
@@ -189,7 +225,7 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     if (jump) void token.offsetWidth;
   };
 
-  function showQuestion(g: number, auto: boolean): void {
+  function showQuestion(g: number): void {
     gate = g;
     gates.forEach((n, i) => {
       n.classList.toggle("on", i === g - 1);
@@ -198,12 +234,10 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     qNum.textContent = String(g);
     qText.textContent = QUESTION[g];
     question.hidden = false;
-    answers.hidden = auto;
-    passBtn.hidden = !auto;
+    answers.hidden = false;
     nextBtn.hidden = true;
-    yesBtn.disabled = auto;
-    noBtn.disabled = auto;
-    passBtn.disabled = !auto;
+    yesBtn.disabled = false;
+    noBtn.disabled = false;
     yesBtn.classList.remove("pick", "no");
     noBtn.classList.remove("pick", "no");
     factEls.forEach((li) => li.classList.remove("hot"));
@@ -220,7 +254,7 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     cardName.textContent = o.name;
     factEls.forEach((li, k) => (li.textContent = o.facts[k]));
     busy = true;
-    showQuestion(1, false);
+    showQuestion(1);
     yesBtn.disabled = true;
     noBtn.disabled = true;
     // 특징 카드는 무대 아래 조작 칸에 있다(수정안의 "왼쪽의 특징 카드"는 화면과 달라 "아래 특징 카드"로 썼다)
@@ -238,7 +272,7 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     mark();
   }
 
-  /** 생물이 계의 칸에 들어간다. */
+  /** 생물이 계의 칸에 들어간다. 마지막 칸(원생생물계)은 ④에서 옆으로 한 칸 간 뒤 내려간다. */
   function land(k: number): void {
     const o = ORGS[oi];
     busy = true;
@@ -258,7 +292,6 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
         f.say(o.land);
         question.hidden = true;
         answers.hidden = true;
-        passBtn.hidden = true;
         nextBtn.textContent = oi < ORGS.length - 1 ? "다음 생물 분류하기" : "버섯이 분류된 길 확인하기";
         nextBtn.hidden = false;
         busy = false;
@@ -285,30 +318,10 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     mark();
     place(GX[g], LINE_Y);
     tm.later(() => {
-      if (g + 1 === 2) openGate2();
-      else {
-        busy = false;
-        showQuestion(g + 1, false);
-        f.say(g + 1 === 3 ? "세 번째 질문이에요. 특징 카드에서 <b>광합성</b> 여부를 확인해 보세요." : "마지막 질문이에요. 특징 카드에서 <b>세포벽</b> 유무와 움직임을 확인해 보세요.");
-      }
+      busy = false;
+      showQuestion(g + 1);
+      f.say(NEXT_SAY[g + 1]);
     }, 500);
-  }
-
-  /** ②는 특징만으로 답할 수 없어서 까닭을 안내하고, 학생이 아래 버튼을 눌러 직접 다음 단계로 넘어가게 한다. */
-  function openGate2(): void {
-    const o = ORGS[oi];
-    const yes = truth(o, 2);
-    showQuestion(2, true);
-    busy = false;
-    passBtn.disabled = false;
-    passBtn.textContent = yes ? "예 · 원생생물계로 보내기" : "아니요 · 3번 질문으로 넘어가기";
-    mark();
-    f.say(
-      yes
-        ? `2번 질문은 특징만으로 가르기 어려워요. <b>${o.name}</b>${o.eun} 세 계 어디에도 속하지 않으므로 아래 버튼을 눌러 분류해 보세요.`
-        : `2번 질문은 특징만으로 가르기 어려워요. <b>${o.name}</b>${o.eun} 균계, 식물계, 동물계 가운데 하나예요. 아래 버튼을 눌러 넘어가세요.`,
-    );
-    if (o.hot[2] !== undefined) factEls[o.hot[2]].classList.add("hot");
   }
 
   function answer(yes: boolean): void {
@@ -324,7 +337,7 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
       btn.classList.add("no");
       const k = o.hot[gate];
       factEls.forEach((li, i) => li.classList.toggle("hot", i === k));
-      f.say(`특징 카드를 다시 확인해 보세요! ${o.name}${o.eun} <b>${o.facts[k]}</b>.`);
+      f.say(o.miss?.[gate] ?? `특징 카드를 다시 확인해 보세요! ${o.name}${o.eun} <b>${o.facts[k]}</b>.`);
       mark();
       return;
     }
@@ -336,12 +349,6 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
   }
   yesBtn.addEventListener("click", () => answer(true));
   noBtn.addEventListener("click", () => answer(false));
-  passBtn.addEventListener("click", () => {
-    if (phase !== "play" || busy || gate !== 2) return;
-    haptic(HAPTIC.tap);
-    passBtn.disabled = true;
-    go(truth(ORGS[oi], 2));
-  });
   nextBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     if (oi < ORGS.length - 1) startOrg(oi + 1);
@@ -351,7 +358,8 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
   function review(): void {
     phase = "ask";
     f.stage.classList.add("trail");
-    gates.forEach((n, i) => n.classList.toggle("on", i === 2));
+    // 소나무와 버섯이 갈린 곳은 ② 물음이다(소나무는 아래 식물계로, 버섯은 옆으로)
+    gates.forEach((n, i) => n.classList.toggle("on", i === 1));
     mark();
     f.say("노란색 선이 버섯이 지나온 길이에요. 소나무(식물계)가 간 길과 <b>어느 질문에서 갈라졌는지</b> 살펴보세요.");
     f.slot.ask(
@@ -365,15 +373,15 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     phase = "done";
     mark();
     f.pips(ORGS.length + 1);
-    // 화면 글은 '운동성'이 아니라 '움직임'으로 쓴다(머리말). 수정안의 "운동성"과 이 단원에서 배우지 않는 말 "진핵생물"은 바꿔 썼다(2026-11-16)
-    f.say("핵막 유무와 광합성 여부, 세포벽과 움직임을 차례로 따져 다섯 생물을 모두 알맞은 계로 분류했어요!");
-    // 원생생물계는 광합성, 세포벽, 움직임으로 가를 수 없는 무리라 결론에 따로 적는다(해캄은 광합성을 하고 짚신벌레는 세포벽 없이 움직인다)
-    f.slot.conclude("생물은 가장 큰 분류 단계인 <b>5계</b>로 나누어요. 세포에 핵막이 없으면 <b>원핵생물계</b>이고, 핵막이 있는 생물은 <b>광합성 여부, 세포벽 유무, 움직임</b> 등에 따라 <b>식물계, 동물계, 균계</b>로 구분하며, 이 세 계에 속하지 않는 생물은 <b>원생생물계</b>로 분류해요.");
+    // 이 단원에서 배우지 않는 말("진핵생물")은 쓰지 않는다
+    f.say("핵막, 광합성과 뿌리·줄기·잎, 세포벽과 양분을 얻는 방법을 차례로 따져 다섯 생물을 모두 알맞은 계로 분류했어요!");
+    // 원생생물계는 식물계, 동물계, 균계의 특징을 갖추지 않은 무리라 결론에 따로 적는다(해캄은 광합성을 하고 짚신벌레는 세포벽 없이 먹이를 먹는다)
+    f.slot.conclude("생물은 가장 큰 분류 단계인 <b>5계</b>로 나누어요. 세포에 핵막이 없으면 <b>원핵생물계</b>이고, 핵막이 있는 생물은 <b>광합성과 뿌리·줄기·잎, 세포벽, 양분을 얻는 방법</b> 등에 따라 <b>식물계, 동물계, 균계</b>로 구분하며, 이 세 계에 속하지 않는 생물은 <b>원생생물계</b>로 분류해요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
-  f.slot.setControls(card, question, answers, passBtn, nextBtn);
+  f.slot.setControls(card, question, answers, nextBtn);
   startOrg(0);
   api.setCTA("다섯 생물을 모두 알맞은 계로 분류해 보세요", { enabled: false });
   return () => {

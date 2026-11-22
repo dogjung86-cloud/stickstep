@@ -166,7 +166,7 @@ LABS.u5l5 = async () => {
   await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
   await W(page, 1500);
   await at("start");
-  // 나무판의 오른쪽 끝(받침점에서 250px)을 deg도까지 들어 올린다. 받침점은 무대의 (34, 200)
+  // 바닥 판의 오른쪽 끝(받침점에서 250px)을 deg도까지 들어 올린다. 받침점은 무대의 (34, 200)
   const lift = async (deg, from = 0) => {
     const P = await stageAt(page, 34, 200);
     const pt = (d) => ({ x: P.x + 250 * Math.cos((d * Math.PI) / 180), y: P.y - 250 * Math.sin((d * Math.PI) / 180) });
@@ -180,15 +180,15 @@ LABS.u5l5 = async () => {
   await page.mouse.up();
   await lift(24, 12);
   await page.mouse.up();
-  ok(await waitPips(1), "u5l5: 나무 면");
+  ok(await waitPips(1), "u5l5: 아크릴판");
   await W(page, 400);
-  await click(page, '.bv-card[data-k="sand"]');
+  await click(page, '.bv-card[data-k="rubber"]');
   await lift(30);
-  await at("sand");
+  await at("rubber");
   await page.mouse.up();
   await lift(38, 30);
   await page.mouse.up();
-  ok(await waitPips(2), "u5l5: 사포 면");
+  ok(await waitPips(2), "u5l5: 고무 매트");
   await W(page, 2800);
   await at("pull");
   await holdBtn(page, ".u5x-push", 500); // 일찍 떼면 안 움직인다
@@ -277,7 +277,7 @@ const holdStage = async (fx, fy, ms) => {
   await W(page, ms);
 };
 const INTROS = {
-  u5l1: () => intro(async () => { await holdStage(0.38, 0.3, 500); await at("mid"); await W(page, 700); await page.mouse.up(); }),
+  u5l1: () => intro(async () => { await holdStage(0.58, 0.5, 500); await at("mid"); await W(page, 700); await page.mouse.up(); }),
   u5l2: () => intro(async () => { for (let i = 0; i < 3; i++) { await click(page, '.opn-u5-btn[data-k="more"]'); await W(page, 500); if (i === 1) await at("mid"); } }),
   u5l4: () => intro(async () => { await click(page, '.opn-u5-btn[data-k="small"]'); await W(page, 1500); await at("mid"); await W(page, 700); await click(page, '.opn-u5-btn[data-k="big"]'); }),
   u5l5: () => intro(async () => { await click(page, '.opn-u5-btn[data-k="dirt"]'); await W(page, 1400); await click(page, '.opn-u5-btn[data-k="ice"]'); await W(page, 1200); await at("mid"); }),

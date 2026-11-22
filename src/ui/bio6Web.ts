@@ -1,10 +1,16 @@
-// bio6Web: 중1 Ⅱ v5 u2l10의 먹이 관계 그림과 규칙(2026-11-11). 랩의 무대(foodWebLab)와 문제 그림(bio6Figures)이 함께 쓴다.
-// 관계는 원전 그림 그대로다. (가) 생물 4종류의 외길, (나) 생물 9종류의 먹이 관계 15갈래.
+// bio6Web: 중1 Ⅱ v5 u2l10의 먹이 관계 그림과 규칙(2026-11-11, 2026-11-22 온대 숲 생물로 새로 짬). 랩의 무대(foodWebLab)와 문제 그림(bio6Figures)이 함께 쓴다.
+// (가) 생물 4종류의 외길: 토끼풀 → 들쥐 → 족제비 → 수리부엉이.
+// (나) 온대 숲의 생물 9종류와 먹이 관계 14갈래.
+//   생산자: 도토리나무(도토리), 산딸기(열매와 잎), 토끼풀
+//   1차 소비자: 다람쥐(도토리, 산딸기 열매), 들쥐(도토리, 산딸기 열매, 토끼풀), 멧토끼(산딸기 잎과 줄기, 토끼풀)
+//   고차 소비자: 족제비(다람쥐, 들쥐), 살모사(다람쥐, 들쥐), 수리부엉이(멧토끼, 족제비, 살모사)
+//   모든 소비자가 먹이를 둘 이상 먹어서 (나)는 생물 하나가 사라져도 위험이 번지지 않는다(랩의 결과 "모두 안전해요"가 계산으로 나온다).
+//   족제비가 다 자란 멧토끼를 잡는 일은 드물어 그 갈래는 넣지 않았다(외길도 멧토끼 대신 들쥐로 잇는다).
 // 화살표는 먹히는 생물에서 먹는 생물 쪽을 가리킨다.
 
-export type WebId = "rice" | "corn" | "cabbage" | "hopper" | "moth" | "frog" | "sparrow" | "snake" | "hawk";
+export type WebId = "oak" | "berry" | "clover" | "squirrel" | "mouse" | "hare" | "weasel" | "viper" | "owl";
 export const WEB_NAME: Record<WebId, string> = {
-  rice: "벼", corn: "옥수수", cabbage: "배추", hopper: "메뚜기", moth: "배추흰나비", frog: "개구리", sparrow: "참새", snake: "뱀", hawk: "매",
+  oak: "도토리나무", berry: "산딸기", clover: "토끼풀", squirrel: "다람쥐", mouse: "들쥐", hare: "멧토끼", weasel: "족제비", viper: "살모사", owl: "수리부엉이",
 };
 export interface Web {
   nodes: Partial<Record<WebId, [number, number]>>;
@@ -13,18 +19,22 @@ export interface Web {
 }
 export const FOOD_WEBS: Record<"A" | "B", Web> = {
   A: {
-    nodes: { hawk: [46, 66], frog: [46, 112], hopper: [46, 158], rice: [46, 204] },
-    edges: [["rice", "hopper"], ["hopper", "frog"], ["frog", "hawk"]],
+    nodes: { owl: [46, 66], weasel: [46, 112], mouse: [46, 158], clover: [46, 204] },
+    edges: [["clover", "mouse"], ["mouse", "weasel"], ["weasel", "owl"]],
   },
   B: {
+    // 네 줄: 맨 위 수리부엉이, 둘째 줄 족제비와 살모사, 셋째 줄 1차 소비자, 맨 아래 생산자.
+    // 셋째 줄과 넷째 줄은 같은 x에 세워(다람쥐 위 도토리나무, 들쥐 위 산딸기, 멧토끼 위 토끼풀) 곧은 화살표가 많게 했다.
     nodes: {
-      hawk: [130, 62], snake: [302, 58], frog: [204, 104], sparrow: [304, 112],
-      moth: [142, 146], hopper: [228, 154], cabbage: [150, 206], rice: [234, 206], corn: [310, 206],
+      owl: [262, 60],
+      weasel: [150, 106], viper: [228, 106],
+      squirrel: [150, 152], mouse: [228, 152], hare: [304, 152],
+      oak: [146, 206], berry: [228, 206], clover: [304, 206],
     },
     edges: [
-      ["cabbage", "moth"], ["cabbage", "hopper"], ["cabbage", "sparrow", -34], ["rice", "hopper"], ["rice", "sparrow", -10],
-      ["corn", "hopper", 10], ["corn", "sparrow"], ["hopper", "frog"], ["hopper", "sparrow"], ["moth", "frog"],
-      ["frog", "hawk"], ["frog", "snake"], ["sparrow", "snake"], ["sparrow", "hawk", 16], ["snake", "hawk", 14],
+      ["oak", "squirrel"], ["oak", "mouse"], ["berry", "squirrel"], ["berry", "mouse"], ["berry", "hare"], ["clover", "mouse"], ["clover", "hare"],
+      ["squirrel", "weasel"], ["mouse", "weasel"], ["squirrel", "viper"], ["mouse", "viper"],
+      ["weasel", "owl", -10], ["viper", "owl"], ["hare", "owl"],
     ],
   },
 };

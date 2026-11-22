@@ -20,7 +20,7 @@
 .u4x-step .bv-range-in::-moz-range-progress { background: var(--subj-matter); }
 .u4x-step .bv-range-in::-moz-range-thumb { border-color: var(--subj-matter); box-shadow: 0 2px 8px rgba(124, 107, 255, .35); }
 .u4x-step .bv-range-in:disabled { opacity: .55; }
-/* 두 칸 줄의 버튼(시계 접시의 종이 대기, 올리브유 다시 재기)은 글이 두 줄이 된다. 낱말 가운데가 아니라 띄어쓰기에서 줄을 바꾼다 */
+/* 두 칸 줄의 버튼(시계 접시의 종이 대기, 식용유 다시 재기)은 글이 두 줄이 된다. 낱말 가운데가 아니라 띄어쓰기에서 줄을 바꾼다 */
 .u4x-step .bv-btn { word-break: keep-all; }
 
 /* ── 꾹 누르는 버튼, 입자의 눈 버튼 ─────────────────── */
@@ -76,8 +76,8 @@
 .u4x-evap-p.fly .u4x-evap-tr { opacity: .8; }
 .u4x-ink-dropper { transition: transform .5s var(--ease-out); }
 .u4x-ink-way { height: 64px; }
-.u4x-ink-btby { opacity: 0; transition: opacity .45s; }
-.u4x-ink-btb.yel .u4x-ink-btby { opacity: 1; }
+.u4x-ink-papr { opacity: 0; transition: opacity .45s; }
+.u4x-ink-pap.red .u4x-ink-papr { opacity: 1; }
 .u4x-ink-rod { transform-box: fill-box; transform-origin: 50% 0%; }
 .u4x-ink-rod.stir { animation: u4xStir .32s ease-in-out infinite alternate; }
 @keyframes u4xStir { 0% { transform: rotate(-9deg); } 100% { transform: rotate(9deg); } }
@@ -137,7 +137,7 @@
 .u4x-dry-lace.sweep { animation: u4xSweep .9s ease-in-out both; }
 @keyframes u4xSweep { 0% { translate: 0 -34px; } 100% { translate: 0 -4px; } }
 
-/* ── 올리브유, 풍선 랩 ───────────────────────────── */
+/* ── 식용유, 풍선 랩 ───────────────────────────── */
 .u4x-olive-bath, .u4x-olive-tape1, .u4x-olive-tape2 { transition: opacity .35s; }
 .u4x-olive-oil { transition: fill .5s; }
 /* 병은 얼리는 동안 저울 옆 비커로 옮겨 간다(바깥 g에 transform 속성이 없어야 CSS 이동이 튀지 않는다) */
@@ -201,31 +201,31 @@
 .opn-u4-ld-em.on { opacity: 1; }
 @keyframes opnU4Waft { 0% { transform: translate(0, 4px); } 100% { transform: translate(6px, -6px); } }
 
-/* 2. 쏟아진 얼음과 주스 */
+/* 2. 체에 붓는 구슬 얼음과 물 */
 .opn-u4-spill.play .opn-u4-hit.ice { display: block; }
-.opn-u4-spill.juice .opn-u4-hit.ice { display: none; }
-.opn-u4-spill.juice .opn-u4-hit.juice { display: block; }
-.opn-u4-spill.done .opn-u4-hit.ice, .opn-u4-spill.done .opn-u4-hit.juice { display: none; }
-.opn-u4-sp-ice { transition: transform .55s var(--ease-out); }
-.opn-u4-spill.play:not(.juice) .opn-u4-sp-ice { animation: opnU4Nudge 1.4s ease-in-out infinite; }
-.opn-u4-sp-scoop, .opn-u4-sp-q { opacity: 0; }
-.opn-u4-spill.scoop .opn-u4-sp-scoop { animation: opnU4Scoop 1.5s ease-in-out both; }
-.opn-u4-spill.done .opn-u4-sp-q { opacity: 1; transition: opacity .3s; }
+.opn-u4-spill.iced .opn-u4-hit.ice { display: none; }
+.opn-u4-spill.iced .opn-u4-hit.water { display: block; }
+.opn-u4-spill.done .opn-u4-hit.ice, .opn-u4-spill.done .opn-u4-hit.water { display: none; }
+.opn-u4-sp-ice { transition: transform .6s var(--ease-out); }
+.opn-u4-spill.play:not(.pour-ice):not(.iced) .opn-u4-sp-cup.a { animation: opnU4Nudge 1.4s ease-in-out infinite; }
+.opn-u4-spill.iced:not(.pour-water):not(.done) .opn-u4-sp-jug.a { animation: opnU4Nudge 1.4s ease-in-out infinite; }
 @keyframes opnU4Nudge { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
-@keyframes opnU4Scoop {
-  0% { opacity: 0; transform: translateY(30px); }
-  25% { opacity: 1; transform: translateY(-46px); }
-  55% { opacity: 1; transform: translateY(-46px); }
-  100% { opacity: 0; transform: translateY(34px); }
-}
+.opn-u4-sp-cup, .opn-u4-sp-jug, .opn-u4-sp-stream, .opn-u4-sp-drip { transition: opacity .25s; }
+.opn-u4-sp-cup.b, .opn-u4-sp-jug.b, .opn-u4-sp-stream, .opn-u4-sp-drip { opacity: 0; }
+.opn-u4-spill.pour-ice .opn-u4-sp-cup.a { opacity: 0; }
+.opn-u4-spill.pour-ice .opn-u4-sp-cup.b { opacity: 1; }
+.opn-u4-spill.pour-water .opn-u4-sp-jug.a { opacity: 0; }
+.opn-u4-spill.pour-water .opn-u4-sp-jug.b, .opn-u4-spill.pour-water .opn-u4-sp-stream { opacity: 1; }
+.opn-u4-spill.pour-water .opn-u4-sp-drip { opacity: 1; animation: opnU4Drip .5s linear infinite; }
+@keyframes opnU4Drip { 0% { translate: 0 -8px; } 100% { translate: 0 10px; } }
+.opn-u4-sp-pool { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0); transition: transform 1.5s var(--ease-out); }
+.opn-u4-spill.pour-water .opn-u4-sp-pool, .opn-u4-spill.done .opn-u4-sp-pool { transform: scaleY(1); }
 
-/* 3. 랩 */
-.opn-u4-wr-wrap { transform-box: fill-box; transform-origin: 50% 100%; }
-.opn-u4-wr-dent { transform-box: fill-box; transform-origin: 50% 0%; opacity: 0; }
+/* 3. 따뜻한 물을 넣고 닫은 페트병 */
+.opn-u4-bt-body { transform-box: fill-box; transform-origin: 50% 100%; transition: opacity .25s; }
+.opn-u4-bt-dent, .opn-u4-bt-dew { opacity: 0; transition: opacity .25s; }
 .u4x-olive-dew { opacity: 0; transition: opacity .3s; }
 .u4x-olive.dew .u4x-olive-dew { opacity: 1; }
-.opn-u4-wr-steam { opacity: 0; transition: opacity .5s; }
-.opn-u4-wrap.hot .opn-u4-wr-steam { opacity: 1; }
 .opn-u4-wr-q { opacity: 0; transition: opacity .3s; }
 .opn-u4-wrap.done .opn-u4-wr-q { opacity: 1; }
 
@@ -245,5 +245,5 @@
 .opn-u4-rm-mark { opacity: 0; transition: opacity .3s; }
 .opn-u4-ramen.done .opn-u4-rm-mark { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
-  .opn-u4-ld-sm.on, .opn-u4-sp-ice, .opn-u4-rm-bub { animation: none !important; }
+  .opn-u4-ld-sm.on, .opn-u4-sp-cup, .opn-u4-sp-jug, .opn-u4-sp-drip, .opn-u4-rm-bub { animation: none !important; }
 }

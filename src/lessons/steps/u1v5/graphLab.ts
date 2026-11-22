@@ -2,11 +2,11 @@
 // 한 통찰: 표의 숫자를 그래프로 옮기면 차이와 규칙이 한눈에 보인다(자료 해석). 많이 오른 컵일수록 선이 가파르다.
 // 조작: 표에서 색칠된 칸의 값을 그래프에 찍는다. 그래프를 누른 채 위아래로 끌면 점과 값이 따라 움직이고, 손을 떼면 찍힌다.
 //       표의 값과 1 ℃ 안쪽이면 그 값에 붙는다. 더 어긋나면 빨갛게 흔들리고 표의 값을 다시 알려 준다(다시 찍는다).
-// 흐름: 여섯 점(컵 셋 × 1시간 뒤, 2시간 뒤. 처음 온도 20 ℃는 찍혀 있다) → 판정 → 결론.
-// 값은 앞 랩(fairLab)의 공정한 실험 결과와 같다: 검은색 20, 30, 39 / 파란색 20, 27, 34 / 흰색 20, 25, 29.
-// 그래프 좌표(viewBox 346×230): 20 ℃ = y 186, 40 ℃ = y 22(1 ℃ = 8.2). 시간 축 x = 70, 178, 286.
+// 흐름: 여섯 점(컵 셋 × 30분 뒤, 60분 뒤. 처음 온도 18 ℃는 찍혀 있다) → 판정 → 결론.
+// 값은 앞 랩(fairLab)의 공정한 실험 결과(60분 뒤 28, 23, 20 ℃)와 같다: 검은색 18, 24, 28 / 노란색 18, 21, 23 / 흰색 18, 19, 20.
+// 그래프 좌표(viewBox 346×230): 18 ℃ = y 186, 30 ℃ = y 22(1 ℃ = 164/12, 약 13.7). 큰 눈금은 2 ℃마다. 시간 축 x = 70, 178, 286.
 // 2026-11-15 그래픽 감사: 판정의 답인 검은색 컵의 선이 밝은 회색이라 흰색 선과 비슷했다. 검은 선은 밝은 테두리를 두른 굵고 짙은 선으로,
-// 선 끝(2시간 뒤 점 오른쪽)에 이름과 값을 붙인다. 그 자리를 내려고 시간 축을 왼쪽으로 조금 당겼다(세로 눈금은 그대로).
+// 선 끝(60분 뒤 점 오른쪽)에 이름과 값을 붙인다. 그 자리를 내려고 시간 축을 왼쪽으로 조금 당겼다(세로 눈금은 그대로).
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -19,35 +19,37 @@ interface GraphStep {
 }
 
 const SERIES = [
-  { name: "검은색", dot: "#2B3440", ring: "#E8EEF9", line: "#232B38", casing: "#E8EEF9", label: "#E8EEF9", v: [20, 30, 39] },
-  { name: "파란색", dot: "#4C9BFF", ring: "#CFE3FF", line: "#4C9BFF", casing: "", label: "#8EC2FF", v: [20, 27, 34] },
-  { name: "흰색", dot: "#FFFFFF", ring: "#FFFFFF", line: "#FFFFFF", casing: "", label: "#FFFFFF", v: [20, 25, 29] },
+  { name: "검은색", dot: "#2B3440", ring: "#E8EEF9", line: "#232B38", casing: "#E8EEF9", label: "#E8EEF9", v: [18, 24, 28] },
+  { name: "노란색", dot: "#FFD84A", ring: "#FFF3BF", line: "#FFD84A", casing: "", label: "#FFE27A", v: [18, 21, 23] },
+  { name: "흰색", dot: "#FFFFFF", ring: "#FFFFFF", line: "#FFFFFF", casing: "", label: "#FFFFFF", v: [18, 19, 20] },
 ];
-const TIMES = ["처음", "1시간 뒤", "2시간 뒤"];
+const TIMES = ["처음", "30분 뒤", "60분 뒤"];
 const XS = [70, 178, 286];
 const GX0 = 46; // 그래프 판의 왼쪽(세로축)
 const GX1 = 304; // 그래프 판의 오른쪽(그 오른쪽은 선 끝 이름표 자리)
-const Y20 = 186;
-const PER = 8.2;
-const yOf = (t: number): number => Y20 - (t - 20) * PER;
+const T_MIN = 18; // 세로축 아래 끝(처음 온도)
+const T_MAX = 30; // 세로축 위 끝
+const Y_MIN = 186; // T_MIN의 y
+const PER = (Y_MIN - 22) / (T_MAX - T_MIN); // 1 ℃의 높이
+const yOf = (t: number): number => Y_MIN - (t - T_MIN) * PER;
 const NS = "http://www.w3.org/2000/svg";
 
 function stageSvg(): string {
-  const grid = [20, 25, 30, 35, 40]
+  const grid = [18, 20, 22, 24, 26, 28, 30]
     .map((t) => `<line x1="${GX0}" y1="${yOf(t)}" x2="${GX1}" y2="${yOf(t)}" stroke="#22344F" stroke-width="1"/><text x="${GX0 - 7}" y="${yOf(t) + 4.5}" text-anchor="end" class="u1g-ax">${t}</text>`)
     .join("");
-  const minor = Array.from({ length: 21 }, (_, i) => 20 + i)
-    .filter((t) => t % 5)
+  const minor = Array.from({ length: T_MAX - T_MIN + 1 }, (_, i) => T_MIN + i)
+    .filter((t) => t % 2)
     .map((t) => `<line x1="${GX0}" y1="${yOf(t)}" x2="${GX1}" y2="${yOf(t)}" stroke="#17263D" stroke-width="1"/>`)
     .join("");
-  const cols = XS.map((x, i) => `<line x1="${x}" y1="${yOf(40)}" x2="${x}" y2="${Y20}" stroke="#22344F" stroke-width="1"/><text x="${x}" y="206" text-anchor="middle" class="u1g-ax">${TIMES[i]}</text>`).join("");
+  const cols = XS.map((x, i) => `<line x1="${x}" y1="${yOf(T_MAX)}" x2="${x}" y2="${Y_MIN}" stroke="#22344F" stroke-width="1"/><text x="${x}" y="206" text-anchor="middle" class="u1g-ax">${TIMES[i]}</text>`).join("");
   return `<svg viewBox="0 0 346 230" role="img" aria-label="시간에 따른 물의 온도 그래프">
     ${minor}${grid}${cols}
     <text x="14" y="14" class="u1g-ax">온도(℃)</text>
     ${SERIES.map((sr, i) => `<circle cx="${150 + i * 64}" cy="10" r="5" fill="${sr.dot}" stroke="${sr.ring}" stroke-width="1.6"/><text x="${159 + i * 64}" y="14.5" class="u1g-ax lg">${sr.name}</text>`).join("")}
-    <line x1="${GX0}" y1="${yOf(40) - 6}" x2="${GX0}" y2="${Y20}" stroke="#8FA3C2" stroke-width="1.6"/>
-    <line x1="${GX0}" y1="${Y20}" x2="${GX1 + 4}" y2="${Y20}" stroke="#8FA3C2" stroke-width="1.6"/>
-    <rect class="u1g-col" x="0" y="${yOf(40) - 6}" width="56" height="${Y20 - yOf(40) + 12}" rx="10" fill="#4C9BFF" opacity="0"/>
+    <line x1="${GX0}" y1="${yOf(T_MAX) - 6}" x2="${GX0}" y2="${Y_MIN}" stroke="#8FA3C2" stroke-width="1.6"/>
+    <line x1="${GX0}" y1="${Y_MIN}" x2="${GX1 + 4}" y2="${Y_MIN}" stroke="#8FA3C2" stroke-width="1.6"/>
+    <rect class="u1g-col" x="0" y="${yOf(T_MAX) - 6}" width="56" height="${Y_MIN - yOf(T_MAX) + 12}" rx="10" fill="#4C9BFF" opacity="0"/>
     <g class="u1g-lines"></g>
     <g class="u1g-dots"></g>
     <g class="u1g-ends"></g>
@@ -95,7 +97,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
   // 그래프(무대)는 이 표의 위에 있다(넓은 화면도 무대 바로 아래에 조작이 온다). 그래서 "위 그래프"라고 부른다.
   const cap = el("div", { class: "u1x-cap", text: "측정한 물의 온도예요. 색칠된 칸의 값을 위 그래프에 찍어 보세요." });
 
-  // 찍을 차례: 컵마다 1시간 뒤, 2시간 뒤
+  // 찍을 차례: 컵마다 30분 뒤, 60분 뒤
   const ORDER: [number, number][] = [];
   SERIES.forEach((_, si) => [1, 2].forEach((ti) => ORDER.push([si, ti])));
   let idx = 0;
@@ -133,7 +135,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
       } else seg(sr.line, "2.6");
     }
     if (ti === 2) {
-      // 선 끝 이름표: 이름과 값(2시간 뒤 점의 오른쪽)
+      // 선 끝 이름표: 이름과 값(60분 뒤 점의 오른쪽)
       const y = yOf(sr.v[ti]);
       const t1 = document.createElementNS(NS, "text");
       t1.setAttribute("x", String(XS[ti] + 10));
@@ -169,7 +171,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
 
   const tempAt = (clientX: number, clientY: number): number => {
     const p = bvSvgPoint(svg, clientX, clientY);
-    return Math.max(20, Math.min(40, Math.round(20 + (Y20 - p.y) / PER)));
+    return Math.max(T_MIN, Math.min(T_MAX, Math.round(T_MIN + (Y_MIN - p.y) / PER)));
   };
   function showGhost(t: number, bad = false): void {
     const [, ti] = ORDER[idx];
@@ -247,7 +249,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
   function askFinal(): void {
     f.say("그래프가 완성됐어요! 세 선이 <b>얼마나 가파르게 올라가는지</b> 비교하며 답해 보세요.");
     f.slot.ask(
-      "2시간 동안 온도가 <b>가장 많이 오른</b> 컵의 선은 어떤 모습인가요?",
+      "60분 동안 온도가 <b>가장 많이 오른</b> 컵의 선은 어떤 모습인가요?",
       [{ t: "가장 가파르게 올라간다", ok: true }, { t: "가장 완만하게 올라간다" }, { t: "가장 아래쪽에 놓인다" }],
       (ok) => api.recordQuiz(ok),
       { why: "검은색 컵의 선이 가장 가팔라요. 온도가 <b>많이 오를수록</b> 선이 가파르게 올라가요.", onNext: finish },
@@ -258,7 +260,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
     finished = true;
     f.pips(4);
     f.say("숫자로만 보던 표를 그래프로 옮기니 색깔별 온도 변화가 한눈에 비교돼요!");
-    f.slot.conclude("표를 그래프로 바꾸면 변화와 차이가 한눈에 보여요. 이렇게 정리한 자료에서 규칙이나 관계를 찾는 과정을 <b>자료 해석</b>이라고 해요. 물의 온도는 검은색, 파란색, 흰색 컵 순으로 많이 올랐어요.");
+    f.slot.conclude("표를 그래프로 바꾸면 변화와 차이가 한눈에 보여요. 이렇게 정리한 자료에서 규칙이나 관계를 찾는 과정을 <b>자료 해석</b>이라고 해요. 물의 온도는 검은색, 노란색, 흰색 컵 순으로 많이 올랐어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 

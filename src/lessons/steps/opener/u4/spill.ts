@@ -1,7 +1,7 @@
-// [Ⅳ단원 도입] u4l2 spill: 「쏟아진 얼음은 손으로 줍는데, 주스도 주울 수 있을까요?」
-// 내기: 쏟아진 얼음과 주스를 둘 다 손으로 주워 담을 수 있을까(정오를 매기지 않는다).
-// 손으로 하는 일: 얼음 세 조각을 눌러 접시에 담고, 주스를 눌러 집어 본다(집었다가 흘러내린다).
-// 도입은 까닭(입자의 배열)을 말하지 않는다. 바로 뒤의 온도 랩과 그릇 랩이 받는다.
+// [Ⅳ단원 도입] u4l2 spill: 「구슬 얼음과 물을 체에 부으면 어떻게 될까요?」
+// 내기: 구멍 뚫린 체에 구슬 모양 얼음과 물을 차례로 부으면 무엇이 체에 남을까(정오를 매기지 않는다).
+// 손으로 하는 일: 얼음 컵을 눌러 체에 붓고(얼음은 동그란 모양 그대로 체에 걸린다), 물 컵을 눌러 붓는다(물은 구멍으로 빠져나가 그릇 모양대로 고인다).
+// 고체는 모양이 일정해 걸러지고, 액체는 흘러서 모양이 바뀐다는 대조만 겪게 한다. 까닭(입자의 배열)은 바로 뒤의 온도 랩과 그릇 랩이 받는다.
 import { el } from "../../../../core/dom";
 import { haptic, HAPTIC } from "../../../../core/haptics";
 import type { OpenerCtx } from "../opener";
@@ -13,62 +13,66 @@ export function spill(c: OpenerCtx): void {
   const S = meta.stage;
   layer(c, "spillBase");
   const pct = (v: number, of: number): string => `${(v / of) * 100}%`;
-  let phase: "ask" | "ice" | "juice" | "done" = "ask";
-  let got = 0;
+  let phase: "ask" | "ice" | "water" | "done" = "ask";
   let pred = "";
+  const balls = M.ice.map((_, i) => c.stage.querySelector<SVGGElement>(`.opn-u4-sp-ice.i${i + 1}`));
 
-  M.ice.forEach(([x, y], i) => {
-    const g = c.stage.querySelector<SVGGElement>(`.opn-u4-sp-ice.i${i + 1}`);
+  const hit = (cls: string, label: string, [x, y, w, h]: readonly number[]): HTMLButtonElement => {
     const b = el("button", {
-      class: "opn-u4-hit ice",
-      attrs: { type: "button", "aria-label": `얼음 ${i + 1} 접시에 담기` },
-      style: { left: pct(x - M.iceHit / 2, S.w), top: pct(y - M.iceHit * 0.7, S.h), width: pct(M.iceHit, S.w), height: pct(M.iceHit * 1.4, S.h) },
+      class: `opn-u4-hit ${cls}`,
+      attrs: { type: "button", "aria-label": label },
+      style: { left: pct(x, S.w), top: pct(y, S.h), width: pct(w, S.w), height: pct(h, S.h) },
     }) as HTMLButtonElement;
-    b.addEventListener("click", () => {
-      if (phase !== "ice" || b.disabled) return;
-      b.disabled = true;
-      haptic(HAPTIC.tap);
-      const [tx, ty] = M.to[i];
-      if (g) g.style.transform = `translate(${tx - x}px, ${ty - y}px)`;
-      got += 1;
-      c.step.dataset.opnIce = String(got);
-      if (got === M.ice.length) {
-        phase = "juice";
-        c.step.dataset.opnPhase = "juice";
-        c.stage.classList.add("juice");
-        c.say("단단한 얼음은 <b>모양이 변하지 않고 그대로</b> 접시에 담겼어요! 이번에는 쏟아진 <b>주스</b>를 눌러 집어 보세요.");
-      }
-    });
     c.stage.append(b);
+    return b;
+  };
+  const cupBtn = hit("ice", "얼음 컵을 체에 붓기", M.cupHit);
+  const jugBtn = hit("water", "물 컵을 체에 붓기", M.jugHit);
+
+  cupBtn.addEventListener("click", () => {
+    if (phase !== "ice") return;
+    phase = "water";
+    haptic(HAPTIC.tap);
+    c.stage.classList.add("pour-ice");
+    // 얼음은 체 바닥의 자리로 하나씩 옮겨 간다(모양은 그대로)
+    balls.forEach((g, i) => {
+      const [x, y] = M.ice[i];
+      const [tx, ty] = M.to[i];
+      c.later(() => {
+        if (g) g.style.transform = `translate(${tx - x}px, ${ty - y}px)`;
+      }, 140 * i);
+    });
+    c.step.dataset.opnIce = String(M.ice.length);
+    c.later(() => {
+      c.stage.classList.remove("pour-ice");
+      c.stage.classList.add("iced");
+      c.step.dataset.opnPhase = "water";
+      c.say("구슬 얼음은 <b>동그란 모양 그대로</b> 체에 걸렸어요! 이번에는 오른쪽의 <b>물 컵</b>을 눌러 체에 부어 보세요.");
+    }, 1100);
   });
-  const [jx, jy, jw, jh] = M.juiceHit;
-  const juice = el("button", {
-    class: "opn-u4-hit juice",
-    attrs: { type: "button", "aria-label": "주스 집어 보기" },
-    style: { left: pct(jx, S.w), top: pct(jy, S.h), width: pct(jw, S.w), height: pct(jh, S.h) },
-  }) as HTMLButtonElement;
-  juice.addEventListener("click", () => {
-    if (phase !== "juice") return;
+
+  jugBtn.addEventListener("click", () => {
+    if (phase !== "water" || !c.stage.classList.contains("iced")) return;
     phase = "done";
     haptic(HAPTIC.tap);
-    c.stage.classList.add("scoop");
+    c.stage.classList.add("pour-water");
     c.later(() => {
       haptic(HAPTIC.correct);
       c.face("surprised");
+      c.stage.classList.remove("pour-water");
       c.stage.classList.add("done");
-      const head = pred.startsWith("얼음만") ? "예측대로" : "예측과 달리";
-      c.say(`${head} 주스는 손가락 사이로 <b>흘러내려서</b> 손으로 집어 담을 수 없어요! 얼음과 주스는 어떤 성질이 다른 걸까요?`);
+      const head = pred.startsWith("얼음은 체에 남고") ? "예측대로" : "예측과 달리";
+      c.say(`${head} 물은 체의 구멍으로 <b>빠져나가</b> 아래 그릇 모양대로 고였어요! 얼음과 물은 어떤 성질이 다른 걸까요?`);
       c.finish();
-    }, 1500);
+    }, 1700);
   });
-  c.stage.append(juice);
 
   c.step.dataset.opnPhase = "ask";
-  // choices[0]이 옳은 예측이고 "얼음만"으로 시작해야 한다(끝의 말머리가 pred.startsWith("얼음만")으로 가른다)
-  c.ask("얼음이 든 주스 컵이 넘어졌어요! 쏟아진 얼음과 주스를 손으로 집어서 접시에 담을 수 있을까요?", {
-    choices: ["얼음만 손으로 집어 담을 수 있다", "얼음과 주스 둘 다 집어 담을 수 있다", "둘 다 손으로 집어 담을 수 없다"],
+  // choices[0]이 옳은 예측이고 "얼음은 체에 남고"로 시작해야 한다(끝의 말머리가 pred.startsWith로 가른다)
+  c.ask("구멍 뚫린 체에 구슬 모양 얼음과 물을 차례로 부으면 어떻게 될까요?", {
+    choices: ["얼음은 체에 남고, 물은 체를 빠져나간다", "얼음과 물 둘 다 체에 남는다", "얼음과 물 둘 다 체를 빠져나간다"],
     neutral: true,
-    good: "좋아요! 먼저 쏟아진 <b>얼음</b>을 하나씩 눌러 접시에 담아 보세요.",
+    good: "좋아요! 먼저 왼쪽의 <b>얼음 컵</b>을 눌러 체에 부어 보세요.",
     onDone: (picked) => {
       pred = picked;
       phase = "ice";

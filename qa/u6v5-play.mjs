@@ -178,13 +178,13 @@ export const PLAY = {
   // ── 도입 ──
   async l1op(page, on) {
     await on("l1op-ask");
-    await choose(page, "서서");
+    await choose(page, "운동화");
     await W(page, 500);
     await on("l1op-picked");
-    await click(page, ".opn-u6-btn.stand");
+    await click(page, ".opn-u6-btn.shoe");
     await W(page, 1500);
     await on("l1op-mid");
-    await click(page, ".opn-u6-btn.flat");
+    await click(page, ".opn-u6-btn.wide");
     await opDone(page, on, "l1op");
   },
   async l3op(page, on) {

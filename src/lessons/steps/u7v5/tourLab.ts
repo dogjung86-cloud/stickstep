@@ -1,5 +1,5 @@
-// u7TourLab: 태양계 구성 천체(u7l1). 교과서 탐구 "태양계 구성 천체 자료 수집 및 분석하기"(228~229쪽)의 여섯 갈래
-// (태양, 행성, 왜소 행성, 소행성, 혜성, 위성)를 가로 화면의 3D 태양계에서 하나씩 찾아 만난다.
+// u7TourLab: 태양계 구성 천체(u7l1). 태양계를 이루는 여섯 갈래의 천체(태양, 행성, 왜소 행성, 소행성, 혜성, 위성)를
+// 가로 화면의 3D 태양계에서 하나씩 찾아 만나고, 돌아와서 특징 표를 채운다.
 // 3D 무대의 뼈대는 정본 steps/solarTour.ts에서 왔다(qa/u7v5-port-landscape.py가 옮겨 적었다). 2026-11-15 그래픽 손질부터는 이 파일이 정본이다
 // (작은 천체의 생김새, 화면 글자 이름표, 비율 알림, 특징 표의 작은 그림, 입구 그림을 이 파일에서 고쳤다. 옮겨 적기 도구를 다시 돌리지 않는다).
 // 바꾼 것: 세로 화면의 틀(한 화면, 찾을 것 여섯 가지, 판정, 결론은 조작 칸에) · 찾을 것(안쪽 2곳, 바깥 2곳, 소행성대 → 천체의 갈래 여섯)
@@ -35,7 +35,7 @@ interface Body {
 const BODIES: Body[] = [
   {
     key: "sun", kind: "sun", name: "태양", d: 0, r: 9, group: "star",
-    fact: "태양계에서 <b>유일하게 스스로 빛을 내는</b> 천체예요. 주로 수소와 헬륨으로 이루어져 있어요.",
+    fact: "수소와 헬륨 기체로 이루어진 거대한 별로, 태양계에서 <b>유일하게 스스로 빛과 열을 내요</b>.",
     dist: "지구에서 약 1억 5천만 km, 빛으로 8분 20초",
     size: "지름 약 139만 km · 지구의 109배",
     grav: "표면 중력 지구의 약 28배",
@@ -106,10 +106,10 @@ const BODIES: Body[] = [
     more: "태양에서 여덟 번째 행성이에요. 강한 바람이 불어 표면에 어두운 소용돌이인 대흑점이 생겼다 사라지곤 하며, 천왕성과 마찬가지로 희미한 고리와 많은 위성이 있어요.",
   },
   {
-    // 왜소 행성 선경험(레슨 마무리 문제·binSort의 '왜소 행성'을 투어에서 먼저 만난다).
+    // 왜소 행성 선경험(레슨 끝 문제와 분류 스텝의 '왜소 행성'을 투어에서 먼저 만난다).
     // BODIES에 있어도 미션(TERRA/JOVIAN/belt)에는 안 잡힘: 목표 로직 불변.
     key: "pluto", kind: "moon", name: "명왕성", d: 104, r: 0.55, group: "etc",
-    fact: "태양 주위를 도는 <b>왜소 행성</b>이에요. 모양은 둥글지만 <b>행성보다 크기가 작고 가벼워요</b>.",
+    fact: "공처럼 둥글지만 <b>행성보다 훨씬 작고 가벼워서</b> <b>왜소 행성</b>으로 분류하는 천체예요.",
     dist: "태양에서 약 59억 km, 지구의 약 40배",
     size: "지름 2,377 km · 달보다 작아요",
     grav: "중력 지구의 약 1/15",
@@ -120,7 +120,7 @@ const BODIES: Body[] = [
 const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav" | "more">> = {
   moon: {
     name: "달",
-    fact: "지구 둘레를 도는 <b>위성</b>이에요. 위성은 태양이 아니라 <b>행성의 둘레</b>를 도는 천체예요.",
+    fact: "<b>행성인 지구의 둘레</b>를 도는 천체라서 지구의 <b>위성</b>이라고 불러요.",
     dist: "지구에서 약 38만 km, 빛으로 1.3초",
     size: "지름 3,475 km · 지구의 0.27배",
     grav: "중력 지구의 1/6",
@@ -128,7 +128,7 @@ const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav
   },
   belt: {
     name: "소행성대",
-    fact: "모양이 울퉁불퉁하고 불규칙한 <b>소행성</b>들이 모여 있어요. 주로 <b>화성과 목성의 궤도 사이</b>에서 태양 둘레를 돌아요.",
+    fact: "크기도 모양도 제각각인 울퉁불퉁한 <b>소행성</b>들이 <b>대부분 화성과 목성 궤도 사이</b>에 띠처럼 모여 태양 둘레를 돌아요.",
     dist: "화성 궤도와 목성 궤도 사이의 띠",
     size: "가장 큰 세레스도 지름 약 940 km",
     grav: "너무 작아 중력이 아주 약해요",
@@ -136,7 +136,7 @@ const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav
   },
   comet: {
     name: "혜성",
-    fact: "<b>얼음과 먼지</b>로 이루어진 천체예요. 태양 둘레를 돌다가 태양에 가까워지면 <b>태양 반대쪽</b>으로 긴 꼬리가 생겨요.",
+    fact: "<b>얼음과 먼지</b>로 이루어진 작은 천체로, 태양 가까이를 지날 때 <b>태양 반대쪽으로 긴 꼬리</b>가 생겨요.",
     dist: "길쭉한 타원 궤도, 가까워졌다 멀어졌다",
     size: "핵의 지름은 보통 수 km",
     grav: "아주 약해요",
@@ -144,7 +144,7 @@ const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav
   },
 };
 
-// 찾을 천체 여섯 가지(교과서 탐구의 여섯 갈래)와 그 갈래에 드는 무대의 천체
+// 찾을 천체 여섯 가지(태양계 구성 천체의 여섯 갈래)와 그 갈래에 드는 무대의 천체
 const KINDS: { id: string; name: string; found: string; keys: string[] }[] = [
   { id: "sun", name: "태양", found: "스스로 빛나요", keys: ["sun"] },
   { id: "planet", name: "행성", found: "태양 주위를 돌아요", keys: ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"] },
@@ -154,7 +154,7 @@ const KINDS: { id: string; name: string; found: string; keys: string[] }[] = [
   { id: "dwarf", name: "왜소 행성", found: "행성보다 작아요", keys: ["pluto"] },
 ];
 const DEV_KEYS = ["sun", "earth", "moon", "belt", "comet", "pluto"];
-// 특징 표의 세 칸(교과서 탐구의 표). ok는 그 특징에 해당하는 갈래, hint는 틀렸을 때 가로 화면에서 본 것을 짚는 말
+// 특징 표의 세 칸. ok는 그 특징에 해당하는 갈래, hint는 틀렸을 때 가로 화면에서 본 것을 짚는 말
 const FEATURES: { id: string; head: string; q: string; ok: string[]; hint: string }[] = [
   { id: "shine", head: "스스로 빛남", q: "여섯 천체 중 <b>스스로 빛을 내는 천체</b>를 모두 고르고 아래 버튼을 눌러 보세요.", ok: ["sun"], hint: "행성과 위성(달)은 태양 빛을 반사해서 반쪽만 밝았어요. 스스로 빛을 내는 천체만 다시 골라 보세요." },
   { id: "sun", head: "태양 둘레", q: "이번에는 <b>태양 주위를 도는 천체</b>를 모두 골라 보세요.", ok: ["planet", "belt", "comet", "dwarf"], hint: "태양은 중심에 있고, 위성(달)은 행성인 지구 둘레를 돌아요. 태양 둘레를 도는 네 가지를 모두 골라 보세요." },
@@ -428,7 +428,7 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     syncMission();
   }
 
-  // 돌아온 뒤: 교과서 탐구의 특징 표를 채운다(특징마다 해당하는 천체를 모두 고른다. 틀리면 본 것을 짚어 주고 다시 고르게 한다)
+  // 돌아온 뒤: 특징 표를 채운다(특징마다 해당하는 천체를 모두 고른다. 틀리면 본 것을 짚어 주고 다시 고르게 한다)
   function startTable(): void {
     asked = true;
     host.dataset.u7Phase = "table";

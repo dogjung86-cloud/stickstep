@@ -470,7 +470,7 @@ if (!ONLY.length) {
   const lits = [...src.matchAll(/"((?:[^"\\\n]|\\.)*)"/g)].map((m) => m[1]).filter((t) => /[가-힣]/.test(t)).join("\n");
   ok(!/[—–]/.test(lits), "내용 파일에 대시");
   ok(!/교과서|분자/.test(lits), "내용 파일에 '교과서'나 '분자'");
-  ok(!/\p{Extended_Pictographic}/u.test(lits), "내용 파일에 이모지");
+  ok(!/\p{Extended_Pictographic}/u.test(lits.replace(/[✓✕›‹←→↗↘·]/g, "")), "내용 파일에 이모지"); // 방향 화살표 기호는 화면 글 검사와 같이 뺀다
 }
 
 // 화면 글 검사

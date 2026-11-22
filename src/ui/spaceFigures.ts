@@ -1,6 +1,6 @@
-// spaceFigures — VII 태양계 단원 퀴즈 SVG + recap 미니아트.
-// 파운드리 재질 문법: 근-동조 그라데이션 면 + 키라이트 + 발광(우주는 접촉 그림자 대신 글로우).
-// 태양 관련 그림은 실제 관측 사진(public/photos/, NASA·NOIRLab — CREDITS.md)을 SVG <image>로 임베드한다.
+// spaceFigures: VII 태양계 단원 퀴즈 SVG와 정리 카드 미니아트.
+// 파운드리 재질 문법: 근동조 그라데이션 면, 키라이트, 발광(우주는 접촉 그림자 대신 글로우).
+// 태양 관련 그림은 실제 관측 사진(public/photos/, NASA·NOIRLab, 출처는 CREDITS.md)을 SVG <image>로 임베드한다.
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -22,8 +22,8 @@ const star = (x: number, y: number, r = 1.2, o = 0.8): string =>
 
 // ── L3 태양 ──────────────────────────────────────────────────
 
-/** 흑점 확대 — 실제 관측 사진(Hinode G-band, 흑점+쌀알 무늬). 콜아웃은 좌하단 태그에서
- *  점선 리더로 흑점을 가리킨다(자체 구도 — 발문 "어두운 부분 (가)"와 짝). */
+/** 흑점 확대: 실제 관측 사진(Hinode G-band, 흑점과 쌀알 무늬). 콜아웃은 좌하단 태그에서
+ *  점선 리더로 흑점을 가리킨다(자체 구도, 발문 "어두운 부분 (가)"와 짝). */
 export function sunspotFig(): string {
   return `<svg viewBox="0 0 280 180" ${NS} fill="none" aria-hidden="true">
     <defs>
@@ -40,7 +40,7 @@ export function sunspotFig(): string {
   </svg>`;
 }
 
-/** 흑점 수 그래프(마무리 13) — 실관측 1990~2010 창.
+/** 흑점 수 그래프: 실관측 1990~2010 창.
  *  1990 부근은 22주기 극대(1989.9) 직후라 높고, 1996 무렵 극소(가), 2000 무렵 23주기 극대(나),
  *  2002 이중 봉우리 어깨, 2008~2009 깊은 극소 뒤 살짝 회복. 극대→극대 약 11년. */
 export function sunspotGraphFig(): string {
@@ -97,7 +97,7 @@ export function uranusTiltFig(): string {
 
 // ── L2 행성 분류 ─────────────────────────────────────────────
 
-/** 행성 두 무리 산점도 — 자체 구도: 가로축 질량·세로축 반지름(지구=1, NASA 공개 자료 기반).
+/** 행성 두 무리 산점도(자체 구도): 가로축 질량, 세로축 반지름(지구=1, NASA 공개 자료 기반).
  *  무리 안 상대 위치는 실제 대소 관계를 따른다(질량 수<화<금<지 / 천<해<토<목,
  *  반지름 수<화<금≈지 / 해≈천<토<목). */
 export function planetGroupsFig(): string {
@@ -131,7 +131,7 @@ export function planetGroupsFig(): string {
 
 // ── L4 일주·공전 ─────────────────────────────────────────────
 
-/** 북쪽 하늘 일주(동심원, 마무리 6) — 자체 구도.
+/** 북쪽 하늘 일주(동심원, 자체 구도).
  *  회전 화살표는 반드시 시계 반대 방향(오른쪽 옆구리에서 위로 감아 올라감):
  *  t=+50°(180,117.5) → t=−30°(193.7,39), sweep 0 = 화면 기준 반시계. 화살촉은 진행 방향(좌상). */
 export function northSkyFig(): string {
@@ -153,7 +153,7 @@ export function northSkyFig(): string {
   );
 }
 
-/** 남쪽 하늘 일주(수평 궤적 — "어느 하늘일까?" 퀴즈). */
+/** 남쪽 하늘 일주(수평 궤적, "어느 하늘일까?" 퀴즈). */
 export function southTrailFig(): string {
   let lines = "";
   let sd = 13;
@@ -181,8 +181,8 @@ export function southTrailFig(): string {
   );
 }
 
-/** 황도 12궁 미니(마무리 7 — 지구 ㉠ = 5월 위치, 그림 VII-8 기준).
- *  지구는 궤도 위쪽(천칭자리 앞) — 태양 너머(아래) 별자리 = 양자리(태양 쪽, 못 봄),
+/** 황도 12궁 미니(지구 ㉠ = 5월 위치).
+ *  지구는 궤도 위쪽(천칭자리 앞). 태양 너머(아래) 별자리 = 양자리(태양 쪽, 못 봄),
  *  지구 등 뒤(위) = 천칭자리(한밤 남쪽 하늘). 양(90°)↔천칭(270°)은 실제로도 마주 보는 짝. */
 export function zodiacQuizFig(): string {
   const names: [string, number][] = [
@@ -199,7 +199,7 @@ export function zodiacQuizFig(): string {
     const a = (deg * Math.PI) / 180;
     const x = cx + Math.cos(a) * R;
     const y = cy + Math.sin(a) * RY;
-    // 정답 유추 방지 — 모든 별자리를 같은 스타일로(강조 금지)
+    // 정답 유추 방지: 모든 별자리를 같은 스타일로(강조 금지)
     ring += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.3" fill="#9FB6DC"/>
       <text x="${x.toFixed(1)}" y="${(y - 7).toFixed(1)}" fill="#B4C7E6" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">${n}</text>`;
   }
@@ -220,6 +220,60 @@ export function zodiacQuizFig(): string {
       <stop offset="0" stop-color="#FFEDBE"/><stop offset="1" stop-color="#FFB03A"/>
     </radialGradient>
     <radialGradient id="spf-ea" cx=".35" cy=".3" r=".8">
+      <stop offset="0" stop-color="#9FC6F4"/><stop offset="1" stop-color="#2E6FD4"/>
+    </radialGradient>`,
+  );
+}
+
+/** 황도 12궁과 8월의 지구 (u7l4 문제, 2026-11-22, zodiacQuizFig는 시험이 쓰므로 그대로 두고 새로 그림).
+ *  위에서 내려다본 공전(시계 반대 방향). 별자리 k(0 양, 1 황소, … 11 물고기)는 화면 각 90° + 30°·k에 놓아 서쪽에서 동쪽 차례가 시계 반대 방향이 되게 한다.
+ *  8월에 태양은 게자리 쪽(왼쪽, 180°)에 보이므로 지구는 그 반대편(오른쪽, 0°)에 있다. 지구에서 태양 반대쪽(바깥)으로 뻗으면 염소자리(0°)다.
+ *  검산: 8월 1일 무렵 태양의 황경 약 129°(게자리), 한밤중 남쪽 하늘의 적경 약 21시(염소자리). 답을 알려 주는 보조 점선은 긋지 않는다.
+ *  글자는 설계 10.5px(폰 약 12px 이상), 정답 유추 방지로 모든 별자리는 같은 모양으로 그린다. */
+export function zodiacMonthFig(): string {
+  const names = ["양", "황소", "쌍둥이", "게", "사자", "처녀", "천칭", "전갈", "궁수", "염소", "물병", "물고기"];
+  const cx = 140, cy = 98, R = 80, RY = 62, ER = 40, ERY = 31;
+  let ring = "";
+  names.forEach((n, k) => {
+    const a = ((90 + 30 * k) * Math.PI) / 180;
+    const x = cx + Math.cos(a) * R;
+    const y = cy - Math.sin(a) * RY;
+    ring += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.3" fill="#9FB6DC"/>
+      <text x="${x.toFixed(1)}" y="${(y - 7).toFixed(1)}" fill="#B4C7E6" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">${n}</text>`;
+  });
+  // 지구의 공전 방향(시계 반대) 화살: 궤도 위 110°→140°
+  const at = (d: number): [number, number] => [cx + Math.cos((d * Math.PI) / 180) * ER, cy - Math.sin((d * Math.PI) / 180) * ERY];
+  let arc = "";
+  for (let d = 110; d <= 140.01; d += 3) {
+    const [x, y] = at(d);
+    arc += `${arc ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  const r1 = (140 * Math.PI) / 180;
+  const tx = -ER * Math.sin(r1), ty = -ERY * Math.cos(r1), tl = Math.hypot(tx, ty);
+  const ux = tx / tl, uy = ty / tl;
+  const [ex, ey] = at(140);
+  const head = `M${(ex + ux * 5).toFixed(1)} ${(ey + uy * 5).toFixed(1)}L${(ex - ux * 2 - uy * 4).toFixed(1)} ${(ey - uy * 2 + ux * 4).toFixed(1)}L${(ex - ux * 2 + uy * 4).toFixed(1)} ${(ey - uy * 2 - ux * 4).toFixed(1)}z`;
+  const [gx, gy] = at(0); // 8월의 지구
+  return panel(
+    280,
+    196,
+    `
+    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${RY}" stroke="#3D5378" stroke-width="1.3" stroke-dasharray="3 4"/>
+    ${ring}
+    <ellipse cx="${cx}" cy="${cy}" rx="${ER}" ry="${ERY}" stroke="#4A6290" stroke-width="1.2" stroke-dasharray="2 4"/>
+    <path d="${arc}" stroke="#7FA2D8" stroke-width="1.8"/><path d="${head}" fill="#7FA2D8"/>
+    <circle cx="${cx}" cy="${cy}" r="10" fill="url(#spf-sunm)"/>
+    <rect x="${cx - 14}" y="${cy + 13}" width="28" height="15" rx="7.5" fill="#0C1530" opacity=".85"/>
+    <text x="${cx}" y="${cy + 24}" fill="#FFC85E" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">태양</text>
+    <circle cx="${gx.toFixed(1)}" cy="${gy.toFixed(1)}" r="6" fill="url(#spf-eam)"/>
+    <!-- 지구 오른쪽 곁의 달 이름표(지구와 염소자리 점 사이 34px 안에 들어간다. 위의 염소, 아래의 궁수 이름과 겹치지 않는다) -->
+    <rect x="${(gx + 8).toFixed(1)}" y="${(gy - 7).toFixed(1)}" width="21" height="15" rx="7.5" fill="#0C1530" opacity=".88"/>
+    <text x="${(gx + 18.5).toFixed(1)}" y="${(gy + 4).toFixed(1)}" fill="#BFD8FF" font-size="11" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">8월</text>
+  `,
+    `<radialGradient id="spf-sunm" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#FFEDBE"/><stop offset="1" stop-color="#FFB03A"/>
+    </radialGradient>
+    <radialGradient id="spf-eam" cx=".35" cy=".3" r=".8">
       <stop offset="0" stop-color="#9FC6F4"/><stop offset="1" stop-color="#2E6FD4"/>
     </radialGradient>`,
   );
@@ -249,31 +303,31 @@ function phaseMoon(id: string, cx: number, cy: number, r: number, e: number): st
     <circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" stroke="#5A6C8E" stroke-width="1" opacity=".8"/>`;
 }
 
-/** 달 공전 8위치(마무리 9 — 태양 빛 오른쪽).
- *  라벨 배치는 자체 구도: (라)=오른쪽(삭)·(가)=위(상현)·(나)=왼쪽(망)·(다)=아래(하현).
- *  발문의 좌우 반전 함정((다) 하현을 "오른쪽이 밝다"로)과 짝.
- *  달은 실사 위에 햇빛 쪽(오른쪽) 반만 밝게, 궤도에는 도는 방향(시계 반대) 화살 둘(보기 "(라)에서 (가)를 지나…"가 방향을 전제한다).
- *  글자는 설계 10.5px 이상(폰 약 13px). */
-export function moonOrbitFig(): string {
-  const cx = 140;
+/** 달 공전 8위치, 햇빛은 왼쪽에서 (u7l5 문제, 2026-11-22. 예전 그림(햇빛이 오른쪽)을 뒤집지 않고 자리를 새로 계산했다).
+ *  위에서 내려다본 궤도, 달은 시계 반대 방향으로 돈다. 각 a는 오른쪽에서 시계 반대로 잰 화면 각이다.
+ *  태양 쪽(왼쪽, a = 180°)이 삭이고, 거기서 시계 반대로 90°씩: 아래(270°) 상현, 오른쪽(0°) 망, 위(90°) 하현.
+ *  이름표: (가) a = 225°(삭과 상현 사이, 초승달), (나) a = 0°(망, 보름달), (다) a = 90°(하현, 왼쪽 반원이 밝은 반달).
+ *  궤도의 달은 모두 햇빛 쪽(왼쪽) 반이 밝다(phaseMoon의 e = 270). 글자는 설계 10.5px 이상. */
+export function moonOrbitLeftFig(): string {
+  const cx = 150;
   const cy = 86;
   const R = 56;
   const RY = R * 0.86;
   let moons = "";
-  const labels: Record<number, string> = { 0: "(라)", 2: "(가)", 4: "(나)", 6: "(다)" };
+  const labels: Record<number, string> = { 5: "(가)", 0: "(나)", 2: "(다)" };
   for (let i = 0; i < 8; i++) {
     const a = (i / 8) * Math.PI * 2;
     const x = cx + Math.cos(a) * R;
     const y = cy - Math.sin(a) * RY;
-    moons += phaseMoon(`spf-mo${i}`, x, y, 8, 90); // 밝은 반구는 항상 태양(오른쪽) 쪽
+    moons += phaseMoon(`spf-ml${i}`, x, y, 8, 270); // 밝은 반구는 항상 태양(왼쪽) 쪽
     const lab = labels[i];
     if (lab) {
-      const lx = cx + Math.cos(a) * (R + 24);
-      const ly = cy - Math.sin(a) * (RY + 22);
+      // (가)는 바깥 대각선 자리에 두면 아래 달(상현)과 높이가 같아 그 달의 이름표로 읽힐 수 있어, 자기 달 바로 왼쪽에 둔다(2026-11-22 검산 지적)
+      const lx = i === 5 ? x - 21 : cx + Math.cos(a) * (R + 24);
+      const ly = i === 5 ? y : cy - Math.sin(a) * (RY + 22);
       moons += `<text x="${lx.toFixed(1)}" y="${(ly + 4).toFixed(1)}" fill="#DCE8FF" font-size="11" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">${lab}</text>`;
     }
   }
-  // 도는 방향 화살(궤도 위, 두 달 사이): 각 a0에서 a1(도)까지, 끝에 화살촉
   const at = (d: number): [number, number] => [cx + Math.cos((d * Math.PI) / 180) * R, cy - Math.sin((d * Math.PI) / 180) * RY];
   const arrow = (a0: number, a1: number): string => {
     let d = "";
@@ -298,24 +352,24 @@ export function moonOrbitFig(): string {
     176,
     `
     <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${RY}" stroke="#3D5378" stroke-width="1.4" stroke-dasharray="4 5"/>
-    ${arrow(102, 121)}${arrow(282, 301)}
+    ${arrow(147, 166)}${arrow(327, 346)}
     ${moons}
-    <circle cx="${cx}" cy="${cy}" r="11" fill="url(#spf-ea2)"/>
+    <circle cx="${cx}" cy="${cy}" r="11" fill="url(#spf-ea3)"/>
     <path d="M${cx - 4} ${cy - 2}q3-3 6-1t5 0" stroke="#7CA65A" stroke-width="1.6"/>
     <text x="${cx}" y="${cy + 26}" fill="#BFD8FF" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">지구</text>
     <g stroke="#FFC24E" stroke-width="3">
-      <path d="M268 62l-14 0M268 86l-14 0M268 110l-14 0"/>
+      <path d="M12 62l14 0M12 86l14 0M12 110l14 0"/>
     </g>
-    <path d="M254 62l6-3.4v6.8zM254 86l6-3.4v6.8zM254 110l6-3.4v6.8z" fill="#FFC24E"/>
-    <text x="258" y="132" fill="#FFD79E" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">태양 빛</text>
+    <path d="M32 62l-6-3.4v6.8zM32 86l-6-3.4v6.8zM32 110l-6-3.4v6.8z" fill="#FFC24E"/>
+    <text x="24" y="132" fill="#FFD79E" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">태양 빛</text>
   `,
-    `<radialGradient id="spf-ea2" cx=".35" cy=".3" r=".8">
+    `<radialGradient id="spf-ea3" cx=".35" cy=".3" r=".8">
       <stop offset="0" stop-color="#9FC6F4"/><stop offset="1" stop-color="#2E6FD4"/>
     </radialGradient>${MOON_BRIGHT}`,
   );
 }
 
-/** 위상 5모양(①~⑤) — 상현 찾기 퀴즈. 실사 달 위에 어두운 부분을 덮는다(②는 초승달: 오른쪽 가장자리만 밝다).
+/** 위상 5모양(①~⑤): 상현 찾기 퀴즈. 실사 달 위에 어두운 부분을 덮는다(②는 초승달: 오른쪽 가장자리만 밝다).
  *  예전에는 ②의 안쪽 호를 반지름 15의 원호로 써서 브라우저가 반지름을 20으로 키웠고, 두 호가 같은 반원을 지나 ①과 같은 빈 원이었다. */
 export function fivePhasesFig(): string {
   const kinds = [0, 50, 90, 180, 270]; // 삭, 초승달, 상현달, 망, 하현달
@@ -335,10 +389,10 @@ export function fivePhasesFig(): string {
 
 // ── L6 일식·월식 ─────────────────────────────────────────────
 
-/** 손전등—큰 공—작은 공 모형(마무리 10) — 월식형 배치(자체 구도).
+/** 손전등, 큰 공, 작은 공 모형: 월식형 배치(자체 구도).
  *  광축(y=62) 위에 세 물체가 정확히 일직선. 빛은 큰 공까지만 닿고,
  *  큰 공 뒤로 그림자가 길게 이어져 그 속의 작은 공 (가)가 통째로 어두워진다.
- *  그림자 경계: y = 62 ± (17 − 17(x−128)/292) — x=205에서 반높이 12.5 > 작은 공 r9(완전히 안). */
+ *  그림자 경계: y = 62 ± (17 − 17(x−128)/292). x=205에서 반높이 12.5 > 작은 공 r9(완전히 안). */
 export function eclipseModelFig(): string {
   return panel(
     280,
@@ -385,9 +439,73 @@ export function eclipseModelFig(): string {
   );
 }
 
-/** 지구 그림자 속 달(마무리 12 — (가) 경계 걸치기 / (나) 깊숙이. 자체 구도).
- *  기하 규칙: 그림자 반높이 h(x) = 17 − 0.0554(x−112) (꼭짓점 x≈419) — 경계선 y = 74 ± h(x).
- *  달의 이동 경로는 (196,74)를 지나는 +24.6° 직선(원본과 반대 기울기) —
+/** 태양, 달, 지구가 한 줄로 늘어선 두 경우의 모식도 (u7l6 문제, 2026-11-22. eclipseModelFig는 시험이 쓰므로 그대로 둔다).
+ *  (가) 위 띠: 태양(26, 52, r 20) · 달(170, 52, r 9.5) · 지구(300, 52, r 40). 달 그림자의 짙은 곳은 바깥 접선이 만나는 점(x = 170 + 144 × 9.5 ÷ 10.5 ≈ 300.3)까지,
+ *      옅은 곳은 안쪽 접선이 엇갈리는 점(x = 26 + 144 × 20 ÷ 29.5 ≈ 123.6)에서 기울기 9.5 ÷ 46.4 ≈ 0.205로 벌어진다.
+ *      지구 왼쪽 겉면(x ≈ 260)에서 짙은 곳의 반폭은 약 3(작은 점), 옅은 곳의 반폭은 약 28.6이라 지구의 낮인 쪽 위아래 끝은 그림자 밖이다. ㉠(263.3, 36)은 옅은 곳 안, 짙은 곳 밖이다.
+ *      달은 태양 쪽 반만 밝다(지구 쪽은 어둡다, 삭).
+ *  (나) 아래 띠: 태양(26, 168, r 20) · 지구(150, 168, r 18) · 달(262, 168, r 7). 지구 그림자는 바깥 접선(기울기 18 ÷ 1116)으로 아주 천천히 좁아져
+ *      달 자리(x 262)에서 반폭이 약 16.2라 반지름 7인 달이 통째로 들어간다. 옅은 그림자는 그리지 않는다. 달은 어둡게만 칠한다(붉은색은 답의 단서라 쓰지 않는다).
+ *  '본그림자, 반그림자'라는 말은 쓰지 않는다. 크기와 거리는 실제와 다르다(문두에 밝힌다). 글자는 설계 10.5px 이상. */
+export function eclipseZonesFig(): string {
+  const f = (v: number): string => v.toFixed(1);
+  // (가) 일식
+  const cyA = 52;
+  const pen = (x: number): number => 0.2049 * (x - 123.63); // 옅은 곳의 반폭
+  const umb = (x: number): number => 9.5 * (1 - (x - 170.7) / 129.6); // 짙은 곳의 반폭
+  const penPoly = `170,${f(cyA - 9.5)} 300,${f(cyA - pen(300))} 300,${f(cyA + pen(300))} 170,${f(cyA + 9.5)}`;
+  const umbPoly = `170.7,${f(cyA - 9.47)} 260,${f(cyA - umb(260))} 260,${f(cyA + umb(260))} 170.7,${f(cyA + 9.47)}`;
+  const mark: [number, number] = [263.3, 36];
+  // (나) 월식
+  const cyB = 168;
+  const eh = (x: number): number => 18 - (18 / 1116) * (x - 150); // 지구 그림자의 반폭
+  const shadowB = `150,${f(cyB - 18)} 338,${f(cyB - eh(338))} 338,${f(cyB + eh(338))} 150,${f(cyB + 18)}`;
+  const sun = (cy: number, id: string): string => `<circle cx="26" cy="${cy}" r="${20 * 1.6}" fill="url(#${id}g)"/><circle cx="26" cy="${cy}" r="20" fill="url(#${id}s)"/>`;
+  const lab = (x: number, y: number, t: string, c = "#BFD4F2"): string => `<text x="${f(x)}" y="${f(y)}" fill="${c}" font-size="10.5" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">${t}</text>`;
+  return panel(
+    344,
+    222,
+    `
+    ${star(96, 92)}${star(224, 92)}${star(62, 200)}${star(206, 212)}${star(330, 132)}
+    <path d="M10 112H334" stroke="#2A3A5C" stroke-width="1.2" stroke-dasharray="3 4"/>
+    <text x="12" y="20" fill="#DCE8FF" font-size="12" font-weight="800" font-family="Pretendard, sans-serif">(가)</text>
+    <text x="12" y="132" fill="#DCE8FF" font-size="12" font-weight="800" font-family="Pretendard, sans-serif">(나)</text>
+    <!-- (가) 태양, 달, 지구 -->
+    ${sun(cyA, "spf-ez")}
+    <polygon points="${penPoly}" fill="#AFC3EA" opacity=".16"/>
+    <polygon points="${umbPoly}" fill="#070B16" opacity=".85"/>
+    <circle cx="170" cy="${cyA}" r="9.5" fill="#8E96A6"/>
+    <path d="M170 ${cyA - 9.5}a9.5 9.5 0 0 0 0 19z" fill="#E8DCB8"/>
+    <clipPath id="spf-ezE"><circle cx="300" cy="${cyA}" r="40"/></clipPath>
+    <circle cx="300" cy="${cyA}" r="40" fill="url(#spf-eze)"/>
+    <g clip-path="url(#spf-ezE)">
+      <polygon points="${penPoly}" fill="#0A1226" opacity=".38"/>
+      <rect x="300" y="${cyA - 41}" width="41" height="82" fill="#06101F" opacity=".62"/>
+    </g>
+    <ellipse cx="261.2" cy="${cyA}" rx="2.4" ry="3.2" fill="#05070E"/>
+    <circle cx="${mark[0]}" cy="${mark[1]}" r="2.6" fill="#FFFFFF" stroke="#0A1226" stroke-width="1"/>
+    <path d="M${mark[0] - 3} ${mark[1] - 3}L244 22" stroke="#DCE8FF" stroke-width="1.1"/>
+    <text x="238" y="22" fill="#FFFFFF" font-size="13" font-weight="800" text-anchor="middle" font-family="Pretendard, sans-serif">㉠</text>
+    ${lab(26, 90, "태양", "#FFD79E")}${lab(170, 80, "달")}${lab(300, 106, "지구")}
+    <!-- (나) 태양, 지구, 달 -->
+    ${sun(cyB, "spf-ez")}
+    <polygon points="${shadowB}" fill="#070B16" opacity=".62"/>
+    <path d="M150 ${cyB - 18}L338 ${f(cyB - eh(338))}M150 ${cyB + 18}L338 ${f(cyB + eh(338))}" stroke="#3D5378" stroke-width="1" stroke-dasharray="3 4"/>
+    <circle cx="150" cy="${cyB}" r="18" fill="url(#spf-eze)"/>
+    <path d="M150 ${cyB - 18}a18 18 0 0 1 0 36z" fill="#06101F" opacity=".6"/>
+    <circle cx="262" cy="${cyB}" r="7" fill="#7B8496"/>
+    <circle cx="262" cy="${cyB}" r="7" fill="#0A1226" opacity=".55"/>
+    ${lab(26, 206, "태양", "#FFD79E")}${lab(150, 201, "지구")}${lab(262, 192, "달")}
+  `,
+    `<radialGradient id="spf-ezg" cx=".5" cy=".5" r=".5"><stop offset=".55" stop-color="rgba(255,190,90,.35)"/><stop offset="1" stop-color="rgba(255,190,90,0)"/></radialGradient>
+    <radialGradient id="spf-ezs" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFEDBE"/><stop offset="1" stop-color="#FFA82E"/></radialGradient>
+    <radialGradient id="spf-eze" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#8FC0F4"/><stop offset="1" stop-color="#1D4FA8"/></radialGradient>`,
+  );
+}
+
+/** 지구 그림자 속 달((가) 경계 걸치기, (나) 깊숙이. 자체 구도).
+ *  기하 규칙: 그림자 반높이 h(x) = 17 − 0.0554(x−112) (꼭짓점 x≈419), 경계선 y = 74 ± h(x).
+ *  달의 이동 경로는 (196,74)를 지나는 +24.6° 직선이다.
  *  (나)는 경로 위·본그림자 중심(깊숙이), (가)는 경로 위·아래쪽 경계에 정확히 걸친다:
  *  0.417t = 12.35 − 0.0504t → t=26.4 → (220,85), h(220)=11.0 = |y−74| 검산 일치(절반만 가려짐). */
 export function lunarPathFig(): string {
@@ -403,8 +521,8 @@ export function lunarPathUpFig(): string {
 function lunarPathSvg(sy: 1 | -1): string {
   // 경로 위 점: P(t) = (196 + 0.909t, 74 ± 0.417t)
   const P = (t: number): [number, number] => [196 + 0.909 * t, 74 + sy * 0.417 * t];
-  const [nx, ny] = P(0); // (나) — 본그림자 깊숙이
-  const [gx, gy] = P(26.4); // (가) — 본그림자 아래 경계 위(절반 노출)
+  const [nx, ny] = P(0); // (나): 그림자 깊숙이
+  const [gx, gy] = P(26.4); // (가): 그림자 아래 경계 위(절반 노출)
   const [p0x, p0y] = P(-36);
   const [p1x, p1y] = P(56);
   return panel(
@@ -637,7 +755,7 @@ export function spaceMiniArt(key: string): string {
         sunG + earthG + moonG,
       );
     case "clockmap": {
-      // 위상 지도(그림 Ⅶ-9의 두 고리): 안쪽 궤도 위의 달은 어느 자리에서나 햇빛 쪽(오른쪽) 반이 밝고,
+      // 위상 지도(두 고리): 안쪽 궤도 위의 달은 어느 자리에서나 햇빛 쪽(오른쪽) 반이 밝고,
       // 바깥의 작은 원이 그 자리에서 지구에서 보이는 모양이다(삭은 안 보임, 위 상현은 오른쪽, 왼쪽 망은 둥글게, 아래 하현은 왼쪽).
       // 예전에는 궤도 위에 보이는 모양을 그대로 얹어 망 자리 달이 통째로, 하현 자리 달이 태양 반대쪽이 밝았다(2026-11-15 그래픽 감사).
       const half = (x: number, y: number, side: "R" | "L"): string =>

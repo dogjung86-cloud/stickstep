@@ -176,17 +176,14 @@ const PLAYS = {
   u4l2: async (id) => {
     ok((await L.stepKind(page)) === "opener:u4-spill", `${id}: 새 도입이 아님(${await L.stepKind(page)})`);
     await at(id, "intro-ask");
-    await L.choose(page, "둘 다 집어"); // "얼음과 주스 둘 다 집어 담을 수 있다"
+    await L.choose(page, "둘 다 체에 남는다"); // "얼음과 물 둘 다 체에 남는다"
     await W(500);
     await at(id, "intro-picked");
-    for (let i = 0; i < 3; i++) {
-      await page.evaluate((k) => [...document.querySelectorAll(".screen.active .opn-u4-hit.ice")][k]?.click(), i);
-      await W(350);
-    }
-    ok(await L.waitPhase(page, "juice", 30), `${id} 도입: 얼음 셋을 담아도 주스 차례가 오지 않음`);
+    await L.click(page, ".opn-u4-hit.ice");
+    ok(await L.waitPhase(page, "water", 40), `${id} 도입: 얼음을 부어도 물 차례가 오지 않음`);
     await W(500);
     await at(id, "intro-mid");
-    await L.click(page, ".opn-u4-hit.juice");
+    await L.click(page, ".opn-u4-hit.water");
     await endOpener(id, "실험으로 알아보기");
     // 옮겨 담기 랩: 두 그릇에 담아 보고 기록한다. 물에서 한 번 틀리게 기록해 본다
     await W(700);
@@ -322,7 +319,7 @@ const PLAYS = {
   u4l4: async (id) => {
     ok((await L.stepKind(page)) === "opener:u4-wrap", `${id}: 새 도입이 아님(${await L.stepKind(page)})`);
     await at(id, "intro-ask");
-    await L.choose(page, "평평");
+    await L.choose(page, "그대로");
     await W(500);
     await L.hold(page, ".opn-u4-btn", 1300);
     await at(id, "intro-mid");
@@ -332,7 +329,7 @@ const PLAYS = {
     await at(id, "intro-bulge");
     await L.hold(page, ".opn-u4-btn", 3000);
     await endOpener(id, "실험으로 알아보기");
-    // 올리브유 랩
+    // 식용유 랩
     await W(500);
     await at(id, "olive-start");
     await L.click(page, ".u4x-olive-weigh");

@@ -75,18 +75,18 @@
 .opn-stage.play:not(.touched) .opn-u6-hit::after { animation: opnU6Ring 1.3s ease-out infinite; }
 @keyframes opnU6Ring { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.3); opacity: 0; } }
 
-/* 1. 얼음판 위의 북극곰 */
-.opn-u6-ice-bear { transition: transform .7s var(--ease-out); }
-.opn-u6-ice.flat .opn-u6-ice-bear { transition-duration: 1.4s; }
-.opn-u6-ice-flat, .opn-u6-ice.flat .opn-u6-ice-stand { opacity: 0; }
-.opn-u6-ice.flat .opn-u6-ice-flat { opacity: 1; }
-.opn-u6-ice-crack { opacity: 0; }
-.opn-u6-ice.cracked .opn-u6-ice-crack { opacity: 1; }
-.opn-u6-ice.cracked .opn-u6-ice-stand { transform-box: fill-box; transform-origin: 50% 100%; animation: opnU6Shake .3s ease-in-out 3; }
-@keyframes opnU6Shake { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-1.6deg); } 70% { transform: rotate(1.6deg); } }
+/* 1. 눈밭의 운동화와 설피: 아이 묶음이 걷고(transform), 그림 셋(idle, sink, up) 가운데 하나만 보인다 */
+.opn-u6-snow-kid { transition: transform .7s var(--ease-out); }
+.opn-u6-snow.wide .opn-u6-snow-kid { transition-duration: 1.4s; }
+.opn-u6-snow-sink, .opn-u6-snow-up, .opn-u6-snow.sink .opn-u6-snow-idle, .opn-u6-snow.wide .opn-u6-snow-idle { opacity: 0; }
+.opn-u6-snow.sink .opn-u6-snow-sink, .opn-u6-snow.wide .opn-u6-snow-up { opacity: 1; }
+.opn-u6-snow.sink .opn-u6-snow-sink { animation: opnU6Sink .35s ease-out; }
+@keyframes opnU6Sink { from { transform: translateY(-26px); } to { transform: translateY(0); } }
+.opn-u6-snow-deep, .opn-u6-snow-flat { opacity: 0; transition: opacity .4s; }
+.opn-u6-snow.deep .opn-u6-snow-deep, .opn-u6-snow.flat .opn-u6-snow-flat { opacity: 1; }
 
-/* 2. 뽁뽁이 */
-.opn-u6-wrap-cap { transform-box: fill-box; transform-origin: 50% 100%; }
+/* 2. 공기 짐볼: 기준점은 장면 코드가 view-box px로 넣는다(공이 바닥에 닿은 자리. 결 무늬 때문에 fill-box는 어긋난다) */
+.opn-u6-gym-ball { transform-box: view-box; }
 
 /* 3. 은박 풍선 */
 .opn-u6-foil-kid { transition: transform 1.1s var(--ease-out); }
@@ -106,7 +106,7 @@
 .opn-u6-pong-steam path { animation: opnU6Steam 1.8s ease-in-out infinite alternate; }
 @keyframes opnU6Steam { from { transform: translateY(4px); opacity: .5; } to { transform: translateY(-6px); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
-  .opn-u6-hit::after, .opn-u6-foil-snow path, .opn-u6-pong-steam path, .opn-u6-ice.cracked .opn-u6-ice-stand { animation: none; }
+  .opn-u6-hit::after, .opn-u6-foil-snow path, .opn-u6-pong-steam path, .opn-u6-snow.sink .opn-u6-snow-sink { animation: none; }
 }
 .u6x-step .bv-card.on { border-color: var(--subj-gas); background: var(--subj-gas-tint); box-shadow: 0 0 0 1px var(--subj-gas) inset; }
 .u6x-step .bv-card.done::after { background-color: var(--subj-gas); }

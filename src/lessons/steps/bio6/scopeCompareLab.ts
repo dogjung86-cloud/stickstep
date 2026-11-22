@@ -9,7 +9,7 @@
 // 판정: 세 표본을 다 본 뒤 "두 세포 나란히 비교하기" → 두 시야를 나란히 놓고 두 번 묻는다(첫 질문만 채점).
 // 그림: 입안 세포는 cheek.webp, 검정말잎은 같은 자리의 두 장(elodea-ao-plain: 물만, elodea-ao: 염색 뒤).
 //       핵의 자리(%)는 그림에서 잰 값이다(qa/make-bio6-assets.py 주석 참고). 그림을 바꾸면 함께 다시 잰다.
-// 현미경 조작 이름(조동 나사 따위)은 쓰지 않는다. 책 본문에 없는 말이다.
+// 현미경 조작 이름(조동 나사 따위)은 쓰지 않는다. 이 단원에서 배우지 않는 말이다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -193,7 +193,7 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
     min: 0,
     max: 100,
     value: 10,
-    label: "초점 맞추기", // 수정안 첫 안 "초점 조절 나사 돌리기"는 쓰지 않는다(머리말: 현미경 조작 이름은 책 본문에 없는 말이다)
+    label: "초점 맞추기", // 수정안 첫 안 "초점 조절 나사 돌리기"는 쓰지 않는다(머리말: 현미경 조작 이름은 이 단원에서 배우지 않는 말이다)
     onInput: (v) => setBlur(v),
     onChange: (v) => onFocusRelease(v),
   });

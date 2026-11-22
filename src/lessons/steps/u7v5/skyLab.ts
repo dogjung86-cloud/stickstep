@@ -988,7 +988,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
       guideMats.push(mat);
       domeGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mat));
     }
-    // 나란한 일주권 원(적위 65°, 25°, 0° — 모두 자전축에 수직인 나란한 원!)
+    // 나란한 일주권 원(적위 65°, 25°, 0°. 모두 자전축에 수직인 나란한 원)
     for (const [decDeg, color] of [[65, 0x94beff], [25, 0x74a4f5], [0, 0x63e6be]] as [number, number][]) {
       const segPts: T.Vector3[] = [];
       for (let i = 0; i <= 108; i++) {

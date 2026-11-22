@@ -288,16 +288,16 @@ console.log("u2l9 검색표 랩");
   const idle = async () => { await W(page, 150); await waitDs(page, "kplBusy", "0"); await W(page, 250); };
   const PLAN = [
     [[1, false]],
-    [[1, true], [2, "pass"]],
-    [[1, true], [2, "pass"], [3, true]],
-    [[1, true], [2, "pass"], [3, false], [4, true]],
-    [[1, true], [2, "pass"], [3, false], [4, false]],
+    [[1, true], [2, true]],
+    [[1, true], [2, false], [3, true]],
+    [[1, true], [2, false], [3, false], [4, false]],
+    [[1, true], [2, false], [3, false], [4, true]],
   ];
   for (let i = 0; i < PLAN.length; i++) {
     for (const [g, ans] of PLAN[i]) {
       await waitDs(page, "kplGate", String(g));
       await idle();
-      await page.locator(`${A} ${ans === "pass" ? ".kpl-pass" : ans ? ".kpl-yes" : ".kpl-no"}`).click();
+      await page.locator(`${A} ${ans ? ".kpl-yes" : ".kpl-no"}`).click();
     }
     await waitDs(page, "kplLanded", String(i + 1));
     await W(page, 300);

@@ -1,6 +1,6 @@
 // 중1 과학 Ⅰ단원(과학과 인류의 지속가능한 삶) 개념 컷 코드 그림.
 // 목록은 Ⅰ단원 v5 세션이 새 개념 스텝을 쓰며 낸 것(D:\Brilliant Science\output\g1-v5\u1\concept-cuts.md). 원본 발주 그림은 없다.
-import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, qmark, sparkle, squiggle, arrow, check } from "../../lib/sk.mjs";
+import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, qmark, sparkle, squiggle, arrow, check, drop } from "../../lib/sk.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT } from "../../lib/figure.mjs";
 import { earth, phone } from "../../lib/props.mjs";
 import { W, H, lerpx, thin } from "./common.mjs";
@@ -160,24 +160,67 @@ function cutU1l4b() {
   return sk;
 }
 
-/* ---------- u1l5: 깨끗한 지구를 다음 사람에게 ---------- */
+/* ---------- u1l5: 두 세대가 함께 새싹 돋은 지구를 돌본다(어른은 물을 주고 아이는 지구를 받친다) ---------- */
+// 물뿌리개: (x, y)는 위 손잡이를 쥔 손 자리, dir은 물줄기가 나가는 쪽(1 = 오른쪽), rot는 기울기(물이 아래로 쏟아지게).
+// 돌려주는 값은 물줄기 끝(꽃잎 모양 꼭지)의 화면 좌표다.
+function wateringCan(sk, x, y, s, dir, rot, color, sd) {
+  const deep = mix(color, "#000000", 0.2);
+  sk.at(x, y, s, () => {
+    sk.ink(curve([[-24, 12], [-16, -12], [0, -18], [16, -12], [24, 12]]), { w: 9, seed: sd, wob: 0.3 });
+    sk.ink(curve([[-38, 22], [-60, 30], [-62, 52], [-38, 62]]), { w: 9, seed: sd + 1, wob: 0.3 });
+    const spout = poly([[30, 34], [100, -6], [108, 6], [34, 58]], 4);
+    sk.fill(spout, color, { dx: 0, dy: 0, wob: 0.3, seed: sd + 2 });
+    sk.ink(spout, { w: 6, seed: sd + 3, wob: 0.3 });
+    const rose = ell(108, -2, 8, 16);
+    sk.fill(rose, deep, { dx: 0, dy: 0, wob: 0.3, seed: sd + 4 });
+    sk.ink(rose, { w: 6, seed: sd + 5, wob: 0.3 });
+    const body = poly([[-38, 8], [38, 8], [42, 76], [-42, 76]], 4);
+    sk.fill(body, color, { dx: 0.8, dy: 1, wob: 0.5, seed: sd + 6, tex: true });
+    sk.ink(body, { w: 9, seed: sd + 7, wob: 0.4 });
+    sk.ink(dense([[-36, 30], [36, 30]]), { w: 5, color: deep, seed: sd + 8, wob: 0.3 });
+  }, rot * dir, dir);
+  const c = Math.cos(rot * dir), si = Math.sin(rot * dir), lx = 110 * dir * s, ly = -2 * s;
+  return [x + lx * c - ly * si, y + lx * si + ly * c];
+}
+// 새싹: 뿌리 자리 (x, y)에서 위로 자란 줄기와 잎 셋
+function sprout(sk, x, y, k, sd) {
+  sk.ink(curve([[x, y], [x - 4 * k, y - 40 * k], [x + 2 * k, y - 82 * k]]), { w: 9, color: "#4E9A46", seed: sd, wob: 0.4 });
+  const leaf = (cx, cy, rx, ry, a, i) => sk.at(cx, cy, 1, () => {
+    const l = ell(0, 0, rx, ry);
+    sk.fill(l, i % 2 ? "#6BB55A" : "#58A84C", { dx: 0, dy: 0, wob: 0.4, seed: sd + 2 + i * 2, tex: 0.5 });
+    sk.ink(l, { w: 6, seed: sd + 3 + i * 2, wob: 0.4 });
+  }, a);
+  leaf(x - 30 * k, y - 46 * k, 30 * k, 14 * k, -0.45, 0);
+  leaf(x + 30 * k, y - 62 * k, 30 * k, 14 * k, 0.4, 1);
+  leaf(x + 4 * k, y - 96 * k, 13 * k, 20 * k, 0.1, 2);
+}
 function cutU1l5() {
   const sk = new Sk(W, H, { id: "e" });
   const GY = 672;
   ground(sk, GY, 11);
-  for (const [x, i] of [[90, 0], [870, 1], [520, 2]]) for (let k = 0; k < 4; k++) sk.ink(curve([[x + k * 10, GY], [x + k * 10 + 2, GY - 16], [x + k * 10 + ((k % 2) * 2 - 1) * 4, GY - 28]]), { w: 6, color: k % 2 ? "#4E9A46" : "#6BB55A", seed: 11 + i * 4 + k, wob: 0.4 });
-  // 어른(쌤)이 두 손으로 지구를 내민다
-  const P = pose({ elR: [92, -306], haR: [160, -300], elL: [60, -300], haL: [128, -282], tilt: 0.06 });
-  const fx = 300, fs = 0.74;
-  drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: false });
-  const ex = 506, ey = GY - 262;
-  earth(sk, ex, ey, 70, { seed: 21 });
-  for (const [x, y, r, i] of [[ex - 90, ey - 70, 14, 0], [ex + 84, ey - 84, 18, 1], [ex + 96, ey + 4, 11, 2]]) sparkle(sk, x, y, r, { seed: 30 + i });
-  handDot(sk, [ex - 70, ey + 30], C.skin, 34, 13); handDot(sk, [fx + fs * 160, GY - fs * 300], C.skin, 35, 13);
-  // 아이(학생)가 두 팔을 벌려 받는다
-  const Q = pose({ elL: [-78, -300], haL: [-130, -330], elR: [-40, -290], haR: [-96, -350], tilt: -0.08 });
-  const cx = 680, cs = 0.56;
-  drawFigure(sk, cx, GY, cs, Q, { ...STUDENT, name: "student" });
+  for (const [x, i] of [[60, 0], [890, 1]]) for (let k = 0; k < 4; k++) sk.ink(curve([[x + k * 10, GY], [x + k * 10 + 2, GY - 16], [x + k * 10 + ((k % 2) * 2 - 1) * 4, GY - 28]]), { w: 6, color: k % 2 ? "#4E9A46" : "#6BB55A", seed: 11 + i * 4 + k, wob: 0.4 });
+  // 땅 위에 놓인 지구, 꼭대기에 새싹
+  const ex = 480, er = 130, ey = GY - er - 4;
+  sk.fill(ell(ex, GY - 2, er * 0.9, 12), "#2A3A5E", { dx: 0, dy: 0, wob: 0.3, seed: 19, alpha: 0.12, tex: false });
+  earth(sk, ex, ey, er, { seed: 21 });
+  const top = ey - er + 6;
+  sprout(sk, ex, top, 1.1, 41);
+  // 어른(쌤): 왼쪽에서 물뿌리개를 들어 새싹에 물을 준다
+  const fx = 206, fs = 0.9;
+  const P = pose({ elR: [104, -362], haR: [178, -424], elL: [-40, -258], haL: [-58, -196], tilt: 0.05 });
+  drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
+  const hA = [fx + fs * 178, GY - fs * 424];
+  const tipA = wateringCan(sk, hA[0] + 10, hA[1] + 6, 1.08, 1, 0.5, "#4FA3E0", 51);
+  handDot(sk, hA, C.skin, 34, 14);
+  // 아이(학생): 오른쪽에서 지구 쪽을 보고 두 손으로 지구를 받친다(좌우를 뒤집어 그린다)
+  const cx = 708, cs = 0.74;
+  const Q = pose({ elR: [86, -322], haR: [170, -306], elL: [70, -270], haL: [140, -244], tilt: -0.08 });
+  drawFigure(sk, cx, GY, cs, Q, { ...STUDENT, name: "student", mirror: true });
+  // 물방울: 물뿌리개 끝에서 새싹 뿌리 쪽으로 떨어진다
+  [[0.3, 0], [0.62, 1], [0.92, 2]].forEach(([t, i]) => drop(sk, lerpx(tipA[0], ex - 14, t), lerpx(tipA[1], top - 6, t) + 12, 0.75, { seed: 70 + i }));
+  // 자라는 새싹을 알리는 반짝임
+  sparkle(sk, ex - 70, top - 150, 15, { seed: 90 });
+  sparkle(sk, ex + 92, top - 128, 11, { seed: 91 });
   return sk;
 }
 
@@ -187,6 +230,6 @@ export function cuts() {
     { name: "u1l2b", theme: "civ", sk: cutU1l2b(), alt: "빼곡한 공책을 꺾은선 그림으로 바꿔 그리고 가장 높이 올라간 선을 짚는 학생", cap: "자료를 그림으로 바꾸면 결론이 보여요" },
     { name: "u1l4", theme: "civ", sk: cutU1l4(), alt: "폰으로 길을 비추자 화면 속 길 위에 화살표가 겹쳐 보이는 장면", cap: "화면 속 길 위에 길잡이 화살표가 겹쳐 보여요" },
     { name: "u1l4b", theme: "civ", sk: cutU1l4b(), alt: "비가 오자 밖에서 폰을 눌러 멀리 있는 집의 창문을 닫는 장면", cap: "멀리 있는 창문도 폰으로 닫을 수 있어요" },
-    { name: "u1l5", theme: "civ", sk: cutU1l5(), alt: "어른이 깨끗이 닦은 지구를 아이에게 건네는 장면", cap: "깨끗한 지구를 다음 세대에게" },
+    { name: "u1l5", theme: "civ", sk: cutU1l5(), alt: "어른이 새싹 돋은 지구에 물을 주고, 맞은편의 아이가 두 손으로 지구를 받쳐 함께 돌보는 장면", cap: "지금 세대와 다음 세대가 함께 지구를 돌봐요" },
   ];
 }

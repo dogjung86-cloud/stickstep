@@ -2758,6 +2758,8 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .ex-bogi-row { display: flex; gap: 8px; padding: 4.5px 0; font-size: 14.5px; line-height: 1.5; color: var(--ink); word-break: keep-all; }
 .ex-bogi-row + .ex-bogi-row { border-top: 1px dashed var(--n200); }
 .ex-bogi-label { flex: none; font-weight: 800; color: var(--blue); }
+/* 레슨 문제의 〈보기〉 상자(quiz.ts가 보기 단추 묶음 .opts 맨 위에 넣는다): 단추 묶음의 위 여백과 겹치지 않게 */
+.opts > .q-bogi { margin: 0 0 4px; }
 .ex-multi-hint { margin-top: 10px; font-size: 12.5px; font-weight: 700; color: var(--n500); text-align: center; }
 .ex-bank { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; justify-content: center; }
 .ex-chip { padding: 11px 17px; border-radius: 99px; border: 1.5px solid var(--line); background: #fff; font-size: 15px; font-weight: 700; color: var(--ink); box-shadow: var(--sh-card); transition: border-color .15s, background .15s, transform .12s var(--spring-soft); }

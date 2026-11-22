@@ -2,7 +2,7 @@
 // 한 통찰: 첨단 과학기술 네 가지가 저마다 하는 일(겹쳐 보이기, 사물끼리 잇기, 학습해 알아보기, 유전정보 쓰기)을 장면에서 먼저 겪고 이름을 붙인다.
 // 조작: 장면 카드 넷 + 기술 끄기와 켜기. 끈 채로는 일이 되지 않는 모습(실패)이 먼저 보인다. 켜면 장면이 바뀌고 그 뒤에 이름이 뜬다.
 // 흐름: 네 장면을 모두 켜 본다 → 판정(첨단 바이오 장면을 무대에 남기고 이름을 가린 채 묻는다) → 결론.
-// 장면은 교과서의 활용 사례를 따른다(가구 배치 앱, 집 밖에서 가전제품 제어, 맞춤형 치료제). 인공지능은 도입(말을 알아듣는 스피커)과 겹치지 않게 사진 알아보기로 잡았다.
+// 장면은 생활 속 활용 사례로 골랐다(책상을 비추면 입체 태양계가 떠오르는 앱, 집 밖에서 가전제품 제어, 맞춤형 치료제). 인공지능은 도입(말을 알아듣는 스피커)과 겹치지 않게 사진 알아보기로 잡았다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -19,10 +19,10 @@ const KEYS: Key[] = ["ar", "iot", "ai", "bio"];
 
 const TECH: Record<Key, { card: string; name: string; off: string; on: string }> = {
   ar: {
-    card: "빈 방에 가구 놓기",
+    card: "책상 위 태양계 보기",
     name: "증강 현실",
-    off: "스마트폰으로 빈 방을 비추고 있어요. 아직은 화면도 빈 방 그대로예요. <b>기술 켜기</b>를 눌러 보세요.",
-    on: "실제 방 모습 위에 <b>가상 소파</b>가 겹쳐 보여요! 이런 기술이 바로 <b>증강 현실</b>이에요.",
+    off: "스마트폰으로 책상을 비추고 있어요. 아직은 화면에도 책상만 보여요. <b>기술 켜기</b>를 눌러 보세요.",
+    on: "실제 책상 모습 위에 <b>가상 태양계</b>가 겹쳐 떠올랐어요! 이런 기술이 바로 <b>증강 현실</b>이에요.",
   },
   iot: {
     card: "집 밖에서 불 켜기",
@@ -40,20 +40,23 @@ const TECH: Record<Key, { card: string; name: string; off: string; on: string }>
     card: "내 몸에 맞는 약",
     name: "첨단 바이오",
     off: "체질이 다른 두 사람이 똑같은 약을 처방받았어요. <b>기술 켜기</b>를 눌러 보세요.",
-    on: "개인의 <b>유전정보</b>를 분석해 사람마다 몸에 맞는 약을 만들어요! 이 기술이 <b>첨단 바이오</b>예요.",
+    on: "사람마다 다른 <b>유전정보</b>를 읽어 그 사람 몸에 맞는 약을 골라 만들어요! 이 기술이 <b>첨단 바이오</b>예요.",
   },
 };
 
-// 방 한 칸(벽, 바닥, 창, 화분). ox, oy는 왼쪽 위, k는 크기 비.
-const room = (ox: number, oy: number, w: number, h: number, px = 0.8): string => {
-  const fy = oy + h * 0.68;
+// 책상 한 칸(벽, 책상 판과 다리, 공책, 연필꽂이). ox, oy는 왼쪽 위, w와 h는 칸의 크기.
+const desk = (ox: number, oy: number, w: number, h: number): string => {
+  const ty = oy + h * 0.6; // 책상 판의 윗면
+  const legTop = ty + 8;
+  const legH = oy + h - legTop - 3;
   return `<rect x="${ox}" y="${oy}" width="${w}" height="${h}" rx="8" fill="#1B2E4C"/>
-    <rect x="${ox}" y="${fy}" width="${w}" height="${oy + h - fy}" fill="#2A3F63"/>
-    <line x1="${ox}" y1="${fy}" x2="${ox + w}" y2="${fy}" stroke="#4A618A" stroke-width="1.4"/>
-    <rect x="${ox + w * 0.12}" y="${oy + h * 0.14}" width="${w * 0.3}" height="${h * 0.3}" rx="3" fill="#8FC5FF" opacity=".75"/>
-    <line x1="${ox + w * 0.27}" y1="${oy + h * 0.14}" x2="${ox + w * 0.27}" y2="${oy + h * 0.44}" stroke="#1B2E4C" stroke-width="1.6"/>
-    <rect x="${ox + w * px}" y="${fy - 12}" width="12" height="12" rx="2" fill="#C98B5B"/>
-    <path d="M${ox + w * px + 6} ${fy - 12} q-9 -12 -2 -22 q2 10 2 22 q0 -12 8 -18 q0 10 -8 18" fill="#3FBF7F"/>`;
+    <rect x="${ox}" y="${oy + h - 10}" width="${w}" height="10" rx="4" fill="#2A3F63"/>
+    <rect x="${ox + w * 0.16}" y="${legTop}" width="6" height="${legH}" fill="#8A5A34"/>
+    <rect x="${ox + w * 0.84 - 6}" y="${legTop}" width="6" height="${legH}" fill="#8A5A34"/>
+    <rect x="${ox + w * 0.08}" y="${ty}" width="${w * 0.84}" height="9" rx="2.5" fill="#C98B5B" stroke="#8A5A34" stroke-width="1.2"/>
+    <rect x="${ox + w * 0.2}" y="${ty - 5}" width="${w * 0.3}" height="5" rx="1.5" fill="#8FC5FF"/>
+    <rect x="${ox + w * 0.64}" y="${ty - 18}" width="${w * 0.12}" height="18" rx="2.5" fill="#3FBF7F"/>
+    <path d="M${ox + w * 0.67} ${ty - 18} l-2 -9 M${ox + w * 0.7} ${ty - 18} l1 -11 M${ox + w * 0.73} ${ty - 18} l3 -8" stroke="#FFD766" stroke-width="2" stroke-linecap="round"/>`;
 };
 
 // 첨단 바이오 장면의 두 사람: 다른 칸과 약의 색(c, deep), 옷, 머리.
@@ -64,21 +67,27 @@ const BIO = [
 
 const SCENE: Record<Key, string> = {
   ar: `
-    <text x="84" y="32" text-anchor="middle" class="u1x-lb">실제 방</text>
-    ${room(14, 42, 140, 138)}
+    <text x="84" y="32" text-anchor="middle" class="u1x-lb">실제 책상</text>
+    ${desk(14, 42, 140, 138)}
     <path d="M160 112 h24 m-7 -6 l7 6 l-7 6" fill="none" stroke="#8FA3C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <rect x="196" y="20" width="128" height="192" rx="16" fill="#0A1220" stroke="#C9D5E8" stroke-width="2"/>
-    ${room(204, 40, 112, 150, 0.87)}
+    ${desk(204, 40, 112, 150)}
     <text x="260" y="34" text-anchor="middle" class="u1x-lb sm">스마트폰 화면</text>
-    <g class="on" transform="translate(-6 0)">
-      <rect x="222" y="112" width="66" height="26" rx="7" fill="#FF8FA3"/>
-      <rect x="216" y="124" width="78" height="24" rx="8" fill="#FF6F8B"/>
-      <rect x="212" y="118" width="14" height="30" rx="6" fill="#FF8FA3"/>
-      <rect x="284" y="118" width="14" height="30" rx="6" fill="#FF8FA3"/>
-      <rect x="208" y="106" width="94" height="46" rx="10" fill="none" stroke="#fff" stroke-width="1.4" stroke-dasharray="4 4"/>
-      <text x="255" y="172" text-anchor="middle" class="u1x-lb hi">가상 소파</text>
+    <g class="on">
+      <path d="M244 128 L230 84 H290 L276 128 Z" fill="#63E6BE" opacity=".12"/>
+      <ellipse cx="260" cy="84" rx="44" ry="13" fill="none" stroke="#8CE8D2" stroke-width="1.4" opacity=".9"/>
+      <ellipse cx="260" cy="84" rx="30" ry="9" fill="none" stroke="#8CE8D2" stroke-width="1.4" opacity=".9"/>
+      <ellipse cx="260" cy="84" rx="17" ry="5" fill="none" stroke="#8CE8D2" stroke-width="1.4" opacity=".9"/>
+      <circle cx="260" cy="84" r="12" fill="#FFC94A" opacity=".28"/>
+      <circle cx="260" cy="84" r="7.5" fill="#FFB938" stroke="#FFE08A" stroke-width="1.2"/>
+      <circle cx="275" cy="87.8" r="2.8" fill="#9FD3FF"/>
+      <circle cx="232" cy="88" r="3.6" fill="#5FA8FF"/>
+      <circle cx="301" cy="78.6" r="5" fill="#F2B880"/>
+      <path d="M296 78.6 h10" stroke="#E8C79A" stroke-width="1.4" stroke-linecap="round"/>
+      <rect x="210" y="62" width="100" height="44" rx="10" fill="none" stroke="#fff" stroke-width="1.4" stroke-dasharray="4 4"/>
+      <text x="260" y="172" text-anchor="middle" class="u1x-lb hi">가상 태양계</text>
     </g>
-    <g class="off"><text x="260" y="172" text-anchor="middle" class="u1x-lb dim">빈 방 그대로</text></g>`,
+    <g class="off"><text x="260" y="172" text-anchor="middle" class="u1x-lb dim">책상 그대로</text></g>`,
   iot: `
     <text x="62" y="52" text-anchor="middle" class="u1x-lb">집 밖</text>
     <rect x="32" y="64" width="60" height="104" rx="11" fill="#0A1220" stroke="#C9D5E8" stroke-width="2"/>
@@ -291,7 +300,7 @@ export const techLab: StepRenderer = (host, step, api) => {
     paint(true);
     f.say("네 가지 기술을 모두 켜 봤어요! 화면의 장면을 보고 알맞은 기술을 골라 보세요.");
     f.slot.ask(
-      "개인의 <b>유전정보</b>를 분석해 사람마다 몸에 맞는 약을 만드는 기술은 무엇인가요?",
+      "사람마다 다른 <b>유전정보</b>를 읽어 몸에 맞는 약을 만드는 기술은 무엇인가요?",
       [{ t: "첨단 바이오", ok: true }, { t: "증강 현실" }, { t: "사물 인터넷" }],
       (ok) => api.recordQuiz(ok),
       { why: "생물의 유전정보나 생명 현상을 활용하는 기술이 <b>첨단 바이오</b>예요.", onNext: finish },

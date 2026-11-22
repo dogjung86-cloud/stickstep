@@ -1,8 +1,8 @@
-// [중1 Ⅳ v5] u4l4 올리브유 랩: 「얼리면 질량과 부피는 어떻게 될까요?」
-// 책의 탐구를 손으로 한다: 유리병의 올리브유 높이를 색 테이프로 표시하고 질량을 잰 뒤, 얼음과 소금에 넣어 얼리고, 높이를 다시 표시하고 질량을 다시 잰다.
+// [중1 Ⅳ v5] u4l4 식용유 랩: 「얼리면 질량과 부피는 어떻게 될까요?」
+// 이 탐구를 손으로 한다: 유리병의 식용유 높이를 색 테이프로 표시하고 질량을 잰 뒤, 얼음과 소금에 넣어 얼리고, 높이를 다시 표시하고 질량을 다시 잰다.
 // 지금 단원에는 이 탐구를 해 보는 랩이 없는데 문제가 이 실험을 묻고 있어서 새로 넣었다.
 // 조작: 높이 표시하고 재기 → 예측(질량) → 꾹 눌러 얼리기 → 바로 잴지 물기를 닦고 잴지 고르기 → 판정 하나(부피가 줄어든 까닭).
-// 닦지 않고 바로 재면 차가운 병 겉에 맺힌 물방울 때문에 숫자가 커진다(책의 주의: 물기를 닦은 후 즉시 측정). 닦고 다시 재게 한다.
+// 닦지 않고 바로 재면 차가운 병 겉에 맺힌 물방울 때문에 숫자가 커진다(물기를 닦은 뒤 바로 재는 것이 이 실험의 주의점이다). 닦고 다시 재게 한다.
 // 통찰 하나: 응고해도 질량은 그대로이고 부피만 준다. 입자 창에서 입자의 수는 그대로이고 사이만 가까워진다.
 // 수치(12.60 g)는 이 랩에서 정한 값이다.
 //
@@ -19,7 +19,7 @@ import { bvBtn } from "../bio6/b6Lab";
 import { A, beaker, bottle, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type Pt, type U4Step } from "./u4Kit";
 
 const MASS = "12.60 g";
-const MASS_W = "13.80 g"; // 같은 병에 같은 높이까지 담은 물의 질량(올리브유보다 조금 무겁다). 얼기 전과 뒤가 같다는 것만 보인다
+const MASS_W = "13.80 g"; // 같은 병에 같은 높이까지 담은 물의 질량(식용유보다 조금 무겁다). 얼기 전과 뒤가 같다는 것만 보인다
 const WET = "12.74 g"; // 닦지 않고 쟀을 때(겉에 맺힌 물방울의 질량이 더해진다)
 const ZERO = "0.00 g";
 const NEED = 3000;
@@ -31,7 +31,7 @@ const BW = 15; // 병 바깥 반폭
 const BOT = SC.y; // 병 바닥(저울판 윗면)
 const BODY = 36; // 병 몸통의 위(그 위로 목 9px)
 const OIL_BOT = BOT - 4.4; // 기름 바닥(유리의 두꺼운 바닥 띠 위)
-const LIQ = 112; // 얼리기 전 올리브유 기둥의 높이
+const LIQ = 112; // 얼리기 전 식용유 기둥의 높이
 const DROP = 14; // 얼어서 내려간 높이(기둥의 약 12%)
 const RISE = 13; // 물이 얼어서 올라간 높이(물의 응고 부피 팽창 예외)
 const L0 = OIL_BOT - LIQ; // 얼리기 전 액면(빨간 테이프)
@@ -136,7 +136,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
   const solC = pairUp(liqC, solidPts(cC));
   const hexC = pairUp(liqC, hexIcePts(cC));
   const lvl0 = topOf(liqC); // 창 안의 액면: 얼리기 전
-  const lvl1 = topOf(solC); // 얼린 뒤(올리브유)
+  const lvl1 = topOf(solC); // 얼린 뒤(식용유)
   const lvlW = topOf(hexC); // 얼린 뒤(물 → 얼음, 높아짐)
 
   const dot = (p: Pt, cls: string): string =>
@@ -289,7 +289,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
   };
 
   const weigh = bvBtn("main u4x-olive-weigh", "처음 높이와 질량 기록하기");
-  const hold = u4Hold(lab, "꾹 눌러 올리브유 얼리기", (ms) => {
+  const hold = u4Hold(lab, "꾹 눌러 식용유 얼리기", (ms) => {
     inBath(true);
     t = Math.min(1, t + ms / NEED);
     paint();
@@ -301,12 +301,12 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     cLine.setAttribute("stroke", "#6C8CFF");
     ghost.setAttribute("opacity", "0.85");
     f.pips(1);
-    f.say("올리브유가 하얗게 굳으면서 높이가 <b>낮아졌어요</b>! 낮아진 높이에 파란색 테이프를 붙였으니, 이제 얼린 뒤의 질량을 재 볼까요?");
+    f.say("식용유가 하얗게 굳으면서 높이가 <b>낮아졌어요</b>! 낮아진 높이에 파란색 테이프를 붙였으니, 이제 얼린 뒤의 질량을 재 볼까요?");
     f.slot.setControls(el("div", { class: "u4x-row" }, rush, again));
     api.setCTA("다시 재 보세요", { enabled: false });
     return false;
   });
-  // 얼린 병을 어떻게 잴지는 학생이 정한다. 닦지 않고 바로 재면 겉에 맺힌 물방울 때문에 숫자가 커진다(책의 주의).
+  // 얼린 병을 어떻게 잴지는 학생이 정한다. 닦지 않고 바로 재면 겉에 맺힌 물방울 때문에 숫자가 커진다(이 실험의 주의점).
   const again = bvBtn("u4x-olive-again", "병 겉면의 물기를 닦고 재기");
   const rush = bvBtn("u4x-olive-rush", "꺼내서 그대로 바로 재기");
   rush.addEventListener("click", () => {
@@ -323,14 +323,14 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     tape1.setAttribute("opacity", "1");
     read.textContent = MASS;
-    f.say(`얼리기 전 높이에 <b>빨간색 테이프</b>를 붙이고 질량(<b>${MASS}</b>)을 기록했어요. 이제 올리브유를 얼려 볼까요?`);
+    f.say(`얼리기 전 높이에 <b>빨간색 테이프</b>를 붙이고 질량(<b>${MASS}</b>)을 기록했어요. 이제 식용유를 얼려 볼까요?`);
     tm.later(
       () =>
         // 첫 보기는 "그대로"로 시작해야 한다(다시 잰 뒤의 말머리가 pred.startsWith("그대로")로 가른다)
-        u4Predict(lab, "액체 올리브유가 얼어서 고체가 되면 <b>질량</b>은 어떻게 될까요?", ["그대로 일정하다", "얼기 전보다 늘어난다", "얼기 전보다 줄어든다"], (picked) => {
+        u4Predict(lab, "액체 식용유가 얼어서 고체가 되면 <b>질량</b>은 어떻게 될까요?", ["그대로 일정하다", "얼기 전보다 늘어난다", "얼기 전보다 줄어든다"], (picked) => {
           pred = picked;
           // 병은 버튼을 누른 순간 비커로 옮겨 간다(inBath). 그래서 아직 '넣었어요'가 아니라 '넣어 얼려요'다
-          f.say("유리병을 <b>얼음과 소금</b>이 든 비커에 넣어 얼려요. 버튼을 꾹 눌러 올리브유가 얼 때 높이와 입자 배열이 어떻게 달라지는지 관찰해 보세요.");
+          f.say("유리병을 <b>얼음과 소금</b>이 든 비커에 넣어 얼려요. 버튼을 꾹 눌러 식용유가 얼 때 높이와 입자 배열이 어떻게 달라지는지 관찰해 보세요.");
           f.slot.setControls(hold);
           api.setCTA("꾹 눌러 얼려 보세요", { enabled: false });
         }),
@@ -353,7 +353,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     wmark.setAttribute("opacity", "1");
     host.dataset.u4OliveCmp = "1";
     const head = pred.startsWith("그대로") ? "예측대로" : "예측과 달리";
-    f.say(`${head} 물기를 닦고 재니 질량은 얼기 전과 똑같이 <b>${MASS}</b>이에요! 반면 올리브유의 높이(부피)는 줄어들었네요.`);
+    f.say(`${head} 물기를 닦고 재니 질량은 얼기 전과 똑같이 <b>${MASS}</b>이에요! 반면 식용유의 높이(부피)는 줄어들었네요.`);
     tm.later(judge, 1100);
   });
 
@@ -409,8 +409,8 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
 
   function judgeWater(): void {
     f.slot.ask(
-      "물이 얼어 얼음이 될 때 올리브유와 <b>달랐던 점</b>은 무엇인가요?",
-      [{ t: "질량은 그대로인데 부피가 늘어났어요", ok: true }, { t: "질량과 부피가 모두 늘어났어요" }, { t: "올리브유처럼 부피가 줄어들었어요" }],
+      "물이 얼어 얼음이 될 때 식용유와 <b>달랐던 점</b>은 무엇인가요?",
+      [{ t: "질량은 그대로인데 부피가 늘어났어요", ok: true }, { t: "질량과 부피가 모두 늘어났어요" }, { t: "식용유처럼 부피가 줄어들었어요" }],
       (ok) => api.recordQuiz(ok),
       {
         why: "물도 얼 때 입자 수가 그대로라 <b>질량은 변하지 않아요</b>. 다만 대부분의 물질과 달리 <b>부피가 늘어나요</b>.",
@@ -422,9 +422,9 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
 
   function judge(): void {
     f.slot.ask(
-      "액체 올리브유가 얼었을 때 <b>부피가 줄어든</b> 까닭은 무엇인가요?",
+      "액체 식용유가 얼었을 때 <b>부피가 줄어든</b> 까닭은 무엇인가요?",
       // 정답 보기는 오답 카드의 정답 줄에 한 줄로 들게 둔다(두 줄이면 틀렸을 때 조작 칸 208px를 넘는다)
-      [{ t: "규칙적으로 배열되며 입자 사이가 가까워져서", ok: true }, { t: "올리브유를 이루는 입자의 개수가 줄어들어서" }, { t: "올리브유 입자 하나하나의 크기가 작아져서" }],
+      [{ t: "규칙적으로 배열되며 입자 사이가 가까워져서", ok: true }, { t: "식용유를 이루는 입자의 개수가 줄어들어서" }, { t: "식용유 입자 하나하나의 크기가 작아져서" }],
       (ok) => api.recordQuiz(ok),
       {
         why: "상태가 변해도 입자의 크기와 개수는 변하지 않아요. 액체가 고체로 응고할 때 <b>입자 사이의 거리</b>가 가까워지기 때문에 부피가 줄어들어요.",
@@ -436,7 +436,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
   paint();
   jitter();
   f.slot.setControls(weigh);
-  f.say("뚜껑 있는 유리병에 <b>올리브유</b>를 담아 저울에 올렸어요. 먼저 높이와 질량을 기록해요.");
+  f.say("뚜껑 있는 유리병에 <b>식용유</b>를 담아 저울에 올렸어요. 먼저 높이와 질량을 기록해요.");
   api.setCTA("높이와 질량을 기록하세요", { enabled: false });
   return lab.cleanup;
 };

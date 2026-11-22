@@ -1,22 +1,22 @@
 // [Ⅰ단원 도입] u1l2 suncups: 「어느 컵이 가장 뜨거워질까?」
 // 형식: 내기를 걸고, 해를 꾹 눌러 햇빛을 비추며 온도계를 지켜본다. 끝에서 예측과 견준다.
-//   1 처음 화면: 검은, 파란, 흰 색종이로 감싼 물컵 셋과 해. 바로 예측(정오를 매기지 않는다).
+//   1 처음 화면: 검은, 노란, 흰 색종이로 감싼 물컵 셋과 해. 바로 예측(정오를 매기지 않는다).
 //   2 해를 누르고 있는 동안만 햇빛이 비치고 세 온도계가 저마다 다른 빠르기로 오른다. 손을 떼면 멈춘다.
-//   3 끝: 가장 뜨거운 것은 파란 컵이다. 검은 컵만 파라솔 그늘에 있었기 때문이다(파라솔은 처음부터 그림에 있다).
+//   3 끝: 가장 뜨거운 것은 노란 컵이다. 검은 컵만 파라솔 그늘에 있었기 때문이다(파라솔은 처음부터 그림에 있다).
 //     "이러면 색깔 탓인지 알 수 없다"로 맺어, 바로 뒤의 변인 통제 분류(무엇을 다르게, 무엇을 같게)로 넘긴다.
 // 도입은 공정한 실험의 결과(검은 컵이 가장 많이 오른다)를 말하지 않는다. 그 답은 뒤의 자료 해석 스텝이 준다.
-// 사실: 햇빛을 받는 두 컵 가운데는 어두운 파란 쪽이 흰 쪽보다 빛을 더 흡수해 더 많이 오른다. 그늘의 컵은 거의 오르지 않는다.
+// 사실: 햇빛을 받는 두 컵 가운데는 노란 쪽이 흰 쪽보다 빛을 더 흡수해 더 많이 오른다(흰 종이는 빛을 거의 다 되비친다). 그늘의 컵은 거의 오르지 않는다.
 // 온도계에는 숫자가 없다(기둥 높이만 견준다). 움직임은 누르는 동안의 rAF 하나다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { OpenerCtx } from "./opener";
 
-type Cup = "black" | "blue" | "white";
-const CUPS: Cup[] = ["black", "blue", "white"];
-const NAME: Record<Cup, string> = { black: "검은 컵", blue: "파란 컵", white: "흰 컵" };
+type Cup = "black" | "yellow" | "white";
+const CUPS: Cup[] = ["black", "yellow", "white"];
+const NAME: Record<Cup, string> = { black: "검은 컵", yellow: "노란 컵", white: "흰 컵" };
 const START = 0.2;
-const END: Record<Cup, number> = { blue: 0.94, white: 0.66, black: 0.3 }; // 기둥 높이(관 길이 대비)
+const END: Record<Cup, number> = { yellow: 0.94, white: 0.52, black: 0.32 }; // 기둥 높이(관 길이 대비). 랩의 값과 같은 차례: 노란 컵 > 흰 컵 > 그늘의 검은 컵
 const NEED = 2400; // 다 오르는 데 눌러야 하는 시간(ms)
 
 export function sunCups(c: OpenerCtx): void {
@@ -54,8 +54,8 @@ export function sunCups(c: OpenerCtx): void {
     c.stage.classList.add("done");
     c.face("surprised");
     haptic(HAPTIC.correct);
-    const head = pred === "blue" ? "예측대로" : "예측과 달리";
-    c.say(`${head} <b>파란 컵</b>의 물이 가장 뜨거워졌어요! 그런데 검은 컵만 <b>그늘</b>에 놓여 있었네요. 조건을 공평하게 맞춰 다시 실험해 볼까요?`);
+    const head = pred === "yellow" ? "예측대로" : "예측과 달리";
+    c.say(`${head} <b>노란 컵</b>의 물이 가장 뜨거워졌어요! 그런데 검은 컵만 <b>그늘</b>에 놓여 있었네요. 조건을 공평하게 맞춰 다시 실험해 볼까요?`);
     c.finish();
   }
 
@@ -111,7 +111,7 @@ export function sunCups(c: OpenerCtx): void {
 
   c.step.dataset.opnPhase = "ask";
   paint();
-  c.ask("검은색, 파란색, 흰색 색종이로 감싼 물컵이에요. 햇빛을 비추면 어느 컵이 가장 뜨거워질까요?", {
+  c.ask("검은색, 노란색, 흰색 색종이로 감싼 물컵이에요. 햇빛을 비추면 어느 컵이 가장 뜨거워질까요?", {
     choices: CUPS.map((k) => NAME[k]),
     neutral: true,
     // 해는 무대 그림 속에 있다. 폰에서는 말풍선 위, 넓은 화면에서는 왼쪽이라 "위 그림"이라 하지 않고 "그림 속"이라 부른다.

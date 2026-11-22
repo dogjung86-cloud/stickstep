@@ -799,11 +799,13 @@ const FIG: any = (function () {
   };
 
   // ---------- 예, 아니요 순서도 ----------
+  // 기본 순서도(2026-11-22): 레슨 u2l9 검색표 랩(steps/bio6/kingdomPathLab.ts)과 같은 네 물음이다. A 원핵생물계, B 식물계, C 동물계, D 균계, E 원생생물계.
+  //   "균계, 식물계, 동물계가 아닌 무리인가?"처럼 답을 미리 아는 물음은 쓰지 않는다. 원생생물계는 마지막 물음에서 아니요로 남는다.
   const FLOW_DEF = [
-    { q: '유전물질이 핵막으로 싸여 있는가?', no: 'A' },
-    { q: '균계, 식물계, 동물계가 아닌 무리인가?', yes: 'B' },
-    { q: '광합성을 하는가?', yes: 'C' },
-    { q: '세포벽이 없고 운동성이 있는가?', yes: 'D', no: 'E' },
+    { q: '핵막으로 둘러싸인 핵이 있는가?', no: 'A' },
+    { q: '엽록체가 있어 광합성을 하고, 뿌리, 줄기, 잎이 있는가?', yes: 'B' },
+    { q: '여러 세포로 된 몸에 세포벽이 없고, 먹이를 섭취하는가?', yes: 'C' },
+    { q: '세포벽이 있고, 죽은 생물이나 배설물을 분해하여 양분을 얻는가?', yes: 'D', no: 'E' },
   ];
   FIG.flow = p => {
     p = p || {};
@@ -2968,13 +2970,17 @@ const FIG: any = (function () {
     return { w: pw, h, body: s };
   }
 
+  // widths(2026-11-22 덧붙임): 판마다 폭을 따로 줄 때의 배열(판 수와 같아야 하고, 합과 사이 8이 376을 넘으면 기본 폭으로 되돌린다).
+  //   한 줄에 칸이 셋인 판(온대 숲의 생산자 셋)은 폭 176에 들어가지 않아 u2e547이 [112, 252]로 쓴다. 주지 않으면 예전 그대로다.
   FIG.l10_web = p => {
     p = p || {};
     let panels = (Array.isArray(p.panels) ? p.panels : []).filter(q => q && typeof q === 'object').slice(0, 3);
     if (!panels.length) panels = [{ nodes: [{ id: 'a', t: 'A', row: 0 }, { id: 'b', t: 'B', row: 1 }, { id: 'c', t: 'C', row: 2 }], edges: [['a', 'b'], ['b', 'c']] }];
     const n = panels.length, pw = n === 1 ? 240 : n === 2 ? 176 : 120;
+    let pws = Array.isArray(p.widths) && p.widths.length === n ? p.widths.map(w => Math.max(100, +w || pw)) : panels.map(() => pw);
+    if (pws.reduce((a, b) => a + b, 0) + (n - 1) * 8 > 376) pws = panels.map(() => pw);
     const ph = Math.max(120, Math.min(220, +p.h || 218));
-    const row = K.rowOf(panels.map(q => webPanel(q, pw, ph)), 8);
+    const row = K.rowOf(panels.map((q, i) => webPanel(q, pws[i], ph)), 8);
     return svg(row.w + 4, r2(row.h + 4), K.move(2, 2, row.body), '생물 사이의 먹이 관계');
   };
 })(FIG);

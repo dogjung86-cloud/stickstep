@@ -1,11 +1,12 @@
 // [중1 Ⅳ v5] u4l1 확산 랩: 「젓지 않아도 잉크가 퍼질까요?」
-// 책의 탐구 둘을 손으로 한다. ① 물이 든 비커 바닥에 스포이트로 잉크를 넣고 젓지 않는다. ② 접시에 BTB 용액 방울을 늘어놓고 가운데에 식초를 떨어뜨린 뒤 뚜껑을 덮는다.
+// 확산 탐구 둘을 손으로 한다. ① 물이 든 비커 바닥에 스포이트로 잉크를 넣고 젓지 않는다. ② 접시에 물에 적신 푸른색 리트머스 종이 조각을 늘어놓고 가운데에 식초를 떨어뜨린 뒤 뚜껑을 덮는다.
 // 통찰 하나: 아무도 젓지 않고 바람도 없는데 퍼진다(입자가 스스로 움직인다).
 // 조작: 예측(정오를 매기지 않는다) → 잉크 넣기 → 저을지 가만히 둘지 고르기 → 시간 막대를 밀어 지켜보기 → 식초 떨어뜨리기 → 시간 막대 → 판정 하나.
-// 저으면 금방 섞이지만 무엇 때문에 섞였는지 알 수 없다(책의 주의: 물이 움직이지 않게). 새 물로 다시 하게 한다.
+// 저으면 금방 섞이지만 무엇 때문에 섞였는지 알 수 없다(물이 움직이지 않게 하는 것이 이 실험의 조건이다). 새 물로 다시 하게 한다.
 // 시간 막대는 되돌아가지 않는다(지나간 시간은 그대로다). 판정은 무대에 남은 것(바깥 고리가 늦게 변했다)으로 답할 수 있는 것만 묻는다.
 // 그림(2026-11-15 다시 그림, 감사 상·중 후보): 비커의 물은 거의 맑게 두고 잉크는 진한 남색 구름으로 바닥에서 번진다(넣기 전에는 잉크가 없다).
-//   접시는 책처럼 초록 BTB 방울이고, 가운데의 식초 입자(보라)가 사방으로 퍼져 나가 입자가 닿은 방울만 노랗게 변한다(책 그림 Ⅳ-1).
+//   접시에는 물에 적신 푸른색 리트머스 종이 조각이 놓여 있고, 가운데의 식초 입자(보라)가 사방으로 퍼져 나가 입자가 닿은 조각만 붉게 변한다.
+//   식초는 산성이라 푸른색 리트머스 종이를 붉게 바꾼다(지시약과 퍼지는 물질의 짝).
 //   판정으로 넘어가면 무대를 두 칸('조금 뒤', '한참 뒤')으로 나눠 바뀐 차례와 퍼진 입자를 함께 남긴다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -24,7 +25,7 @@ const T_MID = 0.38; // 비교판 왼쪽 칸('조금 뒤')의 시간
 
 /** 식초 입자 무리의 퍼진 정도(가운데가 가장 빽빽하고 바깥으로 갈수록 성긴 무리의 크기). 처음에 빠르고 갈수록 느려진다. */
 const sigma = (t: number): number => 61 * Math.pow(Math.max(0, t), 0.7);
-/** 방울이 노랗게 변하는 때: 무리의 크기(×1.55)가 그 방울까지 닿을 때(가운데 농도의 3할쯤이 닿을 때). */
+/** 종이 조각이 붉게 변하는 때: 무리의 크기(×1.55)가 그 조각까지 닿을 때(가운데 농도의 3할쯤이 닿을 때). */
 const reachT = (d: number): number => Math.pow(d / (1.55 * 61), 1 / 0.7);
 
 export const u4InkLab: StepRenderer = (host, step, api) => {
@@ -44,12 +45,12 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
       a: 0.92 - 0.3 * up,
     };
   });
-  // BTB 방울: 안쪽 고리 6, 바깥 고리 10. 식초 입자의 앞머리가 닿는 때에 노랗게 변한다
-  const btb: (Pt & { at: number })[] = [];
+  // 리트머스 종이 조각: 안쪽 고리 6, 바깥 고리 10. 식초 입자의 앞머리가 닿는 때에 붉게 변한다
+  const btb: (Pt & { at: number; rot: number })[] = [];
   const ring = (n: number, r: number, a0: number): void => {
     for (let i = 0; i < n; i++) {
       const a = (i / n) * Math.PI * 2 + a0;
-      btb.push({ x: DISH.x + r * Math.cos(a), y: DISH.y + r * Math.sin(a), at: reachT(r) + 0.012 * (i % 4) });
+      btb.push({ x: DISH.x + r * Math.cos(a), y: DISH.y + r * Math.sin(a), at: reachT(r) + 0.012 * (i % 4), rot: ((i * 37) % 50) - 25 });
     }
   };
   ring(6, R_IN, -Math.PI / 2);
@@ -74,16 +75,17 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
   };
 
   const liqD = beakerLiquidD(BX, BY, BW, BH, 0.8);
-  // 접시 한 장(가운데 0,0 기준). k는 크기 배율, live면 움직일 입자와 방울에 class를 붙인다
+  // 접시 한 장(가운데 0,0 기준). k는 크기 배율, live면 움직일 입자와 종이 조각에 class를 붙인다
   const dishSvg = (t: number, live: boolean): string => {
     const drops = btb
       .map((b, i) => {
-        const yel = t >= b.at;
+        const red = t >= b.at;
         const x = (b.x - DISH.x).toFixed(1), y = (b.y - DISH.y).toFixed(1);
-        return `<g class="u4x-ink-btb${yel ? " yel" : ""}"${live ? ` data-i="${i}"` : ""}>
-          <circle cx="${x}" cy="${y}" r="7.2" fill="url(#u4inkG)" stroke="#2B8A3E" stroke-width="1"/>
-          <circle class="u4x-ink-btby" cx="${x}" cy="${y}" r="7.2" fill="url(#u4inkY)" stroke="#E8A200" stroke-width="1"/>
-          <ellipse cx="${(+x - 2.4).toFixed(1)}" cy="${(+y - 2.6).toFixed(1)}" rx="2.3" ry="1.6" fill="#fff" opacity=".75"/>
+        // 물에 적신 리트머스 종이 한 조각(12×12, 조금씩 돌려 놓는다). 푸른 종이 위에 붉은 종이를 겹쳐 두고 닿으면 붉은 쪽을 보인다
+        return `<g class="u4x-ink-pap${red ? " red" : ""}"${live ? ` data-i="${i}"` : ""} transform="translate(${x} ${y}) rotate(${b.rot})">
+          <rect x="-6" y="-6" width="12" height="12" rx="1.6" fill="url(#u4inkB)" stroke="#364FC7" stroke-width="1"/>
+          <rect class="u4x-ink-papr" x="-6" y="-6" width="12" height="12" rx="1.6" fill="url(#u4inkR)" stroke="#C92A2A" stroke-width="1"/>
+          <path d="M-4 -3.6 h5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
         </g>`;
       })
       .join("");
@@ -112,8 +114,8 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
       <radialGradient id="u4inkBlob" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="${INK}" stop-opacity="1"/><stop offset="0.55" stop-color="${INK}" stop-opacity="0.55"/><stop offset="1" stop-color="${INK}" stop-opacity="0"/></radialGradient>
       <linearGradient id="u4inkWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF4FB"/><stop offset="1" stop-color="#D3E0EF"/></linearGradient>
       <radialGradient id="u4inkDish" cx="0.42" cy="0.36" r="0.75"><stop offset="0" stop-color="#FAFCFE"/><stop offset="0.75" stop-color="#E7EDF5"/><stop offset="1" stop-color="#D2DCE8"/></radialGradient>
-      <radialGradient id="u4inkG" cx="0.38" cy="0.32" r="0.75"><stop offset="0" stop-color="#B2F2BB"/><stop offset="0.55" stop-color="#51CF66"/><stop offset="1" stop-color="#2F9E44"/></radialGradient>
-      <radialGradient id="u4inkY" cx="0.38" cy="0.32" r="0.75"><stop offset="0" stop-color="#FFF3BF"/><stop offset="0.55" stop-color="#FFD43B"/><stop offset="1" stop-color="#F59F00"/></radialGradient>
+      <linearGradient id="u4inkB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#91A7FF"/><stop offset="1" stop-color="#4263EB"/></linearGradient>
+      <linearGradient id="u4inkR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA8A8"/><stop offset="1" stop-color="#E03131"/></linearGradient>
       <radialGradient id="u4inkV" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#FFFDF3"/><stop offset="1" stop-color="#FFE8A3"/></radialGradient>
       <clipPath id="u4inkClip"><path d="${liqD}"/></clipPath>
       <linearGradient id="u4inkTube" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F4F8FC" stop-opacity=".9"/><stop offset=".5" stop-color="#C9D6E6" stop-opacity=".55"/><stop offset="1" stop-color="#EEF3F9" stop-opacity=".85"/></linearGradient>
@@ -153,7 +155,7 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
   const load = q<SVGRectElement>(".u4x-ink-load");
   const live = q<SVGGElement>(".u4x-ink-live");
   const pair = q<SVGGElement>(".u4x-ink-pair");
-  const btbEls = Array.from(live.querySelectorAll<SVGGElement>(".u4x-ink-btb"));
+  const btbEls = Array.from(live.querySelectorAll<SVGGElement>(".u4x-ink-pap"));
   const vpEls = Array.from(live.querySelectorAll<SVGCircleElement>(".u4x-ink-vp"));
   const vin = q<SVGCircleElement>(".u4x-ink-vin");
   const lid = q<SVGGElement>(".u4x-ink-lid");
@@ -184,14 +186,14 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     tint.setAttribute("opacity", (0.5 * Math.pow(Math.max(0, t), 1.25)).toFixed(3));
     host.dataset.u4Ink = t.toFixed(2);
   }
-  /** 접시: 식초 입자를 시간 t의 자리로, 입자가 닿은 방울만 노랗게. */
+  /** 접시: 식초 입자를 시간 t의 자리로, 입자가 닿은 종이 조각만 붉게. */
   function paintDish(t: number): void {
     vpEls.forEach((c, k) => {
       const p = vpAt(vp[k], t);
       c.setAttribute("cx", p.x.toFixed(1));
       c.setAttribute("cy", p.y.toFixed(1));
     });
-    btbEls.forEach((g, k) => g.classList.toggle("yel", t >= btb[k].at));
+    btbEls.forEach((g, k) => g.classList.toggle("red", t >= btb[k].at));
     host.dataset.u4Dish = t.toFixed(2);
   }
 
@@ -224,7 +226,7 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     return r;
   };
 
-  /** 판정 무대: 같은 접시를 '조금 뒤'와 '한참 뒤' 두 칸으로. 안쪽 고리만 노란 때와 모두 노란 때, 그때마다 식초 입자가 퍼진 곳을 함께 둔다. */
+  /** 판정 무대: 같은 접시를 '조금 뒤'와 '한참 뒤' 두 칸으로. 안쪽 고리만 붉은 때와 모두 붉은 때, 그때마다 식초 입자가 퍼진 곳을 함께 둔다. */
   function showPair(): void {
     const k = 0.82;
     const cell = (cx: number, label: string, t: number): string => `
@@ -310,7 +312,7 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     sceneA.style.display = "none";
     sceneB.style.display = "";
-    f.say("초록색 <b>BTB 용액</b> 방울은 식초 성분을 만나면 <b>노란색</b>으로 변해요. 접시 한가운데에 식초를 떨어뜨리고 뚜껑을 덮어 보세요.");
+    f.say("물에 적신 <b>푸른색 리트머스 종이</b> 조각은 식초 성분을 만나면 <b>붉은색</b>으로 변해요. 접시 한가운데에 식초를 떨어뜨리고 뚜껑을 덮어 보세요.");
     f.slot.setControls(addVin);
     api.setCTA("식초를 떨어뜨리고 지켜보세요", { enabled: false });
   });
@@ -322,11 +324,11 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
     paintDish(0);
     tm.later(() => lid.setAttribute("opacity", "1"), 350);
     tm.later(() => {
-      f.say("뚜껑을 덮어 <b>바람을 완전히 막았어요</b>. 시간 막대를 오른쪽으로 밀면서 어느 방울부터 색이 변하는지 살펴보세요.");
+      f.say("뚜껑을 덮어 <b>바람을 완전히 막았어요</b>. 시간 막대를 오른쪽으로 밀면서 어느 종이 조각부터 색이 변하는지 살펴보세요.");
       f.slot.setControls(
         timeBar("u4x-ink-tb", (t) => paintDish(t), () => {
           f.pips(2);
-          f.say("가운데 식초에서 <b>가까운 방울부터 바깥쪽으로</b> 차례차례 노랗게 변했어요!");
+          f.say("가운데 식초에서 <b>가까운 조각부터 바깥쪽으로</b> 차례차례 붉게 변했어요!");
           tm.later(judge, 700);
         }).el,
       );
@@ -336,11 +338,11 @@ export const u4InkLab: StepRenderer = (host, step, api) => {
   function judge(): void {
     showPair();
     f.slot.ask(
-      "가장자리인 <b>바깥쪽 방울</b>이 안쪽 방울보다 더 늦게 노랗게 변한 까닭은 무엇인가요?",
+      "가장자리인 <b>바깥쪽 종이 조각</b>이 안쪽 조각보다 더 늦게 붉게 변한 까닭은 무엇인가요?",
       [
         { t: "식초 입자가 스스로 퍼져 나가는 데 시간이 걸려서", ok: true },
-        { t: "바깥쪽 BTB 용액 방울이 더 진해서" },
-        { t: "뚜껑이 바깥쪽 방울을 누르고 있어서" },
+        { t: "바깥쪽 종이 조각이 더 두꺼워서" },
+        { t: "뚜껑이 바깥쪽 조각을 누르고 있어서" },
       ],
       (ok) => api.recordQuiz(ok),
       {

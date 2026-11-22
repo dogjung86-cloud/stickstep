@@ -14,6 +14,8 @@ interface QuizStep {
   prompt: string;
   figure?: string;
   figureDark?: boolean;
+  /** ㄱㄴㄷ 합답형의 〈보기〉 문장. 그림 다음(그림이 없으면 발문 다음)에 시험 화면과 같은 보기 상자(.ex-bogi)로 그린다 */
+  bogi?: string[];
   options?: string[];
   answer: number | boolean | number[];
   /** false면 표시 순서를 저작 순서로 고정 — ㄱㄴㄷ 조합·(가)(나)·①~⑤ 라벨형 보기용 */
@@ -39,9 +41,26 @@ export const quiz: StepRenderer = (host, step, api) => {
       ),
     );
   }
+  // 〈보기〉 상자는 보기 단추 묶음(.opts) 맨 위에 넣는다. 폰에서는 그림 아래·단추 위에 보이고, 넓은 화면에서는
+  // 단추와 함께 오른쪽 노트로 간다(왼쪽 그림 아래로 떨어져 화면 밖에 걸리지 않게. core/wide.ts는 .opts 앞의 요소만 왼쪽에 둔다)
+  let bogiEl: HTMLElement | null = null;
+  if (q.bogi?.length) {
+    const label = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"];
+    bogiEl = el(
+      "div",
+      { class: "ex-bogi q-bogi" },
+      el("div", { class: "ex-bogi-head", text: "보기" }),
+      ...q.bogi.map((b, i) =>
+        el("div", { class: "ex-bogi-row" }, el("span", { class: "ex-bogi-label", text: `${label[i] ?? i + 1}.` }), el("span", { html: b })),
+      ),
+    );
+  }
 
-  if (mode === "ox") return renderOX(host, q, api);
-  return renderChoice(host, q, api, mode);
+  if (mode === "ox") {
+    if (bogiEl) host.appendChild(bogiEl);
+    return renderOX(host, q, api);
+  }
+  return renderChoice(host, q, api, mode, bogiEl);
 };
 
 /** q 텍스트 해시 — 오답노트 키(스텝엔 id가 없어 문항 텍스트로 안정 키를 만든다). */
@@ -66,6 +85,7 @@ function noteWrong(api: StepAPI, good: boolean, q: QuizStep): void {
     lessonId: api.lesson.id,
     type: mode,
     q: q.prompt,
+    bogi: q.bogi,
     opts: mode === "ox" ? ["O", "X"] : q.options,
     answer: mode === "ox" ? [q.answer === true ? 0 : 1] : Array.isArray(q.answer) ? q.answer : [q.answer as number],
     explain: q.explainBad ?? q.explainGood,
@@ -86,9 +106,11 @@ function feedback(api: StepAPI, good: boolean, q: QuizStep): void {
   }, 420);
 }
 
-function renderChoice(host: HTMLElement, q: QuizStep, api: StepAPI, mode: "mcq" | "multi"): void {
+function renderChoice(host: HTMLElement, q: QuizStep, api: StepAPI, mode: "mcq" | "multi", bogiEl: HTMLElement | null = null): void {
   const box = el("div", { class: "opts" });
   host.appendChild(box);
+  if (bogiEl) box.appendChild(bogiEl);
+  const lead = box.childElementCount; // 보기 상자가 있으면 1(단추 등장 차례는 단추끼리만 센다)
   const opts = q.options ?? [];
   const selected = new Set<number>();
   let locked = false;
@@ -107,7 +129,7 @@ function renderChoice(host: HTMLElement, q: QuizStep, api: StepAPI, mode: "mcq" 
   const cards: HTMLButtonElement[] = []; // 저작 인덱스 → 카드
   for (const oi of order) {
     const card = el("button", { class: "opt", html: `${opts[oi]}<span class="radio">${CHECK}</span>` });
-    card.style.setProperty("--oi", String(box.childElementCount)); // 표시 순서 — 등장 스태거(base.css optIn)
+    card.style.setProperty("--oi", String(box.childElementCount - lead)); // 표시 순서(등장 스태거, base.css optIn)
     if (import.meta.env.DEV) card.dataset.oi = String(oi); // e2e가 셔플 무관하게 보기를 집는 열쇠(dev 전용)
     card.addEventListener("click", () => {
       if (locked) return;
