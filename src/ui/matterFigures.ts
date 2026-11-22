@@ -117,6 +117,88 @@ export function freezeTableFig(): string {
   </svg>`;
 }
 
+/** 냉동실에서 막 꺼낸 캔 음료 (가) 겉면에 하얀 서리, (나) 잠시 뒤 서리가 녹아 맺힌 물방울 (라이트, u4l3 문제, 2026-11-22)
+ *  같은 캔 두 장. (가)는 몸통 아래쪽 3분의 2를 하얀 서리 층과 얼음 알갱이가 덮고, (나)는 서리가 사라진 자리에 투명한 물방울과
+ *  흘러내린 자국, 바닥에 고인 물이 있다. 캔은 파운드리 재질 문법(3스톱 금속 그라데이션, 왼쪽 위 빛, 바닥 접촉 그림자, 재질 최암색 외곽선).
+ *  알갱이 자리는 고정 씨앗의 의사 난수라 그릴 때마다 같다. 대체 글과 그림에 상태 변화의 이름을 쓰지 않는다(그것이 답이다). */
+export function canFrostFig(): string {
+  // 캔 한 개는 가운데 x = 0 기준으로 그린다. 몸통 x −32~32, 윗면 y 30, 밑면 y 134(타원 반지름 32 × 7)
+  const BODY = "M-32 30V134A32 7 0 0 0 32 134V30Z";
+  let seed = 11;
+  const rnd = (): number => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
+  const f1 = (n: number): string => n.toFixed(1);
+  const shell = (inner: string): string => `
+    <ellipse cx="0" cy="143" rx="40" ry="6" fill="#2A3A5E" opacity=".11"/>
+    ${inner}`;
+  const can = (skin: string): string => `
+    <path d="${BODY}" fill="url(#cnfMetal)"/>
+    <g clip-path="url(#cnfClip)">
+      <rect x="-32" y="62" width="64" height="46" fill="url(#cnfBand)"/>
+      <rect x="-32" y="62" width="64" height="2.4" fill="#FFFFFF" opacity=".35"/>
+      ${skin}
+    </g>
+    <path d="${BODY}" fill="none" stroke="#5D6976" stroke-width="1.4"/>
+    <ellipse cx="0" cy="30" rx="32" ry="7" fill="#C7CFD8" stroke="#5D6976" stroke-width="1.4"/>
+    <ellipse cx="0" cy="30.6" rx="25" ry="4.6" fill="#AEB8C3"/>
+    <path d="M-6 28.6h12a3 3 0 0 1 0 4.2h-12a3 3 0 0 1 0-4.2Z" fill="#E3E8ED" stroke="#7D8996" stroke-width="1"/>
+    <path d="M-24 36V126" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" opacity=".38"/>`;
+
+  // (가) 서리: 윗가장자리가 들쭉날쭉한 흰 층 + 얼음 알갱이 + 작은 반짝임
+  let edge = "M-34 146V58";
+  for (let x = -34; x <= 34; x += 6) edge += `L${x} ${f1(56 + rnd() * 9)}`;
+  edge += "L34 146Z";
+  let grains = "";
+  for (let i = 0; i < 74; i++) {
+    const x = -30 + rnd() * 60;
+    const y = 60 + rnd() * 76;
+    const r = 0.9 + rnd() * 1.8;
+    grains += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#FFFFFF" stroke="#BFD9EE" stroke-width=".7"/>`;
+  }
+  let sparks = "";
+  for (let i = 0; i < 9; i++) {
+    const x = -26 + rnd() * 52;
+    const y = 64 + rnd() * 66;
+    // 작은 네 갈래 반짝임(얼음 결정이 빛나는 자리). '+' 기호로 읽히지 않게 가운데가 굵고 끝이 뾰족하다
+    sparks += `<path d="M${f1(x)} ${f1(y - 3.4)}L${f1(x + 0.8)} ${f1(y - 0.8)}L${f1(x + 3.4)} ${f1(y)}L${f1(x + 0.8)} ${f1(y + 0.8)}L${f1(x)} ${f1(y + 3.4)}L${f1(x - 0.8)} ${f1(y + 0.8)}L${f1(x - 3.4)} ${f1(y)}L${f1(x - 0.8)} ${f1(y - 0.8)}Z" fill="#9ACDF0"/>`;
+  }
+  const frost = `<path d="${edge}" fill="#F4FAFF" opacity=".88"/>${grains}${sparks}`;
+
+  // (나) 물방울: 위가 뾰족한 투명한 방울과 흘러내린 자국. 바닥에는 고인 물
+  const drop = (x: number, y: number, s: number): string =>
+    `<path d="M${f1(x)} ${f1(y - 1.5 * s)}C${f1(x + 0.25 * s)} ${f1(y - 0.9 * s)} ${f1(x + s)} ${f1(y - 0.25 * s)} ${f1(x + s)} ${f1(y + 0.2 * s)}A${f1(s)} ${f1(0.85 * s)} 0 0 1 ${f1(x - s)} ${f1(y + 0.2 * s)}C${f1(x - s)} ${f1(y - 0.25 * s)} ${f1(x - 0.25 * s)} ${f1(y - 0.9 * s)} ${f1(x)} ${f1(y - 1.5 * s)}Z" fill="#DDF0FB" fill-opacity=".9" stroke="#5E9BCB" stroke-width=".9"/>
+    <ellipse cx="${f1(x - 0.38 * s)}" cy="${f1(y - 0.05 * s)}" rx="${f1(0.22 * s)}" ry="${f1(0.36 * s)}" fill="#FFFFFF" opacity=".95"/>`;
+  // 흘러내린 자국은 방울의 위쪽(지나온 길)에 남는다
+  const trail = (x: number, y: number, s: number, h: number): string =>
+    `<rect x="${f1(x - 1.1)}" y="${f1(y - 1.5 * s - h)}" width="2.2" height="${h}" rx="1.1" fill="#CFE7F7" opacity=".85"/>`;
+  const DROPS: [number, number, number][] = [[-17, 60, 4.4], [6, 48, 3.6], [21, 80, 4.8], [-5, 92, 4.2], [-22, 106, 3.8], [13, 108, 4.6], [0, 124, 4.0], [24, 125, 3.4], [-14, 127, 4.2]];
+  const drops =
+    [trail(21, 80, 4.8, 18), trail(-5, 92, 4.2, 14), trail(13, 108, 4.6, 20), trail(-14, 127, 4.2, 12)].join("") +
+    DROPS.map(([x, y, s]) => drop(x, y, s)).join("");
+  const puddle = `<ellipse cx="0" cy="140" rx="46" ry="8.5" fill="#D3EAF8" stroke="#8CBEE3" stroke-width="1.1"/>
+    <ellipse cx="-20" cy="141.5" rx="9" ry="2" fill="#FFFFFF" opacity=".7"/>`;
+
+  const label = (x: number, a: string, b: string): string =>
+    `<text x="${x}" y="176" text-anchor="middle" font-size="14" font-weight="700" fill="#333D4B">${a} <tspan font-weight="600" fill="#6B7684">${b}</tspan></text>`;
+  return `<svg viewBox="0 0 344 188" ${NS} role="img" aria-label="냉동실에서 막 꺼낸 캔 음료 (가)의 겉면에 하얀 서리가 생긴 모습과, 잠시 뒤 (나) 서리가 사라지고 겉면에 물방울이 맺혀 바닥에 물이 고인 모습">
+    <defs>
+      <linearGradient id="cnfMetal" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stop-color="#7E8B99"/><stop offset=".24" stop-color="#E6EBF0"/><stop offset=".5" stop-color="#B3BDC8"/><stop offset=".82" stop-color="#8C98A5"/><stop offset="1" stop-color="#6A7684"/>
+      </linearGradient>
+      <linearGradient id="cnfBand" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stop-color="#17786D"/><stop offset=".24" stop-color="#5ED0C0"/><stop offset=".5" stop-color="#2DB09F"/><stop offset=".82" stop-color="#1E9586"/><stop offset="1" stop-color="#156E64"/>
+      </linearGradient>
+      <clipPath id="cnfClip"><path d="${BODY}"/></clipPath>
+    </defs>
+    <g transform="translate(88,0)">${shell(can(frost))}</g>
+    <g transform="translate(256,0)">${shell(puddle + can(drops))}</g>
+    ${label(88, "(가)", "막 꺼냈을 때")}
+    ${label(256, "(나)", "잠시 뒤")}
+  </svg>`;
+}
+
 /** 가열 곡선: 구간 A~E, 시간과 온도 눈금이 있는 판 (라이트, u4l5 문제 둘, 2026-11-22)
  *  kind "solid": 20 ℃의 어떤 고체를 가열(40 ℃와 80 ℃에서 온도가 일정). A 0~2분 20→40, B 2~6분 40, C 6~10분 40→80, D 10~17분 80, E 17~19분 80→96.
  *  kind "ice"  : −20 ℃의 얼음을 가열(0 ℃와 100 ℃에서 온도가 일정). A 0~1분 −20→0, B 1~5분 0, C 5~11분 0→100, D 11~18분 100, E 18~19분 100→110.

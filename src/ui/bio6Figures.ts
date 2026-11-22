@@ -646,23 +646,59 @@ export const PAIR_ART: Record<string, string> = {
 // 껍데기 색에 변이가 있는 한 종류의 달팽이가 (가) 갈색 낙엽이 쌓인 숲 바닥과 (나) 초록 풀밭에 똑같이 섞여 산다. 두 곳 모두 위에 새가 있다.
 // 오랜 시간 뒤의 결과(정답)를 미리 보이지 않게, 두 판의 달팽이는 자리와 색이 모두 같다(갈색 둘, 연두색 둘). 다른 것은 바닥뿐이다.
 // 껍데기 색은 타고나 바뀌지 않는다(실제 숲달팽이의 껍데기 색 변이와 새의 포식에서 빌린 장면). 몸을 바탕색에 맞춰 바꾸는 메뚜기 같은 동물은 쓰지 않는다.
-const SNAIL_SHELL = { brown: ["#C08A55", "#8B5A2B", "#5A3817"], green: ["#E9F2A6", "#BCD254", "#7C9430"] } as const;
-/** 옆에서 본 달팽이 한 마리(원점 = 발 가운데 바닥, 오른쪽을 본다, 높이 약 27). */
+// 껍데기 색 [밝은 면, 바탕, 그늘·외곽선, 나선 띠]. 띠는 바탕보다 조금 짙어 껍데기의 '색'은 그대로 읽힌다(갈색, 연두색)
+const SNAIL_SHELL = {
+  brown: ["#E2B27A", "#A86C35", "#5B3716", "#7A4A20"],
+  green: ["#F3F9C4", "#C3D962", "#6F8A26", "#94AF3C"],
+} as const;
+/** 껍데기 나선(로그 나선에 가깝게 바깥으로 갈수록 빨리 벌어진다). 가운데 (cx, cy), 반지름 r0 → r1, 돌린 수 turns. */
+function shellSpiral(cx: number, cy: number, r0: number, r1: number, turns: number, th0: number, squash: number): string {
+  const T = turns * 2 * Math.PI;
+  let d = "";
+  for (let t = 0; t <= T + 1e-6; t += 0.16) {
+    const r = r0 + (r1 - r0) * Math.pow(t / T, 1.25);
+    const a = th0 + t;
+    d += `${d ? "L" : "M"}${(cx + Math.cos(a) * r).toFixed(2)} ${(cy + Math.sin(a) * r * squash).toFixed(2)}`;
+  }
+  return d;
+}
+/** 옆에서 본 달팽이 한 마리(원점 = 발 가운데 바닥, 오른쪽을 본다, 높이 약 27).
+ *  몸: 꼬리로 갈수록 가늘어지는 발, 목의 주름, 점액 광택, 눈이 달린 긴 더듬이 한 쌍과 짧은 더듬이 한 쌍.
+ *  껍데기: 왼쪽 위 빛의 입체 그라데이션, 나선 봉합선과 나선 띠, 바깥 소용돌이의 성장선, 몸이 나오는 입구 테두리, 반짝임. */
 function snail(u: string, x: number, y: number, k: number, kind: "brown" | "green", flip = 1): string {
-  const [, , dark] = SNAIL_SHELL[kind];
-  let sp = "";
-  for (let t = 0; t <= 12.6; t += 0.3) {
-    const r = 1 + t * 0.7;
-    sp += `${sp ? "L" : "M"}${(-2 + Math.cos(t) * r).toFixed(2)} ${(-12 + Math.sin(t) * r * 0.92).toFixed(2)}`;
+  const [, , dark, band] = SNAIL_SHELL[kind];
+  const cx = -2.4, cy = -13.2, R = 11.6, SQ = 0.94, TH0 = -2.4, TURNS = 2.3;
+  const suture = shellSpiral(cx, cy, 0.6, R - 0.4, TURNS, TH0, SQ);
+  const stripe = shellSpiral(cx, cy, 0.3, R - 3.3, TURNS - 0.15, TH0 + 0.5, SQ);
+  // 바깥 소용돌이의 성장선(껍데기가 자라며 남긴 가는 결)
+  const T = TURNS * 2 * Math.PI;
+  let growth = "";
+  for (let i = 0; i < 18; i++) {
+    const t = T - 2 * Math.PI + 0.35 + i * ((2 * Math.PI - 0.6) / 18);
+    const ro = 0.6 + (R - 0.4 - 0.6) * Math.pow(t / T, 1.25);
+    const a = TH0 + t;
+    const p = (r: number): string => `${(cx + Math.cos(a) * r).toFixed(2)} ${(cy + Math.sin(a) * r * SQ).toFixed(2)}`;
+    growth += `M${p(ro - 0.6)}L${p(ro - 3)}`;
   }
   return `<g transform="translate(${x} ${y}) scale(${(flip * k).toFixed(3)} ${k.toFixed(3)})">
-    <ellipse cx="2" cy="1.5" rx="20" ry="3" fill="#1B1206" opacity=".22"/>
-    <path d="M-19 0.5C-19 -3 -11 -4.5 -1 -4.5C7 -4.5 12 -7.5 15.5 -11.5C18.5 -14.5 22.5 -13 21.6 -8.6C20.8 -4.6 18.4 -1.2 15.4 0.5Z" fill="#D8C4A0" stroke="#7E6747" stroke-width="1.3" stroke-linejoin="round"/>
-    <path d="M17 -12.2L19.4 -20.4M19.6 -11L24.6 -17.4" stroke="#7E6747" stroke-width="1.4" stroke-linecap="round"/>
-    <circle cx="19.6" cy="-21" r="1.5" fill="#4E3F2A"/><circle cx="25" cy="-17.9" r="1.5" fill="#4E3F2A"/>
-    <circle cx="-2" cy="-12" r="11.4" fill="url(#${u}${kind})" stroke="${dark}" stroke-width="1.4"/>
-    <path d="${sp}" fill="none" stroke="${dark}" stroke-width="1.2" stroke-linecap="round" opacity=".85"/>
-    <ellipse cx="-6.4" cy="-17.4" rx="3.4" ry="2.2" fill="#fff" opacity=".38" transform="rotate(-24 -6.4 -17.4)"/>
+    <ellipse cx="1" cy="1.6" rx="22" ry="3" fill="#1B1206" opacity=".2"/>
+    <path d="M-21.5 0.4C-16.5 -2.8 -8.5 -4.3 0 -4.7C6 -5 10.2 -6.6 13.4 -10.4C15.8 -13.4 21.6 -14.6 23.4 -11.1C24.8 -8.3 23.2 -4.4 20.7 -2.2C19.1 -0.8 17.1 0.7 14.6 0.9L-12 1.3C-16.2 1.3 -19.8 1 -21.5 0.4Z" fill="url(#${u}body)" stroke="#765C3C" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M-19.5 0.9H14.8" stroke="#8E7350" stroke-width="1.5" stroke-linecap="round" opacity=".55"/>
+    <path d="M-15 -2.1C-8 -3.7 0 -3.9 6.4 -3.9" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round" opacity=".6"/>
+    <path d="M10.6 -7.4q1.7 -1.5 3.4 -1M12.6 -9.6q1.4 -1.3 2.9 -0.9M19.4 -5.6q1.6 -0.4 2.6 0.6" fill="none" stroke="#8E7350" stroke-width=".8" stroke-linecap="round" opacity=".7"/>
+    ${[[-16, -1.1], [-12, -1.9], [-8, -2.4], [9, -3.4], [12.6, -4.6], [15.8, -6.4], [16.4, -2.4], [18.8, -9.8]].map(([px, py]) => `<circle cx="${px}" cy="${py}" r=".55" fill="#8E7350" opacity=".38"/>`).join("")}
+    <path d="M19.8 -13.4C20.4 -16.6 20.8 -19.4 21.6 -22.2M22.6 -12.8C24.2 -15.2 25.8 -17.4 27.8 -19.4" fill="none" stroke="#8A6E4B" stroke-width="1.7" stroke-linecap="round"/>
+    <circle cx="21.8" cy="-22.8" r="1.8" fill="#4A3A26"/><circle cx="21.3" cy="-23.3" r=".55" fill="#FFFFFF" opacity=".8"/>
+    <circle cx="28.2" cy="-19.9" r="1.8" fill="#4A3A26"/><circle cx="27.7" cy="-20.4" r=".55" fill="#FFFFFF" opacity=".8"/>
+    <path d="M23.6 -8.8C24.9 -8.8 26.1 -8.3 27 -7.6" fill="none" stroke="#8A6E4B" stroke-width="1.3" stroke-linecap="round"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${(R * SQ).toFixed(2)}" fill="url(#${u}${kind})" stroke="${dark}" stroke-width="1.3"/>
+    <path d="${stripe}" fill="none" stroke="${band}" stroke-width="2.6" stroke-linecap="round" opacity=".5"/>
+    <path d="${growth}" stroke="${dark}" stroke-width=".7" stroke-linecap="round" opacity=".32"/>
+    <path d="${suture}" fill="none" stroke="${dark}" stroke-width="1.15" stroke-linecap="round" opacity=".9"/>
+    <path d="M5.6 -4.9C7.6 -6.2 9.4 -7.8 10.2 -10.2" fill="none" stroke="${dark}" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M5.9 -5.6C7.6 -6.8 9 -8.2 9.6 -10" fill="none" stroke="#FFFFFF" stroke-width=".8" stroke-linecap="round" opacity=".45"/>
+    <ellipse cx="-7.4" cy="-19.6" rx="3.8" ry="2" fill="#FFFFFF" opacity=".55" transform="rotate(-28 -7.4 -19.6)"/>
+    <circle cx="-2.6" cy="-22.2" r=".9" fill="#FFFFFF" opacity=".6"/>
   </g>`;
 }
 /** 가지에 앉아 아래를 내려다보는 작은 새(원점 = 발, 왼쪽을 본다). */
@@ -684,8 +720,8 @@ export function snailHabitatPairFig(): string {
   const PW = 164;
   const PH = 116;
   const grad = (id: string, c: readonly string[]): string => `<radialGradient id="${u}${id}" cx=".34" cy=".3" r=".8"><stop offset="0" stop-color="${c[0]}"/><stop offset=".6" stop-color="${c[1]}"/><stop offset="1" stop-color="${c[2]}"/></radialGradient>`;
-  // 판 안의 달팽이 자리와 색(두 판이 같다)
-  const SN: [number, number, "brown" | "green", number][] = [[30, 100, "brown", 1], [66, 86, "green", -1], [104, 102, "green", 1], [138, 88, "brown", -1]];
+  // 판 안의 달팽이 자리와 색(두 판이 같다). 두 줄에 둘씩, 세부(껍데기 띠, 더듬이 눈)가 폰에서도 보이게 크게 그린다
+  const SN: [number, number, "brown" | "green", number][] = [[33, 76, "brown", 1], [128, 76, "green", -1], [55, 108, "green", 1], [125, 108, "brown", -1]];
   const leaves = Array.from({ length: 16 }, (_, i) => {
     const lx = 8 + ((i * 37) % 150), ly = 52 + ((i * 23) % 60), a = (i * 53) % 180;
     const col = ["#A8682F", "#7A4B22", "#C99A5A", "#93602F"][i % 4];
@@ -701,7 +737,7 @@ export function snailHabitatPairFig(): string {
       <g clip-path="url(#${u}c${kind})">
         <rect width="${PW}" height="${PH}" fill="url(#${u}${kind})"/>
         ${kind === "litter" ? leaves : blades}
-        ${SN.map(([x, y, c, f]) => snail(u, x, y, 0.86, c, f)).join("")}
+        ${SN.map(([x, y, c, f]) => snail(u, x, y, 1.02, c, f)).join("")}
         ${perchBird(124, 24)}
       </g>
       <rect x="0" y="0" width="${PW}" height="${PH}" rx="12" fill="none" stroke="#C9CFD6" stroke-width="1.2"/>
@@ -710,6 +746,7 @@ export function snailHabitatPairFig(): string {
   return `<svg viewBox="0 0 344 ${PH + 30}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="(가) 낙엽이 쌓인 숲 바닥과 (나) 풀밭. 두 곳에 껍데기 색이 갈색인 달팽이와 연두색인 달팽이가 둘씩 똑같이 섞여 있고, 두 곳 모두 위쪽 가지에 새가 앉아 있다">
     <defs>
       ${grad("brown", SNAIL_SHELL.brown)}${grad("green", SNAIL_SHELL.green)}
+      <linearGradient id="${u}body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EBDDBF"/><stop offset=".55" stop-color="#D3BC93"/><stop offset="1" stop-color="#B0956C"/></linearGradient>
       <linearGradient id="${u}litter" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9A06A"/><stop offset=".45" stop-color="#A9743F"/><stop offset="1" stop-color="#83552B"/></linearGradient>
       <linearGradient id="${u}grass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B7E08F"/><stop offset=".45" stop-color="#86C55C"/><stop offset="1" stop-color="#5C9E3B"/></linearGradient>
     </defs>

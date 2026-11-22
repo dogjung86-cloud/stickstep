@@ -120,6 +120,9 @@
 
   /* 문제: 질문과 그림 왼쪽, 보기와 확인 버튼은 노트 */
   html.wide .step.wd-quiz > .opts { grid-row: 1 / -1; align-self: start; margin-top: 4px; }
+  /* 〈보기〉 상자가 단추 묶음 맨 위에 있는 문제(quiz.ts)는 노트가 길어져 배율을 낮춘다(1366×768에서 단추 다섯이 확인 버튼 위에 들어오게) */
+  html.wide .step.wd-quiz > .opts:has(> .q-bogi) { zoom: 1; gap: 8px; }
+  html.wide .step.wd-quiz > .opts:has(> .q-bogi) .opt { padding-top: 13px; padding-bottom: 13px; }
   html.wide .step.wd-quiz > .wd-left { zoom: 1.32; margin-right: 12px; }
   html.wide .step.wd-quiz > .q-figure.wd-left { zoom: 1; margin: 22px 0 0; }
   html.wide .step.wd-quiz > .q-figure.wd-left .q-figure-art svg,

@@ -18,7 +18,6 @@ export const G2_UNIT1: Unit = {
   subtitle: "밀도·용해도·녹는점, 물질의 지문을 찾아라",
   color: "#E64980",
   icon: "flask",
-  standard: "책 12~51쪽",
   lessons: [
     // ── L1. 물질의 특성과 밀도 ────────────────────────────────
     lesson({
@@ -29,7 +28,6 @@ export const G2_UNIT1: Unit = {
       label: "밀도",
       icon: "flask",
       minutes: 8,
-      standard: "책 14~19쪽",
       doneNote: "밀도 = 질량 ÷ 부피, 물질의 지문이에요",
       // 도입 → MeasureLab → SizeLab → 용어 → 정리 → 문제 5
       steps: L1,
@@ -44,7 +42,6 @@ export const G2_UNIT1: Unit = {
       label: "뜨고 가라앉기",
       icon: "drop",
       minutes: 7,
-      standard: "책 18~19쪽",
       doneNote: "밀도가 작으면 위로, 크면 아래로!",
       // 도입 → LayerLab → 정리 → 문제 4
       steps: L2,
@@ -59,7 +56,6 @@ export const G2_UNIT1: Unit = {
       label: "용해도",
       icon: "drop",
       minutes: 8,
-      standard: "책 20~23쪽",
       doneNote: "용해도도 물질의 특성이에요",
       // 도입 → DissolveLab → 용어 → WarmLab → 정리 → 문제 5
       steps: L3,
@@ -74,7 +70,6 @@ export const G2_UNIT1: Unit = {
       label: "기체 용해도",
       icon: "sparkle",
       minutes: 7,
-      standard: "책 22~23쪽",
       doneNote: "기체는 차갑고 압력이 높을수록 잘 녹아요",
       premium: true,
       // 도입 → FizzLab → PumpLab → 정리 → 분류 → 문제 3
@@ -90,7 +85,6 @@ export const G2_UNIT1: Unit = {
       label: "녹는점·끓는점",
       icon: "thermo",
       minutes: 9,
-      standard: "책 24~27쪽",
       doneNote: "양이 달라져도 녹는점·끓는점은 그대로!",
       premium: true,
       // 도입 → MeltLab → BoilLab → 용어 → 정리 → 문제 5
@@ -106,7 +100,6 @@ export const G2_UNIT1: Unit = {
       label: "순물질·혼합물",
       icon: "layers",
       minutes: 7,
-      standard: "책 30~33쪽",
       doneNote: "혼합물 속 순물질은 제 성질을 그대로 지녀요",
       premium: true,
       // 도입 → 용어 → 분류 → SaltLab → 정리 → 문제 4
@@ -122,7 +115,6 @@ export const G2_UNIT1: Unit = {
       label: "밀도 차 분리",
       icon: "swap",
       minutes: 8,
-      standard: "책 34~35쪽",
       doneNote: "섞이지 않는 액체는 밀도 차로 나눠요",
       premium: true,
       // 도입 → FunnelLab → SeedLab → 정리 → 문제 4
@@ -138,7 +130,6 @@ export const G2_UNIT1: Unit = {
       label: "재결정",
       icon: "star",
       minutes: 8,
-      standard: "책 36~37쪽",
       doneNote: "용해도 차가 큰 물질이 먼저 석출돼요",
       premium: true,
       // 도입 → CrystalLab → 용어 → 정리 → 문제 → 순서 배열 → 문제 2
@@ -154,7 +145,6 @@ export const G2_UNIT1: Unit = {
       label: "증류",
       icon: "flame",
       minutes: 9,
-      standard: "책 38~41쪽",
       doneNote: "먼저 끓어 나오는 건 끓는점이 낮은 쪽!",
       premium: true,
       // 도입 → DistillLab → 용어 → 정리 → 문제 2 → 순서 배열 → 문제 2

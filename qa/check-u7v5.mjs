@@ -138,24 +138,20 @@ const LABS = {
       texts.push(await stepText(page));
       await page.evaluate(() => document.querySelector(".rot-overlay .u7x-rotdone-btn")?.click());
       await W(page, 700);
-      ok(await waitDs(page, "u7Phase", "clues"), `${id}: 단서 카드가 열리지 않음(${await ds(page, "u7Phase")})`);
+      ok(await waitDs(page, "u7Phase", "table"), `${id}: 특징 표가 열리지 않음(${await ds(page, "u7Phase")})`);
       await W(page, 300);
-      await at(id, "3clues");
-      // 단서 카드 여섯 장을 바구니에 담는다(맞는 바구니는 개발 모드의 u7Want). 첫 카드에서 한 번 틀려 본다
-      const pick = (k) => tap(page, `.u7x-bkbtn[data-k="${k}"]`);
-      const w0 = await ds(page, "u7Want");
-      await pick(w0 === "planet" ? "sun" : "planet");
+      await at(id, "3table");
+      const chip = (k) => tap(page, `.u7x-segbtn[data-k="${k}"]`);
+      await chip("sun"); await chip("planet"); await tap(page, ".bv-btn.main"); // 틀린 답: 태양과 행성이 스스로 빛난다
       await W(page, 500);
-      ok((await ds(page, "u7Clue")) === "0" && (await ds(page, "u7Miss")) === "1", `${id}: 틀린 바구니에 단서가 담김`);
-      ok(await page.evaluate(() => !!document.querySelector(".screen.active .u7x-bkbtn.miss:disabled")), `${id}: 틀린 바구니에 가위표가 없음`);
+      ok((await ds(page, "u7Feature")) === "0" && (await ds(page, "u7Miss")) === "1", `${id}: 틀린 표가 그대로 적힘`);
       await at(id, "4wrong");
-      for (let i = 0; i < 6; i++) {
-        ok(await waitDs(page, "u7Busy", "0", 30), `${id}: ${i + 1}번째 단서가 뜨지 않음`);
-        await pick(await ds(page, "u7Want"));
-        ok(await waitDs(page, "u7Clue", String(i + 1), 30), `${id}: ${i + 1}번째 단서가 담기지 않음`);
-        if (i === 2) { await W(page, 200); await at(id, "4mid", { cap: true }); }
-      }
-      ok((await page.evaluate(() => document.querySelectorAll(".screen.active .u7x-bk.full").length)) === 6, `${id}: 여섯 바구니가 다 차지 않음`);
+      await chip("planet"); await tap(page, ".bv-btn.main");
+      ok(await waitDs(page, "u7Feature", "1", 20), `${id}: 첫 특징이 적히지 않음`);
+      for (const k of ["planet", "belt", "comet", "dwarf"]) await chip(k);
+      await tap(page, ".bv-btn.main");
+      ok(await waitDs(page, "u7Feature", "2", 20), `${id}: 둘째 특징이 적히지 않음`);
+      await chip("moon"); await tap(page, ".bv-btn.main");
       ok(await waitDone(page), `${id}: 결론이 뜨지 않음`);
       await W(page, 400);
     }

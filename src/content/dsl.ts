@@ -65,6 +65,8 @@ export const table = (o: {
 // ㄱㄴㄷ 조합·(가)(나)·①~⑤처럼 순서가 관례인 라벨형 보기만 shuffle: false로 고정한다.
 export const mcq = (o: {
   n?: number; of?: number; prompt: string; figure?: string; figureDark?: boolean;
+  /** ㄱㄴㄷ 합답형의 〈보기〉 문장. 발문에 줄글로 넣지 않고 여기에 두면 시험 화면과 같은 보기 상자로 그린다 */
+  bogi?: string[];
   options: string[]; answer: number; shuffle?: boolean; explainGood?: string; explainBad?: string;
 }): Step => ({ type: "quiz", mode: "mcq", ...o });
 

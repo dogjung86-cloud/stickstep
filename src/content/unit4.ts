@@ -8,7 +8,7 @@ import type { Unit } from "./curriculum";
 import type { Step } from "../lessons/types";
 import type { Curio } from "../ui/curio";
 import { opener, comic, concept, recap, mcq, multi, binSort, cut } from "./dsl";
-import { stateOrderFig, freezeTableFig, segCurveFig, condenseFig, miniArt } from "../ui/matterFigures";
+import { stateOrderFig, freezeTableFig, segCurveFig, condenseFig, canFrostFig, miniArt } from "../ui/matterFigures";
 import { comicStory } from "../ui/sketchArt";
 import { sciFig, sciFigMore } from "./sciFigG1";
 
@@ -368,6 +368,7 @@ const L3 = {
     mcq({
       n: 1, of: 5,
       prompt: "냉동실에서 막 꺼낸 캔 음료의 겉면에 하얀 서리가 생겼다가, 잠시 뒤 서리가 녹아 물방울이 되었어요. <b>(가) 서리가 생길 때</b>와 <b>(나) 서리가 물방울이 될 때</b> 일어난 상태 변화를 옳게 짝 지은 것은?",
+      figure: canFrostFig(),
       options: [
         "(가) 승화, (나) 융해",
         "(가) 응고, (나) 융해",

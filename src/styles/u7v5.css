@@ -63,53 +63,21 @@
 .u7x-film.on .u7x-film-cv { border: 1.5px solid var(--subj-space); }
 .u7x-film i { height: 16px; font-style: normal; font-size: 12px; line-height: 16px; font-weight: 800; color: var(--subj-space-press); white-space: nowrap; letter-spacing: -.07em; }
 
-/* 태양계: 돌아온 뒤 단서 카드를 담는 천체 바구니 여섯(무대) */
+/* 태양계: 돌아온 뒤 채우는 특징 표 */
 .u7x-seg.three { grid-template-columns: repeat(3, 1fr); }
-.u7x-stage.u7x-bkstage { display: block; padding: 8px; }
-.u7x-bk-board { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 6px; height: 100%; }
-.u7x-bk {
-  position: relative; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 3px;
-  padding: 8px 4px 0; border-radius: 12px; border: 1.5px dashed rgba(255, 255, 255, .22); background: rgba(255, 255, 255, .04);
-  transition: background .3s, border-color .3s;
-}
-.u7x-bk b { font-size: 13.5px; line-height: 18px; font-weight: 800; color: #FFE9B8; white-space: nowrap; }
-.u7x-bk-note {
-  font-style: normal; font-size: 12.5px; line-height: 16px; font-weight: 800; color: #DCE7FB; text-align: center; word-break: keep-all;
-  opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s var(--ease-out);
-}
-.u7x-bk.full { border-style: solid; border-color: #FFD25E; background: rgba(255, 210, 94, .12); }
-.u7x-bk.full .u7x-bk-note { opacity: 1; transform: none; }
-.u7x-bk.full::after {
-  content: ""; position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; border-radius: 50%;
-  background: #FFD25E url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.3l2.3 2.2 4.5-4.9' fill='none' stroke='%233D2B00' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px no-repeat;
-}
-.u7x-bk.no { animation: u7xBkNo .4s ease-out both; }
-@keyframes u7xBkNo { 0%, 100% { transform: none; border-color: rgba(255, 255, 255, .22); } 20% { border-color: #FF6B76; } 30% { transform: translateX(-4px); } 60% { transform: translateX(3px); border-color: #FF6B76; } }
-@media (prefers-reduced-motion: reduce) { .u7x-bk.no { animation: none; } .u7x-bk-note { transition: none; } }
-/* 바구니의 작은 그림(가로 화면에서 본 천체). 태양 카드를 틀리면(.u7x-lit) 행성과 위성은 반쪽이 어두워지고 태양만 빛난다 */
-.u7x-bk .u7x-ficon { flex: none; display: block; width: 32px; height: 32px; }
-.u7x-ficon svg { display: block; width: 100%; height: 100%; }
+.u7x-tablestage { display: block; padding: 8px 12px; }
+.u7x-ftable { display: grid; grid-template-columns: 98px repeat(3, 1fr); align-items: center; height: 100%; }
+/* 줄 이름 앞의 작은 그림(가로 화면에서 본 천체). 첫 칸을 틀리면(.u7x-lit) 행성과 위성은 반쪽이 어두워지고 태양만 빛난다 */
+.u7x-ftable .u7x-frow { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.u7x-ftable .u7x-ficon { flex: none; display: block; width: 24px; height: 24px; }
+.u7x-ficon svg { display: block; }
 .u7x-ficon .u7x-night, .u7x-ficon .u7x-glow { opacity: 0; transition: opacity .5s; }
 .u7x-lit .u7x-ficon .u7x-night, .u7x-lit .u7x-ficon .u7x-glow { opacity: 1; }
-/* 조작 칸: 단서 카드와 바구니 버튼(맞으면 체크, 틀리면 가위표가 누른 버튼에 남는다) */
-.u7x-clue {
-  display: grid; gap: 3px; min-height: 84px; align-content: center; padding: 9px 14px; border-radius: 16px;
-  border: 1.5px solid var(--n300); background: #fff; box-shadow: var(--sh-card);
-}
-.u7x-clue.in { animation: bvIn .3s var(--ease-out) both; }
-.u7x-clue-n { font-size: 12.5px; line-height: 16px; font-weight: 800; color: var(--subj-space-press); }
-.u7x-clue-t { font-size: 14.5px; line-height: 20px; font-weight: 700; color: var(--ink); word-break: keep-all; }
-.u7x-clue-t b { color: var(--subj-space-press); }
-.u7x-clue + .u7x-seg { margin-top: 8px; }
-.u7x-bkbtn { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 0 4px; white-space: nowrap; }
-.u7x-bk-ic:empty { display: none; }
-.u7x-bk-ic { flex: none; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
-.u7x-bk-ic svg { display: block; width: 11px; height: 11px; }
-.u7x-segbtn.u7x-bkbtn.ok { border-color: var(--green); background: #EFFBF4; color: var(--green-press); box-shadow: 0 0 0 1px var(--green) inset; opacity: 1; }
-.u7x-segbtn.u7x-bkbtn.ok .u7x-bk-ic { background: var(--green); }
-.u7x-segbtn.u7x-bkbtn.miss { border-color: var(--red); background: #FFF2F3; color: var(--red-press); box-shadow: 0 0 0 1px var(--red) inset; opacity: 1; }
-.u7x-segbtn.u7x-bkbtn.miss .u7x-bk-ic { background: var(--red); }
-@media (prefers-reduced-motion: reduce) { .u7x-clue.in { animation: none; } }
+.u7x-ftable b { font-size: 12.5px; font-weight: 800; color: #FFE9B8; text-align: center; white-space: nowrap; }
+.u7x-ftable span { font-size: 13px; font-weight: 800; color: #E8EEF9; white-space: nowrap; }
+.u7x-ftable em { justify-self: center; width: 22px; height: 22px; border-radius: 50%; border: 1.5px dashed rgba(255, 255, 255, .28); }
+.u7x-ftable em.yes { border: 0; background: #FFD25E; box-shadow: 0 0 0 3px rgba(255, 210, 94, .22); }
+.u7x-ftable em.no { border: 0; background: rgba(255, 255, 255, .1); transform: scale(.42); }
 
 /* 계절과 별자리: 별자리 이름(화면 글자가 3D 그림을 따라다닌다) */
 .u7x-znames { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
@@ -126,8 +94,6 @@
 /* 행성 그래프 */
 .u7x-val { font: 800 12.5px Pretendard, sans-serif; fill: #E8EEF9; text-anchor: middle; }
 .u7x-pname { font: 700 12.5px Pretendard, sans-serif; fill: #C6D3EA; text-anchor: middle; }
-/* 지구형 네 행성을 크게 다시 그린 돋보기 창의 이름(planetLab) */
-.u7x-lens-t { font: 800 12.5px Pretendard, sans-serif; fill: #FFE08A; }
 
 /* 가로 화면으로 들어가는 무대(태양계 순항, 일식과 월식) */
 .u7x-enter { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px 14px; }
