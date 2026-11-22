@@ -1,6 +1,6 @@
 // 중1 Ⅱ 생물의 구성과 다양성 · 단원 종합 평가 풀 v3: 레슨 4 모양이 다른 세포들 (u2e449~e464, 16문항)
 // 2026-11 전면 재출제. 시험지 말투(~이다), 해설은 정답 풀이(explain) + 보기별 이유(optWhy) + 핵심 한 줄(core).
-// 규격과 여덟 시험지 배정은 u2.ts 머리말, 그림은 ui/examFigU2.ts. 범위는 미래엔 교과서 본문이고 단위(μm)는 묻지 않는다.
+// 규격과 여덟 시험지 배정은 u2.ts 머리말, 그림은 ui/examFigU2.ts. 범위는 EXAM_GUIDE.md 「u2 v3」 절을 따르고 단위(μm)는 묻지 않는다.
 import type { ExamItem } from "./types";
 import { u2Fig as fig, u2OptFig as optFig, u2Table as table } from "../../ui/examFigU2";
 

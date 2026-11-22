@@ -642,6 +642,82 @@ export const PAIR_ART: Record<string, string> = {
     <rect x="5" y="25.6" width="30" height="7" rx="2.4" fill="#F08C00" stroke="#C2410C" stroke-width="1.1"/>`),
 };
 
+// ── 두 곳에 나뉘어 사는 달팽이 무리(u2l7 문제, 2026-11-22) ─────────────────
+// 껍데기 색에 변이가 있는 한 종류의 달팽이가 (가) 갈색 낙엽이 쌓인 숲 바닥과 (나) 초록 풀밭에 똑같이 섞여 산다. 두 곳 모두 위에 새가 있다.
+// 오랜 시간 뒤의 결과(정답)를 미리 보이지 않게, 두 판의 달팽이는 자리와 색이 모두 같다(갈색 둘, 연두색 둘). 다른 것은 바닥뿐이다.
+// 껍데기 색은 타고나 바뀌지 않는다(실제 숲달팽이의 껍데기 색 변이와 새의 포식에서 빌린 장면). 몸을 바탕색에 맞춰 바꾸는 메뚜기 같은 동물은 쓰지 않는다.
+const SNAIL_SHELL = { brown: ["#C08A55", "#8B5A2B", "#5A3817"], green: ["#E9F2A6", "#BCD254", "#7C9430"] } as const;
+/** 옆에서 본 달팽이 한 마리(원점 = 발 가운데 바닥, 오른쪽을 본다, 높이 약 27). */
+function snail(u: string, x: number, y: number, k: number, kind: "brown" | "green", flip = 1): string {
+  const [, , dark] = SNAIL_SHELL[kind];
+  let sp = "";
+  for (let t = 0; t <= 12.6; t += 0.3) {
+    const r = 1 + t * 0.7;
+    sp += `${sp ? "L" : "M"}${(-2 + Math.cos(t) * r).toFixed(2)} ${(-12 + Math.sin(t) * r * 0.92).toFixed(2)}`;
+  }
+  return `<g transform="translate(${x} ${y}) scale(${(flip * k).toFixed(3)} ${k.toFixed(3)})">
+    <ellipse cx="2" cy="1.5" rx="20" ry="3" fill="#1B1206" opacity=".22"/>
+    <path d="M-19 0.5C-19 -3 -11 -4.5 -1 -4.5C7 -4.5 12 -7.5 15.5 -11.5C18.5 -14.5 22.5 -13 21.6 -8.6C20.8 -4.6 18.4 -1.2 15.4 0.5Z" fill="#D8C4A0" stroke="#7E6747" stroke-width="1.3" stroke-linejoin="round"/>
+    <path d="M17 -12.2L19.4 -20.4M19.6 -11L24.6 -17.4" stroke="#7E6747" stroke-width="1.4" stroke-linecap="round"/>
+    <circle cx="19.6" cy="-21" r="1.5" fill="#4E3F2A"/><circle cx="25" cy="-17.9" r="1.5" fill="#4E3F2A"/>
+    <circle cx="-2" cy="-12" r="11.4" fill="url(#${u}${kind})" stroke="${dark}" stroke-width="1.4"/>
+    <path d="${sp}" fill="none" stroke="${dark}" stroke-width="1.2" stroke-linecap="round" opacity=".85"/>
+    <ellipse cx="-6.4" cy="-17.4" rx="3.4" ry="2.2" fill="#fff" opacity=".38" transform="rotate(-24 -6.4 -17.4)"/>
+  </g>`;
+}
+/** 가지에 앉아 아래를 내려다보는 작은 새(원점 = 발, 왼쪽을 본다). */
+function perchBird(x: number, y: number): string {
+  return `<g transform="translate(${x} ${y})">
+    <path d="M-30 1.5H30" stroke="#6B4A2B" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M6 -6L22 -2L20 2L4 -1Z" fill="#5E5446" stroke="#3E362C" stroke-width="1" stroke-linejoin="round"/>
+    <ellipse cx="-1" cy="-8" rx="10.5" ry="7.4" fill="#8C7A62" stroke="#4E4334" stroke-width="1.2"/>
+    <circle cx="-10" cy="-13" r="5.6" fill="#8C7A62" stroke="#4E4334" stroke-width="1.2"/>
+    <path d="M-15.4 -13.6L-20.6 -10.4L-15 -11" fill="#E0A030" stroke="#9A6A14" stroke-width=".9" stroke-linejoin="round"/>
+    <circle cx="-11.6" cy="-14.2" r="1.2" fill="#1E1A14"/>
+    <path d="M-4 -1.2V1.5M1 -1V1.5" stroke="#4E4334" stroke-width="1.3" stroke-linecap="round"/>
+  </g>`;
+}
+let snailN = 0;
+/** (가) 낙엽이 쌓인 숲 바닥, (나) 풀밭. 두 판에 같은 자리, 같은 색의 달팽이 넷과 새 한 마리. 폭 344, 높이 150. */
+export function snailHabitatPairFig(): string {
+  const u = `snl${++snailN}`;
+  const PW = 164;
+  const PH = 116;
+  const grad = (id: string, c: readonly string[]): string => `<radialGradient id="${u}${id}" cx=".34" cy=".3" r=".8"><stop offset="0" stop-color="${c[0]}"/><stop offset=".6" stop-color="${c[1]}"/><stop offset="1" stop-color="${c[2]}"/></radialGradient>`;
+  // 판 안의 달팽이 자리와 색(두 판이 같다)
+  const SN: [number, number, "brown" | "green", number][] = [[30, 100, "brown", 1], [66, 86, "green", -1], [104, 102, "green", 1], [138, 88, "brown", -1]];
+  const leaves = Array.from({ length: 16 }, (_, i) => {
+    const lx = 8 + ((i * 37) % 150), ly = 52 + ((i * 23) % 60), a = (i * 53) % 180;
+    const col = ["#A8682F", "#7A4B22", "#C99A5A", "#93602F"][i % 4];
+    return `<ellipse cx="${lx}" cy="${ly}" rx="${9 + (i % 3) * 2}" ry="${4 + (i % 2)}" transform="rotate(${a} ${lx} ${ly})" fill="${col}" stroke="#5E3B1A" stroke-width=".7" opacity=".95"/>`;
+  }).join("");
+  const blades = Array.from({ length: 30 }, (_, i) => {
+    const bx = 3 + ((i * 29) % 160), by = 54 + ((i * 17) % 62), h = 10 + (i % 4) * 4, lean = ((i % 5) - 2) * 2;
+    return `<path d="M${bx} ${by}q${lean} ${-h * 0.6} ${lean * 1.6} ${-h}" fill="none" stroke="${["#3E8A2A", "#7CC659", "#58A83A"][i % 3]}" stroke-width="2" stroke-linecap="round"/>`;
+  }).join("");
+  const panel = (px: number, kind: "litter" | "grass", tag: string): string => `
+    <g transform="translate(${px} 0)">
+      <clipPath id="${u}c${kind}"><rect x="0" y="0" width="${PW}" height="${PH}" rx="12"/></clipPath>
+      <g clip-path="url(#${u}c${kind})">
+        <rect width="${PW}" height="${PH}" fill="url(#${u}${kind})"/>
+        ${kind === "litter" ? leaves : blades}
+        ${SN.map(([x, y, c, f]) => snail(u, x, y, 0.86, c, f)).join("")}
+        ${perchBird(124, 24)}
+      </g>
+      <rect x="0" y="0" width="${PW}" height="${PH}" rx="12" fill="none" stroke="#C9CFD6" stroke-width="1.2"/>
+      <text x="${PW / 2}" y="${PH + 22}" text-anchor="middle" font-size="14" font-weight="700" fill="#4E5968">${tag}</text>
+    </g>`;
+  return `<svg viewBox="0 0 344 ${PH + 30}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="(가) 낙엽이 쌓인 숲 바닥과 (나) 풀밭. 두 곳에 껍데기 색이 갈색인 달팽이와 연두색인 달팽이가 둘씩 똑같이 섞여 있고, 두 곳 모두 위쪽 가지에 새가 앉아 있다">
+    <defs>
+      ${grad("brown", SNAIL_SHELL.brown)}${grad("green", SNAIL_SHELL.green)}
+      <linearGradient id="${u}litter" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9A06A"/><stop offset=".45" stop-color="#A9743F"/><stop offset="1" stop-color="#83552B"/></linearGradient>
+      <linearGradient id="${u}grass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B7E08F"/><stop offset=".45" stop-color="#86C55C"/><stop offset="1" stop-color="#5C9E3B"/></linearGradient>
+    </defs>
+    ${panel(0, "litter", "(가)")}
+    ${panel(180, "grass", "(나)")}
+  </svg>`;
+}
+
 /** (나) 생태계의 먹이 관계 그림(u2l10 문제). 랩의 무대와 같은 자리, 같은 화살표를 밝은 바탕에 그린다.
  *  화살표는 먹히는 생물에서 먹는 생물 쪽을 가리킨다. 그림 칸에서 폭에 맞춰 늘어나도 비율은 그대로다. */
 export function foodWebFig(): string {

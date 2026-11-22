@@ -156,15 +156,51 @@ export function pistonWeightsFig(): string {
   </svg>`;
 }
 
-/** 부피-온도 직선 위 (가)(나)(다) */
-export function tempVolLineFig(): string {
-  return `<svg viewBox="0 0 344 192" ${NS} fill="none" role="img" aria-label="온도에 따른 부피 직선 그래프 위의 세 점 가, 나, 다">
-    <line x1="52" y1="22" x2="52" y2="158" stroke="#B0B8C1" stroke-width="1.6"/>
-    <line x1="52" y1="158" x2="322" y2="158" stroke="#B0B8C1" stroke-width="1.6"/>
-    <line x1="52" y1="132" x2="310" y2="52" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
-    ${[[92, 120, "(가)"], [180, 94, "(나)"], [268, 68, "(다)"]].map(([x, y, t]) => `<circle cx="${x}" cy="${y}" r="4.4" fill="#5E6B7E"/><text x="${x}" y="${Number(y) - 11}" text-anchor="middle" font-size="14" font-weight="700" fill="#4E5968">${t}</text>`).join("")}
-    <text x="12" y="15" font-size="13.5" fill="#4E5968">부피(mL)</text>
-    <text x="322" y="182" text-anchor="end" font-size="13.5" fill="#4E5968">온도(℃)</text>
+/** 끝을 막은 주사기를 물중탕에 담그고 물의 온도를 바꾸며 잰 속 기체의 부피 (라이트, u6l4 문제, 2026-11-22)
+ *  왼쪽은 장치(물이 든 비커, 끝을 마개로 막은 주사기, 온도계), 오른쪽은 결과 표. 압력은 일정(피스톤이 자유롭게 움직인다).
+ *  값은 샤를 법칙의 자연값: 0 ℃에서 41.0 mL이면 1 ℃마다 41.0 ÷ 273 ≈ 0.15 mL씩 늘어 20 ℃ 44.0, 40 ℃ 47.0, 60 ℃ 50.0 mL.
+ *  레슨의 다른 문항(20 ℃ 30.0 mL, 10 ℃마다 1.0 mL)과 시험 풀의 앵커(55 mL·0.2/℃, 82 mL·0.3/℃)와 겹치지 않는다. 글자는 설계 13 이상. */
+export function syringeTableFig(): string {
+  const rows: [string, string][] = [["0", "41.0"], ["20", "44.0"], ["40", "47.0"], ["60", "50.0"]];
+  const TX = 150, TW = 186, HEAD = 34, RH = 32;
+  const H = HEAD + rows.length * RH;
+  const ticks = Array.from({ length: 9 }, (_, i) => `<path d="M${i % 2 ? 51 : 49} ${62 + i * 9}H56" stroke="#7D8A9C" stroke-width="1.1"/>`).join("");
+  return `<svg viewBox="0 0 344 176" ${NS} fill="none" role="img" aria-label="물이 든 비커에 끝을 막은 주사기와 온도계를 넣은 장치, 물의 온도에 따른 주사기 속 기체의 부피를 적은 표">
+    <defs>
+      <linearGradient id="syW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D6EBFF"/><stop offset="1" stop-color="#A9D0F5"/></linearGradient>
+      <linearGradient id="syB" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F7FBFF"/><stop offset=".55" stop-color="#E6EEF7"/><stop offset="1" stop-color="#C9D6E4"/></linearGradient>
+      <clipPath id="syClip"><rect x="${TX}" y="8" width="${TW}" height="${H}" rx="10"/></clipPath>
+    </defs>
+    <ellipse cx="72" cy="168" rx="52" ry="4.5" fill="#2A3A5E" opacity=".1"/>
+    <!-- 비커와 물 -->
+    <path d="M22 78H122V158a8 8 0 0 1-8 8H30a8 8 0 0 1-8-8Z" fill="url(#syW)"/>
+    <path d="M22 78H122" stroke="#8DB8E8" stroke-width="1.4"/>
+    <path d="M18 46V158a10 10 0 0 0 10 10H116a10 10 0 0 0 10-10V46" stroke="#5E6B7E" stroke-width="2.4" stroke-linecap="round"/>
+    <!-- 주사기: 끝(아래)을 마개로 막았다. 피스톤 손잡이는 물 밖 -->
+    <rect x="44" y="56" width="26" height="92" rx="4" fill="url(#syB)" stroke="#7D8A9C" stroke-width="1.5"/>
+    ${ticks}
+    <rect x="46.5" y="84" width="21" height="62" rx="2.5" fill="#EEF6FF" opacity=".9"/>
+    <rect x="45.5" y="80" width="23" height="6" rx="1.5" fill="#5E6B7E"/>
+    <path d="M57 80V30" stroke="#8A97A8" stroke-width="4" stroke-linecap="round"/>
+    <rect x="44" y="24" width="26" height="6" rx="3" fill="#8A97A8"/>
+    <path d="M52 148h10v6a5 5 0 0 1-10 0Z" fill="#3A4452"/>
+    <!-- 온도계 -->
+    <rect x="98" y="30" width="8" height="122" rx="4" fill="#FFFFFF" stroke="#7D8A9C" stroke-width="1.4"/>
+    <path d="M102 112V150" stroke="#F0702E" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="102" cy="153" r="5.4" fill="#F0702E" stroke="#B9531C" stroke-width="1.2"/>
+    <text x="57" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">주사기</text>
+    <text x="104" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">온도계</text>
+    <!-- 결과 표 -->
+    <g clip-path="url(#syClip)">
+      <rect x="${TX}" y="8" width="${TW}" height="${HEAD}" fill="#EEF2F6"/>
+      ${rows.map((_, i) => `<rect x="${TX}" y="${8 + HEAD + i * RH}" width="${TW}" height="${RH}" fill="${i % 2 ? "#F7F9FB" : "#FFFFFF"}"/>`).join("")}
+    </g>
+    <text x="${TX + TW * 0.27}" y="30" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">물의 온도(℃)</text>
+    <text x="${TX + TW * 0.74}" y="30" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">기체의 부피(mL)</text>
+    ${rows.map(([t, v], i) => `<text x="${TX + TW * 0.27}" y="${8 + HEAD + i * RH + 21}" text-anchor="middle" font-size="14.5" font-weight="700" fill="#333D4B">${t}</text><text x="${TX + TW * 0.74}" y="${8 + HEAD + i * RH + 21}" text-anchor="middle" font-size="14.5" font-weight="700" fill="#333D4B">${v}</text>`).join("")}
+    <rect x="${TX}" y="8" width="${TW}" height="${H}" rx="10" stroke="#C9CFD6" stroke-width="1.4"/>
+    <path d="M${TX + TW * 0.5} 8V${8 + H}" stroke="#DCE1E7" stroke-width="1.2"/>
+    ${rows.map((_, i) => `<path d="M${TX} ${8 + HEAD + i * RH}H${TX + TW}" stroke="#DCE1E7" stroke-width="1.2"/>`).join("")}
   </svg>`;
 }
 

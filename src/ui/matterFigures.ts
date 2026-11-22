@@ -6,11 +6,6 @@ const NS = `xmlns="http://www.w3.org/2000/svg"`;
 const P = "#6E9EDB"; // 입자 공통색(다크 그림)
 const dot = (x: number, y: number, r = 6): string =>
   `<circle cx="${x}" cy="${y}" r="${r}" fill="${P}"/><circle cx="${x - r * 0.3}" cy="${y - r * 0.33}" r="${r * 0.3}" fill="rgba(255,255,255,.4)"/>`;
-const trail = (x: number, y: number, ang: number, len: number): string => {
-  const dx = Math.cos(ang) * len;
-  const dy = Math.sin(ang) * len;
-  return `<line x1="${(x - dx * 0.5).toFixed(1)}" y1="${(y - dy * 0.5).toFixed(1)}" x2="${(x + dx).toFixed(1)}" y2="${(y + dy).toFixed(1)}" stroke="#8FB3E8" stroke-width="2" stroke-linecap="round" opacity=".5"/>`;
-};
 
 /** 움직임 꼬리: 입자 뒤로 가늘어지는 옅은 자국(혜성 꼬리 모양). ang은 꼬리가 뻗는 방향. */
 const tail = (x: number, y: number, ang: number, len: number, r: number): string => {
@@ -53,115 +48,156 @@ export function stateTrioFig(): string {
   </svg>`;
 }
 
-/** 뜨거운 물 비커 + 얼음 시계 접시: (가) 얼음, (나) 접시 아랫면 물방울 (라이트)
- *  2026-11-15 다시 그림: 수증기는 보이지 않으므로 김 줄로 그리지 않고 작은 입자와 점선 화살(물 표면에서 접시 아랫면까지)로 그린다.
- *  물방울은 아랫면에 맺힌 둥근 방울, 얼음은 접시 위에 닿아 있다(랩 u4WatchLab과 같은 규칙). */
-export function watchGlassFig(): string {
-  const C = 172;
-  const outerY = (dx: number): number => {
-    const t = (dx + 78) / 156;
-    return 62 + 87 * t * (1 - t);
-  };
-  const drops = [-30, -10, 10, 30]
-    .map((dx, i) => {
-      const r = [3.2, 3.8, 3.6, 3.1][i];
-      const y = outerY(dx) - 0.4 + r;
-      return `<circle cx="${C + dx}" cy="${y.toFixed(1)}" r="${r}" fill="#5AA2F8"/><circle cx="${(C + dx - r * 0.3).toFixed(1)}" cy="${(y - r * 0.35).toFixed(1)}" r="${(r * 0.32).toFixed(1)}" fill="#fff" opacity=".8"/>`;
-    })
-    .join("");
-  const arrows = [-24, 0, 24]
-    .map((dx) => {
-      const y1 = outerY(dx) + 13;
-      return `<path d="M${C + dx} 118 C${C + dx - 5} 110 ${C + dx + 5} ${y1 + 8} ${C + dx} ${y1}" stroke="#8DB3E2" stroke-width="1.5" stroke-dasharray="2.6 3.2" stroke-linecap="round" fill="none"/>
-        <path d="M${C + dx - 3.6} ${y1 + 4.4} L${C + dx} ${y1} L${C + dx + 3.6} ${y1 + 4.4}" stroke="#8DB3E2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
-    })
-    .join("");
-  const vp = [[-33, 110], [-18, 103], [-3, 112], [8, 99], [20, 108], [34, 101]]
-    .map(([dx, y]) => `<circle cx="${C + dx}" cy="${y}" r="2.4" fill="#8DB8EC"/>`)
-    .join("");
-  return `<svg viewBox="0 0 344 200" ${NS} role="img" aria-label="뜨거운 물이 든 비커 위에 얼음이 담긴 시계 접시를 올린 그림">
-    <!-- 비커와 물 -->
-    <path d="M116 122h112v40a6 6 0 0 1-6 6H122a6 6 0 0 1-6-6z" fill="#DCEAFF"/>
-    <path d="M116 122h112" stroke="#B9D3F5" stroke-width="1.6"/>
-    <path d="M110 70v96a8 8 0 0 0 8 8h108a8 8 0 0 0 8-8V70" fill="none" stroke="#4E5968" stroke-width="3"/>
-    <!-- 올라가는 수증기(입자와 점선 화살) -->
-    ${arrows}${vp}
-    <!-- 시계 접시: 비커 입구에 걸친 얇은 곡면 유리 -->
-    <path d="M${C - 78} 62 Q${C} 105.5 ${C + 78} 62 L${C + 76} 60 Q${C} 100 ${C - 76} 60 Z" fill="#EEF4FB" stroke="#4E5968" stroke-width="2.4" stroke-linejoin="round"/>
-    ${drops}
-    <!-- 얼음: 접시 안쪽 곡면에 닿아 있다 -->
-    <rect x="147" y="58" width="22" height="20" rx="5" fill="#EAF4FF" stroke="#5AA2F8" stroke-width="2.4" transform="rotate(5 158 78)"/>
-    <rect x="176" y="60.5" width="20" height="18" rx="5" fill="#EAF4FF" stroke="#5AA2F8" stroke-width="2.4" transform="rotate(-5 186 78.5)"/>
-    <!-- 라벨 -->
-    <text x="262" y="50" font-size="13" font-weight="700" fill="#4E5968">(가) 얼음</text>
-    <path d="M258 47l-58 18" stroke="#B0B8C1" stroke-width="1.6"/>
-    <text x="262" y="100" font-size="13" font-weight="700" fill="#4E5968">(나) 물방울</text>
-    <path d="M258 96l-51 -8" stroke="#B0B8C1" stroke-width="1.6"/>
-    <text x="34" y="150" font-size="13" font-weight="700" fill="#4E5968">뜨거운 물</text>
-    <path d="M94 146l26 -2" stroke="#B0B8C1" stroke-width="1.6"/>
+/** 같은 물질의 세 가지 상태를 (가) 고체 → (나) 액체 → (다) 기체 차례로 놓은 입자 모형 (다크, u4l2 문제, 2026-11-22)
+ *  stateTrioFig(시험도 쓴다)와 같은 입자 9개, 같은 반지름 6.4. 차례로 견주어 무엇이 커지고 작아지는지 읽게 한다.
+ *  움직임 꼬리는 액체에 짧게, 기체에 길게 단다(운동이 점점 활발해진다). 고체는 제자리에서 떨기만 하므로 꼬리를 달지 않는다.
+ *  입자의 크기는 세 상자 모두 같다(보기 "입자 하나의 크기"가 커지지 않는다는 단서).
+ *  고체 덩어리는 상자 가운데에 떠 있지 않고 액체와 같은 높이의 바닥에 놓인다(맨 아래 줄 중심 y 87.6, 2026-11-22 검산 지적). */
+export function stateOrderFig(): string {
+  const R = 6.4;
+  const frame = (bx: number, label: string, inner: string): string =>
+    `<g transform="translate(${bx},10)">
+      <rect x="0" y="0" width="100" height="96" rx="14" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>
+      ${inner}
+      <text x="50" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#AFC3E3">${label}</text>
+    </g>`;
+  let solid = "";
+  for (let i = 0; i < 9; i++) solid += dot(50 + ((i % 3) - 1) * 13.4, 74.2 + (Math.floor(i / 3) - 1) * 13.4, R);
+  const liqPts: [number, number, number][] = [
+    [20.6, 87.4, 3.6], [35.8, 88, 3.3], [51.4, 87.2, 5.6], [66.8, 88.2, 3.0], [82.2, 87.4, 4.4],
+    [28.4, 73.4, 3.8], [44, 72.4, 4.9], [59.8, 73.8, 5.2], [75.2, 72.8, 4.1],
+  ];
+  const liq = liqPts.map(([x, y, a]) => tail(x, y, a, 4, R)).join("") + liqPts.map(([x, y]) => dot(x, y, R)).join("");
+  const gasPts: [number, number, number][] = [
+    [18, 18, 0.6], [54, 14, 2.6], [86, 26, 1.9], [32, 46, 5.4], [72, 50, 3.6], [14, 78, 0.2], [50, 76, 4.6], [86, 80, 2.2], [36, 86, 5.9],
+  ];
+  const gas = gasPts.map(([x, y, a]) => tail(x, y, a, 12, R)).join("") + gasPts.map(([x, y]) => dot(x, y, R)).join("");
+  return `<svg viewBox="0 0 344 136" ${NS} role="img" aria-label="같은 물질의 세 가지 상태를 나타낸 입자 모형 세 상자 (가), (나), (다)">
+    ${frame(6, "(가)", solid)}
+    ${frame(122, "(나)", liq)}
+    ${frame(238, "(다)", gas)}
   </svg>`;
 }
 
-/** 가열(냉각) 곡선: (가)~(라) 구간 라벨. 온도 축에는 수치를 쓰지 않는다(용어 미도입 단원)
- *  2026-11-15 다시 그림: 비탈의 이름표는 비탈 가운데의 왼쪽 위에, 평평한 구간의 이름표는 그 구간 위에 둔다(위쪽 평평한 구간의 이름으로 읽히지 않게).
- *  끓는(응결하는) 구간을 녹는(어는) 구간보다 길게. 축 글자 12.5. */
-export function curveFig(mode: "heat" | "cool" = "heat"): string {
-  const X0 = 44, Y0 = 188; // 원점
-  const yA = mode === "heat" ? 140 : 70; // 첫 평평한 구간
-  const yB = mode === "heat" ? 70 : 140; // 둘째 평평한 구간
-  const p0 = mode === "heat" ? 176 : 24; // 출발 온도
-  // 가열: 녹는 구간(짧게) 뒤 끓는 구간(길게). 냉각: 응결 구간(길게) 뒤 어는 구간(짧게)
-  const xs = mode === "heat" ? [X0, 90, 138, 194, 306] : [X0, 90, 202, 258, 306];
-  const pts: [number, number][] = [[xs[0], p0], [xs[1], yA], [xs[2], yA], [xs[3], yB], [xs[4], yB]];
-  const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x} ${y}`).join(" ");
-  const labels = ["(가)", "(나)", "(다)", "(라)"];
-  const labelEls = labels
+/** 물과 식용유를 얼리기 전과 꽁꽁 얼린 뒤 잰 질량과 부피 (라이트, u4l4 문제, 2026-11-22)
+ *  물: 50.0 g, 50.0 mL → 50.0 g, 54.5 mL(얼음은 같은 질량의 물보다 부피가 약 9% 크다, 얼음의 밀도 약 0.92 g/mL에서).
+ *  식용유: 46.0 g(밀도 약 0.92 g/mL), 50.0 mL → 46.0 g, 47.0 mL(굳으면 부피가 줄어든다. 줄어드는 정도는 기름마다 조금씩 다르다).
+ *  질량은 두 물질 모두 그대로다. 랩(식용유 12.60 g)과 다른 값이다. 글자는 설계 13 이상. */
+export function freezeTableFig(): string {
+  const X0 = 8, W = 328, HEAD = 56, RH = 38;
+  const col = [X0, X0 + 76, X0 + 76 + 63, X0 + 76 + 126, X0 + 76 + 189, X0 + W]; // 칸 경계
+  const mid = (i: number): number => (col[i] + col[i + 1]) / 2;
+  const rows: [string, string[]][] = [
+    ["물", ["50.0", "50.0", "50.0", "54.5"]],
+    ["식용유", ["46.0", "50.0", "46.0", "47.0"]],
+  ];
+  const H = HEAD + rows.length * RH;
+  const body = rows
+    .map(([name, v], r) => {
+      const y = HEAD + r * RH;
+      return `<rect x="${X0}" y="${y}" width="${W}" height="${RH}" fill="${r % 2 ? "#F7F9FB" : "#FFFFFF"}"/>
+        <text x="${mid(0)}" y="${y + 24}" text-anchor="middle" font-size="14" font-weight="700" fill="#333D4B">${name}</text>
+        ${v.map((t, i) => `<text x="${mid(i + 1)}" y="${y + 24}" text-anchor="middle" font-size="14.5" font-weight="700" fill="#333D4B">${t}</text>`).join("")}`;
+    })
+    .join("");
+  return `<svg viewBox="0 -3 344 ${H + 8}" ${NS} role="img" aria-label="물과 식용유를 얼리기 전과 얼린 뒤에 잰 질량과 부피를 적은 표">
+    <clipPath id="frzClip"><rect x="${X0}" y="0" width="${W}" height="${H}" rx="10"/></clipPath>
+    <g clip-path="url(#frzClip)">
+      <rect x="${X0}" y="0" width="${W}" height="${HEAD}" fill="#EEF2F6"/>
+      ${body}
+    </g>
+    <text x="${mid(0)}" y="34" text-anchor="middle" font-size="13.5" font-weight="700" fill="#4E5968">물질</text>
+    <text x="${(col[1] + col[3]) / 2}" y="22" text-anchor="middle" font-size="13.5" font-weight="700" fill="#4E5968">얼리기 전</text>
+    <text x="${(col[3] + col[5]) / 2}" y="22" text-anchor="middle" font-size="13.5" font-weight="700" fill="#4E5968">얼린 뒤</text>
+    ${[1, 2, 3, 4].map((i) => `<text x="${mid(i)}" y="47" text-anchor="middle" font-size="13" font-weight="700" fill="#6B7684">${i % 2 ? "질량(g)" : "부피(mL)"}</text>`).join("")}
+    <rect x="${X0}" y="0" width="${W}" height="${H}" rx="10" fill="none" stroke="#C9CFD6" stroke-width="1.4"/>
+    <path d="M${col[1]} 0V${H}M${col[3]} 0V${H}" stroke="#C9CFD6" stroke-width="1.3"/>
+    <path d="M${col[2]} 30V${H}M${col[4]} 30V${H}M${col[1]} 30H${X0 + W}" stroke="#DCE1E7" stroke-width="1.1"/>
+    <path d="M${X0} ${HEAD}H${X0 + W}M${X0} ${HEAD + RH}H${X0 + W}" stroke="#DCE1E7" stroke-width="1.2"/>
+  </svg>`;
+}
+
+/** 가열 곡선: 구간 A~E, 시간과 온도 눈금이 있는 판 (라이트, u4l5 문제 둘, 2026-11-22)
+ *  kind "solid": 20 ℃의 어떤 고체를 가열(40 ℃와 80 ℃에서 온도가 일정). A 0~2분 20→40, B 2~6분 40, C 6~10분 40→80, D 10~17분 80, E 17~19분 80→96.
+ *  kind "ice"  : −20 ℃의 얼음을 가열(0 ℃와 100 ℃에서 온도가 일정). A 0~1분 −20→0, B 1~5분 0, C 5~11분 0→100, D 11~18분 100, E 18~19분 100→110.
+ *  끓는(기화하는) 구간 D를 녹는(융해하는) 구간 B보다 길게 그린다. 구간 이름표는 평평한 구간은 그 위에, 비탈은 비탈 가운데의 왼쪽 위에 둔다
+ *  (첫 비탈 A만 세로축에 막혀 오른쪽에 두고 지시선으로 잇는다).
+ *  눈금 숫자는 평평한 구간의 온도가 눈금선 위에 오게 고른다. '녹는점, 끓는점' 같은 말은 쓰지 않는다(중1). 대체 글에 답을 쓰지 않는다. */
+export function segCurveFig(kind: "solid" | "ice"): string {
+  const cfg =
+    kind === "solid"
+      ? { yMin: 0, yMax: 100, yTicks: [0, 20, 40, 60, 80, 100], tMax: 20, tStep: 2, pts: [[0, 20], [2, 40], [6, 40], [10, 80], [17, 80], [19, 96]] as [number, number][] }
+      : { yMin: -20, yMax: 120, yTicks: [-20, 0, 20, 40, 60, 80, 100, 120], tMax: 20, tStep: 2, pts: [[0, -20], [1, 0], [5, 0], [11, 100], [18, 100], [19, 110]] as [number, number][] };
+  const X0 = 46, X1 = 320, Y0 = 186, Y1 = 26;
+  const gx = (t: number): number => X0 + ((X1 - X0) * t) / cfg.tMax;
+  const gy = (T: number): number => Y0 - ((Y0 - Y1) * (T - cfg.yMin)) / (cfg.yMax - cfg.yMin);
+  const f = (v: number): string => v.toFixed(1);
+  const xt = Array.from({ length: cfg.tMax / cfg.tStep + 1 }, (_, i) => {
+    const t = i * cfg.tStep;
+    return `<line x1="${f(gx(t))}" y1="${Y0}" x2="${f(gx(t))}" y2="${Y1}" stroke="#EEF1F5" stroke-width="1"/>
+      <text x="${f(gx(t))}" y="${Y0 + 17}" text-anchor="middle" font-size="13" fill="#6B7684">${t}</text>`;
+  }).join("");
+  const yt = cfg.yTicks
+    .map((T) => `<line x1="${X0}" y1="${f(gy(T))}" x2="${X1}" y2="${f(gy(T))}" stroke="#E5E9EE" stroke-width="1"/>
+      <text x="${X0 - 7}" y="${f(gy(T) + 4.5)}" text-anchor="end" font-size="13" fill="#6B7684">${T < 0 ? `−${-T}` : T}</text>`)
+    .join("");
+  const P = cfg.pts.map(([t, T]) => [gx(t), gy(T)] as [number, number]);
+  const line = P.map(([x, y], i) => `${i ? "L" : "M"}${f(x)} ${f(y)}`).join(" ");
+  const labels = ["A", "B", "C", "D", "E"]
     .map((t, i) => {
-      const [x1, y1] = pts[i];
-      const [x2, y2] = pts[i + 1];
+      const [x1, y1] = P[i];
+      const [x2, y2] = P[i + 1];
       const mx = (x1 + x2) / 2;
       const my = (y1 + y2) / 2;
-      if (y1 === y2) return `<text x="${mx}" y="${my - 11}" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${t}</text>`;
-      // 비탈: 가운데에서 위쪽(왼쪽 위 또는 오른쪽 위)으로 수직 거리 16
-      const dx = x2 - x1, dy = y2 - y1;
-      const len = Math.hypot(dx, dy);
+      if (Math.abs(y1 - y2) < 0.5) return `<text x="${f(mx)}" y="${f(my - 10)}" text-anchor="middle" font-size="14" font-weight="800" fill="#4E5968">${t}</text>`;
+      // 첫 비탈은 세로축과 눈금 숫자에 붙어 있어 왼쪽 위에 둘 자리가 없다. 비탈 가운데의 오른쪽(다음 평평한 구간의 밑)에 두고,
+      // 가는 지시선으로 비탈과 이어 위의 평평한 구간 이름으로 읽히지 않게 한다(2026-11-22 검산 지적: 얼음 그래프에서 A가 B 밑에 붙어 보였다)
+      if (i === 0) {
+        const lx = mx + 24, ly = my + 1.5; // 글자 가운데
+        return `<path d="M${f(mx + 3)} ${f(my + 0.5)}L${f(lx - 7)} ${f(ly)}" stroke="#8B95A1" stroke-width="1.2" stroke-linecap="round"/>
+          <text x="${f(lx)}" y="${f(ly + 5)}" text-anchor="middle" font-size="14" font-weight="800" fill="#4E5968">${t}</text>`;
+      }
+      // 비탈: 가운데에서 왼쪽 위로 수직 거리 15
+      const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
       let nx = dy / len, ny = -dx / len;
       if (ny > 0) { nx = -nx; ny = -ny; }
-      if (i === 0 && mode === "heat") { nx = -nx; ny = -ny; } // 가열의 첫 비탈은 세로축에 붙어 있어 아래 오른쪽에
-      return `<text x="${(mx + nx * 17).toFixed(1)}" y="${(my + ny * 17 + 4.5).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${t}</text>`;
+      return `<text x="${f(mx + nx * 15)}" y="${f(my + ny * 15 + 5)}" text-anchor="middle" font-size="14" font-weight="800" fill="#4E5968">${t}</text>`;
     })
     .join("");
-  return `<svg viewBox="0 0 344 216" ${NS} role="img" aria-label="${mode === "heat" ? "고체를 가열" : "기체를 냉각"}할 때 시간에 따른 온도 그래프. 수평 구간이 두 번 나타난다">
-    <line x1="${X0}" y1="${Y0}" x2="${X0}" y2="24" stroke="#B0B8C1" stroke-width="1.6"/>
-    <line x1="${X0}" y1="${Y0}" x2="326" y2="${Y0}" stroke="#B0B8C1" stroke-width="1.6"/>
-    <line x1="${X0}" y1="${yA}" x2="${Math.max(pts[1][0], pts[2][0])}" y2="${yA}" stroke="#DDE2E8" stroke-width="1.4" stroke-dasharray="4 5"/>
-    <line x1="${X0}" y1="${yB}" x2="${pts[3][0]}" y2="${yB}" stroke="#DDE2E8" stroke-width="1.4" stroke-dasharray="4 5"/>
+  const what = kind === "solid" ? "20 ℃의 어떤 고체 물질" : "−20 ℃의 얼음";
+  return `<svg viewBox="0 0 344 222" ${NS} role="img" aria-label="${what}을 일정한 세기로 가열하며 잰 시간에 따른 온도 그래프. 구간 A부터 E까지 이름이 붙어 있다">
+    ${yt}${xt}
+    <line x1="${X0}" y1="${Y1}" x2="${X0}" y2="${Y0}" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="${X0}" y1="${Y0}" x2="${X1}" y2="${Y0}" stroke="#B0B8C1" stroke-width="1.6"/>
     <path d="${line}" fill="none" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    ${labelEls}
-    <text x="10" y="17" font-size="12.5" font-weight="700" fill="#4E5968">온도(℃)</text>
-    <text x="326" y="208" text-anchor="end" font-size="12.5" font-weight="700" fill="#4E5968">${mode === "heat" ? "가열" : "냉각"} 시간(분)</text>
+    ${labels}
+    <text x="8" y="15" font-size="12.5" font-weight="700" fill="#4E5968">온도(℃)</text>
+    <text x="340" y="220" text-anchor="end" font-size="12.5" font-weight="700" fill="#4E5968">가열 시간(분)</text>
   </svg>`;
 }
 
-/** 액체가 기체로 바뀌는 입자 모형(기화, 다크). 상태가 변해도 입자의 수와 크기는 그대로라
- *  두 상자 모두 같은 크기(반지름 6)의 입자 9개다. 바뀌는 것은 입자 사이의 거리와 배열뿐이다.
- *  액체 무리는 상자 바닥에 고여 있다(2026-11-15, 바닥에 5개와 그 위 4개). */
-export function vaporizeFig(): string {
-  const liqPts: [number, number][] = [
-    [31.4, 94.8], [45.2, 95.4], [59, 94.6], [72.8, 95.2], [86.6, 94.8], [38.2, 82.4], [52.2, 81.8], [66, 82.6], [79.8, 81.8],
-  ];
-  const liq = liqPts.map(([x, y]) => dot(x, y, 6)).join("");
+/** 기체가 액체로 바뀌는 입자 모형(액화, 다크, u4l4 문제, 2026-11-22). 왼쪽은 멀리 흩어져 빠르게 움직이는 입자 9개(수증기),
+ *  오른쪽은 상자 바닥에 모인 입자 9개(물방울). 상태가 변해도 입자의 수와 크기(반지름 6)는 그대로다. 달라지는 것은 입자 사이의 거리와 배열뿐이다.
+ *  예전 판(기화, 액체 → 기체)과 방향이 반대다. 움직임 꼬리는 stateOrderFig와 같은 모양으로 기체에 길게, 액체에 짧게 단다.
+ *  액체는 바닥에 6개, 그 위에 3개를 틈 2~3으로 어긋나게 놓는다(두 줄로 가지런하면 고체처럼 읽힌다, 2026-11-22 검산 지적). */
+export function condenseFig(): string {
   const gasPts: [number, number, number][] = [
-    [222, 30, 0.6], [258, 24, 2.3], [286, 44, 4.0], [314, 24, 1.0], [232, 62, 1.4], [270, 70, 5.2], [296, 82, 3.1], [240, 88, 2.0], [272, 102, 3.6],
+    [28, 30, 0.6], [64, 24, 2.3], [92, 44, 4.0], [120, 24, 1.0], [38, 62, 1.4], [76, 70, 5.2], [102, 82, 3.1], [46, 88, 2.0], [78, 102, 3.6],
   ];
-  const gas = gasPts.map(([x, y, a]) => trail(x, y, a, 8) + dot(x, y, 6)).join("");
-  return `<svg viewBox="0 0 344 120" ${NS} role="img" aria-label="촘촘히 모여 있는 입자 9개가 화살표를 지나 넓게 흩어진 입자 9개로 변하는 모형">
-    <rect x="12" y="18" width="94" height="84" rx="14" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>
-    ${liq}
-    <path d="M128 60h64" stroke="#AFC3E3" stroke-width="3.4" stroke-linecap="round"/>
-    <path d="M182 48l14 12-14 12" fill="none" stroke="#AFC3E3" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="206" y="8" width="126" height="104" rx="14" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>
+  const gas = gasPts.map(([x, y, a]) => tail(x, y, a, 10, 6)).join("") + gasPts.map(([x, y]) => dot(x, y, 6)).join("");
+  // 바닥 줄의 꼬리는 위나 옆으로만(아래로 뻗으면 상자 바닥을 뚫는다)
+  const liqPts: [number, number, number][] = [
+    [243.5, 94.4, 3.6], [257.4, 93.6, 4.4], [271.6, 94.8, 2.9], [285.8, 94.0, 5.3], [300.2, 94.6, 0.1], [314.4, 93.6, 4.0],
+    [250.6, 81.6, 3.3], [265.0, 81.0, 5.2], [293.0, 81.2, 1.9],
+  ];
+  const liq = liqPts.map(([x, y, a]) => tail(x, y, a, 3.5, 6)).join("") + liqPts.map(([x, y]) => dot(x, y, 6)).join("");
+  return `<svg viewBox="0 0 344 120" ${NS} role="img" aria-label="넓게 흩어진 입자 9개가 화살표를 지나 상자 바닥에 모인 입자 9개로 변하는 모형">
+    <rect x="12" y="8" width="126" height="104" rx="14" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>
     ${gas}
+    <path d="M152 60h64" stroke="#AFC3E3" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M206 48l14 12-14 12" fill="none" stroke="#AFC3E3" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="232" y="18" width="94" height="84" rx="14" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>
+    ${liq}
   </svg>`;
 }
 

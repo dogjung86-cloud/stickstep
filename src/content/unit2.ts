@@ -13,7 +13,7 @@ import type { Step } from "../lessons/types";
 import type { Block } from "../ui/blocks";
 import { lesson, concept, comic, opener, recap, mcq, ox, multi, binSort, order, pairMatch, cut, magnifyLab, cellWorkLab, slideBuildLab, scopeCompareLab, cellFitLab, levelBuildLab, ecoMapLab, beakIslesLab, kinLab, rankWidenLab, kingdomPathLab, foodWebLab } from "./dsl";
 import { b4MiniArt, rankLadderFig } from "../ui/bio4Figures";
-import { onionRulerFig, foodWebFig, cellPartsFigV5, cellTrioFig, slideBubbleScopeFig, tissueVsCirculatoryFig, PAIR_ART } from "../ui/bio6Figures";
+import { onionRulerFig, foodWebFig, cellPartsFigV5, cellTrioFig, slideBubbleScopeFig, tissueVsCirculatoryFig, snailHabitatPairFig, PAIR_ART } from "../ui/bio6Figures";
 import { organism } from "../ui/figures";
 import { comicStory } from "../ui/sketchArt";
 import { sciFig, sciFigMore } from "./sciFigG1";
@@ -969,34 +969,35 @@ export const UNIT2: Unit = {
           ],
           cta: "문제 풀기",
         }),
+        // 같은 종류 안의 차이(변이)와, 한 생물이 자라거나 계절에 따라 달라지는 것, 서로 다른 종류의 차이를 가른다.
         multi({
-          prompt: "변이의 예로 옳은 것을 <b>모두</b> 고르세요.",
+          prompt: "같은 종류의 생물 사이에서 나타나는 <b>변이</b>의 예를 <b>모두</b> 고르세요.",
           options: [
-            "고양이마다 털색이 조금씩 다르다",
-            "바지락마다 껍데기 무늬가 서로 다르다",
-            "거미와 개미는 다리의 수가 서로 다르다",
-            "붕어는 알을 낳고 고래는 새끼를 낳는다",
-            "낙타는 사막에 살고 오징어는 바다에 산다",
+            "같은 종류의 강낭콩인데 씨앗마다 크기와 무늬가 조금씩 다르다",
+            "사람마다 귓불이 얼굴 쪽에 붙은 모양도 있고 떨어진 모양도 있다",
+            "올챙이가 자라 개구리가 되면서 꼬리가 없어진다",
+            "참새와 독수리는 부리의 모양과 크기가 서로 다르다",
+            "은행나무 한 그루의 잎이 여름에는 초록색, 가을에는 노란색이다",
           ],
           answer: [0, 1],
-          explainGood: "정확해요! 변이는 <b>같은 종류 안</b>의 서로 다름. 거미vs개미, 붕어vs고래, 낙타vs오징어는 <b>다른 종류끼리</b>의 차이라 변이가 아니죠.",
-          explainBad: "'같은 종류인가?'부터 확인해요. 고양이끼리·바지락끼리의 다름만 <b>변이</b>예요. 서로 다른 생물끼리의 차이는 변이가 아니랍니다.",
+          explainGood: "정확해요! 강낭콩끼리, 사람끼리처럼 <b>같은 종류 안</b>에서 나타나는 서로 다른 특징이 변이예요. 올챙이와 은행잎은 한 생물이 자라거나 계절이 바뀌며 달라진 것이고, 참새와 독수리는 서로 다른 종류라 변이가 아니에요.",
+          explainBad: "먼저 '같은 종류끼리 비교했나?'를 확인해요. 강낭콩끼리, 사람끼리의 차이만 <b>변이</b>예요. 한 생물이 자라면서나 계절이 바뀌면서 달라지는 것, 서로 다른 종류의 생물끼리의 차이는 변이가 아니랍니다.",
         }),
-        // 문두에 처음 무리의 변이(목 길이가 조금씩 다르다)를 밝힌다. 바로 뒤 문제가 "처음부터 모두 같았다면"을 묻기 때문이다. 줄바꿈도 다듬는다.
-        // 그림은 v3가 고른 두 섬 그림((가), (나) 이름표가 붙은 한 쌍)을 그대로 쓴다.
+        // 문두에 처음 무리의 변이(껍데기 색이 다르다)와 환경의 차이(바닥 색, 새)를 밝힌다. 바로 뒤 문제가 "처음부터 모두 같았다면"을 묻기 때문이다.
+        // 그림은 두 판에 같은 자리, 같은 색의 달팽이를 둔다(오랜 시간 뒤의 결과를 미리 보이지 않는다). 랩(두 섬의 새, 먹이)과 다른 장면으로 같은 원리를 옮겨 쓴다.
         mcq({
-          prompt: "목 길이가 조금씩 다른 거북 무리가 두 섬에 나뉘어 살아요. (가) 섬에는 키 큰 선인장이, (나) 섬에는 키 작은 풀이 많아요. 아주 오랜 시간이 지나면 각 섬의 거북 무리는 어떻게 될까요?",
-          figure: ppair("sketch/comics/u2l7/island-a.svg", "목 길이가 다른 거북 셋과 키 큰 선인장", "sketch/comics/u2l7/island-b.svg", "목 길이가 다른 거북 셋과 낮은 풀"),
+          prompt: "껍데기 색이 조금씩 다른 한 종류의 달팽이 무리가 두 곳에 나뉘어 살게 되었어요. (가)는 갈색 낙엽이 쌓인 숲 바닥, (나)는 초록 풀밭이에요. 두 곳 모두 달팽이를 잡아먹는 새가 사는데, 새는 바닥 색과 달라 <b>눈에 잘 띄는 달팽이</b>를 먼저 찾아내요. 아주 오랜 시간이 지나면 두 곳의 달팽이 무리는 어떻게 될까요?",
+          figure: snailHabitatPairFig(),
           options: [
-            "(가)엔 목이 긴 무리, (나)엔 목이 짧은 무리가 남는다",
-            "(가)엔 목이 짧은 무리, (나)엔 목이 긴 무리가 남는다",
-            "두 섬 모두 목이 긴 무리만 남는다",
-            "두 섬의 거북이 모두 사라진다",
-            "목 길이는 먹이와 관계없이 정해진다",
+            "(가)엔 갈색 껍데기, (나)엔 연두색 껍데기의 달팽이가 많아진다",
+            "(가)엔 연두색 껍데기, (나)엔 갈색 껍데기의 달팽이가 많아진다",
+            "두 곳 모두 갈색 껍데기의 달팽이만 남는다",
+            "달팽이가 바닥 색에 맞추어 스스로 껍데기 색을 바꾼다",
+            "껍데기 색은 살아남는 데 아무 영향이 없다",
           ],
           answer: 0,
-          explainGood: "맞아요! 높은 선인장을 먹으려면 <b>목이 길어야</b> 유리하고, 낮은 풀을 먹는 데엔 짧은 목도 충분하죠. 적합한 변이가 살아남아요.",
-          explainBad: "먹이의 <b>높이</b>를 봐요. 키 큰 선인장 섬 (가)에선 <b>목 긴 거북</b>이, 낮은 풀 섬 (나)에선 목 짧은 거북이 더 많이 살아남아 자손을 남긴답니다.",
+          explainGood: "맞아요! 낙엽이 쌓인 (가)에서는 갈색 껍데기가, 풀밭인 (나)에서는 연두색 껍데기가 바닥 색에 묻혀 새의 눈에 덜 띄어요. 그 환경에 <b>알맞은 변이</b>를 가진 달팽이가 더 많이 살아남아 자손을 남기죠.",
+          explainBad: "새는 바닥 색과 달라 <b>눈에 잘 띄는 달팽이</b>를 먼저 찾아내요. (가)에서는 갈색, (나)에서는 연두색 껍데기가 덜 잡아먹히니, 이런 달팽이가 더 많이 살아남아 자손을 남겨요. 달팽이 한 마리가 스스로 껍데기 색을 바꾸는 것이 아니라, 무리 안에서 어떤 색의 달팽이가 늘어나는가가 달라지는 거예요.",
         }),
         order({
           title: "무리가 달라지기까지,<br>순서대로!",

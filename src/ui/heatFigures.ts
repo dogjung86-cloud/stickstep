@@ -56,42 +56,101 @@ export function particleTrio(showMotionLines = true): string {
   </svg>`;
 }
 
-/** 뜨거운 물 (가) + 찬물 (나)의 시간-온도 그래프: 4분에 40℃로 열평형 (라이트 그림)
- *  2026-11-15 그래픽 감사: 두 곡선이 4분에 꺾이며 만났다. 이제 곡선이 매끈하게 다가가 4분에 만나고(기울기 0으로 닿는다) 그 뒤로 함께 간다.
- *  만나기 전 3분에도 두 곡선이 떨어져 보이게 (4 − t)^1.5 꼴로 줄인다. 대체 글에서 답(4분, 40도)을 뺐다.
- *  뜨거운 물은 주황(빨강은 오답 색), 글자는 폰에서 12px 이상(설계 13). */
+/** 작은 금속 컵의 뜨거운 물 (가) + 큰 그릇의 찬물 (나)의 시간-온도 그래프 (라이트 그림, u3l2 문제)
+ *  2026-11-22 새로 그림: (가) 80 ℃, (나) 15 ℃에서 출발해 6분에 35 ℃에서 만나고 그 뒤로 함께 간다(기울기 0으로 닿는다).
+ *  검산: 두 물이 모두 물이면 (가)가 잃은 열 = (나)가 얻은 열이라 (가)의 양 × 45 = (나)의 양 × 20, 곧 찬물이 2.25배 많다.
+ *  문두의 "작은 컵, 큰 그릇"이 이 비와 맞는다(양이 같다고 쓰면 열평형 온도는 47.5 ℃여야 해서 어긋난다).
+ *  만나기 전 3분에도 두 곡선이 떨어져 보이게 (6 − t)^1.6 꼴로 줄인다. 세로축은 10 간격 숫자와 5 간격 옅은 눈금선이라 15, 35, 80이 모두 눈금선 위에 온다.
+ *  6분 뒤 두 선은 같은 자리(35 ℃)에 겹친다. 파랑 실선 위에 주황 점선을 얹어 두 선이 함께 가는 것을 보이고, 겹친 선 위에 "35 ℃"를 적는다
+ *  (예전 판은 두 선을 위아래로 1.4씩 띄워 6분 뒤에도 온도가 다른 것처럼 읽혔다, 2026-11-22 검산 지적).
+ *  대체 글에 답(시각, 온도)을 쓰지 않는다. 뜨거운 물은 주황(빨강은 오답 색), 글자는 폰에서 12px 이상(설계 13). */
 export function equilibriumGraph(): string {
-  // 좌표계: x 44..320 (0~8분), y 26..184 (60~10℃)
-  const gx = (min: number): number => 44 + min * 34.5;
-  const gy = (T: number): number => 184 - (T - 10) * 3.16;
-  const xticks = Array.from({ length: 9 }, (_, i) => {
-    const x = gx(i);
-    return `<line x1="${x}" y1="184" x2="${x}" y2="26" stroke="#EDF0F4" stroke-width="1"/>
-      <text x="${x}" y="201" text-anchor="middle" font-size="13" fill="#6B7684">${i}</text>`;
+  // 좌표계: x 44..320 (0~10분), y 26..186 (90~10℃)
+  const gx = (min: number): number => 44 + min * 27.6;
+  const gy = (T: number): number => 186 - (T - 10) * 2;
+  const xticks = Array.from({ length: 11 }, (_, i) => {
+    const x = gx(i).toFixed(1);
+    return `<line x1="${x}" y1="186" x2="${x}" y2="26" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="${x}" y="203" text-anchor="middle" font-size="13" fill="#6B7684">${i}</text>`;
   }).join("");
-  const yticks = [10, 20, 30, 40, 50, 60]
+  const minor = [15, 25, 35, 45, 55, 65, 75, 85]
+    .map((T) => `<line x1="44" y1="${gy(T)}" x2="320" y2="${gy(T)}" stroke="#F3F5F8" stroke-width="1"/>`)
+    .join("");
+  const yticks = [10, 20, 30, 40, 50, 60, 70, 80, 90]
     .map(
-      (T) => `<line x1="44" y1="${gy(T)}" x2="320" y2="${gy(T)}" stroke="#EDF0F4" stroke-width="1"/>
+      (T) => `<line x1="44" y1="${gy(T)}" x2="320" y2="${gy(T)}" stroke="#E5E9EE" stroke-width="1"/>
       <text x="36" y="${gy(T) + 4.5}" text-anchor="end" font-size="13" fill="#6B7684">${T}</text>`,
     )
     .join("");
-  // (4 − t)^1.5으로 줄어드는 차이: 처음 20℃, 4분에 0
-  const curve = (sign: number): string =>
-    Array.from({ length: 41 }, (_, i) => {
-      const t = (i / 40) * 4;
-      const T = 40 + sign * 20 * Math.pow((4 - t) / 4, 1.5);
+  // 처음 차이(가: +45, 나: −20)가 (6 − t)^1.6으로 줄어 6분에 0이 된다
+  const curve = (gap: number): string =>
+    Array.from({ length: 49 }, (_, i) => {
+      const t = (i / 48) * 6;
+      const T = 35 + gap * Math.pow((6 - t) / 6, 1.6);
       return `${i ? "L" : "M"}${gx(t).toFixed(1)},${gy(T).toFixed(1)}`;
-    }).join(" ") + ` L${gx(8)},${gy(40).toFixed(1)}`;
+    }).join(" ");
+  // 6분부터 10분까지 두 물이 함께 가는 35 ℃ 선
+  const both = `M${gx(6).toFixed(1)},${gy(35)} L${gx(10).toFixed(1)},${gy(35)}`;
   return `<svg viewBox="0 0 344 222" ${NS} role="img" aria-label="물 (가)와 (나)의 시간에 따른 온도 그래프">
-    ${yticks}${xticks}
-    <line x1="44" y1="26" x2="44" y2="184" stroke="#B0B8C1" stroke-width="1.6"/>
-    <line x1="44" y1="184" x2="320" y2="184" stroke="#B0B8C1" stroke-width="1.6"/>
-    <path d="${curve(-1)}" fill="none" stroke="#3182F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 1.4)"/>
-    <path d="${curve(1)}" fill="none" stroke="#F08A24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 -1.4)"/>
-    <text x="88" y="40" font-size="14" font-weight="800" fill="#C9650C">(가)</text>
-    <text x="88" y="150" font-size="14" font-weight="800" fill="#1B64DA">(나)</text>
+    ${minor}${yticks}${xticks}
+    <line x1="44" y1="26" x2="44" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="44" y1="186" x2="320" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
+    <path d="${curve(-20)}" fill="none" stroke="#3182F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${curve(45)}" fill="none" stroke="#F08A24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${both}" fill="none" stroke="#3182F6" stroke-width="3" stroke-linecap="round"/>
+    <path d="${both}" fill="none" stroke="#F08A24" stroke-width="3" stroke-dasharray="8 8"/>
+    <text x="${gx(8.4).toFixed(1)}" y="${gy(35) - 9}" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968" stroke="#FFFFFF" stroke-width="3.5" stroke-linejoin="round" paint-order="stroke">35 ℃</text>
+    <text x="74" y="50" font-size="14" font-weight="800" fill="#C9650C">(가)</text>
+    <text x="112" y="176" font-size="14" font-weight="800" fill="#1B64DA">(나)</text>
     <text x="6" y="15" font-size="13" fill="#4E5968">온도(℃)</text>
     <text x="340" y="219" text-anchor="end" font-size="13" fill="#4E5968">시간(분)</text>
+  </svg>`;
+}
+
+/** 모양과 크기가 같은 금속, 나무, 플라스틱 숟가락을 뜨거운 국에 함께 담그고 5분 뒤의 모습 (라이트 그림, u3l3 문제, 2026-11-22)
+ *  손잡이 끝의 같은 높이(y 48)에 같은 크기의 버터 조각을 붙였다. 금속 숟가락의 버터만 녹아 손잡이를 따라 흘러내렸고, 나무와 플라스틱의 버터는 그대로다.
+ *  세 숟가락은 같은 기울기, 같은 길이로 국에 같은 깊이만큼 잠긴다(다른 조건이 같다는 단서). 김이나 불은 그리지 않는다(버터를 녹인 것이 손잡이를 따라 온 열이라는 점만 남긴다).
+ *  이름표는 손잡이 끝 위에, 글자는 설계 13 이상. */
+export function spoonButterFig(): string {
+  const spoons: [number, string, [string, string, string], boolean][] = [
+    [104, "금속", ["#F4F7FA", "#BFC7D1", "#7D8794"], true],
+    [172, "나무", ["#E8C69A", "#C08A52", "#7E5328"], false],
+    [240, "플라스틱", ["#FFFFFF", "#DCE6F2", "#9AAABD"], false],
+  ];
+  const TILT = 9; // 손잡이가 오른쪽으로 기운 각(도)
+  const one = ([x, name, c, melted]: [number, string, [string, string, string], boolean], i: number): string => {
+    const g = `spb${i}`;
+    // 손잡이: 국 속(y 132)에서 손잡이 끝(y 30)까지. 버터는 y 48(끝에서 같은 거리)
+    const butter = melted
+      ? `<path d="M-7 46.5C-7 44 -3 43 0 43.4C3.5 43 7 44.6 7 47C7 49 5 50.5 4.2 53C3.6 56.4 4.4 61 2.6 64.4C1.6 66.2 -0.4 65.8 -0.8 63.6C-1.4 60 -0.4 56.6 -2.4 53.4C-4 51 -7 50 -7 46.5Z" fill="#FFE07A" stroke="#D9A21E" stroke-width="1.3" stroke-linejoin="round"/>
+         <ellipse cx="1.8" cy="69.4" rx="2.2" ry="2.8" fill="#FFE07A" stroke="#D9A21E" stroke-width="1.1"/>
+         <ellipse cx="-2.4" cy="45.6" rx="2.6" ry="1.2" fill="#FFF6CF" opacity=".9"/>`
+      : `<rect x="-8.5" y="40" width="17" height="15" rx="3" fill="url(#${g}b)" stroke="#D9A21E" stroke-width="1.4"/>
+         <path d="M-5.6 43.4h7" stroke="#FFF6CF" stroke-width="1.6" stroke-linecap="round" opacity=".9"/>`;
+    return `<g transform="translate(${x} 0) rotate(${TILT} 0 132)">
+      <defs>
+        <linearGradient id="${g}h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${c[0]}"/><stop offset=".55" stop-color="${c[1]}"/><stop offset="1" stop-color="${c[2]}"/></linearGradient>
+        <linearGradient id="${g}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF0A8"/><stop offset=".6" stop-color="#FFD75A"/><stop offset="1" stop-color="#F0B92E"/></linearGradient>
+      </defs>
+      <rect x="-5" y="30" width="10" height="118" rx="5" fill="url(#${g}h)" stroke="${c[2]}" stroke-width="1.4"/>
+      <path d="M-2 36V140" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".5"/>
+      ${butter}
+    </g>
+    <text x="${x + Math.sin((TILT * Math.PI) / 180) * 104}" y="${30 - 10}" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${name}</text>`;
+  };
+  return `<svg viewBox="0 0 344 206" ${NS} role="img" aria-label="뜨거운 국이 담긴 그릇에 금속, 나무, 플라스틱 숟가락이 같은 기울기로 꽂혀 있다. 세 손잡이 끝의 같은 높이에 버터 조각을 붙였는데, 금속 숟가락의 버터만 녹아 흘러내렸다">
+    <defs>
+      <linearGradient id="spbBowl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#E9EDF2"/><stop offset="1" stop-color="#C9D0D8"/></linearGradient>
+      <linearGradient id="spbSoup" gradientUnits="userSpaceOnUse" x1="0" y1="118" x2="0" y2="150"><stop offset="0" stop-color="#F7B35A"/><stop offset="1" stop-color="#D9822B"/></linearGradient>
+    </defs>
+    <ellipse cx="174" cy="196" rx="112" ry="7" fill="#2A3A5E" opacity=".1"/>
+    <ellipse cx="174" cy="134" rx="118" ry="16" fill="url(#spbSoup)" stroke="#B9671D" stroke-width="1.4"/>
+    ${spoons.map(one).join("")}
+    <!-- 국 표면의 앞쪽 절반을 숟가락 위에 다시 칠해 숟가락이 국 속으로 들어간 것처럼 보이게 한다 -->
+    <path d="M56 134A118 16 0 0 0 292 134Z" fill="url(#spbSoup)"/>
+    <path d="M56 134C56 170 98 194 174 194C250 194 292 170 292 134C292 142 250 152 174 152C98 152 56 142 56 134Z" fill="url(#spbBowl)" stroke="#8C96A3" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M78 156C98 172 132 180 174 180" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+    <text x="300" y="128" text-anchor="start" font-size="13" font-weight="700" fill="#4E5968">국</text>
   </svg>`;
 }
 
@@ -264,26 +323,40 @@ export function heatingCurves3(): string {
   </svg>`;
 }
 
-/** 종이+알루미늄박 테이프: 가열 전/후 (라이트 그림) */
-export function tapeBend(): string {
-  // 알루미늄박은 은백색(랩과 같은 뜻의 색. 2026-11-15 그래픽 감사). 글자는 폰에서 12px 이상(설계 13).
-  return `<svg viewBox="0 0 344 170" ${NS} role="img" aria-label="종이와 알루미늄박을 붙인 테이프의 가열 전과 가열 후 모습">
-    <text x="86" y="22" text-anchor="middle" font-size="13.5" font-weight="700" fill="#4E5968">가열 전</text>
-    <text x="258" y="22" text-anchor="middle" font-size="13.5" font-weight="700" fill="#4E5968">가열 후</text>
-    <line x1="172" y1="14" x2="172" y2="156" stroke="#EDF0F4" stroke-width="1.6"/>
-    <!-- 가열 전: 곧은 2층 띠 -->
-    <rect x="28" y="70" width="116" height="9" rx="4.5" fill="#EDEAE2" stroke="#B9B2A2" stroke-width="1.6"/>
-    <rect x="28" y="79" width="116" height="9" rx="4.5" fill="#D9DEE5" stroke="#98A2AF" stroke-width="1.6"/>
-    <text x="86" y="60" text-anchor="middle" font-size="13" fill="#6B7684">종이(위)</text>
-    <text x="86" y="108" text-anchor="middle" font-size="13" fill="#6B7684">알루미늄박(아래)</text>
-    <!-- 가열 후: 알루미늄이 더 늘어나 바깥(아래·볼록)이 되고, 끝이 종이(위) 쪽으로 말려 올라감 -->
-    <path d="M204 79Q258 125 312 79" fill="none" stroke="#98A2AF" stroke-width="12" stroke-linecap="round"/>
-    <path d="M204 79Q258 125 312 79" fill="none" stroke="#D9DEE5" stroke-width="9" stroke-linecap="round"/>
-    <path d="M204 70Q258 116 312 70" fill="none" stroke="#B9B2A2" stroke-width="12" stroke-linecap="round"/>
-    <path d="M204 70Q258 116 312 70" fill="none" stroke="#EDEAE2" stroke-width="9" stroke-linecap="round"/>
-    <path d="M252 148c5-2.5 3.5-6.5 0-10.5-3.5 4-5 8 0 10.5z" fill="#FF9F43"/>
-    <path d="M266 148c5-2.5 3.5-6.5 0-10.5-3.5 4-5 8 0 10.5z" fill="#FF9F43"/>
-    <text x="258" y="44" text-anchor="middle" font-size="13" fill="#6B7684">끝이 종이 쪽으로 휘어짐</text>
+/** 길이 1 m인 세 금속 막대를 똑같이 50 ℃만큼 데웠을 때 늘어난 길이 (라이트 그림, u3l5 문제, 2026-11-22)
+ *  값은 상온 근처의 선팽창 계수(철 약 12, 구리 약 17, 알루미늄 약 23, 단위는 백만분의 1/℃)로 계산한 자연값이다:
+ *  1000 mm × 계수 × 50 = 0.60, 0.85, 1.15 mm. 막대 색은 재질색이고, 정답(어느 쪽으로 휘는가)의 단서가 되는 화살이나 강조는 넣지 않는다.
+ *  행 차례는 철, 구리, 알루미늄(늘어난 길이 차례와 같지만 표가 그대로 보여 주는 값이라 숨길 것이 없다). 글자는 설계 13 이상. */
+export function expansionTableFig(): string {
+  const rows: [string, string, [string, string, string]][] = [
+    ["철", "0.60", ["#B9C0C9", "#7D8794", "#545D69"]],
+    ["구리", "0.85", ["#F2B48A", "#C8794A", "#8E4A24"]],
+    ["알루미늄", "1.15", ["#F4F7FA", "#C9D1DB", "#8D97A4"]],
+  ];
+  const X0 = 14, W = 316, HEAD = 34, RH = 40;
+  const c1 = 120; // 첫 칸(금속) 폭
+  const body = rows
+    .map(([name, d, c], i) => {
+      const y = HEAD + i * RH;
+      return `<rect x="${X0}" y="${y}" width="${W}" height="${RH}" fill="${i % 2 ? "#F7F9FB" : "#FFFFFF"}"/>
+        <defs><linearGradient id="exb${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c[0]}"/><stop offset=".55" stop-color="${c[1]}"/><stop offset="1" stop-color="${c[2]}"/></linearGradient></defs>
+        <rect x="${X0 + 12}" y="${y + 15}" width="26" height="10" rx="5" fill="url(#exb${i})" stroke="${c[2]}" stroke-width="1.2"/>
+        <text x="${X0 + 48}" y="${y + 25}" font-size="14" font-weight="700" fill="#333D4B">${name}</text>
+        <text x="${X0 + c1 + (W - c1) / 2}" y="${y + 25}" text-anchor="middle" font-size="15" font-weight="700" fill="#333D4B">${d}</text>`;
+    })
+    .join("");
+  const H = HEAD + rows.length * RH;
+  return `<svg viewBox="0 -3 344 ${H + 8}" ${NS} role="img" aria-label="길이가 1 m인 철, 구리, 알루미늄 막대를 똑같이 50 ℃만큼 데웠을 때 늘어난 길이를 적은 표">
+    <clipPath id="exbClip"><rect x="${X0}" y="0" width="${W}" height="${H}" rx="10"/></clipPath>
+    <g clip-path="url(#exbClip)">
+      <rect x="${X0}" y="0" width="${W}" height="${HEAD}" fill="#EEF2F6"/>
+      ${body}
+    </g>
+    <text x="${X0 + c1 / 2}" y="22" text-anchor="middle" font-size="13.5" font-weight="700" fill="#4E5968">금속 막대</text>
+    <text x="${X0 + c1 + (W - c1) / 2}" y="22" text-anchor="middle" font-size="13.5" font-weight="700" fill="#4E5968">늘어난 길이(mm)</text>
+    <rect x="${X0}" y="0" width="${W}" height="${H}" rx="10" fill="none" stroke="#C9CFD6" stroke-width="1.4"/>
+    <path d="M${X0 + c1} 0V${H}" stroke="#DCE1E7" stroke-width="1.2"/>
+    ${rows.map((_, i) => `<path d="M${X0} ${HEAD + i * RH}H${X0 + W}" stroke="#DCE1E7" stroke-width="1.2"/>`).join("")}
   </svg>`;
 }
 
