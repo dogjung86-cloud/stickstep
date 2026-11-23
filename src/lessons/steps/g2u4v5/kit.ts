@@ -10,6 +10,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import { ELEMS, formulaHtml } from "../../../ui/chemKit";
 import type { StepAPI } from "../../types";
 import { bvBtn, bvFrame, bvTimers, type BvChoice, type BvFrame, type BvTimers } from "../bio6/b6Lab";
+import { curioCard, type Curio } from "../../../ui/curio";
 
 export const SW = 346;
 export const SH = 230;
@@ -18,6 +19,8 @@ export const fml = formulaHtml;
 export interface G4Step {
   title: string;
   cta?: string;
+  /** 궁금증 카드(ui/curio.ts). 랩을 마치면 맨 아래에 붙인다(중1 Ⅱ bio6 랩과 같은 자리). */
+  curio?: Curio;
 }
 
 export interface G4Lab {
@@ -74,6 +77,7 @@ export function g4Lab(host: HTMLElement, api: StepAPI, s: G4Step, o: { steps: nu
       haptic(HAPTIC.ctaUnlock);
       api.recordQuiz(wrong === 0);
       api.enableCTA(s.cta ?? "다음");
+      if (s.curio) host.appendChild(curioCard(s.curio));
     },
     finished: () => done,
   };

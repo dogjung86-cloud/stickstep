@@ -238,46 +238,50 @@ function cutL3b() {
   return sk;
 }
 
-/* ---------- g2u8l4: 대장간. 화덕 속 쇠는 노랗게, 막 꺼낸 쇠는 주황으로, 모루 위에서 식는 쇠는 검붉게 ---------- */
-function iron(sk, x, y, rot, col, gcol, gr, ga, sd) {
-  if (gr) sk.glow(x, y, gr, gcol, ga, 0.25);
-  sk.at(x, y, 1, () => { const b = rrect(-76, -22, 152, 44, 10); sk.fill(b, col, { ...F0, seed: sd }); sk.ink(b, { w: 7, seed: sd + 1, wob: 0.4 }); }, rot);
+/* ---------- g2u8l4: 화로의 숯불. 부채 바람을 바로 받은 숯은 노랗게, 가운데 숯은 주황으로, 가장자리 숯은 검붉게 ---------- */
+function coal(sk, x, y, r, col, sd) {
+  const c = circ(x, y, r, { over: 0, seed: sd, lump: 0.14 });
+  sk.fill(c, col, { ...F0, seed: sd + 1 });
+  sk.ink(c, { w: 5, seed: sd + 2, wob: 0.3 });
 }
 function cutL4() {
   const sk = new Sk(W, H, { id: "f" });
-  const GY = 676, SMITH = { hair: "kerchief", capColor: "#3F7CC0", coat: { color: "#B98A5A", seam: "#7A5632", len: 44 }, seed: 61 };
+  const GY = 676;
   ground(sk, GY, 11);
-  // 화덕
+  // 화로: 위가 넓은 쇠 통과 다리 둘
+  const X0 = 64, X1 = 604, TOP = 404, BOT = 524;
   thin(sk, 0.8, () => {
-    const ch = box(132, 26, 212, 176), hood = poly([[52, 300], [112, 172], [232, 172], [292, 300]], 6), body = box(30, 300, 314, GY - 3);
-    shape(sk, ch, "#8E9AAB", 13, 9); shape(sk, hood, "#8E9AAB", 15, 9);
-    sk.fill(body, "#C4775A", { ...F0, seed: 17, tex: 0.9, texAng: 0 }); sk.ink(body, { w: 10, seed: 18, wob: 0.6 });
-    const open = dense([[72, 566], [72, 452], ...ell(172, 452, 100, 66, Math.PI, Math.PI * 2), [272, 566], [72, 566]], 5);
-    sk.fill(open, "#3B2A22", { ...F0, seed: 19 }); sk.ink(open, { w: 8, seed: 20, wob: 0.5 });
+    for (const [x, d, i] of [[X0 + 48, -18, 0], [X1 - 48, 18, 1]]) sk.ink(dense([[x, BOT - 4], [x + d, GY]]), { w: 13, seed: 13 + i });
   });
-  sk.glow(172, 500, 120, "#FF9A2E", 0.9, 0.2);
-  for (const [x, y, r, i] of [[104, 548, 17, 0], [140, 554, 15, 1], [176, 550, 18, 2], [214, 554, 15, 3], [246, 548, 16, 4]]) { const c = circ(x, y, r, { over: 0, seed: 23 + i, lump: 0.08 }); sk.fill(c, i % 2 ? "#E0503A" : "#F58A2E", { ...F0, seed: 28 + i }); sk.ink(c, { w: 4, seed: 33 + i, wob: 0.3 }); }
-  // 화덕 속의 쇠: 가장 뜨겁다(노랗고 밝다)
-  iron(sk, 250, 486, 0, "#FFE84D", "#FFF3A0", 150, 1, 41);
-  // 모루와 식는 쇠: 검붉다
+  // 숯의 빛: 왼쪽 가장자리는 약하게, 바람을 받는 오른쪽은 세게
+  sk.glow(170, TOP - 6, 110, "#C0392B", 0.32, 0.25);
+  sk.glow(340, TOP - 8, 140, "#FFB03A", 0.6, 0.25);
+  sk.glow(510, TOP - 10, 170, "#FFF3A0", 0.95, 0.25);
+  // 숯 더미: 통 위로 둥글게 솟는다. 0 검붉음, 1 주황, 2 노랑
+  const ZC = [["#7E2A1F", "#9E3326"], ["#F58A2E", "#E8702A"], ["#FFE84D", "#FFD43B"]];
+  [[112, -8, 29, 0], [164, -18, 31, 0], [214, -6, 27, 0], [264, -20, 31, 1], [316, -8, 29, 1], [368, -22, 32, 1], [418, -8, 28, 1],
+    [470, -20, 32, 2], [522, -6, 30, 2], [570, -18, 30, 2]].forEach(([x, dy, r, z], i) => coal(sk, x, TOP + dy, r, ZC[z][i % 2], 31 + i * 4));
+  // 통(숯의 아랫부분을 가린다)
   thin(sk, 0.8, () => {
-    const anv = poly([[640, 548], [716, 536], [716, 520], [912, 520], [912, 562], [856, 566], [840, 620], [884, 640], [884, GY - 3], [716, GY - 3], [716, 640], [760, 620], [744, 566], [716, 566]], 5);
-    sk.fill(anv, "#6B7480", { ...F0, seed: 51, tex: 0.9 }); sk.ink(anv, { w: 10, seed: 52, wob: 0.6 });
+    shape(sk, poly([[X0, TOP], [X1, TOP], [X1 - 34, BOT], [X0 + 34, BOT]], 6), "#6B7480", 15, 11);
+    sk.ink(dense([[X0 + 28, TOP + 34], [X1 - 28, TOP + 34]]), { w: 5, color: "#8E9AAB", seed: 17, wob: 0.2 });
   });
-  iron(sk, 812, 497, 0, "#7E2A1F", "#C0392B", 80, 0.35, 55);
-  // 대장장이: 집게로 막 꺼낸 쇠(주황)를 들었다
-  const tx = 556, ts = 0.6, hand = [tx - ts * 130, GY - ts * 322], pc = [404, 318];
-  drawFigure(sk, tx, GY, ts, pose({ elL: [-84, -282], haL: [-130, -322], elR: [58, -262], haR: [100, -206], tilt: -0.06 }), { ...SMITH, name: "smith", hands: false });
-  iron(sk, pc[0], pc[1], -0.42, "#F58A2E", "#FFB03A", 112, 0.75, 61);
-  thin(sk, 0.8, () => { for (const [d, i] of [[-13, 0], [13, 1]]) sk.ink(dense([[hand[0] + 16 + d * 0.5, hand[1] + 22 - d], [pc[0] + 44 + d, pc[1] - 2 - d * 1.2]]), { w: 8, seed: 65 + i, wob: 0.3 }); });
-  handDot(sk, hand, C.skin, 71, 15 * ts + 2);
-  // 다른 손에는 망치
-  const h2 = [tx + ts * 100, GY - ts * 206];
+  // 불티
+  for (const [x, y] of [[484, 300], [544, 266], [438, 250]]) sk.dot(x, y, 7, "#FFB03A");
+  // 학생: 오른쪽에서 부채로 숯을 부친다
+  const sx = 806, ss = 0.74;
+  drawFigure(sk, sx, GY, ss, pose({ elR: [96, -300], haR: [150, -282], tilt: -0.06 }), { ...STUDENT, name: "student", mirror: true, hands: false });
+  const hand = [sx - ss * 150, GY - ss * 282], fc = [hand[0] - 38, hand[1] - 64];
   thin(sk, 0.8, () => {
-    sk.ink(dense([[h2[0] - 8, h2[1] - 12], [h2[0] + 40, h2[1] + 62]]), { w: 9, color: "#A9773F", seed: 75, wob: 0.3 });
-    sk.at(h2[0] + 44, h2[1] + 70, 1, () => shape(sk, rrect(-34, -17, 68, 34, 6), "#6B7480", 77, 7), 0.58);
+    sk.ink(dense([hand, [fc[0] + 9, fc[1] + 23]]), { w: 10, color: "#8A5A33", seed: 61, wob: 0.2 });
+    const fan = circ(fc[0], fc[1], 46, { over: 0, seed: 62 });
+    sk.fill(fan, "#F7E3A1", { ...F0, seed: 63 }); sk.ink(fan, { w: 8, seed: 64, wob: 0.3 });
+    [-0.6, 0, 0.6].forEach((a, i) => sk.ink(dense([[fc[0], fc[1] + 30], [fc[0] + 39 * Math.sin(a), fc[1] - 39 * Math.cos(a)]]), { w: 3.5, color: "#C9A869", seed: 65 + i, wob: 0.1 }));
   });
-  handDot(sk, h2, C.skin, 81, 15 * ts + 2);
+  handDot(sk, hand, C.skin, 71, 15 * ss + 2);
+  handDot(sk, [sx + ss * 56, GY - ss * 184], C.skin, 72, 15 * ss + 2);
+  // 바람: 부채에서 숯 쪽으로
+  [[fc[1] - 30, 0], [fc[1] + 6, 1], [fc[1] + 42, 2]].forEach(([y, i]) => sk.ink(curve([[fc[0] - 58, y], [fc[0] - 88, y - 9], [fc[0] - 118, y + 2]]), { w: 6, color: "#8DB9E8", seed: 75 + i, wob: 0.2 }));
   return sk;
 }
 
@@ -508,7 +512,7 @@ export function cuts() {
     { name: "g2u8l2", theme: T, orig: null, sk: cutL2(), alt: "스틱맨 학생이 손전등으로 벽을 비추는데, 가까이 섰을 때는 벽의 빛 동그라미가 작고 밝고, 두 배 거리로 물러섰을 때는 지름이 두 배로 크고 흐린 장면", cap: "두 배 물러서니 빛 동그라미가 커지면서 흐려졌어요" },
     { name: "g2u8l3", theme: T, orig: null, sk: cutL3(), alt: "달리기 시상대의 가장 높은 단에 가장 밝게 빛나는 별 인형이, 낮은 단으로 갈수록 덜 빛나는 별 인형이 서 있고 스틱맨 학생이 가장 높은 단을 가리키는 장면", cap: "시상대의 1등처럼, 등급의 숫자가 작을수록 더 밝은 별이에요" },
     { name: "g2u8l3b", theme: T, orig: null, sk: cutL3b(), alt: "스틱맨 쌤이 바닥에 그은 한 줄 위에 큰 조명등, 손전등, 촛불을 나란히 세워 놓았고, 조명등이 멀리 있던 자리와 촛불이 가까이 있던 자리가 점선으로 남아 있는 장면", cap: "같은 거리에 세우니 조명등이 촛불보다 훨씬 밝은 것이 드러나요" },
-    { name: "g2u8l4", theme: T, orig: null, sk: cutL4(), alt: "대장간에서 대장장이가 집게로 주황색으로 달아오른 쇳덩이를 들고 있고, 화덕 속의 쇠는 노랗게 빛나며 모루 위에서 식는 쇠는 검붉은 장면", cap: "화덕 속 쇠는 노랗고, 꺼낸 쇠는 주황, 식는 쇠는 검붉어요" },
+    { name: "g2u8l4", theme: T, orig: null, sk: cutL4(), alt: "화로에서 학생이 부채로 숯불을 부치자, 바람을 바로 받은 숯은 노랗게, 가운데 숯은 주황색으로, 바람이 덜 닿는 가장자리 숯은 검붉게 빛나는 장면", cap: "바람을 받아 더 뜨거운 숯일수록 붉은빛에서 노란빛으로" },
     { name: "g2u8l5", theme: T, orig: null, sk: cutL5(), alt: "옆에서 본 넓고 납작한 호떡이 가운데만 위아래로 볼록하고, 가장자리 쪽에 얹힌 깨 한 알을 스틱맨 학생이 손끝으로 가리키는 장면", cap: "가운데가 볼록한 납작한 원반, 태양계는 이 깨처럼 중심에서 벗어나 있어요" },
     { name: "g2u8l6", theme: T, orig: null, sk: cutL6(), alt: "왼쪽에는 아이들 여섯 명이 듬성듬성 흩어져 놀고, 오른쪽에는 많은 아이들이 공 모양으로 빽빽하게 모여 선 장면", cap: "왼쪽은 몇 명이 듬성듬성, 오른쪽은 여럿이 공 모양으로 빽빽이 모였어요" },
     { name: "g2u8l6b", theme: T, orig: null, sk: cutL6b(), alt: "밤의 안개 낀 길에서 한 가로등 둘레의 안개는 빛을 받아 환하게 보이고, 다른 가로등 앞을 가린 짙은 안개 덩어리는 검게 보이는 장면", cap: "가로등 둘레의 안개는 환하고, 불빛을 가린 짙은 안개는 검게 보여요" },
