@@ -92,42 +92,34 @@ function igneousTableFig(): string {
   </svg>`;
 }
 
-/** 광물 분류 흐름도, 석영·방해석·자철석을 두 가지 성질 검사로 가르기.
- *  (가)=방해석(묽은 염산 반응), (나)=자철석(클립 끌어당김), (다)=석영 자리, L2 흐름도 문제용.
- *  판정 순서(염산 먼저 → 자성 나중)는 unit2.ts 문항 선지와 반드시 일치시킬 것. */
-export function mineralFlowFig(): string {
-  const arrow = (x1: number, y1: number, x2: number, y2: number): string =>
-    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#8B95A1" stroke-width="1.8"/>
-     ${x1 === x2
-       ? `<path d="M${x2} ${y2} l-4.5 -7 h9 z" fill="#8B95A1"/>`
-       : `<path d="M${x2} ${y2} l-7 -4.5 v9 z" fill="#8B95A1"/>`}`;
-  const result = (x: number, y: number, w: number, label: string): string =>
-    `<rect x="${x}" y="${y}" width="${w}" height="40" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
-     <text x="${x + w / 2}" y="${y + 26}" text-anchor="middle" font-size="15.5" font-weight="800" fill="#4E5968">(${label})</text>`;
-  // 카드 폭을 다 쓴다: 질문 상자는 왼쪽부터 넓게, '예'의 결과는 같은 높이의 오른쪽 칸. 글자는 폰에서 12px 이상(설계 13.5)
-  return `<svg viewBox="0 0 344 248" ${NS} fill="none" role="img" aria-label="광물 분류 흐름도. 석영, 방해석, 자철석을 묽은 염산과 반응하는지, 클립을 끌어당기는지 두 번 물어 가, 나, 다로 가릅니다">
-    <!-- 시작 -->
-    <rect x="36" y="6" width="200" height="36" rx="18" fill="#F2F4F6" stroke="#C4CAD2" stroke-width="1.4"/>
-    <text x="136" y="29" text-anchor="middle" font-size="14" font-weight="800" fill="#333D4B">석영 · 방해석 · 자철석</text>
-    ${arrow(136, 42, 136, 64)}
-    <!-- 질문 1 -->
-    <rect x="6" y="66" width="260" height="40" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
-    <text x="136" y="91" text-anchor="middle" font-size="14" font-weight="700" fill="#1B64DA">묽은 염산과 반응하는가?</text>
-    ${arrow(266, 86, 284, 86)}
-    <text x="275" y="78" text-anchor="middle" font-size="13.5" font-weight="800" fill="#0CA678">예</text>
-    ${result(286, 66, 54, "가")}
-    ${arrow(136, 106, 136, 130)}
-    <text x="127" y="123" text-anchor="end" font-size="13.5" font-weight="800" fill="#6B7684">아니요</text>
-    <!-- 질문 2 -->
-    <rect x="6" y="132" width="260" height="40" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
-    <text x="136" y="157" text-anchor="middle" font-size="14" font-weight="700" fill="#1B64DA">클립을 끌어당기는가?</text>
-    ${arrow(266, 152, 284, 152)}
-    <text x="275" y="144" text-anchor="middle" font-size="13.5" font-weight="800" fill="#0CA678">예</text>
-    ${result(286, 132, 54, "나")}
-    ${arrow(136, 172, 136, 196)}
-    <text x="127" y="189" text-anchor="end" font-size="13.5" font-weight="800" fill="#6B7684">아니요</text>
-    ${result(96, 198, 80, "다")}
-  </svg>`;
+/** 광물 네 가지 A~D를 겉보기 색, 조흔색, 클립, 묽은 염산으로 시험한 결과 표(L2 문제용). 이름은 쓰지 않는다.
+ *  A = 자철석, B = 장석, C = 흑운모, D = 방해석 자리(문항 선지와 반드시 맞출 것). */
+export function mineralTestFig(): string {
+  const head = ["광물", "겉보기 색", "조흔색", "클립", "묽은 염산"];
+  const rows = [
+    ["A", "검은색", "검은색", "붙는다", "변화 없음"],
+    ["B", "흰색", "흰색", "안 붙는다", "변화 없음"],
+    ["C", "검은색", "흰색", "안 붙는다", "변화 없음"],
+    ["D", "무색투명", "흰색", "안 붙는다", "거품"],
+  ];
+  const X0 = 8, W0 = 44, CW = 71, RH = 33, TOP = 8;
+  const colX = (c: number): number => (c === 0 ? X0 : X0 + W0 + (c - 1) * CW);
+  const colW = (c: number): number => (c === 0 ? W0 : CW);
+  let cells = `<rect x="${X0}" y="${TOP}" width="${W0 + CW * 4}" height="${RH}" fill="#F2F4F7"/>`;
+  rows.forEach((_, i) => { cells += `<rect x="${X0}" y="${TOP + RH * (i + 1)}" width="${W0}" height="${RH}" fill="#F7F8FA"/>`; });
+  head.forEach((h, c) => {
+    cells += `<text x="${colX(c) + colW(c) / 2}" y="${TOP + RH / 2 + 4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${h}</text>`;
+  });
+  rows.forEach((r, i) => r.forEach((v, c) => {
+    cells += `<text x="${colX(c) + colW(c) / 2}" y="${TOP + RH * (i + 1) + RH / 2 + 4.5}" text-anchor="middle" font-size="13" font-weight="${c === 0 ? 800 : 600}" fill="#333D4B">${v}</text>`;
+  }));
+  let grid = "";
+  for (let i = 0; i <= rows.length + 1; i++) grid += `<line x1="${X0}" y1="${TOP + RH * i}" x2="${X0 + W0 + CW * 4}" y2="${TOP + RH * i}" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  for (let c = 0; c <= head.length; c++) {
+    const x = c === head.length ? X0 + W0 + CW * 4 : colX(c);
+    grid += `<line x1="${x}" y1="${TOP}" x2="${x}" y2="${TOP + RH * (rows.length + 1)}" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  }
+  return `<svg viewBox="0 0 344 ${TOP * 2 + RH * (rows.length + 1)}" ${NS} fill="none" role="img" aria-label="광물 A, B, C, D의 겉보기 색, 조흔색, 클립이 붙는지, 묽은 염산에서 거품이 생기는지를 정리한 표. 광물 이름은 적혀 있지 않다">${cells}${grid}</svg>`;
 }
 
 /** 토양 단면 4층, 층 이름·설명 없이 (가)~(라)만. 위에서부터

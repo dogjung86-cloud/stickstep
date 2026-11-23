@@ -67,7 +67,7 @@ export const POOL_G2U3L5: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     diff: 3,
-    prompt: "가까이 있는 무당벌레를 렌즈 (가), (나)로 관찰했더니 그림처럼 보였어요. 옳은 것을 <보기>에서 모두 고른 것은?",
+    prompt: "가까이 있는 나뭇잎을 렌즈 (가), (나)로 관찰했더니 그림처럼 보였어요. 옳은 것을 <보기>에서 모두 고른 것은?",
     figure: twoLensFig(),
     bogi: [
       "(가)는 가운데가 가장자리보다 두꺼운 렌즈다",

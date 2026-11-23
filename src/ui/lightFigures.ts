@@ -160,27 +160,26 @@ export function twoMirrorsFig(): string {
   </svg>`;
 }
 
-/** L5, 렌즈 (가)(나)로 가까운 물체를 본 모습(현재 미사용, 문제는 발주 사진 lpair 사용) */
+/** L5 시험 e276: 맨눈으로 본 나뭇잎과, 렌즈 (가)(나)를 정면에서 대고 본 같은 나뭇잎. (가)로는 크게, (나)로는 작게 보인다.
+ *  렌즈를 옆 단면으로 그리면 볼록과 오목이 모양으로 드러나 판단할 거리가 사라지므로 정면의 둥근 렌즈로만 그린다. */
 export function twoLensFig(): string {
-  const bug = (x: number, y: number, s: number): string => `
+  const leaf = (x: number, y: number, s: number): string => `
     <g transform="translate(${x},${y}) scale(${s})">
-      <ellipse cx="0" cy="0" rx="10" ry="8" fill="#E86A5A" stroke="#A8382C" stroke-width="1.4"/>
-      <circle cx="0" cy="-7.5" r="4" fill="#3C4654"/>
-      <line x1="0" y1="-8" x2="0" y2="8" stroke="#3C4654" stroke-width="1"/>
-      <circle cx="-4" cy="-1" r="1.5" fill="#3C4654"/><circle cx="4" cy="2" r="1.5" fill="#3C4654"/>
+      <path d="M-16 0h-4" stroke="#2F7D3E" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M-16 0Q-4 -11 14 0Q-4 11 -16 0z" fill="#5DB96F" stroke="#2F7D3E" stroke-width="1.3"/>
+      <path d="M-15 0H12" stroke="#2F7D3E" stroke-width="0.9"/>
+      <path d="M-8 0l4 -4.5M-1 0l4 -4.5M6 0l3 -3M-8 0l4 4.5M-1 0l4 4.5M6 0l3 3" stroke="#2F7D3E" stroke-width="0.75" fill="none"/>
     </g>`;
-  const lens = (x: number, convex: boolean, label: string, mag: number): string => `
-    <g transform="translate(${x},0)">
-      ${convex
-        ? `<path d="M0 24Q18 76 0 128Q-18 76 0 24z" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="2.2"/>`
-        : `<path d="M-12 24h24Q4 76 12 128h-24Q-4 76 -12 24z" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="2.2"/>`}
-      ${bug(50, 76, mag)}
-      <path d="M17 76h15" stroke="#A9B5C4" stroke-width="1.6" stroke-dasharray="3 3"/>
-      <text x="0" y="166" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${label}</text>
-    </g>`;
-  return `<svg viewBox="0 0 344 176" ${NS} fill="none" role="img" aria-label="렌즈 두 개로 가까운 무당벌레를 본 모습, 가는 크게, 나는 작게 보인다">
-    ${lens(70, true, "(가)", 1.75)}
-    ${lens(228, false, "(나)", 0.6)}
+  const lens = (x: number, label: string, mag: number): string => `
+    <circle cx="${x}" cy="78" r="50" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="3"/>
+    ${leaf(x + 3 * mag, 78, mag)}
+    <path d="M${x - 34} ${50} a40 40 0 0 1 22 -14" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none" opacity=".8"/>
+    <text x="${x}" y="156" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${label}</text>`;
+  return `<svg viewBox="0 0 344 166" ${NS} fill="none" role="img" aria-label="맨눈으로 본 나뭇잎과, 렌즈 가와 나를 대고 본 같은 나뭇잎. 가로는 크게, 나로는 작게 보인다">
+    ${leaf(42, 78, 1)}
+    <text x="42" y="156" text-anchor="middle" font-size="12" font-weight="700" fill="#6B7684">맨눈</text>
+    ${lens(158, "(가)", 1.75)}
+    ${lens(282, "(나)", 0.6)}
   </svg>`;
 }
 

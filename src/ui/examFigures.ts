@@ -1661,6 +1661,71 @@ export function geoMagmaSiteFig(): string {
   </svg>`;
 }
 
+/** 돋보기로 들여다본 두 화성암 표면 (가)(나). 이름표 없이 생김새만: (가) 어두운 바탕에 알갱이가 아주 작고 구멍이 몇 개,
+ *  (나) 밝은 바탕에 여러 색 광물 결정이 크게 맞물림. 알갱이 자리는 고정 씨앗의 의사 난수라 그릴 때마다 같다. */
+export function geoLoupePairFig(): string {
+  let seed = 20261122;
+  const rnd = (): number => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const R = 62;
+  const inCircle = (cx: number, cy: number, r: number): [number, number] => {
+    for (;;) {
+      const x = cx + (rnd() * 2 - 1) * r;
+      const y = cy + (rnd() * 2 - 1) * r;
+      if ((x - cx) ** 2 + (y - cy) ** 2 < r * r) return [x, y];
+    }
+  };
+  const blob = (x: number, y: number, r: number, n: number): string => {
+    const a0 = rnd() * Math.PI * 2;
+    const pts = Array.from({ length: n }, (_, k) => {
+      const a = a0 + (k / n) * Math.PI * 2;
+      const rr = r * (0.7 + rnd() * 0.45);
+      return `${(x + Math.cos(a) * rr).toFixed(1)},${(y + Math.sin(a) * rr).toFixed(1)}`;
+    });
+    return pts.join(" ");
+  };
+  const loupe = (cx: number, cy: number, inner: string): string => {
+    const id = `glp${FIG_UID++}`;
+    return `<defs><clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${R}"/></clipPath></defs>
+      <line x1="${cx + 47}" y1="${cy + 47}" x2="${cx + 64}" y2="${cy + 64}" stroke="#5E6B7E" stroke-width="10" stroke-linecap="round"/>
+      <g clip-path="url(#${id})">${inner}</g>
+      <circle cx="${cx}" cy="${cy}" r="${R + 2}" stroke="#6B7684" stroke-width="5" fill="none"/>
+      <path d="M${cx - 44} ${cy - 30} a52 52 0 0 1 30 -26" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".55" fill="none"/>`;
+  };
+  // (가) 어두운 바탕, 맨눈으로 하나하나 가려내기 어려운 작은 알갱이, 구멍 몇 개
+  const ax = 88, ay = 90;
+  let fine = `<circle cx="${ax}" cy="${ay}" r="${R}" fill="#4B5058"/>`;
+  const dots = ["#6A717B", "#3A3F46", "#7D848E", "#565C65"];
+  for (let i = 0; i < 260; i++) {
+    const [x, y] = inCircle(ax, ay, R);
+    fine += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(0.7 + rnd() * 0.9).toFixed(2)}" fill="${dots[i % 4]}"/>`;
+  }
+  const holes: [number, number, number, number][] = [[66, 64, 5, 3.6], [104, 70, 3.6, 2.8], [80, 104, 4.4, 3.2], [114, 108, 3, 2.4], [58, 98, 2.8, 2.2], [96, 128, 4, 3], [70, 132, 2.6, 2], [120, 84, 2.4, 1.9]];
+  holes.forEach(([x, y, rx, ry]) => {
+    fine += `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#22262B"/><path d="M${x - rx} ${y} a${rx} ${ry} 0 0 0 ${rx * 2} 0" stroke="#7D848E" stroke-width=".8" fill="none"/>`;
+  });
+  // (나) 밝은 바탕, 여러 색 광물 결정이 크게 맞물림
+  const bx = 256, by = 90;
+  let coarse = `<circle cx="${bx}" cy="${by}" r="${R}" fill="#E9E1D6"/>`;
+  const grains: [string, string, number, number][] = [
+    ["#F6F1E9", "#C9BBA6", 13, 30],
+    ["#F1CFC2", "#C99683", 14, 24],
+    ["#C7CFD6", "#94A0AB", 11, 22],
+    ["#2E3035", "#141518", 6, 18],
+  ];
+  grains.forEach(([fill, edge, size, count]) => {
+    for (let i = 0; i < count; i++) {
+      const [x, y] = inCircle(bx, by, R + 6);
+      coarse += `<polygon points="${blob(x, y, size * (0.8 + rnd() * 0.5), 6)}" fill="${fill}" stroke="${edge}" stroke-width="1"/>`;
+    }
+  });
+  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="두 돌의 표면을 돋보기로 확대한 그림. (가)는 공원의 디딤돌로, 어두운 회색 바탕에 알갱이가 너무 작아 하나하나 구별하기 어렵고 작은 구멍이 여러 개 보인다. (나)는 건물 현관 계단의 돌로, 밝은 바탕에 흰색, 분홍빛, 회색, 검은색 알갱이가 크게 맞물려 있다">
+    ${loupe(ax, ay, fine)}
+    ${loupe(bx, by, coarse)}
+    <text x="${ax}" y="194" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가) 공원의 디딤돌</text>
+    <text x="${bx}" y="194" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나) 현관 계단의 돌</text>
+  </svg>`;
+}
+
 /** 이분 검색표(질문 4 · 결과 5), 시작 목록과 질문 문구는 파라미터. 예/아니요는 각자 결론 칸(한 칸 합류 금지).
  *  q4는 두 줄 상자(파일럿 눈검수에서 (다) 칸과의 겹침을 잡아 재배치, 결과 행과 x 분리). */
 export function geoKeyFiveFig(o: { start: string; q1: string; q2: string; q3: string; q4: [string, string] }): string {
@@ -3244,25 +3309,30 @@ export function starClusterMapFig(): string {
   </svg>`;
 }
 
-/** 우주 팽창 화살표 그림(다크), 은하 A에서 관측: 가까운 B는 짧은 화살표, 먼 C는 긴 화살표. */
-export function starExpandArrowFig(): string {
-  const gal = (x: number, tone: string): string =>
-    `<ellipse cx="${x}" cy="96" rx="17" ry="7" fill="${tone}" opacity=".85"/>
-     <ellipse cx="${x}" cy="96" rx="7" ry="4" fill="#FFF2D8"/>`;
-  const arrow = (x1: number, x2: number): string =>
-    `<line x1="${x1}" y1="72" x2="${x2}" y2="72" stroke="#F0A0B4" stroke-width="2.6"/>
-     <path d="M${x2} 72l-9 -5v10z" fill="#F0A0B4"/>`;
-  return `<svg viewBox="0 0 344 160" ${NS} fill="none" role="img" aria-label="은하 A에서 은하 B와 C를 관측한 그림, 각 은하의 움직임이 화살표로 표시되어 있어요">
-    ${gal(56, "#4A5E92")}
-    <circle cx="56" cy="96" r="24" stroke="#FFE9A8" stroke-width="1.4" stroke-dasharray="4 4" fill="none"/>
-    <text x="56" y="140" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8FF">A</text>
-    <text x="56" y="156" text-anchor="middle" font-size="10" fill="#7E93B8">(관측 기준)</text>
-    ${gal(150, "#4A5E92")}
-    <text x="150" y="140" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8FF">B</text>
-    ${arrow(170, 196)}
-    ${gal(276, "#4A5E92")}
-    <text x="276" y="140" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8FF">C</text>
-    ${arrow(296, 338)}
+/** 우주 팽창 모형 그림(다크): 은하 A, B, C의 자리를 처음과 시간이 흐른 뒤 두 줄로 그린다. 두 줄 모두 A를 같은 자리에 맞추고,
+ *  이웃한 은하 사이는 처음에 같은 간격이며 모든 간격이 같은 비율(1.5배)로 늘어난다. 은하의 크기는 두 줄이 같다.
+ *  빠르기 화살표는 그리지 않는다(거리에 따른 빠르기는 다루지 않는다). */
+export function starExpandTimeFig(): string {
+  const gal = (x: number, y: number): string =>
+    `<ellipse cx="${x}" cy="${y}" rx="22" ry="10" fill="#22325A" opacity=".55"/>
+     <ellipse cx="${x}" cy="${y}" rx="15" ry="6.5" fill="#5B70A8"/>
+     <ellipse cx="${x}" cy="${y}" rx="6" ry="3.4" fill="#FFF2D8"/>`;
+  const row = (y: number, xs: number[], title: string): string => {
+    const names = ["A", "B", "C"];
+    let g = `<text x="332" y="${y - 24}" text-anchor="end" font-size="12" font-weight="800" fill="#AFC2E6">${title}</text>`;
+    xs.forEach((x, i) => {
+      g += gal(x, y) + `<text x="${x}" y="${y + 24}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8FF">${names[i]}</text>`;
+    });
+    for (let i = 0; i < xs.length - 1; i++) {
+      const a = xs[i], b = xs[i + 1], d = y + 36;
+      g += `<path d="M${a} ${d - 5}v10M${b} ${d - 5}v10M${a} ${d}H${b}" stroke="#8EA6D8" stroke-width="1.4"/>`;
+    }
+    return g;
+  };
+  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="은하 A, B, C의 자리를 처음과 시간이 흐른 뒤 두 줄로 나타낸 그림. 두 줄 모두 A를 왼쪽 같은 자리에 맞춰 그렸고 은하의 크기는 두 줄이 같다. 각 줄 아래에 이웃한 은하 사이의 거리를 나타낸 치수선이 있다">
+    <path d="M40 90V126" stroke="#5E7299" stroke-width="1.2" stroke-dasharray="3 4"/>
+    ${row(46, [40, 120, 200], "처음")}
+    ${row(140, [40, 160, 280], "시간이 흐른 뒤")}
   </svg>`;
 }
 
@@ -9399,6 +9469,66 @@ export const rasterArrows = (
     ${badges}
   </div>`;
 };
+
+/** 콩팥단위 모식도(코드 그림). 실뭉치처럼 감긴 혈관(토리)과 그것을 감싼 노란 주머니, 주머니에서 이어져 구불구불하다가
+ *  U자로 굽은 뒤 다시 구불구불하고 아래로 내려가는 노란 관(세뇨관), 토리에서 나와 그 관을 따라 흐르는 붉은 모세혈관.
+ *  marks = 과정마다 붙일 기호(filter: 토리 → 주머니, reabsorb: 관 → 모세혈관, secrete: 모세혈관 → 관).
+ *  구조 이름과 과정 이름은 그리지 않는다(기호만). aria는 생김새와 기호만 말한다. */
+export function nephronLoopFig(o: { marks: { filter: string; reabsorb: string; secrete: string } }): string {
+  const TUBE = { edge: "#B8891A", fill: "#F7D46A", hi: "#FFF4C9" };
+  const VES = { edge: "#A9332C", fill: "#EC6A5F", hi: "#FFD0CA" };
+  const pipe = (d: string, c: typeof TUBE, w: number): string =>
+    `<path d="${d}" stroke="${c.edge}" stroke-width="${w + 2.6}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` +
+    `<path d="${d}" stroke="${c.fill}" stroke-width="${w}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` +
+    `<path d="${d}" stroke="${c.hi}" stroke-width="${(w * 0.3).toFixed(1)}" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".75" transform="translate(-.6 -.9)"/>`;
+  const wave = (x0: number, x1: number, yc: number, per: number): string => {
+    let d = "";
+    for (let x = x0; x <= x1 + 0.01; x += 1.5) d += ` L${x.toFixed(1)} ${(yc + 5 * Math.sin(((x - x0) / per) * Math.PI * 2)).toFixed(1)}`;
+    return d;
+  };
+  // 세뇨관: 주머니 오른쪽 → 구불구불(위) → U자 고리 → 구불구불(오른쪽) → 아래로(오줌이 모이는 쪽)
+  const tubeD = `M91 80${wave(91, 131, 80, 20)} Q144 80 144 94 L144 196 A22 22 0 0 0 188 196 L188 118 Q188 104 202 104${wave(202, 250, 104, 24)} Q272 104 272 120 L272 222`;
+  // 모세혈관: 토리로 들어오는 혈관, 토리에서 나와 관을 따라 흐르는 혈관(고리 안쪽은 머리핀처럼 내려갔다 올라온다)
+  const inD = "M8 172 C18 162 22 128 30 108 C34 98 40 92 48 88";
+  const outD = `M48 72 C38 66 30 58 30 46 C30 34 44 30 58 32 C74 34 82 54 91 58${wave(91, 131, 58, 20)} Q158 58 158 72 L158 188 A7 7 0 0 0 172 188 L172 98 Q172 84 186 84 L202 84${wave(202, 250, 84, 24)} C262 84 268 62 290 58 L330 58`;
+  // 토리(실뭉치)
+  const knot = [
+    [56, 72, 9, 6, 20], [66, 78, 8, 6, -30], [58, 86, 7, 5, 60], [68, 70, 6, 5, 10], [52, 80, 6, 7, -10], [62, 80, 5, 4, 45],
+  ].map(([x, y, rx, ry, rot]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(${rot} ${x} ${y})" fill="none" stroke="${VES.edge}" stroke-width="4.6"/><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(${rot} ${x} ${y})" fill="none" stroke="${VES.fill}" stroke-width="2.6"/>`).join("");
+  // 주머니: 왼쪽(혈관이 드나드는 쪽)이 트인 두꺼운 컵
+  const cx = 60, cy = 80, rO = 31, rI = 22, a0 = (140 * Math.PI) / 180, a1 = (220 * Math.PI) / 180;
+  const P = (r: number, a: number): string => `${(cx + r * Math.cos(a)).toFixed(1)} ${(cy + r * Math.sin(a)).toFixed(1)}`;
+  const cup = `<path d="M${P(rO, a0)} A${rO} ${rO} 0 1 0 ${P(rO, a1)} L${P(rI, a1)} A${rI} ${rI} 0 1 1 ${P(rI, a0)} Z" fill="#FBE6A2" stroke="${TUBE.edge}" stroke-width="1.8" stroke-linejoin="round"/>`;
+  // 물질이 옮겨 가는 방향(흰 테를 두른 짙은 화살표) + 기호
+  const arrow = (x1: number, y1: number, x2: number, y2: number): string => {
+    const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L;
+    const hx = x2 - ux * 7, hy = y2 - uy * 7;
+    const head = `M${x2} ${y2} L${(hx - uy * 4.6).toFixed(1)} ${(hy + ux * 4.6).toFixed(1)} L${(hx + uy * 4.6).toFixed(1)} ${(hy - ux * 4.6).toFixed(1)} Z`;
+    return `<path d="M${x1} ${y1} L${hx.toFixed(1)} ${hy.toFixed(1)}" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/><path d="${head}" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round"/>` +
+      `<path d="M${x1} ${y1} L${hx.toFixed(1)} ${hy.toFixed(1)}" stroke="#1F2A37" stroke-width="2.8" stroke-linecap="round"/><path d="${head}" fill="#1F2A37"/>`;
+  };
+  const flowTip = (x: number, y: number, ang: number, color: string): string => {
+    const a = (ang * Math.PI) / 180, c = Math.cos(a), s = Math.sin(a);
+    const p = (u: number, v: number): string => `${(x + c * u - s * v).toFixed(1)} ${(y + s * u + c * v).toFixed(1)}`;
+    return `<path d="M${p(6, 0)} L${p(-4, -5)} L${p(-4, 5)} Z" fill="${color}"/>`;
+  };
+  const m = o.marks;
+  return `<svg viewBox="0 0 344 240" ${NS} fill="none" role="img" aria-label="콩팥 속에서 오줌을 만드는 단위 하나를 단순하게 그린 모식도. 실뭉치처럼 감긴 붉은 혈관을 노란 주머니가 감싸고 있고, 주머니에서 이어진 노란 관은 구불구불하다가 U자로 굽은 뒤 다시 구불구불해지고 아래로 내려간다. 실뭉치에서 나온 붉은 혈관은 노란 관을 따라 나란히 흐른다. 물질이 옮겨 가는 방향을 나타낸 화살표 세 개에 ${[m.filter, m.reabsorb, m.secrete].sort().join(", ")} 기호가 붙어 있다">
+    <rect x="1" y="1" width="342" height="238" rx="14" fill="#FBFCFD" stroke="#DCE0E6" stroke-width="1.3"/>
+    ${pipe(tubeD, TUBE, 9)}
+    ${pipe(inD, VES, 5)}
+    ${pipe(outD, VES, 5)}
+    ${cup}
+    ${knot}
+    ${flowTip(17, 146, -72, VES.edge)}${flowTip(334, 58, 0, VES.edge)}${flowTip(272, 230, 90, TUBE.edge)}
+    ${arrow(64, 83, 82, 96)}
+    ${arrow(111, 75, 111, 56)}
+    ${arrow(226, 81, 226, 99)}
+    ${g2u6Mark(98, 112, m.filter)}
+    ${g2u6Mark(111, 34, m.reabsorb)}
+    ${g2u6Mark(226, 62, m.secrete)}
+  </svg>`;
+}
 
 // ══════════════════ L1 영양소 ══════════════════
 
