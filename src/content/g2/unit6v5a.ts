@@ -1,4 +1,4 @@
-// 중2 Ⅵ v5 내용 1부: 레슨 1~3(영양소 · 소화 · 순환). 설계와 책의 실험 대응표는 design/g2u6v5-plan.md.
+// 중2 Ⅵ v5 내용 1부: 레슨 1~3(영양소 · 소화 · 순환). 설계와 실험 대응표는 design/g2u6v5-plan.md.
 // 개념 스텝에는 컷이 없다(그림 세션이 output/g2-v5/u6/concept-cuts.md 를 보고 그린 뒤 싣는다).
 // 레슨마다 스텝 배열을 내놓고, 정본 unit6.ts가 레슨에 싣는다. 레슨 3의 만화 스텝은 unit6.ts가 맨 앞에 둔다.
 import type { Step } from "../../lessons/types";

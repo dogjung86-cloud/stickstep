@@ -1,9 +1,9 @@
-// 중2 III(빛과 파동) 퀴즈·개념 그림 — 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
+// 중2 III(빛과 파동) 퀴즈·개념 그림, 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
 // 색이 정답의 단서가 되지 않게 설계(경로 후보는 전부 같은 색). recap 미니아트 포함.
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
-/** 광선 위 진행 방향 화살촉(V자) — 어설픈 반쪽 틱이 잡선처럼 보이는 문제를 막는다.
+/** 광선 위 진행 방향 화살촉(V자), 어설픈 반쪽 틱이 잡선처럼 보이는 문제를 막는다.
  *  (x1,y1)→(x2,y2) 광선의 t 지점에 열린 V를 그린다. */
 function rayArrow(x1: number, y1: number, x2: number, y2: number, t: number, color: string, len = 9): string {
   const dx = x2 - x1;
@@ -26,7 +26,7 @@ function rayArrow(x1: number, y1: number, x2: number, y2: number, t: number, col
   return `<path d="M${w1x.toFixed(1)} ${w1y.toFixed(1)}L${ax.toFixed(1)} ${ay.toFixed(1)}L${w2x.toFixed(1)} ${w2y.toFixed(1)}" stroke="${color}" stroke-width="2.6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
 }
 
-/** L1 반사각 문제 — 광선이 거울 면과 35°를 이루는 그림(입사각·반사각은?) */
+/** L1 반사각 문제, 광선이 거울 면과 35°를 이루는 그림(입사각·반사각은?) */
 export function reflectAngleFig(): string {
   // 거울 수평, 입사점 (172,150). 광선은 거울면과 35° → 법선과 55°(반사 법칙: 반사각도 55°).
   const P = { x: 172, y: 150 };
@@ -52,7 +52,7 @@ export function reflectAngleFig(): string {
   </svg>`;
 }
 
-/** L2 — 공기→물 굴절 경로 고르기(①~⑤, 전부 같은 색 — 색이 단서가 되지 않게).
+/** L2, 공기→물 굴절 경로 고르기(①~⑤, 전부 같은 색, 색이 단서가 되지 않게).
  *  ②가 스넬 법칙 실제 계산값(입사각 55.8° → 굴절각 38.5°), ③은 직진 함정, ⑤는 반사 함정. */
 export function refractPathFig(): string {
   const P = { x: 172, y: 96 };
@@ -82,7 +82,7 @@ export function refractPathFig(): string {
   </svg>`;
 }
 
-/** L2 동전 컵 문제 — 물을 붓기 전/후 컵 속 동전 */
+/** L2 동전 컵 문제, 물을 붓기 전/후 컵 속 동전 */
 export function coinCupFig(): string {
   const cup = (x: number, water: boolean): string => `
     <g transform="translate(${x},0)">
@@ -102,7 +102,7 @@ export function coinCupFig(): string {
   return `<svg viewBox="0 0 344 204" ${NS} fill="none" role="img" aria-label="물을 붓기 전에는 동전이 안 보이고, 부으면 보인다">${cup(4, false)}${cup(178, true)}</svg>`;
 }
 
-/** L4 평면거울 문제 — 평면거울에 비친 고양이와 상 (가) */
+/** L4 평면거울 문제, 평면거울에 비친 고양이와 상 (가) */
 export function catMirrorFig(): string {
   const cat = (x: number, ghost: boolean): string => {
     const s = ghost ? -1 : 1; // 상은 좌우 반전
@@ -129,7 +129,7 @@ export function catMirrorFig(): string {
   </svg>`;
 }
 
-/** L5 — 볼록·오목 거울 단면(어느 쪽이 어떤 상?) */
+/** L5, 볼록·오목 거울 단면(어느 쪽이 어떤 상?) */
 export function twoMirrorsFig(): string {
   // 반사면(빛이 오는 왼쪽)과 뒷면의 정합을 기하로 보장한다(2026-08-01 재작도 · 사용자 파일럿
   // 검수 반영 2차): 가는 호+빗금만으로는 볼록/오목이 "부푼 곡선"으로만 읽힌다 → 반사면 호 +
@@ -160,7 +160,7 @@ export function twoMirrorsFig(): string {
   </svg>`;
 }
 
-/** L5 — 렌즈 (가)(나)로 가까운 물체를 본 모습(현재 미사용 — 문제는 발주 사진 lpair 사용) */
+/** L5, 렌즈 (가)(나)로 가까운 물체를 본 모습(현재 미사용, 문제는 발주 사진 lpair 사용) */
 export function twoLensFig(): string {
   const bug = (x: number, y: number, s: number): string => `
     <g transform="translate(${x},${y}) scale(${s})">
@@ -184,7 +184,7 @@ export function twoLensFig(): string {
   </svg>`;
 }
 
-/** L6 화소 문제 — 모니터 확대: 빨강·초록 화소만 켜짐 */
+/** L6 화소 문제, 모니터 확대: 빨강·초록 화소만 켜짐 */
 export function pixelRGFig(): string {
   const cell = (x: number, y: number): string => {
     const bars = [
@@ -207,7 +207,7 @@ export function pixelRGFig(): string {
   </svg>`;
 }
 
-/** L6 물체의 색 문제 — 어떤 옷에 빨강·초록·파랑 조명을 하나씩 비춘 모습.
+/** L6 물체의 색 문제, 어떤 옷에 빨강·초록·파랑 조명을 하나씩 비춘 모습.
  *  옷은 노란색(빨강+초록 반사·파랑 흡수) → 빨간 조명 빨강·초록 조명 초록·파란 조명 검정. */
 export function clothLightFig(): string {
   const shirt = (x: number, bodyColor: string, lightName: string, lightColor: string): string => `
@@ -226,7 +226,7 @@ export function clothLightFig(): string {
   </svg>`;
 }
 
-/** L7 — 파동 단면(눈금 포함): 파장·진폭 읽기 */
+/** L7, 파동 단면(눈금 포함): 파장·진폭 읽기 */
 export function waveReadFig(): string {
   let d = "";
   for (let x = 0; x <= 280; x += 4) {
@@ -246,10 +246,10 @@ export function waveReadFig(): string {
   </svg>`;
 }
 
-/** L7 hotspot — 마루·골·파장·진폭 찾기용 큰 파동 그림(다크 무대).
- *  기하 규약(스팟 좌표와 1:1 — hotspot 스텝은 pad0로 SVG를 스테이지에 꽉 채워
+/** L7 hotspot, 마루·골·파장·진폭 찾기용 큰 파동 그림(다크 무대).
+ *  기하 규약(스팟 좌표와 1:1, hotspot 스텝은 pad0로 SVG를 스테이지에 꽉 채워
  *  스팟 % = 좌표/viewBox × 100 이 정확히 성립):
- *  파형 y = 112 − 46·sin((x−30)/284·4π), x∈[30,314] — 마루 (65.5,66)·(207.5,66),
+ *  파형 y = 112 − 46·sin((x−30)/284·4π), x∈[30,314], 마루 (65.5,66)·(207.5,66),
  *  골 (136.5,158)·(278.5,158). 파장 브래킷 y=44(65.5→207.5), 진폭 브래킷 x=296(중심→골). */
 export function waveHotspotFig(): string {
   let d = "";
@@ -273,8 +273,8 @@ export function waveHotspotFig(): string {
   </svg>`;
 }
 
-/** L7 waveLab 하단 설명 — 파동 4요소 정지 그림(라이트 카드).
- *  파형 y = 96 − 38·sin((x−26)/280·4π), x∈[26,306] — 마루 (61,58)·(201,58), 골 (131,134)·(271,134). */
+/** L7 waveLab 하단 설명, 파동 4요소 정지 그림(라이트 카드).
+ *  파형 y = 96 − 38·sin((x−26)/280·4π), x∈[26,306], 마루 (61,58)·(201,58), 골 (131,134)·(271,134). */
 export function waveExplainFig(): string {
   let d = "";
   for (let x = 26; x <= 306; x += 2) {
@@ -297,7 +297,7 @@ export function waveExplainFig(): string {
   </svg>`;
 }
 
-/** L8 soundLab 하단 설명 — 3요소 미니 그래프(비교 쌍) */
+/** L8 soundLab 하단 설명, 3요소 미니 그래프(비교 쌍) */
 export function soundMiniFig(kind: "amp" | "freq" | "tone"): string {
   const wavePath = (x0: number, x1: number, amp: number, cycles: number, mode: "sine" | "tri" = "sine"): string => {
     let d = "";
@@ -324,7 +324,7 @@ export function soundMiniFig(kind: "amp" | "freq" | "tone"): string {
   </svg>`;
 }
 
-/** L7 파동 문제 — 수영장의 튜브와, 뒤쪽 수면에 떨어지는 공(매질 제자리 함정) */
+/** L7 파동 문제, 수영장의 튜브와, 뒤쪽 수면에 떨어지는 공(매질 제자리 함정) */
 export function poolTubeFig(): string {
   return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="수영장에 뜬 튜브 뒤쪽 수면에 공이 떨어져 물결이 퍼진다">
     <rect x="12" y="86" width="320" height="70" rx="10" fill="#D6E9FB"/>
@@ -346,7 +346,7 @@ export function poolTubeFig(): string {
   </svg>`;
 }
 
-/** L8 파형 비교 문제 — 파형 (가)~(라): 세기·높낮이 비교 */
+/** L8 파형 비교 문제, 파형 (가)~(라): 세기·높낮이 비교 */
 export function waveFourFig(): string {
   const cell = (x: number, y: number, label: string, amp: number, cyc: number): string => {
     let d = "";
@@ -366,8 +366,8 @@ export function waveFourFig(): string {
   </svg>`;
 }
 
-/** L8 높낮이 문제 — 실로폰 음판 ㉠㉡㉢ (길이 차이 → 진동수 비교).
- *  음판이 짧을수록 빠르게 떨려 진동수가 크다(칼림바 훅과 같은 물리) — 길이가 그림의 단서. */
+/** L8 높낮이 문제, 실로폰 음판 ㉠㉡㉢ (길이 차이 → 진동수 비교).
+ *  음판이 짧을수록 빠르게 떨려 진동수가 크다(칼림바 훅과 같은 물리), 길이가 그림의 단서. */
 export function xyloBarsFig(): string {
   const bar = (i: number): string => {
     const x = 40 + i * 38;

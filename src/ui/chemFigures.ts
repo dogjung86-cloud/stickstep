@@ -1,9 +1,9 @@
-// 중2 I 단원(물질의 특성) 퀴즈·개념 그림 — 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
+// 중2 I 단원(물질의 특성) 퀴즈·개념 그림, 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
 // 곡선 데이터는 CRC Handbook 자연값(실측 용해도)을 따른다. 문항 세팅 수치는 자체 제작.
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
-// 용해도(g/물 100 g) — CRC Handbook 실측값 근사. 10 ℃ 값: 질산 칼륨 20.9, 염화 나트륨 35.8
+// 용해도(g/물 100 g), CRC Handbook 실측값 근사. 10 ℃ 값: 질산 칼륨 20.9, 염화 나트륨 35.8
 const SOL: Record<string, [number, number][]> = {
   kno3: [[0, 13.3], [20, 31.6], [40, 63.9], [60, 110], [80, 169]],
   nano3: [[0, 73], [20, 88], [40, 105], [60, 124], [80, 148]],
@@ -11,7 +11,7 @@ const SOL: Record<string, [number, number][]> = {
 };
 
 function curvePath(pts: [number, number][], gx: (t: number) => number, gy: (s: number) => number): string {
-  // 단조 곡선 근사 — 구간 카트멀롬 대신 부드러운 quadratic 연결
+  // 단조 곡선 근사, 구간 카트멀롬 대신 부드러운 quadratic 연결
   let d = `M${gx(pts[0][0]).toFixed(1)} ${gy(pts[0][1]).toFixed(1)}`;
   for (let i = 1; i < pts.length; i++) {
     const [x0, y0] = pts[i - 1];
@@ -23,7 +23,7 @@ function curvePath(pts: [number, number][], gx: (t: number) => number, gy: (s: n
   return d;
 }
 
-/** 마무리 1·2번 — 고체 (가)~(마)의 질량·부피 산점(밀도 비교) */
+/** 고체 (가)~(마)의 질량·부피 산점(밀도 비교) */
 export function massVolScatterFig(): string {
   const gx = (v: number): number => 56 + (v / 45) * 262;
   const gy = (m: number): number => 168 - (m / 90) * 142;
@@ -39,7 +39,7 @@ export function massVolScatterFig(): string {
   </svg>`;
 }
 
-/** 용해도 곡선 3종(질산 나트륨·질산 칼륨·염화 나트륨) — L3 퀴즈(문항 세팅 수치는 자체 제작) */
+/** 용해도 곡선 3종(질산 나트륨·질산 칼륨·염화 나트륨), L3 퀴즈(문항 세팅 수치는 자체 제작) */
 export function solCurves3Fig(): string {
   const gx = (t: number): number => 54 + (t / 85) * 268;
   const gy = (s: number): number => 170 - (s / 170) * 150;
@@ -59,7 +59,7 @@ export function solCurves3Fig(): string {
   </svg>`;
 }
 
-/** 고체 (가)~(라) 가열 곡선 — 같은 물질 찾기(마무리 5번). (가)·(다)의 평평한 온도가 같다 */
+/** 고체 (가)~(라) 가열 곡선, 같은 물질 찾기. (가)·(다)의 평평한 온도가 같다 */
 export function heatPlateausFig(): string {
   const gy = (c: number): number => 168 - (c / 90) * 146;
   const seg = (x0: number, tempo: number, plateau: number, cls: string, label: string, lx: number): string => {
@@ -81,10 +81,10 @@ export function heatPlateausFig(): string {
   </svg>`;
 }
 
-/** 탄산음료 4조건(온도×흔들기) — 기포 비교(자체 제작 문항).
+/** 탄산음료 4조건(온도×흔들기), 기포 비교(자체 제작 문항).
  *  네 시험관 모두 입구가 열려 있고(압력 조건 동일), 물 온도(얼음물/따뜻한 물)와 흔들기 여부만 다르다.
  *  흔드는 시험관은 살짝 기울이고 양옆에 진동 호를 그린다.
- *  주의: 기포는 절대 그리지 않는다 — 조건만 보여 줘야 문제가 성립한다(기포 수 = 정답 유출). */
+ *  주의: 기포는 절대 그리지 않는다, 조건만 보여 줘야 문제가 성립한다(기포 수 = 정답 유출). */
 export function sodaTubesFig(): string {
   const tube = (x: number, label: string, warm: boolean, shake: boolean): string => {
     const beakerFill = warm ? "#FFE0D6" : "#DDF0FB";
@@ -117,7 +117,7 @@ export function sodaTubesFig(): string {
   </svg>`;
 }
 
-/** 물 vs 소금물 가열 곡선(그림 I-11) — 순물질은 일정, 혼합물은 계속 상승 */
+/** 물 vs 소금물 가열 곡선, 순물질은 일정, 혼합물은 계속 상승 */
 export function waterSaltBoilFig(): string {
   const gy = (c: number): number => 160 - ((c - 20) / 100) * 132;
   return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="물과 소금물의 가열 곡선. 곡선마다 이름이 붙어 있고 100도 눈금선이 그려져 있어요">
@@ -134,7 +134,7 @@ export function waterSaltBoilFig(): string {
   </svg>`;
 }
 
-/** 분별 깔때기 구조 — 마개·꼭지·두 층 */
+/** 분별 깔때기 구조, 마개·꼭지·두 층 */
 export function funnelPartsFig(): string {
   return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="분별 깔때기. 위에 마개, 몸통에 위층 기름과 아래층 물, 아래에 꼭지와 비커">
     <path d="M142 26h60" stroke="#9DAABD" stroke-width="2"/>
@@ -155,7 +155,7 @@ export function funnelPartsFig(): string {
   </svg>`;
 }
 
-/** 물+에탄올 가열 곡선 — ①~④ 구간(L9 퀴즈, 구간 구성 수치는 자체 제작) */
+/** 물+에탄올 가열 곡선, ①~④ 구간(L9 퀴즈, 구간 구성 수치는 자체 제작) */
 export function mixDistillCurveFig(): string {
   const gy = (c: number): number => 156 - (c / 120) * 132;
   return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="물과 에탄올 혼합물의 가열 곡선. 1구간 상승, 2구간 78도 부근 평평, 3구간 다시 상승, 4구간 100도 평평">
@@ -170,7 +170,7 @@ export function mixDistillCurveFig(): string {
   </svg>`;
 }
 
-/** 질산 칼륨 vs 염화 나트륨 — 냉각 석출(L8 퀴즈, 자체 세팅: 물 100 g에 40 g·15 g을 녹여 10 ℃로 냉각).
+/** 질산 칼륨 vs 염화 나트륨, 냉각 석출(L8 퀴즈, 자체 세팅: 물 100 g에 40 g·15 g을 녹여 10 ℃로 냉각).
  *  판정 검산(CRC): 10 ℃ 용해도 질산 칼륨 20.9(40 g 중 약 19 g 석출) vs 염화 나트륨 35.8(15 g 그대로 용해). */
 export function kno3CoolFig(): string {
   const gx = (t: number): number => 54 + (t / 65) * 268;
@@ -196,7 +196,7 @@ export function kno3CoolFig(): string {
   </svg>`;
 }
 
-/** 액체 3층 + 물체 — 뜨고 가라앉기(L2 퀴즈) */
+/** 액체 3층 + 물체, 뜨고 가라앉기(L2 퀴즈) */
 export function floatLayersFig(): string {
   return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="컵 속 세 액체 층. 위부터 에탄올, 식용유, 물. 얼음은 식용유와 물 사이, 동전은 바닥에 있어요">
     <path d="M118 26h108v130a16 16 0 0 1-16 16h-76a16 16 0 0 1-16-16z" fill="rgba(224,238,250,.28)" stroke="#9DAABD" stroke-width="2.2"/>

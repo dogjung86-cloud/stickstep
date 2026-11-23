@@ -1,8 +1,8 @@
-// chemKit — 중2 IV(물질의 구성) 랩 공용 킷(다크 무대 캔버스).
+// chemKit, 중2 IV(물질의 구성) 랩 공용 킷(다크 무대 캔버스).
 // 원자·전자·이온·결합을 "과학적으로 틀리지 않게" 그리기 위한 단일 진실 공급원:
 //   · 원소 색은 CPK 관례(H 흰/O 빨강/C 짙은회색/N 파랑/Cl 초록/S 노랑/Na 보라 등)
 //   · 상대 크기: H가 가장 작고, 음이온(Cl⁻)은 원자보다 크고 양이온(Na⁺)은 작다
-//   · 원자 모형: 원자핵(+N 라벨) + 전자(−) — 양성자수 = 전자수면 중성
+//   · 원자 모형: 원자핵(+N 라벨) + 전자(−), 양성자수 = 전자수면 중성
 // 모든 화학 랩(elementLab·moleculeLab·atomLab·ionLab·ionMoveLab)이 이것만 쓴다.
 
 export const TAU = Math.PI * 2;
@@ -69,7 +69,7 @@ export function drawAtomBall(
   ctx.restore();
 }
 
-/** 결합 막대 — 두 원자 사이(원자 뒤에 먼저 그린다). */
+/** 결합 막대, 두 원자 사이(원자 뒤에 먼저 그린다). */
 export function drawBond(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, w = 5): void {
   ctx.save();
   ctx.lineCap = "round";
@@ -88,7 +88,7 @@ export function drawBond(ctx: CanvasRenderingContext2D, x0: number, y0: number, 
   ctx.restore();
 }
 
-/** 원자핵 — (+양성자수) 라벨이 붙는 붉은 핵(양성자·중성자 알갱이 질감). */
+/** 원자핵, (+양성자수) 라벨이 붙는 붉은 핵(양성자·중성자 알갱이 질감). */
 export function drawNucleus(ctx: CanvasRenderingContext2D, x: number, y: number, protons: number, neutrons: number, r = 20): void {
   const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.34, r * 0.2, x, y, r);
   g.addColorStop(0, "#FFB09A");
@@ -98,7 +98,7 @@ export function drawNucleus(ctx: CanvasRenderingContext2D, x: number, y: number,
   ctx.beginPath();
   ctx.arc(x, y, r, 0, TAU);
   ctx.fill();
-  // 알갱이(양성자=밝음, 중성자=회색) — 개수 그대로, 12개 초과는 질감 점으로
+  // 알갱이(양성자=밝음, 중성자=회색), 개수 그대로, 12개 초과는 질감 점으로
   const total = protons + neutrons;
   const shown = Math.min(total, 12);
   for (let i = 0; i < shown; i++) {
@@ -117,7 +117,7 @@ export function drawNucleus(ctx: CanvasRenderingContext2D, x: number, y: number,
   ctx.beginPath();
   ctx.arc(x, y, r, 0, TAU);
   ctx.stroke();
-  // +N 라벨(교과서 표기)
+  // +N 라벨(표준 표기)
   ctx.font = `800 ${Math.max(11, r * 0.62)}px Pretendard, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -128,7 +128,7 @@ export function drawNucleus(ctx: CanvasRenderingContext2D, x: number, y: number,
   ctx.fillText(`+${protons}`, x, y + 0.5);
 }
 
-/** 전자 — (−) 라벨의 파란 알갱이. */
+/** 전자, (−) 라벨의 파란 알갱이. */
 export function drawElectron(ctx: CanvasRenderingContext2D, x: number, y: number, r = 7, alpha = 1): void {
   ctx.save();
   ctx.globalAlpha = alpha;
@@ -154,7 +154,7 @@ export function drawElectron(ctx: CanvasRenderingContext2D, x: number, y: number
   ctx.restore();
 }
 
-/** 이온식 라벨("Na⁺", "O²⁻") — 위 첨자 렌더. baseline 중앙. */
+/** 이온식 라벨("Na⁺", "O²⁻"), 위 첨자 렌더. baseline 중앙. */
 export function drawIonLabel(ctx: CanvasRenderingContext2D, x: number, y: number, sym: string, charge: number, size = 15): void {
   if (charge === 0) return;
   const supRaw = `${Math.abs(charge) > 1 ? Math.abs(charge) : ""}${charge > 0 ? "+" : "-"}`;

@@ -1,4 +1,4 @@
-// [중2 Ⅴ v5] 랩 무대 그림의 공용 부품(2026-11-15, "식물의 잎, 줄기, 뿌리와 그 속의 입자를 교과서 수준으로" 다시 그리기).
+// [중2 Ⅴ v5] 랩 무대 그림의 공용 부품(2026-11-15, 식물의 잎, 줄기, 뿌리와 그 속의 입자를 실제 구조에 가깝게 다시 그리기).
 //   층 무대   g5Layers: 무대 SVG를 층(g)으로 나누고 바뀐 층만 갈아 끼운다(움직이는 동안 큰 그림을 다시 만들지 않는다).
 //   입자      mol(산소, 이산화 탄소, 물 분자 모형), glucose(육각 고리), sucrose(고리 둘), starchChain(고리 사슬), starchGrain(녹말 알갱이), spark(에너지).
 //   식물      lettuce(주름진 상추 포기), leafBlade(톱니와 그물맥이 있는 잎), roots(원뿌리, 곁뿌리, 뿌리털), pot(화분).
@@ -149,7 +149,7 @@ const hexPts = (x: number, y: number, r: number, rot = 0): string =>
 export function glucose(ns: string, x: number, y: number, r = 6, o: { cls?: string; style?: string; op?: number } = {}): string {
   return `<g${o.cls ? ` class="${o.cls}"` : ""}${o.style ? ` style="${o.style}"` : ""}${o.op !== undefined ? ` opacity="${o.op}"` : ""}><polygon points="${hexPts(x, y, r)}" fill="url(#${ns}p-hexS)" stroke="#8A5A00" stroke-width=".9" stroke-linejoin="round"/><polygon points="${hexPts(x, y, r * 0.5)}" fill="none" stroke="#FFF1CF" stroke-width=".7" opacity=".75"/></g>`;
 }
-/** 설탕(고리 둘이 이어진 것, 앰버). 책의 그림처럼 육각 고리 둘로 그린다. */
+/** 설탕(고리 둘이 이어진 것, 앰버). 그림처럼 육각 고리 둘로 그린다. */
 export function sucrose(ns: string, x: number, y: number, r = 5, o: { cls?: string; style?: string; rot?: number } = {}): string {
   const dx = r * 0.95;
   const one = (cx: number): string => `<polygon points="${hexPts(cx, 0, r)}" fill="url(#${ns}p-hexS)" stroke="#8A5A00" stroke-width=".9" stroke-linejoin="round"/>`;

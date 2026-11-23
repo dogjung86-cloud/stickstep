@@ -1,4 +1,4 @@
-// 단원 종합 평가 그림 — 손코딩 교육용 SVG (u3 열 파일럿).
+// 단원 종합 평가 그림, 손코딩 교육용 SVG (u3 열 파일럿).
 // heatFigures 문법 계승: 색은 답의 단서가 되지 않게(비교 곡선은 같은 색, 라벨만 구분),
 // 그래프·표는 파라미터형으로 만들어 문항마다 수치를 달리 쓴다. 새 단원 시험 그림은 섹션을 나눠 추가.
 
@@ -6,7 +6,7 @@ const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
 /* ══════════════ u2 생물의 구성과 다양성 ══════════════ */
 
-/** 이름을 숨긴 세포 세 종류의 모양 비교 — 기능 판별용. */
+/** 이름을 숨긴 세포 세 종류의 모양 비교, 기능 판별용. */
 export function bioCellRolesExamFig(): string {
   return `<svg viewBox="0 0 344 174" ${NS} fill="none" role="img" aria-label="㉠부터 ㉢까지 서로 다른 모양의 세포 세 종류를 비교한 그림">
     <defs>
@@ -85,7 +85,7 @@ export function bioOrgFlowExamFig(kind: "animal" | "plant", hidden: number[] = [
   </svg>`;
 }
 
-/** 두 지역의 생물 종류·개체 분포 비교 — 점 색은 종류, 점 개수는 개체 수. */
+/** 두 지역의 생물 종류·개체 분포 비교, 점 색은 종류, 점 개수는 개체 수. */
 export function bioDiversityGridFig(a: number[] = [5, 4, 3], b: number[] = [8, 2]): string {
   const colors = ["#EF6B7A", "#4BAE82", "#4C83D5", "#E5A33F", "#8B6FD1"];
   const panel = (x: number, counts: number[], label: string): string => {
@@ -98,7 +98,7 @@ export function bioDiversityGridFig(a: number[] = [5, 4, 3], b: number[] = [8, 2
   </svg>`;
 }
 
-/** 5계 후보 A~E의 특징표 — 행 이름은 숨겨 분류 근거만 판독한다. */
+/** 5계 후보 A~E의 특징표, 행 이름은 숨겨 분류 근거만 판독한다. */
 export function bioKingdomClueTableFig(): string {
   const rows = [
     ["A", "×", "○", "×", "흡수"],
@@ -116,7 +116,7 @@ export function bioKingdomClueTableFig(): string {
   </svg>`;
 }
 
-/** 연도별 개체 수 막대그래프 — 단위는 마리, 값은 파라미터형. */
+/** 연도별 개체 수 막대그래프, 단위는 마리, 값은 파라미터형. */
 export function bioPopulationBarsFig(values: number[] = [48, 36, 24, 18], labels: string[] = ["1년", "2년", "3년", "4년"]): string {
   const max = Math.max(10, ...values), top = Math.ceil(max / 10) * 10;
   const gy = (v:number)=>176-v/top*138;
@@ -131,7 +131,7 @@ export function bioPopulationBarsFig(values: number[] = [48, 36, 24, 18], labels
 
 /* ══════════════ u3 열 ══════════════ */
 
-/** 열평형 시간-온도 그래프(파라미터형) — 뜨거운 쪽·차가운 쪽이 tEq분에 eq℃로 만난다. (라이트) */
+/** 열평형 시간-온도 그래프(파라미터형), 뜨거운 쪽·차가운 쪽이 tEq분에 eq℃로 만난다. (라이트) */
 export function eqGraph(o: {
   hot: number;
   cold: number;
@@ -197,7 +197,7 @@ export function heatCurves(o: {
     yt += `<line x1="40" y1="${gy(T)}" x2="320" y2="${gy(T)}" stroke="#EDF0F4" stroke-width="1"/>
       <text x="32" y="${gy(T) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${T}</text>`;
   }
-  // 같은 T가 둘 이상이면 선이 포개진다 — 라벨을 세로로 흩어 판독 가능하게(u3 v2 검산 치명 1건 반영).
+  // 같은 T가 둘 이상이면 선이 포개진다, 라벨을 세로로 흩어 판독 가능하게(u3 v2 검산 치명 1건 반영).
   // 같은 물질 후보를 묻는 문항이 이 구도를 쓰므로 선 겹침 자체는 의도된 자료다.
   const sameT = new Map<number, number>();
   const lines = o.ends
@@ -220,7 +220,7 @@ export function heatCurves(o: {
   </svg>`;
 }
 
-/** 가벼운 SVG 표(파라미터형) — 표 해석 문항용. 셀 텍스트는 짧게. (라이트) */
+/** 가벼운 SVG 표(파라미터형), 표 해석 문항용. 셀 텍스트는 짧게. (라이트) */
 export function svgTable(head: string[], rows: string[][], o?: { firstColHead?: boolean }): string {
   const W = 344;
   const cols = head.length;
@@ -249,7 +249,7 @@ export function svgTable(head: string[], rows: string[][], o?: { firstColHead?: 
   return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="자료 표">${out}${grid}</svg>`;
 }
 
-/** 온도가 다른 물 (가)(나) — 입자 운동 2박스 모형 (다크) */
+/** 온도가 다른 물 (가)(나), 입자 운동 2박스 모형 (다크) */
 export function particleDuo(showMotionLines = true): string {
   const box = (bx: number, label: string, spread: number, trail: number): string => {
     const pts: [number, number][] = [];
@@ -289,7 +289,7 @@ export function particleDuo(showMotionLines = true): string {
   </svg>`;
 }
 
-/** 온도계 눈금 읽기 — 큰 눈금 10℃, 작은 눈금 2℃, 액체 기둥이 value℃까지. (라이트) */
+/** 온도계 눈금 읽기, 큰 눈금 10℃, 작은 눈금 2℃, 액체 기둥이 value℃까지. (라이트) */
 export function thermometerRead(value: number): string {
   const yOf = (T: number): number => 168 - T * 2.6; // 0℃=168, 50℃=38
   let ticks = "";
@@ -309,7 +309,7 @@ export function thermometerRead(value: number): string {
   </svg>`;
 }
 
-/** 열의 이동 세 장면 (가)(나)(다) — 짝짓기 문항용. (라이트) */
+/** 열의 이동 세 장면 (가)(나)(다), 짝짓기 문항용. (라이트) */
 export function threeWaysFig(): string {
   const flame = (x: number, y: number, s = 1): string =>
     `<g transform="translate(${x},${y}) scale(${s})"><path d="M0 10 C 8 5 5 -2 0 -9 C -5 -2 -8 5 0 10 Z" fill="#FF9F43"/><path d="M0 6.5 C 4.5 3.5 3 -1 0 -5 C -3 -1 -4.5 3.5 0 6.5 Z" fill="#FFD98A"/></g>`;
@@ -319,7 +319,7 @@ export function threeWaysFig(): string {
       ${inner}
       <text x="52" y="152" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${label}</text>
     </g>`;
-  // (가) 전도 — 금속 막대의 한쪽 끝 가열, 열이 손잡이 쪽으로 번짐
+  // (가) 전도, 금속 막대의 한쪽 끝 가열, 열이 손잡이 쪽으로 번짐
   const cond = `
     <defs><linearGradient id="exRodG" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#F0442E"/><stop offset=".55" stop-color="#FF9F43"/><stop offset="1" stop-color="#8B95A1"/>
@@ -328,13 +328,13 @@ export function threeWaysFig(): string {
     <rect x="14" y="52" width="76" height="12" rx="6" fill="none" stroke="#6B7684" stroke-width="1.2"/>
     ${flame(22, 86, 1)}
     <path d="M34 40 h34 M62 35 l8 5 -8 5" fill="none" stroke="#FF6B4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
-  // (나) 대류 — 주전자 물이 순환
+  // (나) 대류, 주전자 물이 순환
   const conv = `
     <path d="M28 36 h48 v52 a8 8 0 0 1 -8 8 h-32 a8 8 0 0 1 -8 -8 Z" fill="#DCEBFB" stroke="#6B7684" stroke-width="1.6"/>
     <path d="M52 82 c-12 0 -16 -8 -16 -16 s6 -16 16 -16 16 8 16 16" fill="none" stroke="#0CA6C0" stroke-width="2.6"/>
     <path d="M68 58 l3 9 -9 -2" fill="none" stroke="#0CA6C0" stroke-width="2.2" stroke-linejoin="round"/>
     ${flame(52, 106, 1)}`;
-  // (다) 복사 — 태양의 열이 물질 없이 직접 도달
+  // (다) 복사, 태양의 열이 물질 없이 직접 도달
   const rad = `
     <circle cx="26" cy="30" r="13" fill="#FFD98A" stroke="#F5A623" stroke-width="2"/>
     <g stroke="#F5A623" stroke-width="2" stroke-linecap="round"><path d="M26 10v-5M26 55v-5M6 30H2M45 30h5"/></g>
@@ -351,7 +351,7 @@ export function threeWaysFig(): string {
   </svg>`;
 }
 
-/** 해풍/육풍 — 낮(mode "day")·밤(mode "night")의 해안 대류 순환. (라이트) */
+/** 해풍/육풍, 낮(mode "day")·밤(mode "night")의 해안 대류 순환. (라이트) */
 export function seaBreeze(mode: "day" | "night"): string {
   const day = mode === "day";
   const skyIcon = day
@@ -360,7 +360,7 @@ export function seaBreeze(mode: "day" | "night"): string {
     : `<path d="M52 22 a15 15 0 1 0 8 27 a12 12 0 0 1 -8 -27 Z" fill="#DFE6F4" stroke="#8B95A1" stroke-width="1.8"/>
        <circle cx="86" cy="26" r="1.8" fill="#B9C2CE"/><circle cx="104" cy="42" r="1.6" fill="#B9C2CE"/><circle cx="70" cy="48" r="1.4" fill="#B9C2CE"/>`;
   // 낮: 육지 위 상승(빨강 위 화살), 바다 위 하강(파랑 아래 화살), 지표 바람은 바다→육지
-  // 밤: 반대 — 상승은 바다, 하강은 육지, 지표 바람은 육지→바다
+  // 밤: 반대, 상승은 바다, 하강은 육지, 지표 바람은 육지→바다
   const upX = day ? 96 : 258;
   const dnX = day ? 258 : 96;
   const surf = day
@@ -381,12 +381,12 @@ export function seaBreeze(mode: "day" | "night"): string {
   </svg>`;
 }
 
-/** 비열 비교 실험 순서도 — ㉠에 들어갈 결론을 묻는 문항용. (라이트) */
+/** 비열 비교 실험 순서도, ㉠에 들어갈 결론을 묻는 문항용. (라이트) */
 export function flowChart(): string {
   const boxStyle = `fill="#F7F8FA" stroke="#B0B8C1" stroke-width="1.5"`;
   const arrow = (x: number, y1: number, y2: number): string =>
     `<path d="M${x} ${y1} V${y2} M${x} ${y2} l-5 -7 M${x} ${y2} l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
-  // '예'와 '아니요'가 각자 다른 결론 칸(㉠/㉡)으로 갈라진다 — 한 상자로 수렴하면 순서도로서 혼동(감사 지적)
+  // '예'와 '아니요'가 각자 다른 결론 칸(㉠/㉡)으로 갈라진다, 한 상자로 수렴하면 순서도로서 혼동(감사 지적)
   return `<svg viewBox="0 0 344 258" ${NS} role="img" aria-label="비열 비교 실험 순서도. 질량을 같게 한 두 물질을 같은 세기 불로 가열해 온도 변화를 비교하고, 예 갈래의 결론 칸 ㉠과 아니요 갈래의 결론 칸 ㉡은 비어 있다">
     <rect x="62" y="8" width="220" height="34" rx="10" ${boxStyle}/>
     <text x="172" y="30" text-anchor="middle" font-size="12.5" font-weight="700" fill="#333D4B">물질 A와 B의 질량을 같게 잰다</text>
@@ -411,7 +411,7 @@ export function flowChart(): string {
   </svg>`;
 }
 
-/** 바이메탈 가열 전/후 — A(위)·B(아래)를 붙인 띠가 가열 후 A 쪽(위)으로 휜다. (라이트) */
+/** 바이메탈 가열 전/후, A(위)·B(아래)를 붙인 띠가 가열 후 A 쪽(위)으로 휜다. (라이트) */
 export function bimetalBend(): string {
   return `<svg viewBox="0 0 344 176" ${NS} role="img" aria-label="금속 A와 B를 붙인 바이메탈. 가열 전에는 곧고, 가열 후에는 A 쪽인 위로 휘어진다">
     <text x="86" y="24" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">가열 전</text>
@@ -433,7 +433,7 @@ export function bimetalBend(): string {
   </svg>`;
 }
 
-/** 바이메탈 화재경보기 — 위쪽에 접점·경보종, 아래쪽에서 화재의 열. (라이트) */
+/** 바이메탈 화재경보기, 위쪽에 접점·경보종, 아래쪽에서 화재의 열. (라이트) */
 export function fireAlarm(): string {
   return `<svg viewBox="0 0 344 206" ${NS} role="img" aria-label="바이메탈 화재경보기 구조. 금속 (가)가 위, (나)가 아래인 띠가 있고, 띠의 오른쪽 끝 위에 접점과 경보종이 연결되어 있다">
     <rect x="8" y="8" width="328" height="172" rx="14" fill="#F7F8FA" stroke="#DCE0E6" stroke-width="1.4"/>
@@ -458,7 +458,7 @@ export function fireAlarm(): string {
   </svg>`;
 }
 
-/** 액체 열팽창 비교 — 같은 부피의 액체 A·B·C를 뜨거운 물 수조에 담근 뒤 유리관 높이. (라이트) */
+/** 액체 열팽창 비교, 같은 부피의 액체 A·B·C를 뜨거운 물 수조에 담근 뒤 유리관 높이. (라이트) */
 export function liquidExpand(): string {
   const flask = (x: number, label: string, rise: number): string => `
     <rect x="${x + 21}" y="${60 - rise}" width="8" height="${52 + rise}" fill="#7FAFE4"/>
@@ -478,7 +478,7 @@ export function liquidExpand(): string {
   </svg>`;
 }
 
-/** 금속 구와 고리 — (가) 가열 전에는 통과, (나) 구를 가열한 후에는 걸린다. (라이트) */
+/** 금속 구와 고리, (가) 가열 전에는 통과, (나) 구를 가열한 후에는 걸린다. (라이트) */
 export function ringSphere(): string {
   const ring = (x: number, y: number): string => `
     <ellipse cx="${x}" cy="${y}" rx="34" ry="10" fill="none" stroke="#8B95A1" stroke-width="4"/>
@@ -514,7 +514,7 @@ const trail4 = (x: number, y: number, ang: number, len: number): string => {
   const dy = Math.sin(ang) * len;
   return `<line x1="${(x - dx * 0.5).toFixed(1)}" y1="${(y - dy * 0.5).toFixed(1)}" x2="${(x + dx).toFixed(1)}" y2="${(y + dy).toFixed(1)}" stroke="#8FB3E8" stroke-width="2" stroke-linecap="round" opacity=".5"/>`;
 };
-/** 입자 배치 3종 — 상자 좌표계(0,0)~(94,84) 기준 */
+/** 입자 배치 3종, 상자 좌표계(0,0)~(94,84) 기준 */
 const GRID4 = (): string => {
   let out = "";
   for (let i = 0; i < 9; i++) out += dot4(26 + (i % 3) * 21, 22 + Math.floor(i / 3) * 21, 6.2);
@@ -529,7 +529,7 @@ const SCATTER4 = (showMotionLines = true): string => {
   return pts.map(([x, y, a]) => `${showMotionLines ? trail4(x, y, a, 8.5) : ""}${dot4(x, y, 5.2)}`).join("");
 };
 
-/** 상태 변화 전후 입자 모형(다크) — 왼쪽 상자가 화살표를 지나 오른쪽 상자로.
+/** 상태 변화 전후 입자 모형(다크), 왼쪽 상자가 화살표를 지나 오른쪽 상자로.
  *  melt: 규칙→붙은 불규칙 · freeze: 붙은 불규칙→규칙 · condense: 흩어짐→붙은 불규칙 · sublime: 규칙→흩어짐 */
 export function particlePairFig(kind: "melt" | "freeze" | "condense" | "sublime", showMotionLines = true): string {
   const inner: Record<string, [string, string, string]> = {
@@ -547,7 +547,7 @@ export function particlePairFig(kind: "melt" | "freeze" | "condense" | "sublime"
   </svg>`;
 }
 
-/** 상태 변화 A~F 다이어그램(라이트) — 기체 위, 고체·액체 아래. 화살표 색은 전부 중립(열 출입 단서 금지). */
+/** 상태 변화 A~F 다이어그램(라이트), 기체 위, 고체·액체 아래. 화살표 색은 전부 중립(열 출입 단서 금지). */
 export function phaseTriFig(): string {
   const box = (x: number, y: number, label: string, mini: string): string =>
     `<g transform="translate(${x},${y})">
@@ -581,7 +581,7 @@ export function phaseTriFig(): string {
   </svg>`;
 }
 
-/** 수치형 가열·냉각 곡선(라이트) — 온도 축 눈금 숫자 포함(값 읽기 문항용).
+/** 수치형 가열·냉각 곡선(라이트), 온도 축 눈금 숫자 포함(값 읽기 문항용).
  *  t = 구간 경계 시각 [t1,t2] 또는 [t1,t2,t3,t4]. p2가 없으면 수평 구간 1개.
  *  secLabels: ㉠~㉤ 구간 라벨. aria-label에는 수치를 쓰지 않는다. */
 export function examCurveFig(o: {
@@ -645,7 +645,7 @@ export function examCurveFig(o: {
   </svg>`;
 }
 
-/** 전자저울 위 거름종이 + 액체 몇 방울(라이트) — 표시창은 빈 패널(숫자 각인 금지). */
+/** 전자저울 위 거름종이 + 액체 몇 방울(라이트), 표시창은 빈 패널(숫자 각인 금지). */
 export function evapScaleFig(): string {
   return `<svg viewBox="0 0 344 190" ${NS} role="img" aria-label="전자저울 위에 액체를 몇 방울 떨어뜨린 거름종이가 놓여 있고, 표면에서 무언가 피어오르는 그림">
     <ellipse cx="172" cy="96" rx="86" ry="14" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
@@ -665,7 +665,7 @@ export function evapScaleFig(): string {
   </svg>`;
 }
 
-/** 밀폐 플라스크 저울 실험(라이트) — (가) 액체 상태 / (나) 전부 기체가 된 후. 표시창은 빈 패널. */
+/** 밀폐 플라스크 저울 실험(라이트), (가) 액체 상태 / (나) 전부 기체가 된 후. 표시창은 빈 패널. */
 export function sealedScaleFig(): string {
   const flask = (x: number, inner: string): string => `
     <g transform="translate(${x},0)">
@@ -687,7 +687,7 @@ export function sealedScaleFig(): string {
   </svg>`;
 }
 
-/** 물의 응고 부피 변화(라이트) — 같은 병의 (가) 물 / (나) 언 뒤. 언 뒤의 높이가 더 높다. */
+/** 물의 응고 부피 변화(라이트), 같은 병의 (가) 물 / (나) 언 뒤. 언 뒤의 높이가 더 높다. */
 export function waterFreezeFig(): string {
   const jar = (x: number, level: number, fill: string, cracked: boolean): string => `
     <g transform="translate(${x},0)">
@@ -707,7 +707,7 @@ export function waterFreezeFig(): string {
   </svg>`;
 }
 
-/** 물질의 상태 분류 순서도(라이트) — 예/아니요가 각자의 결론 칸으로 갈라진다(㉠·㉡·㉢ 빈칸). */
+/** 물질의 상태 분류 순서도(라이트), 예/아니요가 각자의 결론 칸으로 갈라진다(㉠·㉡·㉢ 빈칸). */
 export function stateFlowFig(): string {
   const boxStyle = `fill="#F7F8FA" stroke="#B0B8C1" stroke-width="1.5"`;
   const ansBox = (x: number, y: number, lab: string): string =>
@@ -745,7 +745,7 @@ export function stateFlowFig(): string {
   </svg>`;
 }
 
-/** 액체 팽창 실험 그래프 — 온도에 따라 유리관 눈금이 비례해 오르는 직선. 수치 읽기 문항용. (라이트) */
+/** 액체 팽창 실험 그래프, 온도에 따라 유리관 눈금이 비례해 오르는 직선. 수치 읽기 문항용. (라이트) */
 export function expandScaleGraph(): string {
   const gx = (T: number): number => 40 + T * 3.5; // 0~80℃
   const gy = (n: number): number => 186 - n * 4; // 0~40칸
@@ -779,7 +779,7 @@ export function expandScaleGraph(): string {
 // 규칙 계승: 값 읽기 정답 수치는 aria-label 금지(그림 속 조건 값 서술은 동등 접근이라 허용),
 // 힘 화살표 길이는 크기에 비례, 저울 표시창은 빈 패널, num 정답은 눈금선 위.
 
-/** 상자에 작용하는 두 힘(파라미터형, 라이트) — opposite=false면 같은 방향(오른쪽), true면 서로 반대. */
+/** 상자에 작용하는 두 힘(파라미터형, 라이트), opposite=false면 같은 방향(오른쪽), true면 서로 반대. */
 export function forcePairFig(o: { a: number; b: number; opposite?: boolean }): string {
   const maxN = Math.max(o.a, o.b);
   const len = (n: number): number => 30 + (n / maxN) * 80;
@@ -801,11 +801,11 @@ export function forcePairFig(o: { a: number; b: number; opposite?: boolean }): s
   </svg>`;
 }
 
-/** 미는데도 정지한 상자(라이트) — 마찰력(정지) 문항용. 미는 힘 n N 화살표 + 거친 바닥 빗금. */
+/** 미는데도 정지한 상자(라이트), 마찰력(정지) 문항용. 미는 힘 n N 화살표 + 거친 바닥 빗금. */
 export function pushStillFig(n: number): string {
   let hatch = "";
   for (let x = 30; x <= 314; x += 16) hatch += `<line x1="${x}" y1="118" x2="${x - 9}" y2="130" stroke="#C9B49A" stroke-width="2"/>`;
-  // aria에 미는 힘 값을 낭독하지 않는다(정지 문항은 그 값이 곧 정답 — 값 제시는 문두·그림 라벨 몫).
+  // aria에 미는 힘 값을 낭독하지 않는다(정지 문항은 그 값이 곧 정답, 값 제시는 문두·그림 라벨 몫).
   return `<svg viewBox="0 0 344 150" ${NS} role="img" aria-label="거친 바닥 위의 상자를 옆으로 밀고 있지만 상자는 정지해 있는 그림. 미는 힘의 크기는 그림에 적혀 있다">
     <line x1="20" y1="118" x2="324" y2="118" stroke="#B08D5E" stroke-width="3"/>
     ${hatch}
@@ -817,8 +817,8 @@ export function pushStillFig(n: number): string {
   </svg>`;
 }
 
-/** 용수철 탄성력 그래프(파라미터형, 라이트) — slope N/cm 직선 + 안내선 점. 눈금 숫자 포함(값 읽기용).
- *  lines 옵션: 이름 붙은 직선 여러 개(용수철 A·B 비교용 — u5 v2 확장, 기존 단일 slope 호출 무영향). */
+/** 용수철 탄성력 그래프(파라미터형, 라이트), slope N/cm 직선 + 안내선 점. 눈금 숫자 포함(값 읽기용).
+ *  lines 옵션: 이름 붙은 직선 여러 개(용수철 A·B 비교용, u5 v2 확장, 기존 단일 slope 호출 무영향). */
 export function springExamGraph(o: { slope: number; xMax: number; xStep: number; yMax: number; yStep: number; dots?: number[]; lines?: { slope: number; name: string }[] }): string {
   const gx = (cm: number): number => 48 + cm * (264 / o.xMax);
   const gy = (n: number): number => 168 - (n / o.yMax) * 138;
@@ -856,7 +856,7 @@ export function springExamGraph(o: { slope: number; xMax: number; xStep: number;
   </svg>`;
 }
 
-/** 용수철저울 부력 3장면(라이트) — (가) 공기 중 / (나) 절반 잠김 / (다) 완전 잠김. 표시창은 빈 패널. */
+/** 용수철저울 부력 3장면(라이트), (가) 공기 중 / (나) 절반 잠김 / (다) 완전 잠김. 표시창은 빈 패널. */
 export function buoyThreeFig(): string {
   const scene = (x: number, label: string, waterTop: number | null, sink: number): string => {
     const wy = 92 + sink;
@@ -878,7 +878,7 @@ export function buoyThreeFig(): string {
   </svg>`;
 }
 
-/** 물에 떠서 정지한 공(라이트) — 힘 화살표 없음(평형 판단은 문항 몫). */
+/** 물에 떠서 정지한 공(라이트), 힘 화살표 없음(평형 판단은 문항 몫). */
 export function floatBallFig(): string {
   return `<svg viewBox="0 0 344 170" ${NS} role="img" aria-label="수조의 물 위에 공이 반쯤 잠긴 채 떠서 가만히 있는 그림">
     <path d="M40 42 v96 a10 10 0 0 0 10 10 h244 a10 10 0 0 0 10-10 V42" fill="none" stroke="#8B95A1" stroke-width="2.6"/>
@@ -891,7 +891,7 @@ export function floatBallFig(): string {
   </svg>`;
 }
 
-/** 지구 주위 세 사과의 화살표 ㄱ·ㄴ·ㄷ(라이트) — ㄱ·ㄴ은 지구 중심 쪽, ㄷ은 먼 쪽(합답 판정용). */
+/** 지구 주위 세 사과의 화살표 ㄱ·ㄴ·ㄷ(라이트), ㄱ·ㄴ은 지구 중심 쪽, ㄷ은 먼 쪽(합답 판정용). */
 export function gravityAroundFig(): string {
   const apple = (x: number, y: number): string =>
     `<circle cx="${x}" cy="${y}" r="10" fill="#F8B4B4" stroke="#D66" stroke-width="2"/><path d="M${x} ${y - 10} q3 -6 7 -7" stroke="#7A9B5A" stroke-width="2" fill="none"/>`;
@@ -916,7 +916,7 @@ export function gravityAroundFig(): string {
   </svg>`;
 }
 
-/** 운동 분류 순서도(라이트) — 속력·방향 두 질문, 결론 칸 ㉠·㉡·㉢은 비어 있다. */
+/** 운동 분류 순서도(라이트), 속력·방향 두 질문, 결론 칸 ㉠·㉡·㉢은 비어 있다. */
 export function motionFlowFig(): string {
   const boxStyle = `fill="#F7F8FA" stroke="#B0B8C1" stroke-width="1.5"`;
   const ansBox = (x: number, y: number, lab: string): string =>
@@ -958,7 +958,7 @@ export function motionFlowFig(): string {
 // num 정답은 눈금선 위, 입자 개수는 어느 장면이든 동일하게 그린다(개수 함정 문항의 시각 근거).
 // 수치 앵커(레슨 24·30.0 회피): 보일 k=40/60/48, 샤를 0℃ 55.0 mL + 0.2 mL/℃(55/273≈0.2 자연 기울기).
 
-/** 압력-부피 반비례 곡선(파라미터형, 라이트) — 곱 k 일정. 눈금 숫자 포함(값 읽기용). */
+/** 압력-부피 반비례 곡선(파라미터형, 라이트), 곱 k 일정. 눈금 숫자 포함(값 읽기용). */
 export function gasPvGraphFig(o: { k: number; pMax: number; pStep?: number; vMax: number; vStep: number; dots?: number[] }): string {
   const pStep = o.pStep ?? 1;
   const gx = (p: number): number => 48 + p * (264 / o.pMax);
@@ -992,7 +992,7 @@ export function gasPvGraphFig(o: { k: number; pMax: number; pStep?: number; vMax
   </svg>`;
 }
 
-/** 온도(℃)-부피 직선(파라미터형, 라이트) — 0℃ 절편 v0 > 0. 눈금 숫자 포함(값 읽기용).
+/** 온도(℃)-부피 직선(파라미터형, 라이트), 0℃ 절편 v0 > 0. 눈금 숫자 포함(값 읽기용).
  *  marks를 주면 (가)(나)(다) 라벨 점, dots를 주면 안내선 점을 찍는다. */
 export function gasTvGraphFig(o: {
   v0: number;
@@ -1041,7 +1041,7 @@ export function gasTvGraphFig(o: {
   </svg>`;
 }
 
-/** 온도-부피 그래프 모양 고르기 ①~⑤(라이트) — ②만 옳다(0℃ 부피>0에서 오르는 직선).
+/** 온도-부피 그래프 모양 고르기 ①~⑤(라이트), ②만 옳다(0℃ 부피>0에서 오르는 직선).
  *  ①은 원점 통과 직선(0℃면 부피 0 함정), ③ 반비례 곡선, ④ 수평선, ⑤ 내려가는 직선.
  *  (정답을 첫 보기 ①에 두지 않는 shuffle:false 규칙 준수용 배치.) */
 export function gasTvChoicesFig(): string {
@@ -1064,7 +1064,7 @@ export function gasTvChoicesFig(): string {
   </svg>`;
 }
 
-/** 밀폐 용기 세 개 (가)(나)(다) 입자 모형(라이트) — 입자 수는 셋 다 6개로 같다.
+/** 밀폐 용기 세 개 (가)(나)(다) 입자 모형(라이트), 입자 수는 셋 다 6개로 같다.
  *  (나)는 부피가 절반(온도 같음 = 화살표 길이 같음), (다)는 부피 같고 화살표만 길다(온도 높음). */
 export function gasParticleTrioFig(): string {
   const part = (x: number, y: number, ang: number, len: number): string => {
@@ -1091,7 +1091,7 @@ export function gasParticleTrioFig(): string {
   </svg>`;
 }
 
-/** 피스톤 실린더 (가)(나) 비교(파라미터형, 라이트) — 추 개수로 압력, 피스톤 높이로 부피를 표현.
+/** 피스톤 실린더 (가)(나) 비교(파라미터형, 라이트), 추 개수로 압력, 피스톤 높이로 부피를 표현.
  *  입자는 양쪽 7개로 같다. wa/wb = 추 개수, va/vb = 기체 기둥 높이 비(0~1). */
 export function gasPistonDuoFig(o: { wa: number; wb: number; va: number; vb: number }): string {
   const jar = (x: number, label: string, weights: number, vol: number): string => {
@@ -1118,9 +1118,9 @@ export function gasPistonDuoFig(o: { wa: number; wb: number; va: number; vb: num
   </svg>`;
 }
 
-/** 스펀지 위 병 세 개(라이트) — (가) 빈 병 바로 세움 / (나) 물 채운 병 바로 세움 / (다) 물 채운 병 거꾸로.
- *  dents=true면 눌린 깊이 (가)<(나)<(다)를 그린다 — 눌림이 문항의 전제일 때만 켤 것.
- *  (압력 크기를 "묻는" 문항이 눌림을 보여 주면 그림이 정답을 누설한다 — u6 감사 지적.) */
+/** 스펀지 위 병 세 개(라이트), (가) 빈 병 바로 세움 / (나) 물 채운 병 바로 세움 / (다) 물 채운 병 거꾸로.
+ *  dents=true면 눌린 깊이 (가)<(나)<(다)를 그린다, 눌림이 문항의 전제일 때만 켤 것.
+ *  (압력 크기를 "묻는" 문항이 눌림을 보여 주면 그림이 정답을 누설한다, u6 감사 지적.) */
 export function gasBottleSpongeFig(o?: { dents?: boolean }): string {
   const dents = o?.dents === true;
   const sponge = (x: number, dent: number, mouth?: boolean): string => {
@@ -1149,7 +1149,7 @@ export function gasBottleSpongeFig(o?: { dents?: boolean }): string {
   </svg>`;
 }
 
-/** 끝 막은 주사기 (가)(나) 입자 모형(라이트) — (가) 피스톤 당김(공간 넓음) / (나) 누름(공간 좁음).
+/** 끝 막은 주사기 (가)(나) 입자 모형(라이트), (가) 피스톤 당김(공간 넓음) / (나) 누름(공간 좁음).
  *  입자는 양쪽 6개로 같고 크기도 같다. */
 export function gasSyringeDuoFig(): string {
   const syringe = (y: number, label: string, plungerX: number, parts: [number, number][]): string => {
@@ -1174,12 +1174,12 @@ export function gasSyringeDuoFig(): string {
 }
 
 /* ══════════════ u7 태양계 ══════════════ */
-// 다크 스테이지(figureDark) 전용 — spaceFigures 문법 계승: 달의 밝은 반구는 항상 태양(오른쪽) 쪽,
+// 다크 스테이지(figureDark) 전용, spaceFigures 문법 계승: 달의 밝은 반구는 항상 태양(오른쪽) 쪽,
 // 공전·회전은 시계 반대 방향, 각도 값은 문항의 조건이라 그림에 표기(정답이 아닌 조건 수치).
-// 천체 실사는 그리지 않는다 — public/photos/(NASA)를 <img>로 임베드(풀 파일 pimg 헬퍼).
+// 천체 실사는 그리지 않는다, public/photos/(NASA)를 <img>로 임베드(풀 파일 pimg 헬퍼).
 
-/** 북쪽 하늘 일주 회전(파라미터형, 다크) — 북극성 중심, 별이 A에서 B로 시계 반대 deg도 회전.
- *  각도는 문항의 조건(시간 계산용) — 그림에 표기한다. */
+/** 북쪽 하늘 일주 회전(파라미터형, 다크), 북극성 중심, 별이 A에서 B로 시계 반대 deg도 회전.
+ *  각도는 문항의 조건(시간 계산용), 그림에 표기한다. */
 export function starSpinFig(deg: number): string {
   const cx = 172;
   const cy = 118;
@@ -1212,7 +1212,7 @@ export function starSpinFig(deg: number): string {
   </svg>`;
 }
 
-/** 태양~여덟 행성 배열(다크) — 왼쪽 태양, 거리순 A~H. 크기는 개략 비례(문항은 특징 매칭). */
+/** 태양~여덟 행성 배열(다크), 왼쪽 태양, 거리순 A~H. 크기는 개략 비례(문항은 특징 매칭). */
 export function planetOrderFig(): string {
   const P: { r: number; c1: string; c2: string; ring?: boolean; vring?: boolean }[] = [
     { r: 4, c1: "#B9AC9C", c2: "#8A7E6E" },
@@ -1244,7 +1244,7 @@ export function planetOrderFig(): string {
   </svg>`;
 }
 
-/** 달 공전 8위치 ①~⑧(다크) — 햇빛 오른쪽, 밝은 반구는 항상 오른쪽, 반시계 공전.
+/** 달 공전 8위치 ①~⑧(다크), 햇빛 오른쪽, 밝은 반구는 항상 오른쪽, 반시계 공전.
  *  ①=태양 쪽(삭 자리), ③=위(상현), ⑤=태양 반대(망), ⑦=아래(하현). */
 export function moonPhase8Fig(): string {
   const cx = 156;
@@ -1280,7 +1280,7 @@ export function moonPhase8Fig(): string {
   </svg>`;
 }
 
-/** 일식 그림자 지역(다크) — 태양—달—지구 일렬. 달의 짙은 그림자(본영)가 닿는 좁은 A 지역과
+/** 일식 그림자 지역(다크), 태양, 달, 지구 일렬. 달의 짙은 그림자(본영)가 닿는 좁은 A 지역과
  *  옅은 그림자(반영)가 닿는 넓은 B 지역. 개기/부분일식 관측 지역 문항용. */
 export function eclipseShadowFig(): string {
   return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="태양, 달, 지구가 일렬로 늘어선 그림. 달의 짙은 그림자가 지구 표면의 좁은 A 지역에, 옅은 그림자가 그 둘레의 넓은 B 지역에 드리워 있다">
@@ -1319,7 +1319,7 @@ function solSegPath(pts: [number, number][], gx: (t: number) => number, gy: (s: 
   return d;
 }
 
-/** 온도-용해도 곡선(파라미터형, 라이트) — 눈금 숫자 포함(값 읽기·석출량 문항용).
+/** 온도-용해도 곡선(파라미터형, 라이트), 눈금 숫자 포함(값 읽기·석출량 문항용).
  *  곡선 색은 전부 같은 중립색(색이 답의 단서가 되지 않게), 곡선 끝 라벨로 구분한다.
  *  guideS(수평)·guideT(세로) 점선과 dots(경계 점)로 상황을 표시. aria-label에 정답 수치를 쓰지 않는다. */
 export function chemSolCurveExamFig(o: {
@@ -1371,7 +1371,7 @@ export function chemSolCurveExamFig(o: {
   </svg>`;
 }
 
-/** 부피-질량 원점 직선(파라미터형, 라이트) — 기울기=밀도. 눈금 숫자 포함(값 읽기 문항용).
+/** 부피-질량 원점 직선(파라미터형, 라이트), 기울기=밀도. 눈금 숫자 포함(값 읽기 문항용).
  *  선 색은 전부 같고 라벨로 구분. dots는 [부피, 질량] 강조 점. aria-label에 정답 수치를 쓰지 않는다. */
 export function chemMassVolExamFig(o: {
   lines: { label: string; density: number }[];
@@ -1379,7 +1379,7 @@ export function chemMassVolExamFig(o: {
   mMax: number;
   vStep: number;
   mStep: number;
-  /** [부피, 질량, 라벨?] — 라벨은 점 곁에 인쇄(문두가 P·Q로 지칭하는 문항의 렌더 보장 · g2u1 v2 검산 A 반영). */
+  /** [부피, 질량, 라벨?], 라벨은 점 곁에 인쇄(문두가 P·Q로 지칭하는 문항의 렌더 보장 · g2u1 v2 검산 A 반영). */
   dots?: [number, number, string?][];
 }): string {
   const gx = (v: number): number => 52 + v * (258 / o.vMax);
@@ -1421,13 +1421,13 @@ export function chemMassVolExamFig(o: {
   </svg>`;
 }
 
-/** 액체 (가)~(라) 가열 곡선(라이트) — 끓는점 비교·순물질/혼합물 판별 합답형용.
+/** 액체 (가)~(라) 가열 곡선(라이트), 끓는점 비교·순물질/혼합물 판별 합답형용.
  *  (가)·(다)는 같은 온도에서 평평(시작 위치만 다름), (나)는 더 낮은 온도에서 평평,
  *  (라)는 끓는 동안에도 계속 오른다. 곡선 시작점을 엇갈려 겹침을 피한다(heatPlateausFig 문법).
  *  aria-label에는 판별 단서를 쓰지 않는다. */
 export function chemBoilCurvesFig(): string {
   const gy = (c: number): number => 168 - (c / 110) * 146;
-  // plen = 끓는 평평 구간 길이(px) — 양이 많은 액체일수록 길게(기울기 완만 + 구간 김이 한 세트).
+  // plen = 끓는 평평 구간 길이(px), 양이 많은 액체일수록 길게(기울기 완만 + 구간 김이 한 세트).
   const seg = (x0: number, tempo: number, plateau: number, label: string, lx: number, plen: number): string => {
     const pY = gy(plateau);
     return `<path d="M${x0} ${gy(16)} L${x0 + 40 * tempo} ${pY} L${x0 + 40 * tempo + plen} ${pY}" stroke="#5E6B7E" stroke-width="2.8" fill="none" stroke-linecap="round"/>
@@ -1449,7 +1449,7 @@ export function chemBoilCurvesFig(): string {
   </svg>`;
 }
 
-/** 서로 섞이지 않는 액체 층 기둥(파라미터형, 라이트) — layers는 위→아래 라벨.
+/** 서로 섞이지 않는 액체 층 기둥(파라미터형, 라이트), layers는 위→아래 라벨.
  *  objAt이 있으면 작은 공이 그 경계에 떠 있다(0=맨 위 표면, i=층 i·i+1 사이, 층 수=맨 바닥). */
 export function chemColumnFig(o: { layers: string[]; objLabel?: string; objAt?: number }): string {
   const n = o.layers.length;
@@ -1479,7 +1479,7 @@ export function chemColumnFig(o: { layers: string[]; objLabel?: string; objAt?: 
   </svg>`;
 }
 
-/** 분별 깔때기(중립 라벨판, 라이트) — 층 이름 대신 ㉠(위층)·㉡(아래층). 마개·꼭지·비커 포함. */
+/** 분별 깔때기(중립 라벨판, 라이트), 층 이름 대신 ㉠(위층)·㉡(아래층). 마개·꼭지·비커 포함. */
 export function chemFunnelABFig(): string {
   return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="분별 깔때기에 서로 섞이지 않는 두 액체가 위층과 아래층으로 나뉘어 있고, 아래에 비커가 놓여 있다">
     <path d="M142 26h60" stroke="#9DAABD" stroke-width="2"/>
@@ -1500,7 +1500,7 @@ export function chemFunnelABFig(): string {
   </svg>`;
 }
 
-/** 증류 장치(라이트) — A 온도계(감온부가 가지관 높이), B 둥근 플라스크 속 혼합물(끓임쪽 포함),
+/** 증류 장치(라이트), A 온도계(감온부가 가지관 높이), B 둥근 플라스크 속 혼합물(끓임쪽 포함),
  *  C 찬물이 흐르는 냉각 장치, D 받는 그릇. 장치 각 부분의 역할 문항용. */
 export function chemDistillApparatusFig(): string {
   return `<svg viewBox="0 0 344 228" ${NS} fill="none" role="img" aria-label="증류 장치. 둥근 플라스크 위에 온도계가 꽂혀 있고, 옆으로 뻗은 관이 찬물이 흐르는 냉각 장치를 지나 받는 그릇으로 이어진다">
@@ -1532,10 +1532,10 @@ export function chemDistillApparatusFig(): string {
 }
 
 // ── g2u2(지권의 변화) 시험 전용 ──────────────────────────────
-// aria-label에 정오 단서 금지 — 분포의 '모양'을 말하지 않는다.
+// aria-label에 정오 단서 금지, 분포의 '모양'을 말하지 않는다.
 
-/** 암석 분류 순서도 — 질문 2단 분기, 예/아니요가 각자의 결론 칸으로 갈라진다(수렴 금지).
- *  시작 상자에 담을 암석 목록과 질문 2개를 파라미터로 — 문항마다 각도를 바꿔 재사용. */
+/** 암석 분류 순서도, 질문 2단 분기, 예/아니요가 각자의 결론 칸으로 갈라진다(수렴 금지).
+ *  시작 상자에 담을 암석 목록과 질문 2개를 파라미터로, 문항마다 각도를 바꿔 재사용. */
 export function geoRockFlowFig(o: { start: string; q1: string; q2: string }): string {
   const result = (x: number, y: number, label: string): string =>
     `<rect x="${x}" y="${y}" width="76" height="38" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
@@ -1569,7 +1569,7 @@ export function geoRockFlowFig(o: { start: string; q1: string; q2: string }): st
   </svg>`;
 }
 
-/** 두 판 사이가 벌어진 거리-시간 그래프(원점 직선, 파라미터형) — num 값 읽기용.
+/** 두 판 사이가 벌어진 거리-시간 그래프(원점 직선, 파라미터형), num 값 읽기용.
  *  정답 수치는 반드시 x·y 눈금선 교차점 위에 얹는다. aria에 수치·기울기 언급 금지. */
 export function geoDriftRateFig(o: { xMax: number; xStep: number; yMax: number; yStep: number; slope: number; dots?: [number, number][] }): string {
   const L = 54, R = 328, T = 22, B = 176;
@@ -1585,7 +1585,7 @@ export function geoDriftRateFig(o: { xMax: number; xStep: number; yMax: number; 
       <text x="${L - 6}" y="${py(y) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${y}</text>`;
   }
   const endX = Math.min(o.xMax, o.yMax / o.slope);
-  // 가이드 점선은 그리지 않는다 — 값 읽기(눈금 따라가기)가 문항의 과제라, 축까지 이어 주면 정답이 바로 읽힌다.
+  // 가이드 점선은 그리지 않는다, 값 읽기(눈금 따라가기)가 문항의 과제라, 축까지 이어 주면 정답이 바로 읽힌다.
   const dots = (o.dots ?? [])
     .map(([x, y]) => `<circle cx="${px(x)}" cy="${py(y)}" r="3.4" fill="#FFF" stroke="#F04452" stroke-width="2"/>`)
     .join("");
@@ -1600,7 +1600,7 @@ export function geoDriftRateFig(o: { xMax: number; xStep: number; yMax: number; 
   </svg>`;
 }
 
-/** 암석 순환 시험판 — recap용 rockCycleFig와 달리 과정 라벨을 ㉠~㉤로 감춘다
+/** 암석 순환 시험판, recap용 rockCycleFig와 달리 과정 라벨을 ㉠~㉤로 감춘다
  *  (과정명을 묻는 문항에서 라벨 문자가 정답을 유출하므로). 정거장 이름은 유지.
  *  ㉠ 마그마→화성암 · ㉡ 화성암→퇴적물 · ㉢ 퇴적물→퇴적암 · ㉣ 퇴적암→변성암 · ㉤ 변성암→마그마 */
 export function geoCycleQuizFig(): string {
@@ -1633,12 +1633,12 @@ export function geoCycleQuizFig(): string {
 }
 
 
-// ── g2u2 v2(지권의 변화 재출제) 시험 전용 — 실지도 킷 + 신작 헬퍼 ──────────────
+// ── g2u2 v2(지권의 변화 재출제) 시험 전용, 실지도 킷 + 신작 헬퍼 ──────────────
 // 파일럿 스테이징(qa/g2u2v2-pilot.ts)에서 승격(2026-07-26). 배경 = PALEOMAP 실지도(plateMap 랩과
 // 같은 자산), 점·경계 = plateMap.ts lon/lat 실데이터 복제. 사진 임베드(pic 계열)는 풀 파일 로컬 관행.
 const GEO_IMG_BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
 
-/** 화성암 생성 장소 단면 — 지표(용암) 부근 A, 지하 깊은 곳(마그마) 부근 B. */
+/** 화성암 생성 장소 단면, 지표(용암) 부근 A, 지하 깊은 곳(마그마) 부근 B. */
 export function geoMagmaSiteFig(): string {
   return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="화산과 땅속의 단면 그림. 산 위로 흘러나온 용암 부근에 A, 땅속 깊은 곳의 마그마 부근에 B가 표시되어 있어요">
     <rect x="8" y="8" width="328" height="86" fill="#DDF0FB"/>
@@ -1661,8 +1661,8 @@ export function geoMagmaSiteFig(): string {
   </svg>`;
 }
 
-/** 이분 검색표(질문 4 · 결과 5) — 시작 목록과 질문 문구는 파라미터. 예/아니요는 각자 결론 칸(한 칸 합류 금지).
- *  q4는 두 줄 상자(파일럿 눈검수에서 (다) 칸과의 겹침을 잡아 재배치 — 결과 행과 x 분리). */
+/** 이분 검색표(질문 4 · 결과 5), 시작 목록과 질문 문구는 파라미터. 예/아니요는 각자 결론 칸(한 칸 합류 금지).
+ *  q4는 두 줄 상자(파일럿 눈검수에서 (다) 칸과의 겹침을 잡아 재배치, 결과 행과 x 분리). */
 export function geoKeyFiveFig(o: { start: string; q1: string; q2: string; q3: string; q4: [string, string] }): string {
   const q = (cx: number, cy: number, w: number, t: string): string =>
     `<rect x="${cx - w / 2}" y="${cy - 17}" width="${w}" height="34" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
@@ -1702,11 +1702,11 @@ export function geoKeyFiveFig(o: { start: string; q1: string; q2: string; q3: st
 }
 
 // ── 실지도 래스터 + 실좌표 오버레이 공용(plateMap 랩과 같은 지도·데이터 계보) ──────────
-// 배경 = PALEOMAP 실지도(public/geo/maps — C.R. Scotese, photos/CREDITS.md 기재 자산 재사용).
+// 배경 = PALEOMAP 실지도(public/geo/maps, C.R. Scotese, photos/CREDITS.md 기재 자산 재사용).
 // 점·경계 좌표는 plateMap.ts의 lon/lat 실데이터 복제(승격 때 공용 export 검토).
-// 투영(equirect): x=(lon+180)/360·1000, y=(90−lat)/180·500 — 창(window)으로 잘라 328px 폭에 맞춘다.
+// 투영(equirect): x=(lon+180)/360·1000, y=(90−lat)/180·500, 창(window)으로 잘라 328px 폭에 맞춘다.
 export const MAP_NOW = "geo/maps/Map01a_PALEOMAP_PaleoAtlas_000.webp";
-let FIG_UID = Math.floor(Math.random() * 1e9); // 번들마다 난수 기점 — 갤러리(다중 번들 합본)의 clip id 충돌 방지
+let FIG_UID = Math.floor(Math.random() * 1e9); // 번들마다 난수 기점, 갤러리(다중 번들 합본)의 clip id 충돌 방지
 
 export interface MapWin {
   img: string;
@@ -1736,7 +1736,7 @@ export function mapWindow(o: { lon0: number; lon1: number; lat0: number; lat1: n
   };
 }
 
-/** 지진 95지점(lon, lat, 등급) — 실제 지진대(불의 고리·알프스-히말라야·대양저 경계·열곡). plateMap 복제. */
+/** 지진 95지점(lon, lat, 등급), 실제 지진대(불의 고리·알프스-히말라야·대양저 경계·열곡). plateMap 복제. */
 export const QUAKES: readonly (readonly [number, number, number])[] = [
   [-71.6, -33.0, 3], [-70.3, -27.4, 2], [-71.7, -30.6, 2], [-73.0, -36.8, 3], [-72.1, -39.8, 2],
   [-76.9, -12.1, 3], [-79.0, -8.1, 2], [-79.9, -2.2, 2], [-78.5, 0.6, 1],
@@ -1761,7 +1761,7 @@ export const QUAKES: readonly (readonly [number, number, number])[] = [
   [40.0, 12.5, 1], [36.8, -1.3, 1], [29.5, -6.0, 1], [34.9, -13.5, 1],
 ];
 
-/** 화산 ~60지점(lon, lat) — 불의 고리+지중해+열곡+아이슬란드. 알프스-히말라야 벨트는 실제로
+/** 화산 ~60지점(lon, lat), 불의 고리+지중해+열곡+아이슬란드. 알프스-히말라야 벨트는 실제로
  *  화산이 드물어 비어 있다(지진·화산 분포가 "거의(완전이 아닌)" 일치하는 실증). plateMap 복제. */
 export const VOLCS: readonly (readonly [number, number])[] = [
   [-78.4, -0.7], [-77.4, 1.2], [-75.3, 4.9], [-71.9, -15.8], [-67.7, -23.3], [-72.0, -39.4], [-72.6, -42.8], [-70.6, -35.4],
@@ -1780,14 +1780,14 @@ export const VOLCS: readonly (readonly [number, number])[] = [
   [-155.3, 19.4],
 ];
 
-/** 대서양 한가운데를 남북으로 지나는 판 경계 폴리라인(lon, lat) — plateMap BOUNDS 복제(확대 때 전 경계 승격). */
+/** 대서양 한가운데를 남북으로 지나는 판 경계 폴리라인(lon, lat), plateMap BOUNDS 복제(확대 때 전 경계 승격). */
 export const RIDGE_ATL: readonly (readonly [number, number])[] = [
   [-10, 72], [-16, 68], [-19, 65], [-24, 61], [-28, 56], [-31, 50], [-30, 44], [-35, 38], [-41, 31],
   [-45, 24], [-46, 17], [-40, 11], [-31, 7], [-25, 2], [-16, -4], [-13, -11], [-14, -19], [-15, -27],
   [-17, -35], [-14, -43], [-12, -50],
 ];
 
-/** 판 경계 폴리라인 전체(lon, lat) — plateMap BOUNDS 복제(날짜변경선 넘는 경계는 2조각). */
+/** 판 경계 폴리라인 전체(lon, lat), plateMap BOUNDS 복제(날짜변경선 넘는 경계는 2조각). */
 export const BOUNDS_ALL: readonly (readonly (readonly [number, number])[])[] = [
   [[-150, 58], [-159, 56], [-168, 53.6], [-179.8, 51.6]],
   [[179.8, 51.6], [171, 52.5], [163, 55], [158, 52], [153, 47], [147, 43], [142, 39], [140, 34], [141, 29], [143, 23], [146, 17], [147, 11], [143, 5]],
@@ -1810,8 +1810,8 @@ export const chip = (x: number, y: number, t: string, w = 36): string =>
   `<rect x="${x}" y="${y}" width="${w}" height="19" rx="9.5" fill="rgba(255,255,255,.94)" stroke="#C4CAD2" stroke-width="1.1"/>
    <text x="${x + w / 2}" y="${y + 13.5}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#4E5968">${t}</text>`;
 
-/** 세계 지진(또는 화산) 분포 지도 — 실지도 배경 + 실좌표 점.
- *  boundary: 판 경계 폴리라인 겹침(노랑 점선 — plateMap 랩과 같은 문법) · marks: ㉮㉯ 위치 칩. */
+/** 세계 지진(또는 화산) 분포 지도, 실지도 배경 + 실좌표 점.
+ *  boundary: 판 경계 폴리라인 겹침(노랑 점선, plateMap 랩과 같은 문법) · marks: ㉮㉯ 위치 칩. */
 export function geoQuakeBeltFig(o?: { kind?: "quake" | "volcano"; boundary?: boolean; marks?: { lon: number; lat: number; t: string }[] }): string {
   const kind = o?.kind ?? "quake";
   const W = mapWindow({ lon0: -180, lon1: 180, lat0: 72, lat1: -58, x: 8, y: 8, w: 328 });
@@ -1848,7 +1848,7 @@ export function geoQuakeBeltFig(o?: { kind?: "quake" | "volcano"; boundary?: boo
   </svg>`;
 }
 
-/** (가)(나) 두 분포 지도 대조(상하 2패널) — 지진·화산 실좌표. 알프스-히말라야 벨트의
+/** (가)(나) 두 분포 지도 대조(상하 2패널), 지진·화산 실좌표. 알프스-히말라야 벨트의
  *  화산 공백이 "거의 일치(완전 일치 아님)"의 실측 근거로 그림에 남는다. */
 export function geoTwinMapsFig(o: { left: "quake" | "volcano"; right: "quake" | "volcano" }): string {
   const panel = (y: number, kind: "quake" | "volcano", label: string): string => {
@@ -1919,7 +1919,7 @@ export function geoPlateArrowsFig(o?: { scene?: "atlantic" | "world2" }): string
   </svg>`;
 }
 
-/** 대륙 이동 증거 실지도 창 — mode "fossil"(기본): 남대서양, 마주 보는 해안 화석 구역 띠.
+/** 대륙 이동 증거 실지도 창, mode "fossil"(기본): 남대서양, 마주 보는 해안 화석 구역 띠.
  *  mode "mountain": 북대서양, 북아메리카 동부와 유럽 북부의 산맥 띠가 이어짐. */
 export function geoCoastFitFig(o?: { mode?: "fossil" | "mountain" }): string {
   const mode = o?.mode ?? "fossil";
@@ -1953,7 +1953,7 @@ export function geoCoastFitFig(o?: { mode?: "fossil" | "mountain" }): string {
   </svg>`;
 }
 
-/** 대륙 이동 4단계 — PALEOMAP 실제 고지리 지도 4장(2×2, 순서 뒤섞어 라벨).
+/** 대륙 이동 4단계, PALEOMAP 실제 고지리 지도 4장(2×2, 순서 뒤섞어 라벨).
  *  (가)=약 9천만 년 전 · (나)=약 2억 4천만 년 전(판게아) · (다)=현재 · (라)=약 1억 7천만 년 전.
  *  시대 수치는 그림에 쓰지 않는다(순서 추론 과제 보존). */
 export function geoDriftPanelsFig(): string {
@@ -1972,7 +1972,7 @@ export function geoDriftPanelsFig(): string {
   </svg>`;
 }
 
-/** 변성암 광물 배열·압력 도해 — candidates: 배열만 보여 주고 압력 방향 후보 ㉮(위아래)·㉯(좌우) 제시.
+/** 변성암 광물 배열·압력 도해, candidates: 배열만 보여 주고 압력 방향 후보 ㉮(위아래)·㉯(좌우) 제시.
  *  pair: (가)(나) 두 도해 비교(둘 다 위아래 압력, 배열만 다름). */
 export function geoPressFig(o: { mode: "candidates" | "pair" }): string {
   const grains = (cx: number, cy: number, dir: "h" | "v"): string => {
@@ -2090,7 +2090,7 @@ export function geoPlateQuizFig(): string {
   </svg>`;
 }
 
-/** 여러 대륙의 옛 빙하 흔적 + 이동 방향 — 실지도(남반구 중심 창) 위 오버레이. 적도선 포함. */
+/** 여러 대륙의 옛 빙하 흔적 + 이동 방향, 실지도(남반구 중심 창) 위 오버레이. 적도선 포함. */
 export function geoGlacierMapFig(): string {
   const W = mapWindow({ lon0: -90, lon1: 160, lat0: 30, lat1: -60, x: 8, y: 8, w: 328 });
   const ice = (lon: number, lat: number, rx: number, ry: number): string =>
@@ -2132,11 +2132,11 @@ export function geoGlacierMapFig(): string {
 // ── g2u3(빛과 파동) 시험 전용 ──────────────────────────────
 // 규칙 계승: 값 읽기 정답 수치는 aria-label 금지(그림 속 조건 값 서술은 동등 접근이라 허용),
 // 경로 후보는 전부 같은 색(색이 단서 금지), 라벨형 그림은 정답을 첫 칸에 두지 않게 그림 단계에서 설계.
-// 광학 기하는 정확한 계산으로(반사=미러링, 물→공기 굴절=법선에서 멀어짐 — 눈대중 좌표 금지).
+// 광학 기하는 정확한 계산으로(반사=미러링, 물→공기 굴절=법선에서 멀어짐, 눈대중 좌표 금지).
 // 수치 앵커(레슨 35°·42°·12cm·파장 2m·진폭 20cm·주기 0.5s·50Hz 회피): 시험은 25°·40°·65°·
 // 3칸·파장 4m·진폭 15·30cm·주기 0.4s·40Hz 계열로 세팅.
 
-/** 광선 위 진행 방향 화살촉(V자) — lightFigures.rayArrow와 같은 문법(시험 그림 로컬판). */
+/** 광선 위 진행 방향 화살촉(V자), lightFigures.rayArrow와 같은 문법(시험 그림 로컬판). */
 function lray(x1: number, y1: number, x2: number, y2: number, t: number, color: string, len = 9): string {
   const dx = x2 - x1;
   const dy = y2 - y1;
@@ -2157,7 +2157,7 @@ function lray(x1: number, y1: number, x2: number, y2: number, t: number, color: 
   return `<path d="M${w1x.toFixed(1)} ${w1y.toFixed(1)}L${ax.toFixed(1)} ${ay.toFixed(1)}L${w2x.toFixed(1)} ${w2y.toFixed(1)}" stroke="${color}" stroke-width="2.6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
 }
 
-/** 반사 각도 그림(파라미터형) — 거울 수평, 입사 광선의 각을 거울 면 기준(mirror) 또는
+/** 반사 각도 그림(파라미터형), 거울 수평, 입사 광선의 각을 거울 면 기준(mirror) 또는
  *  법선 기준(normal)으로 표시한다. 표시 각은 문항의 조건 값(aria 서술 허용). */
 export function lightAngleExamFig(o: { mark: "mirror" | "normal"; deg: number }): string {
   const P = { x: 172, y: 150 };
@@ -2189,8 +2189,8 @@ export function lightAngleExamFig(o: { mark: "mirror" | "normal"; deg: number })
   </svg>`;
 }
 
-/** 반원 각도기 반사 실험 장치(파라미터형) — 법선이 0°, 거울 면 쪽이 90°(10° 간격 눈금).
- *  입사 광선이 눈금 inc°를 가리킨다(조건 값 — aria 서술 허용). 반사각 읽기 문항용. */
+/** 반원 각도기 반사 실험 장치(파라미터형), 법선이 0°, 거울 면 쪽이 90°(10° 간격 눈금).
+ *  입사 광선이 눈금 inc°를 가리킨다(조건 값, aria 서술 허용). 반사각 읽기 문항용. */
 export function lightProtractorFig(o: { inc: number }): string {
   const C = { x: 172, y: 152 };
   const R = 112;
@@ -2228,7 +2228,7 @@ export function lightProtractorFig(o: { inc: number }): string {
   </svg>`;
 }
 
-/** 물→공기 굴절 경로 고르기(①~⑤, 전부 같은 색) — 물속 30°(법선 기준) 입사.
+/** 물→공기 굴절 경로 고르기(①~⑤, 전부 같은 색), 물속 30°(법선 기준) 입사.
  *  ③이 스넬 실제 계산값(sin30×1.33=0.665 → 약 42°, 법선에서 멀어짐), ②는 직진 함정,
  *  ①은 법선 쪽(공기→물 방향과 혼동) 함정, ④는 수면에 붙는 극단, ⑤는 반사 함정. 정답 ③(첫 칸 금지 설계). */
 export function lightRefractUpFig(): string {
@@ -2258,7 +2258,7 @@ export function lightRefractUpFig(): string {
   </svg>`;
 }
 
-/** 물체를 보는 경로 그림 — 스탠드(광원)→책 ㉠, 책→눈 ㉡ 화살표. */
+/** 물체를 보는 경로 그림, 스탠드(광원)→책 ㉠, 책→눈 ㉡ 화살표. */
 export function lightSeePathFig(): string {
   return `<svg viewBox="0 0 344 190" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="책상 위 스탠드와 책, 오른쪽 위 사람 눈이 그려져 있어요. 스탠드에서 책으로 가는 화살표에 기호 ㉠, 책에서 눈으로 가는 화살표에 기호 ㉡이 붙어 있어요">
     <line x1="16" y1="168" x2="328" y2="168" stroke="#B0B8C1" stroke-width="2.4"/>
@@ -2292,8 +2292,8 @@ export function lightSeePathFig(): string {
   </svg>`;
 }
 
-/** 모눈 평면거울 상 위치 고르기 — 물체는 거울에서 3칸, 후보 ①~⑤(정답 ③ = 거울 뒤 3칸).
- *  ①1칸·②2칸·③3칸·④4칸·⑤거울 면 위 — 라벨형 그림, 정답 첫 칸 금지 설계. */
+/** 모눈 평면거울 상 위치 고르기, 물체는 거울에서 3칸, 후보 ①~⑤(정답 ③ = 거울 뒤 3칸).
+ *  ①1칸·②2칸·③3칸·④4칸·⑤거울 면 위, 라벨형 그림, 정답 첫 칸 금지 설계. */
 export function lightMirrorGridFig(): string {
   const cell = 24;
   let grid = "";
@@ -2318,7 +2318,7 @@ export function lightMirrorGridFig(): string {
   </svg>`;
 }
 
-/** 화면 확대 화소 그림(파라미터형) — R/G/B 화소의 켜짐/꺼짐을 문항마다 달리 쓴다. */
+/** 화면 확대 화소 그림(파라미터형), R/G/B 화소의 켜짐/꺼짐을 문항마다 달리 쓴다. */
 export function lightPixelExamFig(o: { on: [boolean, boolean, boolean] }): string {
   const bars: [string, string][] = [
     ["#E5322E", "빨간색"],
@@ -2337,8 +2337,8 @@ export function lightPixelExamFig(o: { on: [boolean, boolean, boolean] }): strin
   </svg>`;
 }
 
-/** 조명 3색 아래 풍선(파라미터형) — 같은 풍선이 빨강/초록/파랑 조명에서 어떻게 보이는지.
- *  seen: 각 조명 아래에서 보이는 색(fill·한글 이름) — 조건 값이라 aria 서술 허용. */
+/** 조명 3색 아래 풍선(파라미터형), 같은 풍선이 빨강/초록/파랑 조명에서 어떻게 보이는지.
+ *  seen: 각 조명 아래에서 보이는 색(fill·한글 이름), 조건 값이라 aria 서술 허용. */
 export function lightBalloonFig(o: { seen: { fill: string; name: string }[] }): string {
   const lampColors = ["#E5322E", "#12A84E", "#3A6CFF"];
   const lampNames = ["빨간 조명", "초록 조명", "파란 조명"];
@@ -2358,7 +2358,7 @@ export function lightBalloonFig(o: { seen: { fill: string; name: string }[] }): 
   </svg>`;
 }
 
-/** 파동 그래프(파라미터형) — 가로 거리(m) 또는 시간(초) 축, 세로 변위 축.
+/** 파동 그래프(파라미터형), 가로 거리(m) 또는 시간(초) 축, 세로 변위 축.
  *  amp·wavelength(가로축 단위 기준)는 반드시 눈금선 위 값으로 세팅한다(num 값 읽기 규칙). */
 export function lightWaveGraphFig(o: {
   xMax: number;
@@ -2402,8 +2402,8 @@ export function lightWaveGraphFig(o: {
   </svg>`;
 }
 
-/** 파형 비교 그림(파라미터형) — 같은 시간 동안 기록한 (가)~(라) 파형. 레슨 그림과
- *  배치를 달리 쓰기 위한 시험판. aria는 중립(모양 서술 금지 — 비교가 곧 문항의 과제). */
+/** 파형 비교 그림(파라미터형), 같은 시간 동안 기록한 (가)~(라) 파형. 레슨 그림과
+ *  배치를 달리 쓰기 위한 시험판. aria는 중립(모양 서술 금지, 비교가 곧 문항의 과제). */
 export function lightWave4Fig(o: { cells: { label: string; amp: number; cyc: number }[] }): string {
   const cell = (x: number, y: number, c: { label: string; amp: number; cyc: number }): string => {
     let d = "";
@@ -2423,7 +2423,7 @@ export function lightWave4Fig(o: { cells: { label: string; amp: number; cyc: num
   </svg>`;
 }
 
-/** 팬플루트 관 그림 — 길이가 다른 관 여섯에 ㉠㉡㉢ 기호(marks: 관 인덱스 0=가장 긴 관).
+/** 팬플루트 관 그림, 길이가 다른 관 여섯에 ㉠㉡㉢ 기호(marks: 관 인덱스 0=가장 긴 관).
  *  기호가 붙는 관을 문항마다 달리 쓴다(레슨 실로폰 ㉠긴~㉢짧 배열 회피). */
 export function lightPipesFig(o: { marks: [number, number, number] }): string {
   const pipe = (i: number): string => {
@@ -2441,7 +2441,7 @@ export function lightPipesFig(o: { marks: [number, number, number] }): string {
         <text x="${cx}" y="${cy + 4.5}" text-anchor="middle" font-size="11" font-weight="800" fill="#1B64DA">${symbols[k]}</text>`;
     })
     .join("");
-  // aria는 중립 — 기호가 붙은 관의 길이 서열을 말하지 않는다(길이 비교가 곧 문항의 과제, lightWave4Fig와 동일 문법)
+  // aria는 중립, 기호가 붙은 관의 길이 서열을 말하지 않는다(길이 비교가 곧 문항의 과제, lightWave4Fig와 동일 문법)
   return `<svg viewBox="0 0 344 200" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="길이가 서로 다른 관 여섯 개를 나란히 묶은 악기 그림. 세 관에 ㉠, ㉡, ㉢ 기호가 붙어 있어요. 기호가 붙은 관의 길이를 비교해 보세요">
     <path d="M48 44 L302 44" stroke="#B0846A" stroke-width="5" stroke-linecap="round" opacity=".55"/>
     ${Array.from({ length: 6 }, (_, i) => pipe(i)).join("")}
@@ -2451,7 +2451,7 @@ export function lightPipesFig(o: { marks: [number, number, number] }): string {
 
 /* ══════════════ g2u4 물질의 구성 시험 전용 ══════════════ */
 // atomFigures 문법 계승(라이트 카드): CPK 색(O 빨강·H 흰·C 짙은 회색·N 파랑·Cl 초록), 원자핵 붉은 공, 전자 파란 (−) 알갱이.
-// aria-label에 정오 단서 금지 — 기호(㉠㉡㉢·A~E)가 붙은 알갱이·칸의 정체와 개수, 색소의 전하 부호를 말하지 않는다.
+// aria-label에 정오 단서 금지, 기호(㉠㉡㉢·A~E)가 붙은 알갱이·칸의 정체와 개수, 색소의 전하 부호를 말하지 않는다.
 
 // 라이트 카드용 원자 공 팔레트(atomFigures fourModelFig 계열 + chemKit CPK 대소 관계 유지: H < C·N·O < Cl)
 const XEL: Record<string, { fill: string; line: string; r: number }> = {
@@ -2474,8 +2474,8 @@ const xnuc = (x: number, y: number, p: number, r = 15): string =>
 const xelec = (x: number, y: number, r = 6): string =>
   `<circle cx="${x}" cy="${y}" r="${r}" fill="#5A9AE0" stroke="#2A5AA0" stroke-width="1.3"/><line x1="${x - r * 0.45}" y1="${y}" x2="${x + r * 0.45}" y2="${y}" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>`;
 
-/** 분자 모형(파라미터형) — key: H2·O2·O3·CO·CO2·H2O·NH3·CH4·HCl, label: (가)(나)… 문항마다 조합을 달리 쓴다.
- *  aria는 중립 — 모형이 어떤 분자인지 말하지 않는다(판독이 곧 과제). */
+/** 분자 모형(파라미터형), key: H2·O2·O3·CO·CO2·H2O·NH3·CH4·HCl, label: (가)(나)… 문항마다 조합을 달리 쓴다.
+ *  aria는 중립, 모형이 어떤 분자인지 말하지 않는다(판독이 곧 과제). */
 export function atomMolsFig(mols: { key: "H2" | "O2" | "O3" | "CO" | "CO2" | "H2O" | "NH3" | "CH4" | "HCl"; label: string }[]): string {
   const draw = (key: string, cx: number, cy: number): string => {
     switch (key) {
@@ -2506,7 +2506,7 @@ export function atomMolsFig(mols: { key: "H2" | "O2" | "O3" | "CO" | "CO2" | "H2
   return `<svg viewBox="0 0 344 ${H}" ${NS} fill="none" role="img" aria-label="분자 모형 ${mols.map((m) => m.label).join(", ")}, 각 모형을 이루는 공(원자)의 색깔 종류와 개수를 살펴보세요">${cells}</svg>`;
 }
 
-/** 원자 구조 ㉠㉡㉢ 판독(파라미터형) — 원자핵 속 밝은 알갱이(양성자)·회색 알갱이(중성자)와 궤도의 전자에
+/** 원자 구조 ㉠㉡㉢ 판독(파라미터형), 원자핵 속 밝은 알갱이(양성자)·회색 알갱이(중성자)와 궤도의 전자에
  *  기호만 붙인다. 원자핵 +N 라벨은 일부러 없음(개수 세기·정체 판정이 과제). 기본값은 리튬(3p·4n·3e). */
 export function atomStructQuizFig(o: { p: number; n: number; e: number } = { p: 3, n: 4, e: 3 }): string {
   const cx = 172, cy = 100;
@@ -2535,7 +2535,7 @@ export function atomStructQuizFig(o: { p: number; n: number; e: number } = { p: 
   const tag = (x: number, y: number, t: string): string =>
     `<circle cx="${x}" cy="${y}" r="11" fill="#FFFFFF" stroke="#5AA2F8" stroke-width="1.6"/>
      <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#1B64DA">${t}</text>`;
-  // ㉠→양성자(첫 밝은 알갱이) ㉡→중성자(첫 회색 알갱이) ㉢→전자(표지에서 가장 가까운 것 —
+  // ㉠→양성자(첫 밝은 알갱이) ㉡→중성자(첫 회색 알갱이) ㉢→전자(표지에서 가장 가까운 것,
   // 첫 전자(꼭대기)로 이으면 표선이 그림을 가로질러 ㉡ 선과 X자로 교차한다(눈검수 적발))
   const pIdx = kinds.indexOf(true), nIdx = kinds.indexOf(false);
   const pT: [number, number] = [cx + spots[pIdx][0], cy + spots[pIdx][1]];
@@ -2555,7 +2555,7 @@ export function atomStructQuizFig(o: { p: number; n: number; e: number } = { p: 
   </svg>`;
 }
 
-/** 주기율표 뼈대 + 위치 표시(파라미터형) — 1~3주기 단축형(1·2·13~18족). cells에 넣은 칸만
+/** 주기율표 뼈대 + 위치 표시(파라미터형), 1~3주기 단축형(1·2·13~18족). cells에 넣은 칸만
  *  라벨(A~E·㉠㉡·원소 기호)이 찍힌다. aria는 위치를 말하지 않는다(위치 읽기가 과제). */
 export function atomPeriodicExamFig(o: { cells: { g: number; period: number; t: string; tone?: "blue" | "amber" }[] }): string {
   const gIdx = (g: number): number => (g <= 2 ? g - 1 : g - 11);
@@ -2583,7 +2583,7 @@ export function atomPeriodicExamFig(o: { cells: { g: number; period: number; t: 
   </svg>`;
 }
 
-/** 주기율표 한 칸 확대 ㉠㉡㉢ — 칸 속 세 자리(위 숫자·가운데 기호·아래 이름)의 뜻을 묻는 문항용.
+/** 주기율표 한 칸 확대 ㉠㉡㉢, 칸 속 세 자리(위 숫자·가운데 기호·아래 이름)의 뜻을 묻는 문항용.
  *  cellAnatomyFig(개념용)와 달리 정답 라벨을 전부 감춘 시험판. */
 export function atomCellQuizFig(): string {
   return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="수소의 주기율표 한 칸을 확대한 그림, 위 왼쪽의 원자 번호 1을 ㉠이, 가운데 원소 기호 H를 ㉡이 가리켜요">
@@ -2602,8 +2602,8 @@ export function atomCellQuizFig(): string {
   </svg>`;
 }
 
-/** 물질 분류 순서도(파라미터형) — 질문 1이 예/아니요로 갈라지고, 양쪽 각각 질문 2로 다시 갈라져
- *  (가)~(라) 네 결론 칸이 전부 분리된다(한 칸 수렴 금지 — u3 저작 함정 ④). */
+/** 물질 분류 순서도(파라미터형), 질문 1이 예/아니요로 갈라지고, 양쪽 각각 질문 2로 다시 갈라져
+ *  (가)~(라) 네 결론 칸이 전부 분리된다(한 칸 수렴 금지, u3 저작 함정 ④). */
 export function atomFlowFig(o: { start: string; q1: string; q2: string }): string {
   const result = (cx: number, label: string): string =>
     `<rect x="${cx - 32}" y="186" width="64" height="34" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
@@ -2661,7 +2661,7 @@ export function atomElectrolysisFig(): string {
   </svg>`;
 }
 
-/** 이온 이동(전기영동) 번짐 상태(파라미터형) — 거름종이 가운데 색 점이 한쪽 극으로 번진 모습.
+/** 이온 이동(전기영동) 번짐 상태(파라미터형), 거름종이 가운데 색 점이 한쪽 극으로 번진 모습.
  *  hex: 색소 색, dir: 번진 방향, leftSign: 왼쪽 전극 부호. aria는 관찰 사실(방향·극 배치)만 말한다. */
 export function atomIonMoveExamFig(o: { hex: string; dir: "left" | "right"; leftSign: "+" | "−" }): string {
   const rightSign = o.leftSign === "+" ? "−" : "+";
@@ -2686,7 +2686,7 @@ export function atomIonMoveExamFig(o: { hex: string; dir: "left" | "right"; left
   </svg>`;
 }
 
-/** 이온 조성 원그래프(파라미터형) — slices: 라벨·백분율·색(hide면 범례 %를 ㉠로 감춤 — num 산수용).
+/** 이온 조성 원그래프(파라미터형), slices: 라벨·백분율·색(hide면 범례 %를 ㉠로 감춤, num 산수용).
  *  aria는 숨긴 조각의 값을 말하지 않는다. */
 export function atomPieFig(o: { slices: { label: string; pct: number; hex: string; hide?: boolean }[] }): string {
   const cx = 96, cy = 84, r = 62;
@@ -2718,8 +2718,8 @@ export function atomPieFig(o: { slices: { label: string; pct: number; hex: strin
   </svg>`;
 }
 
-/** 전기 전도 실험(파라미터형) — 액체마다 전극·전구를 꽂은 비커, on이면 전구가 켜진다.
- *  결과 해석 문항 전용(관찰 결과가 전제) — 예측 문항에는 붙이지 않는다. */
+/** 전기 전도 실험(파라미터형), 액체마다 전극·전구를 꽂은 비커, on이면 전구가 켜진다.
+ *  결과 해석 문항 전용(관찰 결과가 전제), 예측 문항에는 붙이지 않는다. */
 export function atomCondFig(o: { cups: { label: string; on: boolean }[] }): string {
   const n = o.cups.length;
   const cell = 344 / n;
@@ -2744,7 +2744,7 @@ export function atomCondFig(o: { cups: { label: string; on: boolean }[] }): stri
   return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="전극과 전구를 꽂은 비커 실험, ${spoken}">${cups}</svg>`;
 }
 
-/** 이온 생성 전·후 모형(파라미터형) — 왼쪽 중성 원자(양성자 p·전자 p), 오른쪽 이온(전자 after).
+/** 이온 생성 전·후 모형(파라미터형), 왼쪽 중성 원자(양성자 p·전자 p), 오른쪽 이온(전자 after).
  *  tell이면 화살표 위에 '전자 n개 잃음/얻음'을 적는다(결과 묻기용). 없으면 개수 비교가 과제. */
 export function atomIonFormExamFig(o: { p: number; after: number; tell?: boolean }): string {
   const ring = (cx: number, cy: number, cnt: number, rx: number, ry: number): string =>
@@ -2766,7 +2766,7 @@ export function atomIonFormExamFig(o: { p: number; after: number; tell?: boolean
 
 // ── g2u7(전기와 자기) 시험 전용 ──────────────────────────────
 // 전하 알갱이는 elecFigures 톤((+) 붉은 원·(−) 파란 원)과 동조. 전류 화살표는 볼트 옐로+진갈색 테두리.
-// aria는 전부 중립 — 판독·계산 과제의 답(부호·수치·힘 방향)을 낭독하지 않는다.
+// aria는 전부 중립, 판독·계산 과제의 답(부호·수치·힘 방향)을 낭독하지 않는다.
 
 const eplus = (x: number, y: number, r = 6.5): string =>
   `<circle cx="${x}" cy="${y}" r="${r}" fill="#E8836B" stroke="#A8442E" stroke-width="1.2"/><path d="M${x - r * 0.45} ${y}h${r * 0.9}M${x} ${y - r * 0.45}v${r * 0.9}" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/>`;
@@ -2815,7 +2815,7 @@ export function elecRubExamFig(o: { moved: number }): string {
     ${cloth(258, 190)}${charges(258, 190, P, M0 + o.moved)}
   </svg>`;
 }
-/** 대전 막대 × 눕힌 깡통 정전기 유도(시험판) — 레슨 그림과 좌우·부호·라벨 전부 교체:
+/** 대전 막대 × 눕힌 깡통 정전기 유도(시험판), 레슨 그림과 좌우·부호·라벨 전부 교체:
  *  막대가 오른쪽에서 접근, 기본 (−)대전. ㉠=막대와 가까운 쪽(오른쪽), ㉡=먼 쪽(왼쪽). */
 export function elecCanExamFig(o?: { pol?: "+" | "-" }): string {
   const pol = o?.pol ?? "-";
@@ -2840,7 +2840,7 @@ export function elecCanExamFig(o?: { pol?: "+" | "-" }): string {
   </svg>`;
 }
 
-/** 검전기(자기완결 문항용) — 금속판·금속박 구조 라벨 + 대전체 접근. 금속박은 접근 전 닫힌 상태. */
+/** 검전기(자기완결 문항용), 금속판·금속박 구조 라벨 + 대전체 접근. 금속박은 접근 전 닫힌 상태. */
 export function elecScopeFig(): string {
   return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="금속판과 금속박으로 이루어진 검전기에 대전된 막대를 가까이 가져가는 그림, 금속박은 아직 닫혀 있다">
     <g transform="rotate(24 234 46)">
@@ -2859,8 +2859,8 @@ export function elecScopeFig(): string {
   </svg>`;
 }
 
-/** 전압-전류 그래프(파라미터형) — lines: 저항 r(Ω)의 원점 직선(I(mA) = V/r×1000).
- *  dots는 점만 표시(가이드 점선 금지 — 값 읽기 과제 보존, g2u2 관행). 눈금은 vStep·iStep. */
+/** 전압-전류 그래프(파라미터형), lines: 저항 r(Ω)의 원점 직선(I(mA) = V/r×1000).
+ *  dots는 점만 표시(가이드 점선 금지, 값 읽기 과제 보존, g2u2 관행). 눈금은 vStep·iStep. */
 export function elecViExamFig(o: {
   lines: { label: string; r: number }[];
   vMax: number;
@@ -2895,8 +2895,8 @@ export function elecViExamFig(o: {
   </svg>`;
 }
 
-/** 전압-전류 그래프 모양 고르기 ①~⑤ — 정답(원점 직선)은 ②에 배치, ①은 원점을 지나지 않는 함정
- *  (라벨형 그림의 정답 위치 설계 — u6 gasTvChoicesFig 관행). shuffle:false 전용. */
+/** 전압-전류 그래프 모양 고르기 ①~⑤, 정답(원점 직선)은 ②에 배치, ①은 원점을 지나지 않는 함정
+ *  (라벨형 그림의 정답 위치 설계, u6 gasTvChoicesFig 관행). shuffle:false 전용. */
 export function elecViChoicesFig(): string {
   const cell = (x: number, num: string, path: string): string =>
     `<g transform="translate(${x} 0)">
@@ -2915,7 +2915,7 @@ export function elecViChoicesFig(): string {
   </svg>`;
 }
 
-/** 전지 1개에 전구 1개(가) vs 전구 2개(나) 비교 회로 — right로 (나)의 연결(직렬/병렬)을 정한다.
+/** 전지 1개에 전구 1개(가) vs 전구 2개(나) 비교 회로, right로 (나)의 연결(직렬/병렬)을 정한다.
  *  전구 저항은 모두 같다는 전제의 밝기·전류 비교 문항용. */
 export function elecTwoCircuitFig(o: { right: "series" | "parallel" }): string {
   const left = `
@@ -2943,7 +2943,7 @@ export function elecTwoCircuitFig(o: { right: "series" | "parallel" }): string {
   </svg>`;
 }
 
-/** 회로 위 세 지점 ㉠㉡㉢(전류 비교 문항용) — series: 한 줄 회로의 앞·사이·뒤 / parallel: 전체·두 갈래. */
+/** 회로 위 세 지점 ㉠㉡㉢(전류 비교 문항용), series: 한 줄 회로의 앞·사이·뒤 / parallel: 전체·두 갈래. */
 export function elecPointsFig(o: { mode: "series" | "parallel" }): string {
   const dot = (x: number, y: number, t: string): string =>
     `<circle cx="${x}" cy="${y}" r="5" fill="#F0A422" stroke="#B87700" stroke-width="1.6"/>
@@ -2970,8 +2970,8 @@ export function elecPointsFig(o: { mode: "series" | "parallel" }): string {
   </svg>`;
 }
 
-/** 전기 기구 에너지 전환 분류 순서도(파라미터형) — 예/아니요가 각자의 결론 칸 A/B/C로 갈라진다
- *  (한 칸 수렴 금지 — u3 관행). q1·q2는 판정 질문 문구. */
+/** 전기 기구 에너지 전환 분류 순서도(파라미터형), 예/아니요가 각자의 결론 칸 A/B/C로 갈라진다
+ *  (한 칸 수렴 금지, u3 관행). q1·q2는 판정 질문 문구. */
 export function elecFlowFig(o: { q1: string; q2: string }): string {
   const dia = (x: number, y: number, w: number, h: number, t: string): string =>
     `<path d="M${x} ${y - h / 2} L${x + w / 2} ${y} L${x} ${y + h / 2} L${x - w / 2} ${y} Z" fill="#FFF7E0" stroke="#D9B44A" stroke-width="1.8"/>
@@ -2998,7 +2998,7 @@ export function elecFlowFig(o: { q1: string; q2: string }): string {
   </svg>`;
 }
 
-/** 전기 기구 표시 라벨(명판) — 정격 전압·소비 전력 해석 문항용. aria는 수치를 낭독하지 않는다. */
+/** 전기 기구 표시 라벨(명판), 정격 전압·소비 전력 해석 문항용. aria는 수치를 낭독하지 않는다. */
 export function elecLabelFig(o: { volt: number; watt: number }): string {
   return `<svg viewBox="0 0 344 140" ${NS} fill="none" role="img" aria-label="전기 기구 뒷면에 붙은 표시 라벨, 적힌 값을 읽어 해석해요">
     <rect x="70" y="18" width="204" height="104" rx="14" fill="#F4F6F9" stroke="#B7C2CE" stroke-width="2.2"/>
@@ -3011,7 +3011,7 @@ export function elecLabelFig(o: { volt: number; watt: number }): string {
   </svg>`;
 }
 
-/** 전동기 사시도(시험판) — 힘 화살표 없음(질문 과제). (가)=코일 왼쪽 변, (나)=오른쪽 변.
+/** 전동기 사시도(시험판), 힘 화살표 없음(질문 과제). (가)=코일 왼쪽 변, (나)=오른쪽 변.
  *  물리 검산(기본 상태): 자기장 B = N(왼)→S(오른) = +x. 전류는 전지 (+)극(왼쪽 도선)에서 나와
  *  (가) 변을 앞→뒤(−z)로 흐름 → F = IL×B ∝ (−ẑ)×x̂ = −ŷ = 아래. (나) 변은 뒤→앞(+z) → 힘 위.
  *  즉 기본: (가) 아래·(나) 위. reverse면 전류·힘 모두 반대((가) 위·(나) 아래). */
@@ -3046,15 +3046,15 @@ export function elecMotorExamFig(o?: { reverse?: boolean }): string {
     <text x="262" y="146" font-size="13" font-weight="800" fill="#4E5968">(나)</text>
     <path d="M260 140l-14 -10" stroke="#C4CAD2" stroke-width="1.3"/>
     <path d="M162 150 V178 M197 150 V178" stroke="#8B95A1" stroke-width="2.6"/>
-    ${ebattery(140, 178, 84, 24, rev) /* 전류 반전판은 전지를 거꾸로 끼운 그림(− 왼쪽) — 극과 전류 방향 일관 */}
+    ${ebattery(140, 178, 84, 24, rev) /* 전류 반전판은 전지를 거꾸로 끼운 그림(− 왼쪽), 극과 전류 방향 일관 */}
   </svg>`;
 }
 
 // ── g2u8(별과 우주) 시험 전용 ──────────────────────────────
-// 다크 우주 스타일(u7 섹션 계승 — figureDark: true, 스트로크 #2C4066·텍스트 #DCE8FF).
-// aria는 판독 과제를 낭독하지 않는다(정답 유출 금지 — crudeTowerFig 선례).
+// 다크 우주 스타일(u7 섹션 계승, figureDark: true, 스트로크 #2C4066·텍스트 #DCE8FF).
+// aria는 판독 과제를 낭독하지 않는다(정답 유출 금지, crudeTowerFig 선례).
 
-/** 발광 별(도해용) — starFigures.star와 같은 문법의 로컬 헬퍼 */
+/** 발광 별(도해용), starFigures.star와 같은 문법의 로컬 헬퍼 */
 function xstar(x: number, y: number, r: number, fill: string): string {
   const spikes: string[] = [];
   for (let i = 0; i < 4; i++) {
@@ -3066,7 +3066,7 @@ function xstar(x: number, y: number, r: number, fill: string): string {
   return `<circle cx="${x}" cy="${y}" r="${r * 2.1}" fill="${fill}" opacity=".13"/><circle cx="${x}" cy="${y}" r="${r}" fill="${fill}"/>${spikes.join("")}`;
 }
 
-/** 지구 공전 궤도(왼쪽 세로 타원)에서 세 별 (가)(나)(다)를 본 시차각(다크) —
+/** 지구 공전 궤도(왼쪽 세로 타원)에서 세 별 (가)(나)(다)를 본 시차각(다크),
  *  별이 멀수록 시선 부채꼴이 좁아진다. 각 값 라벨은 파라미터(기본 0.4″/0.2″/0.1″). */
 export function starParallax3Fig(o: { p: [string, string, string] } = { p: ["0.4″", "0.2″", "0.1″"] }): string {
   const ex = 52; // 태양 x
@@ -3105,8 +3105,8 @@ export function starParallax3Fig(o: { p: [string, string, string] } = { p: ["0.4
   </svg>`;
 }
 
-/** 6개월 간격 관측 두 장면(다크 2패널) — 배경별 ㉯는 고정, 별 ㉮가 ㉯ 쪽으로 다가와 보인다.
- *  간격 라벨 g1(6개월 전)·g2(현재)는 파라미터 — 이동각 = g1−g2, 연주 시차는 그 절반. */
+/** 6개월 간격 관측 두 장면(다크 2패널), 배경별 ㉯는 고정, 별 ㉮가 ㉯ 쪽으로 다가와 보인다.
+ *  간격 라벨 g1(6개월 전)·g2(현재)는 파라미터, 이동각 = g1−g2, 연주 시차는 그 절반. */
 export function starShiftPairFig(o: { g1: string; g2: string }): string {
   const panel = (px: number, title: string, ax: number, gap: string): string => {
     const bx = 118; // ㉯ 고정 위치(패널 좌표)
@@ -3130,7 +3130,7 @@ export function starShiftPairFig(o: { g1: string; g2: string }): string {
   </svg>`;
 }
 
-/** 광원에서 나온 같은 빛다발이 거리 1·2·3배 지점에서 덮는 격자(다크) —
+/** 광원에서 나온 같은 빛다발이 거리 1·2·3배 지점에서 덮는 격자(다크),
  *  한 칸 크기는 같고 판이 1×1 → 2×2 → 3×3으로 커진다(면적 1:4:9). */
 export function starBrightGridFig(): string {
   const grid = (x: number, n: number): string => {
@@ -3184,7 +3184,7 @@ export function starMagScatterFig(o: { pts: { label: string; col: number; mag: n
     ${cols}${pts}
   </svg>`;
 }
-/** 색이 다른 별 셋(다크) — 레슨 colorTempFig의 시험판(라벨·색 구성 파라미터). */
+/** 색이 다른 별 셋(다크), 레슨 colorTempFig의 시험판(라벨·색 구성 파라미터). */
 export function colorTempTrioFig(o: { stars: { label: string; name: string; hex: string }[] }): string {
   const xs = [70, 172, 274];
   const body = o.stars
@@ -3197,7 +3197,7 @@ export function colorTempTrioFig(o: { stars: { label: string; name: string; hex:
   return `<svg viewBox="0 0 344 152" ${NS} fill="none" role="img" aria-label="색이 서로 다른 세 별과 각 별의 색 이름이 표시된 그림">${body}</svg>`;
 }
 
-/** 옆에서 본 우리은하(다크, 시험판) — 이름 라벨 대신 위치 기호 ㉠(중심부)·㉡(원반 위 한 점)·㉢(원반 바깥 공간).
+/** 옆에서 본 우리은하(다크, 시험판), 이름 라벨 대신 위치 기호 ㉠(중심부)·㉡(원반 위 한 점)·㉢(원반 바깥 공간).
  *  galaxySideFig의 이름 라벨은 위치 문항의 정답을 인쇄하므로 시험판을 따로 둔다(geoCycleQuizFig 계보). */
 export function starGalaxyQuizFig(): string {
   const halo: string[] = [];
@@ -3223,7 +3223,7 @@ export function starGalaxyQuizFig(): string {
   </svg>`;
 }
 
-/** 옆에서 본 우리은하 + 두 별 무리의 분포(다크) — ㉮는 원반(나선팔)을 따라,
+/** 옆에서 본 우리은하 + 두 별 무리의 분포(다크), ㉮는 원반(나선팔)을 따라,
  *  ㉯는 중심부 주위와 원반 바깥(헤일로)에 구형으로. 점 색은 같다(색이 답의 단서가 되지 않게). */
 export function starClusterMapFig(): string {
   const dot = (x: number, y: number): string => `<circle cx="${x}" cy="${y}" r="3" fill="#C8D4E8"/><circle cx="${x}" cy="${y}" r="1.2" fill="#F0F4FA"/>`;
@@ -3244,7 +3244,7 @@ export function starClusterMapFig(): string {
   </svg>`;
 }
 
-/** 우주 팽창 화살표 그림(다크) — 은하 A에서 관측: 가까운 B는 짧은 화살표, 먼 C는 긴 화살표. */
+/** 우주 팽창 화살표 그림(다크), 은하 A에서 관측: 가까운 B는 짧은 화살표, 먼 C는 긴 화살표. */
 export function starExpandArrowFig(): string {
   const gal = (x: number, tone: string): string =>
     `<ellipse cx="${x}" cy="96" rx="17" ry="7" fill="${tone}" opacity=".85"/>
@@ -3266,7 +3266,7 @@ export function starExpandArrowFig(): string {
   </svg>`;
 }
 
-/** 코일 + 전지 + 열린 스위치 + 나침반 ㉠(코일 왼쪽 끝) 배치도 — 정성 관찰 문항용(바늘 방향은 채점 대상 아님). */
+/** 코일 + 전지 + 열린 스위치 + 나침반 ㉠(코일 왼쪽 끝) 배치도, 정성 관찰 문항용(바늘 방향은 채점 대상 아님). */
 export function elecCoilCompassFig(): string {
   const turns = [0, 1, 2, 3, 4]
     .map((i) => `<ellipse cx="${132 + i * 22}" cy="96" rx="11" ry="20" stroke="#C97F3A" stroke-width="4" fill="none"/>`)
@@ -3804,7 +3804,7 @@ export function elecSwingExamFig(o?: { swapPoles?: boolean; revCurrent?: boolean
 // ── u7 v2 신작(파일럿 승격 · 재출제 3호) ──
 // 다크 우주 문법(u7 섹션 계승): 밝은 반구 = 태양 쪽 · 회전 반시계 · figureDark: true.
 const U7_IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
-/** 조건 자료 상자(u7 v2 · 미래엔 2 계보 — 텍스트 조건 (가)(나)(다)). 시각자료로 집계한다. */
+/** 조건 자료 상자(u7 v2 계보: 텍스트 조건 (가)(나)(다)). 시각자료로 집계한다. */
 export const dbox = (rows: [string, string][]): string =>
   `<div style="border:1.5px solid #D9DFE6;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:7px">
     ${rows.map(([tag, body]) => `<div style="display:flex;gap:8px;font-size:13.2px;line-height:1.55;word-break:keep-all"><b style="flex:none;color:#4E5968">${tag}</b><span>${body}</span></div>`).join("")}
@@ -3887,7 +3887,7 @@ export function sunLabelFig(kind: "normal" | "eclipse"): string {
   </svg>`;
 }
 
-/** SK 방향별 일주 궤적(다크·파라미터형) · 교과서 표준 구도(우리나라 기준):
+/** SK 방향별 일주 궤적(다크·파라미터형) · 표준 구도(우리나라 기준):
  *  동쪽 하늘 = 오른쪽 위로 비스듬히 떠오름(↗) · 서쪽 하늘 = 오른쪽 아래로 비스듬히 짐(↘) ·
  *  남쪽 하늘 = 왼쪽(동)에서 오른쪽(서)으로 수평(→). 화살촉은 진행 방향(레슨 northSkyFig 검산 계보).
  *  choices 모드 = "북쪽 하늘을 오래 찍으면?" ①~⑤ 미니 컷(정답 ② 반시계 동심원 · shuffle:false 전용). */
@@ -4307,7 +4307,7 @@ export function westSkyFig(o?: { v?: 2 }): string {
 
 /** PB 입자 운동 모형 N박스(다크 · 파라미터형) · particleTrio/Duo 대체 신작.
  *  개수는 9개 고정(개수·크기는 온도의 단서가 아님을 구조로 보장) · spread 간격 · trail 운동 세기.
- *  운동 표시는 입자 옆 호(弧) 떨림 줄(교과서 문법 · 실측 미래엔 "호 줄 수만 다름" 계승):
+ *  운동 표시는 입자 옆 호(弧) 떨림 줄(표준 문법 · 호 줄 수만 다름):
  *  trail 0 = 없음 · 1~7 = 1줄 · 8+ = 2줄(최대 2줄 · 3단계 0/1/2가 한눈에 갈리는 상한 ·
  *  파일럿 2차 검수 "떨림 과함 · 2줄vs3줄 구분 곤란" 반영). 긴 직선 잔상은 잡선으로 읽혀 폐기
  *  (1차 검수 반영). 색은 전부 같은 파랑 · aria는 중립(순서 낭독 금지). */
@@ -5097,7 +5097,7 @@ export function debateFig(o: { a: { name: string; claim: string }; b: { name: st
 
 
 /** 다크 입자 프리미티브(u4 v2) · 컷 간 입자 개수 12개 통일(개수 보존 검산 가능 설계 · v1의 9/6 혼재 보정).
- *  운동 표현은 교과서 세 상태 그림 문법(사용자 원본 이미지 검수로 확정):
+ *  운동 표현은 세 상태 그림의 표준 문법(사용자 원본 이미지 검수로 확정):
  *  기체 = 날아가는 방향의 블러 꼬리(원뿔 잔상) · 고체 = 입자 양옆 괄호형 진동 호 ( ) ·
  *  액체 = 같은 괄호 호를 더 크게 2겹 + 입자별 회전(고체보다 크게 흔들리는 느낌). */
 const dotP = (x: number, y: number, r = 5.6): string =>
@@ -5114,7 +5114,7 @@ const gasTailP = (x: number, y: number, ang: number, len: number, r = 4.7): stri
   return `<path d="M${(x - px * w).toFixed(1)} ${(y - py * w).toFixed(1)} L${tx.toFixed(1)} ${ty.toFixed(1)} L${(x + px * w).toFixed(1)} ${(y + py * w).toFixed(1)} Z" fill="#8FB3E8" opacity=".22"/>
     <circle cx="${(x - dx * len * 0.55).toFixed(1)}" cy="${(y - dy * len * 0.55).toFixed(1)}" r="${(r * 0.55).toFixed(1)}" fill="#8FB3E8" opacity=".13"/>`;
 };
-/** 고체 진동 호 · 교과서 (나) 문법: 격자 덩어리의 **맨 바깥쪽에만** 그린다(입자 사이사이에는 없음).
+/** 고체 진동 호 · 고체 표준 문법: 격자 덩어리의 **맨 바깥쪽에만** 그린다(입자 사이사이에는 없음).
  *  side = 그 입자가 덩어리 가장자리에서 바깥을 향한 면. */
 const vibSideP = (x: number, y: number, side: "l" | "r" | "t" | "b", r = 5.8): string => {
   const rr = r + 3;
@@ -5130,7 +5130,7 @@ const vibOutP = (x: number, y: number, cx: number, cy: number, r = 5.2): string 
   const rr = r + 3;
   return `<g transform="rotate(${deg} ${x} ${y})"><path d="M${(x + rr).toFixed(1)} ${(y - 4.8).toFixed(1)}q2.4 4.8 0 9.6" stroke="#8FB3E8" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".6"/></g>`;
 };
-/** 액체 진동 호 · 괄호 2겹 + 입자별 회전(교과서 (다) 문법 · 고체보다 크게 흔들림). */
+/** 액체 진동 호 · 괄호 2겹 + 입자별 회전(액체 표준 문법 · 고체보다 크게 흔들림). */
 const vib2P = (x: number, y: number, i: number, r = 5.6): string => {
   const rot = [0, 26, -26, 13, -13][i % 5];
   const r1 = r + 2.8;
@@ -5160,7 +5160,7 @@ const gridP = (): string => {
   return out;
 };
 const clumpP = (): string => {
-  // 교과서 액체 표준(사용자 검수 반영): 서로 닿을 듯 말 듯한 틈(중심 간 = 지름의 1.3배쯤)을 두고
+  // 액체 표준(사용자 검수 반영): 서로 닿을 듯 말 듯한 틈(중심 간 = 지름의 1.3배쯤)을 두고
   // 불규칙하게 아래쪽 2/3를 채운다 · 다닥다닥 겹칠 듯 뭉치면 실격 · 위 1/3은 자유 표면으로 비움.
   const pts: [number, number][] = [
     [21, 41], [36, 38], [50, 42], [65, 39], [79, 42],
@@ -5176,7 +5176,7 @@ const scatterP = (motion = true): string => {
   ];
   return pts.map(([x, y], i) => `${motion ? gasTailP(x, y, ((i * 137) % 360) * (Math.PI / 180), 13) : ""}${dotP(x, y, 4.7)}`).join("");
 };
-/** 상태 성질 모형용 성긴 기체(교과서 세 상태 그림 표준 · 5~6개 + 날아가는 블러 꼬리).
+/** 상태 성질 모형용 성긴 기체(세 상태 그림 표준 · 5~6개 + 날아가는 블러 꼬리).
  *  변화 전후 2컷(PP2·SB)은 개수 보존 검산 때문에 scatterP(12)를 유지한다(천체 실측 12=12 계보). */
 const scatterSparseP = (): string => {
   const pts: [number, number][] = [[20, 16], [64, 12], [84, 42], [38, 40], [16, 66], [64, 66]];
@@ -5458,7 +5458,7 @@ export function syringeFig(): string {
 /** SB 밀폐 용기 상태 변화 전후(라이트) · zip = 지퍼 백(드라이아이스류 · 저울 없음 · 부피 대비) ·
  *  flask = 마개 플라스크+저울(빈 패널 · 질량 대비) · open = 마개 없는 대비판. */
 export function sealedPairFig(o: { vessel: "zip" | "flask"; open?: boolean }): string {
-  // 라이트 그림용 기체 꼬리(교과서 문법 · 지퍼 백 기체 입자에도 운동 꼬리를 그린다 · 천재 실측 계보).
+  // 라이트 그림용 기체 꼬리(표준 문법 · 지퍼 백 기체 입자에도 운동 꼬리를 그린다).
   const ltail = (x: number, y: number, deg: number, L = 9, w = 2.6): string => {
     const a = (deg * Math.PI) / 180;
     const dx = Math.cos(a);
@@ -7284,7 +7284,7 @@ export function chemBoilCurvesParamFig(o: { t1: number; t2: number }): string {
 
 
 /* 기체 입자 파츠(라이트) · 운동 표시 = 날아가는 방향 반대쪽 블러 꼬리(원뿔 잔상+페이드 원).
- * u4 v2에서 사용자 검수로 확정한 교과서 기체 문법의 라이트 팔레트판 · 화살표·직선 잔상 금지.
+ * u4 v2에서 사용자 검수로 확정한 기체 표준 문법의 라이트 팔레트판 · 화살표·직선 잔상 금지.
  * 꼬리 세기는 2단만(1 짧음 9.5 · 2 김 17) · 3단 구분은 판독 곤란(u3 검수 계보). */
 export const g6dot = (x: number, y: number, r = 5): string =>
   `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="#7FB8F2" stroke="#4E86C4" stroke-width="1.3"/>`;
@@ -8580,7 +8580,7 @@ export function starColorRowFig(o: { stars: { label: string; name: string; hex: 
 
 /* ══════════════ g2u4 v2 재출제 전용(빌드 승격 · 수정은 qa/g2u4v2-*.ts에서) ══════════════ */
 // 신작·개조 헬퍼 · build-g2u4v2-lessons.mjs가 스테이징 로컬 정의를 그대로 승격한다(멱등).
-// 중성자 표기 = 교과서 그림 Ⅳ-4 문법(양성자 + 표시 · 중성자 무표시 회색 · 구 atomStructQuizFig의
+// 중성자 표기 = 표준 그림 문법(양성자 + 표시 · 중성자 무표시 회색 · 구 atomStructQuizFig의
 // "0" 라벨 폐기 사유는 blueprint §7-2). 구판(atomStructQuizFig·atomCellQuizFig·atomPieFig)은
 // v1 폐기로 참조가 사라지지만 하위 호환을 위해 유지한다.
 /** CQ2 주기율표 칸 확대(파라미터판) · 구 atomCellQuizFig(수소 고정)의 대체 · 칸 내용이 파라미터고
@@ -8637,9 +8637,9 @@ export function molsFig2(mols: { key: "H2O" | "H2O2"; label: string }[]): string
   return `<svg viewBox="0 0 344 ${H}" ${NS} fill="none" role="img" aria-label="분자 모형${mols.some((m) => m.label) ? " " + mols.map((m) => m.label).filter(Boolean).join(", ") : ""} · 각 모형을 이루는 공(원자)의 색깔 종류와 개수를 살펴보세요">${cells}</svg>`;
 }
 
-/** SQ2 원자 구조 ㉠㉡㉢ 판독(교과서 그림 Ⅳ-4 문법판) · 구 atomStructQuizFig(중성자 "0" 라벨)의 대체.
- *  교과서 표기 = 양성자: 빨간 공에 흰 + 표시 · 중성자: 표시 없는 회색 공 · 전자: 파란 (−) 알갱이.
- *  "0" 라벨은 교과서에 없는 창작 표기라 폐기(사용자 파일럿 검수 지시 · 미래엔 144~145쪽 대조).
+/** SQ2 원자 구조 ㉠㉡㉢ 판독(표준 그림 문법판) · 구 atomStructQuizFig(중성자 "0" 라벨)의 대체.
+ *  표준 표기 = 양성자: 빨간 공에 흰 + 표시 · 중성자: 표시 없는 회색 공 · 전자: 파란 (−) 알갱이.
+ *  "0" 라벨은 표준에 없는 창작 표기라 폐기(사용자 파일럿 검수 지시).
  *  핵 알갱이 상한 9(p+n ≤ 9). 이식 때 examFigures의 구판을 이 문법으로 교체 승격한다. */
 export function structQuiz2Fig(o: { p: number; n: number; e: number }): string {
   const cx = 172, cy = 100;
@@ -10211,7 +10211,7 @@ export function sealedPlantFig(o: {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// FC · 요인–광합성량 곡선 (정성 · 축 라벨 생략 = 역추론 문항)
+// FC · 요인과 광합성량 곡선 (정성 · 축 라벨 생략 = 역추론 문항)
 // ══════════════════════════════════════════════════════════════════════════════
 export function factorGraphFig(o: {
   kind: "sat" | "peak";
@@ -10222,7 +10222,7 @@ export function factorGraphFig(o: {
   const L = 54, R = 322, TOP = 28, BASE = 152;
   const px = (f: number): number => L + f * (R - L);
   const COLORS = [C.leafLo, C.sun, C.xylem];
-  // sat 다중 곡선은 "같은 상승 경로를 공유하고 각자의 높이에서 먼저 평평해진다"(교과서 표준 도해).
+  // sat 다중 곡선은 "같은 상승 경로를 공유하고 각자의 높이에서 먼저 평평해진다"(표준 도해).
   // scale로 곡선 전체를 비례 축소하면 저광도 구간의 기울기까지 달라져 "빛이 부족할 땐 두 조건이
   // 거의 같다"는 판정 근거가 사라진다(검산 A 적발). 공유 상승 곡선을 샘플링해 각자 plateau로 클램프한다.
   const TOP1 = BASE - (BASE - TOP - 8);

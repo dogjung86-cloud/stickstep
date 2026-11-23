@@ -1,9 +1,9 @@
 // 중2 대단원 VIII. 별과 우주. 이 파일이 정본이다.
-// 중단원 1 '별의 특성': 별까지의 거리(282~283), 별의 밝기와 등급(284~287), 별의 색과 표면 온도(288~289)
-// 중단원 2 '우리은하와 우주': 우리은하(294~295), 성단과 성운(296~299), 팽창하는 우주(300~303), 우주 탐사(304~305)
+// 중단원 1 '별의 특성': 별까지의 거리, 별의 밝기와 등급, 별의 색과 표면 온도
+// 중단원 2 '우리은하와 우주': 우리은하, 성단과 성운, 팽창하는 우주, 우주 탐사
 // 8레슨(무료 3 + 프리미엄 5). 레슨마다 도입(opener) → 랩 → 용어 → 정리 → 문제. g2u8l7만 허블 만화로 연다.
 // 여기에는 단원과 레슨의 머리 정보, 스텝의 차례가 있다. 스텝의 내용은 unit8v5parts.ts(레슨 1~4)와 unit8v5parts2.ts(레슨 5~8)에 있다.
-// 설계와 책의 탐구 대응표는 design/g2u8v5-plan.md. 개념 스텝에는 아직 컷이 없다(output/g2-v5/u8/concept-cuts.md 를 보고 그림 세션이 그린다).
+// 설계와 탐구 대응표는 design/g2u8v5-plan.md. 개념 스텝에는 아직 컷이 없다(output/g2-v5/u8/concept-cuts.md 를 보고 그림 세션이 그린다).
 import type { Unit } from "../curriculum";
 import { comicStory } from "../../ui/sketchArt";
 import { comic } from "../dsl";
@@ -17,7 +17,7 @@ export const G2_UNIT8: Unit = {
   subtitle: "별까지의 거리, 우리은하와 우주",
   color: "#2E3A8C",
   icon: "sparkle",
-  standard: "2022 개정 교육과정",
+  standard: "[9과15-01]~[9과15-04] 별과 우주",
   lessons: [
     {
       id: "g2u8l1",
@@ -27,6 +27,7 @@ export const G2_UNIT8: Unit = {
       label: "연주 시차",
       icon: "sparkle",
       minutes: 14,
+      standard: "[9과15-01] 연주 시차, 별의 밝기와 등급, 표면 온도와 색",
       doneNote: "시차와 연주 시차로 별까지의 거리를 비교할 수 있어요",
       // 도입 > 연필 랩 > 용어 > 지구 공전 랩 > 거리와 시차 랩 > 용어 > 연주 시차와 pc 랩 > 정리 > 문제
       steps: [...L1],
@@ -39,6 +40,7 @@ export const G2_UNIT8: Unit = {
       label: "밝기와 거리",
       icon: "sparkle",
       minutes: 10,
+      standard: "[9과15-01] 연주 시차, 별의 밝기와 등급, 표면 온도와 색",
       doneNote: "밝기가 거리 제곱에 반비례함을 체험했어요",
       // 도입 > 조도 랩 > 퍼짐 랩 > 용어 > 정리 > 문제
       steps: [...L2],
@@ -51,6 +53,7 @@ export const G2_UNIT8: Unit = {
       label: "별의 등급",
       icon: "sparkle",
       minutes: 12,
+      standard: "[9과15-01] 연주 시차, 별의 밝기와 등급, 표면 온도와 색",
       doneNote: "겉보기 등급과 절대 등급으로 별을 비교할 수 있어요",
       // 도입 > 등급 랩 > 용어 > 절대 등급 랩 > 용어 > 정리 > 문제
       steps: [...L3],
@@ -64,6 +67,7 @@ export const G2_UNIT8: Unit = {
       label: "색과 표면 온도",
       icon: "sparkle",
       minutes: 10,
+      standard: "[9과15-01] 연주 시차, 별의 밝기와 등급, 표면 온도와 색",
       doneNote: "별의 색으로 표면 온도를 비교할 수 있어요",
       // 도입 > 전열기 랩 > 별의 온도 랩 > 용어 > 정리 > 문제
       steps: [...L4],
@@ -77,6 +81,7 @@ export const G2_UNIT8: Unit = {
       label: "우리은하",
       icon: "sparkle",
       minutes: 10,
+      standard: "[9과15-02] 우리은하, 성운과 성단",
       doneNote: "우리은하의 구조와 태양계의 위치를 배웠어요",
       // 도입 > 모형 랩 > 우리은하 랩 > 용어 > 정리 > 문제
       steps: [...L5],
@@ -90,6 +95,7 @@ export const G2_UNIT8: Unit = {
       label: "성단과 성운",
       icon: "sparkle",
       minutes: 11,
+      standard: "[9과15-02] 우리은하, 성운과 성단",
       doneNote: "성단·성운의 종류를 실사로 구분할 수 있어요",
       // 도입 > 관측 랩 > 용어 > 성운 랩 > 용어 > 정리 > 문제
       steps: [...L6],
@@ -103,6 +109,7 @@ export const G2_UNIT8: Unit = {
       label: "팽창하는 우주",
       icon: "sparkle",
       minutes: 12,
+      standard: "[9과15-03] 우주 팽창",
       doneNote: "우주 팽창과 '중심 없음'을 이해했어요",
       // 만화 > 풍선 랩 > 중심 랩 > 용어 > 정리 > 문제
       steps: [comic(comicStory("g2u8l7")), ...L7],
@@ -116,6 +123,7 @@ export const G2_UNIT8: Unit = {
       label: "우주 탐사",
       icon: "sparkle",
       minutes: 10,
+      standard: "[9과15-04] 우주 탐사",
       doneNote: "우주 탐사의 역사와 의의를 배웠어요",
       // 도입 > 탐사 랩 > 계획 랩 > 용어 > 정리 > 문제
       steps: [...L8],

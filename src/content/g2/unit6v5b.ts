@@ -1,4 +1,4 @@
-// 중2 Ⅵ v5 내용 2부: 레슨 4~6(호흡 · 배설 · 세포호흡과 기관계의 협력). 설계와 책의 실험 대응표는 design/g2u6v5-plan.md.
+// 중2 Ⅵ v5 내용 2부: 레슨 4~6(호흡 · 배설 · 세포호흡과 기관계의 협력). 설계와 실험 대응표는 design/g2u6v5-plan.md.
 // 개념 스텝에는 컷이 없다(그림 세션이 output/g2-v5/u6/concept-cuts.md 를 보고 그린 뒤 싣는다).
 // 레슨마다 스텝 배열을 내놓고, 정본 unit6.ts가 레슨에 싣는다.
 import type { Step } from "../../lessons/types";

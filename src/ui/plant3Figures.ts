@@ -1,11 +1,11 @@
-// plant3Figures — 중2 Ⅴ v3 문제·recap 그림(SVG)과 미니아트.
+// plant3Figures, 중2 Ⅴ v3 문제·recap 그림(SVG)과 미니아트.
 // 파운드리 문법(3스톱 그라데이션·좌상단 키라이트·접촉 그림자·재질별 최암색 외곽선)을 지킨다.
 // 퀴즈용 그림은 정답 유출 가림 인자를 받고, concept·recap용은 무인자 완성본을 쓴다.
 // 물질 색 시맨틱은 plant3Kit.P3가 단일 진실 공급원.
 
 import { P3 } from "./plant3Kit";
 
-/** 공통 SVG 래퍼 — 루트에 fill="none"(사진·rect 검정 채움 사고 방지). */
+/** 공통 SVG 래퍼, 루트에 fill="none"(사진·rect 검정 채움 사고 방지). */
 const svg = (vb: string, body: string, aria = ""): string =>
   `<svg viewBox="${vb}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${aria}">${body}</svg>`;
 
@@ -33,9 +33,9 @@ const starchLink = (x: number, y: number, n: number, r: number, vertical = false
   return s;
 };
 
-// ── recap 미니아트(64×64 플랫 문법 — 과학 *Figures 관례) ─────────────────
+// ── recap 미니아트(64×64 플랫 문법, 과학 *Figures 관례) ─────────────────
 const MINI: Record<string, () => string> = {
-  // L1: 잎 + 해 — 광합성
+  // L1: 잎 + 해, 광합성
   leafSun: () =>
     svg("0 0 64 64", `
       <circle cx="46" cy="16" r="9" fill="${P3.light}"/>
@@ -107,7 +107,7 @@ const MINI: Record<string, () => string> = {
       <line x1="10" y1="54" x2="58" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
       <path d="M12 52 L32 20 L56 18" stroke="${P3.leaf}" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     `, "증가하다 일정해지는 곡선"),
-  // L3: 산봉우리 곡선(온도 — 부드러운 봉우리)
+  // L3: 산봉우리 곡선(온도, 부드러운 봉우리)
   curvePeak: () =>
     svg("0 0 64 64", `
       <line x1="10" y1="10" x2="10" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
@@ -148,7 +148,7 @@ const MINI: Record<string, () => string> = {
       <rect x="18" y="34" width="28" height="20" rx="7" fill="#FFFFFF" stroke="#8B95A1" stroke-width="2.6"/>
       <circle cx="32" cy="44" r="6" fill="#20C997" stroke="#0CA678" stroke-width="2.2"/>
     `, "낮과 밤 모두 켜진 표시등"),
-  // L5: 해 아래 잎 — 들어오는 화살표 크게
+  // L5: 해 아래 잎, 들어오는 화살표 크게
   dayLeaf: () =>
     svg("0 0 64 64", `
       <circle cx="14" cy="12" r="7" fill="${P3.light}"/>
@@ -156,7 +156,7 @@ const MINI: Record<string, () => string> = {
       <path d="M4 34 h14 M14 30 l8 4 -8 4 Z" stroke="${P3.co2}" stroke-width="2.8" fill="${P3.co2}" stroke-linecap="round"/>
       <path d="M46 34 h12 M52 30 l8 4 -8 4 Z" stroke="${P3.o2}" stroke-width="2.8" fill="${P3.o2}" stroke-linecap="round"/>
     `, "낮의 잎, 이산화 탄소 흡수·산소 방출"),
-  // L5: 달 아래 잎 — 방향 반대
+  // L5: 달 아래 잎, 방향 반대
   nightLeaf: () =>
     svg("0 0 64 64", `
       <rect x="2" y="2" width="60" height="60" rx="12" fill="#2E3650"/>
@@ -172,7 +172,7 @@ const MINI: Record<string, () => string> = {
       <rect x="34" y="10" width="24" height="44" rx="8" fill="#FFF4E6" stroke="#FF922B" stroke-width="2.6"/>
       <path d="M12 22 h12 M12 32 h12 M12 42 h12 M40 22 h12 M40 32 h12 M40 42 h12" stroke="#8B95A1" stroke-width="2.4" stroke-linecap="round"/>
     `, "광합성과 호흡 비교표"),
-  // L6: 위아래 화살표가 달린 줄기와 설탕(체관 이동). 설탕은 랩 무대와 책 그림처럼 앰버 고리 둘(줄기에 들게 위아래로 이었다).
+  // L6: 위아래 화살표가 달린 줄기와 설탕(체관 이동). 설탕은 랩 무대와 같은 앰버 고리 둘(줄기에 들게 위아래로 이었다).
   sugarTruck: () =>
     svg("0 0 64 64", `
       <rect x="24" y="6" width="16" height="52" rx="7" fill="#8FBE85" stroke="#4E7C46" stroke-width="2.4"/>
@@ -200,14 +200,14 @@ const MINI: Record<string, () => string> = {
     `, "녹말, 설탕, 그 밖의 형태로 양분을 담은 저장 단지 셋"),
 } as const as Record<string, () => string>;
 
-/** recap 카드 미니아트 — 키가 없으면 잎 기본. */
+/** recap 카드 미니아트, 키가 없으면 잎 기본. */
 export function p3MiniArt(key: string): string {
   return (MINI[key] ?? MINI.leafSun)();
 }
 
-// ── 잎 공장 장면(leafFactorySceneFig) — 원본 랩(plantFactoryLab)의 연출 재현(사용자 확정) ──
+// ── 잎 공장 장면(leafFactorySceneFig), 원본 랩(plantFactoryLab)의 연출 재현(사용자 확정) ──
 // codex 발주 잎 실사 위로 물·이산화 탄소·빛 입자가 흘러들며 "물"/"이산화 탄소"/"빛에너지"
-// 텍스트 박스가 차례로 등장 → 포도당(→녹말 저장)과 산소 배출까지 자동 재생(SMIL — rAF 0).
+// 텍스트 박스가 차례로 등장 → 포도당(→녹말 저장)과 산소 배출까지 자동 재생(SMIL, rAF 0).
 // 입자 색·라벨 필 스타일은 원본 랩의 캔버스 문법(tokens의 --plant-* 팔레트)을 그대로 따른다.
 export function leafFactorySceneFig(o?: { mode?: "play" | "quiz"; blank?: "co2" }): string {
   const mode = o?.mode ?? "play";
@@ -224,7 +224,7 @@ export function leafFactorySceneFig(o?: { mode?: "play" | "quiz"; blank?: "co2" 
     starch: "var(--plant-starch, #5A4FB5)",
     ink: "#333D4B",
   };
-  /** 원본 drawTextBox 재현 — 흰 라운드 필 + 액센트 테두리.
+  /** 원본 drawTextBox 재현, 흰 라운드 필 + 액센트 테두리.
    *  play 모드는 begin 시점에 페이드 등장, quiz 모드는 정적(즉시 표시·연출 없음). */
   const box = (x: number, y: number, w: number, label: string, accent: string, begin: string, out?: string): string => {
     if (isQuiz) {
@@ -242,7 +242,7 @@ export function leafFactorySceneFig(o?: { mode?: "play" | "quiz"; blank?: "co2" 
       <text x="${x}" y="${y + 1.45}" text-anchor="middle" font-size="3.9" font-weight="800" fill="${C.ink}">${label}</text>
     </g>`;
   };
-  /** 경로 위를 도는 입자 무리 — begin을 어긋나게 준 SMIL animateMotion 반복(play 전용). */
+  /** 경로 위를 도는 입자 무리, begin을 어긋나게 준 SMIL animateMotion 반복(play 전용). */
   const flow = (path: string, n: number, dur: number, r: number, fill: string, begin = 0, glow = false): string =>
     Array.from({ length: n })
       .map(
@@ -251,7 +251,7 @@ export function leafFactorySceneFig(o?: { mode?: "play" | "quiz"; blank?: "co2" 
       </circle>`,
       )
       .join("");
-  /** 경로 위 고정 입자(quiz 전용 — 정적 그림에서도 흐름이 읽히게 점만 박는다). */
+  /** 경로 위 고정 입자(quiz 전용, 정적 그림에서도 흐름이 읽히게 점만 박는다). */
   const dots = (pts: [number, number][], r: number, fill: string, glow = false): string =>
     pts
       .map(
@@ -348,7 +348,7 @@ function monoPath(pts: [number, number][]): string {
   return d;
 }
 
-// ── 그래프 모양 3종 비교(factorShapesFig) — (가)(나)(다) 무명 곡선(퀴즈용) ──
+// ── 그래프 모양 3종 비교(factorShapesFig), (가)(나)(다) 무명 곡선(퀴즈용) ──
 // (가) 증가 후 일정 · (나) 꼭대기를 지나 빠르게 감소 · (다) 계속 증가(직선).
 // 칸마다 세로축 '광합성량', 가로축 '요인의 값'(13px, 폰 표시 12px 남짓)을 단다. 세 선은 같은 색이다(모양만으로 고르게, 빨강은 오답 색이라 쓰지 않는다).
 // (나)는 온실 랩 온도 그래프의 잰 값(10~45 ℃: 0.2, 0.4, 0.62, 0.84, 1, 0.55, 0.15, 0.03)에 원점 하나를 앞에 두고 같은 방식으로 이었다:
@@ -387,7 +387,7 @@ export function factorShapesFig(): string {
   );
 }
 
-// ── 낮·밤 기체 출입(dayNightGasFig) — 교과서 그림 V-4 구도의 자체 도해 ──────
+// ── 낮·밤 기체 출입(dayNightGasFig), 자체 도해 ──────
 // blank로 라벨 하나를 ㉠으로 가린다(퀴즈용): dayIn(낮 흡수)·dayOut(낮 방출)·nightIn·nightOut.
 export function dayNightGasFig(o?: { blank?: "dayIn" | "dayOut" | "nightIn" | "nightOut" }): string {
   const blank = o?.blank;
@@ -428,7 +428,7 @@ export function dayNightGasFig(o?: { blank?: "dayIn" | "dayOut" | "nightIn" | "n
   );
 }
 
-// ── 광합성 과정 도식(psFlowFig) — 교과서 그림 V-2 구도의 자체 도해 ──────────
+// ── 광합성 과정 도식(psFlowFig), 자체 도해 ──────────
 // blanks에 넣은 키의 이름표가 ㉠㉡㉢…으로 가려진다(퀴즈 정답 유출 차단).
 // 키: light · co2 · water · glucose · o2 · starch · place(엽록체)
 export type PsFlowKey = "light" | "co2" | "water" | "glucose" | "o2" | "starch" | "place";

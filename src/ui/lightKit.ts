@@ -1,4 +1,4 @@
-// lightKit — 중2 III 빛 단원 랩 공용 킷(다크 무대 캔버스).
+// lightKit, 중2 III 빛 단원 랩 공용 킷(다크 무대 캔버스).
 // 발광 광선(글로우 다층 + 광자 점 흐름), 각도 호·법선·각도기, 레이저·거울·눈 소품.
 // 파운드리 재질 문법의 캔버스 버전: 균일 단색 스트로크 금지, 광선은 additive 글로우.
 // reflectLab · diffuseLab · refractLab · seeLab · mirrorImageLab · lightBench가 공유한다.
@@ -10,7 +10,7 @@ export interface Pt {
   y: number;
 }
 
-/** 레이저 빔 기본색 — 교과서 실험(레이저 지시기)의 초록. */
+/** 레이저 빔 기본색, 레이저 지시기 실험의 초록. */
 export const BEAM_GREEN = "88,240,150";
 /** 백색광·햇빛 빔. */
 export const BEAM_WHITE = "255,244,214";
@@ -21,7 +21,7 @@ export interface BeamOpts {
   alpha?: number; // 코어 불투명도
   dash?: number[]; // 점선(허상 연장선 등)
   arrow?: boolean; // 끝점 화살촉(진행 방향)
-  arrowAt?: number; // 화살촉 위치(0~1, 경로 길이 비율) — 없으면 끝
+  arrowAt?: number; // 화살촉 위치(0~1, 경로 길이 비율), 없으면 끝
   flow?: number; // 광자 점 흐름 위상(0~1). undefined면 점 없음
   glow?: boolean; // 글로우 레이어(기본 true)
 }
@@ -51,7 +51,7 @@ function pointAt(pts: Pt[], s: number): { x: number; y: number; a: number } {
   return { x: last.x, y: last.y, a: 0 };
 }
 
-/** 발광 광선 — 넓은 글로우 → 중간 → 밝은 코어 3층 + (선택) 광자 점 흐름 + 화살촉. */
+/** 발광 광선, 넓은 글로우 → 중간 → 밝은 코어 3층 + (선택) 광자 점 흐름 + 화살촉. */
 export function drawBeam(ctx: CanvasRenderingContext2D, pts: Pt[], o: BeamOpts = {}): void {
   if (pts.length < 2) return;
   const rgb = o.rgb ?? BEAM_GREEN;
@@ -89,7 +89,7 @@ export function drawBeam(ctx: CanvasRenderingContext2D, pts: Pt[], o: BeamOpts =
   ctx.setLineDash([]);
 
   const L = polyLen(pts);
-  // 광자 점 흐름 — 진행 방향이 몸으로 읽힌다
+  // 광자 점 흐름, 진행 방향이 몸으로 읽힌다
   if (o.flow !== undefined && L > 18) {
     const gap = 30;
     ctx.globalCompositeOperation = "lighter";
@@ -137,7 +137,7 @@ export function drawArrowHead(
   ctx.restore();
 }
 
-/** 법선 — 표면 위 점에서 수직으로 뻗는 점선(교과서 표기). dir: 법선 방향각. */
+/** 법선, 표면 위 점에서 수직으로 뻗는 점선(표준 표기). dir: 법선 방향각. */
 export function drawNormal(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -197,7 +197,7 @@ export function drawAngleArc(
   ctx.restore();
 }
 
-/** 반원 각도기 — 표면(baseAngle 방향)에 놓인 눈금판. 15° 간격 틱, 은은한 라인. */
+/** 반원 각도기, 표면(baseAngle 방향)에 놓인 눈금판. 15° 간격 틱, 은은한 라인. */
 export function drawProtractor(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -243,7 +243,7 @@ export function drawProtractor(
   ctx.restore();
 }
 
-/** 슬릿 레이저 소품 — 각도 방향으로 쏘는 손잡이형 본체(파운드리 금속 문법). */
+/** 슬릿 레이저 소품, 각도 방향으로 쏘는 손잡이형 본체(파운드리 금속 문법). */
 export function laserBody(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -257,7 +257,7 @@ export function laserBody(
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(angle);
-  // 본체(빔 반대쪽으로 몸통) — 빔 수직 방향 금속 그라데이션(위 밝음)
+  // 본체(빔 반대쪽으로 몸통), 빔 수직 방향 금속 그라데이션(위 밝음)
   const body = ctx.createLinearGradient(0, -W / 2, 0, W / 2);
   body.addColorStop(0, "#93A9C8");
   body.addColorStop(0.45, "#5F7699");
@@ -308,7 +308,7 @@ export function laserBody(
   ctx.restore();
 }
 
-/** 평면거울 소품 — 유리 앞면 + 은박 뒷면 빗금(교과서 표기). (x0,y0)→(x1,y1). */
+/** 평면거울 소품, 유리 앞면 + 은박 뒷면 빗금(표준 표기). (x0,y0)→(x1,y1). */
 export function mirrorProp(
   ctx: CanvasRenderingContext2D,
   x0: number,
@@ -329,7 +329,7 @@ export function mirrorProp(
   ctx.moveTo(x0 + nx * 3.4, y0 + ny * 3.4);
   ctx.lineTo(x1 + nx * 3.4, y1 + ny * 3.4);
   ctx.stroke();
-  // 유리 앞면(밝은 청백 — 세로 그라데이션 대신 양끝 그라데이션)
+  // 유리 앞면(밝은 청백, 세로 그라데이션 대신 양끝 그라데이션)
   const g = ctx.createLinearGradient(x0, y0, x1, y1);
   g.addColorStop(0, "rgba(212,232,255,.95)");
   g.addColorStop(0.5, "rgba(158,194,238,.8)");
@@ -368,12 +368,12 @@ export function mirrorProp(
   ctx.restore();
 }
 
-/** 눈 소품 — 시선 방향(angle)을 바라보는 눈. 광선이 "눈에 들어옴"을 표현. */
+/** 눈 소품, 시선 방향(angle)을 바라보는 눈. 광선이 "눈에 들어옴"을 표현. */
 export function eyeProp(ctx: CanvasRenderingContext2D, x: number, y: number, angle: number, s = 16): void {
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(angle);
-  // 흰자(아몬드) — 위 밝은 그라데이션
+  // 흰자(아몬드), 위 밝은 그라데이션
   const g = ctx.createLinearGradient(0, -s * 0.62, 0, s * 0.62);
   g.addColorStop(0, "#FFFFFF");
   g.addColorStop(1, "#CBD9EC");
@@ -416,16 +416,16 @@ export function eyeProp(ctx: CanvasRenderingContext2D, x: number, y: number, ang
   ctx.restore();
 }
 
-/** 도수 표기용 — 라디안 → 반올림 도수 문자열. */
+/** 도수 표기용, 라디안 → 반올림 도수 문자열. */
 export function degLabel(rad: number): string {
   return `${Math.round((rad * 180) / Math.PI)}°`;
 }
 
-/** setPointerCapture 안전 래퍼 — 합성 이벤트(E2E·테스트)에는 활성 포인터가 없어 throw한다. */
+/** setPointerCapture 안전 래퍼, 합성 이벤트(E2E·테스트)에는 활성 포인터가 없어 throw한다. */
 export function capturePointer(elm: Element, e: PointerEvent): void {
   try {
     elm.setPointerCapture(e.pointerId);
   } catch {
-    /* 합성 이벤트 — 캡처 없이 진행 */
+    /* 합성 이벤트, 캡처 없이 진행 */
   }
 }

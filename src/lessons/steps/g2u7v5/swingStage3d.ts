@@ -1,6 +1,6 @@
 // [중2 Ⅶ v5] g2u7l8 swingLab의 입체 무대(2026-11-15 그래픽 감사 C105. 전동기 입체 무대 motorStage3d와 같은 결).
 // 말굽자석(가운데가 굽은 U자, 벌어진 쪽이 +x)을 옆으로 눕혀 받침에 놓고, 가로대에 매단 코일 그네의 아랫변이 두 극 사이를 지난다.
-// 카메라는 책 그림 '전류의 방향이나 자기장의 방향이 바뀔 때 코일이 받는 힘'처럼 앞에서 조금 내려다보고 오른쪽으로 조금 틀어 고정한다.
+// 카메라는 앞에서 조금 내려다보고 오른쪽으로 조금 틀어 고정한다.
 //   손으로 끌어 돌리지 않는다(사용자가 거절한 방식. 전동기, 세포 입체 무대와 같은 결정).
 // 화살표는 굵은 대와 테두리(전류 볼트 옐로 + 진갈색 테두리, 힘 청록 + 짙은 테두리, 자기장 빨강)이고, 힘 화살표는 늘 위에 그린다.
 // three는 여기서 쓰지 않고 mountSwing3d 안에서 ui/space3d를 동적 import로 부른다(이 파일은 정적으로 불러도 번들이 늘지 않는다).
@@ -35,7 +35,7 @@ export interface Swing3d {
 }
 
 let glOk: boolean | null = null;
-/** 이 기기에서 입체 무대를 쓸 수 있는가(three는 WebGL2만 쓴다). 세션 저장소 ss.swingflat = "1"이면 평면 무대로(비교해 보기용). */
+/** 이 기기에서 입체 무대를 쓸 수 있는가(three는 WebGL2만 쓴다). 세션 저장소 ss.swingflat = "1"이면 평면 무대로(비교활동용). */
 export function canSwing3d(): boolean {
   try {
     if (sessionStorage.getItem("ss.swingflat") === "1") return false;
@@ -212,7 +212,7 @@ export async function mountSwing3d(cv: HTMLCanvasElement, box: HTMLElement): Pro
   rodBetween(v3(0, -pivotY, -half - 0.035), v3(0, -pivotY, half + 0.035), 0.05, copper, swing);
 
   // ── 화살표 ──
-  // 자기장은 두 극 사이 앞쪽 면에 둘. 힘이 향하는 쪽의 반대편에 둔다(책 그림처럼. 힘 화살표와 겹치지 않게)
+  // 자기장은 두 극 사이 앞쪽 면에 둘. 힘이 향하는 쪽의 반대편에 둔다(힘 화살표와 겹치지 않게)
   const fieldArr = [0, 1].map(() => fatArrow({ color: 0xff7b6b, body: 0.042, head: 0.105, headLen: 0.2, opacity: 0.92 }));
   fieldArr.forEach((a) => scene.add(a.g));
   const curArr = fatArrow({ color: 0xffd400, body: 0.062, head: 0.135, headLen: 0.27, outline: 0x6e3f16 });

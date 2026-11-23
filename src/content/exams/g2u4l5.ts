@@ -1,5 +1,5 @@
 // 중2 IV. 물질의 구성 · 단원 종합 평가 풀 v2: 레슨 5 원자·분자·이온 (e308~e334)
-// 재출제 8호(2026-08-01) · 교과서 3사 준거 · 정본 설계표 qa/g2u4-v2-blueprint.md.
+// 재출제 8호(2026-08-01) · 정본 설계표 qa/g2u4-v2-blueprint.md.
 // 이 파일은 build-g2u4v2-lessons.mjs가 스테이징(qa/g2u4v2-*.ts)에서 재생성한다 · 직접 수정 금지.
 import type { ExamItem } from "./types";
 import { atomMolsFig, atomIonFormExamFig, svgTable, dbox, n2Fig, ionFormBeforeFig } from "../../ui/examFigures";

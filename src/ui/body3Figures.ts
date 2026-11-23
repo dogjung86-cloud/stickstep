@@ -1,4 +1,4 @@
-// body3Figures — 중2 Ⅵ v3 퀴즈·concept 도해 + recap 미니아트.
+// body3Figures, 중2 Ⅵ v3 퀴즈·concept 도해 + recap 미니아트.
 // 규약: 퀴즈용 그림은 정답 유출 차단 인자(blanks)를 받고, concept·recap은 무인자.
 // 색은 body3Kit.B6 시맨틱만 사용. 어두운 면 위 라벨은 흰 글자 + 그 면의 최암색 할로.
 import { B6 } from "./body3Kit";
@@ -6,8 +6,8 @@ import { B6 } from "./body3Kit";
 const SVG = (w: number, h: number, inner: string, label?: string): string =>
   `<svg viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg"${label ? ` role="img" aria-label="${label}"` : ` aria-hidden="true"`}>${inner}</svg>`;
 
-// ── 검출 반응 도해(L1) — 시약 ↔ 영양소 ↔ 반응색 대응표 ─────────────────
-// blanks: 가릴 행 키("starch"|"sugar"|"protein"|"fat") — 색 원과 색 이름을 ?로 바꾼다.
+// ── 검출 반응 도해(L1), 시약 ↔ 영양소 ↔ 반응색 대응표 ─────────────────
+// blanks: 가릴 행 키("starch"|"sugar"|"protein"|"fat"), 색 원과 색 이름을 ?로 바꾼다.
 // 퀴즈 전용(정답 유출 차단), concept·recap은 무인자로 전체 공개.
 const DETECT_ROWS = [
   { key: "starch", reagent: "아이오딘-아이오딘화 칼륨", target: "녹말", color: B6.iodine, colorName: "청람색", heat: false },
@@ -37,8 +37,8 @@ export function detectMatchFig(blanks: string[] = []): string {
   return SVG(330, 202, rows, "영양소 검출 반응 대응표");
 }
 
-// ── 소화 여행 복습(L2 흡수 concept) — 발주 해부도 위 기관 라벨+분해 요약 오버레이 ──
-// 좌표는 body/figs/digestive.webp(3:4) 실측 % — 이미지를 바꾸면 반드시 재실측.
+// ── 소화 여행 복습(L2 흡수 concept), 발주 해부도 위 기관 라벨+분해 요약 오버레이 ──
+// 좌표는 body/figs/digestive.webp(3:4) 실측 %, 이미지를 바꾸면 반드시 재실측.
 const IMG_BASE = ((import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/");
 
 export function digestReviewFig(): string {
@@ -74,8 +74,8 @@ export function digestReviewFig(): string {
   </svg>`;
 }
 
-// ── 융털 확대(L2 흡수 concept) — 발주 일러스트 위 양분·통로 라벨 오버레이 ──
-// 좌표는 body/figs/v2/villus-absorption.webp(3:2) 실측 % — 왼쪽 알갱이 = 수용성(청록·보라),
+// ── 융털 확대(L2 흡수 concept), 발주 일러스트 위 양분·통로 라벨 오버레이 ──
+// 좌표는 body/figs/v2/villus-absorption.webp(3:2) 실측 %, 왼쪽 알갱이 = 수용성(청록·보라),
 // 오른쪽 노란 알갱이 = 지방 산물, 중앙 노란 관 = 암죽관, 붉은·파란 그물 = 모세혈관.
 export function villusLabeledFig(): string {
   const W = 340;
@@ -104,8 +104,8 @@ export function villusLabeledFig(): string {
   </svg>`;
 }
 
-// ── 소화계 모식도(L2 concept) — 소화관 세로 흐름 + 부속 기관 곁가지 ──────
-// 경로도는 한글 라벨이 본질이라 벡터로 그린다(하이브리드 방침 — 실사풍은 발주본 bimg 곁들임).
+// ── 소화계 모식도(L2 concept), 소화관 세로 흐름 + 부속 기관 곁가지 ──────
+// 경로도는 한글 라벨이 본질이라 벡터로 그린다(하이브리드 방침, 실사풍은 발주본 bimg 곁들임).
 export function digestMapFig(): string {
   const duct = (y: number, label: string, w = 86): string =>
     `<g><rect x="${62 - w / 2 + 43}" y="${y - 17}" width="${w}" height="34" rx="12" fill="#FFF7F5" stroke="#E8B9B2" stroke-width="2.4"/>
@@ -139,7 +139,7 @@ export function digestMapFig(): string {
   );
 }
 
-// ── 녹말 소화 흐름도(L2 퀴즈) — blanks: ["final"]이면 최종 산물을 ㉠로 가림 ──
+// ── 녹말 소화 흐름도(L2 퀴즈), blanks: ["final"]이면 최종 산물을 ㉠로 가림 ──
 export function starchFlowFig(blanks: string[] = []): string {
   const hideFinal = blanks.includes("final");
   const boxc = (x: number, label: string, hidden = false): string =>
@@ -165,7 +165,7 @@ export function starchFlowFig(blanks: string[] = []): string {
   );
 }
 
-// ── 라스터 오버레이 공용 소품 — 흰 필 라벨·리더선·㉠ 가림(villus 문법의 승격판) ──
+// ── 라스터 오버레이 공용 소품, 흰 필 라벨·리더선·㉠ 가림(villus 문법의 승격판) ──
 const rpill = (x: number, y: number, text: string, stroke: string, ink: string, size = 10.5): string => {
   const w = Math.round(text.length * (size + 0.8)) + 16;
   return `<rect x="${x - w / 2}" y="${y - 10}" width="${w}" height="20" rx="10" fill="#FFFFFF" fill-opacity="0.93" stroke="${stroke}" stroke-width="1.8"/>
@@ -178,8 +178,8 @@ const rblank = (x: number, y: number): string =>
   `<circle cx="${x}" cy="${y}" r="12" fill="#F1F3F5" stroke="#ADB5BD" stroke-width="2" stroke-dasharray="4 3"/>
    <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#868E96">㉠</text>`;
 
-// ── 심장 구조도(L3 concept) — 발주 해부 단면(heart.webp) 위 라벨 오버레이 ──
-// 좌표는 heart.webp(1:1) 실측 % — 정면 뷰라 화면 왼쪽 = 몸의 오른쪽(우심방·우심실).
+// ── 심장 구조도(L3 concept), 발주 해부 단면(heart.webp) 위 라벨 오버레이 ──
+// 좌표는 heart.webp(1:1) 실측 %, 정면 뷰라 화면 왼쪽 = 몸의 오른쪽(우심방·우심실).
 // 파랑 = 산소 적은 혈액 쪽(우측·대정맥·폐동맥), 빨강 = 산소 많은 쪽(좌측·대동맥·폐정맥).
 export function heartMapFig(): string {
   const BLU = ["#5B84B5", "#245B9B"] as const;
@@ -203,7 +203,7 @@ export function heartMapFig(): string {
   </svg>`;
 }
 
-// ── 순환 경로 모식도(L3 퀴즈) — blanks: ["bodyEnd"]면 우심방 라벨을 ㉠로 가림 ──
+// ── 순환 경로 모식도(L3 퀴즈), blanks: ["bodyEnd"]면 우심방 라벨을 ㉠로 가림 ──
 export function twoLoopFig(blanks: string[] = []): string {
   const hideEnd = blanks.includes("bodyEnd");
   const cham = (x: number, y: number, label: string, hidden = false): string =>
@@ -242,8 +242,8 @@ export function twoLoopFig(blanks: string[] = []): string {
   );
 }
 
-// ── 기체 교환 그림(L4) — 발주 일러스트(alveoli-exchange.webp) 위 라벨 오버레이 ──
-// 좌표는 v2/alveoli-exchange.webp(3:2) 실측 % — 파란 알갱이·화살표 = 산소(꽈리→혈관),
+// ── 기체 교환 그림(L4), 발주 일러스트(alveoli-exchange.webp) 위 라벨 오버레이 ──
+// 좌표는 v2/alveoli-exchange.webp(3:2) 실측 %, 파란 알갱이·화살표 = 산소(꽈리→혈관),
 // 보라 알갱이·화살표 = 이산화 탄소(혈관→꽈리). blanks: ["o2"]면 산소 라벨을 ㉠로 가리고
 // 조직세포 승강장 줄(정답 유출 경로)을 함께 생략한다.
 export function gasExchangeFig(blanks: string[] = []): string {
@@ -271,12 +271,12 @@ export function gasExchangeFig(blanks: string[] = []): string {
   </svg>`;
 }
 
-// ── 콩팥단위 구조도(L5) — 발주 해부도(nephron.webp) 위 라벨 오버레이 ──────
+// ── 콩팥단위 구조도(L5), 발주 해부도(nephron.webp) 위 라벨 오버레이 ──────
 // 좌표는 body/figs/nephron.webp(4:3) 실측 %. blanks: ["glom"]이면 토리 라벨을 ㉠로 가림.
 export function nephronMapFig(blanks: string[] = []): string {
   const hideGlom = blanks.includes("glom");
   const AMB = ["#D9A76A", "#A9662B"] as const;
-  // ㉠ 모드에서는 하단 구성 요약도 뺀다 — "토리"가 인쇄되면 정답 유출 표면이 된다.
+  // ㉠ 모드에서는 하단 구성 요약도 뺀다, "토리"가 인쇄되면 정답 유출 표면이 된다.
   return `<svg viewBox="0 0 340 ${hideGlom ? 255 : 278}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="콩팥단위의 구조">
     <image href="${IMG_BASE}body/figs/nephron.webp" x="0" y="0" width="340" height="255" preserveAspectRatio="xMidYMid slice"/>
     ${hideGlom ? rblank(58, 64) : rpill(58, 64, "토리", "#E07A85", "#C9303E")}
@@ -288,7 +288,7 @@ export function nephronMapFig(blanks: string[] = []): string {
   </svg>`;
 }
 
-// ── 기관계 통합 모식도(L6) — blanks: ["dig"]면 소화계 박스를 (가)로 가림 ──
+// ── 기관계 통합 모식도(L6), blanks: ["dig"]면 소화계 박스를 (가)로 가림 ──
 export function teamFig(blanks: string[] = []): string {
   const hideDig = blanks.includes("dig");
   const org = (x: number, y: number, label: string, tone: string, ink: string, hidden = false): string =>
@@ -333,7 +333,7 @@ export function teamFig(blanks: string[] = []): string {
   );
 }
 
-// ── recap 미니아트(64×64 플랫 — 과학 *Figures 관례) ─────────────────────
+// ── recap 미니아트(64×64 플랫, 과학 *Figures 관례) ─────────────────────
 const MINI: Record<string, string> = {};
 
 /** 물방울(물 = 구성 성분 1위) */
@@ -351,7 +351,7 @@ MINI.colorTubes = `<g stroke-width="2"><rect x="8" y="14" width="10" height="34"
 /** 좁은 문과 조각 상자(소화 = 크기 문제) */
 MINI.doorParts = `<rect x="24" y="12" width="18" height="40" rx="3" fill="#FFF7F5" stroke="#C9303E" stroke-width="2.6"/><circle cx="38" cy="33" r="2" fill="#C9303E"/><rect x="6" y="20" width="13" height="10" rx="2" fill="${B6.carb}"/><rect x="6" y="34" width="13" height="10" rx="2" fill="${B6.carb}" opacity="0.75"/><path d="M46 24 h8 M50 20 l6 4 -6 4 Z" stroke="${B6.carb}" stroke-width="2.4" fill="${B6.carb}"/><circle cx="52" cy="40" r="4" fill="${B6.glucose}"/><circle cx="58" cy="46" r="4" fill="${B6.glucose}"/>`;
 
-/** 전담 가위(효소 특이성 — 모양 다른 가위 2개와 사슬) */
+/** 전담 가위(효소 특이성, 모양 다른 가위 2개와 사슬) */
 MINI.enzymeScissors = `<path d="M10 22 h26" stroke="${B6.carb}" stroke-width="3"/><circle cx="14" cy="22" r="4.5" fill="${B6.carb}"/><circle cx="26" cy="22" r="4.5" fill="${B6.carb}"/><circle cx="38" cy="22" r="4.5" fill="${B6.carb}"/><path d="M44 12 l12 14 M56 12 l-12 14" stroke="#7048E8" stroke-width="3" stroke-linecap="round"/><circle cx="45" cy="28" r="3.4" fill="none" stroke="#7048E8" stroke-width="2.4"/><circle cx="55" cy="28" r="3.4" fill="none" stroke="#7048E8" stroke-width="2.4"/><path d="M10 46 h20" stroke="${B6.protein}" stroke-width="3"/><circle cx="14" cy="46" r="4.5" fill="${B6.protein}"/><circle cx="26" cy="46" r="4.5" fill="${B6.protein}"/><path d="M40 40 q6 6 0 12" stroke="#C9CDD2" stroke-width="2.6" fill="none"/><text x="52" y="52" font-size="14" font-weight="800" fill="#8B95A1">?</text>`;
 
 /** 접힌 융털 카펫(표면적) */
@@ -369,7 +369,7 @@ MINI.bloodCrew = `<path d="M14 10 h36 l-4 44 h-28 Z" fill="#FFF3D6" stroke="#E3C
 /** 두 순환 고리(8자) */
 MINI.loopTwo = `<rect x="24" y="26" width="16" height="12" rx="4" fill="#FDE2E5" stroke="#C2626F" stroke-width="2.2"/><path d="M30 26 C12 18 12 4 32 8 C50 4 50 18 34 26" stroke="#7CB2D4" stroke-width="3" fill="none" marker-end="none"/><path d="M30 38 C10 46 12 60 32 56 C52 60 52 46 34 38" stroke="#E05B6E" stroke-width="3" fill="none"/><path d="M14 12 l-2 4 4 1 Z" fill="#7CB2D4"/><path d="M50 52 l2 -4 -4 -1 Z" fill="#E05B6E"/>`;
 
-/** 거꾸로 나무(호흡계 — 숨관→숨관가지→허파꽈리) */
+/** 거꾸로 나무(호흡계, 숨관→숨관가지→허파꽈리) */
 MINI.lungTree = `<path d="M32 8 v14 M32 22 c-8 4 -14 8 -16 16 M32 22 c8 4 14 8 16 16 M16 38 c-3 5 -3 9 -2 12 M48 38 c3 5 3 9 2 12" stroke="#C4707F" stroke-width="3.4" stroke-linecap="round" fill="none"/><circle cx="12" cy="53" r="5" fill="#BBE3F5" stroke="#7CB2D4" stroke-width="2"/><circle cx="21" cy="55" r="5" fill="#BBE3F5" stroke="#7CB2D4" stroke-width="2"/><circle cx="43" cy="55" r="5" fill="#BBE3F5" stroke="#7CB2D4" stroke-width="2"/><circle cx="52" cy="53" r="5" fill="#BBE3F5" stroke="#7CB2D4" stroke-width="2"/>`;
 
 /** 부피↑ = 압력↓ = 공기 in(호흡운동) */
@@ -396,7 +396,7 @@ MINI.energyUse = `<rect x="12" y="10" width="8" height="30" rx="4" fill="#FFFFFF
 /** 네 기관계 퍼즐(통합) */
 MINI.teamFour = `<rect x="10" y="10" width="20" height="20" rx="5" fill="#FFF4E6" stroke="#F3C9A8" stroke-width="2"/><rect x="34" y="10" width="20" height="20" rx="5" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="2"/><rect x="10" y="34" width="20" height="20" rx="5" fill="#FBF3DC" stroke="#D9C08C" stroke-width="2"/><rect x="34" y="34" width="20" height="20" rx="5" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2"/><circle cx="32" cy="32" r="8" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.4"/>`;
 
-/** 자리표시(키 미등록) — 저작 중 눈에 띄게 */
+/** 자리표시(키 미등록), 저작 중 눈에 띄게 */
 const FALLBACK = `<rect x="10" y="10" width="44" height="44" rx="10" fill="#F1F3F5" stroke="#CED4DA" stroke-width="2"/><text x="32" y="38" text-anchor="middle" font-size="16" fill="#868E96">?</text>`;
 
 export function b6MiniArt(key: string): string {

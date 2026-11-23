@@ -1,11 +1,11 @@
-// starFigures — 중2 VIII 별과 우주 그림(등급 figTabs 3종 + 퀴즈 SVG + starMiniArt).
+// starFigures, 중2 VIII 별과 우주 그림(등급 figTabs 3종 + 퀴즈 SVG + starMiniArt).
 // 파운드리 문법: 근-동조 그라데이션 면 + 키라이트 + 접촉 그림자 + 재질별 최암색 외곽선.
 // 천체 실사가 있는 주제(은하·성단·성운)는 public/photos/star/ 사진을 쓰고,
 // 여기는 "개념 기하"가 본질인 도해(등급 사슬·시차 비교·은하 옆모습 라벨판)만 SVG로 그린다.
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
-/** 발광 별 한 개(도해용) — r 크기, 색 지정 */
+/** 발광 별 한 개(도해용), r 크기, 색 지정 */
 function star(x: number, y: number, r: number, fill: string, glow = true): string {
   const g = glow ? `<circle cx="${x}" cy="${y}" r="${r * 2.1}" fill="${fill}" opacity=".14"/>` : "";
   const spikes: string[] = [];
@@ -18,7 +18,7 @@ function star(x: number, y: number, r: number, fill: string, glow = true): strin
   return `${g}<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}"/>${spikes.join("")}`;
 }
 
-// ── figTabs ①: 등급의 계단 — 1등급 작아질 때마다 약 2.5배 밝게 ──
+// ── figTabs ①: 등급의 계단, 1등급 작아질 때마다 약 2.5배 밝게 ──
 export function magChainFig(): string {
   const stars: string[] = [];
   const labels: string[] = [];
@@ -43,7 +43,7 @@ export function magChainFig(): string {
 </svg>`;
 }
 
-// ── figTabs ②: 등급의 확장 — 더 밝으면 0, 음수까지 ──
+// ── figTabs ②: 등급의 확장, 더 밝으면 0, 음수까지 ──
 export function magMinusFig(): string {
   const rows = [
     { name: "보름달", m: "−12.7", x: 62, r: 15, c: "#FFF0C8" },
@@ -69,7 +69,7 @@ export function magMinusFig(): string {
 </svg>`;
 }
 
-// ── figTabs ③: 겉보기 vs 절대 등급 — 같은 출발선(10 pc)에 세우기 ──
+// ── figTabs ③: 겉보기 vs 절대 등급, 같은 출발선(10 pc)에 세우기 ──
 export function absMagFig(): string {
   return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="왼쪽은 실제 하늘, 가까운 촛불별이 먼 왕별보다 밝아 보여요. 오른쪽은 두 별을 같은 거리 선에 세운 모습, 왕별이 훨씬 밝아요">
   <rect x="8" y="8" width="160" height="150" rx="14" fill="#101A2E"/>

@@ -1,4 +1,4 @@
-// 중2 Ⅴ 내용 2부: 레슨 4~6(호흡 · 낮과 밤 · 양분의 저장과 이용)의 스텝 배열. 정본 unit5.ts가 레슨마다 가져다 싣는다. 설계와 책의 실험 대응표는 design/g2u5v5-plan.md.
+// 중2 Ⅴ 내용 2부: 레슨 4~6(호흡 · 낮과 밤 · 양분의 저장과 이용)의 스텝 배열. 정본 unit5.ts가 레슨마다 가져다 싣는다. 설계와 실험 대응표는 design/g2u5v5-plan.md.
 // 개념 스텝에는 컷이 없다(그림 세션이 output/g2-v5/u5/concept-cuts.md 를 보고 그린 뒤 싣는다).
 import type { Step } from "../../lessons/types";
 import { binSort, mcq, multi, opener, ox, recap, cut } from "../dsl";
@@ -110,7 +110,7 @@ export const G2U5L4_STEPS: Step[] = [
   ]),
 ];
 
-// ══ 5. 낮과 밤: 뚜껑을 닫은 유리병(도입) → 빛의 세기와 기체 출입 → 용어 → 붙임딱지 → 정리 → 문제 ══
+// ══ 5. 낮과 밤: 뚜껑을 닫은 유리병(도입) → 빛의 세기와 기체 출입 → 용어 → 광합성과 호흡 잇기 → 정리 → 문제 ══
 export const G2U5L5_STEPS: Step[] = [
   opener({ title: "밀폐된 유리병 속 식물은 계속 살아갈 수 있을까요?", scene: "g2u5-jar", wait: "낮과 밤을 번갈아 보내며 식물을 살펴보세요", cta: "낮과 밤의 기체 교환 알아보기" }),
   lightLab({ title: "낮과 밤에 잎을 드나드는 기체는 어떻게 다를까요?", cta: "광합성과 호흡의 관계 알아보기" }),

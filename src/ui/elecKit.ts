@@ -1,12 +1,12 @@
-// elecKit — 중2 VII(전기와 자기) 랩 공용 킷(다크 무대 캔버스).
-// 회로 소품(전지·전구·전선·스위치)과 전하 표현의 단일 진실 공급원 — 하드코딩 금지.
-//   · 전자(−)는 chemKit의 파란 알갱이와 같은 표현(IV 단원과 연계 — "그때 그 전자").
+// elecKit, 중2 VII(전기와 자기) 랩 공용 킷(다크 무대 캔버스).
+// 회로 소품(전지·전구·전선·스위치)과 전하 표현의 단일 진실 공급원, 하드코딩 금지.
+//   · 전자(−)는 chemKit의 파란 알갱이와 같은 표현(IV 단원과 연계, "그때 그 전자").
 //   · (+)전하는 붉은 알갱이. 전류 흐름은 전선 위 앰버 점 흐름(lightKit drawBeam 문법 계승).
-//   · 전구 밝기는 0~1 — 글로우 반경·필라멘트 색이 함께 변한다.
+//   · 전구 밝기는 0~1, 글로우 반경·필라멘트 색이 함께 변한다.
 
 import { drawElectron } from "./chemKit";
 
-export { drawElectron }; // 전자(−) — chemKit과 동일 표현을 그대로 쓴다
+export { drawElectron }; // 전자(−), chemKit과 동일 표현을 그대로 쓴다
 
 export const TAU = Math.PI * 2;
 export const ELEC = {
@@ -18,7 +18,7 @@ export const ELEC = {
   wireDark: "#4E5E78",
 };
 
-/** (+)전하 알갱이 — 붉은 톤(chemKit 원자핵 톤과 동조). */
+/** (+)전하 알갱이, 붉은 톤(chemKit 원자핵 톤과 동조). */
 export function drawPlus(ctx: CanvasRenderingContext2D, x: number, y: number, r = 7, alpha = 1): void {
   ctx.save();
   ctx.globalAlpha = alpha;
@@ -100,8 +100,8 @@ export function drawWire(
   ctx.restore();
 }
 
-/** 전지 — 가로형(왼쪽 −, 오른쪽 + 기본). 파운드리 재질 + (+)(−) 라벨.
- *  vert=true면 세로로 세운다(캡(+)이 위) — 라벨 글자는 화면 기준으로 바로 세워 그린다. */
+/** 전지, 가로형(왼쪽 −, 오른쪽 + 기본). 파운드리 재질 + (+)(−) 라벨.
+ *  vert=true면 세로로 세운다(캡(+)이 위), 라벨 글자는 화면 기준으로 바로 세워 그린다. */
 export function drawBattery(ctx: CanvasRenderingContext2D, x: number, y: number, w = 74, h = 30, flip = false, vert = false): void {
   ctx.save();
   ctx.translate(x, y);
@@ -135,7 +135,7 @@ export function drawBattery(ctx: CanvasRenderingContext2D, x: number, y: number,
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = "#F2F7FF";
-  // (+) 라벨은 언제나 캡 쪽에 — flip이면 캡이 왼쪽이므로 라벨도 함께 이동
+  // (+) 라벨은 언제나 캡 쪽에, flip이면 캡이 왼쪽이므로 라벨도 함께 이동
   for (const [lx, ch] of [[(flip ? -1 : 1) * w * 0.3, "+"], [(flip ? 1 : -1) * w * 0.3, "−"]] as [number, string][]) {
     ctx.save();
     ctx.translate(lx, 0.5);
@@ -146,7 +146,7 @@ export function drawBattery(ctx: CanvasRenderingContext2D, x: number, y: number,
   ctx.restore();
 }
 
-/** 전구 — brightness 0~1(글로우·필라멘트·유리 톤 연동). */
+/** 전구, brightness 0~1(글로우·필라멘트·유리 톤 연동). */
 export function drawBulb(ctx: CanvasRenderingContext2D, x: number, y: number, r = 20, brightness = 0): void {
   const b = Math.max(0, Math.min(1, brightness));
   ctx.save();
@@ -199,7 +199,7 @@ export function drawBulb(ctx: CanvasRenderingContext2D, x: number, y: number, r 
   ctx.restore();
 }
 
-/** 스위치 — closed면 닫힌 막대, 아니면 들린 막대. 히트 판정은 호출부 몫. */
+/** 스위치, closed면 닫힌 막대, 아니면 들린 막대. 히트 판정은 호출부 몫. */
 export function drawSwitch(ctx: CanvasRenderingContext2D, x: number, y: number, closed: boolean, w = 44): void {
   ctx.save();
   ctx.fillStyle = "#8FA4C2";
@@ -219,7 +219,7 @@ export function drawSwitch(ctx: CanvasRenderingContext2D, x: number, y: number, 
   ctx.restore();
 }
 
-/** 정전기 스파크(장식) — 노란 지그재그 번쩍. */
+/** 정전기 스파크(장식), 노란 지그재그 번쩍. */
 export function drawSpark(ctx: CanvasRenderingContext2D, x: number, y: number, len = 16, alpha = 1): void {
   ctx.save();
   ctx.globalAlpha = alpha;

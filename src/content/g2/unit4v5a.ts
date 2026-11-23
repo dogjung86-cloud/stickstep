@@ -1,4 +1,4 @@
-// 중2 Ⅳ 물질의 구성 내용 1부: 레슨 1~3(원소와 화합물 · 원소 기호와 화학식 · 원자의 구조). 설계와 책의 실험 대응표는 design/g2u4v5-plan.md.
+// 중2 Ⅳ 물질의 구성 내용 1부: 레슨 1~3(원소와 화합물 · 원소 기호와 화학식 · 원자의 구조). 설계와 실험 대응표는 design/g2u4v5-plan.md.
 // 레슨마다 스텝 배열을 차례대로 내놓는다. 단원 정본 unit4.ts가 이 배열을 레슨에 싣는다.
 import type { Step } from "../../lessons/types";
 import { binSort, mcq, multi, opener, ox, pairMatch, recap, cut } from "../dsl";

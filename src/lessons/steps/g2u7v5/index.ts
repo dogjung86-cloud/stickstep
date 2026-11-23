@@ -1,6 +1,6 @@
 // 중2 Ⅶ v5 랩의 등록표. registry.ts가 이 표를 통째로 싣는다(registry.ts를 고치지 않는다).
 // 스텝 타입 이름은 "g2u7"로 시작한다(다른 단원, 기존 랩과 겹치지 않게).
-// 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다). 설계와 책의 실험 대응표는 design/g2u7v5-plan.md.
+// 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다). 설계와 실험 대응표는 design/g2u7v5-plan.md.
 import type { StepRenderer } from "../../types";
 import { strawLab } from "./strawLab";
 import { rubLab } from "./rubLab";

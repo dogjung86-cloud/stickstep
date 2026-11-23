@@ -1,4 +1,4 @@
-// 중2 Ⅴ 내용 1부: 레슨 1~3(광합성 · 광합성의 확인 실험 · 환경요인)의 스텝 배열. 정본 unit5.ts가 레슨마다 가져다 싣는다. 설계와 책의 실험 대응표는 design/g2u5v5-plan.md.
+// 중2 Ⅴ 내용 1부: 레슨 1~3(광합성 · 광합성의 확인 실험 · 환경요인)의 스텝 배열. 정본 unit5.ts가 레슨마다 가져다 싣는다. 설계와 실험 대응표는 design/g2u5v5-plan.md.
 // 개념 스텝에는 컷이 없다(그림 세션이 output/g2-v5/u5/concept-cuts.md 를 보고 그린 뒤 싣는다).
 import type { Step } from "../../lessons/types";
 import { comicStory } from "../../ui/sketchArt";

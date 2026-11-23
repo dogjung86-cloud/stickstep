@@ -1,12 +1,12 @@
 // [중2 Ⅷ v5] g2u8l1 pencilLab: 「팔을 펴면 연필은 몇 칸 옮겨 갈까요?」
-// 책의 어디에서: 해 보기 '시차와 거리의 관계 알아보기'(칠판에 붙임딱지 7개, 연필을 들고 두 눈을 번갈아 감는다. 팔을 굽혔을 때와 폈을 때).
+// 다루는 내용: 활동(칠판에 딱지 7개, 연필을 들고 두 눈을 번갈아 감는다. 팔을 굽혔을 때와 폈을 때).
 // 한 통찰: 보는 자리가 바뀌면 가까운 물체는 먼 배경 앞에서 옮겨 가 보이고, 가까울수록 많이 옮겨 간다.
 // 걸음: ① 팔을 굽히고 두 눈을 번갈아 감는다(4칸) ② 팔을 펴면 어떻게 될지 예측하고 해 본다(2칸) ③ 친구가 더 멀리서 든다(1칸) ④ 판정.
 // 학생이 정하는 것: 연필까지의 거리, 어느 눈을 감을지. 실패하는 길: 한쪽 눈으로만 보면 옮겨 간 칸을 셀 수 없다(반대쪽 눈을 감아 봐야 한다).
 // 그림은 위에서 내려다본 모습이다. 시선은 뜬 눈에서 연필 끝을 지나 칠판까지 곧게 뻗고, 닿는 번호는 그 직선으로 계산한다.
-// 더 멀리(D/2)에서는 두 시선이 붙임딱지 사이(3번과 4번 사이, 4번과 5번 사이)에 닿는다. 폭은 꼭 1칸이다.
-// 눈에서 칠판까지를 D라 하면 연필이 D/5, D/3, D/2에 있을 때 두 눈(간격이 붙임딱지 한 칸)의 시선은 칠판에서 4칸, 2칸, 1칸 벌어진다(간격 × (D/d − 1)).
-// 오른쪽의 작은 칸은 뜬 눈에 보이는 모습이다(연필이 몇 번 붙임딱지에 겹치는지).
+// 더 멀리(D/2)에서는 두 시선이 딱지 사이(3번과 4번 사이, 4번과 5번 사이)에 닿는다. 폭은 꼭 1칸이다.
+// 눈에서 칠판까지를 D라 하면 연필이 D/5, D/3, D/2에 있을 때 두 눈(간격이 딱지 한 칸)의 시선은 칠판에서 4칸, 2칸, 1칸 벌어진다(간격 × (D/d − 1)).
+// 오른쪽의 작은 칸은 뜬 눈에 보이는 모습이다(연필이 몇 번 딱지에 겹치는지).
 // 기록은 칠판 바로 아래에 거리마다 한 줄씩 금색 폭으로 쌓는다(4칸, 2칸, 1칸). 판정 때 조작 칸의 기록 줄이 숨어도 무대에서 세 기록을 비교할 수 있다.
 
 import type { StepRenderer } from "../../types";
@@ -19,7 +19,7 @@ type Eye = "L" | "R"; // 감은 눈
 const BOARD_Y = 40;
 const EYE_Y = 190;
 const HALF = 20; // 두 눈 사이의 절반
-const GAP = 40; // 붙임딱지 간격
+const GAP = 40; // 딱지 간격
 const DIST: Record<Arm, number> = { bend: (EYE_Y - BOARD_Y) / 5, straight: (EYE_Y - BOARD_Y) / 3, far: (EYE_Y - BOARD_Y) / 2 };
 const ARMS: Arm[] = ["bend", "straight", "far"];
 const NAME: Record<Arm, string> = { bend: "팔을 굽혔을 때", straight: "팔을 폈을 때", far: "더 멀리 두었을 때" };
@@ -33,7 +33,7 @@ const hitX = (arm: Arm, closed: Eye): number => {
   return ex - (ex * (EYE_Y - BOARD_Y)) / DIST[arm];
 };
 const shift = (arm: Arm): number => Math.round(Math.abs(hitX(arm, "L") - hitX(arm, "R")) / GAP);
-/** 닿는 자리의 이름. 붙임딱지 위면 "3번", 두 붙임딱지 사이면 "3번과 4번 사이". */
+/** 닿는 자리의 이름. 딱지 위면 "3번", 두 딱지 사이면 "3번과 4번 사이". */
 const spot = (x: number): string => {
   const p = x / GAP + 4;
   return Math.abs(p - Math.round(p)) < 0.1 ? `${Math.round(p)}번` : `${Math.floor(p)}번과 ${Math.floor(p) + 1}번 사이`;
@@ -166,7 +166,7 @@ export const pencilLab: StepRenderer = (host, step, api) => {
     py += (EYE_Y - DIST[arm] - py) * k;
     const target = closed ? hitX(arm, closed) : 0;
     hx += (target - hx) * k;
-    // 칠판과 붙임딱지
+    // 칠판과 딱지
     ctx.fillStyle = "rgba(46,96,78,.55)";
     ctx.beginPath();
     ctx.roundRect(cx - 162, BOARD_Y - 24, 324, 34, 8);
@@ -216,7 +216,7 @@ export const pencilLab: StepRenderer = (host, step, api) => {
       }
     });
     sText(ctx, "위에서 내려다본 모습", 12, EYE_Y + 26, { color: S.dim, px: 12, align: "left" });
-    // 뜬 눈에 보이는 모습(작은 칸): 연필이 몇 번 붙임딱지 앞에 겹쳐 보이는지
+    // 뜬 눈에 보이는 모습(작은 칸): 연필이 몇 번 딱지 앞에 겹쳐 보이는지
     if (closed && !finished) {
       const bx = 236;
       const by = 106;

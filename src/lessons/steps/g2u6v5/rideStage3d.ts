@@ -25,7 +25,7 @@ import {
 let glOk: boolean | null = null;
 export function canRide3d(): boolean {
   try {
-    if (sessionStorage.getItem("ss.rideflat") === "1") return false; // 검사와 비교해 보기용: 평면 무대로
+    if (sessionStorage.getItem("ss.rideflat") === "1") return false; // 검사와 비교활동용: 평면 무대로
   } catch {
     /* 세션 저장소를 못 쓰는 환경 */
   }
@@ -266,7 +266,7 @@ export function modelRideStage(box: HTMLElement, o: RideStageOpts): RideStage {
       return m;
     };
 
-    // ── 큰 그림: 구역의 빛(정리 때 두 순환을 칠한다. 교과서 그림의 주황, 하늘색 바탕) ──
+    // ── 큰 그림: 구역의 빛(정리 때 두 순환을 칠한다. 주황, 하늘색 바탕) ──
     const loopGlow = (c: string, at: Pt, sx: number, sy: number): T.Mesh => {
       const m = new THREE.Mesh(G(new THREE.PlaneGeometry(1, 1)), M(new THREE.MeshBasicMaterial({ map: glowTex(c, "rgba(0,0,0,0)"), transparent: true, depthWrite: false, opacity: 0 })));
       m.position.copy(W(at, -1.1));

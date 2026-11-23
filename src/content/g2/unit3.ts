@@ -1,7 +1,7 @@
 // 중2 대단원 III. 빛과 파동. 이 파일이 정본이다.
-// 중단원 1 '빛': 1 빛의 반사(98~99) · 2 빛의 굴절(100~101) · 3 물체를 보는 과정(102~103) ·
-//   4 평면거울에서 상이 생기는 원리(104~105) · 5 거울과 렌즈(106~111) · 6 빛의 합성(112~115)
-// 중단원 2 '파동': 1 파동의 발생과 전달(120~121) · 2 소리의 특성(122~127)
+// 중단원 1 '빛': 1 빛의 반사 · 2 빛의 굴절 · 3 물체를 보는 과정 ·
+//   4 평면거울에서 상이 생기는 원리 · 5 거울과 렌즈 · 6 빛의 합성
+// 중단원 2 '파동': 1 파동의 발생과 전달 · 2 소리의 특성
 // 여기에는 단원과 레슨의 머리 정보, 레슨마다 스텝의 차례를 적는다. 도입, 랩, 개념, 정리, 문제의 내용은 unit3v5parts.ts에 있고,
 // 레슨 6의 만화는 장면 파일이 정본이다(comicStory). 설계 근거: design/g2u3v5-plan.md.
 import type { Unit } from "../curriculum";
@@ -28,6 +28,7 @@ const L1: Lesson = {
   label: "빛의 반사",
   icon: "reflect",
   minutes: 10,
+  standard: "[9과10-01] 빛의 반사와 굴절, 물체를 보는 과정",
   doneNote: "반사 법칙과 정반사·난반사를 배웠어요",
   steps: steps(P.g2u3l1.intro, ...P.g2u3l1.body),
 };
@@ -43,6 +44,7 @@ const L2: Lesson = {
   label: "빛의 굴절",
   icon: "prism",
   minutes: 9,
+  standard: "[9과10-01] 빛의 반사와 굴절, 물체를 보는 과정",
   doneNote: "굴절의 규칙과 생활 속 굴절 현상을 배웠어요",
   steps: steps(P.g2u3l2.intro, ...P.g2u3l2.body),
 };
@@ -58,6 +60,7 @@ const L3: Lesson = {
   label: "보는 과정",
   icon: "eye",
   minutes: 8,
+  standard: "[9과10-01] 빛의 반사와 굴절, 물체를 보는 과정",
   doneNote: "광원과 물체를 보는 빛의 경로를 배웠어요",
   steps: steps(P.g2u3l3.intro, ...P.g2u3l3.body),
 };
@@ -74,6 +77,7 @@ const L4: Lesson = {
   label: "평면거울의 상",
   icon: "mirror",
   minutes: 9,
+  standard: "[9과10-02] 평면거울의 상, 거울과 렌즈",
   doneNote: "평면거울에서 상이 생기는 원리를 작도로 배웠어요",
   steps: steps(P.g2u3l4.intro, ...P.g2u3l4.body),
 };
@@ -90,6 +94,7 @@ const L5: Lesson = {
   label: "거울과 렌즈",
   icon: "lens",
   minutes: 14,
+  standard: "[9과10-02] 평면거울의 상, 거울과 렌즈",
   doneNote: "거울·렌즈 4종의 상의 특징과 쓰임을 배웠어요",
   steps: steps(P.g2u3l5.intro, ...P.g2u3l5.body),
 };
@@ -106,6 +111,7 @@ const L6: Lesson = {
   label: "빛의 합성",
   icon: "rgb",
   minutes: 12,
+  standard: "[9과10-03] 물체의 색과 빛의 합성",
   doneNote: "물체의 색과 빛의 삼원색, 화소의 원리를 배웠어요",
   steps: steps(P.g2u3l6.intro, comic(comicStory("g2u3l6")), ...P.g2u3l6.body),
 };
@@ -122,6 +128,7 @@ const L7: Lesson = {
   label: "파동",
   icon: "wave",
   minutes: 10,
+  standard: "[9과10-04] 파동의 발생과 전달, 소리의 특성",
   doneNote: "파동·매질과 파동의 네 요소를 배웠어요",
   steps: steps(P.g2u3l7.intro, ...P.g2u3l7.body),
 };
@@ -138,6 +145,7 @@ const L8: Lesson = {
   label: "소리의 특성",
   icon: "note",
   minutes: 10,
+  standard: "[9과10-04] 파동의 발생과 전달, 소리의 특성",
   doneNote: "소리의 3요소로 빛과 파동 단원 완주!",
   steps: steps(P.g2u3l8.intro, ...P.g2u3l8.body),
 };
@@ -150,7 +158,7 @@ export const G2_UNIT3: Unit = {
   color: "#C838A6",
   icon: "prism",
 
-  standard: "2022 개정 교육과정",
+  standard: "[9과10-01]~[9과10-04] 빛과 파동",
   lessons: [L1, L2, L3, L4, L5, L6, L7, L8],
 };
 
