@@ -1371,7 +1371,7 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
     {
       "img": "sketch/comics/u4l6/7.svg",
       "stage": "정리",
-      "title": "열이 나오는 길, 들어가는 길",
+      "title": "열의 방출과 흡수",
       "caption": "응고·액화·승화(기체→고체)가 일어날 때는 <b>열에너지를 방출해</b> 주위가 따뜻해지고, 융해·기화·승화(고체→기체)가 일어날 때는 <b>열에너지를 흡수해</b> 주위가 시원해져요. 이제 실험으로 상태 변화와 열에너지의 관계를 확인해 봐요!",
       "term": {
         "name": "열에너지를 방출하는 상태 변화",
