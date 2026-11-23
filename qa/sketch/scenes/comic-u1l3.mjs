@@ -1,7 +1,7 @@
 // 중1 과학 u1l3 도입 만화 v2: 과학이 바꾼 세상, 시간 여행. 8컷.
 // 조사와 콘티: qa/sketch/research/u1l3.md. 미리보기: node qa/sketch/mock-comic.mjs comic-u1l3 <출력 PNG> 4
 //   전기 사슬을 세 컷으로 끝까지 따라간다: 1 원리(1831년 런던, 패러데이: 코일 속에서 자석을 움직이면 전기가 흐른다)
-//   → 2 기술(1870년대, 자석과 코일을 돌려 전기를 계속 만드는 발전기) → 3 기기와 쓰임(1880년대, 전구와 발전소가 밤을 밝힘).
+//   → 2 기술(1870년대, 자석 사이에서 코일을 돌려 전기를 계속 만드는 발전기) → 3 기기와 쓰임(1880년대, 전구와 발전소가 밤을 밝힘).
 //   이어서 문명의 변화 넷을 시간순으로: 4 산업(1780년대 영국, 증기 기관이 돌린 방적 공장) → 5 의학(1796년 버클리, 제너의 우두 접종: 미리 막기)
 //   → 6 의학(1928년 런던, 플레밍의 접시: 감염 뒤 치료) → 7 통신(1962년 텔스타 생방송) → 8 예술(오늘날 가상 현실 그림, 정리)
 // 2026-11-23 저작권 손질: 옛 1~3컷의 렌즈 사슬(빛의 굴절 → 안경 → 훅의 현미경)을 전기 사슬로 바꿨다(훅의 코르크는 u2l1 만화가 맡는다).
@@ -114,6 +114,15 @@ function p2() {
     sk.dot(wx, wy, 16, "#3E4450");
   });
   for (const [a0, i] of [[-1.9, 0], [1.2, 1]]) sk.ink(arc(wx, wy, wr + 22, a0, a0 + 0.8), { w: 5, color: C.gray, seed: 21 + i, wob: 0.2 });
+  // 바퀴를 돌리는 증기 기관(바퀴 아래): 화덕 위의 보일러, 실린더에서 바퀴의 크랭크로 이은 막대, 피어오르는 증기
+  thin(sk, 0.75, () => {
+    const boiler = rrect(36, 560, 196, 130, 44); sk.fill(boiler, "#7E8794", { seed: 61, tex: true, texAng: 0.02 }); sk.ink(boiler, { w: 9, seed: 62 });
+    const mouth = rrect(76, 624, 64, 44, 10); sk.fill(mouth, C.orange, { dx: 0, dy: 0, wob: 0.4, seed: 63 }); sk.ink(mouth, { w: 7, seed: 64 });
+    const cyl = rrect(160, 508, 56, 54, 10); sk.fill(cyl, "#5B5F66", { seed: 65 }); sk.ink(cyl, { w: 8, seed: 66 });
+    const pin = [wx + 64 * Math.cos(1.25), wy + 64 * Math.sin(1.25)];
+    sk.ink(dense([[188, 508], pin]), { w: 10, color: "#3E4450", seed: 67, wob: 0.1 }); sk.dot(pin[0], pin[1], 9, C.ink);
+  });
+  for (const [x, y, rr, i] of [[66, 528, 22, 0], [42, 500, 28, 1], [70, 470, 20, 2]]) { const c = circ(x, y, rr, { over: 0.2, seed: 68 + i, lump: 0.1 }); sk.fill(c, "#F4F6F8", { dx: 0, dy: 0, wob: 0.6, seed: 71 + i }); sk.ink(c, { w: 5, color: C.gray, seed: 74 + i, wob: 0.6 }); }
   const px = 452, py = 470, pr = 24;
   sk.ink(dense([[wx + 10, wy - wr], [px, py - pr]]), { w: 8, color: "#6B4A32", seed: 25, wob: 0.2 });
   sk.ink(dense([[wx + 10, wy + wr], [px, py + pr]]), { w: 8, color: "#6B4A32", seed: 26, wob: 0.2 });
@@ -124,6 +133,8 @@ function p2() {
       const pole = rrect(x0, 370, 56, 234, 16); sk.fill(pole, "#6B717C", { seed: 33 + i, tex: true, texAng: 1.5 }); sk.ink(pole, { w: 9, seed: 35 + i });
       for (let k = 0; k < 4; k++) { const band = rrect(x0 - 6, 400 + k * 44, 68, 26, 8); sk.fill(band, "#C8733A", { dx: 0, dy: 0, wob: 0.3, seed: 37 + i * 4 + k }); sk.ink(band, { w: 5, seed: 45 + i * 4 + k, wob: 0.3 }); }
     }
+    // 자석의 두 극(막대자석처럼 빨강과 파랑): 돌아가는 구리 고리를 사이에 두고 마주 본다
+    for (const [x0, col, sg, i] of [[528, C.red, 1, 0], [634, C.blue, -1, 1]]) { const shoe = poly([[x0 + (sg > 0 ? 18 : 0), 418], [x0 + (sg > 0 ? 0 : 18), 426], [x0 + (sg > 0 ? 0 : 18), 514], [x0 + (sg > 0 ? 18 : 0), 522]], 3); sk.fill(shoe, col, { dx: 0, dy: 0, wob: 0.3, seed: 57 + i }); sk.ink(shoe, { w: 6, seed: 59 + i, wob: 0.3 }); }
     sk.ink(dense([[px, py], [600, py]]), { w: 10, color: "#3E4450", seed: 53, wob: 0.1 });
     const ring = circ(590, py, 46, { over: 0.08, seed: 54 });
     sk.fill(ring, "#C8733A", { dx: 0, dy: 0, wob: 0.3, seed: 55 });
@@ -133,19 +144,22 @@ function p2() {
     const pul = circ(px, py, pr, { over: 0.08, seed: 73 }); sk.fill(pul, "#8A8F98", { dx: 0, dy: 0, wob: 0.3, seed: 74 }); sk.ink(pul, { w: 8, seed: 75 });
   });
   for (const [a0, i] of [[-2.4, 0], [0.7, 1]]) sk.ink(arc(590, py, 64, a0, a0 + 0.9), { w: 5, color: C.gray, seed: 76 + i, wob: 0.2 });
-  // 전선을 따라 위의 아크등으로(1870년대에는 아직 전구가 없었다): 유리 공 속 두 탄소 막대 사이에서 불꽃이 환하게 튄다
-  sk.ink(curve([[560, 370], [600, 250], [700, 168], [774, 150]]), { w: 5, color: "#7A4A2A", seed: 81, wob: 0.2 });
-  sk.ink(curve([[620, 370], [672, 300], [742, 262], [784, 250]]), { w: 5, color: "#7A4A2A", seed: 82, wob: 0.2 });
-  sk.glow(790, 198, 110, "#FFF1B8", 0.85, 0.15);
-  const cap = rrect(772, 132, 36, 22, 5); sk.fill(cap, "#5B5F66", { dx: 0, dy: 0, wob: 0.3, seed: 86 }); sk.ink(cap, { w: 6, seed: 87 });
-  const globe = circ(790, 198, 46, { over: 0.1, seed: 83 });
+  // 전선을 따라 위의 아크등으로(1870년대에는 아직 전구가 없었다): 유리 공 속 두 탄소 막대 사이에서 불꽃이 환하게 튄다.
+  //   기술자의 말풍선은 머리 왼쪽 위(가로 약 570~800)에 앉으므로 등은 그보다 왼쪽 천장에 단다
+  const lx = 462, ly = 186;
+  sk.ink(dense([[lx, -10], [lx, ly - 60]]), { w: 6, color: "#4A3A30", seed: 80, wob: 0.1 });
+  sk.ink(curve([[562, 372], [548, 300], [500, 262], [lx - 4, ly + 56]]), { w: 5, color: "#7A4A2A", seed: 81, wob: 0.2 });
+  sk.ink(curve([[620, 372], [606, 286], [530, 248], [lx + 4, ly + 56]]), { w: 5, color: "#7A4A2A", seed: 82, wob: 0.2 });
+  sk.glow(lx, ly, 92, "#FFF1B8", 0.85, 0.15);
+  const cap = rrect(lx - 18, ly - 64, 36, 22, 5); sk.fill(cap, "#5B5F66", { dx: 0, dy: 0, wob: 0.3, seed: 86 }); sk.ink(cap, { w: 6, seed: 87 });
+  const globe = circ(lx, ly, 46, { over: 0.1, seed: 83 });
   sk.fill(globe, "#FFFBEA", { dx: 0, dy: 0, wob: 0.3, seed: 84, alpha: 0.9 });
-  sk.ink(dense([[790, 152], [790, 186]]), { w: 8, color: "#3E4450", seed: 85, wob: 0.1 });
-  sk.ink(dense([[790, 206], [790, 238]]), { w: 8, color: "#3E4450", seed: 89, wob: 0.1 });
-  sparkle(sk, 790, 196, 16, { seed: 90, color: C.yellow });
+  sk.ink(dense([[lx, ly - 42], [lx, ly - 8]]), { w: 8, color: "#3E4450", seed: 85, wob: 0.1 });
+  sk.ink(dense([[lx, ly + 8], [lx, ly + 40]]), { w: 8, color: "#3E4450", seed: 89, wob: 0.1 });
+  sparkle(sk, lx, ly - 2, 16, { seed: 90, color: C.yellow });
   sk.ink(globe, { w: 7, seed: 91 });
-  sk.ink(dense([[790, 244], [790, 252]]), { w: 5, seed: 92, wob: 0.1 });
-  for (const [a, i] of [[-2.7, 0], [-0.45, 1], [2.75, 2], [0.4, 3]]) sk.ink(dense([[790 + 62 * Math.cos(a), 198 + 62 * Math.sin(a)], [790 + 86 * Math.cos(a), 198 + 86 * Math.sin(a)]]), { w: 6, color: C.yellow, seed: 93 + i, wob: 0.2 });
+  sk.ink(dense([[lx, ly + 46], [lx, ly + 56]]), { w: 5, seed: 92, wob: 0.1 });
+  for (const [a, i] of [[-2.7, 0], [-0.45, 1], [2.75, 2], [0.4, 3]]) sk.ink(dense([[lx + 62 * Math.cos(a), ly + 62 * Math.sin(a)], [lx + 84 * Math.cos(a), ly + 84 * Math.sin(a)]]), { w: 6, color: C.yellow, seed: 93 + i, wob: 0.2 });
   // 기술자: 환하게 켜진 등을 올려다본다
   const P = pose({ elL: [-70, -320], haL: [-110, -380], elR: [50, -262], haR: [24, -218], tilt: -0.1 });
   drawFigure(sk, 862, 690, 0.62, P, { ...MECH, name: "mech", look: -0.5 });
@@ -487,8 +501,8 @@ const P = [
   },
   {
     fn: p2, when: "1870년대, 유럽", stage: "기술의 발달", title: "돌리는 동안 쉬지 않고",
-    caption: "패러데이의 발견 뒤, 사람들은 자석과 코일을 빠르게 돌려 전기를 <b>끊임없이</b> 만드는 기술을 갈고닦았어요. 1870년대에는 증기 기관으로 돌려 많은 전기를 쉬지 않고 만드는 <b>발전기</b>가 공장에서 쓰이기 시작했지요.",
-    term: { name: "발전기", def: "자석과 코일을 돌려 <b>전기를 만들어 내는</b> 기계예요. 오늘날 발전소에서도 물이나 증기, 바람의 힘으로 커다란 발전기를 돌리죠." },
+    caption: "패러데이의 발견 뒤, 사람들은 자석 사이에서 코일을 빠르게 돌려 전기를 <b>끊임없이</b> 만드는 기술을 갈고닦았어요. 1870년대에는 증기 기관으로 돌려 많은 전기를 쉬지 않고 만드는 <b>발전기</b>가 공장에서 쓰이기 시작했지요.",
+    term: { name: "발전기", def: "자석 사이에서 코일을 돌려 <b>전기를 만들어 내는</b> 기계예요. 오늘날 발전소에서도 물이나 증기, 바람의 힘으로 커다란 발전기를 돌리죠." },
   },
   {
     fn: p3, when: "1880년대, 미국 뉴욕", stage: "기기의 발명과 쓰임", title: "밤을 밝힌 전구",

@@ -261,8 +261,8 @@ function p4() {
   sk.ink(dense([[cx - Math.sqrt(r * r - (yi1 - cy) ** 2), yi1], [cx + Math.sqrt(r * r - (yi1 - cy) ** 2), yi1]]), { w: 5, color: ICELINE, seed: 335, wob: 0.3 });
   // 얼음이 아래로 자라는 자리: 물과 닿은 얼음 밑면의 작은 얼음 바늘
   for (const [x, i] of [[540, 0], [600, 1], [660, 2], [720, 3]]) sk.ink(dense([[x, yi1], [x + (i % 2 ? 6 : -6), yi1 + 16]]), { w: 4, color: ICELINE, seed: 341 + i, wob: 0.2 });
-  // 얼면서 내놓는 열이 얼음을 지나 찬 공기로 빠져나간다(빨강)
-  for (const [x, i] of [[548, 0], [632, 1], [716, 2]]) arrow(sk, [[x, yi0 - 4], [x + (i - 1) * 8, yi0 - 92]], { w: 8, color: HOT, seed: 351 + i, straight: true, head: 18, wob: 0.3 });
+  // 얼음이 자라는 밑면(물과 닿은 곳)에서 나온 열이 얼음을 지나 찬 공기로 빠져나간다(빨강)
+  for (const [x, i] of [[548, 0], [632, 1], [716, 2]]) arrow(sk, [[x, yi1 - 2], [x + (i - 1) * 8, yi0 - 92]], { w: 8, color: HOT, seed: 351 + i, straight: true, head: 18, wob: 0.3 });
   for (const [x, y, len, i] of [[500, 166, 70, 0], [680, 150, 76, 1]]) wind(sk, x, y, len, 361 + i);
   // 얼음 아래 물에 꽂은 온도계: 3컷과 같은 눈금
   thermo(sk, 740, 440, 104, 0.42, 371, { w: 13, br: 11 });
@@ -304,8 +304,8 @@ function p6() {
   const knob = circ(728, 448, 13, { over: 0.15, seed: 613 }); sk.fill(knob, "#5A5F68", { dx: 0, dy: 0, wob: 0.3, seed: 614 }); sk.ink(knob, { w: 5, seed: 615, wob: 0.3 });
   sk.dot(696, 448, 7, C.orange);
   // 개어 둔 수건
-  const tw = rrect(450, 470, 70, 30, 8); sk.fill(tw, "#BFE3F5", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 617 }); sk.ink(tw, { w: 6, seed: 618, wob: 0.4 });
-  // 학생: 파라핀에 담갔다 뺀 손을 든다. 손을 감싼 하얀 파라핀이 굳으며 열을 손으로 내놓는다(안쪽으로 빨강)
+  const tw = rrect(450, 470, 70, 30, 8); sk.fill(tw, "#F4B8C8", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 617 }); sk.ink(tw, { w: 6, seed: 618, wob: 0.4 });
+  // 학생: 파라핀에 담갔다 뺀 손을 든다. 손을 감싼 하얀 파라핀 층은 크게 본 원 안에서 손가락 단면과 함께 보인다
   const K = pose({ elR: [92, -282], haR: [176, -300], elL: [-50, -262], haL: [-24, -218], tilt: 0.06 });
   const kx = 270, ky = 704, ks = 0.72;
   drawFigure(sk, kx, ky, ks, K, { ...KID, hands: "L" });
@@ -316,7 +316,17 @@ function p6() {
     sk.fill(g, "#FBF7EC", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 621 }); sk.ink(g, { w: 6, color: "#B8AE98", seed: 622, wob: 0.4 });
     for (const [x, i] of [[-24, 0], [-8, 1]]) sk.ink(dense([[x, -22], [x + 2, 22]]), { w: 3, color: "#D9D1BE", seed: 623 + i, wob: 0.2 });
   }, ang);
-  heatArrows(sk, gx, gy, 46, 92, [-2.4, -1.4, -0.4, 0.7, 2.3], 631, true);
+  // 크게 본 원: 손가락 단면(살)을 굳어 가는 파라핀 층이 감싸고, 그 층에서 손가락으로 열이 들어간다(빨강은 굳는 물질에서 나오는 열)
+  const zx = 690, zy = 178, zr = 100;
+  for (const [a, b, i] of [[[gx + 20, gy - 30], [zx - zr * 0.94, zy + zr * 0.34]], [[gx + 30, gy + 4], [zx - zr * 0.6, zy + zr * 0.8]]].map((v, i) => [...v, i])) sk.ink(dense([a, b]), { w: 4, color: C.gray, dash: [10, 9], seed: 641 + i, wob: 0 });
+  sk.fill(circ(zx, zy, zr, { over: 0.06, seed: 643 }), "#F6F8FA", { dx: 0, dy: 0, wob: 0.2, seed: 644 });
+  const ring = circ(zx, zy, 76, { over: 0.1, seed: 645 });
+  sk.fill(ring, "#FBF3DD", { dx: 0, dy: 0, wob: 0.4, seed: 646 }); sk.ink(ring, { w: 5, color: "#B8AE98", seed: 647, wob: 0.4 });
+  for (const [r, i] of [[60, 0], [68, 1]]) sk.ink(circ(zx, zy, r, { over: 0.05, seed: 648 + i }), { w: 2.5, color: "#E2D7BC", seed: 650 + i, wob: 0.3 });
+  const finger = circ(zx, zy, 40, { over: 0.1, seed: 652 });
+  sk.fill(finger, C.skin, { dx: 0, dy: 0, wob: 0.3, seed: 653 }); sk.ink(finger, { w: 5, color: "#C98A6A", seed: 654, wob: 0.3 });
+  for (const [a, i] of [[-2.2, 0], [-0.9, 1], [0.4, 2], [1.7, 3], [2.9, 4]]) arrow(sk, [[zx + 70 * Math.cos(a), zy + 70 * Math.sin(a)], [zx + 44 * Math.cos(a), zy + 44 * Math.sin(a)]], { w: 6, color: HOT, seed: 655 + i, straight: true, head: 12, wob: 0.2 });
+  sk.ink(circ(zx, zy, zr, { over: 0.06, seed: 661 }), { w: 7, seed: 662, wob: 0.4 });
   // 쌤: 손을 펴 보인다
   const T = pose({ elL: [-84, -300], haL: [-150, -322], elR: [50, -262], haR: [24, -218], tilt: -0.04 });
   drawFigure(sk, 880, 704, 0.7, T, SSAM);
