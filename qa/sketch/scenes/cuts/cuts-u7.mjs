@@ -379,7 +379,7 @@ function cutU7l5() {
 function cutU7l6() {
   const sk = new Sk(W, H, { id: "g" });
   const PHI = Math.PI / 6, cP = Math.cos(PHI), sP = Math.sin(PHI);
-  const CX = 470, CY = 520; // 탁자 윗면 가운데(화면)
+  const CX = 470, CY = 508; // 탁자 윗면 가운데(화면). 앞 테의 두께까지 그림 틀 안에 든다
   const P = ([x, y, z]) => [CX + x, CY - (y * cP - z * sP)]; // 세계(x 오른쪽, y 위, z 앞) → 화면
   const A = 48 * Math.PI / 180, U = [Math.cos(A), 0, Math.sin(A)]; // 지구본에서 알전구 쪽(오른쪽 앞)
   const along = (p, k) => [p[0] + U[0] * k, p[1] + U[1] * k, p[2] + U[2] * k];
@@ -400,7 +400,7 @@ function cutU7l6() {
   const spot = r => { const pts = []; for (let i = 0; i <= 32; i++) { const t = i / 32 * 2 * Math.PI, a = r * fore * Math.cos(t), b = r * Math.sin(t); pts.push([Ss[0] + a * ux + b * vx, Ss[1] + a * uy + b * vy]); } return pts; };
   // 사람은 탁자 뒤에 선다(허리 아래는 탁자에 가린다)
   const FS = 0.62, FY = P([0, -135, -400])[1];
-  drawFigure(sk, 770, FY, FS, pose({ elL: [-80, -296], haL: [-140, -318], elR: [56, -262], haR: [70, -196], tilt: -0.04 }), { ...TEACHER, name: "teacher" });
+  drawFigure(sk, 740, FY, FS, pose({ elL: [-80, -296], haL: [-140, -318], elR: [56, -262], haR: [70, -196], tilt: -0.04 }), { ...TEACHER, name: "teacher" });
   // 학생: 지구본 위의 점을 손가락으로 가리킨다(손은 지구본 둘레 바로 바깥)
   const SX = 548, hand = [Ss[0] + 48, Ss[1] - 74];
   drawFigure(sk, SX, FY, FS, pose({ elL: [-84, -300], haL: [(hand[0] - SX) / FS, (hand[1] - FY) / FS], elR: [64, -270], haR: [36, -226], tilt: 0.1 }), { ...STUDENT, name: "student" });
@@ -467,7 +467,9 @@ function cutU7l6() {
   });
   const bulb = circ(Ls[0], Ls[1], Rb, { over: 0.1, seed: 86 });
   sk.fill(bulb, C.lemon, { dx: 0, dy: 0, wob: 0.3, seed: 87 });
-  sk.ink(curve([[Ls[0] - 12, Ls[1] + 16], [Ls[0] - 9, Ls[1] - 2], [Ls[0] - 4, Ls[1] + 6], [Ls[0], Ls[1] - 4], [Ls[0] + 4, Ls[1] + 6], [Ls[0] + 9, Ls[1] - 2], [Ls[0] + 12, Ls[1] + 16]]), { w: 4, color: C.orange, seed: 88, wob: 0.1 });
+  // 필라멘트: 소켓에서 올라온 지지선 두 가닥을 작은 고리 코일로 잇는다(봉우리 셋의 지그재그는 글자 M으로 읽힌다)
+  for (const sg of [-1, 1]) sk.ink(dense([[Ls[0] + sg * 7, Ls[1] + Rb - 6], [Ls[0] + sg * 9, Ls[1] + 4]]), { w: 3, color: "#8A9099", seed: 88 + (sg > 0 ? 1 : 0), wob: 0.1 });
+  { const coil = []; for (let k = 0; k <= 64; k++) { const u = k / 64, th = u * 2 * Math.PI * 4; coil.push([Ls[0] - 9 + 18 * u - 3.2 * Math.sin(th), Ls[1] + 3 - 3.6 * Math.cos(th) + 3.6]); } sk.ink(coil, { w: 3, color: C.orange, seed: 90, wob: 0 }); }
   sk.ink(bulb, { w: 7, seed: 89 });
   for (let i = 0; i < 6; i++) { const a = -2.75 + i * 0.47; sk.ink(dense([[Ls[0] + (Rb + 10) * Math.cos(a), Ls[1] + (Rb + 10) * Math.sin(a)], [Ls[0] + (Rb + 26) * Math.cos(a), Ls[1] + (Rb + 26) * Math.sin(a)]]), { w: 6, color: "#F2B632", seed: 90 + i, wob: 0.2 }); }
   return sk;
@@ -481,6 +483,6 @@ export function cuts() {
     { name: "u7l4", theme: "space7", orig: null, sk: cutU7l4(), alt: "회전의자에 앉아 제자리에서 도는 학생의 뒷모습, 학생은 왼쪽으로 도는데 창문과 전등은 오른쪽으로 흘러가는 것처럼 보인다", cap: "내가 돌면 방이 반대로 도는 것처럼 보여요" },
     { name: "u7l4b", theme: "space7", orig: null, sk: cutU7l4b(), alt: "방 가운데 전등 둘레를 학생이 걸어서 돌고, 전등 너머로 보이는 별자리 액자가 걸음마다 달라지는 장면", cap: "한 걸음 옮길 때마다 전등 너머의 액자가 바뀌어요" },
     { name: "u7l5", theme: "space7", orig: null, sk: cutU7l5(), alt: "어두운 방에서 스탠드 불빛을 받는 공을 팔을 뻗어 얼굴 앞에 든 학생이 제자리에서 돈다. 공의 밝은 쪽이 학생의 눈에는 반만 보인다", cap: "밝은 쪽을 얼마나 보느냐에 따라 달의 모양이 달라져요" },
-    { name: "u7l6", theme: "space7", orig: null, sk: cutU7l6(), alt: "둥근 탁자 위에 둥근 알전구 스탠드, 작은 공, 지구본이 비스듬히 한 줄로 놓였다. 작은 공의 그림자가 지구본에 점처럼 떨어지고, 탁자 뒤의 학생이 그 점을 가리키며 쌤이 손으로 보여 준다", cap: "한 줄로 서면 작은 공의 그림자가 지구본에 점처럼 떨어져요" },
+    { name: "u7l6", theme: "space7", orig: null, sk: cutU7l6(), alt: "둥근 탁자 위에 알전구 스탠드, 작은 공, 지구본이 비스듬히 한 줄로 놓였다. 작은 공의 그림자가 지구본에 점처럼 떨어지고, 탁자 뒤에서 학생이 그 점을 가리키고 쌤이 손짓하는 장면", cap: "한 줄로 서면 작은 공의 그림자가 지구본에 점처럼 떨어져요" },
   ];
 }

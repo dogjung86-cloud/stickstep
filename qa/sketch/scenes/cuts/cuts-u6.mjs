@@ -240,7 +240,9 @@ function petBottle(sk, x, y, h, sd, dent = 0) {
   const half = yy => yy > yS ? hw : yy > yN ? nk + (hw - nk) * Math.cos((yy - yS) / (yN - yS) * Math.PI / 2) : nk;
   // 찌그러진 자리: [가운데 높이, 위아래 폭, 깊이] (깊으면 병이 아니라 모래시계로 읽혀 얕게 둔다)
   const DL = [[-h * 0.42, h * 0.2, hw * 0.4], [-h * 0.69, h * 0.05, hw * 0.15]], DR = [[-h * 0.27, h * 0.17, hw * 0.34]];
-  const dip = (D, yy) => dent * D.reduce((s, [c, sp, dp]) => { const t = 1 - Math.abs(yy - c) / sp; return s + (t > 0 ? dp * t ** 1.2 * (1 + 0.22 * Math.sin((yy - c) * 0.8)) : 0); }, 0);
+  // 찌그러짐은 각지게: 가운데가 뾰족한 V 홈에 작은 꺾임을 두 번 더 얹는다(둥글게 파면 그냥 잘록한 병으로 읽힌다)
+  const notch = (yy, c, sp) => Math.max(0, 1 - Math.abs(yy - c) / sp);
+  const dip = (D, yy) => dent * D.reduce((s, [c, sp, dp]) => s + dp * (notch(yy, c, sp) + 0.45 * notch(yy, c - sp * 0.55, sp * 0.22) + 0.35 * notch(yy, c + sp * 0.5, sp * 0.2)), 0);
   const sideL = yy => [x - half(yy) + dip(DL, yy), y + yy], sideR = yy => [x + half(yy) - dip(DR, yy), y + yy];
   const ys = []; for (let yy = -6; yy > yC; yy -= 3) ys.push(yy); ys.push(yC);
   const outline = [[x - hw + 7, y], ...ys.map(sideL), ...ys.slice().reverse().map(sideR), [x + hw - 7, y]];
@@ -260,12 +262,12 @@ function petBottle(sk, x, y, h, sd, dent = 0) {
   sk.fill(cap, "#3F7CC0", { dx: 0, dy: 0, wob: 0.2, seed: sd + 6 }); sk.ink(cap, { w: 6, seed: sd + 7, wob: 0.2 });
   for (const [k, i] of [[-0.45, 0], [0, 1], [0.45, 2]]) sk.ink(dense([[x + k * nk, y + yC - h * 0.1], [x + k * nk, y + yC - h * 0.025]]), { w: 3, color: "#2A5A8C", seed: sd + 8 + i, wob: 0.1 });
   if (!dent) return;
-  // 꺼진 자리의 주름(옆선에서 안쪽으로 짧은 잔물결. 한 점으로 모이면 안쪽을 가리키는 화살촉으로 읽힌다)
+  // 꺼진 자리의 접힘선: 옆선의 꺾인 자리에서 안쪽으로 짧고 곧게(물결이나 한 점으로 모이는 선은 찬 기운이나 화살촉으로 읽힌다)
   for (const [D, sg, side] of [[DL[0], 1, sideL], [DR[0], -1, sideR]]) {
     const [c, sp] = D;
-    for (const [k, len, i] of [[-0.5, 0.62, 0], [0, 0.9, 1], [0.5, 0.62, 2]]) {
+    for (const [k, len, tilt, i] of [[0, 0.6, -0.35, 0], [-0.55, 0.42, 0.3, 1], [0.5, 0.4, -0.25, 2]]) {
       const b = side(c + k * sp), L = hw * len;
-      sk.ink(dense([[b[0] + sg * 4, b[1]], [b[0] + sg * L * 0.35, b[1] - 3], [b[0] + sg * L * 0.7, b[1] + 2.5], [b[0] + sg * L, b[1] - 1]], 2), { w: 3.5, color: "#7D8B99", seed: sd + 12 + i * 2 + (sg > 0 ? 0 : 1), wob: 0.15 });
+      sk.ink(dense([[b[0] + sg * 3, b[1]], [b[0] + sg * L, b[1] + L * tilt]]), { w: 4, color: "#6F7E8E", seed: sd + 12 + i * 2 + (sg > 0 ? 0 : 1), wob: 0.1 });
     }
   }
 }
@@ -308,8 +310,8 @@ function cutU6l4() {
   // 왼쪽: 냉장고에서 막 꺼낸 페트병이 쭈글쭈글
   ground(sk, GY, 43, 36, 452);
   thin(sk, 0.72, () => fridge(sk, 70, GY, 140, 396, 31));
-  // 냉장고에서 흘러나오는 찬 기운
-  for (const [yy, i] of [[420, 0], [476, 1], [532, 2]]) sk.ink(wavy([204, yy], [236, yy - 6], 4, 2), { w: 5, color: "#8FC3E8", seed: 41 + i, wob: 0.1 });
+  // 냉장고에서 흘러나오는 찬 기운(찬 공기는 아래로 흘러내린다). 병과 떨어지게 냉장고 가까이에만
+  for (const [yy, i] of [[478, 0], [530, 1], [582, 2]]) sk.ink(wavy([200, yy], [226, yy + 14], 3.5, 2), { w: 5, color: "#8FC3E8", seed: 41 + i, wob: 0.1 });
   // 두 손으로 병을 받쳐 든다. 병 꼭대기가 모자 챙에 닿지 않게 골반 높이에서 든다
   const HOLD = { elR: [110, -220], haR: [206, -166], elL: [92, -212], haL: [166, -158] };
   const ks = 0.62, kx = 392;

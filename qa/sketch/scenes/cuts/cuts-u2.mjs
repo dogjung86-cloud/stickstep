@@ -601,7 +601,7 @@ function cutU2l8() {
   const fx = 200, fs = 0.72;
   drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
   const hx = fx + fs * 150, hy = GY - fs * 390;
-  card(sk, hx + 34, hy - 50, 71, () => sparrow(sk, -2, -4, 0.66, 73), 0.12);
+  card(sk, hx + 34, hy - 50, 71, () => sparrow(sk, -3, -6, 0.9, 73), 0.12);
   handDot(sk, [hx, hy], C.skin, 75, 12);
   qmark(sk, 360, 190, 0.6, { color: C.teal, seed: 77, rot: 0.1 });
   return sk;
@@ -839,7 +839,7 @@ export function cuts() {
     { name: "u2l5", theme: "bio4", sk: cutU2l5(), alt: "세포 블록으로 계단을 쌓아 올라가는 스틱맨", cap: "한 칸씩 오르면 세포에서 개체까지" },
     { name: "u2l6", theme: "bio4", sk: cutU2l6(), alt: "세 개의 눈금 저울로 자연을 재는 스틱맨 검사관", cap: "다양성은 눈금 세 개로 잰다!" },
     { name: "u2l7", theme: "bio4", sk: cutU2l7(), alt: "무늬가 다른 무당벌레들을 돋보기로 견주는 스틱맨", cap: "같은 무당벌레인데 무늬가 달라요. 그게 변이!" },
-    { name: "u2l8", theme: "bio4", sk: cutU2l8(), alt: "생물 카드를 기준에 따라 상자에 나눠 담는 스틱맨", cap: "좋은 기준이 좋은 분류를 만든다" },
+    { name: "u2l8", theme: "bio4", sk: cutU2l8(), alt: "참새 카드를 든 쌤이 어느 상자에 넣을지 망설이는 장면. 탁자 위 두 상자에는 물고기 카드와 박쥐 카드가 들어 있고, 강아지 카드가 차례를 기다린다", cap: "좋은 기준이 좋은 분류를 만든다" },
     { name: "u2l8b", theme: "bio4", sk: cutU2l8b(), alt: "당나귀와 말과 노새를 견주어 보는 스틱맨", cap: "새끼를 낳을 수 있어도 같은 종이 아닐 수 있다?" },
     { name: "u2l9", theme: "bio4", sk: cutU2l9(), alt: "다섯 개의 문 앞에서 생물들을 안내하는 스틱맨 문지기", cap: "생물의 왕국은 다섯. 문지기의 질문만 기억하면 돼요" },
     { name: "u2l5b", theme: "bio4", orig: null, sk: cutU2l5b(), alt: "가운데 선 스틱맨 쌤 양옆으로 동물의 계단(세포, 조직, 위, 소화계, 강아지)과 식물의 계단(세포, 조직, 줄기 단면, 잎, 나무)이 오르고, 서로 다른 칸(소화계와 줄기 단면)만 청록으로 칠해진 장면", cap: "닮은 두 계단, 다른 칸은 하나씩. 자리도 달라요" },
