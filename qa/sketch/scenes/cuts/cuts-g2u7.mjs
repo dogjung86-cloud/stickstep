@@ -267,33 +267,42 @@ function cutL4b() {
   return sk;
 }
 
-/* ---------- g2u7l5: 줄 전구 두 줄. 한 줄로 이은 줄은 하나가 빠지면 다 꺼지고, 사다리처럼 이은 줄은 나머지가 켜져 있다 ---------- */
+/* ---------- g2u7l5: 야영장 두 기둥 사이의 줄 전구 두 줄. 한 줄로 이은 줄은 하나가 빠지면 다 꺼지고, 사다리처럼 이은 줄은 나머지가 켜져 있다 ---------- */
 function cutL5() {
   const sk = new Sk(W, H, { id: "f" });
   const GY = 680, TX = 388, XS = [200, 294, 388, 482, 576], BR = 28;
   ground(sk, GY, 11);
-  // 나무
+  // 야영장: 뒤쪽 작은 텐트와 줄 전구를 거는 나무 기둥 둘
   thin(sk, 0.8, () => {
-    const trunk = box(TX - 34, 500, TX + 34, GY - 2);
-    sk.fill(trunk, "#A9773F", { dx: 0, dy: 0, wob: 0.3, seed: 13, tex: 0.8 }); sk.ink(trunk, { w: 10, seed: 14 });
-    const can = circ(TX, 296, 232, { over: 0.05, seed: 15, lump: 0.045, sx: 1.3 });
-    sk.fill(can, "#BFE3B4", { dx: 0, dy: 0, wob: 0.6, seed: 16 }); sk.ink(can, { w: 10, seed: 17, wob: 1 });
+    const tent = poly([[262, GY - 2], [388, 552], [514, GY - 2]], 3);
+    sk.fill(tent, "#9ED3A0", { dx: 0, dy: 0, wob: 0.4, seed: 12 });
+    sk.fill(poly([[364, GY - 2], [388, 600], [412, GY - 2]], 3), "#5E8F62", { dx: 0, dy: 0, wob: 0.3, seed: 13 });
+    sk.ink(tent, { w: 9, seed: 14 });
+    for (const [x, i] of [[TX - 292, 0], [TX + 292, 1]]) {
+      const post = box(x - 13, 112, x + 13, GY - 2);
+      sk.fill(post, "#A9773F", { dx: 0, dy: 0, wob: 0.3, seed: 15 + i, tex: 0.8 }); sk.ink(post, { w: 10, seed: 17 + i });
+      sk.ink(dense([[x - 18, 112], [x + 18, 112]]), { w: 9, seed: 19 + i, wob: 0.2 });
+      // 버팀 줄과 말뚝
+      const out = x + (i ? 60 : -60);
+      sk.ink(dense([[x, 128], [out, GY - 6]]), { w: 4, color: C.gray, seed: 21 + i, wob: 0.2 });
+      sk.ink(dense([[out, GY - 18], [out, GY + 4]]), { w: 7, seed: 23 + i, wob: 0.1 });
+    }
   });
   const sag = (y0, d) => x => y0 + d * (1 - ((x - TX) / 250) ** 2);
   // 위: 전선 한 가닥이 전구를 차례로 꿰고 지나간다(직렬). 하나가 빠진 자리에서 선이 끊겨 전부 꺼졌다
-  const y1 = sag(150, 40), ends = [TX - 272, ...XS.flatMap(x => [x - BR - 12, x + BR + 12]), TX + 272];
-  for (let i = 0; i < ends.length; i += 2) { const seg = []; for (let x = ends[i]; x <= ends[i + 1]; x += 4) seg.push([x, y1(x)]); seg.push([ends[i + 1], y1(ends[i + 1])]); sk.ink(seg, { w: 7.5, seed: 21 + i, wob: 0.3 }); }
+  const y1 = sag(150, 40), ends = [TX - 280, ...XS.flatMap(x => [x - BR - 12, x + BR + 12]), TX + 280];
+  for (let i = 0; i < ends.length; i += 2) { const seg = []; for (let x = ends[i]; x <= ends[i + 1]; x += 4) seg.push([x, y1(x)]); seg.push([ends[i + 1], y1(ends[i + 1])]); sk.ink(seg, { w: 7.5, seed: 31 + i, wob: 0.3 }); }
   XS.forEach((x, i) => {
     const y = y1(x), miss = i === 3;
-    if (miss) { sk.ink(circ(x, y, BR, { over: 0, seed: 31 }), { w: 4.5, color: C.gray, dash: [8, 7], seed: 32, wob: 0.2 }); xmark(sk, x, y, 0.5, { w: 13 }); }
-    else { const g = circ(x, y, BR, { over: 0.1, seed: 33 + i }); sk.fill(g, "#D5D9E0", { dx: 0, dy: 0, wob: 0.3, seed: 38 + i }); sk.ink(g, { w: 6.5, seed: 43 + i, wob: 0.4 }); }
-    for (const sg of [-1, 1]) { const cp = box(x + sg * (BR + 1), y - 11, x + sg * (BR + 14), y + 11); sk.fill(cp, "#8E9AAB", { dx: 0, dy: 0, wob: 0.2, seed: 51 + i }); sk.ink(cp, { w: 5, seed: 56 + i * 2 + sg, wob: 0.3 }); }
+    if (miss) { sk.ink(circ(x, y, BR, { over: 0, seed: 41 }), { w: 4.5, color: C.gray, dash: [8, 7], seed: 42, wob: 0.2 }); xmark(sk, x, y, 0.5, { w: 13 }); }
+    else { const g = circ(x, y, BR, { over: 0.1, seed: 43 + i }); sk.fill(g, "#D5D9E0", { dx: 0, dy: 0, wob: 0.3, seed: 48 + i }); sk.ink(g, { w: 6.5, seed: 53 + i, wob: 0.4 }); }
+    for (const sg of [-1, 1]) { const cp = box(x + sg * (BR + 1), y - 11, x + sg * (BR + 14), y + 11); sk.fill(cp, "#8E9AAB", { dx: 0, dy: 0, wob: 0.2, seed: 61 + i }); sk.ink(cp, { w: 5, seed: 66 + i * 2 + sg, wob: 0.3 }); }
   });
   // 아래: 위아래 두 가닥 사이에 전구가 사다리 가로대처럼 하나씩 걸렸다(병렬). 하나가 빠져도 두 가닥은 이어져 있어 나머지는 켜져 있다
   const ya = sag(296, 30), yb = sag(468, 30), wa = [], wb = [];
-  for (let x = TX - 282; x <= TX + 282; x += 6) { wa.push([x, ya(x)]); wb.push([x, yb(x)]); }
+  for (let x = TX - 290; x <= TX + 290; x += 6) { wa.push([x, ya(x)]); wb.push([x, yb(x)]); }
   XS.forEach((x, i) => { if (i !== 1) sk.glow(x, (ya(x) + yb(x)) / 2 + 10, 84, LIT, 0.8, 0.25); });
-  sk.ink(wa, { w: 8.5, seed: 23, wob: 0.4 }); sk.ink(wb, { w: 8.5, seed: 24, wob: 0.4 });
+  sk.ink(wa, { w: 8.5, seed: 73, wob: 0.4 }); sk.ink(wb, { w: 8.5, seed: 74, wob: 0.4 });
   XS.forEach((x, i) => {
     const y = (ya(x) + yb(x)) / 2 + 10, miss = i === 1;
     sk.ink(dense([[x, ya(x)], [x, miss ? ya(x) + 22 : y - BR * 1.5]]), { w: 6, seed: 201 + i, wob: 0.2 });
@@ -589,7 +598,7 @@ export function cuts() {
     { name: "g2u7l3", theme: "elec", orig: null, sk: cutL3(), alt: "흐르는 풀에서 튜브를 탄 사람들이 한 방향으로 떠가고, 물길 한쪽의 펌프가 물을 밀어 흐름을 이어 주는 장면", cap: "물은 한 방향으로 돌고, 펌프가 그 흐름을 이어 줘요" },
     { name: "g2u7l4", theme: "elec", orig: null, sk: cutL4(), alt: "똑같은 수도꼭지에 굵은 호스와 가는 호스를 끼워 들었는데, 굵은 호스에서는 물이 콸콸 솟고 가는 호스에서는 졸졸 나와 스틱맨이 고개를 갸웃하는 장면", cap: "가는 호스에서는 같은 시간에 나오는 물이 훨씬 적어요" },
     { name: "g2u7l4b", theme: "elec", orig: null, sk: cutL4b(), alt: "고무장갑을 낀 스틱맨 쌤이 껍질을 조금 벗긴 전선을 들어 보이고, 벗긴 끝에 속의 금속 선이 드러나 보이는 장면", cap: "전선의 속은 금속 선, 겉은 껍질이에요" },
-    { name: "g2u7l5", theme: "elec", orig: null, sk: cutL5(), alt: "나무에 두른 줄 전구 두 줄 가운데 한 줄로 이은 위쪽 줄은 전구 하나가 빠져 전부 꺼져 있고, 두 가닥 사이에 걸친 아래쪽 줄은 하나가 빠졌는데도 나머지가 켜져 있는 장면", cap: "위 줄은 하나가 빠지자 다 꺼지고, 아래 줄은 나머지가 켜져 있어요" },
+    { name: "g2u7l5", theme: "elec", orig: null, sk: cutL5(), alt: "야영장 두 기둥 사이에 건 줄 전구 두 줄 가운데 한 줄로 이은 위쪽 줄은 전구 하나가 빠져 전부 꺼져 있고, 두 가닥 사이에 걸친 아래쪽 줄은 하나가 빠졌는데도 나머지가 켜져 있는 장면", cap: "위 줄은 하나가 빠지자 다 꺼지고, 아래 줄은 나머지가 켜져 있어요" },
     { name: "g2u7l6", theme: "elec", orig: null, sk: cutL6(), alt: "자전거 발전기에 작은 전구를 연결하면 가볍게 밟아도 불이 켜지는데, 전기 주전자를 연결하자 스틱맨이 땀을 뻘뻘 흘리며 페달을 밟는 장면", cap: "전구는 가볍게, 전기 주전자는 땀을 뻘뻘 흘려야 해요" },
     { name: "g2u7l6b", theme: "elec", orig: null, sk: cutL6b(), alt: "똑같이 밝은 두 전등 아래에서 한 스틱맨은 전구가 뜨거워 손부채질을 하고, 다른 스틱맨은 편안히 책을 읽는 장면", cap: "밝기는 같은데 한쪽 전구만 뜨거워요" },
     { name: "g2u7l7", theme: "elec", orig: null, sk: cutL7(), alt: "종이 밑에 막대자석을 두고 쇳가루를 뿌리자 쇳가루가 자석의 두 끝을 잇는 굽은 줄무늬로 늘어서고, 스틱맨이 그 무늬를 들여다보는 장면", cap: "쇳가루가 자석의 두 끝을 잇는 줄무늬로 늘어서요" },

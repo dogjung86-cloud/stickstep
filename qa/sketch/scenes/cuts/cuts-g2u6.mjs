@@ -2,7 +2,7 @@
 // 목록은 Ⅵ단원 v5 세션이 낸 것(D:\Brilliant Science\output\g2-v5\u6\concept-cuts.md): g2u6l1 ~ g2u6l6 열한 줄.
 // 색의 뜻: 허용된 흐름과 되돌아가는 것은 초록·청록 화살표, 막힌 것은 빨간 가위표와 회색 화살표.
 // 공기는 하늘색 화살표. 산소(새 상자)는 빨간 화살표, 이산화 탄소(빈 상자)는 파란 화살표. 연료는 주황.
-// 두 고리 길(g2u6l3b)은 빨강과 파랑을 쓰지 않는다(회색 길에 짙은 회색 화살표).
+// 두 고리 철길(g2u6l3b)은 빨강과 파랑을 쓰지 않는다(갈색 자갈 철길에 짙은 회색 화살표).
 import { Sk, C, curve, dense, circ, ell, poly, rrect, arrow, emark, drop, xmark, sparkle, heart, hash } from "../../lib/sk.mjs";
 import { drawFigure, drawHead, handDot, pose, TEACHER, STUDENT } from "../../lib/figure.mjs";
 import { orange } from "../../lib/props.mjs";
@@ -227,41 +227,70 @@ function cutL3() {
   return sk;
 }
 
-/* ---------- g2u6l3b: 가운데 정류장 하나에서 만나는 두 고리 길을 순환 버스가 돈다 ---------- */
+/* ---------- g2u6l3b: 가운데 역 하나에서 만나는 두 고리 철길(산길 고리와 바닷길 고리)을 꼬마 기차가 돈다 ---------- */
 function cutL3b() {
   const sk = new Sk(W, H, { id: "f" });
   const cx = 436, cy = 336, AR = 396, BR = 224, AL = 276, BL = 160, PI = Math.PI, ARW = "#39424E";
   const P = t => { const sn = Math.sin(t), r = sn >= 0; return [cx + (r ? AR : AL) * sn, cy + (r ? BR : BL) * Math.sin(2 * t)]; };
   const seg = (t0, t1, n = 24) => Array.from({ length: n + 1 }, (_, i) => P(t0 + (t1 - t0) * i / n));
-  // 숲(작은 고리 안)과 마을(큰 고리 안)
-  const tree = (x, y, k, sd) => { shp(sk, box(x - 7 * k, y - 34 * k, x + 7 * k, y), WOODD, sd, 4.5); shp(sk, circ(x, y - 62 * k, 36 * k, { over: 0.05, seed: sd + 2, lump: 0.07 }), "#7CC47F", sd + 3, 5.5); };
-  tree(cx - 206, cy + 52, 0.9, 11); tree(cx - 150, cy + 64, 1.15, 17); tree(cx - 96, cy + 50, 0.85, 23);
-  const house = (x, y, k, col, sd) => { shp(sk, box(x - 38 * k, y - 58 * k, x + 38 * k, y), "#F6EFDC", sd, 5); shp(sk, poly([[x - 52 * k, y - 56 * k], [x, y - 104 * k], [x + 52 * k, y - 56 * k]], 3), col, sd + 2, 5.5); shp(sk, box(x - 10 * k, y - 30 * k, x + 10 * k, y), WOODD, sd + 4, 4); };
-  house(cx + 150, cy + 56, 0.85, "#F08A2E", 31); house(cx + 236, cy + 70, 1.08, "#C9A7E0", 37); house(cx + 320, cy + 54, 0.82, "#F7C948", 43);
-  // 길: 하나로 이어진 두 고리
-  const road = seg(0, PI * 2, 260);
-  sk.ink(road, { w: 58, color: "#5A6470", seed: 51, wob: 0.5 }); sk.ink(road, { w: 49, color: "#DDE2E8", seed: 51, wob: 0.5 });
-  // 가운데 정류장
-  shp(sk, circ(cx, cy, 44, { over: 0.05, seed: 55 }), "#FFD84A", 56, 7);
-  shp(sk, rrect(cx - 19, cy - 13, 38, 24, 6), C.white, 58, 4.5);
-  sk.dot(cx - 10, cy + 13, 4.5); sk.dot(cx + 10, cy + 13, 4.5);
+  // 산(작은 고리 안): 두 봉우리 언덕과 나무
+  const hill = curve([[cx - 262, cy + 58], [cx - 222, cy - 2], [cx - 184, cy - 38], [cx - 150, cy - 6], [cx - 124, cy - 22], [cx - 92, cy + 20], [cx - 76, cy + 58]], false, 4);
+  shp(sk, [...hill, [cx - 262, cy + 58]], "#9FD38A", 11, 6);
+  const tree = (x, y, k, sd) => { shp(sk, box(x - 6 * k, y - 30 * k, x + 6 * k, y), WOODD, sd, 4.5); shp(sk, poly([[x - 26 * k, y - 26 * k], [x, y - 84 * k], [x + 26 * k, y - 26 * k]], 3), "#3FAE5A", sd + 2, 5); };
+  tree(cx - 196, cy + 6, 0.8, 13); tree(cx - 150, cy + 30, 0.95, 17); tree(cx - 112, cy + 40, 0.7, 23);
+  // 바다(큰 고리 안): 물결과 작은 돛단배
+  const sea = curve([[cx + 96, cy + 30], [cx + 120, cy - 40], [cx + 220, cy - 66], [cx + 318, cy - 44], [cx + 352, cy + 18], [cx + 300, cy + 74], [cx + 190, cy + 86], [cx + 112, cy + 66]], true, 4);
+  shp(sk, sea, "#A8E0E4", 31, 5.5, { line: "#3FA9B5" });
+  for (const [x, y, i] of [[cx + 150, cy + 40, 0], [cx + 266, cy + 50, 1], [cx + 310, cy - 8, 2], [cx + 158, cy - 18, 3]]) sk.ink(curve([[x - 18, y], [x - 9, y - 6], [x, y], [x + 9, y - 6], [x + 18, y]]), { w: 4.5, color: "#3FA9B5", seed: 35 + i, wob: 0.2 });
+  {
+    const bx = cx + 232, by = cy + 18;
+    shp(sk, poly([[bx - 30, by], [bx + 30, by], [bx + 20, by + 16], [bx - 20, by + 16]], 3), WOODD, 41, 5);
+    sk.ink(dense([[bx, by], [bx, by - 62]]), { w: 4.5, seed: 43, wob: 0.1 });
+    shp(sk, poly([[bx + 3, by - 60], [bx + 3, by - 6], [bx + 38, by - 6]], 3), "#F6EFDC", 45, 4.5);
+  }
+  // 철길: 하나로 이어진 두 고리(자갈 바닥, 침목, 레일 둘)
+  const road = seg(0, PI * 2, 520);
+  sk.ink(road, { w: 54, color: "#C9B79A", seed: 51, wob: 0.4 });
+  const norm = (i) => { const a = road[Math.max(0, i - 1)], b = road[Math.min(road.length - 1, i + 1)], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; return [-(b[1] - a[1]) / L, (b[0] - a[0]) / L]; };
+  let acc = 0;
+  for (let i = 1; i < road.length; i++) {
+    acc += Math.hypot(road[i][0] - road[i - 1][0], road[i][1] - road[i - 1][1]);
+    if (acc < 24) continue;
+    acc = 0;
+    const [nx, ny] = norm(i), [x, y] = road[i];
+    sk.ink(dense([[x - nx * 19, y - ny * 19], [x + nx * 19, y + ny * 19]]), { w: 6, color: "#8A6A4A", seed: 1000 + i, wob: 0.1 });
+  }
+  for (const sg of [-1, 1]) {
+    const rail = road.map((p, i) => { const [nx, ny] = norm(i); return [p[0] + sg * nx * 11, p[1] + sg * ny * 11]; });
+    sk.ink(rail, { w: 5, color: "#5A6470", seed: 61 + sg, wob: 0.2 });
+  }
   // 달리는 방향(한 방향으로 이어진다)
   for (const [t0, t1, i] of [[0.2, 0.47, 0], [1.22, 1.6, 1], [1.92, 2.3, 2], [2.62, 2.93, 3], [PI + 0.22, PI + 0.56, 4], [PI + 1.3, PI + 1.84, 5], [PI + 2.56, PI + 2.92, 6]])
-    arrow(sk, seg(t0, t1), { w: 8, color: ARW, seed: 61 + i * 5, head: 22, wob: 0.2 });
-  // 버스(큰 고리 아래쪽을 지나는 중)
+    arrow(sk, seg(t0, t1), { w: 8, color: ARW, seed: 71 + i * 5, head: 22, wob: 0.2 });
+  // 가운데 역(두 고리가 만나는 곳)
+  shp(sk, rrect(cx - 46, cy - 2, 92, 20, 6), "#C3CAD2", 81, 5.5);
+  shp(sk, rrect(cx - 32, cy - 40, 64, 40, 6), "#F6EFDC", 83, 5.5);
+  shp(sk, poly([[cx - 44, cy - 38], [cx, cy - 70], [cx + 44, cy - 38]], 3), "#F7C948", 85, 5.5);
+  shp(sk, rrect(cx - 9, cy - 28, 18, 28, 4), WOODD, 87, 4);
+  // 꼬마 기차(큰 고리 아래쪽을 오른쪽으로 지나는 중): 앞의 기관차와 뒤의 객차
   const b = P(PI / 4);
-  sk.at(b[0], b[1] - 16, 1, () => {
-    shp(sk, rrect(-84, -44, 168, 76, 16), "#F58A2E", 71, 7);
-    for (const [x, i] of [[-70, 0], [-26, 1], [18, 2]]) shp(sk, rrect(x, -32, 36, 30, 5), "#DCEFFA", 73 + i * 2, 4);
-    shp(sk, rrect(60, -32, 18, 44, 4), "#DCEFFA", 81, 4);
-    for (const x of [-48, 46]) { shp(sk, circ(x, 34, 17, { over: 0, seed: 83 + x }), "#39424E", 85 + x, 5); sk.dot(x, 34, 5.5, "#C9D2DE"); }
+  sk.at(b[0], b[1] - 18, 1, () => {
+    // 객차
+    shp(sk, rrect(-118, -36, 92, 56, 12), "#7CC47F", 91, 6.5);
+    for (const [x, i] of [[-104, 0], [-70, 1]]) shp(sk, rrect(x, -26, 26, 22, 5), "#DCEFFA", 93 + i * 2, 4);
+    // 잇개
+    sk.ink(dense([[-26, 6], [-12, 6]]), { w: 6, seed: 97, wob: 0.1 });
+    // 기관차: 몸통, 기관사 칸, 굴뚝, 앞 둥근 판
+    shp(sk, rrect(-14, -14, 96, 34, 10), "#F7C948", 101, 6.5);
+    shp(sk, rrect(-14, -50, 38, 40, 7), "#F7C948", 103, 6.5);
+    shp(sk, rrect(-6, -42, 22, 18, 4), "#DCEFFA", 105, 4);
+    shp(sk, rrect(50, -42, 16, 30, 4), ARW, 107, 4.5);
+    shp(sk, circ(84, 3, 15, { over: 0.05, seed: 109 }), "#E9EEF3", 110, 5);
+    for (const x of [-100, -44, 4, 58]) { shp(sk, circ(x, 24, 13, { over: 0, seed: 113 + x }), ARW, 115 + x, 5); sk.dot(x, 24, 4.5, "#C9D2DE"); }
   });
-  // 정류장 표지판과 기다리는 학생
+  // 기다리며 손을 흔드는 학생
   const GY = 706, kx = cx - 6, ks = 0.44;
-  ground(sk, GY, 91, cx - 96, cx + 122, { w: 7 });
-  thin(sk, 0.8, () => sk.ink(dense([[cx + 72, GY], [cx + 72, 552]]), { w: 7, seed: 93, wob: 0.2 }));
-  shp(sk, circ(cx + 72, 532, 25, { over: 0.05, seed: 95 }), "#3FAE5A", 96, 5.5);
-  shp(sk, rrect(cx + 59, 523, 26, 16, 4), C.white, 98, 3.5);
+  ground(sk, GY, 121, cx - 96, cx + 122, { w: 7 });
   const PK = pose({ elL: [-86, -300], haL: [-126, -386], tilt: -0.06 });
   drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student" });
   return sk;
@@ -492,7 +521,7 @@ export function cuts() {
     { name: "g2u6l2", theme: "body", orig: null, sk: cutL2(), alt: "블록으로 쌓은 큰 성은 벽의 작은 문을 지나지 못하고, 스틱맨이 낱개로 떼어 낸 블록만 문을 지나가는 장면", cap: "큰 성은 작은 문을 못 지나가고, 낱개로 뗀 블록만 문을 지나가요" },
     { name: "g2u6l2b", theme: "body", orig: null, sk: cutL2b(), alt: "엎지른 물을 매끈한 비닐로 닦는 스틱맨의 탁자에는 물이 그대로 남아 있고, 올이 빽빽한 수건으로 닦는 스틱맨의 탁자는 말라 있는 장면", cap: "반들반들한 비닐은 물을 못 닦고, 올이 빽빽한 수건은 물을 빨아들여요" },
     { name: "g2u6l3", theme: "body", orig: null, sk: cutL3(), alt: "비스듬히 내려다본 날개 넷짜리 회전문을 한 사람이 화살표 방향으로 지나가고 다음 사람이 차례를 기다리며, 반대쪽에서 거꾸로 들어가려는 사람은 문 날개에 막혀 서 있는 장면", cap: "회전문은 화살표 쪽으로만 돌아서, 거꾸로 들어가려는 사람은 날개에 막혀요" },
-    { name: "g2u6l3b", theme: "body", orig: null, sk: cutL3b(), alt: "가운데 정류장 하나에서 만나는 크고 작은 두 고리 모양의 길을 순환 버스가 한 방향으로 달리고, 작은 고리 안에는 숲이, 큰 고리 안에는 마을이 있는 장면", cap: "버스는 숲 고리와 마을 고리를 번갈아 돌며 가운데 정류장을 지나요" },
+    { name: "g2u6l3b", theme: "body", orig: null, sk: cutL3b(), alt: "가운데 역 하나에서 만나는 크고 작은 두 고리 모양의 철길을 꼬마 기차가 한 방향으로 달리고, 작은 고리 안에는 산이, 큰 고리 안에는 바다가 있는 장면", cap: "꼬마 기차는 산길 고리와 바닷길 고리를 번갈아 돌며 가운데 역을 지나요" },
     { name: "g2u6l4", theme: "body", orig: null, sk: cutL4(), alt: "위쪽에서는 스틱맨이 손풀무의 손잡이를 벌려 풀무가 부풀며 공기가 들어가고, 아래쪽에서는 손잡이를 오므려 풀무가 납작해지며 공기가 모닥불 쪽으로 밀려 나가는 장면", cap: "풀무를 벌려 안이 넓어지면 공기가 들어오고, 오므려 좁아지면 공기가 밀려 나가요" },
     { name: "g2u6l4b", theme: "body", orig: null, sk: cutL4b(), alt: "집 문 앞에서 배달원이 새 상자를 건네고 집주인은 다 쓴 빈 상자를 건네며, 두 상자 곁의 화살표가 서로 반대 방향을 가리키는 장면", cap: "새 상자는 집으로, 빈 상자는 밖으로 서로 반대로 오가요" },
     { name: "g2u6l5", theme: "body", orig: null, sk: cutL5(), alt: "스틱맨이 방에서 생긴 쓰레기를 봉투에 담아 묶어 문밖 수거함에 내놓고, 방 안은 깨끗하게 반짝이는 장면", cap: "방에서 생긴 쓰레기를 묶어 문밖 수거함에 내놓아요" },

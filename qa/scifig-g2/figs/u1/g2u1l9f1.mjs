@@ -1,11 +1,12 @@
-// g2u1l9f1 원유의 증류탑: 원유 탱크 → 가열로(약 350 ℃) → 증류탑 아래쪽으로 들어간다. 탑은 세로로 잘라 속을 보인다(선반, 덮개,
-// 선반 위 액체, 넘친 액체가 내려가는 관, 위로 가는 기체와 아래로 가는 액체). 탑 옆 온도 띠는 아래가 붉고 위가 푸르다.
-// 오른쪽에 높이마다 뽑아내는 관, 산물 이름, 끓는점 범위(한국석유공사, 2024), 작은 쓰임 그림. 검산 메모는 g2u1l9f1.md
+// g2u1l9f1 원유의 증류탑: 왼쪽 아래 원통형 가열로(속에 나선 코일과 버너 불꽃)에서 데운 원유가 증류탑 아래쪽으로 들어간다.
+// 탑은 세로로 잘라 속을 보인다(선반, 덮개, 선반 위 액체, 넘친 액체가 내려가는 관, 위로 가는 기체와 아래로 가는 액체).
+// 탑 속 뒷벽은 아래가 붉고 위가 푸르며, 탑 왼쪽 온도 띠도 같다. 오른쪽에는 높이마다 뽑아내는 관 끝에 그 산물을 담은 작은 병,
+// 산물 이름, 끓는점 범위 태그(한국석유공사, 2024)를 둔다. 검산 메모는 g2u1l9f1.md
 export const meta = {
   key: "g2u1l9f1",
   w: 340,
-  h: 412,
-  alt: "가열로에서 데운 원유가 증류탑 아래쪽으로 들어가요. 탑을 세로로 자른 속에는 여러 층의 선반이 있어 기체는 위로, 액체는 아래로 움직여요. 탑은 아래가 뜨겁고 위로 갈수록 온도가 낮아서, 위에서부터 액화 석유 가스, 휘발유, 등유, 경유, 중유가 나오고 맨 아래로 찌꺼기가 빠져요.",
+  h: 408,
+  alt: "왼쪽 아래 가열로의 나선 관을 지나며 데워진 원유가 증류탑 아래쪽으로 들어가요. 탑을 세로로 자른 속에는 여러 층의 선반이 있어 기체는 위로, 액체는 아래로 움직여요. 탑은 아래가 뜨겁고 위로 갈수록 온도가 낮아서 탑 속과 왼쪽 띠를 아래는 붉게, 위는 푸르게 칠했어요. 오른쪽 관 끝의 병에는 위에서부터 액화 석유 가스, 휘발유, 등유, 경유, 중유가 모이고 맨 아래로 찌꺼기가 빠지며, 아래로 갈수록 끓는점이 높고 색이 짙어요.",
 };
 
 export default async function draw(root, kit) {
@@ -19,105 +20,33 @@ export default async function draw(root, kit) {
   P.plate(t, nz, { top: "#FBFCFD", bottom: "#EEF2F6", grain: 0.012 });
 
   // ── 탑 기하 ──
-  const TX = 128, TR = 33; // 탑 가운데, 반지름(폭 66)
+  const TX = 116, TR = 31; // 탑 가운데, 반지름(폭 62)
   const TL = TX - TR, TRt = TX + TR;
-  const WIN0 = 44, WIN1 = 376; // 잘라 낸 창(위, 아래)
-  const DOME = 26; // 지붕 꼭대기
-  const SHELL0 = 40; // 몸통 위 끝
+  const WIN0 = 46, WIN1 = 374; // 잘라 낸 창(위, 아래)
+  const DOME = 30; // 지붕 꼭대기
+  const SHELL0 = 44; // 몸통 위 끝
   const BASE = 388; // 받침
   const WALL = 3;
   const trays = [];
-  for (let k = 0; k < 10; k++) trays.push(62 + k * 28); // 선반 높이(62 ~ 314)
-  const FEED = 334; // 원유가 들어오는 높이(맨 아래 선반 밑)
-  const POOL = 356; // 탑 바닥에 고인 찌꺼기 수면
-  // 산물: 뽑는 높이(그 선반의 액체), 액체 색
+  for (let k = 0; k < 10; k++) trays.push(64 + k * 28); // 선반 높이(64 ~ 316)
+  const FEED = 336; // 원유가 들어오는 높이(맨 아래 선반 밑)
+  const POOL = 358; // 탑 바닥에 고인 찌꺼기 수면
+  const IL = TL + WALL, IR = TRt - WALL;
+  // 산물: 뽑는 높이(그 선반의 액체), 병에 담긴 색
   const prod = [
-    { y: 32, name: "액화 석유 가스", range: "−42~1 ℃", use: "가정용, 자동차 연료", icon: "lpg", col: "#E7F5FF", gas: true },
-    { y: trays[1] - 4, name: "휘발유", range: "30~120 ℃", use: "자동차 연료", icon: "car", col: "#FFF3BF" },
-    { y: trays[3] - 4, name: "등유", range: "150~280 ℃", use: "항공기 연료", icon: "plane", col: "#FFE08A" },
-    { y: trays[5] - 4, name: "경유", range: "230~350 ℃", use: "디젤 엔진 연료", icon: "truck", col: "#F6B94B" },
-    { y: trays[7] - 4, name: "중유", range: "300 ℃ 이상", use: "공장, 배 연료", icon: "ship", col: "#B7702A" },
-    { y: 368, name: "찌꺼기", range: "(아스팔트 원료)", use: "도로 포장", icon: "road", col: "#3A2A1E" },
+    { y: 18, name: "액화 석유 가스", range: "−42~1 ℃", col: "#D0EBFF", gas: true },
+    { y: trays[1] - 4, name: "휘발유", range: "30~120 ℃", col: "#FFF3BF" },
+    { y: trays[3] - 4, name: "등유", range: "150~280 ℃", col: "#FFE08A" },
+    { y: trays[5] - 4, name: "경유", range: "230~350 ℃", col: "#F4B34A" },
+    { y: trays[7] - 4, name: "중유", range: "300 ℃ 이상", col: "#8A5226" },
+    { y: 366, name: "찌꺼기", range: "아스팔트 원료", col: "#2B211A", bottom: true },
   ];
   // 선반 위 액체 색: 높이에 따라 옅은 노랑 → 짙은 갈색
   const trayCol = (k) => ["#FFF6CC", "#FFF0B0", "#FFE48A", "#FFDA70", "#F8C45A", "#F1AE45", "#E2913A", "#C97733", "#AE6230", "#94512B"][k];
   // 온도 색(아래 붉음, 위 푸름): s = 0(위) ~ 1(아래)
   const tempStops = [[0, "#1C7ED6"], [0.3, "#74C0FC"], [0.55, "#FFD43B"], [0.78, "#FD7E14"], [1, "#E03131"]];
 
-  // ── 왼쪽: 온도 띠 ──
-  {
-    const x = 78, y0 = 50, y1 = 372, bw = 9;
-    P.dropShadow(t, (c) => P.rrect(c, x, y0, bw, y1 - y0, 4.5), { dx: 1, dy: 2, blur: 4, a: 0.18 });
-    ctx.save();
-    ctx.beginPath();
-    P.rrect(ctx, x, y0, bw, y1 - y0, 4.5);
-    ctx.fillStyle = P.lg(ctx, 0, y0, 0, y1, tempStops);
-    ctx.fill();
-    ctx.fillStyle = P.lg(ctx, x, 0, x + bw, 0, [[0, "rgba(255,255,255,.45)"], [0.4, "rgba(255,255,255,.1)"], [1, "rgba(0,0,0,.12)"]]);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // ── 원유 탱크와 가열로(왼쪽 아래) ──
-  const tank = { x: 4, y: 314, w: 46, h: 46 };
-  {
-    const { x, y, w: tw, h: th } = tank;
-    P.softShadow(t, x + tw / 2 + 3, y + th + 2, tw * 0.62, 4, 0.22);
-    ctx.save();
-    // 몸통(흰 원통)
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x, y + th);
-    ctx.ellipse(x + tw / 2, y + th, tw / 2, 4, 0, Math.PI, 0, true);
-    ctx.lineTo(x + tw, y);
-    ctx.closePath();
-    ctx.fillStyle = P.lg(ctx, x, 0, x + tw, 0, [[0, "#C5CDD6"], [0.3, "#F7F9FB"], [0.7, "#DDE3EA"], [1, "#A7B1BD"]]);
-    ctx.fill();
-    // 띠와 사다리
-    ctx.strokeStyle = "rgba(110,122,138,.55)";
-    ctx.lineWidth = 0.6;
-    for (const yy of [y + 14, y + 30]) {
-      ctx.beginPath();
-      ctx.ellipse(x + tw / 2, yy, tw / 2, 4, 0, 0, Math.PI);
-      ctx.stroke();
-    }
-    ctx.strokeStyle = "rgba(80,92,108,.8)";
-    ctx.lineWidth = 0.7;
-    ctx.beginPath();
-    ctx.moveTo(x + tw - 9, y - 2);
-    ctx.lineTo(x + tw - 9, y + th + 2);
-    ctx.moveTo(x + tw - 5, y - 2);
-    ctx.lineTo(x + tw - 5, y + th + 3);
-    for (let yy = y + 2; yy < y + th; yy += 4) {
-      ctx.moveTo(x + tw - 9, yy);
-      ctx.lineTo(x + tw - 5, yy + 0.4);
-    }
-    ctx.stroke();
-    // 지붕(얕은 원뿔)
-    ctx.beginPath();
-    ctx.ellipse(x + tw / 2, y, tw / 2, 4, 0, 0, Math.PI * 2);
-    ctx.fillStyle = P.lg(ctx, x, y - 4, x + tw, y + 4, [[0, "#FFFFFF"], [1, "#B9C3CE"]]);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.quadraticCurveTo(x + tw / 2, y - 12, x + tw, y);
-    ctx.ellipse(x + tw / 2, y, tw / 2, 4, 0, 0, Math.PI, false);
-    ctx.closePath();
-    ctx.fillStyle = P.lg(ctx, x, y - 10, x + tw, y, [[0, "#FFFFFF"], [0.6, "#DCE2E9"], [1, "#9EA9B6"]]);
-    ctx.fill();
-    // 원유 방울 표시
-    const dx = x + tw / 2 - 4, dy = y + 24;
-    ctx.beginPath();
-    ctx.moveTo(dx, dy - 7);
-    ctx.bezierCurveTo(dx + 3, dy - 3, dx + 5, dy, dx + 5, dy + 2);
-    ctx.arc(dx, dy + 2, 5, 0, Math.PI);
-    ctx.bezierCurveTo(dx - 5, dy, dx - 3, dy - 3, dx, dy - 7);
-    ctx.fillStyle = P.rg(ctx, dx - 2, dy, 0.3, dx, dy + 1, 6, [[0, "#6B5040"], [1, "#1E1612"]]);
-    ctx.fill();
-    ctx.restore();
-  }
-  const fur = { x: 52, y: 344, w: 38, h: 34 };
-  // 탱크 → 가열로 → 탑으로 가는 관
+  // ── 관 그리기 ──
   const pipe = (pts, wd = 4.2, cols = ["#8C96A3", "#EEF1F5", "#6E7885"]) => {
     ctx.save();
     ctx.lineJoin = "round";
@@ -141,64 +70,143 @@ export default async function draw(root, kit) {
     ctx.stroke();
     ctx.restore();
   };
-  pipe([[tank.x + tank.w - 2, tank.y + 36], [fur.x + 4, tank.y + 36], [fur.x + 4, fur.y + 8]]);
-  // 가열로: 벽돌 상자, 앞 창 속에 불꽃과 구불구불한 관
+  const HOT = ["#C2552F", "#F7C2A0", "#7A3A22"]; // 데운 원유가 지나는 관
+
+  // ── 왼쪽: 온도 띠 ──
+  const BAR = { x: 64, y0: 54, y1: 246, bw: 8 };
   {
-    const { x, y, w: fw, h: fh } = fur;
-    P.softShadow(t, x + fw / 2 + 2, y + fh + 2, fw * 0.62, 3.5, 0.22);
+    const { x, y0, y1, bw } = BAR;
+    P.dropShadow(t, (c) => P.rrect(c, x, y0, bw, y1 - y0, 4), { dx: 1, dy: 2, blur: 4, a: 0.18 });
     ctx.save();
     ctx.beginPath();
-    P.rrect(ctx, x, y, fw, fh, 3);
-    ctx.fillStyle = P.lg(ctx, x, y, x + fw, y + fh, [[0, "#B4583F"], [0.5, "#96432F"], [1, "#6F3020"]]);
+    P.rrect(ctx, x, y0, bw, y1 - y0, 4);
+    ctx.fillStyle = P.lg(ctx, 0, y0, 0, y1, tempStops);
     ctx.fill();
-    // 벽돌 줄눈
-    ctx.strokeStyle = "rgba(255,220,200,.22)";
-    ctx.lineWidth = 0.5;
-    for (let r = 1; r < 6; r++) {
-      const yy = y + r * (fh / 6);
-      ctx.beginPath();
-      ctx.moveTo(x + 1, yy);
-      ctx.lineTo(x + fw - 1, yy);
-      ctx.stroke();
-      for (let cI = 0; cI < 5; cI++) {
-        const xx = x + ((cI + (r % 2) * 0.5) * fw) / 4.5;
-        ctx.beginPath();
-        ctx.moveTo(xx, yy - fh / 6);
-        ctx.lineTo(xx, yy);
-        ctx.stroke();
-      }
-    }
-    // 불 창
-    const wx = x + 6, wy = y + 9, ww = fw - 12, wh = fh - 13;
+    ctx.fillStyle = P.lg(ctx, x, 0, x + bw, 0, [[0, "rgba(255,255,255,.45)"], [0.4, "rgba(255,255,255,.1)"], [1, "rgba(0,0,0,.12)"]]);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ── 왼쪽 아래: 원통형 가열로(앞을 잘라 속의 나선 관과 버너 불꽃을 보인다) ──
+  const FUR = { cx: 33, x0: 10, x1: 56, y0: 292, y1: 364, ry: 5 };
+  const COIL = { cx: 33, rx: 11.5, ry: 3.2, yTop: 310, yBot: 346, turns: 3.5 };
+  const coilPt = (s) => {
+    const th = Math.PI * 2 * COIL.turns * s + Math.PI; // s = 0(아래 왼쪽) → 1(위)
+    return [COIL.cx + COIL.rx * Math.cos(th), COIL.yBot - (COIL.yBot - COIL.yTop) * s + COIL.ry * Math.sin(th), Math.sin(th)];
+  };
+  // 원유가 들어오는 관(아래에서 가열로 바닥으로)과 나가는 관(가열로 위에서 탑 아래쪽으로)
+  pipe([[2, 384], [COIL.cx - COIL.rx, 384], [COIL.cx - COIL.rx, FUR.y1 + 2]], 4.4);
+  const OUT = [[FUR.x1 - 2, 300], [74, 300], [74, FEED], [TL + 1, FEED]];
+  pipe(OUT, 4.6, HOT);
+  {
+    const { x0, x1, y0, y1, ry, cx } = FUR;
+    const rx = (x1 - x0) / 2;
+    P.softShadow(t, cx + 3, y1 + 3, rx * 1.25, 4, 0.22);
+    ctx.save();
+    // 몸통(철판 원통)
     ctx.beginPath();
-    P.rrect(ctx, wx, wy, ww, wh, 2);
-    ctx.fillStyle = "#2A1410";
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x0, y1);
+    ctx.ellipse(cx, y1, rx, ry, 0, Math.PI, 0, true);
+    ctx.lineTo(x1, y0);
+    ctx.closePath();
+    ctx.fillStyle = P.lg(ctx, x0, 0, x1, 0, [[0, "#7F8A97"], [0.24, "#EEF2F6"], [0.5, "#C9D1DA"], [1, "#6A7582"]]);
     ctx.fill();
-    ctx.clip();
-    ctx.fillStyle = P.rg(ctx, wx + ww / 2, wy + wh, 1, wx + ww / 2, wy + wh, wh * 1.1, [[0, "rgba(255,210,90,.95)"], [0.5, "rgba(255,120,40,.7)"], [1, "rgba(160,40,20,0)"]]);
-    ctx.fillRect(wx, wy, ww, wh);
-    for (let k = 0; k < 5; k++) {
-      const fx = wx + 3 + k * (ww - 6) / 4, fh2 = wh * (0.55 + rnd() * 0.35);
+    // 이음 띠
+    ctx.strokeStyle = "rgba(70,82,96,.5)";
+    ctx.lineWidth = 0.7;
+    for (const yy of [y0 + 5, y1 - 3]) {
       ctx.beginPath();
-      ctx.moveTo(fx - 2.6, wy + wh);
-      ctx.quadraticCurveTo(fx - 2, wy + wh - fh2 * 0.6, fx, wy + wh - fh2);
-      ctx.quadraticCurveTo(fx + 2, wy + wh - fh2 * 0.6, fx + 2.6, wy + wh);
-      ctx.fillStyle = P.lg(ctx, 0, wy + wh - fh2, 0, wy + wh, [[0, "rgba(255,240,170,.2)"], [0.5, "rgba(255,190,70,.95)"], [1, "rgba(255,120,40,1)"]]);
+      ctx.ellipse(cx, yy, rx, ry, 0, 0, Math.PI);
+      ctx.stroke();
+    }
+    // 윗면
+    ctx.beginPath();
+    ctx.ellipse(cx, y0, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fillStyle = P.lg(ctx, x0, y0 - ry, x1, y0 + ry, [[0, "#FFFFFF"], [1, "#A9B3BF"]]);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(70,82,96,.55)";
+    ctx.stroke();
+    // 앞을 잘라 낸 창
+    const wx0 = x0 + 5, wx1 = x1 - 5, wy0 = y0 + 9, wy1 = y1 - 4;
+    ctx.beginPath();
+    P.rrect(ctx, wx0, wy0, wx1 - wx0, wy1 - wy0, 3);
+    ctx.fillStyle = "#2A1712";
+    ctx.fill();
+    ctx.save();
+    ctx.clip();
+    ctx.fillStyle = P.rg(ctx, cx, wy1, 1, cx, wy1, (wy1 - wy0) * 1.05, [[0, "rgba(255,190,90,.85)"], [0.45, "rgba(235,95,40,.55)"], [1, "rgba(120,30,20,0)"]]);
+    ctx.fillRect(wx0, wy0, wx1 - wx0, wy1 - wy0);
+    // 나선 관: 뒤쪽 반 바퀴 먼저(어둡게)
+    const N1 = 220;
+    const seg = (front) => {
+      for (let i = 0; i < N1; i++) {
+        const a = coilPt(i / N1), b = coilPt((i + 1) / N1);
+        if ((a[2] > 0) !== front) continue;
+        ctx.beginPath();
+        ctx.moveTo(a[0], a[1]);
+        ctx.lineTo(b[0], b[1]);
+        ctx.strokeStyle = front ? "#5A1E10" : "#3A1A12";
+        ctx.lineWidth = 3.6;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(a[0], a[1]);
+        ctx.lineTo(b[0], b[1]);
+        ctx.strokeStyle = front ? P.css(P.hex("#FF8A3D"), 0.95) : "rgba(150,60,30,.85)";
+        ctx.lineWidth = 2.4;
+        ctx.stroke();
+        if (front) {
+          ctx.beginPath();
+          ctx.moveTo(a[0] - 0.3, a[1] - 0.8);
+          ctx.lineTo(b[0] - 0.3, b[1] - 0.8);
+          ctx.strokeStyle = "rgba(255,226,170,.8)";
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    };
+    ctx.lineCap = "round";
+    seg(false);
+    // 버너 불꽃(바닥)
+    for (const fx of [cx - 11, cx, cx + 11]) {
+      const fy = wy1, fh = 8 + rnd() * 2;
+      ctx.beginPath();
+      ctx.moveTo(fx - 3.2, fy);
+      ctx.quadraticCurveTo(fx - 2.6, fy - fh * 0.6, fx, fy - fh);
+      ctx.quadraticCurveTo(fx + 2.6, fy - fh * 0.6, fx + 3.2, fy);
+      ctx.closePath();
+      ctx.fillStyle = P.lg(ctx, 0, fy - fh, 0, fy, [[0, "rgba(255,235,160,.25)"], [0.45, "rgba(255,170,60,.95)"], [1, "rgba(70,140,255,.95)"]]);
       ctx.fill();
     }
-    // 불 위를 지나는 관(구불구불)
-    ctx.strokeStyle = "#5E6772";
-    ctx.lineWidth = 2;
+    seg(true);
+    ctx.restore();
+    // 창 테두리(잘린 철판)
     ctx.beginPath();
-    for (let k = 0; k <= 30; k++) {
-      const s = k / 30, xx = wx + 1 + s * (ww - 2), yy = wy + 4 + Math.sin(s * Math.PI * 4) * 2;
-      k ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy);
-    }
+    P.rrect(ctx, wx0, wy0, wx1 - wx0, wy1 - wy0, 3);
+    ctx.strokeStyle = "rgba(225,230,236,.95)";
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(60,70,82,.8)";
+    ctx.lineWidth = 0.6;
     ctx.stroke();
     ctx.restore();
   }
-  // 가열로 → 탑 아래쪽
-  pipe([[fur.x + fur.w - 4, fur.y + 8], [fur.x + fur.w - 4, FEED], [TL + 1, FEED]], 4.6, ["#B65E3C", "#F6C8A8", "#7A3A22"]);
+  // 나선 관의 들어오는 끝과 나가는 끝(창 밖 몸통 위로 짧게 보이는 관)
+  {
+    const a = coilPt(0), b = coilPt(1);
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#7A3A22";
+    ctx.lineWidth = 3.4;
+    ctx.beginPath();
+    ctx.moveTo(a[0], a[1]);
+    ctx.lineTo(a[0], FUR.y1 + 1);
+    ctx.moveTo(b[0], b[1]);
+    ctx.lineTo(b[0], 300);
+    ctx.lineTo(FUR.x1 - 1, 300);
+    ctx.stroke();
+    ctx.restore();
+  }
 
   // ── 증류탑 ──
   P.softShadow(t, TX + 4, BASE + 3, TR * 1.5, 5, 0.22);
@@ -229,15 +237,15 @@ export default async function draw(root, kit) {
   ctx.fillStyle = P.rg(ctx, TX - 12, DOME + 3, 2, TX, SHELL0, TR * 1.1, [[0, "#FFFFFF"], [0.5, "#D9DFE6"], [1, "#8C96A2"]]);
   ctx.fill();
   ctx.restore();
-  // 잘라 낸 속: 안쪽 뒷벽(아래는 붉게 달아 있고 위로 갈수록 식는다)
-  const IL = TL + WALL, IR = TRt - WALL;
+  // 잘라 낸 속: 뒷벽은 아래가 붉게 달아 있고 위로 갈수록 식어 푸르다
   ctx.save();
   ctx.beginPath();
   ctx.rect(IL, WIN0, IR - IL, WIN1 - WIN0);
   ctx.clip();
-  ctx.fillStyle = P.lg(ctx, IL, 0, IR, 0, [[0, "#2C333B"], [0.5, "#49525D"], [0.85, "#5D6772"], [1, "#3B434C"]]);
+  ctx.fillStyle = P.lg(ctx, 0, WIN0, 0, WIN1, [[0, "#1F4E80"], [0.28, "#2F5D86"], [0.55, "#5A4E5C"], [0.8, "#80392C"], [1, "#8E2A20"]]);
   ctx.fillRect(IL, WIN0, IR - IL, WIN1 - WIN0);
-  ctx.fillStyle = P.lg(ctx, 0, WIN0, 0, WIN1, [[0, "rgba(80,150,230,.30)"], [0.45, "rgba(255,210,90,.10)"], [0.8, "rgba(255,120,40,.26)"], [1, "rgba(240,60,40,.38)"]]);
+  // 둥근 뒷벽의 그늘(가운데 밝고 양옆 어둡게)
+  ctx.fillStyle = P.lg(ctx, IL, 0, IR, 0, [[0, "rgba(0,0,0,.38)"], [0.45, "rgba(255,255,255,.06)"], [0.8, "rgba(0,0,0,.08)"], [1, "rgba(0,0,0,.34)"]]);
   ctx.fillRect(IL, WIN0, IR - IL, WIN1 - WIN0);
   // 탑 바닥에 고인 찌꺼기(짙은 액체)
   ctx.fillStyle = P.lg(ctx, 0, POOL, 0, WIN1, [[0, "#4A3626"], [1, "#22180F"]]);
@@ -252,13 +260,12 @@ export default async function draw(root, kit) {
   const vaporArrows = [], liquidArrows = [];
   trays.forEach((ty, k) => {
     const dcLeft = k % 2 === 0; // 내려가는 관이 왼쪽(짝수 선반)
-    const dcW = 11;
+    const dcW = 10;
     const plateL = dcLeft ? IL + dcW : IL, plateR = dcLeft ? IR : IR - dcW;
-    // 내려가는 관(칸막이와 벽 사이로 액체가 떨어진다): 이 선반에서 아래 선반 바로 위까지
     const nextY = k < trays.length - 1 ? trays[k + 1] : FEED - 6;
     const bx = dcLeft ? IL + dcW : IR - dcW;
     const lc = trayCol(k);
-    ctx.fillStyle = P.css(P.hex(lc), 0.75);
+    ctx.fillStyle = P.css(P.hex(lc), 0.78);
     if (dcLeft) ctx.fillRect(IL, ty - 1, dcW - 0.6, nextY - ty - 3);
     else ctx.fillRect(IR - dcW + 0.6, ty - 1, dcW - 0.6, nextY - ty - 3);
     liquidArrows.push([[dcLeft ? IL + dcW / 2 - 0.5 : IR - dcW / 2 + 0.5, ty + 3], [dcLeft ? IL + dcW / 2 - 0.5 : IR - dcW / 2 + 0.5, nextY - 6]]);
@@ -266,7 +273,7 @@ export default async function draw(root, kit) {
     ctx.fillStyle = "#C3CBD4";
     ctx.fillRect(bx - 0.7, ty - 4, 1.4, nextY - ty);
     // 판 위 액체(얕게 고인다, 넘침 둑 높이까지)
-    ctx.fillStyle = P.lg(ctx, 0, ty - 4, 0, ty, [[0, P.css(P.hex(lc), 0.9)], [1, P.css(P.srgb(P.mixc(P.lin(P.hex(lc)), [0, 0, 0], 0.25)), 0.95)]]);
+    ctx.fillStyle = P.lg(ctx, 0, ty - 4, 0, ty, [[0, P.css(P.hex(lc), 0.92)], [1, P.css(P.srgb(P.mixc(P.lin(P.hex(lc)), [0, 0, 0], 0.25)), 0.96)]]);
     ctx.fillRect(plateL, ty - 4, plateR - plateL, 4);
     ctx.strokeStyle = "rgba(255,255,255,.7)";
     ctx.lineWidth = 0.6;
@@ -277,28 +284,27 @@ export default async function draw(root, kit) {
     // 판(잘린 면)
     ctx.fillStyle = P.lg(ctx, 0, ty, 0, ty + 2.2, [[0, "#EEF2F6"], [1, "#9AA5B2"]]);
     ctx.fillRect(plateL, ty, plateR - plateL, 2.2);
-    // 덮개: 판 구멍 위의 뒤집힌 컵, 가장자리로 기체가 거품이 되어 액체를 뚫는다.
-    // 위 선반에서 액체가 내려오는 관(내려가는 관)의 아래 자리에는 덮개도 기체 화살표도 두지 않는다(그 관으로는 액체만 내려간다)
+    // 덮개: 판 구멍 위의 뒤집힌 컵. 위 선반의 내려가는 관이 내려앉는 자리에는 덮개도 기체 화살표도 두지 않는다.
     const nCap = 3;
-    const inlet = k === 0 ? null : (k - 1) % 2 === 0 ? [IL, IL + dcW] : [IR - dcW, IR]; // 위 선반의 내려가는 관이 차지한 가로 자리
+    const inlet = k === 0 ? null : (k - 1) % 2 === 0 ? [IL, IL + dcW] : [IR - dcW, IR];
     for (let c = 0; c < nCap; c++) {
       const cx = plateL + ((plateR - plateL) * (c + 0.5)) / nCap;
-      if (inlet && cx + 6.5 > inlet[0] && cx - 6.5 < inlet[1]) {
+      if (inlet && cx + 6 > inlet[0] && cx - 6 < inlet[1]) {
         rnd();
-        rnd(); // 거품 자리 난수 몫은 넘겨 다른 덮개의 거품을 그대로 둔다
+        rnd();
         continue;
       }
       ctx.fillStyle = P.lg(ctx, cx - 4, ty - 8, cx + 4, ty - 3, [[0, "#F4F6F8"], [0.5, "#B9C2CC"], [1, "#7D8794"]]);
       ctx.beginPath();
-      ctx.moveTo(cx - 4.2, ty - 2.2);
-      ctx.lineTo(cx - 4.2, ty - 5.5);
-      ctx.quadraticCurveTo(cx - 4.2, ty - 8.6, cx, ty - 8.6);
-      ctx.quadraticCurveTo(cx + 4.2, ty - 8.6, cx + 4.2, ty - 5.5);
-      ctx.lineTo(cx + 4.2, ty - 2.2);
+      ctx.moveTo(cx - 4, ty - 2.2);
+      ctx.lineTo(cx - 4, ty - 5.5);
+      ctx.quadraticCurveTo(cx - 4, ty - 8.4, cx, ty - 8.4);
+      ctx.quadraticCurveTo(cx + 4, ty - 8.4, cx + 4, ty - 5.5);
+      ctx.lineTo(cx + 4, ty - 2.2);
       ctx.closePath();
       ctx.fill();
       ctx.fillStyle = "rgba(255,255,255,.85)";
-      for (const dx of [-5.6, 5.6]) {
+      for (const dx of [-5.4, 5.4]) {
         ctx.beginPath();
         ctx.arc(cx + dx, ty - 2.6 - rnd() * 1.2, 0.9, 0, Math.PI * 2);
         ctx.fill();
@@ -306,16 +312,14 @@ export default async function draw(root, kit) {
       if (k > 0) vaporArrows.push([[cx, ty - 10], [cx, trays[k - 1] + 6]]);
     }
   });
-  // 맨 아래 선반 밑: 원유가 들어오는 곳(일부는 기체로 위로, 일부는 액체로 아래로)
   {
     const lastY = trays[trays.length - 1];
     for (const c of [0.3, 0.7]) vaporArrows.push([[IL + (IR - IL) * c, FEED - 4], [IL + (IR - IL) * c, lastY + 6]]);
     liquidArrows.push([[TX + 4, FEED + 4], [TX + 4, POOL - 3]]);
-    // 맨 위 선반 위: 남은 기체가 지붕 출구로
     vaporArrows.push([[TX, trays[0] - 10], [TX, WIN0 + 3]]);
   }
   ctx.restore();
-  // 잘린 철판 테두리(양옆 두께)
+  // 잘린 철판 테두리(양옆 두께)와 창의 위아래 자른 선
   ctx.save();
   ctx.fillStyle = "#E1E6EC";
   ctx.strokeStyle = "rgba(70,80,92,.8)";
@@ -324,8 +328,6 @@ export default async function draw(root, kit) {
     ctx.fillRect(x, WIN0, WALL, WIN1 - WIN0);
     ctx.strokeRect(x, WIN0, WALL, WIN1 - WIN0);
   }
-  // 창의 위아래 자른 선
-  ctx.strokeStyle = "rgba(70,80,92,.8)";
   ctx.beginPath();
   ctx.moveTo(TL, WIN0);
   ctx.lineTo(TRt, WIN0);
@@ -334,213 +336,137 @@ export default async function draw(root, kit) {
   ctx.stroke();
   ctx.restore();
 
-  // ── 오른쪽: 뽑아내는 관 ──
-  const PX1 = 184; // 관 끝
+  // ── 오른쪽: 뽑아내는 관과 산물 병 ──
+  const BX = 172; // 병 가운데(관은 여기서 아래로 꺾여 병 입구에 닿는다)
+  const SPOUT = 5; // 꺾인 끝의 길이
   for (const p of prod) {
-    let pts;
-    if (p.gas) pts = [[TX, DOME + 1], [TX, 20], [TX + 8, 16], [PX1 - 6, 16], [PX1 - 6, p.y]];
-    else if (p.icon === "road") pts = [[IR - 2, p.y], [PX1, p.y]];
-    else pts = [[TRt - 1, p.y], [PX1, p.y]];
-    if (p.gas) pipe([[TX, DOME + 2], [TX, 18], [PX1, 18]], 4);
-    else pipe(pts, 4);
-    // 관 끝 이음매(밸브)
-    const ey = p.gas ? 18 : p.y;
+    const x0 = p.gas ? TX : p.bottom ? IR - 2 : TRt - 1;
+    const head = p.gas ? [[TX, DOME + 2], [TX, p.y]] : [[x0, p.y]];
+    pipe([...head, [BX, p.y], [BX, p.y + SPOUT]], p.bottom ? 4.4 : 4);
+    // 관 속 산물 색 띠
     ctx.save();
-    ctx.beginPath();
-    P.rrect(ctx, PX1 - 2, ey - 4.2, 4.4, 8.4, 1.2);
-    ctx.fillStyle = P.lg(ctx, 0, ey - 4, 0, ey + 4, [[0, "#C3CBD4"], [0.4, "#F4F6F8"], [1, "#6C7682"]]);
-    ctx.fill();
-    ctx.restore();
-    // 관 속 산물 색 띠(무엇이 나오는지)
-    ctx.save();
-    ctx.strokeStyle = P.css(P.hex(p.col), p.gas ? 0.9 : 0.95);
+    ctx.strokeStyle = P.css(P.hex(p.col), 0.95);
     ctx.lineWidth = 1.6;
+    ctx.lineJoin = "round";
     ctx.beginPath();
-    if (p.gas) {
-      ctx.moveTo(TX + 6, 18);
-      ctx.lineTo(PX1 - 5, 18);
-    } else {
-      ctx.moveTo(TRt + 2, p.y);
-      ctx.lineTo(PX1 - 5, p.y);
-    }
+    ctx.moveTo(p.gas ? TX + 6 : TRt + 2, p.y);
+    ctx.lineTo(BX, p.y);
+    ctx.lineTo(BX, p.y + SPOUT - 1);
     ctx.stroke();
     ctx.restore();
   }
-
-  // ── 쓰임 그림(작은 그림) ──
-  const icon = (kind, x, y) => {
+  // 산물 병(가스는 작은 가스통, 액체는 유리병, 찌꺼기는 검은 덩이). 입구는 꺾인 관 끝 바로 아래(y + SPOUT + 1)
+  const bottle = (p) => {
+    const top = p.y + SPOUT + 1;
     ctx.save();
-    ctx.translate(x, y);
-    const wheel = (wx, wy, r) => {
-      ctx.beginPath();
-      ctx.arc(wx, wy, r, 0, Math.PI * 2);
-      ctx.fillStyle = "#24292F";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(wx, wy, r * 0.45, 0, Math.PI * 2);
-      ctx.fillStyle = "#AEB6C0";
-      ctx.fill();
-    };
-    if (kind === "lpg") {
-      // 가스통
-      ctx.beginPath();
-      P.rrect(ctx, 6, -9, 10, 15, 3.5);
-      ctx.fillStyle = P.lg(ctx, 6, 0, 16, 0, [[0, "#9AA4B0"], [0.35, "#FFFFFF"], [1, "#8C96A2"]]);
-      ctx.fill();
-      ctx.fillStyle = "#E8590C";
-      ctx.fillRect(6, -3, 10, 2.4);
+    if (p.gas) {
+      // 가스통: 꼭지(관이 닿는 곳), 둥근 어깨, 띠
+      const x0 = BX - 7, y0 = top + 4, bw = 14, bh = 21;
+      P.softShadow(t, BX + 1, y0 + bh + 1.5, 8.5, 2, 0.2);
       ctx.fillStyle = "#59636E";
-      ctx.fillRect(9.6, -12, 2.8, 3);
-      ctx.fillRect(8.2, -12.8, 5.6, 1.4);
-    } else if (kind === "car") {
+      ctx.fillRect(BX - 3.6, top, 7.2, 1.8);
+      ctx.fillRect(BX - 1.8, top + 1.6, 3.6, 2.6);
       ctx.beginPath();
-      ctx.moveTo(0, 2);
-      ctx.lineTo(1, -2);
-      ctx.lineTo(6, -3);
-      ctx.lineTo(9, -7);
-      ctx.lineTo(17, -7);
-      ctx.lineTo(21, -3);
-      ctx.lineTo(24, -2);
-      ctx.lineTo(24, 2);
-      ctx.closePath();
-      ctx.fillStyle = P.lg(ctx, 0, -7, 0, 2, [[0, "#74C0FC"], [0.5, "#339AF0"], [1, "#1864AB"]]);
+      P.rrect(ctx, x0, y0, bw, bh, 5.5);
+      ctx.fillStyle = P.lg(ctx, x0, 0, x0 + bw, 0, [[0, "#8FA0B3"], [0.32, "#FFFFFF"], [0.62, "#D5DDE6"], [1, "#7C8B9C"]]);
       ctx.fill();
-      ctx.fillStyle = "rgba(230,245,255,.95)";
-      ctx.beginPath();
-      ctx.moveTo(9.6, -6);
-      ctx.lineTo(12.6, -6);
-      ctx.lineTo(12.6, -3.2);
-      ctx.lineTo(7.4, -3.2);
-      ctx.closePath();
-      ctx.moveTo(13.6, -6);
-      ctx.lineTo(16.6, -6);
-      ctx.lineTo(19.4, -3.2);
-      ctx.lineTo(13.6, -3.2);
-      ctx.closePath();
-      ctx.fill();
-      wheel(5.5, 2.4, 2.6);
-      wheel(18.5, 2.4, 2.6);
-    } else if (kind === "plane") {
-      ctx.fillStyle = P.lg(ctx, 0, -5, 0, 2, [[0, "#FFFFFF"], [1, "#B9C3CE"]]);
-      ctx.beginPath();
-      ctx.moveTo(0, -1);
-      ctx.quadraticCurveTo(2, -4, 6, -4);
-      ctx.lineTo(20, -4);
-      ctx.lineTo(24, -10);
-      ctx.lineTo(26, -10);
-      ctx.lineTo(25, -3);
-      ctx.quadraticCurveTo(25, 0.5, 21, 0.5);
-      ctx.lineTo(5, 0.5);
-      ctx.quadraticCurveTo(1, 0.5, 0, -1);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = "rgba(90,105,125,.7)";
-      ctx.lineWidth = 0.5;
-      ctx.stroke();
-      ctx.fillStyle = "#8C96A2";
-      ctx.beginPath();
-      ctx.moveTo(10, -1.4);
-      ctx.lineTo(16, -1.4);
-      ctx.lineTo(11, 4);
-      ctx.lineTo(8.4, 4);
-      ctx.closePath();
-      ctx.fill();
-      ctx.fillStyle = "#4DABF7";
-      for (let k = 0; k < 5; k++) ctx.fillRect(6 + k * 2.6, -3, 1.4, 1.2);
-    } else if (kind === "truck") {
-      ctx.fillStyle = P.lg(ctx, 0, -9, 0, 1, [[0, "#F8F9FA"], [1, "#BAC3CD"]]);
-      ctx.fillRect(0, -9, 16, 10);
-      ctx.strokeStyle = "rgba(90,105,125,.6)";
-      ctx.lineWidth = 0.5;
-      ctx.strokeRect(0, -9, 16, 10);
-      ctx.beginPath();
-      ctx.moveTo(17, 1);
-      ctx.lineTo(17, -6);
-      ctx.lineTo(21.5, -6);
-      ctx.lineTo(24, -2);
-      ctx.lineTo(24, 1);
-      ctx.closePath();
-      ctx.fillStyle = P.lg(ctx, 0, -6, 0, 1, [[0, "#FF8787"], [1, "#C92A2A"]]);
-      ctx.fill();
-      ctx.fillStyle = "rgba(230,245,255,.95)";
-      ctx.fillRect(18.4, -5, 3, 2.4);
-      wheel(4, 2, 2.3);
-      wheel(11, 2, 2.3);
-      wheel(20.5, 2, 2.3);
-    } else if (kind === "ship") {
-      ctx.fillStyle = P.lg(ctx, 0, -8, 0, -3, [[0, "#FFFFFF"], [1, "#C5CDD6"]]);
-      ctx.fillRect(11, -8, 9, 5);
-      ctx.strokeStyle = "rgba(80,92,108,.7)";
-      ctx.lineWidth = 0.5;
-      ctx.strokeRect(11, -8, 9, 5);
-      ctx.fillStyle = "#4DABF7";
-      for (let k = 0; k < 3; k++) ctx.fillRect(12.4 + k * 2.6, -6.6, 1.4, 1.3);
-      ctx.fillStyle = P.lg(ctx, 15, 0, 18, 0, [[0, "#E03131"], [1, "#A51D1D"]]);
-      ctx.fillRect(15, -11.6, 2.8, 3.8);
-      ctx.beginPath();
-      ctx.moveTo(0, -3);
-      ctx.lineTo(25, -3);
-      ctx.lineTo(22, 2.5);
-      ctx.lineTo(2.5, 2.5);
-      ctx.closePath();
-      ctx.fillStyle = P.lg(ctx, 0, -3, 0, 2.5, [[0, "#495057"], [1, "#212529"]]);
-      ctx.fill();
-      ctx.fillStyle = "#C92A2A";
-      ctx.fillRect(1.4, 0.6, 22, 1.4);
-      ctx.strokeStyle = "rgba(77,171,247,.8)";
+      ctx.strokeStyle = "rgba(70,82,96,.75)";
       ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(-1, 4);
-      ctx.quadraticCurveTo(3, 3, 7, 4);
-      ctx.quadraticCurveTo(11, 5, 15, 4);
-      ctx.quadraticCurveTo(19, 3, 26, 4);
       ctx.stroke();
-    } else if (kind === "road") {
+      ctx.fillStyle = "#3D8FE8";
+      ctx.fillRect(x0 + 0.4, y0 + 8, bw - 0.8, 3);
+    } else if (p.bottom) {
+      // 굳은 찌꺼기 덩이(아스팔트)
+      const y = top + 6;
+      P.softShadow(t, BX + 1, y + 7, 10.5, 2.2, 0.22);
       ctx.beginPath();
-      ctx.moveTo(2, 3);
-      ctx.lineTo(9, -7);
-      ctx.lineTo(16, -7);
-      ctx.lineTo(25, 3);
+      ctx.moveTo(BX - 10.5, y + 6);
+      ctx.quadraticCurveTo(BX - 11, y - 2, BX - 5, y - 4);
+      ctx.quadraticCurveTo(BX + 1, y - 7, BX + 6, y - 3);
+      ctx.quadraticCurveTo(BX + 11, y, BX + 10.5, y + 6);
       ctx.closePath();
-      ctx.fillStyle = P.lg(ctx, 0, -7, 0, 3, [[0, "#5C636B"], [1, "#2F343A"]]);
+      ctx.fillStyle = P.rg(ctx, BX - 4, y - 2, 1, BX, y + 2, 12, [[0, "#5A4A3E"], [1, "#1A1410"]]);
       ctx.fill();
-      ctx.strokeStyle = "#FFE066";
-      ctx.lineWidth = 0.9;
-      for (const [a, b] of [[-6, -3.6], [-2.2, 0.6]]) {
+      ctx.fillStyle = "rgba(255,255,255,.35)";
+      ctx.beginPath();
+      ctx.ellipse(BX - 4, y - 2.5, 2.6, 1, -0.4, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // 유리병: 목, 몸통, 담긴 액체(몸통의 3분의 2쯤)
+      const x0 = BX - 7.5, bw = 15, y0 = top + 4, bh = 19;
+      P.softShadow(t, BX + 1, y0 + bh + 1.5, 9, 2, 0.2);
+      const body = () => {
         ctx.beginPath();
-        ctx.moveTo(12.5, a);
-        ctx.lineTo(12.6, b);
-        ctx.stroke();
-      }
+        ctx.moveTo(BX - 2.8, top);
+        ctx.lineTo(BX - 2.8, y0);
+        ctx.quadraticCurveTo(x0, y0 + 0.5, x0, y0 + 4);
+        ctx.lineTo(x0, y0 + bh - 3);
+        ctx.quadraticCurveTo(x0, y0 + bh, x0 + 3, y0 + bh);
+        ctx.lineTo(x0 + bw - 3, y0 + bh);
+        ctx.quadraticCurveTo(x0 + bw, y0 + bh, x0 + bw, y0 + bh - 3);
+        ctx.lineTo(x0 + bw, y0 + 4);
+        ctx.quadraticCurveTo(x0 + bw, y0 + 0.5, BX + 2.8, y0);
+        ctx.lineTo(BX + 2.8, top);
+      };
+      body();
+      ctx.closePath();
+      ctx.fillStyle = "rgba(232,240,248,.9)";
+      ctx.fill();
+      ctx.save();
+      ctx.clip();
+      const ly = y0 + 6;
+      ctx.fillStyle = P.lg(ctx, x0, 0, x0 + bw, 0, [[0, P.tone(p.col, -0.2)], [0.4, P.tone(p.col, 0.06)], [1, P.tone(p.col, -0.28)]]);
+      ctx.fillRect(x0, ly, bw, y0 + bh - ly);
+      ctx.strokeStyle = "rgba(255,255,255,.8)";
+      ctx.lineWidth = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(x0, ly);
+      ctx.lineTo(x0 + bw, ly);
+      ctx.stroke();
+      ctx.restore();
+      body();
+      ctx.strokeStyle = "rgba(78,92,108,.95)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      // 유리 반짝임
+      ctx.strokeStyle = "rgba(255,255,255,.9)";
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.moveTo(x0 + 2.6, y0 + 5);
+      ctx.lineTo(x0 + 2.6, y0 + bh - 4);
+      ctx.stroke();
     }
     ctx.restore();
   };
+  for (const p of prod) bottle(p);
 
   // ── 겹층: 화살표와 라벨 ──
   const sv = S.svgLayer(root, w, h);
   for (const [a, b] of vaporArrows) S.rayArrow(sv, a, b, { color: "#F1F6FB", w: 1.3, hl: 4.6, hw: 2.8 });
   for (const [a, b] of liquidArrows) S.rayArrow(sv, a, b, { color: "#7A4A1C", w: 1.3, hl: 4.6, hw: 2.8 });
-  // 원유가 들어가는 화살표
-  S.rayArrow(sv, [TL - 14, FEED], [TL + 2, FEED], { color: "#C2410C", w: 1.6, hl: 5, hw: 3.2 });
-  // 산물 줄
+  // 데운 원유가 탑으로 들어가는 화살표, 원유가 가열로로 들어가는 화살표
+  S.rayArrow(sv, [TL - 11, FEED], [TL + 2, FEED], { color: "#C2410C", w: 1.6, hl: 5, hw: 3.2 });
+  S.rayArrow(sv, [4, 384], [14, 384], { color: "#4E5968", w: 1.5, hl: 4.6, hw: 3 });
+  // 산물: 이름(굵게)과 그 아래 끓는점 태그
   const TXL = 190;
   const FONT = "'Pretendard Variable', Pretendard, sans-serif";
   for (const p of prod) {
-    const y = p.gas ? 30 : p.y + 4.5;
-    const tx = S.el(sv, "text", { x: TXL, y, "font-size": 14, "font-weight": 800, fill: "#26303D", "letter-spacing": "-0.01em", "font-family": FONT, "paint-order": "stroke", stroke: "#fff", "stroke-width": 3.4, "stroke-linejoin": "round" });
-    S.el(tx, "tspan", {}, p.name + " ");
-    S.el(tx, "tspan", { "font-size": 13.5, "font-weight": 700, fill: "#B4380D" }, p.range);
-    S.label(sv, TXL + 30, y + 17, p.use, { size: 13.5, weight: 600, color: "#4E5968" });
+    const ny = p.y + 4;
+    S.label(sv, TXL, ny, p.name, { size: 14.5, weight: 800 });
+    // 끓는점 태그(흰 바탕 알약)
+    const fs = 13.5;
+    const tw = p.range.length * fs * 0.62 + 12;
+    const ty = ny + 5;
+    S.el(sv, "rect", { x: TXL - 1, y: ty, width: tw, height: 18, rx: 9, fill: "#FFFFFF", stroke: p.bottom ? "#B8C0CA" : "#F0B48C", "stroke-width": 1.1 });
+    S.el(sv, "text", { x: TXL + 5, y: ty + 13.4, "font-size": fs, "font-weight": 700, fill: p.bottom ? "#4E5968" : "#B4380D", "letter-spacing": "-0.01em", "font-family": FONT }, p.range);
   }
   // 왼쪽 라벨
-  S.label(sv, 6, 20, "증류탑", { size: 14 });
-  S.leader(sv, [[50, 15], [TL - 2, 30]], { dot: false });
-  S.label(sv, 6, 62, "온도가\n낮아요", { size: 13.5, lh: 16, color: "#1864AB" });
-  S.label(sv, 6, 252, "온도가\n높아요", { size: 13.5, lh: 16, color: "#C92A2A" });
-  S.label(sv, 6, 166, "선반", { size: 13.5 });
-  S.leader(sv, [[34, 162], [IL + 22, trays[4] + 1]]);
-  S.label(sv, tank.x + tank.w / 2, 384, "원유", { size: 13.5, anchor: "middle" });
-  S.label(sv, fur.x + fur.w / 2, 398, "가열로", { size: 13.5, anchor: "middle" });
-  // 쓰임 그림은 글자 옆 캔버스 위에(라벨 뒤 할로와 겹치지 않게 미리 계산한 자리)
-  for (const p of prod) icon(p.icon, TXL - 1, (p.gas ? 30 : p.y + 4.5) + 15);
+  S.label(sv, 6, 22, "증류탑", { size: 14 });
+  S.leader(sv, [[50, 18], [TL + 4, 36]], { dot: false });
+  S.label(sv, 6, 66, "온도가\n낮아요", { size: 13.5, lh: 16, color: "#1864AB" });
+  S.label(sv, 6, 228, "온도가\n높아요", { size: 13.5, lh: 16, color: "#C92A2A" });
+  S.label(sv, 6, 150, "선반", { size: 13.5 });
+  S.leader(sv, [[36, 146], [IL + 26, trays[3] + 1]]);
+  S.label(sv, 6, 284, "가열로", { size: 13.5 });
+  S.label(sv, 2, 402, "원유", { size: 13.5 });
 }

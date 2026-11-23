@@ -126,31 +126,54 @@ function cutL2b() {
   return sk;
 }
 
-/* ---------- g2u4l3: 넓은 운동장 한가운데의 작은 구슬, 가장자리 멀리의 더 작은 점들 ---------- */
+/* ---------- g2u4l3: 넓은 실내 체육관 마루 한가운데의 작은 구슬, 벽 가까이 멀리의 더 작은 점들 ---------- */
 function cutL3() {
   const sk = new Sk(W, H, { id: "d" });
-  const cx = 480, cy = 474, rx = 436, ry = 196;
-  // 운동장(위에서 비스듬히 본 타원)
-  const field = ell(cx, cy, rx, ry);
-  sk.fill(field, "#EAF4DF", { dx: 0, dy: 0, wob: 0.6, seed: 11 });
+  // 눈높이에서 본 체육관: 앞쪽 마루 끝(넓다)에서 안쪽 벽 아래(좁다)로 모인다
+  const FY0 = 300, FY1 = 732; // 안쪽 벽 아래, 마루 앞 끝(그림 밖까지)
+  const BX0 = 196, BX1 = 764; // 안쪽 벽 아래의 좌우
+  const FX0 = -54, FX1 = 1014; // 마루 앞 끝의 좌우(그림 밖까지)
+  const atY = (y) => { const t = (y - FY0) / (FY1 - FY0); return [BX0 + (FX0 - BX0) * t, BX1 + (FX1 - BX1) * t]; };
+  // 벽(안쪽 벽, 양옆 벽)과 높은 창
   thin(sk, 0.7, () => {
-    sk.ink(ell(cx, cy, rx - 34, ry - 22), { w: 6, color: C.white, seed: 12, wob: 0.6 });
-    sk.ink(field, { w: 9, seed: 13, color: "#7FA86A", wob: 0.8 });
+    // 천장과 양옆 벽: 그림 밖까지 덮는 바탕 한 장(모서리가 둥글게 그려져도 그림 밖이라 보이지 않는다). 마루와 안쪽 벽이 그 위에 놓인다
+    sk.fill(poly([[-80, -80], [W + 80, -80], [W + 80, H + 80], [-80, H + 80]], 4), "#EAEFF5", { dx: 0, dy: 0, wob: 0, seed: 11 });
+    sk.fill(poly([[BX0, 40], [BX1, 40], [BX1, FY0], [BX0, FY0]], 4), "#E3E9F0", { dx: 0, dy: 0, wob: 0.2, seed: 12 });
+    for (let i = 0; i < 5; i++) {
+      const x = BX0 + 38 + i * ((BX1 - BX0 - 76) / 4.6), win = rrect(x, 78, 74, 62, 8);
+      sk.fill(win, "#CFE8F7", { dx: 0, dy: 0, wob: 0.2, seed: 21 + i }); sk.ink(win, { w: 6, seed: 26 + i, wob: 0.3, color: "#7F8C9C" });
+      sk.ink(dense([[x + 37, 80], [x + 37, 138]]), { w: 4, seed: 31 + i, wob: 0.1, color: "#9AA7B4" });
+    }
+    sk.ink(dense([[BX0, 40], [BX0, FY0]]), { w: 7, seed: 36, color: "#9AA7B4", wob: 0.2 });
+    sk.ink(dense([[BX1, 40], [BX1, FY0]]), { w: 7, seed: 37, color: "#9AA7B4", wob: 0.2 });
+    sk.ink(dense([[BX0, 40], [0, -60]]), { w: 6, seed: 38, color: "#B8C2CE", wob: 0.2 });
+    sk.ink(dense([[BX1, 40], [W, -60]]), { w: 6, seed: 39, color: "#B8C2CE", wob: 0.2 });
+  });
+  // 마루(나무 판): 앞 끝에서 안쪽으로 모이는 판자 줄
+  const floor = poly([[BX0, FY0], [BX1, FY0], [FX1, FY1], [FX0, FY1]], 2);
+  sk.fill(floor, "#EDCF98", { dx: 0, dy: 0, wob: 0.2, seed: 41, tex: 0.8, texAng: 1.45, texDark: 0.05 });
+  thin(sk, 0.6, () => {
+    for (let i = 1; i < 12; i++) { const u = i / 12; sk.ink(dense([[BX0 + (BX1 - BX0) * u, FY0], [FX0 + (FX1 - FX0) * u, FY1]]), { w: 3, color: "#D2AE6E", seed: 42 + i, wob: 0.1 }); }
+    sk.ink(dense([[BX0, FY0], [BX1, FY0]]), { w: 8, seed: 55, color: "#8A6A3E" });
+    // 코트 선: 가운데 가로선과 가운데 원
+    const cyL = 470, [lx0, lx1] = atY(cyL);
+    sk.ink(dense([[lx0 + 30, cyL], [lx1 - 30, cyL]]), { w: 6, color: C.white, seed: 56, wob: 0.2 });
+    sk.ink(ell(480, cyL, 104, 34), { w: 6, color: C.white, seed: 57, wob: 0.3 });
   });
   // 한가운데의 작은 구슬(원자핵)
-  const bx = 446, by = 498;
-  sk.fill(ell(bx + 2, by + 15, 18, 5), "#C9D8BC", { dx: 0, dy: 0, wob: 0.2, seed: 21 });
-  ball(sk, bx, by, 15, RED, 22, 5);
-  for (const [a, i] of [[-2.5, 0], [-1.9, 1], [-1.3, 2]]) sk.ink(dense([[bx + 26 * Math.cos(a), by + 26 * Math.sin(a)], [bx + 42 * Math.cos(a), by + 42 * Math.sin(a)]]), { w: 4, color: C.gray, seed: 26 + i, wob: 0.2 });
-  // 내려다보는 학생(작게: 운동장이 넓다)
-  const P = pose({ tilt: 0.3, head: [16, -430], elR: [60, -262], haR: [92, -206] });
-  drawFigure(sk, 540, 512, 0.42, P, { ...STUDENT, name: "student", mirror: true });
-  // 가장자리 멀리 떠 있는 더 작은 점들(전자)
-  const es = [[104, 318], [296, 408], [236, 590], [702, 318], [812, 548], [636, 628], [78, 520], [906, 400]]; // 구슬에서의 거리를 서로 달리해 흩는다(고리 하나로 읽히지 않게)
+  const bx = 480, by = 462;
+  sk.fill(ell(bx + 2, by + 13, 16, 4.5), "#C9A869", { dx: 0, dy: 0, wob: 0.2, seed: 61 });
+  ball(sk, bx, by, 12, RED, 62, 4.5);
+  for (const [a, i] of [[-2.5, 0], [-1.9, 1], [-1.3, 2]]) sk.ink(dense([[bx + 22 * Math.cos(a), by + 22 * Math.sin(a)], [bx + 36 * Math.cos(a), by + 36 * Math.sin(a)]]), { w: 4, color: C.gray, seed: 66 + i, wob: 0.2 });
+  // 구슬을 가리키는 학생(작게: 체육관이 넓다)
+  const P = pose({ tilt: 0.25, head: [12, -432], elR: [72, -262], haR: [124, -214], elL: [-34, -254], haL: [-48, -182] });
+  drawFigure(sk, 600, 560, 0.46, P, { ...STUDENT, name: "student", mirror: true });
+  // 벽 가까이 멀리 떠 있는 더 작은 점들(전자): 구슬에서의 거리를 서로 달리해 흩는다(고리 하나로 읽히지 않게)
+  const es = [[96, 236], [232, 176], [704, 150], [870, 286], [128, 560], [842, 610], [330, 640], [640, 118]];
   es.forEach(([x, y], i) => {
-    ball(sk, x, y, 10, BLUE, 41 + i * 5, 4);
-    const sg = x < cx ? -1 : 1;
-    sk.ink(ell(x, y, 19, 19, sg > 0 ? -0.6 : Math.PI - 0.6, sg > 0 ? 0.6 : Math.PI + 0.6), { w: 3.5, color: "#8DB9E8", seed: 44 + i * 5, wob: 0 });
+    ball(sk, x, y, 9, BLUE, 81 + i * 5, 4);
+    const sg = x < bx ? -1 : 1;
+    sk.ink(ell(x, y, 18, 18, sg > 0 ? -0.6 : Math.PI - 0.6, sg > 0 ? 0.6 : Math.PI + 0.6), { w: 3.5, color: "#8DB9E8", seed: 84 + i * 5, wob: 0 });
   });
   return sk;
 }
@@ -251,7 +274,7 @@ export function cuts() {
     { name: "g2u4l1", theme: "atom", orig: null, sk: cutL1(), alt: "같은 색 구슬만 담긴 유리병과, 서로 다른 색 구슬 둘이 꼭 붙은 쌍만 담긴 유리병을 양손에 들고 견주어 보는 스틱맨", cap: "한 가지 구슬만 든 병, 두 구슬이 짝을 이룬 병" },
     { name: "g2u4l2", theme: "atom", orig: null, sk: cutL2(), alt: "옷차림이 서로 다른 세 과학자가 금속 덩어리에 걸린 빈 이름표 하나를 함께 가리키고, 머리 위에 체크 표시가 뜬 장면", cap: "나라가 달라도 이름표는 하나로 통해요" },
     { name: "g2u4l2b", theme: "atom", orig: null, sk: cutL2b(), alt: "큰 공 하나에 작은 공 둘이 붙은 모형을 탁자에 놓고, 작은 공을 가리키며 손가락 두 개를 펴 보이는 스틱맨", cap: "어떤 공이 몇 개인지, 그대로 적으면 돼요" },
-    { name: "g2u4l3", theme: "atom", orig: null, sk: cutL3(), alt: "넓은 운동장 한가운데 놓인 작은 구슬 하나를 스틱맨이 내려다보고, 운동장 가장자리 멀리 더 작은 점들이 떠 있는 장면", cap: "가운데에 작은 원자핵, 그 주위에 더 작은 전자" },
+    { name: "g2u4l3", theme: "atom", orig: null, sk: cutL3(), alt: "넓은 실내 체육관 마루 한가운데 놓인 작은 빨간 구슬 하나를 스틱맨이 가리키고, 체육관 벽 가까이 멀리 더 작은 파란 점들이 떠 있는 장면", cap: "가운데에 작은 원자핵, 그 주위에 더 작은 전자" },
     { name: "g2u4l4", theme: "atom", orig: null, sk: cutL4(), alt: "줄지어 놓인 빈 의자들 앞에서 번호표를 든 스틱맨이 세로 한 줄과 가로 한 줄을 두 팔로 가리키는 장면", cap: "번호대로 앉으면 세로줄과 가로줄이 생겨요" },
     { name: "g2u4l5", theme: "atom", orig: null, sk: cutL5(), alt: "블록 세 개로 조립한 작은 자동차는 굴러가고, 옆에 낱개로 흩어진 블록 세 개는 굴러가지 못하는 것을 스틱맨이 번갈아 보는 장면", cap: "낱개로 나누면 굴러가는 성질이 사라져요" },
     { name: "g2u4l5b", theme: "atom", orig: null, sk: cutL5b(), alt: "마주 선 두 스틱맨 가운데 한 사람이 작은 구슬 하나를 건네고, 건넨 사람 머리 위에는 더하기, 받은 사람 머리 위에는 빼기 기호가 뜬 장면", cap: "하나를 건네면 더하기, 하나를 받으면 빼기" },
