@@ -1,15 +1,13 @@
 // 중1 과학 Ⅵ단원(기체의 성질) 개념 컷 코드 그림.
 // 목록은 Ⅵ단원 v5 세션이 새 개념 스텝을 쓰며 낸 것(D:\Brilliant Science\output\g1-v5\u6\concept-cuts.md): u6l1 ~ u6l4.
 // u6l5 는 새로 정의할 용어가 없어 개념 스텝이 없다.
-// 겨울 장면의 학생은 노란 털모자(노란 모자 학생의 겨울옷). 움직임 표시는 청록, 열은 주황 물결 화살표(Ⅲ단원 문법).
+// 움직임 표시는 청록, 열은 주황 물결 화살표(Ⅲ단원 문법).
 import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, drop, squiggle, arrow, hash, sparkle } from "../../lib/sk.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT } from "../../lib/figure.mjs";
-import { ball, cloud, orange } from "../../lib/props.mjs";
-import { W, H, lerpx, lerp2, thin, ray } from "./common.mjs";
+import { cloud, orange, sun } from "../../lib/props.mjs";
+import { W, H, lerpx, lerp2, thin, ray, wavy } from "./common.mjs";
 
-const WKID = { hair: "knit", capColor: "#F2B632", seed: 31 };
 const ground = (sk, y, sd, x0 = 14, x1 = 946) => sk.ink(curve([[x0, y + 2], [lerpx(x0, x1, 0.35), y - 2], [lerpx(x0, x1, 0.7), y + 1], [x1, y - 1]]), { w: 9, seed: sd });
-function snowflake(sk, x, y, r, sd) { for (let i = 0; i < 3; i++) { const a = i * Math.PI / 3 + 0.3; sk.ink(dense([[x - Math.cos(a) * r, y - Math.sin(a) * r], [x + Math.cos(a) * r, y + Math.sin(a) * r]]), { w: 4, color: "#8FC3E8", seed: sd + i, wob: 0.1 }); } }
 // 화면 좌표로 잡은 관절을 인물 좌표(발 사이 원점, 배율 s)로 바꾼다
 const local = (ox, oy, s, j) => Object.fromEntries(Object.entries(j).map(([k, v]) => [k, Array.isArray(v) ? [(v[0] - ox) / s, (v[1] - oy) / s] : v]));
 
@@ -234,76 +232,119 @@ function cutU6l3() {
   return sk;
 }
 
-/* ---------- u6l4: 겨울 운동장의 찌그러진 공, 난로 옆에서 다시 탱탱 ---------- */
-function dentedBall(sk, x, y, r, sd, bg) {
-  // 바람이 빠진 듯 쭈글한 축구공: 아래로 조금 퍼지고, 위가 얕게 꺼졌다(깊게 파면 하트나 깨문 공으로 읽힌다)
-  const cy = y + r * 0.06, kx = 1.08, ky = 0.9;
-  sk.save(); sk.translate(x, cy); sk.scale(kx, ky); ball(sk, 0, 0, r, { seed: sd }); sk.restore();
-  const P = (a, k) => [x + kx * r * k * Math.cos(a), cy + ky * r * k * Math.sin(a)];
-  const a0 = -2.6, a1 = -0.55, am = (a0 + a1) / 2, d = a1 - a0;
-  const inner = curve([P(a0, 1), P(a0 + 0.25 * d, 0.88), P(am, 0.76), P(a1 - 0.25 * d, 0.88), P(a1, 1)], false, 3);
-  const outer = []; for (let i = 0; i <= 24; i++) outer.push(P(a1 + (a0 - a1) * i / 24, 1.22));
-  sk.fill([...outer, ...inner], bg, { dx: 0, dy: 0, wob: 0, seed: sd + 20 });
-  sk.ink(inner, { w: 9, seed: sd + 21, wob: 0.4 });
-  // 꺼진 자리 둘레와 옆구리의 주름
-  for (const [t, i] of [[0.3, 0], [0.55, 1], [0.78, 2]]) { const a = a0 + t * d; sk.ink(curve([P(a, 0.74), P(a + 0.06, 0.6), P(a - 0.02, 0.48)]), { w: 4.5, color: C.gray, seed: sd + 22 + i, wob: 0.2 }); }
-  sk.ink(curve([P(2.5, 0.92), P(2.65, 0.78), P(2.85, 0.84)]), { w: 4.5, color: C.gray, seed: sd + 26, wob: 0.2 });
-  sk.ink(curve([P(0.65, 0.92), P(0.5, 0.78), P(0.3, 0.84)]), { w: 4.5, color: C.gray, seed: sd + 27, wob: 0.2 });
+/* ---------- u6l4: 냉장고에 넣어 둔 빈 페트병은 쭈글, 따뜻한 방에 두면 다시 빵빵 ---------- */
+// 뚜껑을 꼭 닫은 빈 페트병. (x, y) = 바닥 가운데, h = 높이. dent: 0 = 매끈, 1 = 옆구리가 쭈글(차가워져 속 공기의 부피가 줄었다)
+function petBottle(sk, x, y, h, sd, dent = 0) {
+  const hw = h * 0.21, nk = h * 0.075, yS = -h * 0.6, yN = -h * 0.82, yC = -h * 0.875;
+  // 옆선의 반폭: 몸통은 곧고, 어깨는 둥글게 좁아져 목이 된다(y는 바닥에서 위로 음수)
+  const half = yy => yy > yS ? hw : yy > yN ? nk + (hw - nk) * Math.cos((yy - yS) / (yN - yS) * Math.PI / 2) : nk;
+  // 찌그러진 자리: [가운데 높이, 위아래 폭, 깊이] (깊으면 병이 아니라 모래시계로 읽혀 얕게 둔다)
+  const DL = [[-h * 0.42, h * 0.2, hw * 0.4], [-h * 0.69, h * 0.05, hw * 0.15]], DR = [[-h * 0.27, h * 0.17, hw * 0.34]];
+  const dip = (D, yy) => dent * D.reduce((s, [c, sp, dp]) => { const t = 1 - Math.abs(yy - c) / sp; return s + (t > 0 ? dp * t ** 1.2 * (1 + 0.22 * Math.sin((yy - c) * 0.8)) : 0); }, 0);
+  const sideL = yy => [x - half(yy) + dip(DL, yy), y + yy], sideR = yy => [x + half(yy) - dip(DR, yy), y + yy];
+  const ys = []; for (let yy = -6; yy > yC; yy -= 3) ys.push(yy); ys.push(yC);
+  const outline = [[x - hw + 7, y], ...ys.map(sideL), ...ys.slice().reverse().map(sideR), [x + hw - 7, y]];
+  sk.fill(outline, "#E4F2FA", { dx: 0, dy: 0, wob: 0.3, seed: sd });
+  // 띠 상표(글자 없이 두 빛깔)
+  const band = []; for (let yy = -h * 0.17; yy >= -h * 0.38; yy -= 3) band.push(sideL(yy));
+  for (let yy = -h * 0.38; yy <= -h * 0.17; yy += 3) band.push(sideR(yy));
+  sk.fill(band, "#8ED3AE", { dx: 0, dy: 0, wob: 0.2, seed: sd + 1 });
+  const mid = []; for (let yy = -h * 0.255; yy >= -h * 0.295; yy -= 2) mid.push(sideL(yy)); for (let yy = -h * 0.295; yy <= -h * 0.255; yy += 2) mid.push(sideR(yy));
+  sk.fill(mid, "#FFFFFF", { dx: 0, dy: 0, wob: 0.1, seed: sd + 2, alpha: 0.85 });
+  // 반짝이는 옆 줄(빛을 받은 플라스틱)
+  sk.ink(ys.filter(yy => yy < -h * 0.42 && yy > -h * 0.58).map(yy => { const p = sideL(yy); return [p[0] + 9, p[1]]; }), { w: 5, color: "#FFFFFF", seed: sd + 3, wob: 0.2, alpha: 0.9 });
+  sk.ink(outline, { w: 7, seed: sd + 4, wob: 0.35, closed: true });
+  sk.ink(dense([[x - nk, y + yN + 3], [x + nk, y + yN + 3]]), { w: 5, seed: sd + 5, wob: 0.2 });
+  // 뚜껑(꼭 닫혀 있다)
+  const cap = rrect(x - nk - 4, y + yC - h * 0.12, 2 * nk + 8, h * 0.125, 4);
+  sk.fill(cap, "#3F7CC0", { dx: 0, dy: 0, wob: 0.2, seed: sd + 6 }); sk.ink(cap, { w: 6, seed: sd + 7, wob: 0.2 });
+  for (const [k, i] of [[-0.45, 0], [0, 1], [0.45, 2]]) sk.ink(dense([[x + k * nk, y + yC - h * 0.1], [x + k * nk, y + yC - h * 0.025]]), { w: 3, color: "#2A5A8C", seed: sd + 8 + i, wob: 0.1 });
+  if (!dent) return;
+  // 꺼진 자리의 주름(옆선에서 안쪽으로 짧은 잔물결. 한 점으로 모이면 안쪽을 가리키는 화살촉으로 읽힌다)
+  for (const [D, sg, side] of [[DL[0], 1, sideL], [DR[0], -1, sideR]]) {
+    const [c, sp] = D;
+    for (const [k, len, i] of [[-0.5, 0.62, 0], [0, 0.9, 1], [0.5, 0.62, 2]]) {
+      const b = side(c + k * sp), L = hw * len;
+      sk.ink(dense([[b[0] + sg * 4, b[1]], [b[0] + sg * L * 0.35, b[1] - 3], [b[0] + sg * L * 0.7, b[1] + 2.5], [b[0] + sg * L, b[1] - 1]], 2), { w: 3.5, color: "#7D8B99", seed: sd + 12 + i * 2 + (sg > 0 ? 0 : 1), wob: 0.15 });
+    }
+  }
 }
-function heater(sk, x, y, sd) {
-  // 둥근 석유난로. (x, y) = 바닥 가운데
-  sk.glow(x, y - 120, 128, "#FFB46B", 0.45, 0.1);
-  for (const [dx, i] of [[-40, 0], [40, 1]]) sk.ink(dense([[x + dx, y - 20], [x + dx * 1.2, y]]), { w: 9, seed: sd + i });
-  const body = rrect(x - 58, y - 214, 116, 196, 26);
-  sk.fill(body, "#C9D1D9", { seed: sd + 2, tex: 0.7, dx: 0.6, dy: 0.8 });
-  const win = rrect(x - 40, y - 168, 80, 96, 16);
-  sk.fill(win, "#F58A2E", { dx: 0, dy: 0, wob: 0.3, seed: sd + 3 });
-  sk.fill(rrect(x - 26, y - 150, 52, 60, 12), C.lemon, { dx: 0, dy: 0, wob: 0.3, seed: sd + 4 });
-  for (let i = 0; i < 3; i++) sk.ink(dense([[x - 40, y - 146 + i * 24], [x + 40, y - 146 + i * 24]]), { w: 4, color: "#B5541F", seed: sd + 5 + i, wob: 0.1 });
-  sk.ink(win, { w: 7, seed: sd + 8 });
-  sk.ink(body, { w: 10, seed: sd + 9 });
-  const lid = ell(x, y - 214, 62, 14);
-  sk.fill(lid, "#8A9099", { dx: 0, dy: 0, wob: 0.3, seed: sd + 10 }); sk.ink(lid, { w: 8, seed: sd + 11 });
+// 문을 연 냉장고(왼쪽에 경첩, 문이 왼쪽으로 열렸다). (x0, y0) = 몸통 왼쪽 아래, w·h = 몸통 크기
+function fridge(sk, x0, y0, w, h, sd) {
+  const top = y0 - h, fz = top + h * 0.3; // 위 칸(냉동실) 아래 선
+  const body = rrect(x0, top, w, h - 8, 16);
+  sk.fill(body, "#F3F6F9", { seed: sd, tex: 0.5, dx: 0.6, dy: 0.8 });
+  // 냉장실 안(찬 푸른빛, 선반 둘, 반찬 그릇)
+  const inside = rrect(x0 + 12, fz + 10, w - 24, y0 - 26 - fz - 10, 8);
+  sk.fill(inside, "#D3EBFA", { dx: 0, dy: 0, wob: 0.3, seed: sd + 1 });
+  sk.glow(x0 + w / 2, fz + 40, w * 0.55, "#FFFFFF", 0.7, 0.2);
+  const sh = [fz + (y0 - fz) * 0.36, fz + (y0 - fz) * 0.66];
+  for (const [yy, i] of sh.map((v, i) => [v, i])) sk.ink(dense([[x0 + 14, yy], [x0 + w - 14, yy]]), { w: 5, color: "#8FB3CC", seed: sd + 2 + i, wob: 0.1 });
+  const jar = rrect(x0 + 28, sh[0] - 40, 30, 40, 6);
+  sk.fill(jar, "#F6C77E", { dx: 0, dy: 0, wob: 0.2, seed: sd + 4 }); sk.ink(jar, { w: 5, seed: sd + 5, wob: 0.2 });
+  sk.fill(rrect(x0 + 26, sh[0] - 48, 34, 10, 3), "#D2553F", { dx: 0, dy: 0, wob: 0.2, seed: sd + 6 });
+  const bw = [x0 + w * 0.52, sh[1]];
+  const dish = [...ell(bw[0], bw[1] - 16, 34, 16, 0, Math.PI)];
+  sk.fill(dish, "#FFFFFF", { dx: 0, dy: 0, wob: 0.2, seed: sd + 7 }); sk.ink([...dish, dish[0]], { w: 5, seed: sd + 8, wob: 0.2 });
+  sk.ink(dense([[bw[0] - 34, bw[1] - 16], [bw[0] + 34, bw[1] - 16]]), { w: 5, seed: sd + 9, wob: 0.2 });
+  const drawer = rrect(x0 + 20, sh[1] + 16, w - 40, y0 - 40 - sh[1] - 16, 6);
+  sk.fill(drawer, "#BFE0F3", { dx: 0, dy: 0, wob: 0.2, seed: sd + 10 }); sk.ink(drawer, { w: 5, seed: sd + 11, wob: 0.2 });
+  sk.ink(inside, { w: 6, seed: sd + 12, wob: 0.2 });
+  sk.ink(body, { w: 10, seed: sd + 13 });
+  sk.ink(dense([[x0, fz], [x0 + w, fz]]), { w: 8, seed: sd + 14 });
+  sk.fill(rrect(x0 + w - 22, fz - 52, 9, 36, 4), "#AEB7C1", { dx: 0, dy: 0, wob: 0.2, seed: sd + 15 });
+  for (const [fx, i] of [[x0 + 16, 0], [x0 + w - 16, 1]]) sk.ink(dense([[fx, y0 - 8], [fx, y0]]), { w: 9, seed: sd + 16 + i });
+  // 열린 문(비스듬히 보여 좁다) 안쪽의 문 선반 둘
+  const door = poly([[x0, fz + 4], [x0 - 34, fz + 22], [x0 - 34, y0 - 30], [x0, y0 - 12]], 3);
+  sk.fill(door, "#E6ECF2", { dx: 0, dy: 0, wob: 0.3, seed: sd + 18 });
+  for (const [k, i] of [[0.35, 0], [0.68, 1]]) sk.ink(dense([[x0 - 30, lerpx(fz + 22, y0 - 30, k) + 4], [x0 - 4, lerpx(fz + 4, y0 - 12, k)]]), { w: 5, color: "#9AA8B6", seed: sd + 19 + i, wob: 0.1 });
+  sk.ink(door, { w: 8, seed: sd + 21 });
 }
 function cutU6l4() {
   const sk = new Sk(W, H, { id: "d" });
   const P0 = [16, 472], P1 = [488, 944], PT = 16, PB = 704, GY = 640;
   [[P0, "#EAF3FB"], [P1, "#FFF1E3"]].forEach(([[a, b], c], i) => { const r = rrect(a, PT, b - a, PB - PT, 22); sk.fill(r, c, { dx: 0, dy: 0, wob: 0.3, seed: 11 + i }); thin(sk, 0.6, () => sk.ink(r, { w: 9, seed: 13 + i, color: "#C9CED6" })); });
-  // 왼쪽: 겨울 운동장(눈송이, 축구 골대)
-  [[70, 90], [190, 60], [330, 110], [420, 70], [260, 190], [400, 300]].forEach(([x, y], i) => snowflake(sk, x, y, 11, 21 + i * 3));
-  thin(sk, 0.62, () => {
-    const gx0 = 324, gx1 = 452, gt = 430;
-    for (let k = 1; k < 5; k++) sk.ink(dense([[lerpx(gx0, gx1, k / 5), gt], [lerpx(gx0, gx1, k / 5), GY]]), { w: 4, color: "#C3CBD3", seed: 31 + k, wob: 0.2 });
-    for (let k = 1; k < 5; k++) sk.ink(dense([[gx0, lerpx(gt, GY, k / 5)], [gx1, lerpx(gt, GY, k / 5)]]), { w: 4, color: "#C3CBD3", seed: 36 + k, wob: 0.2 });
-    sk.ink(dense([[gx0, GY], [gx0, gt], [gx1, gt], [gx1, GY]]), { w: 12, seed: 41, color: "#8A9099" });
-  });
+  const BH = 140; // 페트병 높이
+  // 왼쪽: 냉장고에서 막 꺼낸 페트병이 쭈글쭈글
   ground(sk, GY, 43, 36, 452);
-  const ks = 0.62, kx = 146;
-  // 두 손으로 공을 아래에서 받쳐 든다(눌린 자리가 위에서 잘 보이고, 공이 얼굴을 가리지 않게 허리 높이에서)
-  const K = pose({ elR: [104, -250], haR: [190, -226], elL: [88, -240], haL: [150, -214], tilt: 0.16 });
-  drawFigure(sk, kx, GY, ks, K, { ...WKID, name: "student", hands: false });
-  const br = 56, bc = [kx + ks * 170, GY - ks * 226 - br + 6];
-  dentedBall(sk, bc[0], bc[1], br, 51, "#EAF3FB");
-  handDot(sk, [kx + ks * 190, GY - ks * 226], C.skin, 61, 11); handDot(sk, [kx + ks * 150, GY - ks * 214], C.skin, 62, 11);
-  // 추워서 덜덜(몸 옆 떨림 선)과 입김
-  for (const [dx, i] of [[-62, 0], [-78, 1]]) sk.ink(curve([[kx + dx, GY - 210], [kx + dx - 6, GY - 196], [kx + dx + 2, GY - 182], [kx + dx - 6, GY - 168]]), { w: 5, color: "#8FC3E8", seed: 63 + i, wob: 0.1 });
-  qmark(sk, kx - 70, 300, 0.55, { color: C.teal, seed: 65, rot: -0.12 });
+  thin(sk, 0.72, () => fridge(sk, 70, GY, 140, 396, 31));
+  // 냉장고에서 흘러나오는 찬 기운
+  for (const [yy, i] of [[420, 0], [476, 1], [532, 2]]) sk.ink(wavy([204, yy], [236, yy - 6], 4, 2), { w: 5, color: "#8FC3E8", seed: 41 + i, wob: 0.1 });
+  // 두 손으로 병을 받쳐 든다. 병 꼭대기가 모자 챙에 닿지 않게 골반 높이에서 든다
+  const HOLD = { elR: [110, -220], haR: [206, -166], elL: [92, -212], haL: [166, -158] };
+  const ks = 0.62, kx = 392;
+  // 냉장고 쪽(왼쪽)을 보게 오른쪽을 보던 자세를 좌우로 뒤집었다
+  drawFigure(sk, kx, GY, ks, pose({ ...HOLD, tilt: 0.16 }), { ...STUDENT, name: "student", hands: false, mirror: true });
+  const kb = [kx - ks * 186, GY - ks * 162];
+  petBottle(sk, kb[0], kb[1], BH, 51, 1);
+  handDot(sk, [kx - ks * 206, GY - ks * 166], C.skin, 61, 11); handDot(sk, [kx - ks * 166, GY - ks * 158], C.skin, 62, 11);
+  qmark(sk, kx + 52, 290, 0.55, { color: C.teal, seed: 65, rot: 0.12 });
   // 가운데: 다음 장면으로
   arrow(sk, [[446, 196], [514, 196]], { w: 9, color: C.teal, straight: true, seed: 71, head: 22, wob: 0.2 });
-  // 오른쪽: 난로 옆
+  // 오른쪽: 햇볕이 드는 따뜻한 방
   ground(sk, GY, 73, 508, 924);
-  thin(sk, 0.8, () => heater(sk, 870, GY, 81));
+  thin(sk, 0.7, () => {
+    const win = rrect(764, 92, 160, 204, 10);
+    sk.fill(win, "#CFE8F7", { dx: 0, dy: 0, wob: 0.3, seed: 81 });
+    sun(sk, 844, 168, 26, { seed: 83 });
+    sk.ink(win, { w: 12, seed: 85, color: "#FFFFFF" });
+    sk.ink(win, { w: 7, seed: 86 });
+    sk.ink(dense([[844, 96], [844, 292]]), { w: 6, seed: 87 }); sk.ink(dense([[768, 210], [920, 210]]), { w: 6, seed: 88 });
+    sk.ink(dense([[750, 300], [936, 300]]), { w: 9, seed: 89 });
+  });
+  // 창으로 드는 햇볕(옅은 빛줄기, 사람과 병 뒤에 깐다)
+  sk.fill([[772, 300], [916, 300], [748, 566], [668, 528]], "#FFE3A0", { dx: 0, dy: 0, wob: 0.3, seed: 90, alpha: 0.42 });
   const ts = 0.62, tx = 556;
-  const T = pose({ elR: [104, -250], haR: [190, -226], elL: [88, -240], haL: [150, -214], tilt: 0.06 });
-  drawFigure(sk, tx, GY, ts, T, { ...TEACHER, name: "teacher", hands: false });
-  const tb = [tx + ts * 170, GY - ts * 226 - 52 + 6];
-  ball(sk, tb[0], tb[1], 52, { seed: 91 });
-  handDot(sk, [tx + ts * 190, GY - ts * 226], C.skin, 93, 11); handDot(sk, [tx + ts * 150, GY - ts * 214], C.skin, 94, 11);
-  // 난로의 열(주황 물결 화살표)이 공으로
-  for (const [dy, i] of [[-38, 0], [0, 1], [38, 2]]) ray(sk, [806, tb[1] + dy], [tb[0] + 64, tb[1] + dy * 0.5], 95 + i, { amp: 5, waves: 3, w: 6 });
-  // 탱탱해진 공 둘레의 반짝
-  sparkle(sk, tb[0] + 6, tb[1] - 84, 14, { seed: 99 });
-  sparkle(sk, tb[0] + 58, tb[1] - 62, 10, { seed: 101 });
+  drawFigure(sk, tx, GY, ts, pose({ ...HOLD, tilt: 0.06 }), { ...TEACHER, name: "teacher", hands: false });
+  const tb = [tx + ts * 186, GY - ts * 162];
+  petBottle(sk, tb[0], tb[1], BH, 91, 0);
+  handDot(sk, [tx + ts * 206, GY - ts * 166], C.skin, 93, 11); handDot(sk, [tx + ts * 166, GY - ts * 158], C.skin, 94, 11);
+  // 방의 열(주황 물결 화살표)이 병으로
+  const bx = tb[0] + BH * 0.21 + 12;
+  for (const [a, yy, i] of [[[786, 330], 428, 0], [[808, 366], 468, 1], [[830, 402], 508, 2]]) ray(sk, a, [bx, yy], 95 + i, { amp: 5, waves: 3, w: 6 });
+  // 다시 빵빵해진 병 둘레의 반짝
+  sparkle(sk, tb[0] + 34, tb[1] - BH - 34, 12, { seed: 99 });
+  sparkle(sk, tb[0] - 26, tb[1] - BH - 46, 8, { seed: 101 });
   return sk;
 }
 
@@ -312,6 +353,6 @@ export function cuts() {
     { name: "u6l1", theme: "gas6", orig: null, sk: cutU6l1(), alt: "똑같이 무거운 장바구니를 한 아이는 가는 끈으로, 다른 아이는 넓은 끈으로 어깨에 멘 장면. 가는 끈을 멘 아이의 어깨 위에 빨간 느낌표", cap: "가방 무게는 같은데 가는 끈이 어깨를 더 아프게 해요. 닿는 넓이가 좁아서예요" },
     { name: "u6l2", theme: "gas6", orig: null, sk: cutU6l2(), alt: "같은 크기의 피자 한 판을 왼쪽에서는 쌤과 아이 둘이 반쪽씩, 오른쪽에서는 넷이 4분의 1쪽씩 나눠 든 장면", cap: "피자 한 판을 둘이 나누면 반쪽, 넷이 나누면 4분의 1쪽이에요" },
     { name: "u6l3", theme: "gas6", orig: null, sk: cutU6l3(), alt: "산꼭대기에서 배낭을 연 아이가 빵빵해진 과자 봉지를 꺼내 들고 놀라는 장면, 산 아래에 작은 마을", cap: "산꼭대기에서 과자 봉지가 빵빵해졌어요" },
-    { name: "u6l4", theme: "gas6", orig: null, sk: cutU6l4(), alt: "겨울 운동장에서 찌그러진 축구공을 든 아이와, 난로 옆에서 다시 탱탱해진 공을 든 쌤", cap: "찬 바깥에선 쭈글, 따뜻한 난로 옆에선 탱탱" },
+    { name: "u6l4", theme: "gas6", orig: null, sk: cutU6l4(), alt: "냉장고에서 꺼낸, 뚜껑을 닫은 빈 페트병이 쭈글쭈글해 아이가 갸웃하고, 햇볕이 드는 따뜻한 방에서는 쌤이 다시 빵빵해진 페트병을 든 장면", cap: "차가운 냉장고 속에선 쭈글, 따뜻한 방에선 다시 빵빵" },
   ];
 }

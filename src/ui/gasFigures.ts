@@ -283,9 +283,10 @@ const MINI: Record<string, string> = {
     <path d="M24 38l3 8M40 38l-3 8" stroke="#8B95A1" stroke-width="2"/>
     <rect x="26" y="46" width="12" height="9" rx="2.5" fill="#C89A5A" stroke="#8A5F30" stroke-width="1.8"/>
     <path d="M30 40q2-4 4 0" stroke="#F25C54" stroke-width="2.2" fill="none"/>`,
-  soccerCold: `<circle cx="30" cy="34" r="16" fill="#fff" stroke="#5E6B7E" stroke-width="2.4"/>
-    <path d="M20 26q8 8 4 14q6 2 10-3" fill="none" stroke="#8B95A1" stroke-width="2"/>
-    <path d="M30 30l4-5 5 3-1 6-6 1z" fill="#5E6B7E"/>
+  // 식히면 작아진다: 뚜껑을 닫은 빈 페트병이 차가워져 옆구리가 쭈글(오른쪽의 찬 기운 표시는 옛 그림과 같다)
+  bottleCold: `<rect x="25.5" y="7" width="9" height="6" rx="1.6" fill="#3F7CC0" stroke="#2A5A8C" stroke-width="1.8"/>
+    <path d="M27.5 13v4c0 3-6.5 4-6.5 9v5l3.6 4-2.8 3.4 3.2 3.6-4 4V53q0 4 3.5 4h11q3.5 0 3.5-4v-4.5l-3.6-3.2 3-3.3-1.2-3V26c0-5-6.5-6-6.5-9v-4z" fill="#EAF6FD" stroke="#5E6B7E" stroke-width="2.2"/>
+    <path d="M25 36.5l4.5 1M24.5 42l5-1.2M34.5 45.8l-4.5 1" stroke="#8B95A1" stroke-width="1.6"/>
     <path d="M50 16l3-3M54 24h4M50 32l3 3" stroke="#37B6D8" stroke-width="2.2"/>`,
 };
 
