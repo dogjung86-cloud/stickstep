@@ -31,7 +31,7 @@ export function viPairFig(): string {
 
 /** 전구 두 개의 회로 문제 그림. series: 한 줄, parallel: 두 갈래(아래 갈래에 스위치). 전구 이름은 (가), (나). */
 export function twoBulbFig(kind: "series" | "parallel"): string {
-  // 전구와 전지는 회로 기호가 아니라 물건의 모습으로 그린다(이 단원은 회로 기호를 배우지 않는다. 책의 문제 그림도 그렇다).
+  // 전구와 전지는 회로 기호가 아니라 물건의 모습으로 그린다(이 단원은 회로 기호를 배우지 않는다).
   const bulb = (x: number, y: number, name: string): string =>
     `<path d="M${x - 9} ${y - 31}l-4 -5M${x} ${y - 34}v-6M${x + 9} ${y - 31}l4 -5" stroke="#F0A422" stroke-width="1.6" stroke-linecap="round"/>` +
     `<circle cx="${x}" cy="${y - 17}" r="13" fill="#FFE98A" stroke="#333D4B" stroke-width="1.5"/>` +

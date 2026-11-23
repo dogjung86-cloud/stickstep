@@ -1,6 +1,6 @@
 // 중2 과학 VIII. 별과 우주 · 단원 종합 평가 풀 v2: 레슨 2 별의 밝기와 거리 (g2u8e222~e239)
 // 이 파일은 qa/build-g2u8v2-lessons.mjs가 스테이징(qa/g2u8v2-*.ts)에서 재생성한다 · 직접 수정 금지.
-// 교과서 3사 준거 전면 재출제(2026-08) · 정본 설계표 qa/g2u8-v2-blueprint.md(실측·회피표·검산 기록).
+// 전면 재출제(2026-08) · 정본 설계표 qa/g2u8-v2-blueprint.md(실측·회피표·검산 기록).
 // 규격: word 0 · 개수 세기 num 0 · diff 태그 · 그림은 자료 의존 설계 · 언어 가드 목록은 설계표 §0.
 import type { ExamItem } from "./types";
 import { svgTable, starBrightGridFig, starDistPairFig, starFlowFig } from "../../ui/examFigures";

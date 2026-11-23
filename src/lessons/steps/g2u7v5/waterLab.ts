@@ -1,5 +1,5 @@
 // [중2 Ⅶ v5] g2u7l3 waterLab: 「물길과 전기 회로는 어디가 닮았을까요?」 (가로 화면)
-// 책의 어디에서: 본문과 그림 '물의 흐름과 전류'(펌프, 수도관, 수도꼭지, 물레방아 ↔ 전지, 전선, 스위치, 전구), 스스로 확인하기 2번(물의 흐름에 비유해 설명하기).
+// 다루는 내용: 물의 흐름 비유(펌프, 관, 수도꼭지, 물레방아 ↔ 전지, 전선, 스위치, 전구)와, 물의 흐름에 비유해 전류를 설명하기.
 // 한 통찰: 펌프가 물의 높이 차를 만들어 물을 계속 흐르게 하듯, 전지는 전압으로 전류를 계속 흐르게 한다.
 // 학생이 정하는 것: 펌프의 세기(전지의 수), 수도꼭지(스위치)를 여닫는 것, 어느 부분이 어느 부분과 짝인지 눌러 찾는 것.
 // 실패하는 길: 펌프가 없으면 수도꼭지를 열어도 물이 흐르지 않고, 수도꼭지를 잠그면 펌프가 있어도 흐르지 않는다(전기 회로도 똑같이 멈춘다).
@@ -144,49 +144,11 @@ function drawGlow(ctx: CanvasRenderingContext2D, r: Rect, v: View, nudged: boole
   ctx.restore();
 }
 
-/** 계단 블록(물길과 회로가 같은 모양, 같은 자리에 놓인다): 높은 곳을 이루는 블록과 낮은 바닥. 은은하게(주인공이 아니다). */
-function drawBlock(ctx: CanvasRenderingContext2D, x0: number, x1: number, top: number, base: number, floorL: number, floorR: number): void {
-  ctx.save();
-  // 낮은 바닥(아래 물길, 아래 전선이 놓인다)
-  ctx.fillStyle = "rgba(150,170,200,.10)";
-  ctx.fillRect(floorL, base + 13, floorR - floorL, 7);
-  // 높은 블록(위 물길, 위 전선이 놓인다)
-  const g = ctx.createLinearGradient(0, top, 0, base);
-  g.addColorStop(0, "rgba(160,180,210,.17)");
-  g.addColorStop(1, "rgba(160,180,210,.07)");
-  ctx.fillStyle = g;
-  ctx.fillRect(x0, top, x1 - x0, base - top);
-  ctx.beginPath();
-  ctx.rect(x0, top, x1 - x0, base - top);
-  ctx.clip();
-  // 벽돌 줄눈(아주 옅게)
-  ctx.strokeStyle = "rgba(170,190,220,.09)";
-  ctx.lineWidth = 1;
-  const row = 15;
-  for (let y = top + row, i = 0; y < base; y += row, i++) {
-    ctx.beginPath();
-    ctx.moveTo(x0, y);
-    ctx.lineTo(x1, y);
-    ctx.stroke();
-    for (let x = x0 + (i % 2 ? 14 : 30); x < x1; x += 32) {
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x, Math.min(base, y + row));
-      ctx.stroke();
-    }
-  }
-  ctx.restore();
-  ctx.save();
-  ctx.strokeStyle = "rgba(170,190,220,.32)";
-  ctx.lineWidth = 1.2;
-  ctx.strokeRect(x0, top, x1 - x0, base - top);
-  ctx.restore();
-}
-
 /** 두 그림을 w×h 판에 그린다. 눌러 찾을 자리(왼쪽 그림과 오른쪽 그림 각각)를 돌려준다.
  *  live(가로 화면)이면 찾을 자리의 힌트와 찾은 자리의 이름표를 함께 그린다. 세로 화면의 작은 그림에는 힌트를 두지 않는다(눌러도 반응이 없어서).
- *  그림(2026-11-15 그래픽 감사 C094): 물길과 회로를 같은 모양의 계단 블록 위 같은 자리에 놓는다(참고 그림 '전압 전류 비유'의 구도).
- *    펌프 ↔ 전지(왼쪽 면), 수도꼭지 ↔ 스위치(윗면 가운데), 물이 떨어지는 곳 ↔ 전구(오른쪽 면), 높이 차 ↔ 전압(같은 자리의 위아래 화살표).
+ *  그림: 물길은 투명한 위아래 물통, 아래 물통에 잠긴 파란 펌프, 하늘색 관, 노란 물레방아로 그린다(정밀 그림 g2u7l5f1과 같은 부품과 색).
+ *    짝은 왼쪽에서 오른쪽으로 같은 차례다: 펌프 ↔ 전지(왼쪽), 수도꼭지 ↔ 스위치(위 가운데), 물이 떨어지는 곳 ↔ 전구(오른쪽).
+ *    높이 차는 위 물통 수면과 아래 물통 수면 사이의 화살표, 전압은 위 전선과 아래 전선 사이의 화살표다.
  *    회로의 전선은 높이 색으로 칠한다(병렬 전압 랩과 같은 약속): 전지 (+)극에서 전구 앞까지 높은 색(빨강), 전구 뒤에서 (−)극까지 낮은 색(파랑).
  *    스위치를 열면 스위치 뒤부터 전구까지도 낮은 색이다(전구를 지나 (−)극과 이어져 있다. 수도꼭지를 잠그면 꼭지 뒤 물길이 비는 것과 같다).
  *    전압 화살표에는 값(전지 하나 1.5 V, 둘 3 V)을 쓴다. 높이 차는 낮음, 높음으로만 보이고 수치는 전압에만 쓴다(옛 3D판의 약속). */
@@ -228,74 +190,184 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
       else xText(ctx, name, r[0] + r[2] / 2, Math.max(r[1] - (side === "right" ? 2 : 9), SAFE_TOP), { px: fs, color: "#FFE08A", w: 800 });
     }
   };
-  // 두 그림이 함께 쓰는 자리(그림 반쪽 안의 x): 펌프·전지, 높이 차·전압, 수도꼭지·스위치, 물이 떨어지는 곳·전구
+  // 두 그림이 함께 쓰는 자리(그림 반쪽 안의 x): 전지, 전압, 수도꼭지·스위치, 물이 떨어지는 곳·전구
   const px = pw * 0.2;
   const fx = pw * 0.78;
   const tx = (px + fx) / 2;
   const gx = pw * 0.4;
   const ox = pw; // 오른쪽 그림(회로)의 시작
-  // 같은 모양의 계단 블록 둘
-  for (const o of [0, ox]) drawBlock(ctx, o + px, o + fx, top, base, o + pw * 0.08, o + pw * 0.92);
-  // ── 왼쪽: 물길 ──
-  const wat = "#4FA8F2";
-  const full = "rgba(79,168,242,.85)";
-  const empty = "rgba(143,164,194,.18)";
-  // 아래 물길과 위 물길(수도꼭지를 잠그면 꼭지 뒤의 위 물길이 빈다)
-  xBox(ctx, pw * 0.1, base, pw * 0.8, 12, 4, full, "#2B6FB8");
-  xBox(ctx, px - 6, top - 10, fx - px + 12, 10, 3, empty, "#8FA4C2");
+  // ── 왼쪽: 물길. 부품과 색은 정밀 그림 g2u7l5f1과 같다(투명한 위아래 물통, 아래 물통에 잠긴 파란 펌프, 하늘색 관, 노란 물레방아).
+  //   펌프가 아래 물통의 물을 올리는 관(맨 왼쪽)으로 위 물통에 붓고, 위 물통 오른쪽 관의 수도꼭지를 지나 물이 떨어지며 물레방아를 돌리고 아래 물통으로 돌아온다.
+  //   어두운 무대라 유리와 물은 정밀 그림보다 옅게 깐다(뒷유리 rgba(190,220,245,.08), 물 #BFE6FB → #7CC2EC를 85%로).
+  const PIPE = "#6CC0F4";
+  const PIPE_LINE = "#2B78BE";
+  const RIM = "#8FB0CC";
+  const pipeW = big ? 9 : 6;
+  /** 관: 테두리 → 바탕(물이 차면 하늘색, 비면 옅은 회청) → 가운데 빛줄 */
+  const tubeLine = (pts: [number, number][], filled: boolean): void => {
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+    ctx.strokeStyle = PIPE_LINE;
+    ctx.lineWidth = pipeW + 3;
+    ctx.stroke();
+    ctx.strokeStyle = filled ? PIPE : "rgba(143,164,194,.4)";
+    ctx.lineWidth = pipeW;
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(236,248,255,.55)";
+    ctx.lineWidth = Math.max(1.2, pipeW * 0.22);
+    ctx.stroke();
+    ctx.restore();
+  };
+  /** 위가 열린 유리 물통: 뒷유리, 물(수면 surf부터 바닥까지), 수면 선, 세 벽 */
+  const glassTank = (x0: number, y0: number, x1: number, y1: number, surf: number): void => {
+    ctx.save();
+    ctx.fillStyle = "rgba(190,220,245,.08)";
+    ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    if (surf < y1 - 3) {
+      const g = ctx.createLinearGradient(0, surf, 0, y1);
+      g.addColorStop(0, "rgba(191,230,251,.85)");
+      g.addColorStop(1, "rgba(124,194,236,.85)");
+      ctx.fillStyle = g;
+      ctx.fillRect(x0 + 1.5, surf, x1 - x0 - 3, y1 - surf - 1.5);
+      ctx.strokeStyle = "#3D9BEA";
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(x0 + 1.5, surf);
+      ctx.lineTo(x1 - 1.5, surf);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = RIM;
+    ctx.lineWidth = big ? 2.4 : 1.8;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x0, y1);
+    ctx.lineTo(x1, y1);
+    ctx.lineTo(x1, y0);
+    ctx.stroke();
+    ctx.restore();
+  };
+  // 자리(그림 반쪽 안의 x): 펌프와 올리는 관 0.08, 높이 차 0.14, 위 물통 0.2~0.42, 수도꼭지 tx, 물이 떨어지는 곳 fx
+  const pumpX = pw * 0.08;
+  const gapX = pw * 0.14;
+  const tankL = pw * 0.2;
+  const tankR = pw * 0.42;
+  const pourX = pw * 0.27;
+  const upSurf = v.level > 0 ? top - 16 : top - 1; // 펌프가 없으면 위 물통이 거의 비어 있다
+  const loSurf = base - 6;
+  // 아래 물통(펌프가 잠겨 있다)
+  glassTank(pw * 0.03, base - 16, pw * 0.95, base + 18, loSurf);
+  // 위 물통
+  glassTank(tankL, top - 30, tankR, top + 4, upSurf);
+  // 파란 펌프(아래 물통 바닥, 펌프가 둘이면 몸통이 크다). 아래쪽에 물 빨아들이는 틈 셋
+  const pumpW = big ? 24 : 16;
+  const pumpH = (big ? 18 : 13) + (v.level === 2 ? (big ? 6 : 4) : 0);
+  const pumpY = base + 16 - pumpH / 2 - 2;
+  ctx.save();
+  ctx.globalAlpha = v.level > 0 ? 1 : 0.35;
+  const pg = ctx.createLinearGradient(pumpX - pumpW / 2, 0, pumpX + pumpW / 2, 0);
+  pg.addColorStop(0, "#8DB6F5");
+  pg.addColorStop(0.5, "#2F6FDE");
+  pg.addColorStop(1, "#1E4FA8");
+  ctx.fillStyle = pg;
+  ctx.beginPath();
+  ctx.roundRect(pumpX - pumpW / 2, pumpY - pumpH / 2, pumpW, pumpH, 5);
+  ctx.fill();
+  ctx.strokeStyle = "#173E85";
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+  ctx.fillStyle = "rgba(14,38,90,.55)";
+  for (let i = -1; i <= 1; i++) ctx.fillRect(pumpX + i * pumpW * 0.24 - 1, pumpY + pumpH * 0.08, 2, pumpH * 0.32);
+  ctx.restore();
+  // 올리는 관(펌프 → 위로 → 위 물통 위에서 붓는다). 펌프가 돌면 관 속 물이 올라간다
+  const riseTop = top - 40;
+  tubeLine([[pumpX, pumpY - pumpH / 2], [pumpX, riseTop], [pourX, riseTop], [pourX, top - 26]], v.level > 0);
   if (v.level > 0) {
     ctx.save();
-    ctx.beginPath();
-    ctx.roundRect(px - 6, top - 10, (v.open ? fx + 6 : tx) - (px - 6), 10, 3);
-    ctx.fillStyle = full;
-    ctx.fill();
+    ctx.fillStyle = "rgba(236,248,255,.85)";
+    const run = pumpY - pumpH / 2 - riseTop;
+    for (let i = 0; i < 5; i++) {
+      const y = pumpY - pumpH / 2 - (((v.ph * (on ? 1 : 0) * 26 + i * 22) % run) + 2);
+      ctx.fillRect(pumpX - 1.5, y, 3, 6);
+    }
     ctx.restore();
   }
-  // 펌프 관
-  xBox(ctx, px - 7, top - 10, 14, base - top + 16, 4, "rgba(143,164,194,.35)", "#8FA4C2");
+  // 위 물통으로 쏟아지는 물(펌프가 돌 때)
   if (v.level > 0) {
-    ctx.fillStyle = wat;
-    for (let i = 0; i < 5; i++) {
-      const y = base - (((v.ph * (on ? 1 : 0) * 26 + i * 22) % (base - top)) + 2);
-      ctx.fillRect(px - 3, y, 6, 8);
-    }
+    ctx.fillStyle = "rgba(108,192,244,.85)";
+    ctx.fillRect(pourX - 2.5, top - 26, 5, upSurf - (top - 26));
   }
-  xBox(ctx, px - 13, top - 30 - v.level * 5, 26, 22 + v.level * 5, 6, v.level > 0 ? "#E0503A" : "rgba(224,80,58,.3)", "#8E2A1C");
+  // 위 물통 오른쪽 관: 수도꼭지 앞은 펌프가 돌면 차 있고, 꼭지 뒤는 꼭지를 열어야 찬다
+  tubeLine([[tankR, top - 2], [tx, top - 2]], v.level > 0);
+  tubeLine([[tx, top - 2], [fx + 5, top - 2], [fx + 5, top + 8]], on);
   // 수도꼭지
-  xBox(ctx, tx - 4, top - 24, 8, 16, 2, "#B9C4D4", "#66738A");
-  xBox(ctx, tx - 13, top - 30, 26, 7, 3, v.open ? "#37C08E" : "#F25757", "#3A465C");
-  if (!v.open) xBox(ctx, tx - 2, top - 10, 4, 10, 1, "#3A465C");
-  // 떨어지는 물과 물레방아
+  xBox(ctx, tx - 4, top - 18, 8, 12, 2, "#B9C4D4", "#66738A");
+  xBox(ctx, tx - 13, top - 24, 26, 7, 3, v.open ? "#37C08E" : "#F25757", "#3A465C");
+  if (!v.open) xBox(ctx, tx - 2, top - 7, 4, 10, 1, "#3A465C");
+  // 떨어지는 물과 노란 물레방아(물줄기가 바퀴의 오른쪽 판에 닿는다)
   const wy = (top + base) / 2 + 4;
   const wr = Math.min(rise * 0.42, big ? 34 : 22);
   if (on) {
-    ctx.fillStyle = "rgba(79,168,242,.8)";
-    ctx.fillRect(fx + 2, top - 2, 7, base - top + 2);
+    ctx.fillStyle = "rgba(108,192,244,.85)";
+    ctx.fillRect(fx + 2, top + 8, 6, loSurf - (top + 8));
   }
   ctx.save();
   ctx.translate(fx - wr * 0.55, wy);
   ctx.rotate(v.spin);
-  ctx.strokeStyle = "#D9A866";
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.arc(0, 0, wr, 0, Math.PI * 2);
-  ctx.stroke();
-  for (let i = 0; i < 8; i++) {
-    const a = (i / 8) * Math.PI * 2;
+  const ring = wr * 0.8;
+  ctx.strokeStyle = "#B07A00";
+  ctx.lineWidth = big ? 2 : 1.5;
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(Math.cos(a) * (wr + 4), Math.sin(a) * (wr + 4));
+    ctx.lineTo(Math.cos(a) * ring, Math.sin(a) * ring);
+    ctx.stroke();
+  }
+  ctx.lineWidth = big ? 3 : 2.2;
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a) * ring, Math.sin(a) * ring);
+    ctx.lineTo(Math.cos(a) * (wr + 3), Math.sin(a) * (wr + 3));
+    ctx.stroke();
+  }
+  ctx.strokeStyle = "#FFD43B";
+  ctx.lineWidth = big ? 5 : 3.6;
+  ctx.beginPath();
+  ctx.arc(0, 0, ring, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = "#E0A800";
+  ctx.lineWidth = 1.1;
+  for (const d of [-1, 1]) {
+    ctx.beginPath();
+    ctx.arc(0, 0, ring + d * (big ? 2.6 : 1.9), 0, Math.PI * 2);
     ctx.stroke();
   }
   ctx.restore();
-  // 높이 차 표시
+  ctx.fillStyle = "#6C757D";
+  ctx.beginPath();
+  ctx.arc(fx - wr * 0.55, wy, big ? 4 : 3, 0, Math.PI * 2);
+  ctx.fill();
+  // 높이 차: 위 물통 수면에서 아래 물통 수면까지(위 수면은 물통 왼쪽 벽에서 점선으로 끌어온다)
   if (v.level > 0) {
-    xArrow(ctx, gx, top + 6, gx, base - 3, "rgba(232,238,249,.75)", 1.8, 6);
-    xArrow(ctx, gx, base - 6, gx, top + 3, "rgba(232,238,249,.75)", 1.8, 6);
+    ctx.save();
+    ctx.setLineDash([4, 3]);
+    ctx.strokeStyle = "#7C8796";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(tankL, upSurf);
+    ctx.lineTo(gapX - 5, upSurf);
+    ctx.stroke();
+    ctx.restore();
+    xArrow(ctx, gapX, upSurf + 3, gapX, loSurf - 2, "rgba(232,238,249,.8)", 1.8, 6);
+    xArrow(ctx, gapX, loSurf - 5, gapX, upSurf, "rgba(232,238,249,.8)", 1.8, 6);
   }
   if (on) {
-    xArrow(ctx, tx + 46, top - 18, tx + 74, top - 18, wat, 2.2, 7);
-    xArrow(ctx, pw * 0.6, base + 24, pw * 0.44, base + 24, wat, 2.2, 7);
+    xArrow(ctx, tx + 40, top - 16, tx + 68, top - 16, PIPE, 2.2, 7);
+    xArrow(ctx, pw * 0.62, base + 6, pw * 0.46, base + 6, "#1864AB", 2.2, 7);
   }
   // ── 오른쪽: 전기 회로(물길과 같은 자리) ──
   const L = ox + px;
@@ -362,9 +434,9 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
   // 스위치 상자는 들린 손잡이까지만(아래로 길면 전압 상자 오른쪽 빈 곳을 눌렀을 때 스위치가 더 가까워진다).
   // 이름표를 상자 오른쪽에 쓰는 넷: 높이 차와 전압(위에 쓰면 관과 전선에 걸린다. 물레방아, 전구 상자까지 자리가 모자라면 상자 위 가장자리),
   // 물의 흐름과 전류(수도꼭지, 스위치 이름표와 붙어 한 말로 읽힌다. 위에 쓰면 폰에서 상태 줄에 가린다).
-  mark("pump", [px - 22, top - 40, 44, 44], "펌프");
+  mark("pump", [pumpX - 20, pumpY - pumpH / 2 - 8, 40, pumpH + 14], "펌프");
   mark("pump", [L - 22, T + 4, 44, B - T - 8], "전지");
-  mark("gap", [gx - 22, top + 12, 44, base - top - 14], "높이 차", "right", fx - wr * 0.55 - wr - 4);
+  mark("gap", [gapX - 16, upSurf - 2, 32, loSurf - upSurf + 2], "높이 차", "right", fx - wr * 0.55 - wr - 4);
   mark("gap", [vx - 25, T + 12, 50, B - T - 18], "전압", "right", Rr - 26);
   mark("flow", [tx + 38, top - 34, 46, 30], "물의 흐름", "right");
   mark("flow", [tc + 38, T - 29, 46, 30], "전류", "right");

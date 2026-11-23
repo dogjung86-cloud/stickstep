@@ -1,10 +1,10 @@
 // 중2 대단원 VII. 전기와 자기. 이 파일이 정본이다.
-// 중단원 1 '전기': 마찰 전기(244~245) · 정전기 유도(246~247) · 전류와 전압(248~249) ·
-//   전류·전압·저항의 관계(250~253) · 저항의 연결(254~255) · 전기 에너지의 전환(256~259)
-// 중단원 2 '자기': 전류가 만드는 자기장(264~265) · 전류가 흐르는 코일이 받는 힘(266~269)
+// 중단원 1 '전기': 마찰 전기 · 정전기 유도 · 전류와 전압 ·
+//   전류·전압·저항의 관계 · 저항의 연결 · 전기 에너지의 전환
+// 중단원 2 '자기': 전류가 만드는 자기장 · 전류가 흐르는 코일이 받는 힘
 // 8레슨(무료 3 + 프리미엄 5). 레슨마다 도입(opener) → 랩 → 용어 → 정리 → 문제(이 단원에는 만화가 없다).
 // 여기에는 단원과 레슨의 머리 정보, 레슨의 차례만 있다. 스텝은 unit7v5parts.ts(레슨 1~4)와 unit7v5parts2.ts(레슨 5~8)에 있다.
-// 설계와 책의 실험 대응표는 design/g2u7v5-plan.md. 개념 스텝에는 아직 컷이 없다(output/g2-v5/u7/concept-cuts.md 를 보고 그림 세션이 그린다).
+// 설계와 실험 대응표는 design/g2u7v5-plan.md. 개념 스텝에는 아직 컷이 없다(output/g2-v5/u7/concept-cuts.md 를 보고 그림 세션이 그린다).
 import type { Unit } from "../curriculum";
 import { L1, L2, L3, L4 } from "./unit7v5parts";
 import { L5, L6, L7, L8 } from "./unit7v5parts2";
@@ -17,7 +17,7 @@ export const G2_UNIT7: Unit = {
   color: "#EFB800",
   icon: "bolt",
 
-  standard: "2022 개정 교육과정",
+  standard: "[9과14-01]~[9과14-04] 전기와 자기",
   lessons: [
     {
       id: "g2u7l1",
@@ -27,6 +27,7 @@ export const G2_UNIT7: Unit = {
       label: "마찰 전기",
       icon: "bolt",
       minutes: 11,
+      standard: "[9과14-01] 마찰 전기와 정전기 유도",
       doneNote: "마찰 전기와 대전, 전기력을 배웠어요",
       steps: L1,
     },
@@ -38,6 +39,7 @@ export const G2_UNIT7: Unit = {
       label: "정전기 유도",
       icon: "bolt",
       minutes: 9,
+      standard: "[9과14-01] 마찰 전기와 정전기 유도",
       doneNote: "정전기 유도를 전자의 이동으로 설명할 수 있어요",
       steps: L2,
     },
@@ -49,6 +51,7 @@ export const G2_UNIT7: Unit = {
       label: "전류와 전압",
       icon: "bolt",
       minutes: 10,
+      standard: "[9과14-02] 전류, 전압, 저항의 관계",
       doneNote: "전류·전압을 물의 흐름 비유로 이해했어요",
       steps: L3,
     },
@@ -61,6 +64,7 @@ export const G2_UNIT7: Unit = {
       label: "옴의 법칙",
       icon: "bolt",
       minutes: 12,
+      standard: "[9과14-02] 전류, 전압, 저항의 관계",
       doneNote: "그래프에서 전류·전압·저항의 관계를 이끌어냈어요",
       steps: L4,
     },
@@ -73,6 +77,7 @@ export const G2_UNIT7: Unit = {
       label: "저항의 연결",
       icon: "bolt",
       minutes: 16,
+      standard: "[9과14-03] 저항의 연결과 전기 에너지의 전환",
       doneNote: "직렬·병렬연결의 특징을 비교할 수 있어요",
       steps: L5,
     },
@@ -85,6 +90,7 @@ export const G2_UNIT7: Unit = {
       label: "전기 에너지",
       icon: "bolt",
       minutes: 9,
+      standard: "[9과14-03] 저항의 연결과 전기 에너지의 전환",
       doneNote: "소비 전력과 에너지 전환·효율을 배웠어요",
       steps: L6,
     },
@@ -97,6 +103,7 @@ export const G2_UNIT7: Unit = {
       label: "전류와 자기장",
       icon: "bolt",
       minutes: 12,
+      standard: "[9과14-04] 전류의 자기장과 코일이 받는 힘",
       doneNote: "전류가 흐르는 코일 주위의 자기장을 관찰했어요",
       steps: L7,
     },
@@ -109,6 +116,7 @@ export const G2_UNIT7: Unit = {
       label: "코일이 받는 힘",
       icon: "bolt",
       minutes: 14,
+      standard: "[9과14-04] 전류의 자기장과 코일이 받는 힘",
       doneNote: "전기와 자기 단원 완주, 전동기의 원리까지!",
       steps: L8,
     },

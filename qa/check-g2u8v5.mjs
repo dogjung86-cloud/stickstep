@@ -322,11 +322,8 @@ const LAB = {
   },
   async balloon() {
     await at("balloon-start");
-    // 딱지 ㄷ은 한 간격이 다른 간격의 1.5배를 넘게 붙여야 한다: 세 간격이 비슷한 자리(165, 104)는 받지 않는다
-    for (const [x, y] of [[134, 108], [152, 131], [165, 104]]) { await tapStage(page, x, y); await W(page, 250); }
-    ok((await page.evaluate(() => document.querySelector(".screen.active .bv-helper")?.textContent ?? "")).includes("비슷해요"), "balloon: 간격이 비슷한 딱지 ㄷ을 받아 버림");
-    await at("balloon-near");
-    await tapStage(page, 196, 100); await W(page, 250);
+    // 스티커 ㄱ, ㄴ, ㄷ을 붙인다(간격을 일부러 다르게 할 필요는 없다. 결론은 '모두 늘어난다'와 '중심이 없다'뿐이다)
+    for (const [x, y] of [[134, 108], [152, 131], [196, 100]]) { await tapStage(page, x, y); await W(page, 250); }
     await at("balloon-tags");
     await hold("바람 더", 1900);
     await W(page, 400);
@@ -359,7 +356,7 @@ const LAB = {
     await at("mission-far");
     for (const k of ["sp", "ap", "hb", "is"]) { await tapKey(page, k); await W(page, 1300); }
     await at("mission-all");
-    await finishLab("mission", "화성 탐사 계획 세우러 가기", 1);
+    await finishLab("mission", "달 탐사 계획 세우러 가기", 1);
   },
   async plan() {
     await at("plan-start");

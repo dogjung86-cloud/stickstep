@@ -1,17 +1,17 @@
-// 중2 II. 지권의 변화 — 단원 종합 평가 풀 v2: 광물의 특성 (g2u2e219~e236)
-// 2026-07-26 교과서 준거 전면 재출제(과학 재출제 1호) — 정본 소스는 qa/g2u2v2-*.ts 스테이징,
-// 이 파일은 qa/build-g2u2v2-lessons.mjs가 재생성한다(직접 수정 금지 — 수정은 스테이징에서).
+// 중2 II. 지권의 변화, 단원 종합 평가 풀 v2: 광물의 특성 (g2u2e219~e236)
+// 2026-07-26 전면 재출제(과학 재출제 1호), 정본 소스는 qa/g2u2v2-*.ts 스테이징,
+// 이 파일은 qa/build-g2u2v2-lessons.mjs가 재생성한다(직접 수정 금지, 수정은 스테이징에서).
 // 규격·회피표·검산 기록 = qa/g2u2-v2-blueprint.md, 관행 = EXAM_GUIDE.md "g2u2 v2" 항목.
 import type { ExamItem } from "./types";
 import { svgTable, geoRockFlowFig } from "../../ui/examFigures";
 
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
-/** 실사 사진 임베드 — loading=lazy 금지(사고 #14). alt에 암석·광물 이름 등 정답 금지(관찰 서술만). */
+/** 실사 사진 임베드, loading=lazy 금지(사고 #14). alt에 암석·광물 이름 등 정답 금지(관찰 서술만). */
 const pic = (path: string, alt: string): string =>
   `<img src="${IMG_BASE}${path}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
 
-/** 사진 3연((가)(나)(다)) — 구성 광물 관찰 등. */
+/** 사진 3연((가)(나)(다)), 구성 광물 관찰 등. */
 const pic3 = (a: [string, string], b: [string, string], c: [string, string]): string => {
   const cell = (p: [string, string], label: string): string =>
     `<span style="position:relative;display:block"><img src="${IMG_BASE}${p[0]}" alt="${p[1]}" style="display:block;width:100%;border-radius:12px" /><b style="position:absolute;left:6px;top:6px;background:rgba(255,255,255,.94);border:1px solid #C4CAD2;border-radius:10px;padding:1px 7px;font-size:11.5px;font-weight:800;color:#4E5968">${label}</b></span>`;
@@ -218,7 +218,7 @@ export const POOL_G2U2L2: ExamItem[] = [
     options: ["조암 광물", "보석 광물", "조흔 광물", "퇴적물", "화성암"],
     answer: 0,
     explain:
-      "<span class='xh'>정답 풀이</span>암석의 재료로 흔히 쓰이는 주된 광물들을 <b>조암 광물</b>이라고 해요. 석영·장석·흑운모·각섬석·방해석이 대표 선수들이죠. '암석을 짓는(造巖) 광물'이라는 뜻 그대로예요.<span class='xh'>오답 하나씩 격파</span>'보석 광물'은 교과서에 없는 말로, 반짝인다고 암석의 주재료가 되는 것은 아니에요. '조흔 광물'은 조흔색이라는 성질 이름에 광물을 붙여 만든 가짜 용어죠. 비슷한 글자로 헷갈리게 하는 전형적인 함정이에요. '퇴적물'은 암석이 부서진 알갱이를 부르는 말이라 광물 분류가 아니고, '화성암'은 광물이 아니라 암석의 한 가족 이름이에요. 용어 문제는 뜻풀이(암석을 이루는 주된 광물)와 이름(조암)을 한 쌍으로 외우면 흔들리지 않아요.",
+      "<span class='xh'>정답 풀이</span>암석의 재료로 흔히 쓰이는 주된 광물들을 <b>조암 광물</b>이라고 해요. 석영·장석·흑운모·각섬석·방해석이 대표 선수들이죠. '암석을 짓는(造巖) 광물'이라는 뜻 그대로예요.<span class='xh'>오답 하나씩 격파</span>'보석 광물'은 조암 광물을 가리키는 말이 아니에요. 반짝인다고 암석의 주재료가 되는 것은 아니죠. '조흔 광물'은 조흔색이라는 성질 이름에 광물을 붙여 만든 가짜 용어죠. 비슷한 글자로 헷갈리게 하는 전형적인 함정이에요. '퇴적물'은 암석이 부서진 알갱이를 부르는 말이라 광물 분류가 아니고, '화성암'은 광물이 아니라 암석의 한 가족 이름이에요. 용어 문제는 뜻풀이(암석을 이루는 주된 광물)와 이름(조암)을 한 쌍으로 외우면 흔들리지 않아요.",
     core: "암석의 주재료 광물들 = 조암 광물(석영·장석·흑운모·각섬석·방해석)!",
   },
     {

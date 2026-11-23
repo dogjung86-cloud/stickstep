@@ -1,6 +1,6 @@
 // 중2 과학 VIII. 별과 우주 · 단원 종합 평가 풀 v2: 레슨 4 별의 색과 표면 온도 (g2u8e261~e279)
 // 이 파일은 qa/build-g2u8v2-lessons.mjs가 스테이징(qa/g2u8v2-*.ts)에서 재생성한다 · 직접 수정 금지.
-// 교과서 3사 준거 전면 재출제(2026-08) · 정본 설계표 qa/g2u8-v2-blueprint.md(실측·회피표·검산 기록).
+// 전면 재출제(2026-08) · 정본 설계표 qa/g2u8-v2-blueprint.md(실측·회피표·검산 기록).
 // 규격: word 0 · 개수 세기 num 0 · diff 태그 · 그림은 자료 의존 설계 · 언어 가드 목록은 설계표 §0.
 import type { ExamItem } from "./types";
 import { svgTable, starMagScatterFig, colorTempTrioFig, starColorRowFig } from "../../ui/examFigures";
@@ -178,7 +178,7 @@ export const POOL_G2U8L4: ExamItem[] = [
   },
   {
     // [268] d2 · TBL 실명 별 색 표(알데바란 주황 · 레굴루스 청백 · 비03 계보, 실명은 자료 제시 관행 ·
-    // 베텔게우스·리겔·시리우스(교과서·레슨)·안타레스·스피카(v1) 회피). 검산: 청백 > 주황 온도.
+    // 베텔게우스·리겔·시리우스(레슨)·안타레스·스피카(v1) 회피). 검산: 청백 > 주황 온도.
     id: "g2u8e268",
     lessonId: "g2u8l4",
     type: "mcq",

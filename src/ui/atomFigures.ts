@@ -1,4 +1,4 @@
-// atomFigures — 중2 IV(물질의 구성) 퀴즈·개념 그림 — 손코딩 교육용 SVG(라이트 카드 기준) + recap 미니아트.
+// atomFigures, 중2 IV(물질의 구성) 퀴즈·개념 그림, 손코딩 교육용 SVG(라이트 카드 기준) + recap 미니아트.
 // 입자 표현 관례: 원자핵 +N 라벨, 전자(−) 파랑, CPK 색(O 빨강·H 흰색·N 파랑), NaCl은 격자.
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
@@ -27,7 +27,7 @@ function cloudSpots(cx: number, cy: number, n: number, rIn: number, rOut: number
   });
 }
 
-/** 원자 모형(+p 핵, e개 전자, 파라미터형): 책과 같은 구름 모형. 옅은 파란 구름 가운데 원자핵, 전자는 궤도선 없이 구름 안에 고르게. 원자 구조 판독 문제용 */
+/** 원자 모형(+p 핵, e개 전자, 파라미터형): 구름 모형. 옅은 파란 구름 가운데 원자핵, 전자는 궤도선 없이 구름 안에 고르게. 원자 구조 판독 문제용 */
 export function atomModelFig(p: number, e: number): string {
   // aria는 중립: 핵 라벨 값·전자 수가 곧 문항의 판독 과제라 수치를 말하지 않는다(시험 aria 유출 규칙 소급).
   return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="원자 모형, 가운데 원자핵에 전하 라벨이 적혀 있고, 둘레의 옅은 파란 구름 속에 전자 알갱이들이 흩어져 있어요. 라벨 값과 알갱이 수를 살펴보세요">
@@ -80,7 +80,7 @@ export function fourModelFig(): string {
   const fe = (x: number, y: number): string => ball(x, y, 10, "#A87858", "#6B4630");
   const na = (x: number, y: number): string => ball(x, y, 7.5, "#C0A2E8", "#7A54B0");
   const cl = (x: number, y: number): string => ball(x, y, 12, "#8ED0A0", "#3E8A54");
-  // aria는 중립 — 입자 종류(분자/원자/이온) 판정이 곧 문항의 과제라 종류를 말하지 않는다(시험 aria 유출 규칙 소급).
+  // aria는 중립, 입자 종류(분자/원자/이온) 판정이 곧 문항의 과제라 종류를 말하지 않는다(시험 aria 유출 규칙 소급).
   return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="산소, 물, 철, 염화 나트륨 네 가지 물질의 입자 모형, 각 모형에서 알갱이들이 어떻게 배열되어 있는지 살펴보세요">
     <g><line x1="66" y1="52" x2="94" y2="52" stroke="#9AA5B4" stroke-width="4"/>${O(60, 52)}${O(100, 52)}
       <text x="80" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">산소</text></g>
@@ -94,7 +94,7 @@ export function fourModelFig(): string {
   </svg>`;
 }
 
-/** 이온 생성 모형 — 원자 A(+4, 전자 4개)는 전자 2개를 잃어 (가) A²⁺, 원자 B(+9, 전자 9개)는 전자 1개를 얻어 (나) B⁻.
+/** 이온 생성 모형, 원자 A(+4, 전자 4개)는 전자 2개를 잃어 (가) A²⁺, 원자 B(+9, 전자 9개)는 전자 1개를 얻어 (나) B⁻.
  *  전하 검산: 중성 원자는 양성자수 = 전자 수, (가) +4/전자 2 → 2+, (나) +9/전자 10 → 1−. */
 export function ionFormFig(): string {
   const ring = (cx: number, cy: number, n: number, rx: number, ry: number): string =>
@@ -118,7 +118,7 @@ export function ionFormFig(): string {
   </svg>`;
 }
 
-/** 물 vs 과산화 수소 분자 모형 — 같은 원소, 다른 개수 */
+/** 물 vs 과산화 수소 분자 모형, 같은 원소, 다른 개수 */
 export function waterPeroxFig(): string {
   const O = (x: number, y: number): string => `<circle cx="${x}" cy="${y}" r="14" fill="#E8695A" stroke="#A8342A" stroke-width="1.6"/>`;
   const H = (x: number, y: number): string => `<circle cx="${x}" cy="${y}" r="9" fill="#F4F7FB" stroke="#9AA5B4" stroke-width="1.4"/>`;
@@ -133,7 +133,7 @@ export function waterPeroxFig(): string {
   </svg>`;
 }
 
-/** 이온의 이동 장치 — 거름종이 + 전극 */
+/** 이온의 이동 장치, 거름종이 + 전극 */
 export function ionMoveFig(): string {
   return `<svg viewBox="0 0 344 160" ${NS} fill="none" role="img" aria-label="거름종이 양끝에 전극을 연결하고 가운데에 수용액을 떨어뜨린 실험 장치">
     <rect x="52" y="56" width="240" height="56" rx="8" fill="#F4F7FB" stroke="#B0B8C1" stroke-width="1.8"/>
@@ -145,7 +145,7 @@ export function ionMoveFig(): string {
   </svg>`;
 }
 
-/** L2 개념 — 화학식 해부도: 아래 숫자의 뜻(H₂O) */
+/** L2 개념, 화학식 해부도: 아래 숫자의 뜻(H₂O) */
 export function formulaAnatomyFig(): string {
   return `<svg viewBox="0 0 344 150" ${NS} fill="none" role="img" aria-label="화학식 H2O에서 아래 숫자 2는 수소 원자의 개수, 산소의 1은 생략">
     <text x="118" y="76" text-anchor="middle" font-size="52" font-weight="800" fill="#333D4B">H</text>
@@ -160,7 +160,7 @@ export function formulaAnatomyFig(): string {
   </svg>`;
 }
 
-/** L4 개념 — 주기율표 칸 읽는 법(교과서 그림 IV-6의 수소 칸 해부도) */
+/** L4 개념, 주기율표 칸 읽는 법(수소 칸 해부도) */
 export function cellAnatomyFig(): string {
   const callout = (y: number, label: string, tx: number, ty: number, color: string): string => `
     <text x="118" y="${y + 4}" text-anchor="end" font-size="13" font-weight="800" fill="${color}">${label}</text>
@@ -183,7 +183,7 @@ export function cellAnatomyFig(): string {
   </svg>`;
 }
 
-/** L5 개념 — 이온식 쓰는 법: 잃으면 +, 얻으면 −, 숫자는 부호 앞(오른쪽 위) */
+/** L5 개념, 이온식 쓰는 법: 잃으면 +, 얻으면 −, 숫자는 부호 앞(오른쪽 위) */
 export function ionNotationFig(): string {
   const ex = (x: number, y: number, from: string, to: string, sup: string, supColor: string, note: string): string => `
     <text x="${x}" y="${y}" text-anchor="middle" font-size="26" font-weight="800" fill="#8B95A1">${from}</text>
@@ -250,7 +250,7 @@ const MINI: Record<string, string> = {
     <text x="42" y="46" text-anchor="middle" font-size="15" font-weight="800" fill="#C77800">Fe</text>`,
   formulaMini: `<circle cx="24" cy="26" r="10" fill="#E8695A"/><circle cx="13" cy="40" r="7" fill="#F4F7FB" stroke="#9AA5B4" stroke-width="1.4"/><circle cx="36" cy="40" r="7" fill="#F4F7FB" stroke="#9AA5B4" stroke-width="1.4"/>
     <text x="46" y="30" font-size="13" font-weight="800" fill="#333D4B">H</text><text x="54" y="35" font-size="9" font-weight="800" fill="#333D4B">2</text><text x="58" y="30" font-size="13" font-weight="800" fill="#333D4B">O</text>`,
-  // 원자핵과 전자: 책의 구름 모형(옅은 파란 구름 가운데 + 원자핵, 구름 안에 (−) 전자). 궤도선과 숫자 글자 없이.
+  // 원자핵과 전자: 구름 모형(옅은 파란 구름 가운데 + 원자핵, 구름 안에 (−) 전자). 궤도선과 숫자 글자 없이.
   atomCore: `${miniCloud(32, 32, 29)}
     <circle cx="32" cy="32" r="7.5" fill="#E8836B" stroke="#A8442E" stroke-width="1.2"/><path d="M28.4 32h7.2M32 28.4v7.2" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/>
     ${cloudSpots(32, 32, 4, 15, 22.5, -2.1).map(([x, y]) => miniElectron(x, y)).join("")}`,

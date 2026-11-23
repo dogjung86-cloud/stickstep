@@ -42,16 +42,18 @@ export function salivaTubesFig(): string {
   return svg(200, body, "녹말 용액과 증류수를 넣은 시험관 (가), 녹말 용액과 침 용액을 넣은 시험관 (나)를 37도의 물이 담긴 비커에 담근 모습");
 }
 
-/** 호흡운동 모형: 컵 속의 작은 고무풍선, 빨대, 고무 막에 (가)~(라) 기호를 붙였다. */
+/** 호흡운동 모형: 투명한 통 속의 작은 고무풍선, Y자관, 통, 고무 막에 (가)~(라) 기호를 붙였다. */
 export function chestModelFig(): string {
   let body = "";
-  body += `<path d="M170 14 L170 62 M170 62 L150 78 M170 62 L190 78" fill="none" stroke="#5AB0F2" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`;
-  body += `<ellipse cx="144" cy="98" rx="15" ry="19" fill="#F58CA0" stroke="#B4405A" stroke-width="2"/><ellipse cx="196" cy="98" rx="15" ry="19" fill="#F58CA0" stroke="#B4405A" stroke-width="2"/>`;
-  body += `<path d="M118 40 L222 40 L232 140 L108 140 Z" fill="rgba(160,200,255,.12)" stroke="#7F93AD" stroke-width="2.4"/>`;
-  body += `<path d="M108 140 Q170 150 232 140" fill="none" stroke="#9B5DE5" stroke-width="5" stroke-linecap="round"/>`;
+  body += `<path d="M156 46 C156 58 112 58 112 74 L112 140 L228 140 L228 74 C228 58 184 58 184 46 Z" fill="rgba(160,200,255,.12)"/>`;
+  body += `<path d="M156 30 L156 46 C156 58 112 58 112 74 L112 140 M184 30 L184 46 C184 58 228 58 228 74 L228 140" fill="none" stroke="#7F93AD" stroke-width="2.4" stroke-linejoin="round"/>`;
+  body += `<rect x="154" y="28" width="32" height="18" rx="3" fill="#5A6577" stroke="#3A4252" stroke-width="1.4"/>`;
+  body += `<path d="M170 8 L170 70 M170 70 L150 84 M170 70 L190 84" fill="none" stroke="#5AB0F2" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`;
+  body += `<ellipse cx="144" cy="104" rx="15" ry="19" fill="#F58CA0" stroke="#B4405A" stroke-width="2"/><ellipse cx="196" cy="104" rx="15" ry="19" fill="#F58CA0" stroke="#B4405A" stroke-width="2"/>`;
+  body += `<path d="M112 140 Q170 150 228 140" fill="none" stroke="#9B5DE5" stroke-width="5" stroke-linecap="round"/>`;
   const lab = (x: number, y: number, s: string, tx: number, ty: number): string => `<line x1="${x}" y1="${y}" x2="${tx}" y2="${ty}" stroke="#8B95A1" stroke-width="1.4"/>${t(x, y + 4.5, s, { anchor: x < 170 ? "end" : "start", weight: 800 })}`;
-  body += lab(92, 22, "(가)", 164, 24) + lab(250, 70, "(나)", 228, 72) + lab(92, 100, "(다)", 128, 100) + lab(250, 150, "(라)", 214, 144);
-  return svg(166, body, "플라스틱 컵 속에 빨대에 달린 작은 고무풍선 두 개가 있고 컵 아래에 고무 막을 씌운 모형. 네 부분에 기호가 붙어 있다");
+  body += lab(92, 16, "(가)", 164, 16) + lab(250, 90, "(나)", 230, 92) + lab(92, 106, "(다)", 128, 106) + lab(250, 152, "(라)", 214, 145);
+  return svg(166, body, "투명한 통의 마개를 지나는 Y자관 끝에 작은 고무풍선 두 개가 달려 있고 통 아래에 고무 막을 씌운 모형. 네 부분에 기호가 붙어 있다");
 }
 
 /** 건강한 사람의 세 곳에 들어 있는 물질의 표(혈액, 여과된 액체, 오줌). 포도당 줄의 오줌 칸이 ㉠이다. */

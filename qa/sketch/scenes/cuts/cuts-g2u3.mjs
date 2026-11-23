@@ -75,15 +75,22 @@ function cutL1() {
   return sk;
 }
 
-/* ---------- g2u3l2: 수면 위의 머리와 물속의 몸통이 어긋나 보이는 물개 ---------- */
+/* ---------- g2u3l2: 얕은 수영장 물속에 선 친구의 다리가 짧고 떠 보인다. 발에서 나온 빛이 수면에서 꺾여 물가의 눈으로 온다 ---------- */
 function cutL2() {
   const sk = new Sk(W, H, { id: "b" });
-  const GY = 668, X0 = 340, X1 = 760, RIM = 438, WY = 470, BOT = 662, N = 1.33;
-  ground(sk, GY, 11);
-  // 학생(왼쪽, 수조를 내려다본다)과 눈의 자리
-  const kx = 230, ks = 0.72, EYE = [kx + 50, GY - ks * 436 + 4];
-  // 물개의 한 점 T 에서 나온 빛이 수면의 Q 에서 꺾여 눈으로 간다: 1.33 sin(물속 각) = sin(공기 중 각)
-  const SX = -50, T = [562 + SX, 628]; // SX: 물개를 학생 쪽으로 당긴 만큼
+  const N = 1.33;
+  const GY = 492, X0 = 330, X1 = 906, WY = 518, BOT = 690; // 물가 바닥, 수영장 벽, 수면, 수영장 바닥
+  ground(sk, GY, 11, 14, X0);
+  ground(sk, GY, 12, X1, 946);
+  // 학생(왼쪽 물가에서 내려다본다)과 눈의 자리
+  const kx = 186, ks = 0.74, EYE = [kx + 50, GY - ks * 436 + 4];
+  // 친구(물속): 엉덩이가 수면 높이에 오도록 배율을 맞추고 발은 바닥에 둔다
+  const fx = 650, FY = BOT - 2, fs = (FY - WY) / 212;
+  const scr = ([lx, ly]) => [fx + lx * fs, FY + ly * fs];
+  const loc = ([x, y]) => [(x - fx) / fs, (y - FY) / fs];
+  const base = pose();
+  // 학생 쪽 발 T 에서 나온 빛이 수면의 Q 에서 꺾여 눈으로 간다: 1.33 sin(물속 각) = sin(공기 중 각)
+  const T = scr(base.ftL);
   let lo = EYE[0], hi = T[0];
   for (let i = 0; i < 40; i++) {
     const q = (lo + hi) / 2;
@@ -92,54 +99,38 @@ function cutL2() {
   }
   const Q = [(lo + hi) / 2, WY];
   const slope = (WY - EYE[1]) / (Q[0] - EYE[0]);
-  const A = [T[0], WY + (T[0] - Q[0]) * slope]; // 눈이 느끼는 자리(공기 중 빛을 거슬러 곧게 이은 선 위)
-  const K = (A[1] - WY) / (T[1] - WY);          // 떠 보이는 비율. 물속 몸통 전체를 이 비율로 끌어올려 그린다
+  const A = [T[0], WY + (T[0] - Q[0]) * slope]; // 눈이 느끼는 발의 자리(공기 중 빛을 거슬러 곧게 이은 선 위)
+  const K = (A[1] - WY) / (T[1] - WY);          // 떠 보이는 비율. 물속 다리 전체를 이 비율로 끌어올려 그린다
   const up = p => [p[0], WY + (p[1] - WY) * K];
   // 물
   sk.fill(box(X0 + 6, WY, X1 - 6, BOT), "#CFE9F7", { dx: 0, dy: 0, wob: 0.3, seed: 21 });
-  // 물속 몸통: 실제 자리(점선)와 보이는 자리(떠오른 자리, 칠한 몸통)
-  const SEAL = "#9AA7B4";
-  sk.save(); sk.translate(SX, 0);
-  const side = [[589, WY], [564, 522], [544, 574], [528, 620], [536, 646], [566, 652], [596, 630], [626, 588], [650, 530], [661, WY]];
-  const real = curve(side, false, 4);
-  sk.fill([...real, real[0]], "#7FA9C6", { dx: 0, dy: 0, wob: 0.3, seed: 22, alpha: 0.45 });
-  sk.ink(real, { w: 7, color: "#557F9E", dash: [12, 9], seed: 23, wob: 0.2 });
-  const seen = curve(side.map(up), false, 4);
-  sk.fill([...seen, seen[0]], SEAL, { dx: 0, dy: 0, wob: 0.3, seed: 25 });
-  sk.ink(seen, { w: 9, seed: 26, wob: 0.6 });
-  // 수면 위: 목과 머리(실제 자리 그대로)
-  const neck = [...curve([[589, WY], [600, 446], [612, 424]], false, 4), ...curve([[690, 424], [678, 448], [661, WY]], false, 4)];
-  sk.fill([...neck, neck[0]], SEAL, { dx: 0, dy: 0, wob: 0.3, seed: 31 });
-  sk.ink(curve([[589, WY], [600, 446], [612, 424]], false, 4), { w: 9, seed: 32, wob: 0.5 });
-  sk.ink(curve([[690, 424], [678, 448], [661, WY]], false, 4), { w: 9, seed: 33, wob: 0.5 });
-  const head = circ(652, 396, 47, { over: 0.1, seed: 34 });
-  sk.fill(head, SEAL, { dx: 0, dy: 0, wob: 0.4, seed: 35 }); sk.ink(head, { w: 9, seed: 36, wob: 0.6 });
-  const sn = ell(612, 406, 22, 16);
-  sk.fill(sn, "#C3CCD5", { dx: 0, dy: 0, wob: 0.3, seed: 37 }); sk.ink(sn, { w: 7, seed: 38, wob: 0.4 });
-  sk.dot(594, 400, 6); sk.dot(640, 380, 6);
-  for (const [dy, i] of [[-8, 0], [2, 1], [12, 2]]) sk.ink(dense([[606, 410 + dy * 0.4], [578, 412 + dy * 1.5]]), { w: 3.5, seed: 39 + i, wob: 0.2 });
-  sk.restore();
-  // 수조와 수면
+  // 물속 다리: 실제 자리(점선)
+  for (const [kn, ft, i] of [[base.knL, base.ftL, 0], [base.knR, base.ftR, 1]]) {
+    sk.ink(curve([scr(base.hip), scr(kn), scr(ft)]), { w: 7, color: "#557F9E", dash: [12, 9], seed: 23 + i, wob: 0.2 });
+  }
+  // 친구: 보이는 자리의 다리(짧고 떠 있다)로 그린다. 한 팔은 물가의 학생에게 흔든다
+  const seen = Object.fromEntries(["knL", "ftL", "knR", "ftR"].map(k => [k, loc(up(scr(base[k])))]));
+  const PF = pose({ ...seen, elL: [-92, -306], haL: [-150, -388], elR: [48, -270], haR: [58, -226], tilt: -0.06 });
+  drawFigure(sk, fx, FY, fs, PF, { hair: "short", hairColor: "#3F3A36", seed: 91, name: "friend" });
+  // 수영장과 수면
   thin(sk, 0.8, () => {
-    sk.ink(curve([[X0 + 6, WY + 1], [450, WY - 3], [560, WY + 2], [660, WY - 2], [X1 - 6, WY + 1]]), { w: 8, color: "#3F8FC8", seed: 41, wob: 0.6 });
-    sk.ink(dense([[X0, RIM], [X0, BOT + 2], [X1, BOT + 2], [X1, RIM]]), { w: 11, seed: 42 });
-    sk.ink(dense([[X0 + 16, RIM + 44], [X0 + 16, BOT - 30]]), { w: 5, color: C.white, seed: 43, wob: 0.2 });
+    sk.ink(curve([[X0 + 6, WY + 1], [460, WY - 3], [600, WY + 2], [760, WY - 2], [X1 - 6, WY + 1]]), { w: 8, color: "#3F8FC8", seed: 41, wob: 0.6 });
+    sk.ink(dense([[X0, GY + 2], [X0, BOT + 2], [X1, BOT + 2], [X1, GY + 2]]), { w: 11, seed: 42 });
+    sk.ink(dense([[X0 + 16, WY + 30], [X0 + 16, BOT - 26]]), { w: 5, color: C.white, seed: 43, wob: 0.2 });
   });
-  // 빛의 길: 물속에서 수면까지, 수면에서 꺾여 눈으로. 눈이 느끼는 길은 점선
+  // 빛의 길: 발에서 수면까지, 수면에서 꺾여 눈으로. 눈이 느끼는 길은 점선
   sk.ink(dense([[Q[0], WY - 62], [Q[0], WY + 62]]), { w: 4, color: C.gray, dash: [8, 7], seed: 51, wob: 0 });
   sk.ink(dense([Q, A]), { w: 6, color: LIGHT, dash: [10, 9], seed: 52, wob: 0 });
   sk.ink(dense([T, Q]), { w: 9, color: LIGHT, seed: 53, wob: 0.3 });
   const tip = lerp2(Q, EYE, 0.8);
   arrow(sk, [Q, tip], { w: 9, color: LIGHT, straight: true, seed: 54, head: 24, wob: 0.3 });
   sk.dot(T[0], T[1], 8, LIGHT);
-  arrow(sk, [[T[0] + 78, T[1] + 6], [T[0] + 78, A[1] + 14]], { w: 9, color: TEAL, straight: true, seed: 57, head: 22, wob: 0.2 }); // 실제 자리에서 보이는 자리로: 떠 보인다
+  const ax = scr(base.ftR)[0] + 44;
+  arrow(sk, [[ax, T[1] + 2], [ax, A[1] + 10]], { w: 9, color: TEAL, straight: true, seed: 57, head: 22, wob: 0.2 }); // 실제 발 높이에서 보이는 발 높이로: 떠 보인다
   // 학생: 깜짝 놀라 한 팔을 든다
   const PK = pose({ elL: [-104, -300], haL: [-176, -384], elR: [62, -262], haR: [110, -212], tilt: 0.1 });
   drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student" });
-  emark(sk, kx + 104, GY - ks * 436 - 138, 0.95);
-  // 쌤: 수면을 가리킨다
-  const PT = pose({ elR: [102, -292], haR: [178, -322], tilt: 0.05 });
-  drawFigure(sk, 872, GY, 0.6, PT, { ...TEACHER, name: "teacher", mirror: true });
+  emark(sk, kx + 152, GY - ks * 436 - 70, 0.9); // 머리 오른쪽(머리 위는 그림 끝에 가깝다)
   return sk;
 }
 
@@ -570,7 +561,7 @@ function cutL8() {
 export function cuts() {
   return [
     { name: "g2u3l1", theme: "light", orig: null, sk: cutL1(), alt: "당구대에서 공이 쿠션에 비스듬히 맞고 같은 기울기로 튀어 나가고, 쿠션에 수직으로 놓인 큐대를 가운데 두고 스틱맨이 한 팔로는 들어간 길, 다른 팔로는 나온 길을 가리키는 장면", cap: "큐대를 가운데 두면 들어간 길과 나온 길의 기울기가 같아요" },
-    { name: "g2u3l2", theme: "light", orig: null, sk: cutL2(), alt: "유리 수조 속 물개의 수면 위 머리와 물속 몸통이 어긋나 보여 스틱맨이 깜짝 놀라고, 다른 스틱맨이 수면을 가리키는 장면", cap: "수면을 지나며 꺾인 빛 때문에 몸통이 떠올라 보여요" },
+    { name: "g2u3l2", theme: "light", orig: null, sk: cutL2(), alt: "얕은 수영장 물속에 선 친구의 다리가 실제보다 짧고 떠 보여 물가의 스틱맨이 깜짝 놀라고, 물속 발에서 나온 빛이 수면에서 꺾여 눈으로 가는 장면", cap: "수면을 지나며 꺾인 빛 때문에 물속 다리가 짧아 보여요" },
     { name: "g2u3l3", theme: "light", orig: null, sk: cutL3(), alt: "어두운 영화관에서 영사기의 빛이 스크린에 닿았다가 객석에 앉은 스틱맨의 눈으로 돌아오는 길을 화살표 둘로 나타낸 장면", cap: "빛은 영사기에서 스크린으로, 스크린에서 눈으로 와요" },
     { name: "g2u3l4", theme: "light", orig: null, sk: cutL4(), alt: "벽 거울 앞에 한 팔을 들고 선 스틱맨과 거울 속에 같은 크기로 마주 선 모습, 바닥에는 거울 앞과 거울 속에 같은 길이의 줄자가 놓인 장면", cap: "거울 앞 거리와 거울 속 거리, 줄자로 재면 같아요" },
     { name: "g2u3l5", theme: "light", orig: null, sk: cutL5(), alt: "편의점 천장 구석의 둥근 볼록 거울에 가게 안이 넓고 작게 비치고, 계산대 옆에서 스틱맨이 오목한 확대 거울에 얼굴을 바짝 대어 크게 비춰 보는 장면", cap: "볼록 거울은 넓고 작게, 오목 거울은 바짝 대면 크게" },

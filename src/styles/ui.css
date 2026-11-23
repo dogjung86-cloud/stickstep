@@ -2272,7 +2272,7 @@
 .ptx-cell.mark1, .ptx-cell.g1 { background: rgba(240,164,34,.28); border-color: rgba(240,180,106,.7); }
 .ptx-cell.mark18, .ptx-cell.g18 { background: rgba(124,176,36,.26); border-color: rgba(151,207,72,.7); }
 .ptx-cell.p2on { box-shadow: inset 0 -2.5px 0 rgba(126,214,255,.75); }
-/* 칠하기 — 상온 상태(교과서 IV-6 색: 고체 파랑·액체 초록·기체 살구) */
+/* 칠하기: 상온 상태 색(고체 파랑·액체 초록·기체 살구) */
 .ptx-grid.paint-state .ptx-cell.st-sol { background: rgba(90,138,216,.32); border-color: rgba(126,168,238,.62); }
 .ptx-grid.paint-state .ptx-cell.st-liq { background: rgba(50,172,118,.36); border-color: rgba(94,210,160,.7); }
 .ptx-grid.paint-state .ptx-cell.st-gas { background: rgba(240,138,90,.32); border-color: rgba(250,180,130,.64); }

@@ -1,10 +1,10 @@
-// 중2 II 단원(지권의 변화) 퀴즈·개념 그림 — 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
-// 정답을 유출하는 라벨은 절대 그리지 않는다 — 빈칸은 (가)~(라)로만.
+// 중2 II 단원(지권의 변화) 퀴즈·개념 그림, 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
+// 정답을 유출하는 라벨은 절대 그리지 않는다, 빈칸은 (가)~(라)로만.
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
-/** 지구 내부 단면 4분원 — 두께 비례(지각 0~35 / 맨틀 ~2900 / 외핵 ~5100 / 내핵 ~6400 km).
- *  층 이름은 쓰지 않고 (가)~(라)만 — 마무리 3·4번용. (가)=지각(테두리 얇은 띠),
+/** 지구 내부 단면 4분원, 두께 비례(지각 0~35 / 맨틀 ~2900 / 외핵 ~5100 / 내핵 ~6400 km).
+ *  층 이름은 쓰지 않고 (가)~(라)만. (가)=지각(테두리 얇은 띠),
  *  (나)=맨틀, (다)=외핵, (라)=내핵 자리. */
 export function earthLayersFig(): string {
   const cx = 47; // 왼쪽 깊이 숫자(13.5px)가 그림 밖으로 잘리지 않게 조금 오른쪽으로
@@ -45,8 +45,8 @@ export function earthLayersFig(): string {
   </svg>`;
 }
 
-/** 화성암 2×2 분류표 — x축 색(어둡다↔밝다), y축 결정 크기(작다↔크다), 빈칸 (가)~(라).
- *  (가)=어둡다·크다(반려암), (나)=밝다·크다(화강암), (다)=어둡다·작다(현무암), (라)=밝다·작다(유문암) 자리 — 마무리 6번용. */
+/** 화성암 2×2 분류표, x축 색(어둡다↔밝다), y축 결정 크기(작다↔크다), 빈칸 (가)~(라).
+ *  (가)=어둡다·크다(반려암), (나)=밝다·크다(화강암), (다)=어둡다·작다(현무암), (라)=밝다·작다(유문암) 자리. */
 export function igneousGridFig(o: { lab?: boolean } = {}): string {
   if (o.lab) return igneousTableFig();
   const cell = (x: number, y: number, label: string): string =>
@@ -92,47 +92,39 @@ function igneousTableFig(): string {
   </svg>`;
 }
 
-/** 광물 분류 흐름도 — 석영·방해석·자철석을 두 가지 성질 검사로 가르기.
- *  (가)=방해석(묽은 염산 반응), (나)=자철석(클립 끌어당김), (다)=석영 자리 — L2 흐름도 문제용.
- *  판정 순서(염산 먼저 → 자성 나중)는 unit2.ts 문항 선지와 반드시 일치시킬 것. */
-export function mineralFlowFig(): string {
-  const arrow = (x1: number, y1: number, x2: number, y2: number): string =>
-    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#8B95A1" stroke-width="1.8"/>
-     ${x1 === x2
-       ? `<path d="M${x2} ${y2} l-4.5 -7 h9 z" fill="#8B95A1"/>`
-       : `<path d="M${x2} ${y2} l-7 -4.5 v9 z" fill="#8B95A1"/>`}`;
-  const result = (x: number, y: number, w: number, label: string): string =>
-    `<rect x="${x}" y="${y}" width="${w}" height="40" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
-     <text x="${x + w / 2}" y="${y + 26}" text-anchor="middle" font-size="15.5" font-weight="800" fill="#4E5968">(${label})</text>`;
-  // 카드 폭을 다 쓴다: 질문 상자는 왼쪽부터 넓게, '예'의 결과는 같은 높이의 오른쪽 칸. 글자는 폰에서 12px 이상(설계 13.5)
-  return `<svg viewBox="0 0 344 248" ${NS} fill="none" role="img" aria-label="광물 분류 흐름도. 석영, 방해석, 자철석을 묽은 염산과 반응하는지, 클립을 끌어당기는지 두 번 물어 가, 나, 다로 가릅니다">
-    <!-- 시작 -->
-    <rect x="36" y="6" width="200" height="36" rx="18" fill="#F2F4F6" stroke="#C4CAD2" stroke-width="1.4"/>
-    <text x="136" y="29" text-anchor="middle" font-size="14" font-weight="800" fill="#333D4B">석영 · 방해석 · 자철석</text>
-    ${arrow(136, 42, 136, 64)}
-    <!-- 질문 1 -->
-    <rect x="6" y="66" width="260" height="40" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
-    <text x="136" y="91" text-anchor="middle" font-size="14" font-weight="700" fill="#1B64DA">묽은 염산과 반응하는가?</text>
-    ${arrow(266, 86, 284, 86)}
-    <text x="275" y="78" text-anchor="middle" font-size="13.5" font-weight="800" fill="#0CA678">예</text>
-    ${result(286, 66, 54, "가")}
-    ${arrow(136, 106, 136, 130)}
-    <text x="127" y="123" text-anchor="end" font-size="13.5" font-weight="800" fill="#6B7684">아니요</text>
-    <!-- 질문 2 -->
-    <rect x="6" y="132" width="260" height="40" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
-    <text x="136" y="157" text-anchor="middle" font-size="14" font-weight="700" fill="#1B64DA">클립을 끌어당기는가?</text>
-    ${arrow(266, 152, 284, 152)}
-    <text x="275" y="144" text-anchor="middle" font-size="13.5" font-weight="800" fill="#0CA678">예</text>
-    ${result(286, 132, 54, "나")}
-    ${arrow(136, 172, 136, 196)}
-    <text x="127" y="189" text-anchor="end" font-size="13.5" font-weight="800" fill="#6B7684">아니요</text>
-    ${result(96, 198, 80, "다")}
-  </svg>`;
+/** 광물 네 가지 A~D를 겉보기 색, 조흔색, 클립, 묽은 염산으로 시험한 결과 표(L2 문제용). 이름은 쓰지 않는다.
+ *  A = 자철석, B = 장석, C = 흑운모, D = 방해석 자리(문항 선지와 반드시 맞출 것). */
+export function mineralTestFig(): string {
+  const head = ["광물", "겉보기 색", "조흔색", "클립", "묽은 염산"];
+  const rows = [
+    ["A", "검은색", "검은색", "붙는다", "변화 없음"],
+    ["B", "흰색", "흰색", "안 붙는다", "변화 없음"],
+    ["C", "검은색", "흰색", "안 붙는다", "변화 없음"],
+    ["D", "무색투명", "흰색", "안 붙는다", "거품"],
+  ];
+  const X0 = 8, W0 = 44, CW = 71, RH = 33, TOP = 8;
+  const colX = (c: number): number => (c === 0 ? X0 : X0 + W0 + (c - 1) * CW);
+  const colW = (c: number): number => (c === 0 ? W0 : CW);
+  let cells = `<rect x="${X0}" y="${TOP}" width="${W0 + CW * 4}" height="${RH}" fill="#F2F4F7"/>`;
+  rows.forEach((_, i) => { cells += `<rect x="${X0}" y="${TOP + RH * (i + 1)}" width="${W0}" height="${RH}" fill="#F7F8FA"/>`; });
+  head.forEach((h, c) => {
+    cells += `<text x="${colX(c) + colW(c) / 2}" y="${TOP + RH / 2 + 4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${h}</text>`;
+  });
+  rows.forEach((r, i) => r.forEach((v, c) => {
+    cells += `<text x="${colX(c) + colW(c) / 2}" y="${TOP + RH * (i + 1) + RH / 2 + 4.5}" text-anchor="middle" font-size="13" font-weight="${c === 0 ? 800 : 600}" fill="#333D4B">${v}</text>`;
+  }));
+  let grid = "";
+  for (let i = 0; i <= rows.length + 1; i++) grid += `<line x1="${X0}" y1="${TOP + RH * i}" x2="${X0 + W0 + CW * 4}" y2="${TOP + RH * i}" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  for (let c = 0; c <= head.length; c++) {
+    const x = c === head.length ? X0 + W0 + CW * 4 : colX(c);
+    grid += `<line x1="${x}" y1="${TOP}" x2="${x}" y2="${TOP + RH * (rows.length + 1)}" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  }
+  return `<svg viewBox="0 0 344 ${TOP * 2 + RH * (rows.length + 1)}" ${NS} fill="none" role="img" aria-label="광물 A, B, C, D의 겉보기 색, 조흔색, 클립이 붙는지, 묽은 염산에서 거품이 생기는지를 정리한 표. 광물 이름은 적혀 있지 않다">${cells}${grid}</svg>`;
 }
 
-/** 토양 단면 4층 — 층 이름·설명 없이 (가)~(라)만. 위에서부터
+/** 토양 단면 4층, 층 이름·설명 없이 (가)~(라)만. 위에서부터
  *  (가)=식물이 자랄 수 있는 층, (나)=빗물에 녹은 물질·진흙이 쌓인 층,
- *  (다)=암석 조각·모래 층, (라)=풍화받지 않은 암석 자리 — 마무리 8번용. */
+ *  (다)=암석 조각·모래 층, (라)=풍화받지 않은 암석 자리. */
 export function soilLayersFig(): string {
   const lead = (y: number, label: string): string =>
     `<line x1="252" y1="${y}" x2="278" y2="${y}" stroke="#C4CAD2" stroke-width="1.4"/>
@@ -169,7 +161,7 @@ export function soilLayersFig(): string {
   </svg>`;
 }
 
-/** 판의 구조 단면 — 대륙 지각 + 해양 지각 + 맨틀의 윗부분 = 판(두께 약 100 km) — 마무리 10번용. */
+/** 판의 구조 단면, 대륙 지각 + 해양 지각 + 맨틀의 윗부분 = 판(두께 약 100 km). */
 export function plateSectionFig(): string {
   return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="판의 구조 단면. 왼쪽 대륙 지각과 오른쪽 해양 지각, 그 아래 맨틀의 윗부분까지가 판이고, 더 아래는 맨틀이 이어져요">
     <!-- 바다(오른쪽 위) -->
@@ -209,7 +201,7 @@ export function plateSectionFig(): string {
   </svg>`;
 }
 
-/** 암석 순환 다이어그램 — 마그마·화성암·퇴적물·퇴적암·변성암 + 과정 화살표. recap·문제용. */
+/** 암석 순환 다이어그램, 마그마·화성암·퇴적물·퇴적암·변성암 + 과정 화살표. recap·문제용. */
 export function rockCycleFig(): string {
   const node = (cx: number, cy: number, name: string, bg: string, line: string, ink: string): string =>
     `<rect x="${cx - 42}" y="${cy - 17}" width="84" height="34" rx="17" fill="${bg}" stroke="${line}" stroke-width="1.5"/>

@@ -1,4 +1,4 @@
-// elecFigures — 중2 VII(전기와 자기) 퀴즈·개념 그림 — 손코딩 교육용 SVG(라이트 카드 기준) + recap 미니아트.
+// elecFigures, 중2 VII(전기와 자기) 퀴즈·개념 그림, 손코딩 교육용 SVG(라이트 카드 기준) + recap 미니아트.
 // 전하 표현: (+) 붉은 원 / (−) 파란 원(chemKit 전자 톤과 동조). 회로 기호는 실물풍(전지·전구·스위치).
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
@@ -8,7 +8,7 @@ const plus = (x: number, y: number, r = 7): string =>
 const minus = (x: number, y: number, r = 7): string =>
   `<circle cx="${x}" cy="${y}" r="${r}" fill="#5A9AE0" stroke="#2A5AA0" stroke-width="1.2"/><path d="M${x - r * 0.45} ${y}h${r * 0.9}" stroke="#FFF" stroke-width="1.6" stroke-linecap="round"/>`;
 
-/** L1 — 마찰 전/후의 스웨터·풍선 대전 상태(훅 wintershock 소재 회수).
+/** L1, 마찰 전/후의 스웨터·풍선 대전 상태(훅 wintershock 소재 회수).
  *  전하 개수는 보존: (+)는 좌우 3/2개 불변, 전자(−)는 스웨터→풍선으로 2개 이동(5개 총합 유지). */
 export function rubBeforeAfterFig(): string {
   const sweater = (x: number, y: number): string => `
@@ -42,7 +42,7 @@ export function rubBeforeAfterFig(): string {
   </svg>`;
 }
 
-/** L2 — (+)대전 유리 막대를 깡통에 접근(랩의 (+)막대 모드와 짝) */
+/** L2, (+)대전 유리 막대를 깡통에 접근(랩의 (+)막대 모드와 짝) */
 export function canInductionFig(): string {
   return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="플러스 대전체인 유리 막대를 알루미늄 깡통에 가까이 가져가는 그림">
     <line x1="20" y1="158" x2="324" y2="158" stroke="#C9D2DC" stroke-width="2"/>
@@ -64,9 +64,9 @@ export function canInductionFig(): string {
   </svg>`;
 }
 
-/** L4 — 어떤 니크롬선의 전압-전류 그래프(저항 읽기: 4V에 200mA → 20Ω. mA→A 변환 함정 유지) */
+/** L4, 어떤 니크롬선의 전압-전류 그래프(저항 읽기: 4V에 200mA → 20Ω. mA→A 변환 함정 유지) */
 export function viGraphFig(): string {
-  // 축 스케일: 전압 1V = 64px(0~4V), 전류 1mA = 0.55px(0~약 210mA) — 점은 I = V × 50mA 직선 위
+  // 축 스케일: 전압 1V = 64px(0~4V), 전류 1mA = 0.55px(0~약 210mA), 점은 I = V × 50mA 직선 위
   const px = (v: number): number => 52 + v * 64;
   const py = (ma: number): number => 170 - ma * 0.55;
   return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="원점을 지나는 직선 그래프, 전압 4볼트에서 전류 200밀리암페어">
@@ -83,7 +83,7 @@ export function viGraphFig(): string {
   </svg>`;
 }
 
-/** L3 — 회로 속 전류의 방향 도해((가)(나)는 전류 방향, 전자는 그 반대 — 현재 미사용 예비) */
+/** L3, 회로 속 전류의 방향 도해((가)(나)는 전류 방향, 전자는 그 반대, 현재 미사용 예비) */
 export function electronFlowFig(): string {
   return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="전지와 전구가 연결된 회로, (가)와 (나)는 전류가 흐르는 방향">
     <path d="M92 156h-40V44h240v112h-40" stroke="#8B95A1" stroke-width="4" fill="none" stroke-linecap="round"/>
@@ -100,7 +100,7 @@ export function electronFlowFig(): string {
   </svg>`;
 }
 
-/** L5 — 병렬 전구 (가)(나) 회로((나) 가지에 열린 스위치 — '닫으면?' 문항용) */
+/** L5, 병렬 전구 (가)(나) 회로((나) 가지에 열린 스위치, '닫으면?' 문항용) */
 export function parallelBulbsFig(): string {
   const bulb = (x: number, y: number, label: string): string => `
     <circle cx="${x}" cy="${y}" r="16" fill="#FFF3C4" stroke="#C8A23E" stroke-width="1.8"/>
@@ -123,7 +123,7 @@ export function parallelBulbsFig(): string {
   </svg>`;
 }
 
-/** L5 개념 — 직렬 비유: 한 물길에 물레방아 두 개(높이를 나눠 갖고, 물살은 하나) */
+/** L5 개념, 직렬 비유: 한 물길에 물레방아 두 개(높이를 나눠 갖고, 물살은 하나) */
 export function seriesWaterFig(): string {
   const wheel = (x: number, y: number, r: number): string => `
     <circle cx="${x}" cy="${y}" r="${r}" stroke="#C9A05E" stroke-width="4" fill="none"/>
@@ -142,7 +142,7 @@ export function seriesWaterFig(): string {
   </svg>`;
 }
 
-/** L5 개념 — 병렬 비유: 같은 높이에서 갈라진 두 물길(높이는 같고, 물이 나뉜다) */
+/** L5 개념, 병렬 비유: 같은 높이에서 갈라진 두 물길(높이는 같고, 물이 나뉜다) */
 export function parallelWaterFig(): string {
   const wheel = (x: number, y: number, r: number): string => `
     <circle cx="${x}" cy="${y}" r="${r}" stroke="#C9A05E" stroke-width="4" fill="none"/>
@@ -161,7 +161,7 @@ export function parallelWaterFig(): string {
   </svg>`;
 }
 
-/** L8 — 전동기 원리(코일 좌우 전류 반대 → 힘 반대 → 회전) */
+/** L8, 전동기 원리(코일 좌우 전류 반대 → 힘 반대 → 회전) */
 export function motorFig(): string {
   return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="전동기 구조, 자석 사이 코일의 왼쪽과 오른쪽에 반대 방향 전류가 흘러 반대 방향 힘을 받아 회전한다">
     <rect x="26" y="48" width="42" height="120" rx="8" fill="#E8836B" stroke="#A8442E" stroke-width="1.8"/>

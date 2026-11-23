@@ -1,6 +1,6 @@
-// 중2 II. 지권의 변화 — 단원 종합 평가 풀 v2: 풍화와 토양 (g2u2e307~e324)
-// 2026-07-26 교과서 준거 전면 재출제(과학 재출제 1호) — 정본 소스는 qa/g2u2v2-*.ts 스테이징,
-// 이 파일은 qa/build-g2u2v2-lessons.mjs가 재생성한다(직접 수정 금지 — 수정은 스테이징에서).
+// 중2 II. 지권의 변화, 단원 종합 평가 풀 v2: 풍화와 토양 (g2u2e307~e324)
+// 2026-07-26 전면 재출제(과학 재출제 1호), 정본 소스는 qa/g2u2v2-*.ts 스테이징,
+// 이 파일은 qa/build-g2u2v2-lessons.mjs가 재생성한다(직접 수정 금지, 수정은 스테이징에서).
 // 규격·회피표·검산 기록 = qa/g2u2-v2-blueprint.md, 관행 = EXAM_GUIDE.md "g2u2 v2" 항목.
 import type { ExamItem } from "./types";
 import { soilLayersFig } from "../../ui/geoFigures";
@@ -8,7 +8,7 @@ import { svgTable } from "../../ui/examFigures";
 
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
-/** 실사 사진 임베드 — loading=lazy 금지(사고 #14). alt에 암석·광물 이름 등 정답 금지(관찰 서술만). */
+/** 실사 사진 임베드, loading=lazy 금지(사고 #14). alt에 암석·광물 이름 등 정답 금지(관찰 서술만). */
 const pic = (path: string, alt: string): string =>
   `<img src="${IMG_BASE}${path}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
 

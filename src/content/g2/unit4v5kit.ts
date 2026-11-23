@@ -5,6 +5,8 @@ import { concept } from "../dsl";
 interface LabProps {
   title: string;
   cta?: string;
+  /** 궁금증 카드(ui/curio.ts). 랩을 마치면 맨 아래에 붙는다. */
+  curio?: { q: string; a: string };
 }
 const lab = (type: string) => (o: LabProps): Step => ({ type, ...o }) as unknown as Step;
 export const waterLab = lab("g2u4WaterLab");

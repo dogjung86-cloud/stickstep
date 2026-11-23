@@ -139,7 +139,7 @@ const PHOTOS = [
   "body/figs/digestive.webp", "body/figs/heart.webp", "body/figs/respiratory.webp",
   "body/figs/urinary.webp", "body/figs/nephron.webp", "body/figs/alveoli.webp",
   "body/figs/v2/vessel-compare.webp", "body/figs/v2/breath-inhale.webp", "body/figs/v2/breath-exhale.webp",
-  "body/figs/v2/nephron-process.webp", "body/figs/v2/double-circulation-base.webp", "body/figs/v2/pulse-wrist.webp",
+  "body/figs/v2/double-circulation-base.webp", "body/figs/v2/pulse-wrist.webp",
 ];
 const photoRes = await page.evaluate(async (names) => {
   const out = [];
@@ -154,7 +154,7 @@ const photoRes = await page.evaluate(async (names) => {
   }
   return out;
 }, PHOTOS);
-ok(photoRes.every((p) => p.w > 0), "시험이 참조하는 라스터 15장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
+ok(photoRes.every((p) => p.w > 0), "시험이 참조하는 라스터 14장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
 
 // ═══════════ A. 무료 첫 응시 — 레슨 진행 0%에서도 열려 있어야 한다 ═══════════
 console.log("A. 무료 첫 응시(진행 0% · 중2 지도)");

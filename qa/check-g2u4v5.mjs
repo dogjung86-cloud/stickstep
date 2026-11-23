@@ -49,7 +49,8 @@ const kind = () =>
 
 async function at(id, mark, shot = true) {
   const m = await L.measure(page);
-  ok(m.content <= m.view && m.scrollTop === 0, `${id} ${mark}: 스크롤 ${m.content}/${m.view}, 밀림 ${m.scrollTop}`);
+  // 결론까지는 한 화면, 그 아래 궁금증 카드는 넘쳐도 된다(중1 Ⅳ 검사 check-u4v5.mjs와 같은 약속)
+  ok(m.content - m.curio <= m.view && m.scrollTop === 0, `${id} ${mark}: 스크롤 ${m.content}/${m.view}(궁금증 카드 ${m.curio}), 밀림 ${m.scrollTop}`);
   ok(m.taps.every((t) => t.h >= 47.5), `${id} ${mark}: 낮은 버튼 ${m.taps.filter((t) => t.h < 47.5).map((t) => t.t + ":" + t.h).join(", ")}`);
   ok(m.cut.length === 0, `${id} ${mark}: 잘린 글 ${m.cut.join(" | ")}`);
   ok(m.small.length === 0, `${id} ${mark}: 작은 글자 ${m.small.map((s) => s.t + ":" + s.px).join(", ")}`);

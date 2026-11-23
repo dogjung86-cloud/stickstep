@@ -1,9 +1,9 @@
-// 중2 I 단원(물질의 특성) 퀴즈·개념 그림 — 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
+// 중2 I 단원(물질의 특성) 퀴즈·개념 그림, 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
 // 곡선 데이터는 CRC Handbook 자연값(실측 용해도)을 따른다. 문항 세팅 수치는 자체 제작.
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
-// 용해도(g/물 100 g) — CRC Handbook 실측값 근사. 10 ℃ 값: 질산 칼륨 20.9, 염화 나트륨 35.8
+// 용해도(g/물 100 g), CRC Handbook 실측값 근사. 10 ℃ 값: 질산 칼륨 20.9, 염화 나트륨 35.8
 const SOL: Record<string, [number, number][]> = {
   kno3: [[0, 13.3], [20, 31.6], [40, 63.9], [60, 110], [80, 169]],
   nano3: [[0, 73], [20, 88], [40, 105], [60, 124], [80, 148]],
@@ -11,7 +11,7 @@ const SOL: Record<string, [number, number][]> = {
 };
 
 function curvePath(pts: [number, number][], gx: (t: number) => number, gy: (s: number) => number): string {
-  // 단조 곡선 근사 — 구간 카트멀롬 대신 부드러운 quadratic 연결
+  // 단조 곡선 근사, 구간 카트멀롬 대신 부드러운 quadratic 연결
   let d = `M${gx(pts[0][0]).toFixed(1)} ${gy(pts[0][1]).toFixed(1)}`;
   for (let i = 1; i < pts.length; i++) {
     const [x0, y0] = pts[i - 1];
@@ -23,7 +23,7 @@ function curvePath(pts: [number, number][], gx: (t: number) => number, gy: (s: n
   return d;
 }
 
-/** 마무리 1·2번 — 고체 (가)~(마)의 질량·부피 산점(밀도 비교) */
+/** 고체 (가)~(마)의 질량·부피 산점(밀도 비교) */
 export function massVolScatterFig(): string {
   const gx = (v: number): number => 56 + (v / 45) * 262;
   const gy = (m: number): number => 168 - (m / 90) * 142;
@@ -39,7 +39,7 @@ export function massVolScatterFig(): string {
   </svg>`;
 }
 
-/** 용해도 곡선 3종(질산 나트륨·질산 칼륨·염화 나트륨) — L3 퀴즈(문항 세팅 수치는 자체 제작) */
+/** 용해도 곡선 3종(질산 나트륨·질산 칼륨·염화 나트륨), L3 퀴즈(문항 세팅 수치는 자체 제작) */
 export function solCurves3Fig(): string {
   const gx = (t: number): number => 54 + (t / 85) * 268;
   const gy = (s: number): number => 170 - (s / 170) * 150;
@@ -59,7 +59,7 @@ export function solCurves3Fig(): string {
   </svg>`;
 }
 
-/** 고체 (가)~(라) 가열 곡선 — 같은 물질 찾기(마무리 5번). (가)·(다)의 평평한 온도가 같다 */
+/** 고체 (가)~(라) 가열 곡선, 같은 물질 찾기. (가)·(다)의 평평한 온도가 같다 */
 export function heatPlateausFig(): string {
   const gy = (c: number): number => 168 - (c / 90) * 146;
   const seg = (x0: number, tempo: number, plateau: number, cls: string, label: string, lx: number): string => {
@@ -81,10 +81,10 @@ export function heatPlateausFig(): string {
   </svg>`;
 }
 
-/** 탄산음료 4조건(온도×흔들기) — 기포 비교(자체 제작 문항).
+/** 탄산음료 4조건(온도×흔들기), 기포 비교(자체 제작 문항).
  *  네 시험관 모두 입구가 열려 있고(압력 조건 동일), 물 온도(얼음물/따뜻한 물)와 흔들기 여부만 다르다.
  *  흔드는 시험관은 살짝 기울이고 양옆에 진동 호를 그린다.
- *  주의: 기포는 절대 그리지 않는다 — 조건만 보여 줘야 문제가 성립한다(기포 수 = 정답 유출). */
+ *  주의: 기포는 절대 그리지 않는다, 조건만 보여 줘야 문제가 성립한다(기포 수 = 정답 유출). */
 export function sodaTubesFig(): string {
   const tube = (x: number, label: string, warm: boolean, shake: boolean): string => {
     const beakerFill = warm ? "#FFE0D6" : "#DDF0FB";
@@ -117,7 +117,7 @@ export function sodaTubesFig(): string {
   </svg>`;
 }
 
-/** 물 vs 소금물 가열 곡선(그림 I-11) — 순물질은 일정, 혼합물은 계속 상승 */
+/** 물 vs 소금물 가열 곡선, 순물질은 일정, 혼합물은 계속 상승 */
 export function waterSaltBoilFig(): string {
   const gy = (c: number): number => 160 - ((c - 20) / 100) * 132;
   return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="물과 소금물의 가열 곡선. 곡선마다 이름이 붙어 있고 100도 눈금선이 그려져 있어요">
@@ -134,7 +134,7 @@ export function waterSaltBoilFig(): string {
   </svg>`;
 }
 
-/** 분별 깔때기 구조 — 마개·꼭지·두 층 */
+/** 분별 깔때기 구조, 마개·꼭지·두 층 */
 export function funnelPartsFig(): string {
   return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="분별 깔때기. 위에 마개, 몸통에 위층 기름과 아래층 물, 아래에 꼭지와 비커">
     <path d="M142 26h60" stroke="#9DAABD" stroke-width="2"/>
@@ -155,7 +155,7 @@ export function funnelPartsFig(): string {
   </svg>`;
 }
 
-/** 물+에탄올 가열 곡선 — ①~④ 구간(L9 퀴즈, 구간 구성 수치는 자체 제작) */
+/** 물+에탄올 가열 곡선, ①~④ 구간(L9 퀴즈, 구간 구성 수치는 자체 제작) */
 export function mixDistillCurveFig(): string {
   const gy = (c: number): number => 156 - (c / 120) * 132;
   return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="물과 에탄올 혼합물의 가열 곡선. 1구간 상승, 2구간 78도 부근 평평, 3구간 다시 상승, 4구간 100도 평평">
@@ -170,7 +170,7 @@ export function mixDistillCurveFig(): string {
   </svg>`;
 }
 
-/** 질산 칼륨 vs 염화 나트륨 — 냉각 석출(L8 퀴즈, 자체 세팅: 물 100 g에 40 g·15 g을 녹여 10 ℃로 냉각).
+/** 질산 칼륨 vs 염화 나트륨, 냉각 석출(L8 퀴즈, 자체 세팅: 물 100 g에 40 g·15 g을 녹여 10 ℃로 냉각).
  *  판정 검산(CRC): 10 ℃ 용해도 질산 칼륨 20.9(40 g 중 약 19 g 석출) vs 염화 나트륨 35.8(15 g 그대로 용해). */
 export function kno3CoolFig(): string {
   const gx = (t: number): number => 54 + (t / 65) * 268;
@@ -196,7 +196,7 @@ export function kno3CoolFig(): string {
   </svg>`;
 }
 
-/** 액체 3층 + 물체 — 뜨고 가라앉기(L2 퀴즈) */
+/** 액체 3층 + 물체, 뜨고 가라앉기(L2 퀴즈) */
 export function floatLayersFig(): string {
   return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="컵 속 세 액체 층. 위부터 에탄올, 식용유, 물. 얼음은 식용유와 물 사이, 동전은 바닥에 있어요">
     <path d="M118 26h108v130a16 16 0 0 1-16 16h-76a16 16 0 0 1-16-16z" fill="rgba(224,238,250,.28)" stroke="#9DAABD" stroke-width="2.2"/>
@@ -218,58 +218,117 @@ export function floatLayersFig(): string {
   </svg>`;
 }
 
-/** 원유 증류탑 — hotspot용(끓는점 낮을수록 위층). 각 층 오른쪽에 용도 픽토그램(파이프 끝). */
+/** 원유 증류탑(시험 그림): 왼쪽 아래 원통형 가열로(속에 나선 관), 앞을 잘라 선반이 보이는 탑, 높이마다 뽑아내는 관 끝의 병과 산물 이름.
+ *  이 그림을 쓰는 문항이 탑 안 온도의 방향과 끓는점 차례를 묻기 때문에 온도 색, 온도 글자, 끓는점 범위는 넣지 않는다(aria도 같다). */
 export function crudeTowerFig(): string {
-  const deck = (y: number, w: number, c: string): string =>
-    `<rect x="${172 - w / 2}" y="${y}" width="${w}" height="30" rx="7" fill="${c}" stroke="#B08D3E" stroke-width="1.2" opacity=".92"/>`;
-  // 용도 미니 픽토그램(cx≈286, 파이프 높이에 맞춤) — 교과서 그림 I-14의 용도 아이콘 재해석
-  const icoLpg = `<g transform="translate(272 50)">
-      <rect x="0" y="6" width="11" height="20" rx="4" fill="#FFB37C" stroke="#D07030" stroke-width="1.3"/>
-      <rect x="3" y="2" width="5" height="5" rx="1.6" fill="#D07030"/>
-      <path d="M20 22q-4-5 0-10 1.5 3 4 4-1-5 3.4-7 0 6 4 8 2 4-2 7-5 3-9.4-2z" fill="#7FB8F2" stroke="#3A7DDB" stroke-width="1.1"/>
-    </g>`;
-  const icoCar = `<g transform="translate(266 90)">
-      <path d="M4 14 q2-7 9-8 l14 0 q7 1 9 8 l3 1 q2 1 2 3 v3 q0 2 -2 2 h-36 q-2 0 -2 -2 v-3 q0-3 3-4z" fill="#8FC0EC" stroke="#3A6FA8" stroke-width="1.3"/>
-      <path d="M13 8 h12 l3 6 h-18z" fill="#EAF6FF" stroke="#3A6FA8" stroke-width="1"/>
-      <circle cx="12" cy="24" r="4" fill="#4E5968"/><circle cx="30" cy="24" r="4" fill="#4E5968"/>
-    </g>`;
-  const icoPlane = `<g transform="translate(264 128)">
-      <path d="M2 16 q16-5 30-4 l10 3 q3 1 0 3 l-10 2 q-14 1 -30 -4z" fill="#D6E6F5" stroke="#5E7E9E" stroke-width="1.2"/>
-      <path d="M18 13 l-6-8 5 0 8 8z M18 19 l-6 8 5 0 8-8z" fill="#8FB3D6" stroke="#5E7E9E" stroke-width="1"/>
-      <path d="M39 12 l4-5 3 1-4 5z" fill="#8FB3D6" stroke="#5E7E9E" stroke-width="1"/>
-    </g>`;
-  const icoTruck = `<g transform="translate(266 166)">
-      <rect x="0" y="6" width="24" height="14" rx="2.4" fill="#FFD98A" stroke="#C08A2E" stroke-width="1.3"/>
-      <path d="M24 10 h8 l6 6 v4 h-14z" fill="#8FC0EC" stroke="#3A6FA8" stroke-width="1.2"/>
-      <circle cx="9" cy="22" r="3.8" fill="#4E5968"/><circle cx="30" cy="22" r="3.8" fill="#4E5968"/>
-    </g>`;
-  const icoShip = `<g transform="translate(264 204)">
-      <path d="M2 14 h40 l-6 9 h-28z" fill="#5E7E9E" stroke="#3C5670" stroke-width="1.2"/>
-      <rect x="8" y="7" width="9" height="7" rx="1" fill="#F2A45C"/><rect x="18" y="7" width="9" height="7" rx="1" fill="#8FC0EC"/><rect x="28" y="4" width="6" height="10" rx="1" fill="#EAF0F6" stroke="#8B99A8" stroke-width="1"/>
-      <path d="M2 26 q6 3 12 0 t12 0 12 0" stroke="#7FB8F2" stroke-width="1.6"/>
-    </g>`;
-  const icoRoad = `<g transform="translate(268 232)">
-      <path d="M0 10 h38 v8 h-38z" fill="#4E5968"/>
-      <path d="M4 14 h6 M16 14 h6 M28 14 h6" stroke="#FFD98A" stroke-width="1.8"/>
-    </g>`;
-  return `<svg viewBox="0 0 344 260" ${NS} fill="none" role="img" aria-label="원유 증류탑. 아래에서 가열하며 여러 층에서 서로 다른 물질이 분리되고, 층마다 쓰임새가 달라요">
-    <ellipse cx="172" cy="248" rx="96" ry="7" fill="#2A3A5E" opacity=".10"/>
-    <path d="M126 42h92v186a12 12 0 0 1-12 12h-68a12 12 0 0 1-12-12z" fill="#F4E9D2" stroke="#C9A26A" stroke-width="2.2"/>
-    <path d="M126 42a46 18 0 0 1 92 0" fill="#F4E9D2" stroke="#C9A26A" stroke-width="2.2"/>
-    ${deck(52, 74, "#FFF3D9")}
-    ${deck(90, 78, "#FFE9BC")}
-    ${deck(128, 82, "#FFDF9E")}
-    ${deck(166, 86, "#FCD284")}
-    ${deck(204, 90, "#F5C468")}
-    <path d="M218 62h44M218 100h44M218 138h44M218 176h44M218 214h44" stroke="#C9A26A" stroke-width="3"/>
-    ${icoLpg}${icoCar}${icoPlane}${icoTruck}${icoShip}
-    <path d="M172 240v-2" stroke="#C9A26A" stroke-width="3"/>
-    ${icoRoad}
-    <path d="M84 226h42" stroke="#C9A26A" stroke-width="4"/>
-    <g>
-      <path d="M96 240q-9-11 0-22 2 7 9 9-2-11 7-15 0 13 9 17 5 9-4 15-12 7-21-4z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.4"/>
-    </g>
-    <text x="70" y="218" text-anchor="end" font-size="11" font-weight="700" fill="#4E5968">원유 가열</text>
+  const TX = 150, TR = 27; // 탑 가운데, 반지름
+  const TL = TX - TR, TRt = TX + TR;
+  const DOME = 30, SHELL0 = 40, WIN0 = 42, WIN1 = 236, BASE = 248;
+  const trays = Array.from({ length: 9 }, (_, k) => 56 + k * 19); // 56 ~ 208
+  const FEED = 222, POOL = 228;
+  const BX = 212; // 병 가운데(관은 여기서 아래로 꺾인다)
+  const prod: { y: number; name: string; col: string; kind: "gas" | "liq" | "lump" }[] = [
+    { y: 16, name: "액화 석유 가스", col: "#D0EBFF", kind: "gas" },
+    { y: trays[1] - 3, name: "휘발유", col: "#FFF3BF", kind: "liq" },
+    { y: trays[3] - 3, name: "등유", col: "#FFE08A", kind: "liq" },
+    { y: trays[5] - 3, name: "경유", col: "#F4B34A", kind: "liq" },
+    { y: trays[7] - 3, name: "중유", col: "#8A5226", kind: "liq" },
+    { y: 231, name: "찌꺼기", col: "#2B211A", kind: "lump" },
+  ];
+  const trayCol = ["#FFF6CC", "#FFF0B0", "#FFE48A", "#FFDA70", "#F8C45A", "#F1AE45", "#E2913A", "#C97733", "#AE6230"];
+  const pipe = (d: string, c = "#9AA5B2", w = 4): string =>
+    `<path d="${d}" stroke="#5E6874" stroke-width="${w + 1.4}" stroke-linejoin="round" stroke-linecap="round" fill="none"/>` +
+    `<path d="${d}" stroke="${c}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round" fill="none"/>`;
+  // 탑 속: 선반(판 + 판 위 액체 + 덮개 둘) + 넘친 액체가 내려가는 칸(양쪽 번갈아)
+  const IL = TL + 2.5, IR = TRt - 2.5;
+  let inside = "";
+  trays.forEach((ty, k) => {
+    const left = k % 2 === 0, dw = 8;
+    const pl = left ? IL + dw : IL, pr = left ? IR : IR - dw;
+    const next = k < trays.length - 1 ? trays[k + 1] : FEED - 4;
+    inside += `<rect x="${left ? IL : IR - dw}" y="${ty}" width="${dw}" height="${next - ty - 3}" fill="${trayCol[k]}" opacity=".85"/>`;
+    inside += `<rect x="${pl}" y="${ty - 3}" width="${pr - pl}" height="3" fill="${trayCol[k]}"/>`;
+    inside += `<rect x="${pl}" y="${ty}" width="${pr - pl}" height="1.8" fill="#8E99A6"/>`;
+    inside += `<path d="M${left ? IL + dw : IR - dw} ${ty - 3}v${next - ty}" stroke="#B9C2CC" stroke-width="1.1"/>`;
+    for (const c of [0.3, 0.72]) {
+      const cx = pl + (pr - pl) * c;
+      inside += `<path d="M${(cx - 3.4).toFixed(1)} ${ty - 1.6}v-2.6a3.4 3.4 0 0 1 6.8 0v2.6z" fill="#C9D1DA" stroke="#7D8794" stroke-width=".8"/>`;
+    }
+  });
+  // 원통형 가열로(앞을 잘라 나선 관과 불꽃을 보인다)
+  const FX = 46, FR = 19, FY0 = 168, FY1 = 226;
+  const coil = (front: boolean): string => {
+    let d = "";
+    const n = 120, turns = 3, rx = 10, ry = 2.6, yT = 184, yB = 212;
+    const p = (th: number, s: number): string => `${(FX + rx * Math.cos(th)).toFixed(1)} ${(yB - (yB - yT) * s + ry * Math.sin(th)).toFixed(1)}`;
+    for (let i = 0; i < n; i++) {
+      const a = (Math.PI * 2 * turns * i) / n + Math.PI, b = (Math.PI * 2 * turns * (i + 1)) / n + Math.PI;
+      if ((Math.sin(a) > 0) !== front) continue;
+      d += `M${p(a, i / n)}L${p(b, (i + 1) / n)}`;
+    }
+    return front
+      ? `<path d="${d}" stroke="#5A1E10" stroke-width="3.4" stroke-linecap="round"/><path d="${d}" stroke="#FF8A3D" stroke-width="2.2" stroke-linecap="round"/>`
+      : `<path d="${d}" stroke="#7A3A22" stroke-width="2.6" stroke-linecap="round" opacity=".9"/>`;
+  };
+  const flame = (x: number): string =>
+    `<path d="M${x - 3} 219q.6-5 3-8.5q2.4 3.5 3 8.5z" fill="#FFB347"/><path d="M${x - 1.6} 219q.4-2.6 1.6-4.4q1.2 1.8 1.6 4.4z" fill="#5AA2F8"/>`;
+  const furnace = `
+    <ellipse cx="${FX + 2}" cy="${FY1 + 4}" rx="${FR + 6}" ry="3.6" fill="#2A3A5E" opacity=".12"/>
+    <path d="M${FX - FR} ${FY0}V${FY1}a${FR} 4 0 0 0 ${FR * 2} 0V${FY0}z" fill="#C9D1DA" stroke="#6E7885" stroke-width="1.3"/>
+    <path d="M${FX - FR + 4} ${FY0 + 2}V${FY1 + 2}" stroke="#F4F6F8" stroke-width="2.4" opacity=".8"/>
+    <ellipse cx="${FX}" cy="${FY0}" rx="${FR}" ry="4" fill="#E9EDF2" stroke="#6E7885" stroke-width="1.3"/>
+    <rect x="${FX - 14}" y="${FY0 + 9}" width="28" height="${FY1 - FY0 - 12}" rx="3" fill="#2A1712" stroke="#E1E6EC" stroke-width="1.4"/>
+    ${coil(false)}${flame(FX - 8)}${flame(FX)}${flame(FX + 8)}${coil(true)}`;
+  // 관: 원유 → 가열로 바닥, 가열로 위 → 탑 아래쪽, 뽑아내는 관(끝은 병 입구로 꺾인다)
+  const feedIn = pipe(`M2 244H${FX - 10}V${FY1 + 3}`);
+  const feedOut = pipe(`M${FX + FR - 1} ${FY0 + 6}H98V${FEED}H${TL + 1}`, "#D9734A", 4.4);
+  const outs = prod
+    .map((p) => {
+      const x0 = p.kind === "gas" ? TX : p.kind === "lump" ? IR - 2 : TRt - 1;
+      const head = p.kind === "gas" ? `M${TX} ${DOME + 2}V${p.y}` : `M${x0} ${p.y}`;
+      return pipe(`${head}H${BX}v5`) + `<path d="M${p.kind === "gas" ? TX + 5 : TRt + 2} ${p.y}H${BX}v4" stroke="${p.col}" stroke-width="1.5" fill="none" stroke-linejoin="round"/>`;
+    })
+    .join("");
+  // 산물 병(가스통, 유리병, 찌꺼기 덩이)
+  const vessel = (p: (typeof prod)[number]): string => {
+    const top = p.y + 6;
+    if (p.kind === "gas")
+      return `<rect x="${BX - 3.2}" y="${top}" width="6.4" height="2" fill="#59636E"/>
+        <rect x="${BX - 6.5}" y="${top + 3}" width="13" height="19" rx="5" fill="#E8EDF2" stroke="#6E7885" stroke-width="1.1"/>
+        <rect x="${BX - 6}" y="${top + 9}" width="12" height="2.6" fill="#3D8FE8"/>
+        <path d="M${BX - 3.6} ${top + 6}v12" stroke="#FFFFFF" stroke-width="1.4" opacity=".9"/>`;
+    if (p.kind === "lump")
+      return `<ellipse cx="${BX + 1}" cy="${top + 12}" rx="10" ry="2" fill="#2A3A5E" opacity=".12"/>
+        <path d="M${BX - 10} ${top + 11}q-.6-7 5-9q6-4 11 .4q5 2.6 4 8.6z" fill="#2B211A" stroke="#120D0A" stroke-width="1"/>
+        <ellipse cx="${BX - 4}" cy="${top + 4.6}" rx="2.4" ry=".9" fill="#FFFFFF" opacity=".35"/>`;
+    const x0 = BX - 7, y0 = top + 3, bh = 16;
+    const outline = `M${BX - 2.6} ${top}V${y0}q-4.4 .4-4.4 3.4V${y0 + bh - 2.4}q0 2.4 2.4 2.4h10q2.4 0 2.4-2.4V${y0 + 3.4}q0-3-4.4-3.4V${top}`;
+    return `<path d="${outline}z" fill="#EEF3F8"/>
+      <rect x="${x0}" y="${y0 + 5}" width="14" height="${bh - 5}" rx="2.2" fill="${p.col}"/>
+      <path d="${outline}" fill="none" stroke="#6E7885" stroke-width="1.1"/>
+      <path d="M${x0 + 2.4} ${y0 + 4}v${bh - 7}" stroke="#FFFFFF" stroke-width="1.2" opacity=".9"/>`;
+  };
+  const labels = prod
+    .map((p) => `<text x="${BX + 14}" y="${p.y + (p.kind === "gas" ? 16 : 17)}" font-size="12" font-weight="700" fill="#333D4B">${p.name}</text>`)
+    .join("");
+  return `<svg viewBox="0 0 344 262" ${NS} fill="none" role="img" aria-label="원유를 분리하는 증류탑. 왼쪽 아래 가열로의 나선 관을 지나며 데워진 원유가 탑 아래쪽으로 들어가요. 앞을 잘라 낸 탑 속에 여러 층의 선반이 있고, 탑의 여러 높이에 달린 관에서 액화 석유 가스, 휘발유, 등유, 경유, 중유가, 바닥의 관에서 찌꺼기가 나와 각각 병에 모여요">
+    <ellipse cx="${TX + 3}" cy="${BASE + 4}" rx="44" ry="4.5" fill="#2A3A5E" opacity=".12"/>
+    <path d="M${TL - 3} ${WIN1}L${TL - 7} ${BASE}H${TRt + 7}L${TRt + 3} ${WIN1}z" fill="#AEB7C2" stroke="#6E7885" stroke-width="1.2"/>
+    <path d="M${TL} ${SHELL0}C${TL} ${DOME},${TRt} ${DOME},${TRt} ${SHELL0}z" fill="#E3E8EE" stroke="#6E7885" stroke-width="1.3"/>
+    <rect x="${TL}" y="${SHELL0}" width="${TR * 2}" height="${WIN0 - SHELL0 + 2}" fill="#D5DCE4"/>
+    <rect x="${TL}" y="${WIN0}" width="${TR * 2}" height="${WIN1 - WIN0}" fill="#E1E6EC" stroke="#6E7885" stroke-width="1.3"/>
+    <rect x="${IL}" y="${WIN0 + 1}" width="${IR - IL}" height="${WIN1 - WIN0 - 2}" fill="#F5F7FA"/>
+    <rect x="${IL}" y="${POOL}" width="${IR - IL}" height="${WIN1 - POOL - 1}" fill="#3A2C20"/>
+    ${inside}
+    ${outs}
+    ${feedIn}${feedOut}
+    <path d="M${TL - 10} ${FEED}h9" stroke="#C2410C" stroke-width="1.6"/><path d="M${TL - 1} ${FEED}l-5-3.2v6.4z" fill="#C2410C"/>
+    <path d="M6 244h6" stroke="#4E5968" stroke-width="1.6"/><path d="M14 244l-5-3.2v6.4z" fill="#4E5968"/>
+    ${furnace}
+    ${prod.map(vessel).join("")}
+    ${labels}
+    <text x="${FX}" y="160" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">가열로</text>
+    <text x="4" y="259" font-size="12" font-weight="700" fill="#4E5968">원유</text>
   </svg>`;
 }
 

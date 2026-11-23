@@ -10,6 +10,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import { ELEMS, formulaHtml } from "../../../ui/chemKit";
 import type { StepAPI } from "../../types";
 import { bvBtn, bvFrame, bvTimers, type BvChoice, type BvFrame, type BvTimers } from "../bio6/b6Lab";
+import { curioCard, type Curio } from "../../../ui/curio";
 
 export const SW = 346;
 export const SH = 230;
@@ -18,6 +19,8 @@ export const fml = formulaHtml;
 export interface G4Step {
   title: string;
   cta?: string;
+  /** 궁금증 카드(ui/curio.ts). 랩을 마치면 맨 아래에 붙인다(중1 Ⅱ bio6 랩과 같은 자리). */
+  curio?: Curio;
 }
 
 export interface G4Lab {
@@ -74,6 +77,7 @@ export function g4Lab(host: HTMLElement, api: StepAPI, s: G4Step, o: { steps: nu
       haptic(HAPTIC.ctaUnlock);
       api.recordQuiz(wrong === 0);
       api.enableCTA(s.cta ?? "다음");
+      if (s.curio) host.appendChild(curioCard(s.curio));
     },
     finished: () => done,
   };
@@ -176,7 +180,7 @@ export function electron(x: number, y: number, r = 6.5, cls = ""): string {
 }
 
 // ── 원자 모형(구름 모형) ────────────────────────────────────────────
-// 책의 원자 모형과 같게 그린다: 원자의 크기만 한 옅은 파란 구름, 가운데 원자핵, 전자는 고리 없이 구름 안에 고르게 흩어 둔다(개수는 정확히).
+// 구름 모형으로 그린다: 원자의 크기만 한 옅은 파란 구름, 가운데 원자핵, 전자는 고리 없이 구름 안에 고르게 흩어 둔다(개수는 정확히).
 // 이 교과 과정은 전자 껍질을 다루지 않으므로 궤도선이나 "안쪽 2개, 바깥 8개" 같은 채우는 차례를 보이지 않는다.
 
 /** 구름 그라데이션(무대 한 장에 한 번 넣는다). 가운데가 조금 진하고 가장자리로 갈수록 옅어진다. */

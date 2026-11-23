@@ -374,13 +374,10 @@ const LABS = {
     await at(id, "chest-leak");
     await must(id, K("seal"), 300);
     await must(id, K("pull"), 400);
+    await dsIs(id, "g6Vol", "1", "고무 막을 당겨도 통 속 부피가 커지지 않음");
     await at(id, "chest-pull");
-    await must(id, K("cup"), 400);
-    await dsIs(id, "g6Vol", "2", "컵을 올리고 막을 당겨도 부피가 가장 크지 않음");
-    await at(id, "chest-max", false);
     await must(id, K("push"), 400);
-    await must(id, K("cup"), 400);
-    await dsIs(id, "g6Vol", "-1", "컵을 내리고 막을 올려도 부피가 가장 작지 않음");
+    await dsIs(id, "g6Vol", "-1", "고무 막을 밀어 올려도 통 속 부피가 작아지지 않음");
     await at(id, "chest-min");
     await must(id, ".g2u6x-go", 400);
     await wrongOnce(id, "chest");

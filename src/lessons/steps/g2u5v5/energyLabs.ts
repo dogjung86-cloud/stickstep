@@ -1,12 +1,12 @@
 // [중2 Ⅴ v5] 호흡과 에너지 쪽의 랩 네 판(g2u5l3, g2u5l4, g2u5l5).
 //
 // g2u5FarmLab 「이산화 탄소와 온도도 높을수록 좋을까요?」 (g2u5l3)
-//   책의 세 그래프 가운데 둘과 스마트팜(이산화 탄소 공급 장치, 냉난방 장치). 학생이 정하는 것: 온실의 이산화 탄소 농도, 이어서 온도.
+//   세 그래프 가운데 둘과 스마트팜(이산화 탄소 공급 장치, 냉난방 장치). 학생이 정하는 것: 온실의 이산화 탄소 농도, 이어서 온도.
 //   한 번에 하나만 바꾼다(농도를 정한 뒤 온도). 한 단계 바꿀 때마다 잰 점이 그래프에 찍힌다.
 //   실패하는 길: 더 늘릴 수 있는 곳에서 정하면 되돌려 보낸다. 온도를 지나치게 올리면 광합성량이 뚝 떨어지고 잎이 처진다.
-//   그림(2026-11-15 다시 그림, 같은 날 손봄): 맨 위 전체 폭에 광합성량 막대(조건을 바꿀 때마다 바로 보이는 결과), 그 아래 낮은 띠에 책의 스마트팜처럼
+//   그림(2026-11-15 다시 그림, 같은 날 손봄): 맨 위 전체 폭에 광합성량 막대(조건을 바꿀 때마다 바로 보이는 결과), 그 아래 낮은 띠에 스마트팜처럼
 //   둥근 지붕의 유리 온실(재배대의 상추, 오른쪽 이산화 탄소 통, 왼쪽 냉난방 장치의 온도 표시). 이산화 탄소 농도는 온실 공기 속 분자 수로 보인다(단계마다 늚).
-//   그래프는 잰 점을 매끈한 선으로 잇는다(책의 그림 Ⅴ-3과 같은 모양). 한때 온실을 크게 그리고 막대를 지붕 밑에 작게 두었더니 결과가 묻혔다(사용자 지적).
+//   그래프는 잰 점을 매끈한 선으로 잇는다(그림과 같은 모양). 한때 온실을 크게 그리고 막대를 지붕 밑에 작게 두었더니 결과가 묻혔다(사용자 지적).
 //
 // g2u5SproutLab 「싹이 자랄 에너지는 무엇으로 얻을까요?」 (g2u5l4)
 //   땅속의 강낭콩. 학생이 정하는 것: 흙 속 산소와 빛을 주고 끊는 일.
@@ -18,15 +18,16 @@
 //   콩 속 양분은 떡잎 안의 앰버 덩어리와 오른쪽 아래 막대로 함께 보인다(자랄수록 준다).
 //
 // g2u5LightLab 「잎이 내보내는 기체는 무엇이 정할까요?」 (g2u5l5)
-//   책의 낮과 밤 그림과 순서도. 학생이 정하는 것: 빛의 세기 네 단계. 주어진 세 상황을 만들어 확인한다.
-//   호흡의 양은 늘 같고 광합성의 양만 빛에 따라 달라진다. 광합성량과 호흡량이 같은 단계는 두지 않았다(책 밖).
+//   낮과 밤 그림과 순서도. 학생이 정하는 것: 빛의 세기 네 단계. 주어진 세 상황을 만들어 확인한다.
+//   호흡의 양은 늘 같고 광합성의 양만 빛에 따라 달라진다. 광합성량과 호흡량이 같은 단계는 두지 않았다(다루지 않는 내용).
 //   그림(2026-11-15 다시 그림, 같은 날 손봄): 단순한 잎 한 장 안에 광합성 칸(엽록체)과 호흡 칸(마이토콘드리아)을 나란히 두고, 칸마다 쓰고 내놓는 기체를
 //   분자 개수 그대로 그린다. 그 아래 한 줄이 두 양을 비교한다. 공변세포 사이의 기공으로 남는 기체가 나가고 모자란 기체가 들어온다.
 //   한때 잎 조직(울타리, 해면, 잎맥)을 자세히 그렸으나 요점(두 양의 비교)이 묻혀(사용자 지적) 조직은 그리지 않는다.
 //
 // g2u5CycleLab 「광합성과 호흡은 어떻게 이어질까요?」 (g2u5l5)
-//   책의 해 보기(붙임딱지). 빈칸 여섯 개에 붙임딱지를 붙인다. 틀린 딱지는 붙지 않고 까닭이 뜬다.
-//   그림(2026-11-15 다시 그림): 책의 해 보기처럼 상자 대신 엽록체(그라나가 보인다)와 마이토콘드리아(안쪽 막의 주름)를 그리고 둘을 굽은 화살로 잇는다.
+//   활동(카드). 빈칸 여섯 개에 물질 카드를 붙인다. 틀린 카드는 붙지 않고 까닭이 뜬다.
+//   그림: 위에 엽록체(그라나가 보인다), 아래에 마이토콘드리아(안쪽 막의 주름)를 두고 오른쪽과 왼쪽의 굽은 화살로 위아래를 잇는 순환.
+//   오른쪽 화살(초록)은 광합성 산물이 아래로, 왼쪽 화살(주황)은 호흡 산물이 위로 간다. 빛에너지는 왼쪽 위에서 들어오고 에너지는 오른쪽 아래로 나간다.
 
 import type { StepRenderer } from "../../types";
 import { P, arrow, bad, bvBtn, chip, g5Lab, good, row, stepper, tag, tap, toast, txt, type G5Step } from "./kit";
@@ -646,34 +647,34 @@ export const g2u5LightLab: StepRenderer = (host, step, api) => {
   return lab.cleanup;
 };
 
-// ── 붙임딱지로 잇는 광합성과 호흡 ───────────────────────────────────
+// ── 카드로 잇는 광합성과 호흡 ───────────────────────────────────
 type Sticker = "빛에너지" | "포도당" | "산소" | "이산화 탄소" | "물" | "에너지";
 const STAGES: { accept: Sticker[]; say: string; why: string }[] = [
-  { accept: ["빛에너지"], say: "(1/4) 먼저 엽록체에서 <b>광합성</b>이 일어날 때 필요한 에너지를 골라 붙여 보세요.", why: "광합성은 태양의 <b>빛에너지</b>를 받아서 일어나요." },
-  { accept: ["포도당", "산소"], say: "(2/4) 광합성으로 만들어져 호흡에 쓰이는 <b>두 가지 물질</b>을 위쪽 빈칸에 붙여 보세요.", why: "광합성 결과 <b>포도당</b>과 <b>산소</b>가 만들어져요." },
-  { accept: ["이산화 탄소", "물"], say: "(3/4) 호흡 결과 생겨서 다시 광합성의 재료로 쓰이는 <b>두 가지 물질</b>을 아래쪽 빈칸에 붙여 보세요.", why: "호흡 과정에서 나온 <b>이산화 탄소</b>와 <b>물</b>은 다시 광합성의 재료가 돼요." },
-  { accept: ["에너지"], say: "(4/4) 마지막으로 호흡을 통해 방출되어 식물이 살아가는 데 쓰이는 것을 오른쪽 빈칸에 붙여 보세요.", why: "식물은 호흡으로 양분을 분해해 생활에 필요한 <b>에너지</b>를 얻어요." },
+  { accept: ["빛에너지"], say: "(1/4) 먼저 엽록체에서 <b>광합성</b>이 일어날 때 필요한 에너지를 골라 왼쪽 위 빈칸에 붙여 보세요.", why: "광합성은 태양의 <b>빛에너지</b>를 받아서 일어나요." },
+  { accept: ["포도당", "산소"], say: "(2/4) 광합성으로 만들어져 호흡에 쓰이는 <b>두 가지 물질</b>을 오른쪽 빈칸에 붙여 보세요.", why: "광합성 결과 <b>포도당</b>과 <b>산소</b>가 만들어져요." },
+  { accept: ["이산화 탄소", "물"], say: "(3/4) 호흡 결과 생겨서 다시 광합성의 재료로 쓰이는 <b>두 가지 물질</b>을 왼쪽 빈칸에 붙여 보세요.", why: "호흡 과정에서 나온 <b>이산화 탄소</b>와 <b>물</b>은 다시 광합성의 재료가 돼요." },
+  { accept: ["에너지"], say: "(4/4) 마지막으로 호흡을 통해 방출되어 식물이 살아가는 데 쓰이는 것을 오른쪽 아래 빈칸에 붙여 보세요.", why: "식물은 호흡으로 양분을 분해해 생활에 필요한 <b>에너지</b>를 얻어요." },
 ];
 const TINT: Record<Sticker, string> = { 빛에너지: P.energy, 포도당: P.sugar, 산소: P.o2, "이산화 탄소": P.co2, 물: P.water, 에너지: "#FF9F5A" };
 const SHELF: Sticker[] = ["물", "에너지", "산소", "빛에너지", "이산화 탄소", "포도당"];
 
 export const g2u5CycleLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
-  const lab = g5Lab(host, api, s, { steps: 4, cls: "g2u5x-cycle", wait: "빈칸에 알맞은 붙임딱지를 모두 붙여 보세요" });
+  const lab = g5Lab(host, api, s, { steps: 4, cls: "g2u5x-cycle", wait: "빈칸에 알맞은 카드를 모두 붙여 보세요" });
   const { f, tm } = lab;
   const A = newNs("cy");
-  const ly = g5Layers(lab, "광합성과 호흡을 잇는 그림과 붙임딱지를 붙일 빈칸", ["defs", "base", "slots"]);
+  const ly = g5Layers(lab, "광합성과 호흡을 잇는 그림과 카드를 붙일 빈칸", ["defs", "base", "slots"]);
   ly.set(
     "defs",
-    `<defs>${particleDefs(A)}${microDefs(A)}<linearGradient id="${A}arG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7FD08A" stop-opacity=".25"/><stop offset="1" stop-color="#7FD08A" stop-opacity=".55"/></linearGradient>` +
-      `<linearGradient id="${A}arO" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#F0A070" stop-opacity=".25"/><stop offset="1" stop-color="#F0A070" stop-opacity=".55"/></linearGradient></defs>`,
+    `<defs>${particleDefs(A)}${microDefs(A)}<linearGradient id="${A}arG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FD08A" stop-opacity=".25"/><stop offset="1" stop-color="#7FD08A" stop-opacity=".55"/></linearGradient>` +
+      `<linearGradient id="${A}arO" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#F0A070" stop-opacity=".25"/><stop offset="1" stop-color="#F0A070" stop-opacity=".55"/></linearGradient></defs>`,
   );
   let at = 0;
   const filled: Sticker[][] = [[], [], [], []];
   // 빈칸의 자리: [단계][칸] = (가운데 x, 가운데 y, 폭)
-  const SLOT: [number, number, number][][] = [[[46, 26, 78]], [[136, 54, 72], [210, 54, 72]], [[210, 178, 72], [136, 178, 72]], [[300, 26, 78]]];
+  const SLOT: [number, number, number][][] = [[[50, 22, 78]], [[282, 92, 72], [282, 136, 72]], [[64, 136, 72], [64, 92, 72]], [[294, 208, 78]]];
 
-  /** 굵은 굽은 화살(책의 해 보기처럼 넓은 띠). pts는 지나는 점, 끝에 화살촉. */
+  /** 굵은 굽은 화살(활동처럼 넓은 띠). pts는 지나는 점, 끝에 화살촉. */
   const band = (pts: Pt[], grad: string, head: string, flow: boolean): string => {
     const d = smooth(pts);
     const [a, b] = [pts[pts.length - 2], pts[pts.length - 1]];
@@ -683,18 +684,20 @@ export const g2u5CycleLab: StepRenderer = (host, step, api) => {
     const R: Pt = [b[0] + Math.cos(ang - 2.2) * 9, b[1] + Math.sin(ang - 2.2) * 9];
     return `<path d="${d}" fill="none" stroke="url(#${A}${grad})" stroke-width="10" stroke-linecap="round"${flow ? ' class="g2u5x-flow"' : ""}/><path d="${d}" fill="none" stroke="${head}" stroke-width="1.6" stroke-dasharray="2 4" opacity=".8"/><polygon points="${f1(tip[0])},${f1(tip[1])} ${f1(L[0])},${f1(L[1])} ${f1(R[0])},${f1(R[1])}" fill="${head}"/>`;
   };
+  // 위아래 순환: 엽록체(위 가운데) → 오른쪽 화살(광합성 산물) → 마이토콘드리아(아래 가운데) → 왼쪽 화살(호흡 산물) → 엽록체
   const drawBase = (done: boolean): string =>
-    band([[86, 92], [96, 54], [173, 40], [250, 54], [262, 84]], "arG", "#7FD08A", done) +
-    band([[262, 144], [250, 180], [173, 196], [96, 180], [84, 148]], "arO", "#F0A070", done) +
-    arrow(46, 42, 52, 84, P.energy, 2.6) +
-    arrow(296, 86, 300, 42, "#FF9F5A", 2.6) +
-    chloroplast(A, 74, 117, 112, 56, { rot: -6, seed: 5, starch: 2 }) +
-    label(74, 112, "광합성", { size: 15 }) +
-    label(74, 132, "엽록체", { size: 12, fill: "#CFF5D6" }) +
-    mitochondrion(A, 272, 117, 108, 52, { rot: 6 }) +
-    label(272, 112, "호흡", { size: 15 }) +
-    label(272, 132, "마이토콘드리아", { size: 12, fill: "#FFE0C8" }) +
-    txt(173, 222, "위쪽 화살표: 광합성 산물 · 아래쪽 화살표: 호흡 산물", { size: 12, fill: P.dim });
+    band([[226, 50], [262, 62], [282, 114], [262, 168], [228, 180]], "arG", "#7FD08A", done) +
+    band([[120, 180], [84, 168], [64, 114], [84, 62], [118, 50]], "arO", "#F0A070", done) +
+    arrow(88, 30, 112, 40, P.energy, 2.6) +
+    arrow(228, 198, 252, 206, "#FF9F5A", 2.6) +
+    chloroplast(A, 173, 50, 112, 56, { rot: -4, seed: 5, starch: 2 }) +
+    label(173, 45, "광합성", { size: 15 }) +
+    label(173, 65, "엽록체", { size: 12, fill: "#CFF5D6" }) +
+    mitochondrion(A, 173, 182, 108, 52, { rot: 4 }) +
+    label(173, 177, "호흡", { size: 15 }) +
+    label(173, 197, "마이토콘드리아", { size: 12, fill: "#FFE0C8" }) +
+    txt(208, 119, "광합성 산물", { size: 12, fill: "#9FE0A8" }) +
+    txt(138, 119, "호흡 산물", { size: 12, fill: "#F5C09A" });
 
   const draw = (): void => {
     let slots = "";
@@ -724,7 +727,7 @@ export const g2u5CycleLab: StepRenderer = (host, step, api) => {
         c.el.classList.add("miss");
         tm.later(() => c.el.classList.remove("miss"), 500);
         host.dataset.g5Miss = "1";
-        f.say(`이 빈칸에 들어갈 알맞은 붙임딱지가 아니에요. ${st.why}`);
+        f.say(`이 빈칸에 들어갈 알맞은 카드가 아니에요. ${st.why}`);
         return;
       }
       good();
@@ -740,7 +743,7 @@ export const g2u5CycleLab: StepRenderer = (host, step, api) => {
       if (at >= STAGES.length) {
         f.say("순환 그림이 완성됐어요! 광합성과 호흡이 <b>서로 주고받는 물질</b>을 화살표를 따라 확인해 보세요.");
         tm.later(() => {
-          lab.judge("광합성으로 만들어진 <b>포도당과 산소</b>는 식물의 어떤 작용에 쓰이나요?", [{ t: "호흡에 쓰인다", ok: true }, { t: "그대로 다시 광합성에 쓰인다" }, { t: "쓰이지 않고 모두 식물 밖으로 나간다" }], "그림의 위쪽 화살표를 보면 포도당과 산소가 광합성(엽록체)에서 <b>호흡(마이토콘드리아)</b> 쪽으로 이동해요.", () =>
+          lab.judge("광합성으로 만들어진 <b>포도당과 산소</b>는 식물의 어떤 작용에 쓰이나요?", [{ t: "호흡에 쓰인다", ok: true }, { t: "그대로 다시 광합성에 쓰인다" }, { t: "쓰이지 않고 모두 식물 밖으로 나간다" }], "그림의 오른쪽 화살표를 보면 포도당과 산소가 광합성(엽록체)에서 <b>호흡(마이토콘드리아)</b> 쪽으로 이동해요.", () =>
             lab.finish("광합성으로 만든 <b>포도당과 산소</b>는 호흡에 쓰이고, 호흡 결과 생긴 <b>이산화 탄소와 물</b>은 다시 광합성의 재료로 쓰이며 서로 순환해요. 광합성은 빛에너지를 흡수하고 호흡은 에너지를 내놓아요."),
           );
         }, 2200);

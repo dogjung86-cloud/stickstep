@@ -1,7 +1,11 @@
 // 중2 과학 Ⅲ 빛과 파동 도입(opener) 여덟 장면의 그림(손그림 코드 그림). intro-u5.mjs와 같은 엔진, 같은 무대(960×544).
 // 그림 속에 글자와 숫자는 넣지 않는다(기호만). 움직일 부분은 <g class>로 묶고 앱의 CSS와 코드가 움직인다.
-//   town   (g2u3l1) 산에 가린 마을, 맞은편 언덕의 거울(앱이 돌리고 햇빛 줄기를 긋는다)
+//   town   (g2u3l1) 건물 그늘에 놓인 화분, 햇빛 드는 곳에서 손거울을 든 학생(앱이 거울을 돌리고 햇빛 줄기를 긋는다)
 //   straw  (g2u3l2) 탁자 위의 유리컵과 지켜보는 학생(물과 빨대는 앱이 그린다)
+//   cat    (g2u3l4) 무용실 전신거울 앞의 학생과 거울에 비친 모습
+//   dots   (g2u3l6) 이젤 위의 도화지(바나나는 앱이 빨간 점과 초록 점으로 찍는다)
+//   float  (g2u3l7) 나뭇잎 끝의 빗방울과 연못에 뜬 탁구공
+// 장면 키(town, cat, float)와 움직이는 겹의 클래스 이름은 앞 판에서 물려받아 그대로 쓴다(앱 코드와 검사가 이 이름을 본다).
 // build-intro.mjs g2u3 이 build(add)를 불러 src/ui/introArt.g2u3.generated.ts에 싣는다.
 import { Sk, C, curve, dense, circ, ell, arc, poly, rrect, rays } from "../lib/sk.mjs";
 import { drawFigure, pose, STUDENT } from "../lib/figure.mjs";
@@ -10,46 +14,51 @@ import { sun, note } from "../lib/props.mjs";
 const W = 960, H = 544;
 const g = (sk, cls, fn) => { sk.raw(`<g class="${cls}">`); fn(); sk.raw("</g>"); };
 const ground = (sk, y = 506, color = C.grayLight, sd = 3) => sk.ink(dense([[40, y], [920, y + 2]], 8), { w: 9, color, wob: 1.2, seed: sd });
-const house = (sk, x, y, s, roof, sd) => {
-  const b = poly([[x - 34 * s, y], [x - 34 * s, y - 46 * s], [x + 34 * s, y - 46 * s], [x + 34 * s, y]], 4);
-  sk.fill(b, C.woodLight, { dx: 0.6, dy: 0.8, wob: 0.5, seed: sd });
-  sk.ink(b, { w: 6, wob: 0.6, seed: sd + 1 });
-  const r = poly([[x - 44 * s, y - 44 * s], [x, y - 84 * s], [x + 44 * s, y - 44 * s]], 4);
-  sk.fill(r, roof, { dx: 0.6, dy: 0.8, wob: 0.5, seed: sd + 2 });
-  sk.ink(r, { w: 6, wob: 0.6, seed: sd + 3 });
-};
 
-/* ══════════ 1. 산에 가린 마을과 거울 (g2u3l1) ══════════ */
-export const TOWN = { sun: [112, 92], mir: [836, 214], spots: [[800, 400], [752, 474], [640, 486], [520, 420], [400, 296]], plaza: 2 };
+/* ══════════ 1. 건물 그늘의 화분과 손거울 (g2u3l1) ══════════ */
+// spots: 손거울에서 반사한 빛이 닿는 자리(학생 발치의 바닥 → 화분 → 건물 벽 위쪽). plaza = 화분의 차례(앞 판의 이름을 물려받았다).
+// 해에서 거울로 오는 줄기는 건물 지붕보다 20 px 넘게 위로 지나간다(해 줄기 시작점은 앱이 해 가운데에서 (46, 8) 옮긴 자리).
+export const TOWN = { sun: [112, 92], mir: [760, 286], spots: [[690, 500], [596, 500], [486, 432], [392, 360], [392, 262]], plaza: 2 };
 export function townBase() {
   const sk = new Sk(W, H, { id: "g3a" });
   sun(sk, TOWN.sun[0], TOWN.sun[1], 40);
   ground(sk);
-  // 큰 산(해와 마을 사이)
-  const mt = poly([[60, 506], [250, 268], [380, 166], [500, 300], [560, 506]], 6);
-  sk.fill(mt, "#CFE3C8", { dx: 1, dy: 1.2, wob: 1.4, seed: 11, tex: true });
-  sk.ink(dense([[60, 506], [250, 268], [380, 166], [500, 300], [560, 506]], 6), { w: 9, wob: 1.6, seed: 12 });
-  // 맞은편 언덕
-  const hill = curve([[716, 506], [770, 380], [836, 262], [900, 330], [930, 506]]);
-  sk.fill([...hill, [716, 506]], "#DDE9C9", { dx: 1, dy: 1.2, wob: 1, seed: 15, tex: true });
-  sk.ink(hill, { w: 9, wob: 1.4, seed: 16 });
-  // 마을(집 셋)
-  house(sk, 586, 504, 0.8, C.red, 21);
-  house(sk, 650, 504, 1, C.blue, 31);
-  house(sk, 706, 504, 0.7, C.orange, 41);
-  // 산 그늘(앱이 걷는다)
-  g(sk, "opn-g2u3-shade", () => sk.raw(`<path d="M548 506 L560 392 L740 392 L740 506 Z" fill="#2F4168" opacity=".34"/>`));
-  // 밝아진 광장(앱이 켠다)
-  g(sk, "opn-g2u3-lit", () => { sk.glow(646, 470, 120, C.yellow, 0.75, 0.15); rays(sk, 646, 404, 20, 46, 5, { color: C.orange, w: 7, seed: 51 }); });
-  // 거울 기둥
-  sk.ink(dense([[TOWN.mir[0] + 8, TOWN.mir[1] + 6], [TOWN.mir[0] + 14, 270]], 5), { w: 8, color: C.navy, wob: 0.4, seed: 61 });
-  // 거울(옆에서 본 모습, 앱이 돌린다). 거울 면은 왼쪽을 본다
+  // 건물(해와 화분 사이), 창문 여섯
+  const bd = poly([[236, 506], [236, 196], [404, 196], [404, 506]], 4);
+  sk.fill(bd, "#E8D2B4", { dx: 1, dy: 1.2, wob: 0.8, seed: 11, tex: true });
+  sk.ink(bd, { w: 9, wob: 1, seed: 12 });
+  [[262, 226], [336, 226], [262, 316], [336, 316], [262, 406], [336, 406]].forEach(([x, y], i) => {
+    const wnd = rrect(x, y, 44, 52, 6);
+    sk.fill(wnd, C.sea, { dx: 0, dy: 0, wob: 0.4, seed: 13 + i * 2 });
+    sk.ink(wnd, { w: 6, wob: 0.5, seed: 14 + i * 2 });
+  });
+  // 화분과 풀(건물 그늘 속)
+  const pot = poly([[458, 506], [514, 506], [524, 458], [448, 458]], 4);
+  sk.fill(pot, "#D9774B", { dx: 0.6, dy: 0.8, wob: 0.5, seed: 31 });
+  sk.ink(pot, { w: 7, wob: 0.6, seed: 32 });
+  sk.ink(dense([[442, 458], [530, 458]], 5), { w: 10, color: "#B85A33", wob: 0.4, seed: 33 });
+  sk.ink(curve([[486, 456], [483, 420], [490, 392]]), { w: 7, color: C.green, wob: 0.5, seed: 34 });
+  [[466, 430, -0.5], [507, 414, 0.45], [474, 400, -0.35]].forEach(([x, y, r], i) => sk.at(x, y, 1, () => {
+    const lf = ell(0, 0, 20, 9);
+    sk.fill(lf, C.green, { dx: 0, dy: 0, wob: 0.3, seed: 35 + i * 2 });
+    sk.ink(lf, { w: 5, wob: 0.4, seed: 36 + i * 2 });
+  }, r));
+  const bud = circ(490, 384, 12, { seed: 43 });
+  sk.fill(bud, C.red, { dx: 0, dy: 0, wob: 0.3, seed: 44 });
+  sk.ink(bud, { w: 5, wob: 0.4, seed: 45 });
+  // 건물 그늘(손거울 빛은 화분 한 곳만 밝히므로 그늘은 걷지 않는다)
+  g(sk, "opn-g2u3-shade", () => sk.raw(`<path d="M404 506 L404 318 L522 318 L604 506 Z" fill="#2F4168" opacity=".32"/>`));
+  // 햇빛이 닿은 화분(앱이 켠다)
+  g(sk, "opn-g2u3-lit", () => { sk.glow(486, 432, 92, C.yellow, 0.8, 0.15); rays(sk, 488, 384, 26, 50, 5, { color: C.orange, w: 7, seed: 51 }); });
+  // 손거울을 든 학생(오른쪽 햇빛 속, 건물 쪽을 본다). 손은 거울 뒤쪽을 쥔다
+  drawFigure(sk, 852, 506, 0.6, pose({ elR: [66, -300], haR: [137, -360] }), { ...STUDENT, mirror: true });
+  // 손거울(옆에서 본 모습, 앱이 돌린다). 거울 면은 왼쪽을 본다
   g(sk, "opn-g2u3-mir", () => {
     const [mx, my] = TOWN.mir;
-    const m = poly([[mx - 7, my - 58], [mx + 7, my - 58], [mx + 7, my + 58], [mx - 7, my + 58]], 4);
+    const m = rrect(mx - 6, my - 34, 12, 68, 6);
     sk.fill(m, C.sea, { dx: 0, dy: 0, wob: 0.3, seed: 63 });
-    sk.ink(m, { w: 6, wob: 0.4, seed: 64 });
-    sk.ink(dense([[mx + 7, my - 58], [mx + 7, my + 58]], 5), { w: 8, color: C.navy, wob: 0.2, seed: 65 });
+    sk.ink(m, { w: 5, wob: 0.4, seed: 64 });
+    sk.ink(dense([[mx + 6, my - 30], [mx + 6, my + 30]], 5), { w: 7, color: C.navy, wob: 0.2, seed: 65 });
   });
   return { sk };
 }
@@ -109,21 +118,30 @@ export function darkBase() {
   return { sk };
 }
 
-/* ══════════ 4. 거울 앞의 고양이 (g2u3l4) ══════════ */
+/* ══════════ 4. 무용실 전신거울 앞의 학생 (g2u3l4) ══════════ */
+// 학생(opn-g2u3-cat)과 거울에 비친 모습(opn-g2u3-cat2)은 거울 면에서 같은 거리(290)에 마주 서고, 앱이 한 걸음(62)씩 함께 옮긴다.
 export const CATM = { mirror: 480, step: 62, steps: 3 };
+const DANCER = pose({ elR: [70, -296], haR: [126, -338] });
 export function catBase() {
   const sk = new Sk(W, H, { id: "g3e" });
   // 거울 속(오른쪽)은 옅은 하늘색으로 깐다
   sk.raw(`<rect x="${CATM.mirror}" y="40" width="440" height="466" fill="#DCEEFB"/>`);
-  ground(sk);
-  // 거울(옆에서 본 모습)과 받침
+  // 나무 마루
+  sk.raw(`<rect x="40" y="506" width="880" height="34" fill="${C.woodLight}"/>`);
+  ground(sk, 506, C.woodDark, 3);
+  // 벽의 손잡이 봉과 거울에 비친 봉(마주 보는 자리)
+  [[70, 466, 120, 416], [494, 890, 544, 840]].forEach(([x0, x1, p0, p1], i) => {
+    [p0, p1].forEach((px, j) => sk.ink(dense([[px, 330], [px, 362]], 4), { w: 7, color: C.gray, wob: 0.3, seed: 91 + i * 4 + j }));
+    sk.ink(dense([[x0, 330], [x1, 330]], 6), { w: 11, color: C.woodDark, wob: 0.5, seed: 95 + i * 4 });
+  });
+  // 전신거울(옆에서 본 모습)
   const m = poly([[CATM.mirror - 8, 60], [CATM.mirror + 8, 60], [CATM.mirror + 8, 504], [CATM.mirror - 8, 504]], 6);
   sk.fill(m, C.sea, { dx: 0, dy: 0, wob: 0.3, seed: 101 });
   sk.ink(m, { w: 7, wob: 0.5, seed: 102 });
-  // 진짜 고양이(왼쪽, 거울을 본다)
-  g(sk, "opn-g2u3-cat", () => sk.at(CATM.mirror - 290, 500, 1, () => cat(sk, 0, 0, 1.05, 111), 0, -1));
-  // 거울 속 고양이(오른쪽, 마주 본다)
-  g(sk, "opn-g2u3-cat2", () => sk.at(CATM.mirror + 290, 500, 1, () => cat(sk, 0, 0, 1.05, 111)));
+  // 학생(왼쪽, 거울을 본다)
+  g(sk, "opn-g2u3-cat", () => drawFigure(sk, CATM.mirror - 290, 506, 0.6, DANCER, { ...STUDENT }));
+  // 거울에 비친 모습(오른쪽, 마주 본다)
+  g(sk, "opn-g2u3-cat2", () => drawFigure(sk, CATM.mirror + 290, 506, 0.6, DANCER, { ...STUDENT, mirror: true }));
   return { sk };
 }
 
@@ -170,12 +188,14 @@ export function spoonBase() {
   return { sk };
 }
 
-/* ══════════ 6. 점으로 그린 물고기 (g2u3l6) ══════════ */
-export const DOTS = { body: [606, 262, 168, 96], tail: [[446, 262], [352, 186], [352, 338]], eye: [704, 236], gap: 25, r: 10 };
+/* ══════════ 6. 점으로 그린 바나나 (g2u3l6) ══════════ */
+// 바나나 = 가운데 c, 반지름 R인 원호(각 a0~a1, 아래로 휜다)를 따라 가운데 굵기가 half인 띠. 양 끝으로 갈수록 가늘어진다.
+// 앱이 이 띠 안에만 빨간 점과 초록 점을 번갈아 찍는다. 꼭지(stem)만 갈색으로 칠해 둔다.
+export const DOTS = { c: [605, 80], R: 200, a0: 0.18 * Math.PI, a1: 0.82 * Math.PI, half: 52, stem: [[435, 186], [419, 161]], gap: 25, r: 10 };
 export function dotsBase() {
   const sk = new Sk(W, H, { id: "g3g" });
   ground(sk);
-  // 이젤 위의 도화지(물고기는 앱이 점으로 찍는다)
+  // 이젤 위의 도화지(바나나는 앱이 점으로 찍는다)
   const paper = rrect(300, 58, 610, 410, 18);
   sk.fill(paper, "#FFFDF6", { dx: 0, dy: 0, wob: 0.6, seed: 151 });
   sk.ink(paper, { w: 9, color: C.woodDark, wob: 1, seed: 152 });
@@ -185,42 +205,43 @@ export function dotsBase() {
   return { sk };
 }
 
-/* ══════════ 7. 연못의 낚시찌 (g2u3l7) ══════════ */
-export const FLOAT = { water: 340, cone: [250, 150], splash: [250, 340], float: [640, 340], hit: [150, 60, 210, 200] };
+/* ══════════ 7. 연못에 뜬 탁구공 (g2u3l7) ══════════ */
+// cone = 나뭇잎 끝에 맺힌 빗방울의 가운데(앱이 splash까지 떨어뜨린다), float = 탁구공이 뜬 자리(앱이 위아래로 흔든다).
+// 탁구공 색은 랩(g2u3BallLab)과 정밀 그림(g2u3l7f1)의 공과 같다: 왼쪽 위 #FFFFFF → #FFB35C.
+export const FLOAT = { water: 340, cone: [250, 156], splash: [250, 340], float: [640, 340], hit: [150, 60, 210, 200] };
 export function floatBase() {
   const sk = new Sk(W, H, { id: "g3h" });
   // 연못
   sk.raw(`<rect x="40" y="${FLOAT.water}" width="800" height="170" fill="${C.sea}" opacity=".55"/>`);
   sk.ink(dense([[40, FLOAT.water], [840, FLOAT.water + 2]], 8), { w: 8, color: C.seaDeep, wob: 1.6, seed: 161 });
-  // 둑과 학생
+  // 둑과 학생(탁구공 쪽을 본다)
   const bank = poly([[820, 300], [930, 296], [930, 512], [800, 512]], 6);
   sk.fill(bank, "#DDE9C9", { dx: 0, dy: 0, wob: 1, seed: 162, tex: true });
   sk.ink(dense([[800, 512], [820, 300], [930, 296]], 6), { w: 9, wob: 1.2, seed: 163 });
-  drawFigure(sk, 872, 300, 0.42, pose({ elR: [-110, -300], haR: [-190, -350] }), { ...STUDENT });
-  // 낚싯대
-  sk.ink(dense([[792, 152], [700, 60]], 6), { w: 6, color: C.woodDark, wob: 0.4, seed: 165 });
-  // 소나무 가지
-  sk.ink(curve([[40, 96], [170, 84], [300, 104]]), { w: 14, color: C.woodDark, wob: 1, seed: 166 });
-  [[90, 78], [150, 70], [210, 78]].forEach(([x, y], i) => rays(sk, x, y, 6, 34, 5, { color: C.green, w: 6, seed: 167 + i * 5 }));
-  // 솔방울(앱이 떨어뜨린다)
+  drawFigure(sk, 872, 300, 0.42, pose({ elR: [80, -290], haR: [150, -312] }), { ...STUDENT, mirror: true });
+  // 나뭇가지와 잎. 마지막 잎 끝에 빗방울이 맺혀 있다
+  sk.ink(curve([[40, 92], [150, 84], [236, 100]]), { w: 12, color: C.woodDark, wob: 1, seed: 166 });
+  [[96, 104, 0.6], [168, 70, -0.45], [234, 116, 1.05]].forEach(([x, y, r], i) => sk.at(x, y, 1, () => {
+    const lf = ell(0, 0, 32, 13);
+    sk.fill(lf, C.green, { dx: 0, dy: 0, wob: 0.4, seed: 167 + i * 2 });
+    sk.ink(lf, { w: 6, wob: 0.5, seed: 168 + i * 2 });
+  }, r));
+  // 빗방울(앱이 떨어뜨린다)
   g(sk, "opn-g2u3-cone", () => {
     const [x, y] = FLOAT.cone;
-    const cn = ell(x, y, 22, 30);
-    sk.fill(cn, C.wood, { dx: 0, dy: 0, wob: 0.5, seed: 181, tex: true });
-    sk.ink(cn, { w: 7, wob: 0.6, seed: 182 });
-    sk.ink(dense([[x - 16, y - 8], [x + 16, y - 8]], 4), { w: 4, color: C.woodDark, wob: 0.3, seed: 183 });
-    sk.ink(dense([[x - 18, y + 8], [x + 18, y + 8]], 4), { w: 4, color: C.woodDark, wob: 0.3, seed: 184 });
+    const dp = curve([[x, y - 26], [x + 11, y - 9], [x + 14, y + 3], [x + 8, y + 14], [x, y + 17], [x - 8, y + 14], [x - 14, y + 3], [x - 11, y - 9]], true, 3);
+    sk.fill(dp, "#BFE6FB", { dx: 0, dy: 0, wob: 0.3, seed: 181 });
+    sk.ink(dp, { w: 5, color: C.seaDeep, wob: 0.3, seed: 182 });
+    sk.dot(x - 5, y + 1, 3.2, C.white);
   });
-  // 낚시찌(앱이 위아래로 움직인다)와 낚싯줄
+  // 탁구공(앱이 위아래로 움직인다). 아래쪽이 물에 조금 잠겨 있다
   g(sk, "opn-g2u3-flt", () => {
     const [x, y] = FLOAT.float;
-    sk.ink(dense([[700, 60], [x, y - 56]], 6), { w: 3, color: C.gray, wob: 0.2, seed: 191 });
-    const top = poly([[x - 9, y - 54], [x + 9, y - 54], [x + 11, y - 6], [x - 11, y - 6]], 4);
-    sk.fill(top, C.red, { dx: 0, dy: 0, wob: 0.3, seed: 192 });
-    sk.ink(top, { w: 6, wob: 0.4, seed: 193 });
-    const bot = poly([[x - 11, y - 6], [x + 11, y - 6], [x + 5, y + 30], [x - 5, y + 30]], 4);
-    sk.fill(bot, C.white, { dx: 0, dy: 0, wob: 0.3, seed: 194 });
-    sk.ink(bot, { w: 6, wob: 0.4, seed: 195 });
+    sk.defs.push(`<radialGradient id="g3hPing" cx="36%" cy="30%" r="74%"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#FFB35C"/></radialGradient>`);
+    const b = circ(x, y - 12, 26, { seed: 191 });
+    sk.fill(b, "url(#g3hPing)", { dx: 0, dy: 0, wob: 0.3, seed: 192 });
+    sk.ink(b, { w: 6, color: "#C46816", wob: 0.4, seed: 193 });
+    sk.ink(dense([[x - 34, y + 3], [x + 34, y + 3]], 4), { w: 5, color: C.seaDeep, wob: 0.4, seed: 194 });
   });
   return { sk };
 }

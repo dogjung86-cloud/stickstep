@@ -2,7 +2,7 @@
 // 목록은 Ⅱ단원 v5 세션이 낸 것(D:\Brilliant Science\output\g2-v5\u2\concept-cuts.md).
 // g2u2l3(녹인 설탕 굳히기)과 g2u2l2b(색이 같은 분필)는 사실과 다른 비유라 처음에 빼 두었다가(판정 자료 README 참조),
 // 2026-11-15 그래픽 수정에서 판정 자료가 고른 대안 장면(빨리 얼린 아이스크림과 천천히 다시 언 아이스크림, 자루가 똑같이 검은 색연필)으로 그려 실었다.
-// 색의 뜻: 지구 속 네 층은 복숭아의 실제 색(껍질 붉은색, 과육 노랑, 씨 겉 짙은 갈색, 씨 속 밝은 살구색).
+// 색의 뜻: 지구 속 층은 반으로 자른 아보카도의 실제 색(얇은 껍질 짙은 초록, 두꺼운 과육 초록에서 연노랑, 가운데 씨 갈색).
 // 누르는 힘은 빨간 화살표, 차례(아래에서 위로)는 청록 화살표. 그 밖의 소품은 일상 물건 색이다.
 import { Sk, C, curve, dense, circ, ell, poly, rrect, arrow, emark, sparkle, hash, drop } from "../../lib/sk.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT } from "../../lib/figure.mjs";
@@ -83,48 +83,55 @@ function cutL1() {
   return sk;
 }
 
-/* ---------- g2u2l1b: 반으로 자른 복숭아. 얇은 껍질, 두꺼운 과육, 씨의 겉과 속 ---------- */
+/* ---------- g2u2l1b: 반으로 자른 아보카도. 얇은 껍질, 두꺼운 과육, 가운데 둥근 씨 ---------- */
 function cutL1b() {
   const sk = new Sk(W, H, { id: "b" });
-  const GY = 668, cx = 612, cy = 316, R = 202, TY = 522;
+  const GY = 668, cx = 566, cy = 300, RX = 168, RY = 214, TY = 522;
   ground(sk, GY, 11);
   table(sk, 384, 944, TY, GY, 21);
-  // 뒤에 엎어 둔 나머지 반쪽
-  const dome = [...curve([[800, TY], [796, 470], [826, 428], [862, 420], [900, 432], [932, 474], [930, TY]], false, 4), [800, TY]];
-  sk.fill(dome, "#FBC49A", { dx: 0, dy: 0, wob: 0.5, seed: 31 });
-  sk.fill(curve([[838, 440], [872, 432], [912, 452], [920, 492], [884, 500], [848, 478]], true, 4), "#F0808A", { dx: 0, dy: 0, wob: 0.5, seed: 33, alpha: 0.75 });
+  // 뒤에 놓인 통째 아보카도(울퉁불퉁한 짙은 초록 껍질)
+  const whole = curve([[812, TY], [800, 488], [812, 450], [840, 426], [866, 430], [884, 456], [904, 494], [906, TY]], false, 4);
+  const wp = [...whole, [812, TY]];
+  sk.fill(wp, "#3E6B2F", { dx: 0, dy: 0, wob: 0.5, seed: 31 });
   thin(sk, 0.8, () => {
-    sk.ink(curve([[862, 424], [848, 462], [852, TY - 6]]), { w: 5, color: "#C8643C", seed: 34, wob: 0.4 });
-    sk.ink(dense([[862, 424], [866, 404]]), { w: 9, color: "#7A5236", seed: 35, wob: 0.2 });
-    sk.ink(dome, { w: 10, seed: 32 });
+    for (const [x, y, i] of [[840, 470, 0], [870, 452, 1], [884, 494, 2], [834, 502, 3], [860, 488, 4]]) sk.dot(x, y, 4, "#2B4A21");
+    sk.ink(dense([[852, 430], [856, 412]]), { w: 8, color: "#7A5236", seed: 35, wob: 0.2 });
+    sk.ink(wp, { w: 10, seed: 32 });
   });
-  // 자른 면: 복숭아 꼴(위가 살짝 패고 아래가 조금 뾰족하다)
-  const shape = k => { const p = []; for (let i = 0; i <= 72; i++) { const a = -Math.PI / 2 + i / 72 * Math.PI * 2, d = Math.atan2(Math.sin(a + Math.PI / 2), Math.cos(a + Math.PI / 2)), b = Math.atan2(Math.sin(a - Math.PI / 2), Math.cos(a - Math.PI / 2)); const r = R * k * (1 - 0.06 * Math.exp(-(d * d) / 0.05) + 0.035 * Math.exp(-(b * b) / 0.08)); p.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return p; };
-  // 꼭지와 잎
+  // 자른 면: 아보카도 꼴(위가 좁고 아래가 넓은 둥근 배 모양)
+  const shape = (k, dy = 0) => {
+    const p = [];
+    for (let i = 0; i <= 80; i++) {
+      const a = (i / 80) * Math.PI * 2, s = Math.sin(a), c = Math.cos(a);
+      const up = Math.max(0, -s); // 위쪽일수록 1
+      const nar = 1 - 0.3 * up * up; // 위쪽을 좁힌다
+      p.push([cx + RX * k * c * nar, cy + dy + RY * k * s]);
+    }
+    return p;
+  };
   thin(sk, 0.8, () => {
-    sk.ink(curve([[cx, cy - R + 14], [cx + 4, cy - R - 16], [cx + 14, cy - R - 34]]), { w: 10, color: "#7A5236", seed: 41, wob: 0.3 });
-    const leaf = curve([[cx + 12, cy - R - 22], [cx + 50, cy - R - 58], [cx + 104, cy - R - 50], [cx + 62, cy - R - 16]], true, 3);
-    sk.fill(leaf, C.green, { ...flat, seed: 42 }); sk.ink(leaf, { w: 8, seed: 43, wob: 0.5 });
+    // 꼭지
+    sk.ink(curve([[cx, cy - RY + 6], [cx + 2, cy - RY - 14], [cx + 8, cy - RY - 26]]), { w: 9, color: "#7A5236", seed: 41, wob: 0.3 });
   });
   const outer = shape(1);
-  sk.fill(outer, "#D4183D", { ...flat, seed: 51 });                 // 껍질: 얇은 붉은 테
-  sk.fill(shape(0.94), "#FFD98A", { ...flat, seed: 52, tex: 1.3, texAng: 0.6, texDark: 0.06 }); // 과육
+  sk.fill(outer, "#2F5D2A", { ...flat, seed: 51 });                                  // 껍질: 얇은 짙은 초록 테
+  sk.fill(shape(0.955, 2), "#9CC85E", { ...flat, seed: 52, tex: 1.1, texAng: 0.6, texDark: 0.05 }); // 과육 바깥(초록)
+  sk.fill(shape(0.8, 14), "#E2EC97", { ...flat, seed: 53, tex: 0.9, texAng: 0.6, texDark: 0.04 });  // 과육 안쪽(연노랑)
   thin(sk, 0.75, () => {
-    sk.ink(outer, { w: 6, seed: 53, wob: 0.5 });
-    // 씨의 겉(짙고 울퉁불퉁하다)과 속(밝은 알맹이)
-    const pit = circ(cx, cy + 6, R * 0.52, { over: 0.05, seed: 61, lump: 0.05 });
-    sk.fill(pit, "#8A5A33", { ...flat, seed: 62, tex: 0.6, texAng: 1.2 });
-    sk.ink(pit, { w: 9, seed: 63, wob: 1.4 });
-    for (let i = 0; i < 9; i++) { const a = i / 9 * Math.PI * 2 + 0.3, r0 = R * 0.3, r1 = R * 0.44; sk.ink(curve([[cx + r0 * Math.cos(a), cy + 6 + r0 * Math.sin(a)], [cx + (r0 + r1) / 2 * Math.cos(a + 0.12), cy + 6 + (r0 + r1) / 2 * Math.sin(a + 0.12)], [cx + r1 * Math.cos(a), cy + 6 + r1 * Math.sin(a)]]), { w: 4, color: "#5E3B20", seed: 64 + i, wob: 0.3 }); }
-    const ker = circ(cx, cy + 6, R * 0.2, { over: 0.05, seed: 75 });
-    sk.fill(ker, "#F3DDB0", { ...flat, seed: 76 }); sk.ink(ker, { w: 7, seed: 77, wob: 0.5 });
+    sk.ink(outer, { w: 6, seed: 54, wob: 0.5 });
+    // 가운데 둥근 씨(갈색, 윤이 난다)
+    const sy = cy + 56, SR = RX * 0.56;
+    const seed = circ(cx, sy, SR, { over: 0.05, seed: 61, lump: 0.025 });
+    sk.fill(seed, "#8A5A33", { ...flat, seed: 62, tex: 0.5, texAng: 1.2 });
+    sk.ink(seed, { w: 9, seed: 63, wob: 0.8 });
+    sk.ink(curve([[cx - SR * 0.56, sy - SR * 0.36], [cx - SR * 0.34, sy - SR * 0.62], [cx - SR * 0.02, sy - SR * 0.72]]), { w: 7, color: "#C9935F", seed: 64, wob: 0.2 });
   });
   // 쌤: 손가락으로 얇은 껍질을 짚는다
   const fx = 198, s = 0.8;
   const P = pose({ elR: [112, -296], haR: [204, -338], tilt: 0.06 });
   drawFigure(sk, fx, GY, s, P, { ...TEACHER, name: "teacher", hands: "L" });
   const hx = fx + s * 204, hy = GY - s * 338;
-  const f = dense([[hx + 6, hy - 2], [hx + 44, hy - 12]]);
+  const f = dense([[hx + 6, hy - 2], [hx + 50, hy - 12]]);
   sk.ink(f, { w: 16, seed: 81, wob: 0.3 }); sk.ink(f, { w: 8, color: C.skin, seed: 82, wob: 0.3 });
   handDot(sk, [hx, hy], C.skin, 83, 13);
   return sk;
@@ -603,7 +610,7 @@ function cutL9() {
 export function cuts() {
   return [
     { name: "g2u2l1", theme: "geo", orig: null, sk: cutL1(), alt: "비 오는 날 우산을 쓴 스틱맨이 화분의 풀을 가리키고, 곁에 웅덩이와 젖은 흙, 구름 사이로 달이 보이는 장면", cap: "비, 흙, 풀, 웅덩이, 달이 한 장면에 이어져 있어요" },
-    { name: "g2u2l1b", theme: "geo", orig: null, sk: cutL1b(), alt: "반으로 자른 복숭아의 얇은 껍질을 스틱맨이 손가락으로 짚고, 자른 면에 두꺼운 과육과 씨의 겉과 속이 보이는 장면", cap: "껍질은 종이처럼 얇고, 과육이 가장 두꺼워요" },
+    { name: "g2u2l1b", theme: "geo", orig: null, sk: cutL1b(), alt: "반으로 자른 아보카도의 얇은 껍질을 스틱맨이 손가락으로 짚고, 자른 면에 두꺼운 과육과 가운데 둥근 씨가 보이는 장면", cap: "껍질은 종이처럼 얇고, 과육이 가장 두꺼워요" },
     { name: "g2u2l2", theme: "geo", orig: null, sk: cutL2(), alt: "잡곡밥 한 그릇에 섞인 흰 쌀, 검은콩, 노란 조를 스틱맨이 젓가락으로 가리키는 장면", cap: "밥 한 그릇에 여러 알갱이가 섞여 있어요" },
     { name: "g2u2l2b", theme: "geo", orig: null, sk: cutL2b(), alt: "스틱맨이 자루가 똑같이 검은 색연필 두 자루로 흰 종이에 줄을 긋자 한 줄은 검은색, 한 줄은 붉은 갈색으로 그어진 장면", cap: "겉은 똑같이 검어도 그은 줄의 색은 달라요" },
     { name: "g2u2l3", theme: "geo", orig: null, sk: cutL3(), alt: "식탁 위 두 그릇의 아이스크림. 빨리 얼린 왼쪽은 알갱이가 잘아 매끈하고, 녹았다가 천천히 다시 언 오른쪽은 굵은 얼음 알갱이가 드러나 있는 장면", cap: "빨리 얼면 알갱이가 잘고, 천천히 얼면 굵게 자라요" },

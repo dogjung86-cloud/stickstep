@@ -1,8 +1,9 @@
-// [중2 Ⅷ v5] g2u8l8 planLab: 「화성 탐사에 무엇을 실어 갈까요?」
-// 책의 어디에서: 탐구 '우주 탐사 계획 세우기'(탐사할 천체와 목적을 정하고, 임무와 가져갈 장비, 예상 성과를 적은 탐사 계획 보고서를 만든다. 예시는 화성 기지 답사).
+// [중2 Ⅷ v5] g2u8l8 planLab: 「달 얼음 탐사에 무엇을 실어 갈까요?」
+// 다루는 내용: 탐구 활동(탐사할 천체와 목적을 정하고, 임무와 가져갈 장비, 예상 성과를 적은 탐사 계획 보고서를 만든다).
+// 예시는 햇빛이 들지 않는 달 남극의 깊은 분화구에서 얼음을 찾는 탐사다. 활동의 예시로만 쓰고, 달의 얼음을 개념이나 문제로 묻지 않는다.
 // 한 통찰: 탐사 계획은 목적에서 임무가 나오고, 임무에 맞춰 장비를 고른다.
 // 학생이 정하는 것: 임무 셋에 맞춰 실을 장비 셋. 실패하는 길: 임무에 맞지 않는 장비를 실으면 그 임무가 실패로 돌아온다(계획을 고쳐 다시 보낸다).
-// 화성의 모습은 실사(public/photos/mars.jpg).
+// 달의 모습은 실사(public/photos/moon_lro.jpg, NASA LRO 모자이크).
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -11,17 +12,17 @@ import { bvBtn, bvTimers } from "../bio6/b6Lab";
 import { S, sBox, sCanvas, sDisk, sFrame, sText, type LabStep } from "./kit";
 
 const TASKS = [
-  { name: "기지를 세울 토양 조사하기", need: 0, fail: "화성 토양의 성분을 분석할 장비가 없었어요" },
-  { name: "지구에 탐사 자료 전송하기", need: 1, fail: "지구와 신호를 주고받을 통신 장비가 없었어요" },
-  { name: "비행사가 숨 쉴 산소 확보하기", need: 2, fail: "화성에서 산소를 만들어 낼 장비가 없었어요" },
+  { name: "어두운 분화구에서 얼음 찾기", need: 0, fail: "땅속의 얼음을 찾아낼 탐지 장비가 없었어요" },
+  { name: "얼어붙은 땅을 파서 시료 얻기", need: 1, fail: "단단히 언 땅을 파낼 장비가 없었어요" },
+  { name: "지구에 탐사 자료 전송하기", need: 2, fail: "지구와 신호를 주고받을 통신 장비가 없었어요" },
 ];
-const GEAR = ["토양 분석기", "통신 안테나", "산소 발생 장치", "우산", "고무보트", "부채"];
+const GEAR = ["얼음 탐지기", "시추 드릴", "통신 안테나", "우산", "고무보트", "부채"];
 const BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
 export const planLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
   const f = sFrame(host, { title: s.title, steps: 3, api, tall: true });
-  f.stage.appendChild(el("img", { class: "g2u8x-mars", attrs: { src: `${BASE}photos/mars.jpg`, alt: "붉은 화성", draggable: "false" } }));
+  f.stage.appendChild(el("img", { class: "g2u8x-moon", attrs: { src: `${BASE}photos/moon_lro.jpg`, alt: "회색빛 달", draggable: "false" } }));
   const st = sCanvas(f.stage);
   const tm = bvTimers();
 
@@ -62,7 +63,7 @@ export const planLab: StepRenderer = (host, step, api) => {
     flying = true;
     fly = 0;
     paint();
-    f.say("탐사선이 화성으로 날아가고 있어요. 임무를 해낼 수 있을까요?");
+    f.say("탐사선이 달로 날아가고 있어요. 임무를 해낼 수 있을까요?");
     tm.later(() => {
       flying = false;
       result = TASKS.map((t) => picked.has(t.need));
@@ -92,7 +93,7 @@ export const planLab: StepRenderer = (host, step, api) => {
     );
   }
   function finish(): void {
-    f.say("탐사 목적에 맞는 임무와 장비를 갖추어 화성 기지 답사를 성공적으로 마쳤어요!");
+    f.say("탐사 목적에 맞는 임무와 장비를 갖추어 달 얼음 탐사를 성공적으로 마쳤어요!");
     f.slot.conclude("우주 탐사 계획을 세울 때는 <b>탐사할 천체와 탐사 목적</b>을 먼저 정한 뒤, 목적에 맞는 구체적인 <b>임무</b>와 그 임무를 수행할 <b>장비</b>를 맞추어 계획해요.");
     api.enableCTA(s.cta ?? "다음");
   }
@@ -100,7 +101,7 @@ export const planLab: StepRenderer = (host, step, api) => {
   st.run((ctx, w, h, _t, dt) => {
     if (flying) fly = Math.min(1, fly + dt / 110);
     // 탐사 계획 보고서(왼쪽)
-    sText(ctx, "탐사 계획: 화성 기지 답사", 12, 16, { color: S.ink, px: 12.5, align: "left", w: 800 });
+    sText(ctx, "탐사 계획: 달 얼음 탐사", 12, 16, { color: S.ink, px: 12.5, align: "left", w: 800 });
     TASKS.forEach((task, i) => {
       const y = 32 + i * 46;
       const r = result ? result[i] : null;
@@ -111,18 +112,18 @@ export const planLab: StepRenderer = (host, step, api) => {
       if (r !== null) sText(ctx, r ? "성공" : "실패", w - 132, y + 13, { color: r ? S.ok : "#FF7A85", px: 13, align: "right", w: 800 });
     });
     sText(ctx, `실은 장비 ${picked.size}/3`, 12, h - 14, { color: picked.size === 3 ? S.gold : S.dim, px: 12.5, align: "left", w: 800 });
-    // 날아가는 탐사선(오른쪽 화성 사진 쪽으로)
+    // 날아가는 탐사선(오른쪽 달 사진 쪽으로)
     if (flying) {
       const x = w - 150 + fly * 70;
       const y = h - 30 - fly * 70;
       sDisk(ctx, x, y, 4, "#fff");
       for (let i = 1; i < 4; i++) sDisk(ctx, x - i * 6, y + i * 6, 2.5 - i * 0.5, `rgba(255,200,120,${0.6 - i * 0.15})`);
     }
-    sText(ctx, "화성", w - 60, h - 16, { color: S.ink, px: 12 });
+    sText(ctx, "달", w - 60, h - 16, { color: S.ink, px: 12 });
   });
 
   paint();
-  f.say("화성에 기지를 세우기 전에 미리 가 보는 탐사예요. 왼쪽의 <b>임무 셋</b>을 해낼 <b>장비 세 개</b>를 골라 실어 보세요.");
+  f.say("햇빛이 들지 않는 달 남극의 깊은 분화구에 얼음이 있는지 찾아보는 탐사예요. 왼쪽의 <b>임무 셋</b>을 해낼 <b>장비 세 개</b>를 골라 실어 보세요.");
   api.setCTA("탐사 계획을 세워 보세요", { enabled: false });
   return () => {
     tm.clear();
