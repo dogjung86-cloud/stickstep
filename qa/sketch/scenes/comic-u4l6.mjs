@@ -4,9 +4,9 @@
 //   2 1761년 겨울 글래스고, 블랙: 찬 공기 속 온도계를 얼어 가는 물에 넣으면 눈금이 올라간다
 //   3 블랙의 생각: 물은 얼면서 열을 내놓는다, 다 얼 때까지 온도가 일정하다(응고 = 방출)
 //   4 수수께끼 풀이: 어는 물이 내놓는 열이 찬 공기로 빠져나가야 더 얼 수 있어 연못은 천천히 언다(크게 본 단면)
-//   5 이슬(액화도 방출) → 6 파라핀 손 찜질(굳으면서 내놓는 열) → 7 사막의 물주머니(반대로 기화는 흡수)
+//   5 이슬(액화도 방출) → 6 함박눈(승화도 방출) → 7 사막의 물주머니(반대로 기화는 흡수)
 //   → 8 열이 나오는 길(빨강)과 들어가는 길(파랑)
-// 2026-11-23 저작권 손질: 옛 1, 4컷(과수원에서 꽃에 물 뿌리기)과 6컷(함박눈 오는 날의 포근함)을 블랙의 연못과 파라핀 찜질로 바꿨다.
+// 2026-11-23 저작권 손질: 옛 1, 4컷(과수원에서 꽃에 물 뿌리기)을 블랙의 연못으로 바꿨다. 6컷(함박눈)은 사용자 결정으로 장면을 그대로 두고 캡션만 새로 썼다.
 // 화살표 색: 빨강 = 상태가 변하는 물질에서 열이 나온다(방출), 파랑 = 상태가 변하는 물질로 열이 들어간다(흡수). 찬 공기는 화살촉 없는 옅은 바람 선.
 // 이글루 벽에 물을 뿌려 집을 데운다는 이야기는 근거가 약해 쓰지 않는다.
 // 블랙의 과냉각 이야기(파렌하이트가 본, 0 ℃ 아래에서도 얼지 않은 물)는 0 ℃에서 온도가 멈추는 냉각 곡선 랩과 헷갈릴 수 있어 쓰지 않는다.
@@ -289,47 +289,23 @@ function p5() {
   return sk;
 }
 
-/* ---------- 6. 파라핀 손 찜질: 굳으면서 열을 내놓는다 ---------- */
+/* ---------- 6. 함박눈: 승화(기체 → 고체)도 열을 내놓는다 ---------- */
 function p6() {
   const sk = new Sk(W, H, { id: "f" });
-  ground(sk, 704, 601);
-  // 탁자와 녹인 파라핀을 담은 찜질 통
-  thin(sk, 0.85, () => {
-    for (const lx of [470, 790]) sk.ink(dense([[lx, 520], [lx + (lx < 600 ? -8 : 8), 704]]), { w: 12, color: "#7A5A3A", seed: 603 + lx, wob: 0.3 });
-    const top = rrect(430, 500, 400, 26, 9); sk.fill(top, C.wood, { seed: 605, tex: true, texAng: 0.02 }); sk.ink(top, { w: 10, seed: 606 });
-    const bath = rrect(520, 388, 250, 112, 16); sk.fill(bath, "#C9CED6", { seed: 607, tex: true, texAng: 0.02 }); sk.ink(bath, { w: 10, seed: 608 });
-  });
-  const wax = ell(645, 392, 112, 16);
-  sk.fill(wax, "#FFF1CF", { dx: 0, dy: 0, wob: 0.3, seed: 611 }); sk.ink(wax, { w: 6, seed: 612, wob: 0.3 });
-  const knob = circ(728, 448, 13, { over: 0.15, seed: 613 }); sk.fill(knob, "#5A5F68", { dx: 0, dy: 0, wob: 0.3, seed: 614 }); sk.ink(knob, { w: 5, seed: 615, wob: 0.3 });
-  sk.dot(696, 448, 7, C.orange);
-  // 개어 둔 수건
-  const tw = rrect(450, 470, 70, 30, 8); sk.fill(tw, "#F4B8C8", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 617 }); sk.ink(tw, { w: 6, seed: 618, wob: 0.4 });
-  // 학생: 파라핀에 담갔다 뺀 손을 든다. 손을 감싼 하얀 파라핀 층은 크게 본 원 안에서 손가락 단면과 함께 보인다
-  const K = pose({ elR: [92, -282], haR: [176, -300], elL: [-50, -262], haL: [-24, -218], tilt: 0.06 });
-  const kx = 270, ky = 704, ks = 0.72;
-  drawFigure(sk, kx, ky, ks, K, { ...KID, hands: "L" });
-  const el = [kx + ks * 92, ky - ks * 282], hd = [kx + ks * 176, ky - ks * 300];
-  const ang = Math.atan2(hd[1] - el[1], hd[0] - el[0]), gx = hd[0] - Math.cos(ang) * 10, gy = hd[1] - Math.sin(ang) * 10;
-  sk.at(gx, gy, 1, () => {
-    const g = curve([[-40, -18], [-6, -26], [26, -22], [40, 0], [26, 22], [-6, 26], [-40, 18]], true, 3);
-    sk.fill(g, "#FBF7EC", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 621 }); sk.ink(g, { w: 6, color: "#B8AE98", seed: 622, wob: 0.4 });
-    for (const [x, i] of [[-24, 0], [-8, 1]]) sk.ink(dense([[x, -22], [x + 2, 22]]), { w: 3, color: "#D9D1BE", seed: 623 + i, wob: 0.2 });
-  }, ang);
-  // 크게 본 원: 손가락 단면(살)을 굳어 가는 파라핀 층이 감싸고, 그 층에서 손가락으로 열이 들어간다(빨강은 굳는 물질에서 나오는 열)
-  const zx = 690, zy = 178, zr = 100;
-  for (const [a, b, i] of [[[gx + 20, gy - 30], [zx - zr * 0.94, zy + zr * 0.34]], [[gx + 30, gy + 4], [zx - zr * 0.6, zy + zr * 0.8]]].map((v, i) => [...v, i])) sk.ink(dense([a, b]), { w: 4, color: C.gray, dash: [10, 9], seed: 641 + i, wob: 0 });
-  sk.fill(circ(zx, zy, zr, { over: 0.06, seed: 643 }), "#F6F8FA", { dx: 0, dy: 0, wob: 0.2, seed: 644 });
-  const ring = circ(zx, zy, 76, { over: 0.1, seed: 645 });
-  sk.fill(ring, "#FBF3DD", { dx: 0, dy: 0, wob: 0.4, seed: 646 }); sk.ink(ring, { w: 5, color: "#B8AE98", seed: 647, wob: 0.4 });
-  for (const [r, i] of [[60, 0], [68, 1]]) sk.ink(circ(zx, zy, r, { over: 0.05, seed: 648 + i }), { w: 2.5, color: "#E2D7BC", seed: 650 + i, wob: 0.3 });
-  const finger = circ(zx, zy, 40, { over: 0.1, seed: 652 });
-  sk.fill(finger, C.skin, { dx: 0, dy: 0, wob: 0.3, seed: 653 }); sk.ink(finger, { w: 5, color: "#C98A6A", seed: 654, wob: 0.3 });
-  for (const [a, i] of [[-2.2, 0], [-0.9, 1], [0.4, 2], [1.7, 3], [2.9, 4]]) arrow(sk, [[zx + 70 * Math.cos(a), zy + 70 * Math.sin(a)], [zx + 44 * Math.cos(a), zy + 44 * Math.sin(a)]], { w: 6, color: HOT, seed: 655 + i, straight: true, head: 12, wob: 0.2 });
-  sk.ink(circ(zx, zy, zr, { over: 0.06, seed: 661 }), { w: 7, seed: 662, wob: 0.4 });
-  // 쌤: 손을 펴 보인다
-  const T = pose({ elL: [-84, -300], haL: [-150, -322], elR: [50, -262], haR: [24, -218], tilt: -0.04 });
-  drawFigure(sk, 880, 704, 0.7, T, SSAM);
+  snowGround(sk, 664, 601);
+  const cl = [[-12, -12], [972, -12], ...curve([[972, 196], [880, 214], [800, 196], [700, 218], [600, 198], [500, 220], [400, 200], [300, 220], [200, 198], [100, 216], [-12, 198]], false, 5)];
+  cl.push(cl[0]);
+  sk.fill(cl, "#E4E9EF", { dx: 0, dy: 0, wob: 0, seed: 603 });
+  sk.ink(curve([[972, 196], [880, 214], [800, 196], [700, 218], [600, 198], [500, 220], [400, 200], [300, 220], [200, 198], [100, 216], [-12, 198]], false, 5), { w: 8, color: "#9AA6B4", seed: 604 });
+  // 구름 속: 수증기가 곧장 얼음 알갱이가 되며 열을 내놓는다
+  for (const [x, y, r, rot, i] of [[520, 104, 30, 0.3, 0], [700, 120, 34, 0.1, 1], [880, 92, 28, 0.5, 2]]) { snowflake(sk, x, y, r, 611 + i * 12, rot); heatArrows(sk, x, y, r + 14, r + 46, [-0.4, 2.7, 3.6], 711 + i * 4); }
+  // 땅으로 내리는 눈
+  for (const [x, y, r, rot, i] of [[330, 320, 30, 0.2, 0], [880, 380, 28, 0.4, 1], [690, 460, 24, 0.3, 2], [440, 480, 22, 0.6, 3], [860, 570, 20, 0.2, 4], [540, 300, 22, 0.1, 5]]) snowflake(sk, x, y, r, 651 + i * 12, rot);
+  // 쌤: 두 팔을 벌린다. 학생: 손바닥으로 눈을 받는다
+  const T = pose({ elL: [-96, -300], haL: [-164, -318], elR: [96, -300], haR: [164, -318], tilt: -0.04 });
+  drawFigure(sk, 600, 668, 0.74, T, { ...SSAM, under: scarf(sk, C.red, 5) });
+  const K = pose({ elR: [70, -300], haR: [130, -350], elL: [-50, -262], haL: [-18, -222], tilt: 0.06 });
+  drawFigure(sk, 190, 668, 0.7, K, { ...KID, under: scarf(sk, "#3FAE5A", 9) });
   return sk;
 }
 
@@ -421,9 +397,9 @@ const TEXT = [
     bubbles: [{ who: "student", text: "이슬이<br>맺혔어요!" }],
   },
   {
-    when: "오늘날, 물리 치료실", stage: "생활 속 응고", title: "따뜻한 파라핀 장갑",
-    caption: "손목이나 손가락이 뻣뻣할 때 녹인 파라핀에 손을 여러 번 담갔다 빼는 찜질을 하기도 해요. 손에 묻은 액체 파라핀이 하얗게 굳으면서(<b>응고</b>) <b>열에너지를 방출하기</b> 때문에 손이 오랫동안 따뜻하지요.",
-    bubbles: [{ who: "student", text: "손이<br>따뜻해요!" }],
+    when: "겨울, 함박눈 오는 날", stage: "승화도 방출", title: "눈 오는 날은 포근해",
+    caption: "함박눈이 펑펑 오는 날은 생각보다 덜 춥게 느껴질 때가 많아요. 구름 속에서 수증기가 물을 거치지 않고 곧바로 얼음 알갱이인 눈송이가 되는 <b>승화</b>가 일어나는데, 이때 나오는 <b>열에너지</b>가 추위를 누그러뜨리는 데 한몫하거든요.",
+    bubbles: [{ who: "student", text: "생각보다<br>포근해요!" }],
   },
   {
     when: "한낮, 사막", stage: "반대로 흡수", title: "땀 흘리는 물주머니",
