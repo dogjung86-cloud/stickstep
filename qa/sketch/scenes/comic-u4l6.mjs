@@ -1,17 +1,18 @@
-// 중1 과학 u4l6 도입 만화(v2): 사과꽃을 지킨 얼음 옷(응고, 액화, 승화는 열에너지를 방출한다). 8컷. 배선 전.
+// 중1 과학 u4l6 도입 만화(v2): 연못은 왜 천천히 얼까?(응고, 액화는 열에너지를 방출한다). 8컷.
 // 조사와 콘티는 qa/sketch/research/u4l6.md.
-//   1 봄밤 과수원, 서리가 온다는데 나무에 물을 뿌린다(궁금증)
+//   1 겨울 아침 글래스고, 블랙: 밤새 꽁꽁 추웠는데 연못은 가장자리만 살얼음이다(궁금증)
 //   2 1761년 겨울 글래스고, 블랙: 찬 공기 속 온도계를 얼어 가는 물에 넣으면 눈금이 올라간다
 //   3 블랙의 생각: 물은 얼면서 열을 내놓는다, 다 얼 때까지 온도가 일정하다(응고 = 방출)
-//   4 새벽 과수원: 얼음 옷 속 꽃은 0 ℃ 가까이에 머물러 멀쩡하다
+//   4 수수께끼 풀이: 어는 물이 내놓는 열이 찬 공기로 빠져나가야 더 얼 수 있어 연못은 천천히 언다(크게 본 단면)
 //   5 이슬(액화도 방출) → 6 함박눈(승화도 방출) → 7 사막의 물주머니(반대로 기화는 흡수)
-//   → 8 열이 나오는 길(빨강)과 들어가는 길(파랑)
+//   → 8 열의 방출(빨강)과 흡수(파랑)
+// 2026-11-23 저작권 손질: 옛 1, 4컷(과수원에서 꽃에 물 뿌리기)을 블랙의 연못으로 바꿨다. 6컷(함박눈)은 사용자 결정으로 장면을 그대로 두고 캡션만 새로 썼다.
 // 화살표 색: 빨강 = 상태가 변하는 물질에서 열이 나온다(방출), 파랑 = 상태가 변하는 물질로 열이 들어간다(흡수). 찬 공기는 화살촉 없는 옅은 바람 선.
 // 이글루 벽에 물을 뿌려 집을 데운다는 이야기는 근거가 약해 쓰지 않는다.
 // 블랙의 과냉각 이야기(파렌하이트가 본, 0 ℃ 아래에서도 얼지 않은 물)는 0 ℃에서 온도가 멈추는 냉각 곡선 랩과 헷갈릴 수 있어 쓰지 않는다.
 import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, sparkle, drop, squiggle, arrow } from "../lib/sk.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT } from "../lib/figure.mjs";
-import { sun, moon, cloud } from "../lib/props.mjs";
+import { sun, cloud } from "../lib/props.mjs";
 
 const W = 960, H = 720;
 const thin = (sk, k, fn) => { const o = sk.lwK; sk.lwK = k; fn(); sk.lwK = o; };
@@ -76,32 +77,68 @@ function black(sk, x, y, s, p, extra = {}) {
   drawFigure(sk, x, y, s, p, o);
   wigRolls(sk, x, y, s, p, { mirror: o.mirror });
 }
-// 과수원 농부: 털모자 + 초록 작업복. 사막 길손: 챙 넓은 모자 + 긴 옷. 둘 다 얼굴 없음
-const FARMER = { hair: "knit", capColor: "#C0504A", coat: { color: "#4E7A4A", seam: "#34553A", len: 24 }, seed: 561 };
+// 사막 길손: 챙 넓은 모자 + 긴 옷. 얼굴 없음
 const TRAVELER = { hair: "short", hairColor: "#5B463A", fringe: 24, hat: "brim", hatColor: "#D9B77A", coat: { color: "#EADDBB", seam: "#B59B6A", len: 90 }, seed: 571 };
 const SSAM = { ...TEACHER, name: "teacher" };
 const KID = { ...STUDENT, name: "student" };
 
 /* ---------- 소품 ---------- */
-// 사과꽃: 분홍 꽃잎 다섯 장. ice 면 투명한 얼음 껍질을 씌운다
-function blossom(sk, x, y, r, sd, ice = false) {
-  for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * Math.PI * 2 / 5; const p = circ(x + r * 0.56 * Math.cos(a), y + r * 0.56 * Math.sin(a), r * 0.46, { over: 0.15, seed: sd + i }); sk.fill(p, "#F9BFD0", { dx: 0, dy: 0, wob: 0.4, seed: sd + 5 + i }); sk.ink(p, { w: Math.max(3.5, r * 0.13), color: "#D9788F", seed: sd + 10 + i, wob: 0.4 }); }
-  sk.dot(x, y, r * 0.24, C.yellow);
-  if (ice) {
-    const sh = circ(x, y, r * 1.34, { over: 0.15, seed: sd + 20, lump: 0.07 });
-    sk.fill(sh, ICE, { dx: 0, dy: 0, wob: 0.6, seed: sd + 21, alpha: 0.55 });
-    sk.ink(sh, { w: Math.max(4, r * 0.14), color: ICELINE, seed: sd + 22, wob: 0.6 });
-    sk.ink(curve([[x - r * 0.9, y - r * 0.3], [x - r * 0.7, y - r * 0.8], [x - r * 0.2, y - r * 1.02]]), { w: Math.max(3, r * 0.1), color: C.white, seed: sd + 23, wob: 0.2 });
+// 연못(비스듬히 내려다본 타원). edge = 가장자리 살얼음 띠의 두께(0~1)
+function pond(sk, cx, cy, rx, ry, edge, sd) {
+  const outer = ell(cx, cy, rx, ry);
+  sk.fill(outer, ICE, { dx: 0, dy: 0, wob: 0.4, seed: sd });
+  const ix = cx + rx * 0.04, iy = cy + ry * 0.06, irx = rx * (1 - edge), iry = ry * (1 - edge * 1.25);
+  const inner = ell(ix, iy, irx, iry);
+  sk.fill(inner, "#9FD0EE", { dx: 0, dy: 0, wob: 0.5, seed: sd + 1 });
+  sk.ink(inner, { w: 4, color: ICELINE, seed: sd + 2, wob: 0.7 });
+  // 살얼음의 금(가장자리에서 안쪽 물가로)
+  for (let i = 0; i < 7; i++) {
+    const a = i * Math.PI * 2 / 7 + 0.3;
+    const p0 = [ix + irx * Math.cos(a), iy + iry * Math.sin(a)], p1 = [cx + rx * 0.96 * Math.cos(a + 0.06), cy + ry * 0.96 * Math.sin(a + 0.06)];
+    sk.ink(dense([p0, [(p0[0] + p1[0]) / 2 + 6, (p0[1] + p1[1]) / 2], p1], 3), { w: 3, color: ICELINE, seed: sd + 3 + i, wob: 0.4 });
+  }
+  // 얼지 않은 물의 잔물결
+  for (const [dx, dy, i] of [[-0.25, -0.1, 0], [0.12, 0.18, 1]]) sk.ink(curve([[ix + irx * (dx - 0.16), iy + iry * dy], [ix + irx * (dx - 0.05), iy + iry * dy - 5], [ix + irx * (dx + 0.06), iy + iry * dy], [ix + irx * (dx + 0.17), iy + iry * dy - 5]]), { w: 4, color: "#5E9FCB", seed: sd + 12 + i, wob: 0.3 });
+  sk.ink(outer, { w: 8, seed: sd + 15, wob: 0.5 });
+}
+// 서리 앉은 마른 갈대: 가는 줄기와 흰 끝
+function frostReeds(sk, x, y, n, sd) {
+  for (let i = 0; i < n; i++) {
+    const bx = x + i * 15, h = 96 + 34 * Math.sin(i * 2.3 + 1), lean = (i % 2 ? 1 : -1) * (8 + i * 2);
+    sk.ink(curve([[bx, y], [bx + lean * 0.4, y - h * 0.5], [bx + lean, y - h]]), { w: 5, color: "#8A7A4A", seed: sd + i, wob: 0.3 });
+    sk.ink(dense([[bx + lean * 0.82, y - h * 0.84], [bx + lean, y - h]]), { w: 7, color: C.white, seed: sd + 20 + i, wob: 0.1 });
   }
 }
-function appleTree(sk, x, y, s, sd = 251) {
-  thin(sk, 0.86, () => sk.at(x, y, s, () => {
-    const trunk = poly([[-26, 0], [-18, -190], [18, -190], [28, 0]], 4);
-    sk.fill(trunk, "#8A5A33", { seed: sd, tex: true, texAng: 1.5 }); sk.ink(trunk, { w: 10, seed: sd + 1 });
-    const top = curve([[-40, -180], [-150, -200], [-190, -300], [-150, -400], [-60, -460], [40, -470], [140, -420], [196, -320], [160, -210], [50, -180]], true, 5);
-    sk.fill(top, "#7DBE6A", { seed: sd + 2, tex: true, texAng: 0.6 }); sk.ink(top, { w: 11, seed: sd + 3 });
-  }));
-  for (const [dx, dy, i] of [[-110, -290, 0], [-30, -390, 1], [70, -330, 2], [130, -250, 3], [-40, -250, 4], [60, -420, 5], [-120, -370, 6]]) blossom(sk, x + dx * s, y + dy * s, 24 * s, sd + 10 + i * 30);
+// 고드름 달린 나뭇가지(오른쪽 위에서 들어온다)
+function icyBranch(sk, sd) {
+  const br = curve([[980, 96], [880, 122], [790, 164], [716, 190]]);
+  sk.ink(br, { w: 28, seed: sd, wob: 0.8 }); sk.ink(br, { w: 15, color: "#7A5A3A", seed: sd, wob: 0.8 });
+  const tw = curve([[860, 132], [830, 92], [800, 70]]);
+  sk.ink(tw, { w: 18, seed: sd + 1, wob: 0.6 }); sk.ink(tw, { w: 8, color: "#7A5A3A", seed: sd + 1, wob: 0.6 });
+  const snow = curve([[976, 84], [900, 104], [820, 138], [740, 172], [712, 180], [744, 162], [826, 124], [904, 94]], true, 3);
+  sk.fill(snow, SNOW, { dx: 0, dy: 0, wob: 0.4, seed: sd + 2 }); sk.ink(snow, { w: 4, color: "#B9CCDB", seed: sd + 3, wob: 0.4 });
+  for (const [x, y, len, i] of [[934, 116, 58, 0], [884, 134, 86, 1], [836, 154, 52, 2], [790, 174, 74, 3], [748, 190, 44, 4]]) {
+    const ic = poly([[x - 10, y], [x + 10, y], [x + 1, y + len]], 2);
+    sk.fill(ic, ICE, { dx: 0, dy: 0, wob: 0.3, seed: sd + 10 + i }); sk.ink(ic, { w: 4, color: ICELINE, seed: sd + 20 + i, wob: 0.3 });
+  }
+}
+// 원 안에서 두 가로선 사이(y0~y1)를 채우는 다각형(원을 칼로 자른 띠)
+function circleBand(cx, cy, r, y0, y1) {
+  const a = Math.max(y0, cy - r + 0.5), b = Math.min(y1, cy + r - 0.5), right = [], left = [];
+  for (let k = 0; k <= 24; k++) { const y = a + (b - a) * k / 24, dx = Math.sqrt(Math.max(0, r * r - (y - cy) ** 2)); right.push([cx + dx, y]); left.push([cx - dx, y]); }
+  const pts = [...right, ...left.reverse()]; pts.push(pts[0]);
+  return pts;
+}
+// 작은 나무 통의 살얼음 물(8컷의 응고 예)
+function miniTub(sk, x, y, sd) {
+  thin(sk, 0.8, () => {
+    const tub = poly([[x - 34, y - 18], [x + 34, y - 18], [x + 28, y + 26], [x - 28, y + 26]], 3);
+    sk.fill(tub, C.wood, { seed: sd, tex: true, texAng: 1.5 }); sk.ink(tub, { w: 6, seed: sd + 1 });
+  });
+  const water = ell(x, y - 18, 33, 8);
+  sk.fill(water, "#9FD0EE", { dx: 0, dy: 0, wob: 0.3, seed: sd + 2 });
+  const ice = ell(x - 8, y - 18, 18, 5); sk.fill(ice, C.white, { dx: 0, dy: 0, wob: 0.3, seed: sd + 3 }); sk.ink(ice, { w: 3, color: ICELINE, seed: sd + 4, wob: 0.3 });
+  sk.ink(water, { w: 4, seed: sd + 5, wob: 0.3 });
 }
 function snowflake(sk, x, y, r, sd, rot = 0) {
   sk.at(x, y, 1, () => {
@@ -131,29 +168,19 @@ function waterbag(sk, x, y, s, o = {}) {
   for (const [dx, dy, k] of (o.drops ?? [[-52, 30, 0.9], [44, 42, 0.8], [-20, 66, 0.7], [58, -6, 0.7]])) drop(sk, x + dx * s, y + dy * s, k * Math.sqrt(s));
 }
 
-/* ---------- 1. 봄밤, 과수원: 꽃에 물을 뿌린다고? ---------- */
+/* ---------- 1. 겨울 아침, 글래스고: 밤새 추웠는데 연못은 가장자리만 얼었다 ---------- */
 function p1() {
   const sk = new Sk(W, H, { id: "a" });
-  moon(sk, 560, 74, 34);
-  for (const [x, y, r, i] of [[650, 60, 7, 0], [460, 70, 6, 1], [900, 120, 6, 2]]) sparkle(sk, x, y, r, { seed: 11 + i, w: 3 });
-  ground(sk, 694, 15);
-  appleTree(sk, 470, 694, 1.0, 251);
-  // 키 큰 관 위의 스프링클러가 나무 위로 물을 뿌린다
-  thin(sk, 0.86, () => {
-    sk.ink(dense([[690, 694], [690, 236]]), { w: 12, color: "#8A9099", seed: 21, wob: 0.3 });
-    const head = rrect(676, 214, 28, 26, 6);
-    sk.fill(head, "#5A5F68", { dx: 0, dy: 0, wob: 0.3, seed: 22 }); sk.ink(head, { w: 6, seed: 23, wob: 0.3 });
-    const valve = circ(690, 600, 16, { over: 0.15, seed: 24 });
-    sk.fill(valve, C.red, { dx: 0, dy: 0, wob: 0.4, seed: 25 }); sk.ink(valve, { w: 6, seed: 26, wob: 0.4 });
-  });
-  for (const [ex, ey, i] of [[330, 250, 0], [420, 200, 1], [560, 230, 2]]) sk.ink(curve([[680, 214], [(680 + ex) / 2, 150 - i * 12], [ex, ey]]), { w: 6, color: "#5BA8EE", dash: [14, 12], seed: 31 + i, wob: 0.5 });
-  for (const [x, y, k] of [[340, 290, 0.9], [430, 250, 0.8], [560, 270, 0.9], [380, 360, 0.7], [520, 330, 0.7]]) drop(sk, x, y, k);
-  // 농부: 밸브 곁에 선다
-  const F = pose({ elL: [-56, -262], haL: [-96, -232], elR: [50, -262], haR: [24, -218] });
-  drawFigure(sk, 840, 694, 0.66, F, { ...FARMER, name: "farmer" });
-  // 쌤: 깜짝 놀란다
-  const wow = pose({ elL: [-104, -362], haL: [-156, -448], elR: [104, -362], haR: [156, -448], tilt: -0.04 });
-  drawFigure(sk, 150, 694, 0.66, wow, SSAM);
+  snowGround(sk, 470, 11);
+  icyBranch(sk, 21);
+  pond(sk, 610, 600, 290, 72, 0.3, 41);
+  frostReeds(sk, 862, 586, 5, 61);
+  frostReeds(sk, 318, 610, 3, 71);
+  // 연못 위의 찬 바람(화살촉 없는 옅은 선)
+  for (const [x, y, len, i] of [[430, 380, 120, 0], [600, 352, 110, 1], [700, 408, 96, 2]]) wind(sk, x, y, len, 81 + i);
+  // 블랙: 연못을 가리키며 고개를 갸웃한다
+  const P = pose({ elR: [92, -318], haR: [172, -284], elL: [-50, -262], haL: [-18, -222], tilt: 0.08 });
+  black(sk, 170, 692, 0.74, P, { face: "curious" });
   return sk;
 }
 
@@ -217,29 +244,32 @@ function p3() {
   return sk;
 }
 
-/* ---------- 4. 새벽 과수원: 얼음 옷 입은 꽃 ---------- */
+/* ---------- 4. 수수께끼 풀이: 어는 물이 내놓는 열이 빠져나가야 더 언다 ---------- */
 function p4() {
   const sk = new Sk(W, H, { id: "d" });
-  // 크게 본 가지
-  const br = curve([[440, 720], [530, 590], [640, 460], [780, 350], [940, 270]]);
-  sk.ink(br, { w: 40, seed: 301, wob: 1 }); sk.ink(br, { w: 26, color: "#8A5A33", seed: 301, wob: 1 });
-  const tw = curve([[640, 460], [656, 360], [700, 270]]);
-  sk.ink(tw, { w: 28, seed: 302, wob: 1 }); sk.ink(tw, { w: 16, color: "#8A5A33", seed: 302, wob: 1 });
-  for (const [x, y, r, i] of [[560, 500, 52, 0], [706, 248, 48, 1], [826, 420, 50, 2]]) {
-    blossom(sk, x, y, r, 311 + i * 30, true);
-    heatArrows(sk, x, y, r * 1.5, r * 1.5 + 40, [-2.6, -1.57, -0.5, 0.6, 2.5].slice(0, i === 2 ? 4 : 5), 411 + i * 6);
-  }
-  // 얼음 옷을 입은 온도계(가지에 매달아 물을 함께 맞았다): 눈금이 공기보다 높다
-  sk.ink(dense([[880, 300], [880, 330]]), { w: 3, seed: 421, wob: 0 });
-  thermo(sk, 880, 520, 180, 0.42, 431, { w: 14, br: 12 });
-  const shell = curve([[858, 548], [852, 470], [866, 420], [894, 420], [908, 470], [902, 548], [880, 560]], true, 4);
-  sk.fill(shell, ICE, { dx: 0, dy: 0, wob: 0.5, seed: 441, alpha: 0.32 }); sk.ink(shell, { w: 5, color: ICELINE, seed: 442, wob: 0.5 });
-  // 농부: 공기 속 온도를 재는 온도계를 든다(눈금이 낮다)
-  thermo(sk, 194, 590, 150, 0.16, 451, { w: 13, br: 11 });
-  const F = pose({ elR: [70, -330], haR: [136, -416], elL: [-56, -262], haL: [-96, -232] });
-  drawFigure(sk, 110, 704, 0.62, F, FARMER);
-  const P = pose({ elR: [96, -340], haR: [176, -360], elL: [-50, -262], haL: [-18, -222], tilt: 0.06 });
-  drawFigure(sk, 290, 704, 0.74, P, SSAM);
+  snowGround(sk, 560, 301);
+  pond(sk, 690, 650, 230, 46, 0.5, 311);
+  // 연못 겉의 한 곳을 크게: 위는 찬 공기, 가운데 얼음, 아래 물
+  const cx = 632, cy = 300, r = 176, yi0 = 292, yi1 = 326;
+  const zx = 650, zy = 640;
+  sk.ink(poly([[zx - 18, zy - 10], [zx + 18, zy - 10], [zx + 18, zy + 10], [zx - 18, zy + 10]], 2), { w: 4, seed: 321, wob: 0.2 });
+  for (const [a, b, i] of [[[zx - 18, zy - 10], [cx - r * 0.82, cy + r * 0.57]], [[zx + 18, zy - 10], [cx + r * 0.82, cy + r * 0.57]]].map((v, i) => [...v, i])) sk.ink(dense([a, b]), { w: 4, color: C.gray, dash: [10, 9], seed: 323 + i, wob: 0 });
+  sk.fill(circleBand(cx, cy, r, cy - r, yi0), "#F2F7FB", { dx: 0, dy: 0, wob: 0.2, seed: 331 });
+  sk.fill(circleBand(cx, cy, r, yi1, cy + r), "#9FD0EE", { dx: 0, dy: 0, wob: 0.2, seed: 332 });
+  sk.fill(circleBand(cx, cy, r, yi0, yi1), ICE, { dx: 0, dy: 0, wob: 0.2, seed: 333 });
+  sk.ink(dense([[cx - Math.sqrt(r * r - (yi0 - cy) ** 2), yi0], [cx + Math.sqrt(r * r - (yi0 - cy) ** 2), yi0]]), { w: 5, color: ICELINE, seed: 334, wob: 0.3 });
+  sk.ink(dense([[cx - Math.sqrt(r * r - (yi1 - cy) ** 2), yi1], [cx + Math.sqrt(r * r - (yi1 - cy) ** 2), yi1]]), { w: 5, color: ICELINE, seed: 335, wob: 0.3 });
+  // 얼음이 아래로 자라는 자리: 물과 닿은 얼음 밑면의 작은 얼음 바늘
+  for (const [x, i] of [[540, 0], [600, 1], [660, 2], [720, 3]]) sk.ink(dense([[x, yi1], [x + (i % 2 ? 6 : -6), yi1 + 16]]), { w: 4, color: ICELINE, seed: 341 + i, wob: 0.2 });
+  // 얼음이 자라는 밑면(물과 닿은 곳)에서 나온 열이 얼음을 지나 찬 공기로 빠져나간다(빨강)
+  for (const [x, i] of [[548, 0], [632, 1], [716, 2]]) arrow(sk, [[x, yi1 - 2], [x + (i - 1) * 8, yi0 - 92]], { w: 8, color: HOT, seed: 351 + i, straight: true, head: 18, wob: 0.3 });
+  for (const [x, y, len, i] of [[500, 166, 70, 0], [680, 150, 76, 1]]) wind(sk, x, y, len, 361 + i);
+  // 얼음 아래 물에 꽂은 온도계: 3컷과 같은 눈금
+  thermo(sk, 740, 440, 104, 0.42, 371, { w: 13, br: 11 });
+  sk.ink(circ(cx, cy, r, { over: 0.06, seed: 381 }), { w: 8, seed: 382, wob: 0.4 });
+  // 블랙: 크게 본 단면을 가리킨다
+  const P = pose({ elR: [96, -350], haR: [174, -404], elL: [-50, -262], haL: [-18, -222], tilt: 0.06 });
+  black(sk, 200, 700, 0.74, P, { face: "smile" });
   return sk;
 }
 
@@ -300,7 +330,7 @@ function p7() {
   return sk;
 }
 
-/* ---------- 8. 열이 나오는 길, 들어가는 길 ---------- */
+/* ---------- 8. 열의 방출과 흡수 ---------- */
 function p8() {
   const sk = new Sk(W, H, { id: "h" });
   ground(sk, 704, 901);
@@ -323,8 +353,8 @@ function p8() {
   const fr = one(L, S, 1, HOT, 911); one(S, L, -1, COOL, 913);
   const cd = one(G, L, 1, HOT, 915); one(L, G, -1, COOL, 917);
   const dp = one(G, S, 1, HOT, 919); one(S, G, -1, COOL, 921);
-  // 방출의 예: 얼음 옷 꽃(응고), 이슬(액화), 눈송이(승화)
-  blossom(sk, fr[0], fr[1] + 10, 24, 931, true);
+  // 방출의 예: 살얼음 낀 통(응고), 이슬(액화), 눈송이(승화)
+  miniTub(sk, fr[0], fr[1] + 6, 931);
   drop(sk, cd[0] + 4, cd[1], 1.3);
   snowflake(sk, dp[0] - 4, dp[1], 26, 941, 0.2);
   // 쌤
@@ -334,21 +364,21 @@ function p8() {
 }
 
 export const META = {
-  title: "사과꽃을 지킨<br><em>얼음 옷</em>",
-  lead: "추운 봄밤, 과수원에서는 사과꽃에 일부러 물을 뿌려요. 얼음이 꽃을 지켜 주는 과학 원리를 따라가 봐요.",
+  title: "연못은 왜<br><em>천천히 얼까?</em>",
+  lead: "아무리 추운 밤에도 연못은 한꺼번에 꽁꽁 얼지 않아요. 260여 년 전 한 과학자가 온도계로 그 까닭을 찾아냈지요.",
   narrator: "앞에서는 상태가 변할 때 <b>열에너지를 흡수</b>하는 경우를 배웠지요. 오늘은 반대로 <b>열에너지를 방출하는</b> 상태 변화를 만나 볼게요.",
   cta: "실험으로 확인하기",
 };
 
 const TEXT = [
   {
-    when: "봄밤, 사과 과수원", stage: "궁금증", title: "꽃에 물을 뿌린다고?",
-    caption: "사과꽃이 막 핀 봄밤, 기온이 영하로 떨어진다는 소식이 왔어요. 그런데 과수원에서는 나무에 물을 뿌리기 시작했어요. 추운 밤에 물을 뿌리면 꽃이 더 꽁꽁 얼지 않을까요?",
-    bubbles: [{ who: "teacher", text: "물을<br>뿌려요?" }],
+    when: "1760년 무렵 겨울, 영국 글래스고", stage: "궁금증", title: "왜 한꺼번에 얼지 않지?",
+    caption: "스코틀랜드의 과학자 <b>조지프 블랙</b>은 겨울마다 눈여겨본 것이 있었어요. 서리가 내린 추운 밤이 지나도 연못은 한꺼번에 두꺼운 얼음으로 덮이지 않고 살얼음만 끼었지요. 날씨가 이렇게 추운데 물은 왜 이렇게 천천히 얼까요?",
+    bubbles: [{ who: "black", text: "밤새 추웠는데<br>살얼음뿐이네?" }],
   },
   {
     when: "1761년 겨울, 영국 글래스고", stage: "실마리", title: "블랙의 온도계",
-    caption: "스코틀랜드의 과학자 <b>조지프 블랙</b>은 추운 겨울에도 연못물이 한꺼번에 얼지 않는 까닭을 궁금해했어요. 찬 공기 속에 두었던 온도계를 얼어 가는 물에 넣었더니, 눈금이 <b>0 ℃</b>로 올라가 물이 다 얼 때까지 그대로 머물렀지요.",
+    caption: "블랙은 온도계로 그 까닭을 살펴보았어요. 찬 공기 속에 두었던 온도계를 얼어 가는 물에 넣었더니, 눈금이 <b>0 ℃</b>로 올라가 물이 다 얼 때까지 그대로 머물렀지요.",
     bubbles: [{ who: "black", text: "눈금이<br>올라가네?" }],
   },
   {
@@ -357,9 +387,9 @@ const TEXT = [
     term: { name: "응고 = 열에너지 방출", def: "액체가 고체로 변할 때는 열에너지를 <b>방출</b>해요. 다 얼 때까지 온도가 일정하고, 둘레의 온도는 덜 내려가요." },
   },
   {
-    when: "다음 날 새벽, 사과 과수원", stage: "응고 = 방출", title: "얼음 옷 입은 꽃",
-    caption: "과수원에 밤새 뿌린 물은 사과꽃을 감싸며 얼어 얼음 옷이 되었어요. 물이 계속 얼면서 <b>열에너지를 방출한</b> 덕분에 얼음 옷 속 꽃은 영하로 내려가지 않고 <b>0 ℃</b> 가까이에 머물러 무사히 봄밤을 견뎌 냈지요.",
-    bubbles: [{ who: "teacher", text: "꽃이<br>멀쩡해!" }],
+    when: "1761년 겨울, 영국 글래스고", stage: "수수께끼 풀이", title: "연못이 천천히 어는 까닭",
+    caption: "이제 연못의 수수께끼가 풀렸어요. 물이 얼려면 품고 있던 <b>열에너지를 밖으로 내놓아야</b> 하는데, 그 열이 얼음을 지나 찬 공기로 빠져나가는 데 시간이 걸려요. 그래서 아무리 추운 밤에도 연못은 겉에서부터 조금씩 천천히 얼지요.",
+    bubbles: [{ who: "black", text: "그래서<br>천천히 어는군!" }],
   },
   {
     when: "여름 새벽, 풀밭", stage: "액화도 방출", title: "이슬이 맺힐 때",
@@ -368,7 +398,7 @@ const TEXT = [
   },
   {
     when: "겨울, 함박눈 오는 날", stage: "승화도 방출", title: "눈 오는 날은 포근해",
-    caption: "겨울철 함박눈이 내리는 날이 유난히 포근하게 느껴지는 것도 같은 원리예요. 구름 속 수증기가 곧장 얼음 알갱이로 바뀌는 <b>승화</b>가 일어날 때 주위로 <b>열에너지를 방출하기</b> 때문이지요.",
+    caption: "함박눈이 펑펑 오는 날은 생각보다 덜 춥게 느껴질 때가 많아요. 구름 속에서 수증기가 물을 거치지 않고 곧바로 얼음 알갱이인 눈송이가 되는 <b>승화</b>가 일어나는데, 이때 나오는 <b>열에너지</b>가 추위를 누그러뜨리는 데 한몫하거든요.",
     bubbles: [{ who: "student", text: "생각보다<br>포근해요!" }],
   },
   {
@@ -377,7 +407,7 @@ const TEXT = [
     bubbles: [{ who: "traveler", text: "마셔<br>봐요" }, { who: "teacher", text: "와,<br>시원해!", dy: 6 }],
   },
   {
-    stage: "정리", title: "열이 나오는 길, 들어가는 길",
+    stage: "정리", title: "열의 방출과 흡수",
     caption: "응고·액화·승화(기체→고체)가 일어날 때는 <b>열에너지를 방출해</b> 주위가 따뜻해지고, 융해·기화·승화(고체→기체)가 일어날 때는 <b>열에너지를 흡수해</b> 주위가 시원해져요. 이제 실험으로 상태 변화와 열에너지의 관계를 확인해 봐요!",
     term: { name: "열에너지를 방출하는 상태 변화", def: "<b>응고, 액화, 승화(기체 → 고체)</b>가 일어나는 동안 둘레의 온도가 높아지거나 덜 내려가요." },
   },

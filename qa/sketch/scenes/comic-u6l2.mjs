@@ -1,7 +1,7 @@
 // 중1 과학 u6l2 만화 v2(배선 전 미리보기): 계단 위의 J자 유리관(보일 법칙). 8컷.
 // 조사와 콘티: qa/sketch/research/u6l2.md
 //   1 1661년, 공기가 수은 기둥을 떠받칠까 → 2 끝을 막은 J자 관(갇힌 공기, 바깥 공기만큼 눌림) → 3 절반이 된 공기(누르는 힘 2배)
-//   → 4 첫 관이 깨지고, 계단에 매단 더 긴 관 → 5 4배로 누르면 4분의 1 → 6 촛불을 대 보니(온도) → 7 반대로 늘이면(보일 법칙)
+//   → 4 계단에 매단 더 긴 관 → 5 4배로 누르면 4분의 1 → 6 촛불을 대 보니(온도) → 7 반대로 늘이면(보일 법칙)
 //   → 8 오늘날: 입자로 보면
 // 보일 자신의 설명은 "공기의 용수철"이었다. 입자 설명은 마지막 컷에서 쌤이 한다. 수은을 부은 사람의 이름은 기록에 없어 이름 없는 조수로 그린다.
 import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, hash, emark, qmark, xmark, check, sparkle, drop, arrow } from "../lib/sk.mjs";
@@ -103,12 +103,6 @@ function candle(sk, x, y, s, sd) {
     const core = curve([[0, -124], [-6, -136], [0, -152], [6, -136]], true, 3); sk.fill(core, C.yellow, { dx: 0, dy: 0, wob: 0.2, seed: sd + 7 });
   });
 }
-// 깨진 유리 조각
-function shards(sk, list, sd) {
-  list.forEach(([x, y, rot], i) => sk.at(x, y, 1, () => { const s = poly([[-16, 9], [0, -18], [17, 11]], 2); sk.fill(s, "#E6F2F9", { dx: 0, dy: 0, wob: 0.3, seed: sd + i }); sk.ink(s, { w: 5, seed: sd + 20 + i, wob: 0.3 }); }, rot));
-}
-// 수은 방울
-const beads = (sk, list, sd) => list.forEach(([x, y, r], i) => { const b = circ(x, y, r, { over: 0.15, seed: sd + i }); sk.fill(b, HG, { dx: 0, dy: 0, wob: 0.4, seed: sd + 20 + i }); sk.ink(b, { w: Math.max(4, r * 0.4), seed: sd + 40 + i, wob: 0.4 }); sk.dot(x - r * 0.3, y - r * 0.3, r * 0.22, C.white); });
 // 손거울(수은 면을 비춰 보던 작은 거울). (x, y) = 손잡이 끝
 function handMirror(sk, x, y, s, rot, sd) {
   sk.at(x, y, s, () => {
@@ -200,7 +194,7 @@ function p3() {
   return sk;
 }
 
-/* ---------- 4. 첫 관이 깨지고, 계단에 매단 더 긴 관 ---------- */
+/* ---------- 4. 계단에 매단 더 긴 관 ---------- */
 // 계단(오른쪽으로 올라간다) + 난간
 function stairs(sk, x0, y0, n, rise, run, sd = 321) {
   const pts = [[x0, y0]];
@@ -220,20 +214,6 @@ function box(sk, x0, x1, y, sd = 341) {
     sk.ink(dense([[x0 + 3, y - 38], [x1 - 3, y - 38]]), { w: 5, color: C.woodDark, seed: sd + 2, wob: 0.4 });
   });
 }
-// 깨진 첫 관: 굽은 토막 + 곧은 토막(끝이 들쭉날쭉) + 흩어진 수은
-function brokenTube(sk, sd) {
-  sk.at(150, 662, 1, () => {
-    const bend = ell(0, 0, 34, 34, 0, Math.PI);
-    const legs = [...dense([[34, -70], [34, 0]], 6), ...bend, ...dense([[-34, 0], [-34, -40]], 6)];
-    sk.ink(legs, { w: 30, seed: sd, wob: 0.4, cap: "butt" }); sk.ink(legs, { w: 18, color: GLASS, seed: sd, wob: 0.4, cap: "butt" });
-    for (const [x, y] of [[34, -70], [-34, -40]]) sk.ink(dense([[x - 15, y], [x - 6, y - 12], [x + 3, y + 2], [x + 15, y - 10]], 3), { w: 5, seed: sd + x, wob: 0.2 });
-  }, 1.35);
-  sk.at(70, 690, 1, () => {
-    sk.ink(dense([[0, 0], [110, -6]]), { w: 30, seed: sd + 5, wob: 0.4, cap: "butt" }); sk.ink(dense([[0, 0], [110, -6]]), { w: 18, color: GLASS, seed: sd + 5, wob: 0.4, cap: "butt" });
-    sk.ink(dense([[110, -21], [100, -10], [114, -2], [106, 9]], 3), { w: 5, seed: sd + 6, wob: 0.2 });
-  }, -0.05);
-  beads(sk, [[230, 694, 14], [262, 690, 9], [196, 698, 8], [290, 696, 7], [120, 700, 6]], sd + 10);
-}
 function p4() {
   const sk = new Sk(W, H, { id: "d" });
   ground(sk, 704, 71);
@@ -244,7 +224,6 @@ function p4() {
   jtube(sk, { xl, xs, top: 296, sTop, yb, air: 44, hgL: 470, sd: 305, tw: 22 });
   scaleStrip(sk, xs - 30, sTop + 4, sTop + 64, 8, 313);
   box(sk, 580, 750, 704, 341);
-  brokenTube(sk, 77);
   // 조수: 층계참에 서서 관 입구 위에서 조금씩 붓는다
   const hp = pose({ elL: [-70, -360], haL: [-150, -330], elR: [56, -268], haR: [30, -220], tilt: -0.1 });
   const hx0 = 806, hy0 = 704 - 6 * 62, hs = 0.48;
@@ -371,8 +350,8 @@ const CUTS = [
     bubbles: [{ who: "boyle", text: "절반이<br>됐어!" }],
   },
   {
-    fn: p4, when: "1661년, 영국", stage: "다시 도전", title: "계단에 매단 더 긴 관",
-    caption: "더 큰 힘으로 눌러 보려다 첫 유리관이 깨지자, 보일은 방 안에 세울 수 없을 만큼 긴 유리관을 새로 구해 계단 난간에 매달았어요. 한 사람은 계단 위에서 수은을 붓고, 다른 사람은 아래에서 눈금을 읽으며 실험을 이어 갔지요.",
+    fn: p4, when: "1661년, 영국", stage: "더 큰 장치", title: "계단에 매단 더 긴 관",
+    caption: "더 큰 힘으로 눌러 보려고 보일은 방 안에 세울 수 없을 만큼 긴 유리관을 새로 구해 계단 난간에 매달았어요. 한 사람은 계단 위에서 수은을 붓고, 다른 사람은 아래에서 눈금을 읽으며 실험을 이어 갔지요.",
     bubbles: [{ who: "boyle", text: "조금씩<br>부어요!" }],
   },
   {

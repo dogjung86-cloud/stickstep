@@ -1,13 +1,14 @@
 // 중2 과학 g2u8l7 만화 v2(배선 전 미리보기): 뿌연 성운에서 멀어지는 은하까지(팽창하는 우주의 도입). 8컷.
 // 조사와 콘티: qa/sketch/research/g2u8l7.md
-//   1 1920년 대논쟁(성운은 우리은하 안인가 밖인가) → 2 1912년 리비트의 규칙(밝을수록 느리게 깜빡이는 별)
+//   1 18세기부터 풀리지 않던 물음(성운은 우리은하 안인가 밖인가, 허셜의 망원경) → 2 1912년 리비트의 규칙(밝을수록 느리게 깜빡이는 별)
 //   → 3 1923년 후커 망원경 → 4 건판의 밝기가 변하는 별 → 5 1924년 우리은하 밖의 은하 → 6 슬라이퍼의 빛 띠
 //   → 7 1929년 그래프(르메트르는 글로만) → 8 오늘: 그럼 우리가 한가운데? (답하지 않고 풍선 랩으로 넘긴다)
 // 화살표 색: 주황 = 멀다, 멀어진다. 청록 = 우리은하 안쪽, 우리은하의 크기(견주는 길이).
 // 대폭발, 우주의 나이, 우주 배경 복사, "중심이 없다"는 답은 만화에 넣지 않는다(뒤 스텝과 랩의 몫).
+// 2026-11-23 저작권 손질: 옛 1컷(1920년 워싱턴의 두 학자 강연)을 허셜의 밤하늘 관측과 생각 구름으로 바꿨다.
 import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, hash, emark, qmark, sparkle, arrow, TAU } from "../lib/sk.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT, R } from "../lib/figure.mjs";
-import { board, desk, openBook } from "../lib/props.mjs";
+import { board, desk, openBook, cloud } from "../lib/props.mjs";
 
 const W = 960, H = 720;
 const thin = (sk, k, fn) => { const o = sk.lwK; sk.lwK = k; fn(); sk.lwK = o; };
@@ -18,8 +19,6 @@ const HUBBLE = { hair: "short", hairColor: "#3A2E28", fringe: 24, coat: { color:
 // 리비트: 틀어 올린 머리(장면에서 머리 뒤에 덧그린다) + 발목까지 오는 긴 옷
 const LEAVITT = { hair: "short", hairColor: "#6B4A32", fringe: 24, coat: { color: "#7A7391", buttons: "#F4F1EA", seam: "#544E69", len: 186 }, seed: 331, mini: true, face: "calm" };
 // 생김새의 근거를 찾지 못한 인물: 그 시대 정장의 학자로만 그린다(옷 색으로만 구분)
-const SHAPLEY = { hair: "short", hairColor: "#5B463A", fringe: 24, coat: { color: "#6B7280", seam: "#454B57" }, seed: 351, mini: true, face: "calm" };
-const CURTIS = { hair: "short", hairColor: "#6B5A4A", fringe: 24, coat: { color: "#3E5C76", seam: "#2A3F52" }, seed: 371, mini: true, face: "calm" };
 const SLIPHER = { hair: "short", hairColor: "#5B463A", fringe: 24, coat: { color: "#5E6F5A", seam: "#3E4C3C" }, seed: 391, mini: true, face: "calm" };
 const HUMASON = { hair: "short", hairColor: "#4E3B2E", fringe: 24, coat: { color: "#7A7F8A", seam: "#50545C" }, seed: 411, mini: true, face: "calm" };
 
@@ -79,25 +78,63 @@ function band(sk, x, y, w, h, lines, sd) {
   sk.ink(rrect(x, y, w, h, 6), { w: 7, seed: sd + 50, wob: 0.6 });
 }
 
-/* ---------- 1. 1920년: 저 성운은 어디에 있을까 ---------- */
+/* ---------- 1. 1780년대: 저 성운은 어디에 있을까 ---------- */
+// 윌리엄 허셜(1780년대 마흔 무렵): 분을 바른 머리와 귀 옆 말림 + 짙은 자주 외투. 작은 얼굴
+const HERSCHEL = { hair: "short", hairColor: "#ECE8E0", fringe: 24, coat: { color: "#5A4660", buttons: "#C9B48A", seam: "#3B2E40", len: 46 }, seed: 331, mini: true, face: "curious" };
+function wigRolls(sk, x, y, s, p, sd = 951) {
+  sk.save(); sk.translate(x + s * p.head[0], y + s * p.head[1]); sk.scale(s, s); sk.rotate(p.tilt ?? 0);
+  for (const sg of [-1, 1]) for (const [cy, rr, i] of [[-2, 23, 0], [38, 20, 1]]) {
+    const c = circ(sg * (98 + i * 2), cy, rr, { over: 0.25, seed: sd + i + (sg > 0 ? 4 : 0), lump: 0.05 });
+    sk.fill(c, "#ECE8E0", { dx: 1, dy: 1.4, wob: 0.8, seed: sd + 10 + i }); sk.ink(c, { w: 9, wob: 0.8, seed: sd + 20 + i });
+  }
+  sk.restore();
+}
 function p1() {
   const sk = new Sk(W, H, { id: "a" });
-  ground(sk, 704, 11);
-  thin(sk, 0.85, () => board(sk, 250, 110, 470, 360, { legs: 234, seed: 13 }));
-  // 칠판: 납작한 우리은하(연노랑 점 무리)와 그 밖의 뿌연 나선 성운, 물음표
-  const gx = 400, gy = 325, rx = 118, ry = 40;
-  sk.ink(ell(gx, gy, rx, ry), { w: 4, color: "#FFF3C4", dash: [10, 9], seed: 15, wob: 0.6 });
-  for (let i = 0; i < 46; i++) { const a = hash(i * 3.3 + 1) * TAU, rr = Math.sqrt(hash(i * 7.1 + 2)) * 0.9; sk.dot(gx + rx * rr * Math.cos(a), gy + ry * rr * Math.sin(a), 2.2 + 1.6 * hash(i * 1.7), MW); }
-  sk.fill(ell(gx, gy, 20, 11), MW, { dx: 0, dy: 0, wob: 0.3, seed: 17 });
-  spiral(sk, 566, 240, 26, { color: "#C9D8EA", q: 0.6, rot: -0.4, sd: 19, haze: 0.45 });
-  qmark(sk, 566, 182, 0.42, { color: C.white, seed: 21 });
-  // 섀플리의 주장: 성운은 우리은하 안쪽(청록). 커티스의 주장: 우리은하 밖 먼 곳(주황)
-  arrow(sk, [[540, 256], [500, 296], [448, 318]], { w: 6, color: NEAR, seed: 23, head: 15, wob: 0.4 });
-  arrow(sk, [[596, 232], [680, 196]], { w: 6, color: FAR, seed: 25, head: 15, straight: true, wob: 0.3 });
-  const ps = pose({ elR: [90, -330], haR: [170, -380], elL: [-50, -260], haL: [-30, -214], tilt: 0.05 });
-  drawFigure(sk, 130, 704, 0.62, ps, { ...SHAPLEY, name: "shapley", face: "calm" });
-  const pc = pose({ elL: [-90, -330], haL: [-170, -380], elR: [50, -260], haR: [30, -214], tilt: -0.05 });
-  drawFigure(sk, 850, 704, 0.62, pc, { ...CURTIS, name: "curtis", face: "curious" });
+  // 위쪽 띠만 밤하늘: 별과 뿌연 얼룩(안드로메다 성운)
+  sk.fill(poly([[-10, -10], [970, -10], [970, 262], [-10, 262]], 6), NIGHT, { dx: 0, dy: 0, wob: 0, seed: 11, tex: false });
+  for (const [x, y, r, i] of [[470, 40, 6, 0], [560, 150, 5, 1], [640, 52, 7, 2], [930, 70, 5, 3], [890, 220, 4, 4], [720, 200, 5, 5], [500, 220, 4, 6]]) star(sk, x, y, r, 13 + i);
+  const nx = 820, ny = 132;
+  sk.fill(ell(nx, ny, 58, 22), "#C9D8EA", { dx: 0, dy: 0, wob: 0.4, seed: 21, alpha: 0.35 });
+  sk.fill(ell(nx, ny, 34, 13), "#DCE6F2", { dx: 0, dy: 0, wob: 0.3, seed: 22, alpha: 0.55 });
+  sk.fill(ell(nx, ny, 12, 5), "#FFF6D8", { dx: 0, dy: 0, wob: 0.2, seed: 23 });
+  sk.ink(dense([[0, 262], [970, 262]]), { w: 6, color: "#8A9099", seed: 24, wob: 0.6 });
+  ground(sk, 690, 25);
+  // 반사 망원경: 비스듬한 통, 위 끝 옆의 접안부, 나무 받침
+  const a0 = [322, 610], a1 = [640, 346], tw = 62;
+  const ux = (a1[0] - a0[0]), uy = (a1[1] - a0[1]), L = Math.hypot(ux, uy), tx = ux / L, ty = uy / L, nxp = -ty, nyp = tx;
+  thin(sk, 0.85, () => {
+    for (const [fx2, i] of [[300, 0], [470, 1], [560, 2]]) sk.ink(dense([[480, 478], [fx2, 690]]), { w: 11, color: "#7A5A3A", seed: 31 + i, wob: 0.3 });
+    const tube = poly([[a0[0] + nxp * tw / 2, a0[1] + nyp * tw / 2], [a1[0] + nxp * tw / 2, a1[1] + nyp * tw / 2], [a1[0] - nxp * tw / 2, a1[1] - nyp * tw / 2], [a0[0] - nxp * tw / 2, a0[1] - nyp * tw / 2]], 4);
+    sk.fill(tube, "#C9A24A", { seed: 34, tex: true, texAng: Math.atan2(uy, ux) }); sk.ink(tube, { w: 10, seed: 35 });
+    const mouth = ell(a1[0], a1[1], tw / 2, 12);
+    sk.save(); sk.translate(a1[0], a1[1]); sk.rotate(Math.atan2(uy, ux) + Math.PI / 2); sk.translate(-a1[0], -a1[1]);
+    sk.fill(mouth, "#3A3228", { dx: 0, dy: 0, wob: 0.2, seed: 36 }); sk.ink(mouth, { w: 7, seed: 37 });
+    sk.restore();
+    // 접안부: 통의 위 끝 가까이, 관측자가 선 오른쪽 옆구리에 붙어 있다
+    const ep0 = [a1[0] - tx * 26 + nxp * tw / 2 - 4, a1[1] - ty * 26 + nyp * tw / 2 - 6], ep1 = [ep0[0] + 34, ep0[1] - 2];
+    sk.ink(dense([ep0, ep1]), { w: 16, color: "#5B5F66", seed: 38, wob: 0.1, cap: "butt" });
+  });
+  // 통이 겨눈 곳: 성운
+  sk.ink(dense([[a1[0] + tx * 30, a1[1] + ty * 30], [nx - 52, ny + 40]]), { w: 4, color: "#C9D8EA", dash: [10, 10], seed: 39, wob: 0 });
+  // 허셜의 생각 구름: 우리은하(점선 타원 속 별 무리)와 그 밖의 뿌연 성운. 안쪽일까(청록) 아주 먼 밖일까(주황)
+  cloud(sk, 236, 300, 400, 250, { seed: 41, tail: [[500, 300, 14, 0], [572, 318, 10, 1]] });
+  const gx = 196, gy = 330, rx = 112, ry = 36;
+  sk.ink(ell(gx, gy, rx, ry), { w: 4, color: "#C9B36A", dash: [10, 9], seed: 45, wob: 0.6 });
+  for (let i = 0; i < 40; i++) { const a = hash(i * 3.3 + 1) * TAU, rr = Math.sqrt(hash(i * 7.1 + 2)) * 0.9; sk.dot(gx + rx * rr * Math.cos(a), gy + ry * rr * Math.sin(a), 2.2 + 1.4 * hash(i * 1.7), "#E0B33A"); }
+  sk.fill(ell(gx, gy, 18, 10), "#F2C94C", { dx: 0, dy: 0, wob: 0.3, seed: 47 });
+  const sx = 352, sy = 258;
+  sk.fill(ell(sx, sy, 30, 12), "#9FB4CC", { dx: 0, dy: 0, wob: 0.3, seed: 48, alpha: 0.55 });
+  sk.fill(ell(sx, sy, 10, 4), "#5C6F92", { dx: 0, dy: 0, wob: 0.2, seed: 49 });
+  qmark(sk, sx, sy - 44, 0.34, { seed: 51 });
+  arrow(sk, [[sx - 26, sy + 14], [sx - 70, sy + 50], [gx + 60, gy - 6]], { w: 6, color: NEAR, seed: 53, head: 14, wob: 0.4 });
+  arrow(sk, [[sx + 30, sy - 4], [sx + 86, sy - 34]], { w: 6, color: FAR, seed: 55, head: 14, straight: true, wob: 0.3 });
+  // 허셜: 위 끝의 접안부에 눈을 대고 하늘을 본다(낮은 나무 단 위)
+  thin(sk, 0.85, () => { const step = rrect(650, 646, 150, 44, 6); sk.fill(step, C.wood, { seed: 61, tex: true, texAng: 0.02 }); sk.ink(step, { w: 9, seed: 62 }); });
+  const P = pose({ elL: [-70, -318], haL: [-118, -372], elR: [50, -262], haR: [24, -218], tilt: -0.16 });
+  const hx = 712, hy = 646, hs = 0.6;
+  drawFigure(sk, hx, hy, hs, P, { ...HERSCHEL, name: "herschel", look: -0.7 });
+  wigRolls(sk, hx, hy, hs, P);
   return sk;
 }
 
@@ -344,15 +381,15 @@ function p8() {
 
 export const META = {
   title: "우주가 커지고<br><em>있다고?</em>",
-  lead: "1920년 워싱턴의 대논쟁에서 1929년 허블의 그래프까지, 인류가 알던 우주가 넓어진 결정적 10년을 따라가 봐요.",
-  narrator: "100여 년 전만 해도 많은 천문학자가 <b>우리은하가 우주의 전부</b>라고 생각했어요. 밤하늘의 뿌연 <b>안드로메다 성운</b>이 그 생각을 완전히 바꾸어 놓았답니다.",
+  lead: "18세기 밤하늘의 뿌연 얼룩에서 1929년 허블의 그래프까지, 인류가 알던 우주가 넓어진 이야기를 따라가 봐요.",
+  narrator: "밤하늘의 뿌연 <b>안드로메다 성운</b>은 우리은하 안에 있을까, 밖에 있을까? 오래된 이 물음의 답이 <b>우주의 크기</b>에 대한 생각을 완전히 바꾸어 놓았답니다.",
   cta: "풍선 우주 열기",
 };
 
 const CUTS = [
   {
-    fn: p1, when: "1920년, 미국 워싱턴", stage: "궁금증", title: "저 성운은 어디에 있을까",
-    caption: "1920년 4월 26일, 미국 워싱턴에서 천문학자 섀플리와 커티스가 차례로 강연했어요. 안드로메다 성운 같은 뿌연 나선 <b>성운</b>들이 쟁점이었어요. 섀플리는 우리은하 안의 구름이라고 했고, 커티스는 우리은하 밖 먼 곳의 또 다른 별 무리라고 했지요. 거리를 잴 방법이 없어 이날은 결론이 나지 않았어요.",
+    fn: p1, when: "1780년대, 영국", stage: "궁금증", title: "저 성운은 어디에 있을까",
+    caption: "18세기 프랑스의 메시에는 혜성과 헷갈리지 않으려고 밤하늘의 뿌연 얼룩, 즉 <b>성운</b>들을 목록으로 남겼어요. 영국의 <b>허셜</b>은 더 큰 망원경으로 성운과 별 무리를 2,500개나 찾아냈지요. 하지만 안드로메다 성운 같은 성운이 우리은하 안의 구름인지, 우리은하 밖의 또 다른 별 무리인지는 거리를 잴 방법이 없어 오랫동안 풀리지 않았어요.",
   },
   {
     fn: p2, when: "1912년, 하버드 천문대", stage: "거리의 자", title: "밝을수록 느리게 깜빡이는 별",
