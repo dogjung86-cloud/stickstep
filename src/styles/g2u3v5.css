@@ -68,13 +68,13 @@
 .opn-g2u3-btn:disabled { opacity: .5; }
 @media (prefers-reduced-motion: reduce) { .opn-stage.play .opn-g2u3-hit::after { animation: none; } }
 
-/* 1. 산에 가린 마을 */
+/* 1. 건물 그늘의 화분과 손거울 */
 .opn-g2u3-mir { transform-box: view-box; transition: transform .5s var(--ease); }
 .opn-g2u3-beam line { stroke: #FFC83D; stroke-width: 9; stroke-linecap: round; opacity: .85; }
+.opn-g2u3-beam circle { fill: #FFE27A; stroke: #FFC83D; stroke-width: 4; }
 .opn-g2u3-lit { opacity: 0; transition: opacity .5s; }
 .opn-g2u3-shade { transition: opacity .5s; }
 .opn-stage.lit .opn-g2u3-lit { opacity: 1; }
-.opn-stage.lit .opn-g2u3-shade { opacity: 0; }
 
 /* 2. 유리컵과 빨대 */
 .opn-g2u3-straw .w { fill: #8CC8EC; opacity: .6; }
@@ -96,7 +96,7 @@
 .opn-stage.lit .opn-g2u3-dark .cone { opacity: .5; }
 .opn-stage.lit .opn-g2u3-dark .eyes { opacity: 0; }
 
-/* 4. 거울 앞의 고양이 */
+/* 4. 무용실 전신거울 앞의 학생(겹 이름 cat, cat2는 앞 판에서 물려받았다) */
 .opn-g2u3-cat, .opn-g2u3-cat2 { transition: transform .5s var(--ease); }
 .opn-g2u3-cat2 { opacity: .62; }
 
@@ -104,10 +104,10 @@
 .opn-g2u3-sp { opacity: 0; transition: opacity .3s; }
 .opn-stage.side-in .opn-g2u3-sp.in, .opn-stage.side-out .opn-g2u3-sp.out { opacity: 1; }
 
-/* 6. 점으로 그린 물고기 */
-.opn-g2u3-dots .fish { transform-box: view-box; }
+/* 6. 점으로 그린 바나나 */
+.opn-g2u3-dots .banana { transform-box: view-box; }
 
-/* 7. 연못의 낚시찌 */
+/* 7. 연못에 뜬 탁구공(겹 이름 cone은 빗방울, flt는 탁구공) */
 .opn-g2u3-cone { transition: transform .5s cubic-bezier(.5, 0, 1, .6), opacity .15s; }
 .opn-g2u3-rip .ring { fill: none; stroke: #2F8EE0; stroke-width: 6; opacity: 0; transform-box: view-box; }
 .opn-stage.ripple .opn-g2u3-rip .ring { animation: opnG2u3Ring 2.6s ease-out both; }

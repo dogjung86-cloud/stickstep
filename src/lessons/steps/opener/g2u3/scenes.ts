@@ -1,13 +1,14 @@
 // [중2 Ⅲ 도입] 여덟 장면. 형식은 중1과 같다: 내기(예측)를 먼저 걸고 → 손으로 한 일이 장면을 바꾸고 → 끝에서 예측과 견준다.
 // 예측은 모두 neutral(답이 조작으로 드러난다). 원리의 답은 말하지 않고 물음으로 맺어 바로 뒤의 랩에 넘긴다.
-//   g2u3-town   (g2u3l1) 거울을 기울여 그늘진 마을 광장에 햇빛 보내기      → 랩: 비춘 각과 반사한 각 재기
+//   g2u3-town   (g2u3l1) 손거울을 기울여 건물 그늘의 화분에 햇빛 보내기     → 랩: 비춘 각과 반사한 각 재기
 //   g2u3-straw  (g2u3l2) 컵에 물을 부으면 빨대가 어떻게 보이나            → 랩: 수조에 레이저 비추기
 //   g2u3-dark   (g2u3l3) 깜깜한 방에서 눈을 크게 떠 보고, 손전등을 켠다     → 랩: 빛의 길 화살표로 잇기
-//   g2u3-cat    (g2u3l4) 고양이가 거울로 한 걸음씩 다가간다               → 랩: 반투명 거울로 상의 자리 찾기
+//   g2u3-cat    (g2u3l4) 무용실 전신거울로 학생이 한 걸음씩 다가간다        → 랩: 반투명 거울로 상의 자리 찾기
 //   g2u3-spoon  (g2u3l5) 숟가락의 오목한 쪽과 볼록한 쪽에 얼굴 비추기       → 랩: 볼록 거울과 오목 거울 관찰
-//   g2u3-dots   (g2u3l6) 빨간 점과 초록 점만 찍은 그림에서 뒤로 물러나기     → 랩: 조명, 손전등, 화소
-//   g2u3-float  (g2u3l7) 연못에 솔방울을 떨어뜨리고 낚시찌 지켜보기         → 랩: 수조의 탁구공
-//   g2u3-kalimba(g2u3l8) 칼림바의 긴 막대와 짧은 막대 튕기기               → 랩: 소리 분석 화면 견주기
+//   g2u3-dots   (g2u3l6) 빨간 점과 초록 점만 찍은 바나나 그림에서 뒤로 물러나기 → 랩: 조명, 손전등, 화소
+//   g2u3-float  (g2u3l7) 나뭇잎 끝의 빗방울을 떨어뜨리고 탁구공 지켜보기     → 랩: 수조의 탁구공
+//   g2u3-kalimba(g2u3l8) 칼림바의 긴 막대와 짧은 막대 튕기기               → 랩: 소리 분석 화면 비교하기
+// 장면 이름(town, cat, float)과 겹의 클래스 이름은 앞 판에서 물려받았다(검사 qa/g2u3v5-play.mjs가 이 이름으로 장면을 고른다).
 // 그림은 qa/sketch/scenes/intro-g2u3.mjs(손그림). 좌표는 c.meta에서 읽는다. 그림 속에 글자와 숫자는 없다.
 // 옛 훅(hookLight.ts)과 달라진 것: 예측이 결과 앞으로 왔고, 답을 말하던 끝말을 물음으로 바꿨다
 // (2번은 동전 대신 빨대로 바꿨다. 동전은 바로 뒤 둘째 랩이 다룬다).
@@ -127,7 +128,7 @@ export function holdFill(c: OpenerCtx, b: HTMLButtonElement, ms: number, canPres
   c.onCleanup(() => cancelAnimationFrame(raf));
 }
 
-// ── 1. 산에 가린 마을과 거울 ────────────────────────────────────
+// ── 1. 건물 그늘의 화분과 손거울 ────────────────────────────────
 const town: OpenerScene = (c) => {
   const M = meta(c).town;
   art(c, "townBase");
@@ -135,7 +136,8 @@ const town: OpenerScene = (c) => {
   const ov = overlay(c, "opn-g2u3-beam");
   svgEl(ov, "line", { x1: M.sun[0] + 46, y1: M.sun[1] + 8, x2: M.mir[0], y2: M.mir[1] });
   const outRay = svgEl(ov, "line", { x1: M.mir[0], y1: M.mir[1], x2: M.mir[0], y2: M.mir[1] });
-  let idx = M.spots.length - 1; // 처음에는 햇빛이 산 중턱에 가 있다
+  const spot = svgEl(ov, "circle", { cx: M.mir[0], cy: M.mir[1], r: 11 }); // 햇빛이 닿은 자리
+  let idx = M.spots.length - 1; // 처음에는 햇빛이 건물 벽 위쪽에 가 있다
   const aim = (): void => {
     const [tx, ty] = M.spots[idx];
     const norm = (x: number, y: number): [number, number] => {
@@ -144,11 +146,15 @@ const town: OpenerScene = (c) => {
     };
     const s = norm(M.sun[0] - M.mir[0], M.sun[1] - M.mir[1]);
     const t = norm(tx - M.mir[0], ty - M.mir[1]);
-    // 거울 면에 수직인 방향은 해 쪽과 닿는 곳 쪽의 한가운데다(그림의 거울은 왼쪽을 보고 서 있다)
-    const deg = (Math.atan2(s[1] + t[1], s[0] + t[0]) * 180) / Math.PI - 180;
+    // 거울 면에 수직인 방향은 해 쪽과 닿는 곳 쪽의 한가운데다(그림의 거울은 왼쪽을 보고 서 있다).
+    // 벽 위쪽처럼 위로 비추는 자리는 각이 -180°를 넘으므로 -180°~180° 안으로 돌려 놓는다(거울이 한 바퀴 돌지 않게).
+    let deg = (Math.atan2(s[1] + t[1], s[0] + t[0]) * 180) / Math.PI - 180;
+    if (deg < -180) deg += 360;
     if (mir) mir.style.transform = `rotate(${deg}deg)`;
     outRay.setAttribute("x2", String(tx));
     outRay.setAttribute("y2", String(ty));
+    spot.setAttribute("cx", String(tx));
+    spot.setAttribute("cy", String(ty));
     c.stage.classList.toggle("lit", idx === M.plaza);
   };
   if (mir) mir.style.transformOrigin = `${M.mir[0]}px ${M.mir[1]}px`;
@@ -166,16 +172,15 @@ const town: OpenerScene = (c) => {
     aim();
     if (idx === M.plaza) {
       done = true;
-      c.later(() => end(c, `${verdict()} 각도를 맞추자 광장이 환해졌어요! 빛은 어떤 규칙으로 방향을 바꿀까요?`), 900);
-      // 광장보다 산 쪽 자리는 둘(산기슭, 산 중턱)이라 수정안의 "산 중턱" 대신 "산 쪽"으로 둔다(2026-11-16)
-    } else c.say(idx > M.plaza ? "햇빛이 아직 <b>산 쪽</b>을 비추고 있어요. 거울을 조금 더 숙여 보세요." : "햇빛이 마을을 지나쳐 <b>언덕 쪽</b>으로 갔어요. 거울을 다시 세워 보세요.");
+      c.later(() => end(c, `${verdict()} 각도를 맞추자 그늘 속 화분에 햇빛이 닿았어요! 빛은 어떤 규칙으로 방향을 바꿀까요?`), 900);
+    } else c.say(idx > M.plaza ? "햇빛이 아직 <b>건물 벽</b>을 비추고 있어요. 거울을 조금 더 숙여 보세요." : "햇빛이 화분을 지나쳐 <b>바닥</b>으로 갔어요. 거울을 다시 세워 보세요.");
   };
-  const down = btn(c, "down", "거울 숙이기", "빛을 언덕 쪽으로");
-  const upB = btn(c, "up", "거울 세우기", "빛을 산 쪽으로");
+  const down = btn(c, "down", "거울 숙이기", "빛을 바닥 쪽으로");
+  const upB = btn(c, "up", "거울 세우기", "빛을 벽 쪽으로");
   c.controls.classList.add("opn-g2u3-two");
   down.addEventListener("click", () => move(-1));
   upB.addEventListener("click", () => move(1));
-  const verdict = bet(c, "산에 가려 해가 들지 않는 마을이 있어요. 맞은편 언덕의 거울로 광장을 밝힐 수 있을까요?", ["거울 각도를 잘 맞추면 밝힐 수 있어요", "거울은 스스로 빛을 못 내서 밝힐 수 없어요", "거울을 어느 각도로 두어도 밝아져요"], "생각을 정했군요! 거울을 기울여 햇빛을 <b>광장</b>에 보내 보세요.");
+  const verdict = bet(c, "건물 그늘에 놓인 화분에는 햇빛이 들지 않아요. 햇빛이 드는 곳에서 손거울로 이 화분에 햇빛을 보낼 수 있을까요?", ["거울 각도를 잘 맞추면 보낼 수 있어요", "거울은 스스로 빛을 못 내서 보낼 수 없어요", "거울을 어느 각도로 두어도 화분에 닿아요"], "생각을 정했군요! 손거울을 기울여 햇빛을 <b>화분</b>에 보내 보세요.");
 };
 
 // ── 2. 유리컵과 빨대 ────────────────────────────────────────────
@@ -302,7 +307,7 @@ const dark: OpenerScene = (c) => {
   });
 };
 
-// ── 4. 거울 앞의 고양이 ─────────────────────────────────────────
+// ── 4. 무용실 전신거울 앞의 학생 ────────────────────────────────
 const catMirror: OpenerScene = (c) => {
   const M = meta(c).cat;
   art(c, "catBase");
@@ -311,7 +316,7 @@ const catMirror: OpenerScene = (c) => {
   let n = 0;
   const go = btn(c, "step", "한 걸음 다가가기", "거울을 향해 이동하기");
   c.controls.classList.add("opn-g2u3-one");
-  const verdict = bet(c, "거울 앞에 앉아 있던 고양이가 거울 쪽으로 한 걸음 다가가면, 거울 속 고양이는 어떻게 될까요?", ["거울 쪽으로 똑같이 한 걸음 다가와요", "원래 자리에 그대로 멈춰 있어요", "거울에서 한 걸음 더 멀어져요"], "생각을 정했군요! 버튼을 세 번 눌러 고양이를 거울 앞으로 다가가게 해 보세요.");
+  const verdict = bet(c, "무용실 전신거울 앞에 서 있던 학생이 거울 쪽으로 한 걸음 다가가면, 거울에 비친 모습은 어떻게 될까요?", ["거울 쪽으로 똑같이 한 걸음 다가와요", "원래 자리에 그대로 멈춰 있어요", "거울에서 한 걸음 더 멀어져요"], "생각을 정했군요! 버튼을 세 번 눌러 학생을 거울 앞으로 다가가게 해 보세요.");
   go.addEventListener("click", () => {
     if (!playing(c) || n >= M.steps) return;
     n += 1;
@@ -319,11 +324,11 @@ const catMirror: OpenerScene = (c) => {
     if (real) real.style.transform = `translateX(${n * M.step}px)`;
     if (twin) twin.style.transform = `translateX(${-n * M.step}px)`;
     if (n < M.steps) {
-      c.say(`거울 속 고양이도 함께 다가왔어요! <b>${M.steps - n}걸음</b> 더 다가가 보세요.`);
+      c.say(`거울에 비친 모습도 함께 다가왔어요! <b>${M.steps - n}걸음</b> 더 다가가 보세요.`);
       return;
     }
     go.disabled = true;
-    c.later(() => end(c, `${verdict()} 거울 속 고양이도 똑같이 다가왔어요! 거울 속 모습은 어디에 생기는 걸까요?`), 800);
+    c.later(() => end(c, `${verdict()} 거울에 비친 모습도 똑같이 다가왔어요! 거울 속 모습은 어디에 생기는 걸까요?`), 800);
   });
 };
 
@@ -354,39 +359,49 @@ const spoon: OpenerScene = (c) => {
   bOut.addEventListener("click", () => show("out"));
 };
 
-// ── 6. 점으로 그린 물고기 ───────────────────────────────────────
+// ── 6. 점으로 그린 바나나 ───────────────────────────────────────
 const dots: OpenerScene = (c) => {
   const M = meta(c).dots;
   art(c, "dotsBase");
   const ov = overlay(c, "opn-g2u3-dots");
-  const [bx, by, rx, ry] = M.body;
-  const tail = M.tail.map((p) => `${p[0]},${p[1]}`).join(" ");
-  const grp = svgEl(ov, "g", { class: "fish" });
-  grp.style.transformOrigin = `${bx - 40}px ${by}px`;
-  // 빨간 점과 초록 점을 번갈아 찍는다
-  const inTail = (x: number, y: number): boolean => {
-    const [a, b, d] = M.tail;
-    const s = (p: readonly number[], q: readonly number[]): number => (x - q[0]) * (p[1] - q[1]) - (p[0] - q[0]) * (y - q[1]);
-    const d1 = s(a, b);
-    const d2 = s(b, d);
-    const d3 = s(d, a);
-    return !((d1 < 0 || d2 < 0 || d3 < 0) && (d1 > 0 || d2 > 0 || d3 > 0));
+  const [cx, cy] = M.c;
+  const grp = svgEl(ov, "g", { class: "banana" });
+  // 줄어드는 가운데 = 바나나를 감싸는 상자의 가운데(위 끝은 양쪽 끝, 아래 끝은 띠 가운데의 바깥 가장자리)
+  grp.style.transformOrigin = `${cx}px ${cy + (M.R * Math.sin(M.a0) + M.R + M.half) / 2}px`;
+  // 바나나 띠: 원호 위 각 a에서의 굵기(가운데가 가장 굵고 양 끝으로 갈수록 가늘다)
+  const halfAt = (a: number): number => {
+    const t = (a - M.a0) / (M.a1 - M.a0);
+    return t <= 0 || t >= 1 ? 0 : M.half * Math.pow(Math.sin(Math.PI * t), 0.55);
   };
+  // 빨간 점과 초록 점을 번갈아 찍는다
   const dotG = svgEl(grp, "g", { class: "pts" });
   let i = 0;
-  for (let y = by - ry - 60; y <= by + ry + 60; y += M.gap * 0.86) {
+  for (let y = cy + M.R * Math.sin(M.a0) - M.half; y <= cy + M.R + M.half; y += M.gap * 0.86) {
     i += 1;
-    for (let x = bx - rx - 110 + (i % 2) * (M.gap / 2), j = 0; x <= bx + rx; x += M.gap, j++) {
-      const inBody = ((x - bx) / rx) ** 2 + ((y - by) / ry) ** 2 <= 1;
-      if (!inBody && !inTail(x, y)) continue;
+    for (let x = cx - M.R - M.half + (i % 2) * (M.gap / 2), j = 0; x <= cx + M.R + M.half; x += M.gap, j++) {
+      const d = Math.hypot(x - cx, y - cy);
+      if (Math.abs(d - M.R) > halfAt(Math.atan2(y - cy, x - cx))) continue;
       svgEl(dotG, "circle", { cx: x.toFixed(1), cy: y.toFixed(1), r: M.r, fill: (i + j) % 2 ? "#E8453C" : "#35B24F" });
     }
   }
-  // 멀리서 본 모습(점이 섞여 보인다)
+  // 멀리서 본 모습(점이 섞여 보인다): 띠의 바깥 가장자리를 따라갔다가 안쪽 가장자리로 돌아온다
   const blend = svgEl(grp, "g", { class: "blend" });
-  svgEl(blend, "ellipse", { cx: bx, cy: by, rx, ry, fill: "#F2D21E" });
-  svgEl(blend, "polygon", { points: tail, fill: "#F2D21E" });
-  svgEl(grp, "circle", { cx: M.eye[0], cy: M.eye[1], r: 9, fill: "#1c1c1e" });
+  const rim: string[] = [];
+  const N = 60;
+  for (let k = 0; k <= N; k++) {
+    const a = M.a0 + ((M.a1 - M.a0) * k) / N;
+    const r = M.R + halfAt(a);
+    rim.push(`${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`);
+  }
+  for (let k = N; k >= 0; k--) {
+    const a = M.a0 + ((M.a1 - M.a0) * k) / N;
+    const r = M.R - halfAt(a);
+    rim.push(`${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`);
+  }
+  svgEl(blend, "polygon", { points: rim.join(" "), fill: "#F2D21E" });
+  // 꼭지와 반대쪽 끝(갈색)은 처음부터 칠해 둔다
+  svgEl(grp, "line", { x1: M.stem[0][0], y1: M.stem[0][1], x2: M.stem[1][0], y2: M.stem[1][1], stroke: "#7A4B22", "stroke-width": 15, "stroke-linecap": "round" });
+  svgEl(grp, "circle", { cx: (cx + M.R * Math.cos(M.a0)).toFixed(1), cy: (cy + M.R * Math.sin(M.a0)).toFixed(1), r: 7, fill: "#5C3818" });
   const paint = (v: number): void => {
     grp.style.transform = `scale(${1 - 0.62 * v})`;
     blend.style.opacity = String(Math.max(0, (v - 0.35) / 0.55));
@@ -417,7 +432,7 @@ const dots: OpenerScene = (c) => {
   );
 };
 
-// ── 7. 연못의 낚시찌 ────────────────────────────────────────────
+// ── 7. 연못에 뜬 탁구공 ─────────────────────────────────────────
 const floatScene: OpenerScene = (c) => {
   const M = meta(c).float;
   art(c, "floatBase");
@@ -428,23 +443,23 @@ const floatScene: OpenerScene = (c) => {
     return e;
   });
   void rings;
-  const cone = c.stage.querySelector<SVGElement>(".opn-g2u3-cone");
-  const b = hit(c, M.hit, "솔방울을 눌러 연못에 떨어뜨리기");
+  const drop = c.stage.querySelector<SVGElement>(".opn-g2u3-cone"); // 빗방울(겹 이름은 앞 판에서 물려받았다)
+  const b = hit(c, M.hit, "빗방울을 눌러 연못에 떨어뜨리기");
   let done = false;
-  const verdict = bet(c, "잔잔한 연못에 솔방울이 풍덩 떨어지면서 물결이 퍼져 나가요. 물 위에 떠 있는 낚시찌는 어떻게 움직일까요?", ["제자리에서 위아래로만 오르내려요", "퍼져 나가는 물결을 따라 바깥쪽으로 밀려가요", "솔방울이 떨어진 안쪽으로 끌려와요"], "생각을 정했군요! 나뭇가지의 <b>솔방울</b>을 눌러 연못에 떨어뜨려 보세요.");
+  const verdict = bet(c, "나뭇잎 끝의 빗방울이 잔잔한 연못에 똑 떨어지면서 물결이 퍼져 나가요. 물 위에 떠 있는 탁구공은 어떻게 움직일까요?", ["제자리에서 위아래로만 오르내려요", "퍼져 나가는 물결을 따라 바깥쪽으로 밀려가요", "빗방울이 떨어진 안쪽으로 끌려와요"], "생각을 정했군요! 나뭇잎 끝의 <b>빗방울</b>을 눌러 연못에 떨어뜨려 보세요.");
   b.addEventListener("click", () => {
     if (!playing(c) || done) return;
     done = true;
     haptic(HAPTIC.tap);
     c.stage.classList.add("touched");
-    if (cone) cone.style.transform = `translateY(${M.splash[1] - M.cone[1]}px)`;
+    if (drop) drop.style.transform = `translateY(${M.splash[1] - M.cone[1]}px)`;
     c.later(() => {
       c.stage.classList.add("ripple");
-      if (cone) cone.style.opacity = "0";
-      c.say("퐁당! 물결이 퍼져 나가요. <b>낚시찌</b>를 지켜보세요.");
+      if (drop) drop.style.opacity = "0";
+      c.say("똑! 물결이 퍼져 나가요. <b>탁구공</b>을 지켜보세요.");
     }, 520);
     c.later(() => c.stage.classList.add("bob"), 1900);
-    c.later(() => end(c, `${verdict()} 물결은 바깥쪽으로 멀리 퍼져 나갔는데, 낚시찌는 <b>제자리</b>에서 위아래로 오르내릴 뿐이에요! 왜 물결을 따라 이동하지 않을까요?`), 4300);
+    c.later(() => end(c, `${verdict()} 물결은 바깥쪽으로 멀리 퍼져 나갔는데, 탁구공은 <b>제자리</b>에서 위아래로 오르내릴 뿐이에요! 왜 물결을 따라 이동하지 않을까요?`), 4300);
   });
 };
 

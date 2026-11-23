@@ -41,14 +41,14 @@ export function galaxySideFig8(): string {
   return `<svg viewBox="0 0 320 160" ${NS} role="img" aria-label="옆에서 본 우리은하. 가운데가 볼록한 납작한 원반이고 태양계는 중심에서 떨어져 있다"><rect width="320" height="160" rx="12" fill="#0B1326"/><ellipse cx="160" cy="80" rx="132" ry="9" fill="#5E78C8" opacity=".85"/><ellipse cx="160" cy="80" rx="34" ry="22" fill="#FFE0B0"/><circle cx="234" cy="80" r="4" fill="#FFD23F" stroke="#fff" stroke-width="1.4"/><text x="160" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="#FFE0B0">중심부</text><text x="72" y="100" text-anchor="middle" font-size="12" font-weight="800" fill="#B8C8F2">원반</text><text x="234" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="#FFD23F">태양계</text></svg>`;
 }
 
-/** 풍선 모형 그림(딱지 셋). */
+/** 풍선 모형 그림(스티커 셋). */
 export function balloonFig(): string {
   const tags: [number, number, string][] = [
     [112, 64, "ㄱ"],
     [150, 98, "ㄴ"],
     [186, 58, "ㄷ"],
   ];
-  return `<svg viewBox="0 0 320 170" ${NS} role="img" aria-label="붙임딱지 세 개를 붙인 풍선"><rect width="320" height="170" rx="12" fill="#F4F6FB"/><circle cx="150" cy="82" r="66" fill="#8FA6F2" stroke="#4A5FC4" stroke-width="2.5"/><path d="M216 82 l22 -8 v16 z" fill="#4A5FC4"/><rect x="238" y="72" width="26" height="20" rx="4" fill="#C9CED6" stroke="#6B7684" stroke-width="2"/>${tags
+  return `<svg viewBox="0 0 320 170" ${NS} role="img" aria-label="스티커 세 개를 붙인 풍선"><rect width="320" height="170" rx="12" fill="#F4F6FB"/><circle cx="150" cy="82" r="66" fill="#8FA6F2" stroke="#4A5FC4" stroke-width="2.5"/><path d="M216 82 l22 -8 v16 z" fill="#4A5FC4"/><rect x="238" y="72" width="26" height="20" rx="4" fill="#C9CED6" stroke="#6B7684" stroke-width="2"/>${tags
     .map(([x, y, t]) => `<circle cx="${x}" cy="${y}" r="12" fill="#FFD84A" stroke="#8A6500" stroke-width="2"/><text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13" font-weight="800" fill="#3A2A00">${t}</text>`)
     .join("")}<text x="251" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">집게</text></svg>`;
 }
@@ -90,8 +90,8 @@ const globular = Array.from({ length: 26 }, (_, i) => {
 }).join("");
 
 const MINI: Record<string, string> = {
-  // 시차: 머리 원 안의 두 눈에서 연필(노란 점)을 지난 두 시선이 칠판의 서로 다른 자리에 닿는다
-  eyes: `<rect x="8" y="6" width="48" height="8" rx="3" fill="#CFE3D9" stroke="#3C8A68" stroke-width="1.4"/><circle cx="32" cy="50" r="12" fill="#fff" stroke="#3D8FE8" stroke-width="2.2"/><path d="M27 48 L37 13 M37 48 L27 13" stroke="#3D8FE8" stroke-width="1.8" stroke-dasharray="3 2.5"/><circle cx="37" cy="10" r="2.6" fill="#F0A422"/><circle cx="27" cy="10" r="2.6" fill="#F0A422"/><circle cx="32" cy="30.5" r="3.6" fill="#F7C948" stroke="#8A6500" stroke-width="1.2"/><circle cx="27" cy="48" r="2.4" fill="#1B2A44"/><circle cx="37" cy="48" r="2.4" fill="#1B2A44"/>`,
+  // 시차: 머리 원 안의 두 눈에서 엄지(살색 점)를 지난 두 시선이 뒤 벽 사물함 줄의 서로 다른 자리에 닿는다
+  eyes: `<rect x="8" y="6" width="48" height="8" rx="2" fill="#DCE3EE" stroke="#60708C" stroke-width="1.4"/><circle cx="32" cy="50" r="12" fill="#fff" stroke="#3D8FE8" stroke-width="2.2"/><path d="M27 48 L37 13 M37 48 L27 13" stroke="#3D8FE8" stroke-width="1.8" stroke-dasharray="3 2.5"/><circle cx="37" cy="10" r="2.6" fill="#F0A422"/><circle cx="27" cy="10" r="2.6" fill="#F0A422"/><circle cx="32" cy="30.5" r="3.6" fill="#F6D6BE" stroke="#B0805E" stroke-width="1.2"/><circle cx="27" cy="48" r="2.4" fill="#1B2A44"/><circle cx="37" cy="48" r="2.4" fill="#1B2A44"/>`,
   pc: `<circle cx="32" cy="10" r="4.5" fill="#FFE9A8" stroke="#E2B23C" stroke-width="1.6"/><circle cx="14" cy="54" r="4.5" fill="#3E8EE0"/><circle cx="32" cy="54" r="5" fill="#FFC94A"/><path d="M14 54 L32 10 L32 54" stroke="#12B886" stroke-width="2.2"/><path d="M28 22 A 12 12 0 0 1 32 23" stroke="#12B886" stroke-width="2"/>`,
   // 거리의 제곱에 반비례: 같은 빛이 거리 1, 2, 3배에서 1칸, 2×2=4칸, 3×3=9칸에 나뉜다(작은 카드에서도 칸이 보이게 칸 한 변 7)
   grid: `<circle cx="5" cy="32" r="3.6" fill="#FFD166" stroke="#C98A12" stroke-width="1"/><rect x="11" y="28.5" width="7" height="7" fill="#FFF3C4" stroke="#3D8FE8" stroke-width="1.3"/><path d="M22 25 h14 v14 h-14 z M29 25 v14 M22 32 h14" fill="#FFF3C4" stroke="#3D8FE8" stroke-width="1.3"/><path d="M40 21.5 h21 v21 h-21 z M47 21.5 v21 M54 21.5 v21 M40 28.5 h21 M40 35.5 h21" fill="#FFF3C4" stroke="#3D8FE8" stroke-width="1.3"/>`,

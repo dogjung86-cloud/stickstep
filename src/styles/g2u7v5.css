@@ -206,7 +206,7 @@
 .opn-g2u7-hand { transform-box: view-box; transform-origin: 330px 250px; }
 .opn-g2u7-clock.on1 .opn-g2u7-hand { animation: opnG2u7Tick 8s steps(16) infinite; }
 @keyframes opnG2u7Tick { to { transform: rotate(360deg); } }
-/* 5. 멀티탭: 스탠드의 플러그가 뽑힌다 */
+/* 5. 멀티탭: 가습기의 플러그가 뽑힌다 */
 .opn-g2u7-tap.on1 .opn-g2u7-mv { transform: translate(-22px, -64px); }
 /* 6. 계량기: 원판의 표시가 선풍기에서는 천천히, 헤어드라이어에서는 빨리 지나간다 */
 .opn-g2u7-meter.on1 .opn-g2u7-disc { animation: opnG2u7Disc 2.6s linear infinite; }
