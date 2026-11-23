@@ -3,10 +3,7 @@
 //   1 거북 등에 오른 다윈(1835) → 2 로슨의 거북 이야기를 흘려듣다 → 3 굴드: 모두 핀치였다(1837)
 //   → 4 수첩의 나뭇가지 그림(1837) → 5 「종의 기원」(1859, 이때는 턱수염이 없다) → 6 그랜트 부부가 잰 부리(같은 종류 안의 차이 = 변이)
 //   → 7 1977년 가뭄: 부리 큰 새가 더 많이 살아남아 새끼를 남겼다
-// extras(): 거북 문제(mcq)가 쓰는 두 섬 그림(인물 없음, 이름 island-a, island-b). 2026-11-15 그래픽 손질로 바꿨다:
-//   문두는 "목 길이가 조금씩 다른 거북 무리"인데 옛 그림은 (가)에 목 긴 거북, (나)에 목 짧은 거북을 두어 오랜 시간 뒤의 결과(정답)를 먼저 보여 줬다.
-//   이제 두 섬에 똑같이 목 길이가 다른 거북 셋(긴, 중간, 짧은)을 두고 먹이만 다르다: (가) 키 큰 선인장, (나) 낮은 풀.
-//   2컷의 두 섬(islandA, islandB: 로슨의 거북 이야기, 등딱지가 다른 두 섬)은 그대로다.
+// 옛 extras()(거북 섬 문제 그림 island-a, island-b)는 2026-11-23 저작권 손질 때 지웠다. 그 문제는 2026-11-22에 달팽이 문제(ui/bio6Figures.ts의 snailHabitatPairFig)로 바뀌었다.
 // 그림 속에는 글자와 숫자를 넣지 않는다. 때와 곳은 when 으로 앱이 상자를 얹는다.
 import { Sk, C, curve, dense, circ, ell, poly, rrect, lerp, mix, emark, qmark, check, sparkle, drop } from "../lib/sk.mjs";
 import { drawFigure, handDot, pose, DARWIN, LAWSON, GOULD, GRANT_A, GRANT_B } from "../lib/figure.mjs";
@@ -415,21 +412,3 @@ export function panels() {
   return [p1, p2, p3, p4, p5, p6, p7].map((fn, i) => ({ sk: fn(), ...TEXT[i] }));
 }
 
-// 거북 문제 그림: 섬 (가) 키 큰 선인장, 섬 (나) 낮은 풀. 2컷과 같은 거북을 인물 없이 한 섬씩 따로 그린다(옛 장면과 같은 그림).
-// 문제 그림의 두 섬: 같은 무리(목 긴, 중간, 짧은 거북 셋, 등딱지는 같다)가 산다. 먹이만 다르다. 원점 = 땅 가운데
-function quizIsle(sk, x, y, s, food) {
-  sk.at(x, y, s, () => {
-    sk.ink(curve([[-300, 6], [-100, -4], [120, 0], [310, 8]]), { w: 9, seed: food === "cactus" ? 445 : 447 });
-    // 선인장의 잎은 목 긴 거북의 머리 높이쯤에서 시작한다(목 짧은 거북은 닿지 않는다). 풀은 목 짧은 거북의 머리 높이쯤으로 낮다
-    if (food === "cactus") cactus(sk, 222, 0, 250, 363);
-    else { grass(sk, -300, 2, 3, 385, 30); grass(sk, 146, 4, 4, 387, 34); grass(sk, 226, 3, 5, 389, 28); }
-    tortoise(sk, -240, 0, 0.44, { kind: "dome", neck: "long", seed: 351 });
-    tortoise(sk, -84, 0, 0.44, { kind: "dome", neck: "mid", seed: 353 });
-    tortoise(sk, 72, 0, 0.44, { kind: "dome", neck: "short", seed: 355 });
-  });
-}
-export function extras() {
-  const a = new Sk(560, 300, { id: "xa" }); quizIsle(a, 272, 284, 0.86, "cactus");
-  const b = new Sk(560, 300, { id: "xb" }); quizIsle(b, 272, 284, 0.86, "grass");
-  return [{ name: "island-a", sk: a }, { name: "island-b", sk: b }];
-}

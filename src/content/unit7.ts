@@ -292,7 +292,7 @@ const L3 = {
   id: "u7l3",
   unitId: "u7",
   title: "태양의 활동",
-  subtitle: "870여 년 전 기록에서 우주 날씨까지",
+  subtitle: "900년 전 그림에서 우주 날씨까지",
   label: "태양의 활동",
   icon: "flame",
   minutes: 9,

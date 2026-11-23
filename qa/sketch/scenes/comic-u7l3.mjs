@@ -1,11 +1,12 @@
-// 중1 과학 u7l3 만화 v2(배선 전 미리보기): 고려사에 적힌 태양의 점(광구, 흑점, 쌀알 무늬, 11년 주기, 플레어, 태양풍, 우주 날씨). 8컷.
+// 중1 과학 u7l3 만화 v2: 900년 전 그림 속 태양의 점(광구, 흑점, 쌀알 무늬, 11년 주기, 플레어, 태양풍, 우주 날씨). 8컷.
 // 조사와 콘티: qa/sketch/research/u7l3.md
-//   1 1151년 고려의 흑점 기록 → 2 흰 판에 비춘 해: 광구와 흑점 → 3 쌀알 무늬와 대류(된장국)
+//   1 1128년 영국 우스터, 수도사 존의 연대기에 남은 흑점 그림 → 2 흰 판에 비춘 해: 광구와 흑점 → 3 쌀알 무늬와 대류(된장국)
 //   → 4 1843년 슈바베: 늘었다 줄었다(11년) → 5 1859년 캐링턴: 하얀 섬광(플레어) → 6 이튿날: 오로라와 전신기 불꽃(태양풍)
 //   → 7 2024년 5월 강원 화천의 붉은 오로라 → 8 오늘날 우주 날씨 예보(통신, 인공위성, 정전)
-// 그림 속에 글자와 숫자는 넣지 않는다(한자 표기도 넣지 않는다). 해를 맨눈으로 보는 사람은 그리지 않는다.
+// 2026-11-23 저작권 손질: 옛 1컷(1151년 고려의 흑점 기록)을 1128년 우스터의 흑점 그림으로 바꿨다.
+// 그림 속에 글자와 숫자는 넣지 않는다. 해를 맨눈으로 똑바로 보는 사람은 그리지 않는다(1컷의 수도사는 책에 그림을 그린다).
 import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, hash, emark, xmark, check, sparkle, drop, arrow } from "../lib/sk.mjs";
-import { drawFigure, handDot, pose, TEACHER, OFFICIAL, R } from "../lib/figure.mjs";
+import { drawFigure, handDot, pose, TEACHER, R } from "../lib/figure.mjs";
 import { earth, satellite, openBook } from "../lib/props.mjs";
 
 const W = 960, H = 720;
@@ -86,13 +87,6 @@ function aurora(sk, pts, len, cols, sd, alpha = 0.85) {
 
 /* ---------- 소품 ---------- */
 
-// 낮은 서안(책상)과 다리. (x, y) = 상판 왼쪽 위
-function seoan(sk, x, y, w, sd = 81) {
-  thin(sk, 0.85, () => {
-    for (const lx of [x + 18, x + w - 18]) sk.ink(dense([[lx, y + 18], [lx - (lx < x + w / 2 ? 6 : -6), y + 96]]), { w: 11, color: "#6B4A32", seed: sd + lx, wob: 0.3 });
-    const top = rrect(x, y, w, 22, 6); sk.fill(top, "#9C6B3E", { seed: sd, tex: true, texAng: 0.02 }); sk.ink(top, { w: 10, seed: sd + 1 });
-  });
-}
 // 망원경: (x0, y0) = 접안부(아래), (x1, y1) = 대물부(위). 세 다리 받침
 function telescope(sk, x0, y0, x1, y1, tw, foot, sd) {
   const ang = Math.atan2(y1 - y0, x1 - x0), nx = -Math.sin(ang) * tw / 2, ny = Math.cos(ang) * tw / 2;
@@ -187,25 +181,61 @@ function antenna(sk, x, y, s, sd) {
   });
 }
 
-/* ---------- 1. 1151년 고려: 해에 검은 점이 있다 ---------- */
+/* ---------- 1. 1128년 우스터: 해 안에 검은 점이 둘 ---------- */
+// 수도사 존(이름 있는 인물이라 작은 얼굴): 정수리를 깎은 머리 + 검은 수도복
+const MONK = { hair: "bald", coat: { color: "#2E2A30", seam: "#151317", len: 182 }, seed: 221, mini: true, face: "wide" };
+// 정수리를 둥글게 깎은 머리(머리 둘레의 띠만 남는다). 머리 중심과 축척, 기울기에 맞춰 덧그린다
+function tonsure(sk, x, y, s, p, sd = 231) {
+  sk.save(); sk.translate(x + s * p.head[0], y + s * p.head[1]); sk.scale(s, s); sk.rotate(p.tilt ?? 0);
+  const band = curve([[-104, 16], [-102, -26], [-82, -56], [-42, -68], [0, -70], [42, -68], [82, -56], [102, -26], [104, 16]]);
+  sk.ink(band, { w: 30, color: "#6B4A32", seed: sd, wob: 0.6 });
+  sk.ink(curve([[-82, -40], [-40, -52], [0, -54], [40, -52], [82, -40]]), { w: 5, color: "#4A3226", seed: sd + 1, wob: 0.4 });
+  sk.restore();
+}
 function p1() {
   const sk = new Sk(W, H, { id: "a" });
-  // 낮게 걸려 붉게 흐려진 해. 맨눈에도 큰 점이 보였다
-  sunDisc(sk, 690, 330, 168, { color: RED, seed: 401, spots: [[-0.2, -0.16, 0.13]] });
-  haze(sk, 460, 940, [398, 446, 494], 11);
-  const hill = [...curve([[-12, 600], [180, 556], [360, 590], [560, 548], [760, 584], [972, 560]], false, 5), [972, 732], [-12, 732]];
+  // 돌벽과 바닥
+  sk.fill(poly([[-10, -10], [970, -10], [970, 730], [-10, 730]], 8), "#EEE6D6", { dx: 0, dy: 0, wob: 0, seed: 3, tex: false });
+  for (const [y, x0, x1, i] of [[150, 40, 260, 0], [250, 120, 420, 1], [560, 30, 180, 2], [190, 330, 520, 3]]) sk.ink(dense([[x0, y], [x1, y]]), { w: 4, color: "#D8CDBA", seed: 5 + i, wob: 0.6 });
+  sk.fill(poly([[-10, 690], [970, 690], [970, 730], [-10, 730]], 4), "#D6C8AC", { dx: 0, dy: 0, wob: 0.5, seed: 9, tex: true, texAng: 0.02 });
+  sk.ink(dense([[-10, 690], [970, 690]]), { w: 9, seed: 10 });
+  // 둥근 아치 창: 낮게 걸려 붉게 흐려진 겨울 해, 그 안의 검은 점 둘(위는 크고 아래는 작다)
+  const L = 600, Rx = 890, top = 250, bot = 456, cx = (L + Rx) / 2, rr = (Rx - L) / 2;
+  const shape = [...curve([[L, bot], [L, top]], false, 4), ...ell(cx, top, rr, rr, Math.PI, 2 * Math.PI), ...curve([[Rx, top], [Rx, bot]], false, 4)];
+  shape.push(shape[0]);
+  sk.fill(shape, "#E8EEF2", { dx: 0, dy: 0, wob: 0.4, seed: 11, tex: false });
+  const hill = [...curve([[L + 6, 420], [690, 404], [780, 416], [Rx - 6, 400]], false, 4), [Rx - 6, bot - 4], [L + 6, bot - 4]];
   hill.push(hill[0]);
-  sk.fill(hill, "#E7EFE2", { dx: 0, dy: 0, wob: 0, seed: 15 }); sk.ink(hill.slice(0, -3), { w: 9, seed: 16 });
-  seoan(sk, 360, 600, 190, 17);
-  openBook(sk, 455, 604, 0.7, { color: "#6E8FA8", seed: 19 });
-  // 천문 관리: 해를 가리키며 붓을 든다
-  const P = pose({ elR: [96, -340], haR: [168, -404], elL: [-54, -268], haL: [-90, -226], tilt: 0.08 });
-  const fx = 236, fy = 704, fs = 0.72;
-  drawFigure(sk, fx, fy, fs, P, { ...OFFICIAL, name: "official", hands: "R" });
-  const bx = fx - fs * 90, by = fy - fs * 226;
-  sk.ink(dense([[bx + 6, by + 18], [bx - 20, by - 62]]), { w: 6, color: "#8A5A33", seed: 21, wob: 0.3 });
-  sk.ink(dense([[bx + 6, by + 18], [bx + 12, by + 34]]), { w: 8, seed: 22, wob: 0.2 });
-  handDot(sk, [bx, by], C.skin, 23, 11);
+  sk.fill(hill, "#C9D6C0", { dx: 0, dy: 0, wob: 0.3, seed: 12 });
+  sunDisc(sk, 745, 318, 84, { color: RED, seed: 401, spots: [[-0.04, -0.34, 0.21], [0.05, 0.36, 0.14]] });
+  haze(sk, 612, 878, [252, 388], 13);
+  thin(sk, 0.8, () => {
+    sk.ink(shape, { w: 14, color: "#8F8474", seed: 15 });
+    const sill = rrect(L - 26, bot - 4, Rx - L + 52, 24, 6); sk.fill(sill, "#CFC4B0", { seed: 16, tex: true, texAng: 0.02 }); sk.ink(sill, { w: 9, seed: 17 });
+  });
+  // 비스듬한 글 쓰는 책상과 펼친 연대기: 오른쪽 쪽에 해와 두 점을 그려 넣었다
+  thin(sk, 0.85, () => {
+    sk.ink(dense([[444, 520], [444, 690]]), { w: 14, color: "#6B4A32", seed: 21, wob: 0.3 });
+    sk.ink(dense([[380, 690], [508, 690]]), { w: 12, color: "#6B4A32", seed: 22, wob: 0.3 });
+    const desk = poly([[330, 528], [560, 476], [566, 500], [336, 552]], 3);
+    sk.fill(desk, "#9C6B3E", { seed: 23, tex: true, texAng: -0.22 }); sk.ink(desk, { w: 10, seed: 24 });
+  });
+  openBook(sk, 448, 512, 0.88, { color: "#7A3E2E", seed: 25, rot: -0.22, lines: false });
+  sk.at(448, 512, 0.88, () => {
+    const d = circ(42, -40, 18, { over: 0.1, seed: 27 });
+    sk.ink(d, { w: 4, color: "#4A3226", seed: 28, wob: 0.2 });
+    sk.dot(38, -47, 4.5, "#2E211C"); sk.dot(45, -31, 3, "#2E211C");
+    for (let i = 0; i < 3; i++) sk.ink(curve([[-66, -50 + i * 10], [-40, -54 + i * 10], [-14, -50 + i * 10]]), { w: 3, color: C.gray, seed: 29 + i, wob: 0.2 });
+  }, -0.22);
+  // 수도사 존: 깃펜을 책에 대고 창밖의 해를 본다
+  const P = pose({ elR: [124, -280], haR: [224, -326], elL: [-50, -262], haL: [-24, -212], tilt: 0.04 });
+  const fx = 254, fy = 690, fs = 0.74;
+  drawFigure(sk, fx, fy, fs, P, { ...MONK, name: "john", look: 0.7 });
+  tonsure(sk, fx, fy, fs, P);
+  const qh = [fx + fs * 224, fy - fs * 326];
+  sk.ink(curve([[qh[0] + 8, qh[1] + 10], [qh[0] - 14, qh[1] - 34], [qh[0] - 34, qh[1] - 64]]), { w: 7, color: "#F4F1EA", seed: 41, wob: 0.3 });
+  sk.ink(curve([[qh[0] + 8, qh[1] + 10], [qh[0] - 14, qh[1] - 34], [qh[0] - 34, qh[1] - 64]]), { w: 2.5, color: "#8A8F98", seed: 42, wob: 0.2 });
+  handDot(sk, qh, C.skin, 43, 11);
   return sk;
 }
 
@@ -380,17 +410,17 @@ function p8() {
 }
 
 export const META = {
-  title: "고려사에 적힌<br><em>태양의 점</em>",
-  lead: "870여 년 전 고려의 흑점 기록에서 오늘날의 우주 날씨 예보까지 따라가 봐요.",
-  narrator: "1151년 봄, 고려의 관리는 해에 나타난 <b>검은 점</b>을 보고 기록을 남겼어요. 그 점은 지구에까지 큰 영향을 주는 <b>태양 활동</b>의 신호였답니다.",
+  title: "900년 전 그림 속<br><em>태양의 점</em>",
+  lead: "900년쯤 전 영국의 한 수도사가 남긴 흑점 그림에서 오늘날의 우주 날씨 예보까지 따라가 봐요.",
+  narrator: "1128년 겨울, 영국의 한 수도사는 해 안에 나타난 <b>검은 점</b> 두 개를 연대기에 그려 남겼어요. 그 점은 지구에까지 큰 영향을 주는 <b>태양 활동</b>의 신호였답니다.",
   cta: "태양 살펴보기",
 };
 
 const CUTS = [
   {
-    fn: p1, when: "1151년 3월, 고려", stage: "옛 기록", title: "해에 검은 점이 있다",
-    caption: "「고려사」에 1151년 3월의 이런 기록이 있어요. “해에 <b>검은 점</b>이 있는데 크기가 달걀만 하다.” 열흘 뒤와 그다음 날에도 같은 기록이 이어져요. 지금 남아 있는 우리나라 기록 가운데 가장 이른 흑점 기록이에요.",
-    bubbles: [{ who: "official", text: "해에 검은<br>점이 있다!", dy: 6 }],
+    fn: p1, when: "1128년 12월, 영국 우스터", stage: "옛 기록", title: "해 안에 검은 점이 둘",
+    caption: "영국 우스터의 수도사 <b>존</b>은 1128년 12월 8일의 일을 연대기에 적었어요. “아침부터 저녁까지 해 안에 <b>검은 공</b> 같은 것이 두 개 보였다. 위의 것은 크고 아래 것은 작았다.” 그리고 그 모습을 그림으로도 남겼지요. 지금까지 알려진 가장 오래된 흑점 그림이에요.",
+    bubbles: [{ who: "john", text: "해 안에 검은<br>점이 둘!" }],
   },
   {
     fn: p2, stage: "점의 정체", title: "흰 판에 비추어 보면",
