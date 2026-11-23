@@ -371,59 +371,107 @@ function cutU7l5() {
   return sk;
 }
 
-/* ---------- u7l6: 손전등, 작은 공, 큰 공을 한 줄로. 작은 공의 그림자가 큰 공에 점처럼 ---------- */
+/* ---------- u7l6: 둥근 알전구 스탠드, 작은 공, 지구본을 비스듬히 한 줄로. 작은 공의 그림자가 지구본에 점처럼 ---------- */
+// 둥근 탁자를 비스듬히 내려다본다(정사영, 내려다보는 각 30°). 알전구(오른쪽 앞), 작은 공, 지구본(왼쪽 뒤)의 가운데가
+// 같은 높이의 한 직선 위에 있고, 그림자 점은 그 직선이 지구본 겉면과 만나는 곳에 떨어진다(화면에서도 세 가운데와 점이 한 줄).
+// 점의 크기도 기하로 정한다: 전구가 공보다 커서 본그림자는 뒤로 갈수록 좁아지는 원뿔이고, 그 길이 Lu = d·r ÷ (R전구 − r),
+// 지구본에 닿는 본그림자 반지름 = r × (1 − 공에서 지구본 겉면까지 ÷ Lu)다. 비스듬히 닿아 화면에서는 빛 쪽으로 납작한 타원이다.
 function cutU7l6() {
   const sk = new Sk(W, H, { id: "g" });
-  const GY = 700, TT = 612, LY = 566;
-  ground(sk, GY, 11);
-  const fl = [228, LY], small = [462, LY], sR = 22, big = [738, 542], bR = 68;
-  const limb = big[0] - Math.sqrt(bR * bR - (LY - big[1]) ** 2), dot = [big[0] - bR * 0.72, LY];
-  // 쌤(왼쪽, 탁자 뒤): 늘어놓은 것을 손으로 보여 준다
-  const T = pose({ elR: [96, -300], haR: [160, -322], elL: [-80, -290], haL: [-120, -320], tilt: 0.04 });
-  drawFigure(sk, 116, GY, 0.72, T, { ...TEACHER, name: "teacher" });
-  // 학생(두 공 사이 뒤): 한 손으로 큰 공 위의 점을 가리키고, 다른 손은 허리에
-  const sx = 586, ss = 0.8;
-  const hand = [dot[0] - 20, dot[1] - 38];
-  const S = pose({ elR: [96, -330], haR: [(hand[0] - sx) / ss, -(GY - hand[1]) / ss], elL: [-66, -282], haL: [-34, -238], tilt: 0.12 });
-  drawFigure(sk, sx, GY, ss, S, { ...STUDENT, name: "student" });
-  sk.ink(dense([hand, [hand[0] + 12, hand[1] + 18]]), { w: 6, seed: 7, wob: 0.1 });
-  // 탁자(천을 덮어 뒤쪽 사람들의 다리를 가린다)
-  thin(sk, 0.7, () => {
-    const cloth = poly([[50, TT], [910, TT], [902, 664], [58, 664]], 4);
-    sk.fill(cloth, "#F4EFE6", { dx: 0, dy: 0, wob: 0.3, seed: 21 }); sk.ink(cloth, { w: 10, seed: 22 });
-    for (const [x, i] of [[96, 0], [864, 1]]) sk.ink(dense([[x, 664], [x, GY]]), { w: 12, seed: 23 + i });
-    const top = rrect(36, TT - 14, 890, 22, 8);
-    sk.fill(top, C.wood, { seed: 25, tex: true, texAng: 0.02 }); sk.ink(top, { w: 11, seed: 26 });
-  });
-  // 빛(손전등에서 큰 공 쪽으로 퍼진다): 사람보다 앞에 있으니 불투명하게
-  sk.fill(poly([[fl[0] + 52, LY - 22], [limb + 4, LY - 42], [limb + 4, LY + 42], [fl[0] + 52, LY + 22]], 3), "#FBF1C4", { dx: 0, dy: 0, wob: 0.2, seed: 31 });
-  // 작은 공 뒤의 그림자 쐐기(큰 공에 닿을수록 좁아진다)
-  sk.fill(poly([[small[0] + sR * 0.6, LY - sR * 0.85], [limb + 2, LY - 6], [limb + 2, LY + 6], [small[0] + sR * 0.6, LY + sR * 0.85]], 2), "#3E5A7E", { dx: 0, dy: 0, wob: 0.1, seed: 32, alpha: 0.28 });
-  // 손전등
-  sk.at(fl[0], fl[1], 1, () => {
-    const body = rrect(-64, -18, 94, 36, 10);
-    sk.fill(body, "#4A5568", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 33 }); sk.ink(body, { w: 8, seed: 34 });
-    const head = poly([[28, -22], [56, -30], [56, 30], [28, 22]], 3);
-    sk.fill(head, "#8A9099", { dx: 0, dy: 0, wob: 0.2, seed: 35 }); sk.ink(head, { w: 8, seed: 36 });
-    sk.fill(ell(56, 0, 7, 28), C.lemon, { dx: 0, dy: 0, wob: 0.2, seed: 37 });
-  });
-  // 받침 둘
-  thin(sk, 0.7, () => {
-    sk.ink(dense([[small[0], small[1] + sR], [small[0], TT - 14]]), { w: 9, seed: 41, color: "#4A5568" });
-    for (const [x, w, i] of [[small[0], 26, 0], [big[0], 44, 1]]) { const bs = ell(x, TT - 16, w, 7); sk.fill(bs, "#8A9099", { dx: 0, dy: 0, wob: 0.2, seed: 43 + i }); sk.ink(bs, { w: 7, seed: 45 + i }); }
-  });
-  // 공 둘: 손전등 쪽 절반이 밝다
-  const shadeBall = (c, r, lit, dark, sd) => {
-    const b = circ(c[0], c[1], r, { over: 0.1, seed: sd });
-    sk.fill(b, dark, { dx: 0, dy: 0, wob: 0.3, seed: sd + 1 });
-    sk.fill([...ell(c[0], c[1], r - 2, r - 2, Math.PI / 2, Math.PI * 1.5), ...ell(c[0] - 3, c[1], r * 0.12, r - 2, -Math.PI / 2, Math.PI / 2)], lit, { dx: 0, dy: 0, wob: 0.2, seed: sd + 2 });
-    sk.ink(b, { w: Math.max(7, r * 0.12), seed: sd + 3 });
+  const PHI = Math.PI / 6, cP = Math.cos(PHI), sP = Math.sin(PHI);
+  const CX = 470, CY = 508; // 탁자 윗면 가운데(화면). 앞 테의 두께까지 그림 틀 안에 든다
+  const P = ([x, y, z]) => [CX + x, CY - (y * cP - z * sP)]; // 세계(x 오른쪽, y 위, z 앞) → 화면
+  const A = 48 * Math.PI / 180, U = [Math.cos(A), 0, Math.sin(A)]; // 지구본에서 알전구 쪽(오른쪽 앞)
+  const along = (p, k) => [p[0] + U[0] * k, p[1] + U[1] * k, p[2] + U[2] * k];
+  const HC = 150, Rb = 36, rm = 22, Re = 95, d1 = 220, gap = 157; // 가운데 높이, 반지름(전구, 공, 지구본), 전구~공, 공~지구본 겉면
+  const M3 = [40, HC, 20], L3 = along(M3, d1), E3 = along(M3, -(gap + Re)), S3 = along(E3, Re);
+  const Ls = P(L3), Ms = P(M3), Es = P(E3), Ss = P(S3), foot = p => P([p[0], 0, p[2]]);
+  const Lu = d1 * rm / (Rb - rm), ru = rm * (1 - gap / Lu); // 본그림자 길이, 지구본에 닿는 본그림자 반지름
+  const lam = Math.atan2(U[2] * sP, U[0]), fore = U[2] * cP; // 화면에서 빛이 오는 쪽의 각, 빛을 받는 면이 이쪽을 보는 정도
+  const ux = Math.cos(lam), uy = Math.sin(lam), vx = -uy, vy = ux;
+  // 밤 쪽(빛 반대편) 초승달: 둘레 반원 + 낮과 밤의 경계(짧은 반지름 R·fore 인 타원의 반쪽)
+  const night = (c, R) => {
+    const pts = [];
+    for (let i = 0; i <= 24; i++) { const a = lam + Math.PI / 2 + Math.PI * i / 24; pts.push([c[0] + R * Math.cos(a), c[1] + R * Math.sin(a)]); }
+    for (let i = 0; i <= 24; i++) { const t = 1.5 * Math.PI - Math.PI * i / 24, lx = R * fore * Math.cos(t), my = R * Math.sin(t); pts.push([c[0] + lx * ux + my * vx, c[1] + lx * uy + my * vy]); }
+    return pts;
   };
-  shadeBall(small, sR, "#F2F0EA", "#9A9AA4", 51);
-  shadeBall(big, bR, "#9ED3F2", "#5C7FA6", 55);
-  // 작은 공의 그림자가 큰 공의 밝은 쪽에 점처럼 떨어진다(진한 가운데 + 옅은 둘레)
-  sk.fill(ell(dot[0], dot[1], 13, 17), "#3E5A7E", { dx: 0, dy: 0, wob: 0.2, seed: 61, alpha: 0.55 });
-  sk.fill(ell(dot[0], dot[1], 7.5, 10), "#1C2A3E", { dx: 0, dy: 0, wob: 0.2, seed: 62 });
+  // 지구본 겉면에 비스듬히 닿은 원(그림자 점): 빛 쪽으로 r·fore, 옆으로 r
+  const spot = r => { const pts = []; for (let i = 0; i <= 32; i++) { const t = i / 32 * 2 * Math.PI, a = r * fore * Math.cos(t), b = r * Math.sin(t); pts.push([Ss[0] + a * ux + b * vx, Ss[1] + a * uy + b * vy]); } return pts; };
+  // 사람은 탁자 뒤에 선다(허리 아래는 탁자에 가린다)
+  const FS = 0.62, FY = P([0, -135, -400])[1];
+  drawFigure(sk, 740, FY, FS, pose({ elL: [-80, -296], haL: [-140, -318], elR: [56, -262], haR: [70, -196], tilt: -0.04 }), { ...TEACHER, name: "teacher" });
+  // 학생: 지구본 위의 점을 손가락으로 가리킨다(손은 지구본 둘레 바로 바깥)
+  const SX = 548, hand = [Ss[0] + 48, Ss[1] - 74];
+  drawFigure(sk, SX, FY, FS, pose({ elL: [-84, -300], haL: [(hand[0] - SX) / FS, (hand[1] - FY) / FS], elR: [64, -270], haR: [36, -226], tilt: 0.1 }), { ...STUDENT, name: "student" });
+  { const dx = Ss[0] - hand[0], dy = Ss[1] - hand[1], l = Math.hypot(dx, dy); sk.ink(dense([hand, [hand[0] + dx / l * 14, hand[1] + dy / l * 14]]), { w: 6, seed: 7, wob: 0.1 }); }
+  // 둥근 탁자
+  const RT = 360, TRY = RT * sP;
+  thin(sk, 0.72, () => {
+    const front = [...ell(CX, CY, RT, TRY, 0, Math.PI), ...ell(CX, CY + 22, RT, TRY, Math.PI, 0)];
+    sk.fill(front, "#B07A45", { dx: 0, dy: 0, wob: 0.3, seed: 21 }); sk.ink(front, { w: 10, seed: 22, closed: true });
+    const top = ell(CX, CY, RT, TRY);
+    sk.fill(top, C.wood, { seed: 23, tex: true, texAng: 0.04 }); sk.ink(top, { w: 10, seed: 24 });
+  });
+  // 알전구의 빛(지구본 쪽으로 퍼지는 옅은 빛줄기)
+  sk.glow(Ls[0], Ls[1], 130, "#FFD84A", 0.5, 0.12);
+  { const dx = Es[0] - Ls[0], dy = Es[1] - Ls[1], l = Math.hypot(dx, dy), px = -dy / l, py = dx / l;
+    sk.fill([[Ls[0] + px * Rb * 0.8, Ls[1] + py * Rb * 0.8], [Es[0] + px * Re * 0.75, Es[1] + py * Re * 0.75], [Es[0] - px * Re * 0.75, Es[1] - py * Re * 0.75], [Ls[0] - px * Rb * 0.8, Ls[1] - py * Rb * 0.8]], "#FFF1B8", { dx: 0, dy: 0, wob: 0.3, seed: 31, alpha: 0.6 }); }
+  // 지구본: 받침, 몸통(바다와 땅), 밤 쪽, 기운 축을 잡은 반원 테
+  const TILT = 23 * Math.PI / 180, RR = Re + 12;
+  thin(sk, 0.7, () => {
+    const eb = foot(E3);
+    sk.ink(dense([[eb[0], eb[1] - 4], [Es[0], Es[1] + RR]]), { w: 10, seed: 41, color: "#4A5568" });
+    const base = ell(eb[0], eb[1], 50, 50 * sP); sk.fill(base, "#5C6675", { dx: 0, dy: 0, wob: 0.2, seed: 42 }); sk.ink(base, { w: 8, seed: 43 });
+  });
+  const globe = circ(Es[0], Es[1], Re, { over: 0.1, seed: 51 });
+  sk.fill(globe, "#7EC4EE", { dx: 0, dy: 0, wob: 0.3, seed: 52 });
+  sk.defs.push(`<clipPath id="${sk.id}globe"><circle cx="${Es[0].toFixed(1)}" cy="${Es[1].toFixed(1)}" r="${Re - 3}"/></clipPath>`);
+  sk.raw(`<g clip-path="url(#${sk.id}globe)">`);
+  for (const [pts, i] of [
+    [[[-62, -60], [-30, -76], [6, -68], [28, -50], [16, -30], [-8, -26], [-22, -8], [-40, -14], [-54, -34]], 0],
+    [[[-60, 8], [-36, 2], [-22, 22], [-26, 48], [-42, 66], [-58, 52], [-66, 30]], 1],
+    [[[30, -20], [48, -28], [56, -12], [42, -2], [28, -8]], 2],
+    [[[-8, 62], [16, 58], [24, 76], [4, 92], [-12, 82]], 3],
+  ]) sk.fill(curve(pts.map(([x, y]) => [Es[0] + x, Es[1] + y]), true, 3), "#8CCB6A", { dx: 0, dy: 0, wob: 0.3, seed: 55 + i });
+  sk.raw(`</g>`);
+  sk.fill(night(Es, Re - 1), "#1E2B49", { dx: 0, dy: 0, wob: 0.1, seed: 60, alpha: 0.42 });
+  sk.ink(globe, { w: 9, seed: 61 });
+  thin(sk, 0.7, () => {
+    sk.ink(ell(Es[0], Es[1], RR, RR, Math.PI / 2 - TILT, 1.5 * Math.PI - TILT), { w: 11, color: "#B88A2E", seed: 62, wob: 0.2 });
+    for (const [a, i] of [[Math.PI / 2 - TILT, 0], [1.5 * Math.PI - TILT, 1]]) sk.dot(Es[0] + RR * Math.cos(a), Es[1] + RR * Math.sin(a), 7, "#8A6420");
+  });
+  // 작은 공의 그림자가 지구본에 점처럼 떨어진다(진한 본그림자 둘레로 바깥으로 갈수록 옅어지는 반그림자)
+  sk.defs.push(`<radialGradient id="${sk.id}pen"><stop offset="0" stop-color="#1E2B49" stop-opacity="0.55"/><stop offset="0.42" stop-color="#1E2B49" stop-opacity="0.32"/><stop offset="1" stop-color="#1E2B49" stop-opacity="0"/></radialGradient>`);
+  sk.raw(`<ellipse cx="${Ss[0].toFixed(1)}" cy="${Ss[1].toFixed(1)}" rx="${(ru * 2.6 * fore).toFixed(1)}" ry="${(ru * 2.6).toFixed(1)}" transform="rotate(${(lam * 180 / Math.PI).toFixed(1)} ${Ss[0].toFixed(1)} ${Ss[1].toFixed(1)})" fill="url(#${sk.id}pen)"/>`);
+  sk.fill(spot(ru), "#141C2E", { dx: 0, dy: 0, wob: 0.15, seed: 66, alpha: 0.92 });
+  // 작은 공 뒤의 본그림자 원뿔(지구본에 닿을수록 좁아진다)
+  { const dx = Ss[0] - Ms[0], dy = Ss[1] - Ms[1], l = Math.hypot(dx, dy), px = -dy / l, py = dx / l;
+    sk.fill([[Ms[0] + px * rm * 0.92, Ms[1] + py * rm * 0.92], [Ss[0] + px * ru, Ss[1] + py * ru], [Ss[0] - px * ru, Ss[1] - py * ru], [Ms[0] - px * rm * 0.92, Ms[1] - py * rm * 0.92]], "#3E5A7E", { dx: 0, dy: 0, wob: 0.1, seed: 67, alpha: 0.3 }); }
+  // 작은 공(받침 위)
+  thin(sk, 0.7, () => {
+    const mb = foot(M3);
+    sk.ink(dense([[mb[0], mb[1] - 3], [Ms[0], Ms[1] + rm - 2]]), { w: 8, seed: 71, color: "#4A5568" });
+    const base = ell(mb[0], mb[1], 24, 24 * sP); sk.fill(base, "#5C6675", { dx: 0, dy: 0, wob: 0.2, seed: 72 }); sk.ink(base, { w: 7, seed: 73 });
+  });
+  const ballC = circ(Ms[0], Ms[1], rm, { over: 0.1, seed: 74 });
+  sk.fill(ballC, "#F4F2EC", { dx: 0, dy: 0, wob: 0.2, seed: 75 });
+  sk.fill(night(Ms, rm - 1), "#1E2B49", { dx: 0, dy: 0, wob: 0.1, seed: 76, alpha: 0.4 });
+  sk.ink(ballC, { w: 7, seed: 77 });
+  // 둥근 알전구 스탠드(오른쪽 앞): 받침, 기둥, 소켓, 알전구, 빛살
+  thin(sk, 0.7, () => {
+    const lb = foot(L3);
+    const base = ell(lb[0], lb[1], 50, 50 * sP); sk.fill(base, "#4A5568", { dx: 0, dy: 0, wob: 0.2, seed: 81 }); sk.ink(base, { w: 8, seed: 82 });
+    sk.ink(dense([[lb[0], lb[1] - 4], [Ls[0], Ls[1] + Rb + 18]]), { w: 11, seed: 83, color: "#4A5568" });
+    const sock = rrect(Ls[0] - 14, Ls[1] + Rb - 6, 28, 24, 5); sk.fill(sock, "#8A9099", { dx: 0, dy: 0, wob: 0.2, seed: 84 }); sk.ink(sock, { w: 7, seed: 85 });
+  });
+  const bulb = circ(Ls[0], Ls[1], Rb, { over: 0.1, seed: 86 });
+  sk.fill(bulb, C.lemon, { dx: 0, dy: 0, wob: 0.3, seed: 87 });
+  // 필라멘트: 소켓에서 올라온 지지선 두 가닥을 작은 고리 코일로 잇는다(봉우리 셋의 지그재그는 글자 M으로 읽힌다)
+  for (const sg of [-1, 1]) sk.ink(dense([[Ls[0] + sg * 7, Ls[1] + Rb - 6], [Ls[0] + sg * 9, Ls[1] + 4]]), { w: 3, color: "#8A9099", seed: 88 + (sg > 0 ? 1 : 0), wob: 0.1 });
+  { const coil = []; for (let k = 0; k <= 64; k++) { const u = k / 64, th = u * 2 * Math.PI * 4; coil.push([Ls[0] - 9 + 18 * u - 3.2 * Math.sin(th), Ls[1] + 3 - 3.6 * Math.cos(th) + 3.6]); } sk.ink(coil, { w: 3, color: C.orange, seed: 90, wob: 0 }); }
+  sk.ink(bulb, { w: 7, seed: 89 });
+  for (let i = 0; i < 6; i++) { const a = -2.75 + i * 0.47; sk.ink(dense([[Ls[0] + (Rb + 10) * Math.cos(a), Ls[1] + (Rb + 10) * Math.sin(a)], [Ls[0] + (Rb + 26) * Math.cos(a), Ls[1] + (Rb + 26) * Math.sin(a)]]), { w: 6, color: "#F2B632", seed: 90 + i, wob: 0.2 }); }
   return sk;
 }
 
@@ -435,6 +483,6 @@ export function cuts() {
     { name: "u7l4", theme: "space7", orig: null, sk: cutU7l4(), alt: "회전의자에 앉아 제자리에서 도는 학생의 뒷모습, 학생은 왼쪽으로 도는데 창문과 전등은 오른쪽으로 흘러가는 것처럼 보인다", cap: "내가 돌면 방이 반대로 도는 것처럼 보여요" },
     { name: "u7l4b", theme: "space7", orig: null, sk: cutU7l4b(), alt: "방 가운데 전등 둘레를 학생이 걸어서 돌고, 전등 너머로 보이는 별자리 액자가 걸음마다 달라지는 장면", cap: "한 걸음 옮길 때마다 전등 너머의 액자가 바뀌어요" },
     { name: "u7l5", theme: "space7", orig: null, sk: cutU7l5(), alt: "어두운 방에서 스탠드 불빛을 받는 공을 팔을 뻗어 얼굴 앞에 든 학생이 제자리에서 돈다. 공의 밝은 쪽이 학생의 눈에는 반만 보인다", cap: "밝은 쪽을 얼마나 보느냐에 따라 달의 모양이 달라져요" },
-    { name: "u7l6", theme: "space7", orig: null, sk: cutU7l6(), alt: "손전등, 작은 공, 큰 공을 탁자에 한 줄로 놓은 쌤, 작은 공의 그림자가 큰 공에 점처럼 떨어지고 학생이 그 점을 가리킨다", cap: "한 줄로 서면 작은 공의 그림자가 큰 공에 떨어져요" },
+    { name: "u7l6", theme: "space7", orig: null, sk: cutU7l6(), alt: "둥근 탁자 위에 알전구 스탠드, 작은 공, 지구본이 비스듬히 한 줄로 놓였다. 작은 공의 그림자가 지구본에 점처럼 떨어지고, 탁자 뒤에서 학생이 그 점을 가리키고 쌤이 손짓하는 장면", cap: "한 줄로 서면 작은 공의 그림자가 지구본에 점처럼 떨어져요" },
   ];
 }

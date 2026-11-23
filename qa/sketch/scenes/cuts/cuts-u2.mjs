@@ -179,22 +179,6 @@ function bat(sk, x, y, s, sd) {
     for (const sg of [-1, 1]) sk.fill(poly([[sg * 4, -22], [sg * 10, -32], [sg * 10, -20]], 2), "#5B5470", { dx: 0, dy: 0, wob: 0.2, seed: sd + 5 });
   });
 }
-function squirrel(sk, x, y, s, sd) {
-  sk.at(x, y, s, () => {
-    // 몸 뒤로 솟아 끝이 말린 큰 꼬리
-    const tail = curve([[-6, 22], [-30, 18], [-42, -6], [-40, -34], [-26, -52], [-6, -54], [4, -42], [-10, -36], [-22, -32], [-24, -12], [-14, 6]], true, 3);
-    sk.fill(tail, "#C9884A", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd, tex: 0.6, texAng: 1.0 }); sk.ink(tail, { w: 6, wob: 0.4, seed: sd + 1 });
-    const body = curve([[-8, 26], [-14, 4], [-2, -14], [14, -16], [22, 2], [18, 26]], true, 3);
-    sk.fill(body, "#A86A35", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd + 2 }); sk.ink(body, { w: 6, wob: 0.4, seed: sd + 3 });
-    const head = curve([[8, -14], [10, -32], [24, -38], [36, -28], [34, -14], [20, -8]], true, 3);
-    sk.fill(head, "#A86A35", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd + 4 }); sk.ink(head, { w: 6, wob: 0.4, seed: sd + 5 });
-    const ear = poly([[16, -34], [18, -48], [26, -36]], 2);
-    sk.fill(ear, "#A86A35", { dx: 0, dy: 0, wob: 0.2, seed: sd + 6 }); sk.ink(ear, { w: 5, wob: 0.2, seed: sd + 7 });
-    sk.dot(26, -26, 3.2);
-    sk.fill(ell(4, 8, 7, 11), "#E8C9A0", { dx: 0, dy: 0, wob: 0.2, seed: sd + 8 });
-    sk.ink(curve([[22, 0], [30, 6], [28, 12]]), { w: 4, seed: sd + 9, wob: 0.2 });
-  });
-}
 function frog(sk, x, y, s, sd) {
   sk.at(x, y, s, () => {
     const b = curve([[-30, 10], [-26, -12], [-10, -20], [10, -20], [26, -12], [30, 10], [10, 18], [-10, 18]], true, 3);
@@ -241,6 +225,46 @@ function dog(sk, x, y, s, sd) {
     const ear = curve([[66, -112], [56, -92], [64, -76], [74, -98]], true, 3);
     sk.fill(ear, "#9C6A33", { dx: 0, dy: 0, wob: 0.3, seed: sd + 13 }); sk.ink(ear, { w: 6, seed: sd + 14, wob: 0.3 });
     sk.dot(94, -106, 4.2); sk.dot(117, -98, 4.6);
+  });
+}
+// 참새(옆모습, 오른쪽을 본다): 밤색 정수리, 흰 뺨의 검은 점, 줄무늬 날개, 짧고 굵은 부리. 랩(kinLab)의 참새와 같은 새
+function sparrow(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    const b = curve([[-34, 4], [-20, -22], [10, -26], [30, -8], [26, 16], [0, 26], [-26, 20]], true, 3);
+    sk.fill(b, "#D9BF98", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd });
+    const crown = curve([[-2, -23], [12, -27], [27, -15], [24, -9], [12, -13], [2, -14]], true, 3);
+    sk.fill(crown, "#8A4B2A", { dx: 0, dy: 0, wob: 0.3, seed: sd + 1 });
+    sk.fill(ell(15, -1, 10, 7), "#FFFFFF", { dx: 0, dy: 0, wob: 0.2, seed: sd + 2 });
+    sk.dot(14, 0, 3.4, "#2B2B30");
+    sk.ink(b, { w: 7, wob: 0.4, seed: sd + 3 });
+    const wing = curve([[-20, -2], [0, -12], [12, 4], [-6, 13]], true, 3);
+    sk.fill(wing, "#8A5A33", { dx: 0, dy: 0, wob: 0.3, seed: sd + 4 }); sk.ink(wing, { w: 5, wob: 0.3, seed: sd + 5 });
+    for (const [y0, i] of [[-1, 0], [6, 1]]) sk.ink(dense([[-14, y0 + 2], [2, y0 - 3]]), { w: 3.5, color: "#EAD6B4", seed: sd + 6 + i, wob: 0.1 });
+    const beak = poly([[28, -13], [41, -8], [28, -3]], 2);
+    sk.fill(beak, "#3F3A36", { dx: 0, dy: 0, wob: 0.2, seed: sd + 8 }); sk.ink(beak, { w: 4, wob: 0.2, seed: sd + 9 });
+    sk.dot(20, -10, 3.6);
+    sk.ink(dense([[-4, 26], [-6, 40]]), { w: 5, seed: sd + 10, wob: 0.2 }); sk.ink(dense([[8, 25], [8, 40]]), { w: 5, seed: sd + 11, wob: 0.2 });
+  });
+}
+// 앉은 강아지(옆모습, 오른쪽을 본다): 늘어진 귀, 흰 주둥이와 가슴. 빛깔은 u2l8b의 개, 랩(kinLab)의 강아지와 같다. 원점 = 가운데
+function puppy(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    const fur = "#D9A55E", dark = "#9C6A33", pale = "#F6E7CC";
+    sk.ink(curve([[-24, 12], [-36, 2], [-40, -14]]), { w: 7, seed: sd, wob: 0.3 });
+    const body = curve([[-30, 30], [-32, 8], [-20, -8], [0, -12], [14, 0], [16, 30]], true, 3);
+    sk.fill(body, fur, { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd + 1 });
+    sk.fill(curve([[4, -8], [14, 0], [15, 18], [6, 16], [2, 2]], true, 3), pale, { dx: 0, dy: 0, wob: 0.2, seed: sd + 2 });
+    sk.ink(body, { w: 6, wob: 0.4, seed: sd + 3 });
+    const thigh = ell(-15, 17, 13, 11);
+    sk.fill(thigh, mix(fur, "#000000", 0.1), { dx: 0, dy: 0, wob: 0.3, seed: sd + 4 }); sk.ink(thigh, { w: 5, wob: 0.3, seed: sd + 5 });
+    for (const [lx, i] of [[3, 0], [12, 1]]) { const leg = rrect(lx - 4, 4, 9, 26, 4); sk.fill(leg, i ? fur : mix(fur, "#000000", 0.1), { dx: 0, dy: 0, wob: 0.2, seed: sd + 6 + i }); sk.ink(leg, { w: 5, wob: 0.2, seed: sd + 8 + i }); }
+    const head = curve([[-4, -26], [2, -42], [18, -48], [32, -40], [46, -32], [46, -20], [32, -14], [6, -14]], true, 3);
+    sk.fill(head, fur, { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd + 10 });
+    sk.fill(curve([[30, -32], [46, -30], [46, -20], [32, -16], [26, -23]], true, 3), pale, { dx: 0, dy: 0, wob: 0.2, seed: sd + 11 });
+    sk.ink(head, { w: 6, wob: 0.4, seed: sd + 12 });
+    const ear = curve([[6, -42], [-6, -34], [-6, -16], [3, -14], [12, -30]], true, 3);
+    sk.fill(ear, dark, { dx: 0, dy: 0, wob: 0.3, seed: sd + 13 }); sk.ink(ear, { w: 5, wob: 0.3, seed: sd + 14 });
+    sk.dot(24, -32, 3.4); sk.dot(46, -27, 4.2);
   });
 }
 
@@ -570,14 +594,14 @@ function cutU2l8() {
   card(sk, 520, TOP - 120, 51, () => fish(sk, 0, 0, 0.7, 53), -0.08);
   card(sk, 740, TOP - 120, 55, () => bat(sk, 0, 0, 0.7, 57), 0.08);
   b1.done(); b2.done();
-  // 다음 차례를 기다리는 카드(다람쥐)
-  card(sk, 878, TOP - 58, 61, () => squirrel(sk, 0, 2, 0.8, 63), 0.12);
-  // 쌤: 새 카드를 들고 어느 상자에 넣을지 고민
+  // 다음 차례를 기다리는 카드(강아지). 참새, 박쥐, 강아지는 랩(kinLab)이 견주는 세 동물이다
+  card(sk, 878, TOP - 58, 61, () => puppy(sk, -6, 6, 0.8, 63), 0.12);
+  // 쌤: 참새 카드를 들고 어느 상자에 넣을지 고민
   const P = pose({ elR: [96, -330], haR: [150, -390], elL: [-50, -262], haL: [-24, -220], tilt: 0.1 });
   const fx = 200, fs = 0.72;
   drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
   const hx = fx + fs * 150, hy = GY - fs * 390;
-  card(sk, hx + 34, hy - 50, 71, () => bird(sk, -2, -4, 0.62, 73), 0.12);
+  card(sk, hx + 34, hy - 50, 71, () => sparrow(sk, -3, -6, 0.9, 73), 0.12);
   handDot(sk, [hx, hy], C.skin, 75, 12);
   qmark(sk, 360, 190, 0.6, { color: C.teal, seed: 77, rot: 0.1 });
   return sk;
@@ -815,7 +839,7 @@ export function cuts() {
     { name: "u2l5", theme: "bio4", sk: cutU2l5(), alt: "세포 블록으로 계단을 쌓아 올라가는 스틱맨", cap: "한 칸씩 오르면 세포에서 개체까지" },
     { name: "u2l6", theme: "bio4", sk: cutU2l6(), alt: "세 개의 눈금 저울로 자연을 재는 스틱맨 검사관", cap: "다양성은 눈금 세 개로 잰다!" },
     { name: "u2l7", theme: "bio4", sk: cutU2l7(), alt: "무늬가 다른 무당벌레들을 돋보기로 견주는 스틱맨", cap: "같은 무당벌레인데 무늬가 달라요. 그게 변이!" },
-    { name: "u2l8", theme: "bio4", sk: cutU2l8(), alt: "생물 카드를 기준에 따라 상자에 나눠 담는 스틱맨", cap: "좋은 기준이 좋은 분류를 만든다" },
+    { name: "u2l8", theme: "bio4", sk: cutU2l8(), alt: "참새 카드를 든 쌤이 어느 상자에 넣을지 망설이는 장면. 탁자 위 두 상자에는 물고기 카드와 박쥐 카드가 들어 있고, 강아지 카드가 차례를 기다린다", cap: "좋은 기준이 좋은 분류를 만든다" },
     { name: "u2l8b", theme: "bio4", sk: cutU2l8b(), alt: "당나귀와 말과 노새를 견주어 보는 스틱맨", cap: "새끼를 낳을 수 있어도 같은 종이 아닐 수 있다?" },
     { name: "u2l9", theme: "bio4", sk: cutU2l9(), alt: "다섯 개의 문 앞에서 생물들을 안내하는 스틱맨 문지기", cap: "생물의 왕국은 다섯. 문지기의 질문만 기억하면 돼요" },
     { name: "u2l5b", theme: "bio4", orig: null, sk: cutU2l5b(), alt: "가운데 선 스틱맨 쌤 양옆으로 동물의 계단(세포, 조직, 위, 소화계, 강아지)과 식물의 계단(세포, 조직, 줄기 단면, 잎, 나무)이 오르고, 서로 다른 칸(소화계와 줄기 단면)만 청록으로 칠해진 장면", cap: "닮은 두 계단, 다른 칸은 하나씩. 자리도 달라요" },
